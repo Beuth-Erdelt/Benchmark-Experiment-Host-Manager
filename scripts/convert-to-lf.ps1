@@ -16,7 +16,7 @@ $paths = @(
 )
 
 foreach ($path in $paths) {
-    Get-ChildItem -Path $path -File -Recurse -Include *.md, *.txt, *Dockerfile*, *.sh, *.py | ForEach-Object {
+    Get-ChildItem -Path $path -File -Recurse -Include *.md, *.txt, *Dockerfile*, *.sh, *.py, *.log | ForEach-Object {
 
         # --- Dateiinhalt in UTF-8 einlesen ---
         $utf8 = New-Object System.Text.UTF8Encoding($true)  # BOM optional erlauben

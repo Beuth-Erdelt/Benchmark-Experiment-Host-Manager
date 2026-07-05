@@ -33,7 +33,7 @@ BEXHOMA_NUM_TENANTS=2
 # -xis                          run ANALYZE after data load
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 10Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -mtb schema                   tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -51,7 +51,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -72,7 +72,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_
 # -xis                          run ANALYZE after data load
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 10Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -mtb database                 tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -90,7 +90,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -112,7 +112,7 @@ BEXHOMA_NUM_TENANTS_LOADER=16
 # -xis                          run ANALYZE after data load
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 10Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -mtb database                 tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -130,7 +130,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -150,7 +150,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database multiload  tenants=$
 # -xis                          run ANALYZE after data load
 # -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -mtb container                tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -167,7 +167,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 5Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -196,7 +196,7 @@ BEXHOMA_NUM_TENANTS=2
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 20Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -mtb schema                   tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -215,7 +215,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rss 20Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -235,7 +235,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 20Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -mtb database                 tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -254,7 +254,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rss 20Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -274,7 +274,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOM
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
-# -rss 10Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -mtb container                tenant isolation level (schema / database / container)
 # -mtn $BEXHOMA_NUM_TENANTS     number of tenants
@@ -293,7 +293,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \

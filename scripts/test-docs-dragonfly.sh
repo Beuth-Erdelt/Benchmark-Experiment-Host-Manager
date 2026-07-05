@@ -22,7 +22,7 @@ source ./scripts/testfunctions.sh
 
 # Single host Dragonfly
 # -dbms Dragonfly               DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records x 1000)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -33,20 +33,20 @@ source ./scripts/testfunctions.sh
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 1                        number of operations for the benchmark phase (x 1000)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
   -dbms Dragonfly \
-  -sf 1 \
+  -sf 3 \
   -xwl a \
   -xtb 16384 \
   -xnbf 4 \
@@ -57,18 +57,18 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 128 \
-  -xop 10 \
+  -xop 1 \
   -m \
   -ma \
   -mc \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 5Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=3  nbp=1"
 
 
 # Cluster of 3 Dragonfly instances
@@ -93,7 +93,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -119,7 +119,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 5Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_2.log
 
@@ -146,7 +146,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -tr                           verify result meets basic sanity requirements
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -170,7 +170,7 @@ bexhoma ycsb \
   -ma \
   -mc \
   -tr \
-  -rss 5Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_3.log
 

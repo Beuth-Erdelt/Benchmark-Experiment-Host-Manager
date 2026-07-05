@@ -13,15 +13,16 @@ Extracted from log files in `logs_tests/`.
 ## Rule of thumb for `-rss`
 
 `-rss` sets the persistent volume claim size (or the ephemeral storage limit when no `-rst` is given).
-Use these formulas as the default; increase for special cases noted below.
+The **minimum** is always **50 Gi** regardless of formula result.
+Use these formulas as the default (floored at 50 Gi); increase for special cases noted below.
 
-| Workload | Formula | Rationale |
-|----------|---------|-----------|
-| TPC-H | `15 × SF Gi` | MySQL at SF=1 needs 8.1 G; PostgreSQL/MariaDB need 2–3 G. 15× covers MySQL with ~1.85× headroom, providing additional margin for indexes and temp files. |
-| TPC-DS | `15 × SF Gi` | MySQL SF=1 needs 8.1 G; PostgreSQL SF=10 needs 54 G. 15× provides ≥ 1.85× headroom with additional margin for indexes and temp files. |
-| YCSB | `10 × SF Gi` | PostgreSQL/MariaDB need 1.9–2.4 G at load; MySQL clean-load ~3–5 G. Workload E inserts grow the PostgreSQL volume to ~4.8 G at SF=1 (96 % of a 5 Gi PVC), causing INSERT failures. 10× provides adequate headroom across all workloads. |
-| Benchbase | `1 × SF Gi` | MySQL SF=16 needs 11 G < 16 Gi; PostgreSQL needs ≤ 5.2 G. 1× is sufficient. |
-| HammerDB | `1 × SF Gi` | MySQL SF=16 needs ~11 G < 16 Gi; PostgreSQL needs ≤ 4.8 G. Same headroom as Benchbase. |
+| Workload | Formula | Effective minimum | Rationale |
+|----------|---------|-------------------|-----------|
+| TPC-H | `max(50, 15 × SF) Gi` | 50 Gi (SF ≤ 3) | MySQL at SF=1 needs 8.1 G; PostgreSQL/MariaDB need 2–3 G. 15× covers MySQL with ~1.85× headroom, providing additional margin for indexes and temp files. |
+| TPC-DS | `max(50, 15 × SF) Gi` | 50 Gi (SF ≤ 3) | MySQL SF=1 needs 8.1 G; PostgreSQL SF=10 needs 54 G. 15× provides ≥ 1.85× headroom with additional margin for indexes and temp files. |
+| YCSB | `max(50, 10 × SF) Gi` | 50 Gi (SF ≤ 5) | PostgreSQL/MariaDB need 1.9–2.4 G at load; MySQL clean-load ~3–5 G. Workload E inserts grow the PostgreSQL volume to ~4.8 G at SF=1 (96 % of a 5 Gi PVC), causing INSERT failures. 10× provides adequate headroom across all workloads. |
+| Benchbase | `max(50, 1 × SF) Gi` | 50 Gi (SF ≤ 50) | MySQL SF=16 needs 11 G < 50 Gi; PostgreSQL needs ≤ 5.2 G. The 50 Gi floor applies for all practical scale factors. |
+| HammerDB | `max(50, 1 × SF) Gi` | 50 Gi (SF ≤ 50) | MySQL SF=16 needs ~11 G < 50 Gi; PostgreSQL needs ≤ 4.8 G. The 50 Gi floor applies for all practical scale factors. |
 
 **Special case — TPC-H/TPC-DS MonetDB SF=100:** measured at rest (TPC-H: 162–200 G; TPC-DS: 151–155 G); formula would give 1500 Gi which is grossly over-provisioned. Use **1000 Gi** instead — the measured value is before benchmarking; concurrent clients can generate substantial temp data, so ≈ 5–7× the at-rest size is appropriate.
 

@@ -38,6 +38,17 @@ RUN chown -R bench:bench /home/bench \
     && chmod 600 /home/bench/.ssh/authorized_keys
 
 ######################################################################################
+# Base folder for fio/sysbench benchmarks
+######################################################################################
+# World-writable so fio (run over SSH as "bench") can use it whether or not
+# k8s/deploymenttemplate-Hardware.yml's PVC ends up mounted here — with no PVC
+# (use_storage()=False, e.g. no -rst flag passed to hardware.py) this directory
+# is just part of the container's own ephemeral filesystem; with a PVC it's
+# the mount point (also chmod'd by that manifest's initContainer).
+RUN mkdir -p /database \
+    && chmod 777 /database
+
+######################################################################################
 # Copy entrypoint and expose SSH port
 ######################################################################################
 COPY entrypoint.sh /entrypoint.sh

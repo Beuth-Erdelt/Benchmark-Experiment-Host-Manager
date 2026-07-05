@@ -66,7 +66,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -270,7 +270,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -474,7 +474,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -691,7 +691,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -tr \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -1038,7 +1038,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rss 20Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -1177,7 +1177,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rss 20Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database \
   -mtn $BEXHOMA_NUM_TENANTS \
@@ -1317,7 +1317,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container \
   -mtn $BEXHOMA_NUM_TENANTS \

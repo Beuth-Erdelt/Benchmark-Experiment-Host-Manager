@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 777s 
-* Code: 1782071835
+* Duration: 702s 
+* Code: 1782829152
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -15,7 +15,7 @@ YCSB SF=1
   * Target is based on multiples of '16384'.
   * Factors for loading are [12].
   * Factors for benchmarking are [4].
-  * Experiment uses bexhoma version 0.9.17.
+  * Experiment uses bexhoma version 0.10.2.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['Redis'].
   * Import is handled by 8 processes (pods).
@@ -35,7 +35,8 @@ YCSB SF=1
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:239025
+  * disk:263492
+  * datadisk:1095
   * volume_size:50G
   * volume_used:1.1G
   * cpu_list:0-127
@@ -43,14 +44,15 @@ YCSB SF=1
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782071835
+    * code:1782829152
 * Redis-1-2-1-1 uses docker image redis:8.6.1
   * RAM:540492877824
   * CPU:Intel(R) Xeon(R) Gold 6430
   * Cores:128
   * host:6.8.0-111-generic
   * node:cl-worker38
-  * disk:239070
+  * disk:263492
+  * datadisk:1095
   * volume_size:50G
   * volume_used:1.1G
   * cpu_list:0-127
@@ -58,7 +60,10 @@ YCSB SF=1
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1782071835
+    * code:1782829152
+
+### SUT Container Restarts
+* bexhoma-sut-redis-1-1782829152-79f8fdc767-x64z2: 0 0
 
 ### Workflow
 
@@ -78,20 +83,20 @@ YCSB SF=1
 
 | connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| Redis-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8344.46 |                14980.00 |            125000.00 |                              2083.00 | 1.00 |              240.32 |
-| Redis-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8607.04 |                14523.00 |            125000.00 |                              1983.00 | 1.00 |              247.88 |
-| Redis-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8246.47 |                15158.00 |            125000.00 |                              2057.00 | 1.00 |              237.50 |
-| Redis-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8451.09 |                14791.00 |            125000.00 |                              2010.00 | 1.00 |              243.39 |
-| Redis-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8289.67 |                15079.00 |            125000.00 |                              1967.00 | 1.00 |              238.74 |
-| Redis-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8491.27 |                14721.00 |            125000.00 |                              1988.00 | 1.00 |              244.55 |
-| Redis-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8310.62 |                15041.00 |            125000.00 |                              2024.00 | 1.00 |              239.35 |
-| Redis-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8285.83 |                15086.00 |            125000.00 |                              2019.00 | 1.00 |              238.63 |
+| Redis-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8280.89 |                15095.00 |            125000.00 |                              2491.00 | 1.00 |              238.49 |
+| Redis-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8419.21 |                14847.00 |            125000.00 |                              2507.00 | 1.00 |              242.47 |
+| Redis-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8584.58 |                14561.00 |            125000.00 |                              2589.00 | 1.00 |              247.24 |
+| Redis-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8458.52 |                14778.00 |            125000.00 |                              2453.00 | 1.00 |              243.61 |
+| Redis-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8336.11 |                14995.00 |            125000.00 |                              2483.00 | 1.00 |              240.08 |
+| Redis-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8608.82 |                14520.00 |            125000.00 |                              2339.00 | 1.00 |              247.93 |
+| Redis-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8405.62 |                14871.00 |            125000.00 |                              2445.00 | 1.00 |              242.08 |
+| Redis-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8517.89 |                14675.00 |            125000.00 |                              2305.00 | 1.00 |              245.32 |
 
 #### Per Run
 
 | DBMS      |   experiment_run |   threads |    target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------|-----------------:|----------:|----------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| Redis-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              237.50 |                        67026.44 |                15158.00 |           1000000.00 |                              2016.38 |
+| Redis-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              238.49 |                        67611.63 |                15095.00 |           1000000.00 |                              2451.50 |
 
 ### Execution
 
@@ -99,15 +104,15 @@ YCSB SF=1
 
 | DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| Redis-1-1-1-1-1 | Redis-1-1-1 | Redis-1-1-1-1 | Redis-1         |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        65501.18 |               152669.00 |            5000901 |                            1275.00 |              4999099 |                              1258.00 |
-| Redis-1-2-1-1-1 | Redis-1-2-1 | Redis-1-2-1-1 | Redis-1         |                2 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        65499.90 |               152672.00 |            5001322 |                             871.00 |              4998678 |                               855.00 |
+| Redis-1-1-1-1-1 | Redis-1-1-1 | Redis-1-1-1-1 | Redis-1         |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        65502.90 |               152665.00 |            4996363 |                            1340.00 |              5003637 |                              1335.00 |
+| Redis-1-2-1-1-1 | Redis-1-2-1 | Redis-1-2-1-1 | Redis-1         |                2 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        65500.75 |               152670.00 |            4999042 |                            1265.00 |              5000958 |                              1255.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| Redis-1-1-1 | Redis-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        65501.18 |               152669.00 |            5000901 |                            1275.00 |              4999099 |                              1258.00 |
-| Redis-1-2-1 | Redis-1-2-1 |                2 |       128 |    65536 |               1 |           1 |            0 |                        65499.90 |               152672.00 |            5001322 |                             871.00 |              4998678 |                               855.00 |
+| Redis-1-1-1 | Redis-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        65502.90 |               152665.00 |            4996363 |                            1340.00 |              5003637 |                              1335.00 |
+| Redis-1-2-1 | Redis-1-2-1 |                2 |       128 |    65536 |               1 |           1 |            0 |                        65500.75 |               152670.00 |            4999042 |                            1265.00 |              5000958 |                              1255.00 |
 
 ### Monitoring
 
@@ -115,16 +120,17 @@ YCSB SF=1
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| Redis-1-1-1-1 |         0.17 |      0.00 |           0.00 |                  0.00 |
+| Redis-1-1-1-1 |        17.93 |      0.00 |           0.10 |                  0.10 |
 
 ### Execution phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| Redis-1-1-1-1 |       802.79 |      5.97 |           0.12 |                  0.12 |
-| Redis-1-2-1-1 |       802.79 |      5.97 |           0.12 |                  0.12 |
+| Redis-1-1-1-1 |       679.93 |      4.80 |           0.13 |                  0.13 |
+| Redis-1-2-1-1 |       679.93 |      9.46 |           0.13 |                  0.13 |
 
 ### Tests
+* TEST passed: No SUT container restarts
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN

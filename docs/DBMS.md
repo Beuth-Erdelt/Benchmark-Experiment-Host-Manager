@@ -31,6 +31,9 @@ This document covers all DBMS currently supported by bexhoma.
 **External / Cloud Database Services**
 - [DatabaseService](#databaseservice)
 
+**Raw Hardware Benchmarks (no DBMS)**
+- [Hardware](#hardware)
+
 ---
 
 ## Configuration Reference
@@ -42,10 +45,10 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `loadData` | yes | Shell command run inside the SUT container to execute an init script. Placeholders: `{scriptname}`, `{database}`, `{schema}`, `{service_name}`, `{namespace}` |
 | `delay_prepare` | no | Seconds to wait after the container starts before bexhoma considers it ready (useful for engines that restart during init, e.g., MySQL InnoDB setup) |
 | `template` | yes | Base connection template passed to DBMSBenchmarker — includes `version`, `alias`, `docker_alias`, `dialect`, and `JDBC` sub-section |
-| `template.JDBC.driver` | yes | Fully qualified Java class name of the JDBC driver |
-| `template.JDBC.auth` | yes | `[username, password]` pair |
-| `template.JDBC.url` | yes | JDBC URL template. Placeholders: `{serverip}`, `{database}`, `{schema}`, `{dbname}`, `{timeout_ms}`, `{namespace}` |
-| `template.JDBC.jar` | yes | JDBC jar filename(s) expected in `jarfolder` |
+| `template.JDBC.driver` | yes¹ | Fully qualified Java class name of the JDBC driver |
+| `template.JDBC.auth` | yes¹ | `[username, password]` pair |
+| `template.JDBC.url` | yes¹ | JDBC URL template. Placeholders: `{serverip}`, `{database}`, `{schema}`, `{dbname}`, `{timeout_ms}`, `{namespace}` |
+| `template.JDBC.jar` | yes¹ | JDBC jar filename(s) expected in `jarfolder` |
 | `template.JDBC.database` | no | Default database name (substituted into `{database}` in `loadData` and the JDBC URL; overridden per tenant in multi-tenant mode) |
 | `template.JDBC.schema` | no | Default schema name (substituted into `{schema}`; overridden per tenant) |
 | `template.init_SQL` | no | SQL statement executed after connection is established (e.g., `SET optimizer_switch = ...`) |
@@ -56,6 +59,15 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `store_args` | no | Whether to capture and display the container startup arguments in the experiment summary (default: `True`) |
 | `priceperhourdollar` | no | Reserved for cost modelling (currently unused) |
 | `monitor` | no | Application-level monitoring configuration; see [Monitoring](Monitoring.md) |
+
+¹ Only required for SQL DBMS queried via DBMSBenchmarker. Entries whose SUT is
+never queried through DBMSBenchmarker — [Dragonfly](#dragonfly),
+[DragonflyCluster](#dragonflycluster), [Redis](#redis), [Hardware](#hardware) —
+omit `template.JDBC` entirely; `template` itself is still required (at minimum
+`version`, `alias`, `docker_alias`), and `template.auth` (a `[username,
+password]` pair) becomes required instead — `configurations/manifest.py`
+falls back to `template['auth']` for `BEXHOMA_USER`/`BEXHOMA_PASSWORD`
+injection whenever `template.JDBC` is absent.
 
 ### JDBC URL Placeholders
 
@@ -798,6 +810,55 @@ The JDBC connection and `loadData` command reference the service by its in-clust
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/DatabaseService)
 
 See [Example: Cloud Database](Example-CloudDatabase.md) for a worked example.
+
+---
+
+## Hardware
+
+`Hardware` is not a DBMS — it benchmarks raw disk I/O (fio) or CPU/memory
+(sysbench) on a dedicated SUT container, bypassing any database engine
+entirely. The benchmarker connects to the SUT over SSH instead of JDBC or a
+CLI client, so there is no `loadData` command and no DDL scripts. Run it with
+`python hardware.py run -dbms Hardware -xht fio ...` (see `hardware.py -h`
+for the full set of fio-specific flags).
+
+**Deployment template:** [`k8s/deploymenttemplate-Hardware.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Hardware.yml)
+— mounts a PVC at `/database` on the SUT; the benchmarker's
+`HARDWARE_TEST_DIR` targets a subdirectory of this mount so fio measures the
+PVC-backed storage instead of the SUT container's ephemeral filesystem.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'Hardware': {
+    'loadData': '',
+    'delay_prepare': 0,
+    'template': {
+        'version': 'v1.0',
+        'alias': 'Hardware',
+        'docker_alias': 'HW',
+        'auth': ['bench', ''],
+    },
+    'logfile': '',
+    'datadir': '/database',
+    'priceperhourdollar': 0.0,
+},
+```
+
+`template.auth` is required for every non-JDBC `dockers` entry — it's used to
+populate `BEXHOMA_USER`/`BEXHOMA_PASSWORD` env vars injected into every job
+pod (`configurations/manifest.py`). Hardware's benchmarker scripts don't
+actually use these two vars (SSH auth goes through `BEXHOMA_SUT_USER`/
+`BEXHOMA_SUT_KEY` instead), but the manifest builder still requires the key
+to be present.
+
+No `template.JDBC` block (see footnote¹ above) — results are parsed from the
+benchmarker pod's own log output, not queried through DBMSBenchmarker.
+
+**DDL scripts:** none — Hardware has no loading phase; `experiment_dict_template["loader"]`
+is always empty and `cluster.config['volumes']['hardware']['initscripts']['Schema']`
+is an empty placeholder required only so `configurations.default(...)` can resolve
+its (unused) init-script lookup.
 
 ---
 

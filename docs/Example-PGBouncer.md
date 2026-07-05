@@ -652,7 +652,7 @@ bexhoma benchbase \
   -xconn \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 16Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_newconn.log
 ```
@@ -780,7 +780,7 @@ bexhoma benchbase \
   -xconn \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 16Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_newconn_pool.log
 ```

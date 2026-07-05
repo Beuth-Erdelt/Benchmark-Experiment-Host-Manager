@@ -20,7 +20,7 @@
 # Default variable values (override after sourcing if needed)
 # ---------------------------------------------------------------------------
 
-BEXHOMA_NODE_SUT="cl-worker38"
+BEXHOMA_NODE_SUT="cl-worker36"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
 LOG_DIR="./logs_tests"

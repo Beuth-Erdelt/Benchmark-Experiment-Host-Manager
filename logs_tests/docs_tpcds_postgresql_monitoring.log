@@ -1,9 +1,9 @@
-﻿Data Directory                : is running
+Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1782969611
-Experiment                    : starts at 2026-07-02 07:20:16.322581 (1367605.2378667)
+Experiment                    : has code 1783002163
+Experiment                    : starts at 2026-07-02 16:22:43.786289 (10710.5607941)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=3) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
@@ -12,7 +12,7 @@ Timeout per query is 1200.
 Import sets indexes and constraints after loading and recomputes statistics.
 Experiment uses bexhoma version 0.10.2.
 System metrics are monitored by a cluster-wide installation.
-Experiment is limited to DBMS ['MonetDB'].
+Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
@@ -22,76 +22,119 @@ Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-MonetDB-1                     : will start now
-MonetDB-1                     : deployments ['sut']
-MonetDB-1                     : stateful sets []
-MonetDB-1                     : pvcs ['sut']
-MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1782969611
-MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1782969611
+PostgreSQL-1                  : will start now
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1783002163
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1783002163
 - waiting 30s -               : done
-MonetDB-1                     : is not loaded yet
-MonetDB-1                     : will start loading but not before 2026-07-02 05:22:17 (that is in 60 secs)
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-- waiting 2s -                : done
-MonetDB-1                     : is not loaded yet
-MonetDB-1                     : will start loading but not before 2026-07-02 05:22:17
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-MonetDB-1                     : is not loaded yet
-MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782969611-6dfcbdd4d-7bv6w to load scripts
-MonetDB-1                     : start asynch loading scripts of type loaded
-MonetDB-1                     : is loading
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-MonetDB-1                     : is loading
+PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
-MonetDB-1                     : is loading
+PostgreSQL-1                  : is not loaded yet
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1783002163-95776b5f4-wmxbr to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type loaded
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-MonetDB-1                     : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-MonetDB-1                     : is loading
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
-MonetDB-1                     : showing loader times
-MonetDB-1                     : generator times (start/end per pod and container) [(1782969898, 1782969898), (1782969898, 1782969898), (1782969898, 1782969898), (1782969897, 1782969897), (1782969898, 1782969898), (1782969898, 1782969898), (1782969898, 1782969898), (1782969897, 1782969897)]
-MonetDB-1                     : loader times (start/end per pod and container) [(1782969906, 1782969918), (1782969906, 1782969918), (1782969907, 1782969917), (1782969906, 1782969919), (1782969907, 1782969919), (1782969906, 1782969918), (1782969906, 1782970205), (1782969906, 1782969918)]
-MonetDB-1                     : total times (start/end per pod and container) [(1782969898, 1782969898), (1782969898, 1782969898), (1782969898, 1782969898), (1782969897, 1782969897), (1782969898, 1782969898), (1782969898, 1782969898), (1782969898, 1782969898), (1782969897, 1782969897), (1782969906, 1782969918), (1782969906, 1782969918), (1782969907, 1782969917), (1782969906, 1782969919), (1782969907, 1782969919), (1782969906, 1782969918), (1782969906, 1782970205), (1782969906, 1782969918)]
-MonetDB-1                     : generator timespan (first to last [s]) = 1
-MonetDB-1                     : loader timespan (first to last [s]) = 299
-MonetDB-1                     : total timespan (first to last [s]) = 308
-MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1782969611-6dfcbdd4d-7bv6w to load scripts
-MonetDB-1                     : start asynch loading scripts of type indexed
-MonetDB-1                     : is loading
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : showing loader times
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1783002366, 1783002366), (1783002366, 1783002366), (1783002366, 1783002366), (1783002366, 1783002366), (1783002365, 1783002365), (1783002366, 1783002366), (1783002366, 1783002366), (1783002366, 1783002366)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1783002373, 1783002422), (1783002373, 1783002423), (1783002373, 1783002419), (1783002373, 1783002423), (1783002374, 1783002420), (1783002373, 1783002526), (1783002374, 1783002423), (1783002374, 1783002423)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1783002366, 1783002366), (1783002366, 1783002366), (1783002366, 1783002366), (1783002366, 1783002366), (1783002365, 1783002365), (1783002366, 1783002366), (1783002366, 1783002366), (1783002366, 1783002366), (1783002373, 1783002422), (1783002373, 1783002423), (1783002373, 1783002419), (1783002373, 1783002423), (1783002374, 1783002420), (1783002373, 1783002526), (1783002374, 1783002423), (1783002374, 1783002423)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 1
+PostgreSQL-1                  : loader timespan (first to last [s]) = 153
+PostgreSQL-1                  : total timespan (first to last [s]) = 161
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1783002163-95776b5f4-wmxbr to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type indexed
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1782969611 initialized to 1.
-MonetDB-1                     : benchmarks done 0 of 1. This will be client 1
-MonetDB-1-1-1-1               : start benchmarking (benchmark_run=1)
-MonetDB-1-1-1-1               : needs monitoring (common metrics) for deployment sut
-MonetDB-1                     : benchmarking results in folder D:\data\benchmarks/1782969611
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1783002163 initialized to 1.
+PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
+PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1783002163
 - waiting 10s -               : done
-MonetDB-1                     : benchmarking is waiting for job bexhoma-benchmarker-monetdb-1-1782969611-1-1-1-kjwcl: found
-MonetDB-1-1-1-1               : needs monitoring (common metrics) for deployment sut
-MonetDB-1-1-1-1               : collecting loading metrics of SUT at connection MonetDB-1-1-1-1
-MonetDB-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1782969611(.*)", pod=~"(.*)monetdb-1-1782969611(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MonetDB-1-1-1-1               : collecting metrics of data generator at connection MonetDB-1-1-1-1
-MonetDB-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1782969611(.*)", pod=~"(.*)monetdb-1-1782969611(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MonetDB-1-1-1-1               : collecting metrics of data injector at connection MonetDB-1-1-1-1
-MonetDB-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1782969611(.*)", pod=~"(.*)monetdb-1-1782969611(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1783002163-1-1-1-g76jv: found
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-1-1-1            : collecting loading metrics of SUT at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1783002163(.*)", pod=~"(.*)postgresql-1-1783002163(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : collecting metrics of data generator at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1783002163(.*)", pod=~"(.*)postgresql-1-1783002163(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : collecting metrics of data injector at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1783002163(.*)", pod=~"(.*)postgresql-1-1783002163(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-MonetDB-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1782969611/MonetDB-1-1-1-1.config
-MonetDB-1-1-1-1               : showing benchmarker times
-MonetDB-1-1-1-1               : benchmarker timespan job from 1782970536 to 1782970639
-MonetDB-1-1-1-1               : benchmarker timespan pods from 1782970546 to 1782970604
-MonetDB-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 58
-MonetDB-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1782970546, 1782970604)]
-MonetDB-1-1-1-1               : found and updated times {'benchmarker': [(1782970546, 1782970604)]}
-MonetDB-1-1-1-1               : needs monitoring (common metrics) for deployment sut
-MonetDB-1-1-1-1               : collecting execution metrics of SUT at connection MonetDB-1-1-1-1
-MonetDB-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1782969611(.*)", pod=~"(.*)monetdb-1-1782969611(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-MonetDB-1-1-1-1               : collecting metrics of benchmarker at connection MonetDB-1-1-1-1
-MonetDB-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1782969611(.*)", pod=~"(.*)monetdb-1-1782969611(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-MonetDB-1                     : can be stopped
-MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1782969611-6dfcbdd4d-7bv6w
-Experiment                    : ends at 2026-07-02 07:38:42.215759 (1368711.1309983) - 1105.89s total
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1783002163/PostgreSQL-1-1-1-1.config
+PostgreSQL-1-1-1-1            : showing benchmarker times
+PostgreSQL-1-1-1-1            : benchmarker timespan job from 1783002692 to 1783003364
+PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1783002703 to 1783003325
+PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 622
+PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1783002703, 1783003325)]
+PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1783002703, 1783003325)]}
+PostgreSQL-1-1-1-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1-1-1-1            : collecting execution metrics of SUT at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1783002163(.*)", pod=~"(.*)postgresql-1-1783002163(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-1-1-1-1            : collecting metrics of benchmarker at connection PostgreSQL-1-1-1-1
+PostgreSQL-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1783002163(.*)", pod=~"(.*)postgresql-1-1783002163(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1783002163-95776b5f4-wmxbr
+Experiment                    : ends at 2026-07-02 16:43:33.335785 (11960.110539) - 1249.55s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -105,8 +148,8 @@ Result workflow not complete
 ### Workload
 TPC-DS Queries SF=3
 * Type: tpcds
-* Duration: 1106s 
-* Code: 1782969611
+* Duration: 1250s 
+* Code: 1783002163
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=3) data is loaded and benchmark is executed.
@@ -116,7 +159,7 @@ TPC-DS Queries SF=3
   * Import sets indexes and constraints after loading and recomputes statistics.
   * Experiment uses bexhoma version 0.10.2.
   * System metrics are monitored by a cluster-wide installation.
-  * Experiment is limited to DBMS ['MonetDB'].
+  * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker19.
   * Benchmarking is fixed to cl-worker19.
@@ -127,157 +170,158 @@ TPC-DS Queries SF=3
   * Experiment is run once.
 
 ### Connections
-* MonetDB-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP1
-  * RAM:1081853939712
-  * CPU:Intel(R) Xeon(R) Gold 6438Y+
-  * Cores:128
+* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
   * host:6.8.0-111-generic
-  * node:cl-worker37
-  * disk:654135
-  * cpu_list:0-127
+  * node:cl-worker36
+  * disk:702208
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1782969611
+    * code:1783002163
 
 ### SUT Container Restarts
-* bexhoma-sut-monetdb-1-1782969611-6dfcbdd4d-7bv6w: 0
+* bexhoma-sut-postgresql-1-1783002163-95776b5f4-wmxbr: 0 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
 
 #### Planned
 
-* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
 
 ### Loading
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MonetDB-1-1 |                1 |    3 |      966.00 |           7.00 |            1.00 |        299.00 |          651.00 |              8 |           0 |             | None           |             0 | False         |               11.18 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PostgreSQL-1-1 |                1 | 3.00 |      476.00 |           1.00 |            1.00 |        153.00 |          314.00 |              8 |           0 |             | None           |             0 | False         |               22.69 |
 
 ### Execution
 
 #### Per Connection
 
-|                   | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| MonetDB-1-1-1-1-1 | MonetDB-1       | MonetDB-1-1-1 | MonetDB-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |         58 |            0.22 |            51182.36 |          18434.48 |          -1 | MonetDB-1-1-1-1-1 |
+|                      | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |        622 |            0.60 |            18524.49 |           1718.97 |          -1 | PostgreSQL-1-1-1-1-1 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MonetDB-1-1-1 | MonetDB-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |         58 |            0.22 |            51182.36 |          18434.48 |          -1 |
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |        622 |            0.60 |            18524.49 |           1718.97 |          -1 |
 
 ### Latency of Timer Execution [ms]
-| Queries       |   MonetDB-1-1-1-1-1 |
-|:--------------|--------------------:|
-| TPC-DS Q1     |               86.56 |
-| TPC-DS Q2     |              408.70 |
-| TPC-DS Q3     |               98.14 |
-| TPC-DS Q4     |             2508.60 |
-| TPC-DS Q5     |              271.87 |
-| TPC-DS Q6     |              155.05 |
-| TPC-DS Q7     |              172.58 |
-| TPC-DS Q8     |               72.92 |
-| TPC-DS Q9     |              340.07 |
-| TPC-DS Q10    |              113.55 |
-| TPC-DS Q11    |             1245.74 |
-| TPC-DS Q12    |               51.11 |
-| TPC-DS Q13    |              219.56 |
-| TPC-DS Q14a+b |             6028.01 |
-| TPC-DS Q15    |               61.35 |
-| TPC-DS Q16    |              277.80 |
-| TPC-DS Q17    |              376.44 |
-| TPC-DS Q18    |              211.52 |
-| TPC-DS Q19    |              180.90 |
-| TPC-DS Q20    |               81.29 |
-| TPC-DS Q21    |              186.28 |
-| TPC-DS Q22    |             2191.72 |
-| TPC-DS Q23a+b |             6037.71 |
-| TPC-DS Q24a+b |              602.93 |
-| TPC-DS Q25    |              397.19 |
-| TPC-DS Q26    |              100.18 |
-| TPC-DS Q27    |              278.09 |
-| TPC-DS Q28    |              266.67 |
-| TPC-DS Q29    |              486.53 |
-| TPC-DS Q30    |               49.53 |
-| TPC-DS Q31    |              447.62 |
-| TPC-DS Q32    |               77.62 |
-| TPC-DS Q33    |               93.55 |
-| TPC-DS Q34    |              120.39 |
-| TPC-DS Q35    |              246.50 |
-| TPC-DS Q36    |              283.06 |
-| TPC-DS Q37    |              165.29 |
-| TPC-DS Q38    |              481.28 |
-| TPC-DS Q39a+b |             3188.68 |
-| TPC-DS Q40    |              205.65 |
-| TPC-DS Q41    |               10.73 |
-| TPC-DS Q42    |               84.78 |
-| TPC-DS Q43    |              201.73 |
-| TPC-DS Q44    |              159.42 |
-| TPC-DS Q45    |               40.10 |
-| TPC-DS Q46    |              163.38 |
-| TPC-DS Q47    |              621.12 |
-| TPC-DS Q48    |              160.76 |
-| TPC-DS Q49    |              411.68 |
-| TPC-DS Q50    |              371.79 |
-| TPC-DS Q51    |             1132.97 |
-| TPC-DS Q52    |               84.98 |
-| TPC-DS Q53    |               93.31 |
-| TPC-DS Q54    |              106.25 |
-| TPC-DS Q55    |               76.81 |
-| TPC-DS Q56    |               81.48 |
-| TPC-DS Q57    |              269.08 |
-| TPC-DS Q58    |              191.56 |
-| TPC-DS Q59    |              390.63 |
-| TPC-DS Q60    |               90.14 |
-| TPC-DS Q61    |              157.88 |
-| TPC-DS Q62    |               89.51 |
-| TPC-DS Q63    |               88.93 |
-| TPC-DS Q64    |              931.17 |
-| TPC-DS Q65    |              367.14 |
-| TPC-DS Q66    |              361.90 |
-| TPC-DS Q67    |              949.10 |
-| TPC-DS Q68    |              189.42 |
-| TPC-DS Q69    |              141.87 |
-| TPC-DS Q70    |              241.12 |
-| TPC-DS Q71    |              127.61 |
-| TPC-DS Q72    |              420.07 |
-| TPC-DS Q73    |               83.64 |
-| TPC-DS Q74    |              442.32 |
-| TPC-DS Q75    |             1085.68 |
-| TPC-DS Q76    |              155.95 |
-| TPC-DS Q77    |              196.07 |
-| TPC-DS Q78    |             1975.21 |
-| TPC-DS Q79    |              162.71 |
-| TPC-DS Q80    |             1116.84 |
-| TPC-DS Q81    |               86.20 |
-| TPC-DS Q82    |              156.12 |
-| TPC-DS Q83    |               25.19 |
-| TPC-DS Q84    |               27.42 |
-| TPC-DS Q85    |              309.50 |
-| TPC-DS Q86    |              112.41 |
-| TPC-DS Q87    |              674.65 |
-| TPC-DS Q88    |              182.59 |
-| TPC-DS Q89    |              133.23 |
-| TPC-DS Q90    |               28.19 |
-| TPC-DS Q91    |               40.63 |
-| TPC-DS Q92    |               31.58 |
-| TPC-DS Q93    |              367.57 |
-| TPC-DS Q94    |              127.15 |
-| TPC-DS Q95    |              989.74 |
-| TPC-DS Q96    |               37.44 |
-| TPC-DS Q97    |              525.77 |
-| TPC-DS Q98    |              152.25 |
-| TPC-DS Q99    |              148.06 |
+| Queries       |   PostgreSQL-1-1-1-1-1 |
+|:--------------|-----------------------:|
+| TPC-DS Q1     |                 212.18 |
+| TPC-DS Q2     |                 430.13 |
+| TPC-DS Q3     |                 365.46 |
+| TPC-DS Q4     |               16855.85 |
+| TPC-DS Q5     |                 738.25 |
+| TPC-DS Q6     |              191835.74 |
+| TPC-DS Q7     |                 554.79 |
+| TPC-DS Q8     |                 102.27 |
+| TPC-DS Q9     |                2350.19 |
+| TPC-DS Q10    |                1073.05 |
+| TPC-DS Q11    |                9707.91 |
+| TPC-DS Q12    |                 131.82 |
+| TPC-DS Q13    |                1076.73 |
+| TPC-DS Q14a+b |                6238.12 |
+| TPC-DS Q15    |                 283.15 |
+| TPC-DS Q16    |                 406.47 |
+| TPC-DS Q17    |                 648.48 |
+| TPC-DS Q18    |                 509.20 |
+| TPC-DS Q19    |                 395.90 |
+| TPC-DS Q20    |                 244.87 |
+| TPC-DS Q21    |                 309.12 |
+| TPC-DS Q22    |                6321.21 |
+| TPC-DS Q23a+b |               11175.08 |
+| TPC-DS Q24a+b |                1350.01 |
+| TPC-DS Q25    |                 642.24 |
+| TPC-DS Q26    |                 431.13 |
+| TPC-DS Q27    |                  43.16 |
+| TPC-DS Q28    |                1939.44 |
+| TPC-DS Q29    |                 752.46 |
+| TPC-DS Q30    |                6807.26 |
+| TPC-DS Q31    |                3531.96 |
+| TPC-DS Q32    |                 127.29 |
+| TPC-DS Q33    |                 651.57 |
+| TPC-DS Q34    |                  32.98 |
+| TPC-DS Q35    |                1258.47 |
+| TPC-DS Q36    |                  40.55 |
+| TPC-DS Q37    |                 409.56 |
+| TPC-DS Q38    |                2404.42 |
+| TPC-DS Q39a+b |                4867.33 |
+| TPC-DS Q40    |                 233.51 |
+| TPC-DS Q41    |                 486.60 |
+| TPC-DS Q42    |                 152.39 |
+| TPC-DS Q43    |                  55.31 |
+| TPC-DS Q44    |                   2.94 |
+| TPC-DS Q45    |                 181.72 |
+| TPC-DS Q46    |                  57.28 |
+| TPC-DS Q47    |                2203.22 |
+| TPC-DS Q48    |                1091.78 |
+| TPC-DS Q49    |                 635.20 |
+| TPC-DS Q50    |                1507.09 |
+| TPC-DS Q51    |                1841.48 |
+| TPC-DS Q52    |                 159.92 |
+| TPC-DS Q53    |                 193.74 |
+| TPC-DS Q54    |                  64.19 |
+| TPC-DS Q55    |                 146.58 |
+| TPC-DS Q56    |                 778.27 |
+| TPC-DS Q57    |                1988.72 |
+| TPC-DS Q58    |                 733.17 |
+| TPC-DS Q59    |                 738.77 |
+| TPC-DS Q60    |                 650.64 |
+| TPC-DS Q61    |                  90.65 |
+| TPC-DS Q62    |                 164.62 |
+| TPC-DS Q63    |                 191.62 |
+| TPC-DS Q64    |                1254.95 |
+| TPC-DS Q65    |                1168.50 |
+| TPC-DS Q66    |                 500.87 |
+| TPC-DS Q67    |                7802.04 |
+| TPC-DS Q68    |                  66.70 |
+| TPC-DS Q69    |                 347.07 |
+| TPC-DS Q70    |                 707.29 |
+| TPC-DS Q71    |                 775.73 |
+| TPC-DS Q72    |                2174.47 |
+| TPC-DS Q73    |                  38.68 |
+| TPC-DS Q74    |                2084.69 |
+| TPC-DS Q75    |                3349.52 |
+| TPC-DS Q76    |                 302.41 |
+| TPC-DS Q77    |                 419.58 |
+| TPC-DS Q78    |                3664.26 |
+| TPC-DS Q79    |                 242.09 |
+| TPC-DS Q80    |                 736.20 |
+| TPC-DS Q81    |              275056.23 |
+| TPC-DS Q82    |                 432.21 |
+| TPC-DS Q83    |                 134.95 |
+| TPC-DS Q84    |                  76.93 |
+| TPC-DS Q85    |                 282.77 |
+| TPC-DS Q86    |                 495.68 |
+| TPC-DS Q87    |                2498.68 |
+| TPC-DS Q88    |                2463.43 |
+| TPC-DS Q89    |                 197.64 |
+| TPC-DS Q90    |                 272.84 |
+| TPC-DS Q91    |                 135.37 |
+| TPC-DS Q92    |                  82.05 |
+| TPC-DS Q93    |                 466.64 |
+| TPC-DS Q94    |                 300.68 |
+| TPC-DS Q95    |                6945.69 |
+| TPC-DS Q96    |                 154.36 |
+| TPC-DS Q97    |                 722.20 |
+| TPC-DS Q98    |                 561.93 |
+| TPC-DS Q99    |                 273.11 |
 
 ### Errors (failed queries)
 
@@ -291,33 +335,33 @@ No warnings
 
 ### Loading phase: SUT deployment
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |       617.08 |      3.18 |           5.07 |                  6.60 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       206.70 |      2.22 |           6.31 |                 12.99 |
 
 ### Loading phase: component data generator
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |        37.53 |      0.18 |           0.01 |                  2.65 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        33.73 |      0.36 |           0.01 |                  2.65 |
 
 ### Execution phase: SUT deployment
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |       199.62 |      5.77 |          11.56 |                 13.09 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |       769.12 |      2.55 |           6.44 |                 13.12 |
 
 ### Execution phase: component benchmarker
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |        15.75 |      0.09 |           0.31 |                  0.32 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| PostgreSQL-1-1-1-1 |        21.58 |      0.14 |           0.32 |                  0.33 |
 
 ### Tests
 * TEST passed: No SUT container restarts

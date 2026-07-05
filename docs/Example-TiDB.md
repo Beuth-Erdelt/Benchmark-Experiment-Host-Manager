@@ -69,7 +69,9 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 10Gi \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   run &>$LOG_DIR/docs_ycsb_tidb_1.log
 ```
 
@@ -373,7 +375,9 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 16Gi \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   run &>$LOG_DIR/docs_benchbase_tidb_1.log
 ```
 

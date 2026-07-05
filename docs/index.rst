@@ -27,6 +27,7 @@
     ./Queries-TPC-H.md
     ./Example-TPC-DS.md
     ./Queries-TPC-DS.md
+    ./Example-Hardware.md
     ./Example-Citus.md
     ./Example-YugaByteDB.md
     ./Example-CockroachDB.md
@@ -45,8 +46,8 @@
     ./bexhoma
 
 
-.. mdinclude:: ../README.md
-
+.. include:: ../README.md
+   :parser: myst_parser.sphinx_
 
 Indices and tables
 ==================

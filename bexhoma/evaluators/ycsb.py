@@ -1086,6 +1086,8 @@ class YcsbEvaluator(LogEvaluator):
         Record YCSB pass/fail tests.
 
         Tests overall throughput for the loading phase (when data is available).
+        When all configurations had loading deactivated (data pre-existing from a
+        reused PVC), the loading throughput test is skipped rather than failed.
         When benchmarking is active, also tests execution-phase throughput,
         workflow completeness, and absence of FAILED operation columns.
 
@@ -1096,7 +1098,17 @@ class YcsbEvaluator(LogEvaluator):
         :param workflow_planned: Planned workflow dict from workload config.
         """
         if not df_loading.empty:
-            experiment._test_column(df_loading, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
+            configs = getattr(experiment, 'configurations', [])
+            loading_skipped = (
+                len(configs) > 0
+                and all(getattr(c, 'loading_deactivated', False) for c in configs)
+            )
+            if loading_skipped:
+                experiment._record_skipped_test(
+                    "Loading Phase: [OVERALL].Throughput(ops/sec) (data pre-existing)"
+                )
+            else:
+                experiment._test_column(df_loading, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
         if experiment.benchmarking_is_active():
             experiment._test_column(df_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
             experiment._record_test(

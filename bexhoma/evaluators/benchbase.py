@@ -526,15 +526,23 @@ class BenchbaseEvaluator(LogEvaluator):
         """
         Record Benchbase pass/fail tests: throughput and workflow completeness.
 
+        When the experiment ran in start-only or load-only mode
+        (``experiment.benchmarking_is_active()`` is ``False``), the throughput
+        test is skipped rather than failed, because no benchmarking phase ran.
+
         :param experiment: The owning experiment object.
         :param df_loading: Per-run loading DataFrame (unused here).
         :param df_reduced: Per-phase execution DataFrame.
         :param workflow_actual: Reconstructed actual workflow dict.
         :param workflow_planned: Planned workflow dict from workload config.
         """
-        experiment._test_column(df_reduced, "Throughput (requests/second)")
         if experiment.benchmarking_is_active():
+            experiment._test_column(df_reduced, "Throughput (requests/second)")
             experiment._record_test(
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"
+            )
+        else:
+            experiment._record_skipped_test(
+                "Throughput (requests/second) (benchmarking phase not active)"
             )

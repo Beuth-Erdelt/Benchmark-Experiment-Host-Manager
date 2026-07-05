@@ -40,8 +40,12 @@ templates_path = ['_templates']
 
 #html_theme = 'bizstyle'
 html_theme = 'sphinx_rtd_theme'
+html_theme_options = {
+    'style_nav_header_background': '#FFFFFF',
+}
 html_static_path = ['_static']
-html_logo = 'logo/bexhoma-icon-256.png'
+html_css_files = ['custom.css']
+html_logo = 'logo/bexhoma-logo-1-icon.svg'
 html_favicon = 'logo/favicon.ico'
 
 # -- Options for EPUB output

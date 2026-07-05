@@ -26,6 +26,8 @@ source ./scripts/testfunctions.sh
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 bexhoma ycsb \
   -dbms PostgreSQL \
@@ -34,6 +36,8 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_ycsb_postgresql_start.log
 
@@ -49,6 +53,9 @@ kubectl delete all -l app=bexhoma,usecase=ycsb
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 bexhoma ycsb \
@@ -60,6 +67,9 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_ycsb_postgresql_load.log
 
@@ -78,6 +88,9 @@ kubectl delete all -l app=bexhoma,usecase=ycsb
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -93,6 +106,9 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_run.log
 
@@ -113,6 +129,8 @@ kubectl delete all -l app=bexhoma,usecase=ycsb
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 bexhoma benchbase \
   -dbms PostgreSQL \
@@ -120,6 +138,8 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_benchbase_postgresql_start.log
 
@@ -134,6 +154,9 @@ kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 bexhoma benchbase \
@@ -144,6 +167,9 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_benchbase_postgresql_load.log
 
@@ -161,6 +187,9 @@ kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -175,6 +204,9 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_run.log
 
@@ -195,6 +227,8 @@ kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 bexhoma hammerdb \
   -dbms PostgreSQL \
@@ -202,6 +236,8 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_hammerdb_postgresql_start.log
 
@@ -216,6 +252,9 @@ kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 bexhoma hammerdb \
@@ -226,6 +265,9 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_hammerdb_postgresql_load.log
 
@@ -243,6 +285,9 @@ kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -257,6 +302,9 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_run.log
 
@@ -277,6 +325,8 @@ kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 bexhoma tpch \
   -dbms PostgreSQL \
@@ -284,6 +334,8 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_tpch_postgresql_start.log
 
@@ -301,6 +353,9 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 bexhoma tpch \
@@ -312,6 +367,9 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_tpch_postgresql_load.log
 
@@ -332,6 +390,9 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -347,6 +408,9 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_run.log
 
@@ -367,6 +431,8 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 bexhoma tpcds \
   -dbms PostgreSQL \
@@ -374,6 +440,8 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_tpcds_postgresql_start.log
 
@@ -391,6 +459,9 @@ kubectl delete all -l app=bexhoma,usecase=tpc-ds
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 bexhoma tpcds \
@@ -402,6 +473,9 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_tpcds_postgresql_load.log
 
@@ -422,6 +496,9 @@ kubectl delete all -l app=bexhoma,usecase=tpc-ds
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -437,6 +514,9 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_run.log
 

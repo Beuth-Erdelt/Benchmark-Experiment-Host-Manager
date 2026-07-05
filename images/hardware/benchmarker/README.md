@@ -31,9 +31,21 @@ Pods always synchronise before starting: each pod decrements the Redis counter
 * `BEXHOMA_TIME_START`: Optional RFC-3339 timestamp. When non-zero, the pod sleeps until this time before starting.
 * `BEXHOMA_TIME_NOW`: Informational timestamp of the planned start, echoed to the log.
 
+### Multi-tenancy
+
+* `BEXHOMA_TENANT_BY`: Tenancy mode. Only `container` is meaningful for Hardware (one SUT pod per tenant, all pinned to the same node via `-rnn`); empty means no tenancy. Echoed to the log.
+* `BEXHOMA_TENANT_NUM`: Total number of tenants (`-mtn`). Echoed to the log.
+* `BEXHOMA_TENANT_ID`: This tenant's 0-based index, injected directly as a benchmarking parameter by `hardware.py` (no shell-side computation, unlike the `schema`/`database` tenancy modes used by other benchmark types). Echoed to the log.
+
+When `BEXHOMA_TENANT_BY=container`, this pod additionally decrements and polls the
+experiment-level Redis counter `bexhoma-benchmarker-podcount-exp-<EXPERIMENT>` before
+starting its workload, so that every co-located tenant's sysbench/fio run begins at the
+same synchronized instant — the basis for co-located noisy-neighbor experiments (`-mtn N
+-mtb container` on `hardware.py`, each tenant getting its own `-rc`/`-lc` CPU quota).
+
 ### SUT connection
 
-* `BEXHOMA_SUT_HOST`: Hostname of the SUT container (default `sut-service`).
+* `BEXHOMA_HOST`: Hostname of the SUT container. Injected automatically by bexhoma's manifest builder (`configurations/manifest.py`) with the SUT's real Kubernetes service DNS name; not set via the Dockerfile. SSH connects on port 9091, not 22 — `bexhoma-service` maps the SUT's real SSH port (22) to service port 9091 (`port-dbms`), the same port every other DBMS's client connects through.
 * `BEXHOMA_SUT_USER`: SSH user on the SUT (default `bench`).
 * `BEXHOMA_SUT_KEY`: Path to the SSH private key inside the benchmarker image (default `/root/.ssh/id_ed25519`).
 
@@ -41,9 +53,9 @@ Pods always synchronise before starting: each pod decrements the Redis counter
 
 * `HARDWARE_TYPE`: Benchmark to run — `sysbench` or `fio`.
 * `HARDWARE_THREADS`: Number of threads passed to sysbench (default `4`). Not used by fio.
-* `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/tmp/fio-test`). Not used by sysbench.
+* `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/database/fio-test`). Not used by sysbench. `/database` is always present on the SUT (baked into `images/hardware/sut/Dockerfile`); whether it's backed by a real PVC or is just the SUT container's own ephemeral filesystem depends on `-rst` at deploy time — see `images/hardware/sut/README.md`.
 * `HARDWARE_SIZE`: Size of the fio test file (default `1G`). Not used by sysbench.
-* `HARDWARE_DURATION`: Runtime of the fio job in seconds (default `30`). Not used by sysbench.
+* `HARDWARE_DURATION`: Runtime in seconds (default `30`) — fio's `--runtime` (time-based, so actual runtime matches) and, since both sysbench sub-tests pass `--time=$HARDWARE_DURATION`, an upper bound for each of the CPU and memory phases. The memory phase can finish earlier than `HARDWARE_DURATION` if `--memory-total-size` (10G) transfers before the time limit.
 
 ### fio workload parameters (`HARDWARE_TYPE=fio` only)
 
@@ -64,8 +76,8 @@ options exposed by `scripts/hardware-benchmark.sh`):
 
 Runs two tests sequentially on the SUT via SSH:
 
-1. **CPU** — prime-number calculation (`--cpu-max-prime=20000`).
-2. **Memory** — sequential memory transfers (1 KB blocks, 10 GB total).
+1. **CPU** — prime-number calculation (`--cpu-max-prime=20000`), capped at `HARDWARE_DURATION` seconds.
+2. **Memory** — sequential memory transfers (1 KB blocks, 10 GB total or `HARDWARE_DURATION` seconds, whichever comes first).
 
 ### fio (`HARDWARE_TYPE=fio`)
 

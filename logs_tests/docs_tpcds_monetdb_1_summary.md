@@ -3,8 +3,8 @@
 ### Workload
 TPC-DS Queries SF=30
 * Type: tpcds
-* Duration: 1942s 
-* Code: 1782973916
+* Duration: 1884s 
+* Code: 1783005788
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=30) data is loaded and benchmark is executed.
@@ -29,7 +29,7 @@ TPC-DS Queries SF=30
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:636767
+  * disk:642905
   * volume_size:2.0T
   * volume_used:53G
   * cpu_list:0-223
@@ -37,10 +37,10 @@ TPC-DS Queries SF=30
   * requests_memory:1024Gi
   * limits_memory:1024Gi
   * eval_parameters
-    * code:1782973916
+    * code:1783005788
 
 ### SUT Container Restarts
-* bexhoma-sut-monetdb-1-1782973916-bc785fd48-srthn: 0
+* bexhoma-sut-monetdb-1-1783005788-6674645ddd-nqd6d: 0
 
 ### Workflow
 
@@ -56,9 +56,9 @@ TPC-DS Queries SF=30
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MonetDB-1-1 |                1 |   30 |     1435.00 |          36.00 |            2.00 |        346.00 |         1029.00 |              8 |           0 |             | None           |             0 | False         |               75.26 |
+|             |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MonetDB-1-1 |                1 | 30.00 |     1475.00 |           4.00 |            1.00 |        530.00 |          926.00 |              8 |           0 |             | None           |             0 | False         |               73.22 |
 
 ### Execution
 
@@ -66,120 +66,126 @@ TPC-DS Queries SF=30
 
 |                   | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
 |:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| MonetDB-1-1-1-1-1 | MonetDB-1       | MonetDB-1-1-1 | MonetDB-1-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |        442 |            0.80 |           139643.82 |          24190.05 |          -1 | MonetDB-1-1-1-1-1 |
+| MonetDB-1-1-1-1-1 | MonetDB-1       | MonetDB-1-1-1 | MonetDB-1-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               95 |        732 |            0.68 |           166879.25 |          14016.39 |          -1 | MonetDB-1-1-1-1-1 |
 
 #### Per Phase
 
 |               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MonetDB-1-1-1 | MonetDB-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |        442 |            0.80 |           139643.82 |          24190.05 |          -1 |
+| MonetDB-1-1-1 | MonetDB-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               95 |        732 |            0.68 |           166879.25 |          14016.39 |          -1 |
 
 ### Latency of Timer Execution [ms]
 | Queries       |   MonetDB-1-1-1-1-1 |
 |:--------------|--------------------:|
-| TPC-DS Q1     |              268.96 |
-| TPC-DS Q2     |             1743.13 |
-| TPC-DS Q3     |             1877.89 |
-| TPC-DS Q4     |            21483.63 |
-| TPC-DS Q5     |             2011.46 |
-| TPC-DS Q6     |              649.53 |
-| TPC-DS Q7     |              353.08 |
-| TPC-DS Q8     |              493.33 |
-| TPC-DS Q9     |              783.38 |
-| TPC-DS Q10    |              190.56 |
-| TPC-DS Q11    |             8402.45 |
-| TPC-DS Q12    |              160.95 |
-| TPC-DS Q13    |              503.64 |
-| TPC-DS Q14a+b |            41366.90 |
-| TPC-DS Q15    |              160.74 |
-| TPC-DS Q16    |            45606.84 |
-| TPC-DS Q17    |             2613.10 |
-| TPC-DS Q18    |              960.92 |
-| TPC-DS Q19    |              206.41 |
-| TPC-DS Q20    |              143.13 |
-| TPC-DS Q21    |              167.80 |
-| TPC-DS Q22    |             1382.52 |
-| TPC-DS Q23a+b |            45821.75 |
-| TPC-DS Q24a+b |            24162.32 |
-| TPC-DS Q25    |             3114.50 |
-| TPC-DS Q26    |              289.04 |
-| TPC-DS Q27    |             1487.51 |
-| TPC-DS Q28    |              980.75 |
-| TPC-DS Q29    |             2818.04 |
-| TPC-DS Q30    |               72.79 |
-| TPC-DS Q31    |             2251.45 |
-| TPC-DS Q32    |              165.22 |
-| TPC-DS Q33    |              103.68 |
-| TPC-DS Q34    |              244.27 |
-| TPC-DS Q35    |             1234.49 |
-| TPC-DS Q36    |             1569.94 |
-| TPC-DS Q37    |              517.28 |
-| TPC-DS Q38    |             2834.53 |
-| TPC-DS Q39a+b |             1603.64 |
-| TPC-DS Q40    |             1222.29 |
-| TPC-DS Q41    |                7.58 |
-| TPC-DS Q42    |              112.51 |
-| TPC-DS Q43    |              251.62 |
-| TPC-DS Q44    |              273.62 |
-| TPC-DS Q45    |              157.63 |
-| TPC-DS Q46    |              209.76 |
-| TPC-DS Q47    |             1072.51 |
-| TPC-DS Q48    |              353.60 |
-| TPC-DS Q49    |             1590.88 |
-| TPC-DS Q50    |              701.24 |
-| TPC-DS Q51    |             2941.70 |
-| TPC-DS Q52    |               94.62 |
-| TPC-DS Q53    |               96.69 |
-| TPC-DS Q54    |              122.73 |
-| TPC-DS Q55    |               76.83 |
-| TPC-DS Q56    |              100.05 |
-| TPC-DS Q57    |              164.61 |
-| TPC-DS Q58    |             6448.39 |
-| TPC-DS Q59    |             1091.47 |
-| TPC-DS Q60    |              134.81 |
-| TPC-DS Q61    |              222.71 |
-| TPC-DS Q62    |              372.24 |
-| TPC-DS Q63    |               98.21 |
-| TPC-DS Q64    |             6772.62 |
-| TPC-DS Q65    |             1412.03 |
-| TPC-DS Q66    |             2242.74 |
-| TPC-DS Q67    |             7158.08 |
-| TPC-DS Q68    |              496.84 |
-| TPC-DS Q69    |              102.20 |
-| TPC-DS Q70    |             2699.61 |
-| TPC-DS Q71    |              233.09 |
-| TPC-DS Q72    |             1426.64 |
-| TPC-DS Q73    |               96.58 |
-| TPC-DS Q74    |             2355.94 |
-| TPC-DS Q75    |             7741.86 |
-| TPC-DS Q76    |             5393.72 |
-| TPC-DS Q77    |             1096.27 |
-| TPC-DS Q78    |            18910.63 |
-| TPC-DS Q79    |              324.73 |
-| TPC-DS Q80    |            15288.44 |
-| TPC-DS Q81    |              163.48 |
-| TPC-DS Q82    |             1409.14 |
-| TPC-DS Q83    |              321.31 |
-| TPC-DS Q84    |               43.25 |
-| TPC-DS Q85    |             1217.36 |
-| TPC-DS Q86    |              533.41 |
-| TPC-DS Q87    |             4013.35 |
-| TPC-DS Q88    |              968.91 |
-| TPC-DS Q89    |              284.76 |
-| TPC-DS Q90    |              143.25 |
-| TPC-DS Q91    |               44.61 |
-| TPC-DS Q92    |              147.50 |
-| TPC-DS Q93    |             2529.62 |
-| TPC-DS Q94    |            42605.79 |
-| TPC-DS Q95    |            46219.09 |
-| TPC-DS Q96    |              241.16 |
-| TPC-DS Q97    |             5697.41 |
-| TPC-DS Q98    |              280.28 |
-| TPC-DS Q99    |              331.28 |
+| TPC-DS Q1     |              293.93 |
+| TPC-DS Q2     |             1934.26 |
+| TPC-DS Q3     |              442.54 |
+| TPC-DS Q4     |            16152.60 |
+| TPC-DS Q5     |             1368.65 |
+| TPC-DS Q6     |              383.03 |
+| TPC-DS Q7     |              342.43 |
+| TPC-DS Q8     |              306.68 |
+| TPC-DS Q9     |              857.80 |
+| TPC-DS Q10    |              109.92 |
+| TPC-DS Q11    |             6802.43 |
+| TPC-DS Q12    |              160.22 |
+| TPC-DS Q13    |              496.14 |
+| TPC-DS Q14a+b |            34686.66 |
+| TPC-DS Q15    |              183.21 |
+| TPC-DS Q16    |            40486.93 |
+| TPC-DS Q17    |             2397.13 |
+| TPC-DS Q18    |              806.73 |
+| TPC-DS Q19    |              194.64 |
+| TPC-DS Q20    |              143.64 |
+| TPC-DS Q21    |              152.05 |
+| TPC-DS Q22    |             1069.65 |
+| TPC-DS Q23a+b |            53920.76 |
+| TPC-DS Q24a+b |            20106.17 |
+| TPC-DS Q25    |             2403.08 |
+| TPC-DS Q26    |              254.80 |
+| TPC-DS Q27    |             1126.26 |
+| TPC-DS Q28    |              983.10 |
+| TPC-DS Q29    |             2247.58 |
+| TPC-DS Q30    |              113.98 |
+| TPC-DS Q31    |             2005.23 |
+| TPC-DS Q32    |              189.70 |
+| TPC-DS Q33    |               93.11 |
+| TPC-DS Q34    |              208.59 |
+| TPC-DS Q35    |             1015.40 |
+| TPC-DS Q36    |             1157.83 |
+| TPC-DS Q37    |              515.81 |
+| TPC-DS Q38    |             2224.59 |
+| TPC-DS Q39a+b |             1307.31 |
+| TPC-DS Q40    |              980.92 |
+| TPC-DS Q41    |                6.78 |
+| TPC-DS Q42    |              132.36 |
+| TPC-DS Q43    |              309.21 |
+| TPC-DS Q44    |              205.99 |
+| TPC-DS Q45    |              156.56 |
+| TPC-DS Q46    |              231.80 |
+| TPC-DS Q47    |              985.87 |
+| TPC-DS Q48    |              230.73 |
+| TPC-DS Q49    |             1263.42 |
+| TPC-DS Q50    |              611.57 |
+| TPC-DS Q51    |             2099.36 |
+| TPC-DS Q52    |               75.32 |
+| TPC-DS Q53    |               91.36 |
+| TPC-DS Q54    |              103.47 |
+| TPC-DS Q55    |               96.21 |
+| TPC-DS Q56    |              101.52 |
+| TPC-DS Q57    |              153.13 |
+| TPC-DS Q58    |             5506.27 |
+| TPC-DS Q59    |              962.24 |
+| TPC-DS Q60    |              117.83 |
+| TPC-DS Q61    |              319.80 |
+| TPC-DS Q62    |              332.45 |
+| TPC-DS Q63    |               87.36 |
+| TPC-DS Q64    |             4161.67 |
+| TPC-DS Q65    |             1318.94 |
+| TPC-DS Q66    |             2011.13 |
+| TPC-DS Q67    |             4685.05 |
+| TPC-DS Q68    |              532.34 |
+| TPC-DS Q69    |               96.04 |
+| TPC-DS Q70    |             2206.65 |
+| TPC-DS Q71    |              218.54 |
+| TPC-DS Q72    |             1231.54 |
+| TPC-DS Q73    |               78.67 |
+| TPC-DS Q74    |             1864.48 |
+| TPC-DS Q75    |             6220.18 |
+| TPC-DS Q76    |             1641.90 |
+| TPC-DS Q77    |              779.15 |
+| TPC-DS Q78    |            11897.88 |
+| TPC-DS Q79    |              263.64 |
+| TPC-DS Q80    |             7195.21 |
+| TPC-DS Q81    |               93.16 |
+| TPC-DS Q82    |              482.26 |
+| TPC-DS Q83    |               43.09 |
+| TPC-DS Q84    |               35.46 |
+| TPC-DS Q85    |              912.64 |
+| TPC-DS Q86    |              330.66 |
+| TPC-DS Q87    |             3183.65 |
+| TPC-DS Q88    |              592.07 |
+| TPC-DS Q89    |              162.43 |
+| TPC-DS Q90    |               94.13 |
+| TPC-DS Q91    |               34.80 |
+| TPC-DS Q92    |              182.45 |
+| TPC-DS Q93    |             1995.47 |
+| TPC-DS Q94    |            35202.01 |
+| TPC-DS Q95    |           344738.96 |
 
 ### Errors (failed queries)
 
-No errors
+|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
+|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
+| MonetDB-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         1.00 |         1.00 |
+* TPC-DS Q96
+  * MonetDB-1-1-1-1-1: numRun 1: : java.sql.SQLException: Cannot bind column sys.store_sales.ss_sold_time_sk
+* TPC-DS Q97
+  * MonetDB-1-1-1-1-1: numRun 1: : java.sql.SQLException: Cannot bind column sys.store_sales.ss_sold_date_sk
+* TPC-DS Q98
+  * MonetDB-1-1-1-1-1: numRun 1: : java.sql.SQLException: Cannot bind column sys.store_sales.ss_item_sk
+* TPC-DS Q99
+  * MonetDB-1-1-1-1-1: numRun 1: : java.sql.SQLException: Cannot bind column sys.catalog_sales.cs_call_center_sk
 
 ### Warnings (result mismatch)
 
@@ -191,7 +197,7 @@ No warnings
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |      2114.76 |     11.97 |          49.86 |                 50.57 |
+| MonetDB-1-1-1-1 |      2280.32 |      5.36 |          52.75 |                 53.46 |
 
 ### Loading phase: component data generator
 
@@ -203,19 +209,19 @@ No warnings
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |       478.98 |      2.55 |           0.01 |                  3.36 |
+| MonetDB-1-1-1-1 |       462.46 |      1.11 |           0.01 |                  3.36 |
 
 ### Execution phase: SUT deployment
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |      7564.32 |     78.75 |         421.12 |                421.13 |
+| MonetDB-1-1-1-1 |     11251.02 |    173.16 |         826.52 |                826.53 |
 
 ### Execution phase: component benchmarker
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MonetDB-1-1-1-1 |        28.65 |      0.15 |           0.43 |                  0.44 |
+| MonetDB-1-1-1-1 |        87.84 |      0.63 |           0.64 |                  0.67 |
 
 ### Tests
 * TEST passed: No SUT container restarts
@@ -227,6 +233,6 @@ No warnings
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
-* TEST passed: No SQL errors
+* TEST failed: SQL errors
 * TEST passed: No SQL warnings
 * TEST passed: Workflow as planned

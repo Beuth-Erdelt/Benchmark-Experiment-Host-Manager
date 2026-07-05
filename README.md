@@ -5,11 +5,19 @@
     </picture>
 </p>
 
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/graphs/commit-activity)
+[![Maintained](https://img.shields.io/maintenance/yes/2026.svg)](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager)
 [![GitHub release](https://img.shields.io/github/release/Beuth-Erdelt/Benchmark-Experiment-Host-Manager.svg)](https://GitHub.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/releases/)
 [![PyPI version](https://badge.fury.io/py/bexhoma.svg)](https://badge.fury.io/py/bexhoma)
-[![.github/workflows/draft-pdf.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/actions/workflows/draft-pdf.yml/badge.svg)](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/actions/workflows/draft-pdf.yml)
+[![Python versions](https://img.shields.io/pypi/pyversions/bexhoma.svg)](https://pypi.org/project/bexhoma/)
 [![Documentation Status](https://readthedocs.org/projects/bexhoma/badge/?version=latest)](https://bexhoma.readthedocs.io/en/latest/?badge=latest)
+[![License](https://img.shields.io/github/license/Beuth-Erdelt/Benchmark-Experiment-Host-Manager)](LICENSE)
+
+![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white)
+![Workloads](https://img.shields.io/badge/Workloads-TPC--C%20%7C%20TPC--H%20%7C%20TPC--DS%20%7C%20YCSB-informational)
 
 # Benchmark Experiment Host Manager (Bexhoma)
 

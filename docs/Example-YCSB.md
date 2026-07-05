@@ -57,7 +57,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_loading.log
 ```
@@ -435,7 +435,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 10Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_benchmarking.log
 ```
@@ -632,7 +632,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 15Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_monitoring.log
 ```
@@ -876,7 +876,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 30Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_storage.log
@@ -1145,7 +1145,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 10Gi \
+  -rss 50Gi \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
   run &>$LOG_DIR/docs_ycsb_postgresql_loading_patch.log
 ```

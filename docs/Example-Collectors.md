@@ -518,7 +518,7 @@ bexhoma benchbase \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
   -lr 64Gi -rr 64Gi \
-  -rss 16Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_3.log
 ```
@@ -762,7 +762,7 @@ bexhoma benchbase \
   -xkey \
   -m -ma -mc \
   -lr 64Gi -rr 64Gi \
-  -rsr -rss 20Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_schema.log
@@ -1001,7 +1001,7 @@ bexhoma benchbase \
   -xkey \
   -m -ma -mc \
   -lr 64Gi -rr 64Gi \
-  -rsr -rss 20Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_database.log
@@ -1236,7 +1236,7 @@ bexhoma benchbase \
   -xkey \
   -m -ma -mc \
   -lr 64Gi -rr 64Gi \
-  -rsr -rss 10Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_container.log
@@ -1571,7 +1571,7 @@ bexhoma tpch \
   -m -ma -mc \
   -tr \
   -lr 64Gi -rr 64Gi \
-  -rsr -rss 30Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_1.log
 ```
@@ -1865,7 +1865,7 @@ bexhoma tpch \
   -m -ma -mc \
   -tr \
   -lr 64Gi -rr 64Gi \
-  -rsr -rss 30Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_2.log
 ```
@@ -2456,7 +2456,7 @@ bexhoma tpch \
   -m -ma -mc \
   -tr \
   -lr 64Gi -rr 64Gi \
-  -rsr -rss 30Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb schema -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_schema.log
@@ -2802,7 +2802,7 @@ bexhoma tpch \
   -m -ma -mc \
   -tr \
   -lr 64Gi -rr 64Gi \
-  -rsr -rss 30Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb database -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_database.log
@@ -3148,7 +3148,7 @@ bexhoma tpch \
   -m -ma -mc \
   -tr \
   -lr 64Gi -rr 64Gi \
-  -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -mtb container -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_container.log
@@ -3528,7 +3528,7 @@ bexhoma ycsb \
   -xop 1 \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
-  -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_1.log
 ```
@@ -3775,7 +3775,7 @@ bexhoma ycsb \
   -xop 1 \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
-  -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_2.log
 ```
@@ -4018,7 +4018,7 @@ bexhoma ycsb \
   -xop 1 \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
-  -rss 15Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_3.log
 ```
@@ -4274,7 +4274,7 @@ bexhoma hammerdb \
   -xlat \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
-  -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_1.log
 ```
@@ -4486,7 +4486,7 @@ bexhoma hammerdb \
   -xlat \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
-  -rsr -rss 15Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_2.log
 ```
@@ -4694,7 +4694,7 @@ bexhoma hammerdb \
   -xlat \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
-  -rss 16Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_3.log
 ```

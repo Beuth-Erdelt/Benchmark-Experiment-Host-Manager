@@ -22,7 +22,7 @@ source ./scripts/testfunctions.sh
 
 # Single host Redis
 # -dbms Redis                   DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records x 1000)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -33,17 +33,19 @@ source ./scripts/testfunctions.sh
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 1                        number of operations for the benchmark phase (x 1000)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -tr                           verify result meets basic sanity requirements
-# -rss 5Gi                      size of the persistent volume claim
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
   -dbms Redis \
-  -sf 1 \
+  -sf 3 \
   -xwl a \
   -xtb 16384 \
   -xnbf 4 \
@@ -54,15 +56,17 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 128 \
-  -xop 10 \
+  -xop 1 \
   -m \
   -mc \
   -tr \
-  -rss 5Gi \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=1  nbp=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=3  nbp=1"
 
 
 # Cluster of 3 Redis instances
@@ -83,7 +87,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=1  nbp=1"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -tr                           verify result meets basic sanity requirements
-# -rss 5Gi                      size of the persistent volume claim
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -105,7 +111,9 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
-  -rss 5Gi \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_2.log
 
@@ -131,7 +139,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3  sf=1  nbp=1"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -tr                           verify result meets basic sanity requirements
-# -rss 5Gi                      size of the persistent volume claim
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -154,7 +164,9 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
-  -rss 5Gi \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_3.log
 
@@ -178,6 +190,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3 replication  sf=1
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -201,6 +215,8 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -228,6 +244,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single PVC  sf=1  nbp=1  nc
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -252,6 +270,8 @@ bexhoma ycsb \
   -m \
   -mc \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \

@@ -35,7 +35,7 @@ source ./scripts/testfunctions.sh
 # -nbt 64                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -54,7 +54,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 5Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_loading.log
 
@@ -76,7 +76,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading  sf=1  nlp=1,8"
 # -nbt 64                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -95,7 +95,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 5Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_benchmarking.log
 
@@ -119,7 +119,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB benchmarking  sf=1  nbp=1,8"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 15Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -140,7 +140,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 15Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_monitoring.log
 
@@ -167,7 +167,7 @@ sleep 30
 # -nbt 64                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 30Gi                     size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -187,7 +187,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 30Gi \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_storage.log
@@ -210,7 +210,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB storage  sf=1  nbp=1,8  nc=2"
 # -nbt 64                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 5Gi                      size of the persistent volume claim
+# -rss 50Gi                     size of the persistent volume claim
 # --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 override deployment configuration parameter
 bexhoma ycsb \
   -dbms PostgreSQL \
@@ -227,7 +227,7 @@ bexhoma ycsb \
   -nbt 64 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 5Gi \
+  -rss 50Gi \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
   run &>$LOG_DIR/docs_ycsb_postgresql_loading_patch.log
 

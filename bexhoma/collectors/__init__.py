@@ -2,11 +2,11 @@
 Public API of the bexhoma.collectors package.
 
 Exports the collector classes (:class:`CollectorBase`, :class:`BenchbaseCollector`,
-:class:`DbmsBenchmarkerCollector`, :class:`MixedCollector`, :class:`TpccCollector`,
-:class:`YcsbCollector`) and the utility functions :func:`get_non_constant` and
-:func:`map_index_to_queryname`.
+:class:`DbmsBenchmarkerCollector`, :class:`HardwareCollector`, :class:`MixedCollector`,
+:class:`TpccCollector`, :class:`YcsbCollector`) and the utility functions
+:func:`get_non_constant` and :func:`map_index_to_queryname`.
 
-Backward-compatible aliases (``base``, ``benchbase``, ``dbmsbenchmarker``,
+Backward-compatible aliases (``base``, ``benchbase``, ``dbmsbenchmarker``, ``hardware``,
 ``mixed``, ``tpcc``, ``ycsb``) are provided so that existing code that imports
 the old lowercase class names continues to work without modification.
 
@@ -18,6 +18,7 @@ See LICENSE for details.
 from .base import CollectorBase, get_non_constant
 from .dbmsbenchmarker import DbmsBenchmarkerCollector, map_index_to_queryname
 from .benchbase import BenchbaseCollector
+from .hardware import HardwareCollector
 from .tpcc import TpccCollector
 from .ycsb import YcsbCollector
 from .mixed import MixedCollector
@@ -26,13 +27,14 @@ from .mixed import MixedCollector
 base = CollectorBase
 dbmsbenchmarker = DbmsBenchmarkerCollector
 benchbase = BenchbaseCollector
+hardware = HardwareCollector
 tpcc = TpccCollector
 ycsb = YcsbCollector
 mixed = MixedCollector
 
 __all__ = [
-    "CollectorBase", "DbmsBenchmarkerCollector", "MixedCollector",
+    "CollectorBase", "DbmsBenchmarkerCollector", "HardwareCollector", "MixedCollector",
     "TpccCollector", "BenchbaseCollector", "YcsbCollector",
     "get_non_constant", "map_index_to_queryname",
-    "base", "dbmsbenchmarker", "mixed", "tpcc", "benchbase", "ycsb",
+    "base", "dbmsbenchmarker", "hardware", "mixed", "tpcc", "benchbase", "ycsb",
 ]

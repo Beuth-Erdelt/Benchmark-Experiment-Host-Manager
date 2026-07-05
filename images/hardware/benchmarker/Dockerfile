@@ -36,19 +36,24 @@ ENV BEXHOMA_NUM_PODS=1
 ENV BEXHOMA_CHILD=1
 ENV BEXHOMA_RNGSEED=123
 
+# Multi-tenancy (container tenancy only — see -mtb/-mtn in hardware.py)
+ENV BEXHOMA_TENANT_BY=""
+ENV BEXHOMA_TENANT_NUM=""
+
 # Pod synchronisation
 ENV BEXHOMA_TIME_START=0
 ENV BEXHOMA_TIME_NOW=0
 
 # SUT connection
-ENV BEXHOMA_SUT_HOST=sut-service
+# BEXHOMA_HOST is injected at runtime by bexhoma's manifest builder
+# (configurations/manifest.py) with the SUT's real k8s service DNS name.
 ENV BEXHOMA_SUT_USER=bench
 ENV BEXHOMA_SUT_KEY=/root/.ssh/id_ed25519
 
 # Hardware benchmark parameters
 ENV HARDWARE_TYPE=sysbench
 ENV HARDWARE_THREADS=4
-ENV HARDWARE_TEST_DIR=/tmp/fio-test
+ENV HARDWARE_TEST_DIR=/database/fio-test
 ENV HARDWARE_SIZE=1G
 ENV HARDWARE_DURATION=30
 

@@ -3,8 +3,8 @@ Public API of the bexhoma.evaluators package.
 
 Exports :class:`EvaluatorBase`, :class:`LogEvaluator`,
 :class:`DbmsBenchmarkerEvaluator`, :class:`BenchbaseEvaluator`,
-:class:`TpccEvaluator`, and :class:`YcsbEvaluator` evaluator classes,
-plus the :func:`natural_sort` utility from :mod:`base`.
+:class:`TpccEvaluator`, :class:`YcsbEvaluator`, and :class:`HardwareEvaluator`
+evaluator classes, plus the :func:`natural_sort` utility from :mod:`base`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -17,6 +17,7 @@ from .dbmsbenchmarker import DbmsBenchmarkerEvaluator
 from .benchbase import BenchbaseEvaluator
 from .tpcc import TpccEvaluator
 from .ycsb import YcsbEvaluator
+from .hardware import HardwareEvaluator
 
 # backward-compat aliases
 base = EvaluatorBase
@@ -25,10 +26,11 @@ dbmsbenchmarker = DbmsBenchmarkerEvaluator
 benchbase = BenchbaseEvaluator
 tpcc = TpccEvaluator
 ycsb = YcsbEvaluator
+hardware = HardwareEvaluator
 
 __all__ = [
     "EvaluatorBase", "LogEvaluator", "DbmsBenchmarkerEvaluator",
-    "BenchbaseEvaluator", "TpccEvaluator", "YcsbEvaluator", "natural_sort",
+    "BenchbaseEvaluator", "TpccEvaluator", "YcsbEvaluator", "HardwareEvaluator", "natural_sort",
     # backward-compat aliases
-    "base", "logger", "dbmsbenchmarker", "tpcc", "benchbase", "ycsb",
+    "base", "logger", "dbmsbenchmarker", "tpcc", "benchbase", "ycsb", "hardware",
 ]

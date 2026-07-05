@@ -19,7 +19,7 @@
 # Default variable values (override after dot-sourcing if needed)
 # ---------------------------------------------------------------------------
 
-$BEXHOMA_NODE_SUT         = ""
+$BEXHOMA_NODE_SUT         = "cl-worker36"
 $BEXHOMA_NODE_LOAD        = "cl-worker19"
 $BEXHOMA_NODE_BENCHMARK   = "cl-worker19"
 $LOG_DIR                  = ".\logs_tests"
