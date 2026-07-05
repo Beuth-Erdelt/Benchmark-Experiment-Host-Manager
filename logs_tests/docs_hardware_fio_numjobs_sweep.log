@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1783161637
-Experiment                    : starts at 2026-07-04 12:40:37.230628 (66721.0065749)
+Experiment                    : has code 1783190728
+Experiment                    : starts at 2026-07-04 20:45:28.256005 (95810.1192084)
 Experiment                    : This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
 Benchmark tool: fio.
 Test file size is '4G', duration per round is 60s.
@@ -28,104 +28,105 @@ Hardware-1                    : deployments ['sut']
 Hardware-1                    : stateful sets []
 Hardware-1                    : pvcs ['sut']
 Hardware-1                    : found labels on pvc = []
-Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1783161637
-Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1783161637
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1783190728
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1783190728
 Hardware-1                    : name of SUT PVC name = bexhoma-storage-hardware-hardware
 Hardware-1                    : storage bexhoma-storage-hardware-hardware should be removed
 - waiting 10s -               : done
 Hardware-1                    : storage bexhoma-storage-hardware-hardware is gone
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 1
 Hardware-1-1-1-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-1-1-rdns9: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-1-1-jzc54: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-1-1.config
+Hardware-1                    : has running benchmarks
+Hardware-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-1-1.config
 Hardware-1-1-1-1              : showing benchmarker times
-Hardware-1-1-1-1              : benchmarker timespan job from 1783161696 to 1783161775
-Hardware-1-1-1-1              : benchmarker timespan pods from 1783161699 to 1783161769
-Hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 70
-Hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1783161699, 1783161769)]
-Hardware-1-1-1-1              : found and updated times {'benchmarker': [(1783161699, 1783161769)]}
+Hardware-1-1-1-1              : benchmarker timespan job from 1783190785 to 1783190863
+Hardware-1-1-1-1              : benchmarker timespan pods from 1783190787 to 1783190858
+Hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 71
+Hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1783190787, 1783190858)]
+Hardware-1-1-1-1              : found and updated times {'benchmarker': [(1783190787, 1783190858)]}
 Hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-1-1              : collecting execution metrics of SUT at connection Hardware-1-1-1-1
-Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-1-1              : collecting metrics of benchmarker at connection Hardware-1-1-1-1
-Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 2
 Hardware-1-1-2-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-2-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-2-1-zxddh: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-2-1-hwmdw: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-2-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-2-1.config
+Hardware-1-1-2-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-2-1.config
 Hardware-1-1-2-1              : showing benchmarker times
-Hardware-1-1-2-1              : benchmarker timespan job from 1783161831 to 1783161941
-Hardware-1-1-2-1              : benchmarker timespan pods from 1783161834 to 1783161911
-Hardware-1-1-2-1              : benchmarker timespan (start to end single container [s]) = 77
-Hardware-1-1-2-1              : benchmarker times (start/end per pod and container) = [(1783161834, 1783161911)]
-Hardware-1-1-2-1              : found and updated times {'benchmarker': [(1783161834, 1783161911)]}
+Hardware-1-1-2-1              : benchmarker timespan job from 1783190923 to 1783191033
+Hardware-1-1-2-1              : benchmarker timespan pods from 1783190925 to 1783191004
+Hardware-1-1-2-1              : benchmarker timespan (start to end single container [s]) = 79
+Hardware-1-1-2-1              : benchmarker times (start/end per pod and container) = [(1783190925, 1783191004)]
+Hardware-1-1-2-1              : found and updated times {'benchmarker': [(1783190925, 1783191004)]}
 Hardware-1-1-2-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-2-1              : collecting execution metrics of SUT at connection Hardware-1-1-2-1
-Hardware-1-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-2-1              : collecting metrics of benchmarker at connection Hardware-1-1-2-1
-Hardware-1-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 3.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 3
 Hardware-1-1-3-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-3-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-3-1-jsj5s: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-3-1-rxd7s: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-3-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-3-1.config
+Hardware-1-1-3-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-3-1.config
 Hardware-1-1-3-1              : showing benchmarker times
-Hardware-1-1-3-1              : benchmarker timespan job from 1783161999 to 1783162109
-Hardware-1-1-3-1              : benchmarker timespan pods from 1783162002 to 1783162096
+Hardware-1-1-3-1              : benchmarker timespan job from 1783191089 to 1783191199
+Hardware-1-1-3-1              : benchmarker timespan pods from 1783191091 to 1783191185
 Hardware-1-1-3-1              : benchmarker timespan (start to end single container [s]) = 94
-Hardware-1-1-3-1              : benchmarker times (start/end per pod and container) = [(1783162002, 1783162096)]
-Hardware-1-1-3-1              : found and updated times {'benchmarker': [(1783162002, 1783162096)]}
+Hardware-1-1-3-1              : benchmarker times (start/end per pod and container) = [(1783191091, 1783191185)]
+Hardware-1-1-3-1              : found and updated times {'benchmarker': [(1783191091, 1783191185)]}
 Hardware-1-1-3-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-3-1              : collecting execution metrics of SUT at connection Hardware-1-1-3-1
-Hardware-1-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-3-1              : collecting metrics of benchmarker at connection Hardware-1-1-3-1
-Hardware-1-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 4.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 4
 Hardware-1-1-4-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-4-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-4-1-dtmkf: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-4-1-lszx2: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
@@ -133,29 +134,29 @@ Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-4-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-4-1.config
+Hardware-1-1-4-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-4-1.config
 Hardware-1-1-4-1              : showing benchmarker times
-Hardware-1-1-4-1              : benchmarker timespan job from 1783162166 to 1783162312
-Hardware-1-1-4-1              : benchmarker timespan pods from 1783162169 to 1783162303
-Hardware-1-1-4-1              : benchmarker timespan (start to end single container [s]) = 134
-Hardware-1-1-4-1              : benchmarker times (start/end per pod and container) = [(1783162169, 1783162303)]
-Hardware-1-1-4-1              : found and updated times {'benchmarker': [(1783162169, 1783162303)]}
+Hardware-1-1-4-1              : benchmarker timespan job from 1783191255 to 1783191397
+Hardware-1-1-4-1              : benchmarker timespan pods from 1783191257 to 1783191379
+Hardware-1-1-4-1              : benchmarker timespan (start to end single container [s]) = 122
+Hardware-1-1-4-1              : benchmarker times (start/end per pod and container) = [(1783191257, 1783191379)]
+Hardware-1-1-4-1              : found and updated times {'benchmarker': [(1783191257, 1783191379)]}
 Hardware-1-1-4-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-4-1              : collecting execution metrics of SUT at connection Hardware-1-1-4-1
-Hardware-1-1-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-4-1              : collecting metrics of benchmarker at connection Hardware-1-1-4-1
-Hardware-1-1-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 5.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-5-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-5-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 5
 Hardware-1-1-5-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-5-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-5-1-k79vr: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-5-1-bglg9: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
@@ -163,171 +164,157 @@ Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-- waiting 2s -                : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-5-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-5-1.config
+Hardware-1-1-5-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-5-1.config
 Hardware-1-1-5-1              : showing benchmarker times
-Hardware-1-1-5-1              : benchmarker timespan job from 1783162370 to 1783162580
-Hardware-1-1-5-1              : benchmarker timespan pods from 1783162373 to 1783162569
-Hardware-1-1-5-1              : benchmarker timespan (start to end single container [s]) = 196
-Hardware-1-1-5-1              : benchmarker times (start/end per pod and container) = [(1783162373, 1783162569)]
-Hardware-1-1-5-1              : found and updated times {'benchmarker': [(1783162373, 1783162569)]}
+Hardware-1-1-5-1              : benchmarker timespan job from 1783191454 to 1783191661
+Hardware-1-1-5-1              : benchmarker timespan pods from 1783191456 to 1783191643
+Hardware-1-1-5-1              : benchmarker timespan (start to end single container [s]) = 187
+Hardware-1-1-5-1              : benchmarker times (start/end per pod and container) = [(1783191456, 1783191643)]
+Hardware-1-1-5-1              : found and updated times {'benchmarker': [(1783191456, 1783191643)]}
 Hardware-1-1-5-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-5-1              : collecting execution metrics of SUT at connection Hardware-1-1-5-1
-Hardware-1-1-5-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-5-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-5-1              : collecting metrics of benchmarker at connection Hardware-1-1-5-1
-Hardware-1-1-5-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-5-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 6.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-6-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-6-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 6
 Hardware-1-1-6-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-6-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-6-1-sqt8g: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-6-1-d7cqz: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1                    : has running benchmarks
-- waiting 30s -               : done
-Hardware-1-1-6-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-6-1.config
+Hardware-1-1-6-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-6-1.config
 Hardware-1-1-6-1              : showing benchmarker times
-Hardware-1-1-6-1              : benchmarker timespan job from 1783162638 to 1783162748
-Hardware-1-1-6-1              : benchmarker timespan pods from 1783162641 to 1783162713
-Hardware-1-1-6-1              : benchmarker timespan (start to end single container [s]) = 72
-Hardware-1-1-6-1              : benchmarker times (start/end per pod and container) = [(1783162641, 1783162713)]
-Hardware-1-1-6-1              : found and updated times {'benchmarker': [(1783162641, 1783162713)]}
+Hardware-1-1-6-1              : benchmarker timespan job from 1783191718 to 1783191796
+Hardware-1-1-6-1              : benchmarker timespan pods from 1783191720 to 1783191783
+Hardware-1-1-6-1              : benchmarker timespan (start to end single container [s]) = 63
+Hardware-1-1-6-1              : benchmarker times (start/end per pod and container) = [(1783191720, 1783191783)]
+Hardware-1-1-6-1              : found and updated times {'benchmarker': [(1783191720, 1783191783)]}
 Hardware-1-1-6-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-6-1              : collecting execution metrics of SUT at connection Hardware-1-1-6-1
-Hardware-1-1-6-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-6-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-6-1              : collecting metrics of benchmarker at connection Hardware-1-1-6-1
-Hardware-1-1-6-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-6-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 7.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-7-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-7-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 7
 Hardware-1-1-7-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-7-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-7-1-9zhfn: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-7-1-j9wl8: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-7-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-7-1.config
+Hardware-1-1-7-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-7-1.config
 Hardware-1-1-7-1              : showing benchmarker times
-Hardware-1-1-7-1              : benchmarker timespan job from 1783162806 to 1783162884
-Hardware-1-1-7-1              : benchmarker timespan pods from 1783162809 to 1783162873
+Hardware-1-1-7-1              : benchmarker timespan job from 1783191858 to 1783191936
+Hardware-1-1-7-1              : benchmarker timespan pods from 1783191860 to 1783191924
 Hardware-1-1-7-1              : benchmarker timespan (start to end single container [s]) = 64
-Hardware-1-1-7-1              : benchmarker times (start/end per pod and container) = [(1783162809, 1783162873)]
-Hardware-1-1-7-1              : found and updated times {'benchmarker': [(1783162809, 1783162873)]}
+Hardware-1-1-7-1              : benchmarker times (start/end per pod and container) = [(1783191860, 1783191924)]
+Hardware-1-1-7-1              : found and updated times {'benchmarker': [(1783191860, 1783191924)]}
 Hardware-1-1-7-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-7-1              : collecting execution metrics of SUT at connection Hardware-1-1-7-1
-Hardware-1-1-7-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-7-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-7-1              : collecting metrics of benchmarker at connection Hardware-1-1-7-1
-Hardware-1-1-7-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-7-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 8.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-8-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-8-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 8
 Hardware-1-1-8-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-8-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-8-1-tvzn5: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-8-1-sdpn9: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-8-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-8-1.config
+Hardware-1-1-8-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-8-1.config
 Hardware-1-1-8-1              : showing benchmarker times
-Hardware-1-1-8-1              : benchmarker timespan job from 1783162942 to 1783163020
-Hardware-1-1-8-1              : benchmarker timespan pods from 1783162945 to 1783163008
+Hardware-1-1-8-1              : benchmarker timespan job from 1783191993 to 1783192072
+Hardware-1-1-8-1              : benchmarker timespan pods from 1783191995 to 1783192058
 Hardware-1-1-8-1              : benchmarker timespan (start to end single container [s]) = 63
-Hardware-1-1-8-1              : benchmarker times (start/end per pod and container) = [(1783162945, 1783163008)]
-Hardware-1-1-8-1              : found and updated times {'benchmarker': [(1783162945, 1783163008)]}
+Hardware-1-1-8-1              : benchmarker times (start/end per pod and container) = [(1783191995, 1783192058)]
+Hardware-1-1-8-1              : found and updated times {'benchmarker': [(1783191995, 1783192058)]}
 Hardware-1-1-8-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-8-1              : collecting execution metrics of SUT at connection Hardware-1-1-8-1
-Hardware-1-1-8-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-8-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-8-1              : collecting metrics of benchmarker at connection Hardware-1-1-8-1
-Hardware-1-1-8-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-8-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 9.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-9-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-9-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 9
 Hardware-1-1-9-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-9-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-9-1-mnxc8: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-9-1-gswjd: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-9-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-9-1.config
+Hardware-1-1-9-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-9-1.config
 Hardware-1-1-9-1              : showing benchmarker times
-Hardware-1-1-9-1              : benchmarker timespan job from 1783163077 to 1783163154
-Hardware-1-1-9-1              : benchmarker timespan pods from 1783163080 to 1783163143
+Hardware-1-1-9-1              : benchmarker timespan job from 1783192131 to 1783192209
+Hardware-1-1-9-1              : benchmarker timespan pods from 1783192133 to 1783192196
 Hardware-1-1-9-1              : benchmarker timespan (start to end single container [s]) = 63
-Hardware-1-1-9-1              : benchmarker times (start/end per pod and container) = [(1783163080, 1783163143)]
-Hardware-1-1-9-1              : found and updated times {'benchmarker': [(1783163080, 1783163143)]}
+Hardware-1-1-9-1              : benchmarker times (start/end per pod and container) = [(1783192133, 1783192196)]
+Hardware-1-1-9-1              : found and updated times {'benchmarker': [(1783192133, 1783192196)]}
 Hardware-1-1-9-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-9-1              : collecting execution metrics of SUT at connection Hardware-1-1-9-1
-Hardware-1-1-9-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-9-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-9-1              : collecting metrics of benchmarker at connection Hardware-1-1-9-1
-Hardware-1-1-9-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1-1-9-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 10.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-10-Hardware-1-1783161637 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-10-Hardware-1-1783190728 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 10
 Hardware-1-1-10-1             : start benchmarking (benchmark_run=1)
 Hardware-1-1-10-1             : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783161637
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783190728
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783161637-1-10-1-zh9gp: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783190728-1-10-1-nhplv: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1                    : has running benchmarks
-Hardware-1-1-10-1             : wrote benchmarking_timespans to D:/data/benchmarks/1783161637/Hardware-1-1-10-1.config
+Hardware-1-1-10-1             : wrote benchmarking_timespans to D:/data/benchmarks/1783190728/Hardware-1-1-10-1.config
 Hardware-1-1-10-1             : showing benchmarker times
-Hardware-1-1-10-1             : benchmarker timespan job from 1783163211 to 1783163289
-Hardware-1-1-10-1             : benchmarker timespan pods from 1783163215 to 1783163285
-Hardware-1-1-10-1             : benchmarker timespan (start to end single container [s]) = 70
-Hardware-1-1-10-1             : benchmarker times (start/end per pod and container) = [(1783163215, 1783163285)]
-Hardware-1-1-10-1             : found and updated times {'benchmarker': [(1783163215, 1783163285)]}
+Hardware-1-1-10-1             : benchmarker timespan job from 1783192266 to 1783192344
+Hardware-1-1-10-1             : benchmarker timespan pods from 1783192268 to 1783192332
+Hardware-1-1-10-1             : benchmarker timespan (start to end single container [s]) = 64
+Hardware-1-1-10-1             : benchmarker times (start/end per pod and container) = [(1783192268, 1783192332)]
+Hardware-1-1-10-1             : found and updated times {'benchmarker': [(1783192268, 1783192332)]}
 Hardware-1-1-10-1             : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-10-1             : collecting execution metrics of SUT at connection Hardware-1-1-10-1
-Hardware-1-1-10-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-10-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-10-1             : collecting metrics of benchmarker at connection Hardware-1-1-10-1
-Hardware-1-1-10-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783161637(.*)", pod=~"(.*)hardware-1-1783161637(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr and write to pvc bexhoma-storage-hardware-hardware
-bexhoma : C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\hardware.py:183: FutureWarning: 
-Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly 
-call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-In Zeile:1 Zeichen:1
-+ bexhoma hardware `
-+ ~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (C:\Users\Patric...asting', True)`:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-  for key in _KEYS_RESULTS:
+Hardware-1-1-10-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783190728(.*)", pod=~"(.*)hardware-1-1783190728(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Hardware-1                    : can be stopped
-Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr
-Experiment                    : ends at 2026-07-04 13:08:54.599901 (68418.3765563) - 1697.37s total
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm
+Experiment                    : ends at 2026-07-04 21:13:09.383861 (97471.2471265) - 1661.13s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -338,8 +325,8 @@ Result workflow complete
 ### Workload
 Hardware Benchmark (fio)
 * Type: hardware
-* Duration: 1698s 
-* Code: 1783161637
+* Duration: 1662s 
+* Code: 1783190728
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
   * Benchmark tool: fio.
@@ -367,133 +354,133 @@ Hardware Benchmark (fio)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:839207
+  * disk:823734
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-10-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:842199
+  * disk:815983
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:840328
+  * disk:826418
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:836171
+  * disk:821858
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:840991
+  * disk:828969
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:839254
+  * disk:821433
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-6-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:838123
+  * disk:818500
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-7-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:840521
+  * disk:827363
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-8-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:837586
+  * disk:818057
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 * Hardware-1-1-9-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:838925
+  * disk:821903
   * volume_size:80.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783161637
+    * code:1783190728
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1783161637-7b45c4c4cb-w7fxr: 0
+* bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm: 0
 
 ### Workflow
 
@@ -527,37 +514,33 @@ Hardware Benchmark (fio)
 
 #### Per Connection
 
-| DBMS                | phase           | job               |   experiment_run |   client |   benchmark_run |   child | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
-|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1-1-1  | Hardware-1-1-1  | Hardware-1-1-1-1  |                1 |        1 |               1 |       1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                  2924.99 |                      0.00 |                          72.88 |                            0.00 |                         267.39 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-2-1-1  | Hardware-1-1-2  | Hardware-1-1-2-1  |                1 |        2 |               1 |       1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      2 |                  4335.98 |                      0.00 |                          74.97 |                            0.00 |                         608.17 |                            0.00 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-1  | Hardware-1-1-3  | Hardware-1-1-3-1  |                1 |        3 |               1 |       1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      4 |                  4110.61 |                      0.00 |                          94.90 |                            0.00 |                        2231.37 |                            0.00 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-1  | Hardware-1-1-4  | Hardware-1-1-4-1  |                1 |        4 |               1 |       1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      8 |                  4074.11 |                      0.00 |                         196.08 |                            0.00 |                        4798.28 |                            0.00 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-5-1-1  | Hardware-1-1-5  | Hardware-1-1-5-1  |                1 |        5 |               1 |       1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     16 |                  3891.85 |                      0.00 |                        1216.35 |                            0.00 |                        7012.88 |                            0.00 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-6-1-1  | Hardware-1-1-6  | Hardware-1-1-6-1  |                1 |        6 |               1 |       1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   1218.91 |                           0.00 |                          181.40 |                           0.00 |                          463.47 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-7-1-1  | Hardware-1-1-7  | Hardware-1-1-7-1  |                1 |        7 |               1 |       1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      2 |                     0.00 |                   2653.30 |                           0.00 |                          183.50 |                           0.00 |                          367.00 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-8-1-1  | Hardware-1-1-8  | Hardware-1-1-8-1  |                1 |        8 |               1 |       1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      4 |                     0.00 |                   3844.71 |                           0.00 |                          221.25 |                           0.00 |                          767.56 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-9-1-1  | Hardware-1-1-9  | Hardware-1-1-9-1  |                1 |        9 |               1 |       1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      8 |                     0.00 |                   3365.52 |                           0.00 |                          329.25 |                           0.00 |                         3741.32 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\hardware.py:183: FutureWarning: Downcasting 
-behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call 
-`result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  for key in _KEYS_RESULTS:
-| Hardware-1-1-10-1-1 | Hardware-1-1-10 | Hardware-1-1-10-1 |                1 |       10 |               1 |       1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     16 |                     0.00 |                   3642.50 |                           0.00 |                          918.55 |                           0.00 |                         7147.09 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| DBMS                | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1  | Hardware-1-1-1  | Hardware-1-1-1-1  |                1 |        1 |               1 |       1 |         71 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                  4338.31 |                      0.00 |                          54.26 |                            0.00 |                         152.04 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1  | Hardware-1-1-2  | Hardware-1-1-2-1  |                1 |        2 |               1 |       1 |         79 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      2 |                  4703.97 |                      0.00 |                          89.65 |                            0.00 |                         497.03 |                            0.00 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1  | Hardware-1-1-3  | Hardware-1-1-3-1  |                1 |        3 |               1 |       1 |         94 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      4 |                  5166.99 |                      0.00 |                         113.77 |                            0.00 |                         952.11 |                            0.00 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1  | Hardware-1-1-4  | Hardware-1-1-4-1  |                1 |        4 |               1 |       1 |        122 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      8 |                  5773.17 |                      0.00 |                         196.08 |                            0.00 |                        1803.55 |                            0.00 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5-1-1  | Hardware-1-1-5  | Hardware-1-1-5-1  |                1 |        5 |               1 |       1 |        187 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     16 |                  5295.18 |                      0.00 |                        1333.79 |                            0.00 |                        4731.17 |                            0.00 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6-1-1  | Hardware-1-1-6  | Hardware-1-1-6-1  |                1 |        6 |               1 |       1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   1878.38 |                           0.00 |                          141.56 |                           0.00 |                          256.90 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-7-1-1  | Hardware-1-1-7  | Hardware-1-1-7-1  |                1 |        7 |               1 |       1 |         64 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      2 |                     0.00 |                   3213.22 |                           0.00 |                          168.82 |                           0.00 |                          265.29 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-8-1-1  | Hardware-1-1-8  | Hardware-1-1-8-1  |                1 |        8 |               1 |       1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      4 |                     0.00 |                   3792.92 |                           0.00 |                          214.96 |                           0.00 |                          750.78 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-9-1-1  | Hardware-1-1-9  | Hardware-1-1-9-1  |                1 |        9 |               1 |       1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      8 |                     0.00 |                   4919.47 |                           0.00 |                          320.86 |                           0.00 |                         1484.78 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-10-1-1 | Hardware-1-1-10 | Hardware-1-1-10-1 |                1 |       10 |               1 |       1 |         64 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     16 |                     0.00 |                   6830.33 |                           0.00 |                          488.64 |                           0.00 |                         2768.24 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
 
 #### Per Phase
 
-| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
-|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1  | Hardware-1-1-1  |                1 |        1 |               1 |           1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  2924.99 |                      0.00 |                          72.88 |                            0.00 |                         267.39 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-2  | Hardware-1-1-2  |                1 |        2 |               1 |           1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  4335.98 |                      0.00 |                          74.97 |                            0.00 |                         608.17 |                            0.00 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-3  | Hardware-1-1-3  |                1 |        3 |               1 |           1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  4110.61 |                      0.00 |                          94.90 |                            0.00 |                        2231.37 |                            0.00 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-4  | Hardware-1-1-4  |                1 |        4 |               1 |           1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  4074.11 |                      0.00 |                         196.08 |                            0.00 |                        4798.28 |                            0.00 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-5  | Hardware-1-1-5  |                1 |        5 |               1 |           1 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  3891.85 |                      0.00 |                        1216.35 |                            0.00 |                        7012.88 |                            0.00 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-6  | Hardware-1-1-6  |                1 |        6 |               1 |           1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   1218.91 |                           0.00 |                          181.40 |                           0.00 |                          463.47 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-7  | Hardware-1-1-7  |                1 |        7 |               1 |           1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   2653.30 |                           0.00 |                          183.50 |                           0.00 |                          367.00 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-8  | Hardware-1-1-8  |                1 |        8 |               1 |           1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   3844.71 |                           0.00 |                          221.25 |                           0.00 |                          767.56 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-9  | Hardware-1-1-9  |                1 |        9 |               1 |           1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   3365.52 |                           0.00 |                          329.25 |                           0.00 |                         3741.32 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-10 | Hardware-1-1-10 |                1 |       10 |               1 |           1 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   3642.50 |                           0.00 |                          918.55 |                           0.00 |                         7147.09 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1  | Hardware-1-1-1  |                1 |        1 |               1 |           1 |         71 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  4338.31 |                      0.00 |                          54.26 |                            0.00 |                         152.04 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2  | Hardware-1-1-2  |                1 |        2 |               1 |           1 |         79 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  4703.97 |                      0.00 |                          89.65 |                            0.00 |                         497.03 |                            0.00 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3  | Hardware-1-1-3  |                1 |        3 |               1 |           1 |         94 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  5166.99 |                      0.00 |                         113.77 |                            0.00 |                         952.11 |                            0.00 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4  | Hardware-1-1-4  |                1 |        4 |               1 |           1 |        122 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  5773.17 |                      0.00 |                         196.08 |                            0.00 |                        1803.55 |                            0.00 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5  | Hardware-1-1-5  |                1 |        5 |               1 |           1 |        187 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  5295.18 |                      0.00 |                        1333.79 |                            0.00 |                        4731.17 |                            0.00 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6  | Hardware-1-1-6  |                1 |        6 |               1 |           1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   1878.38 |                           0.00 |                          141.56 |                           0.00 |                          256.90 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-7  | Hardware-1-1-7  |                1 |        7 |               1 |           1 |         64 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   3213.22 |                           0.00 |                          168.82 |                           0.00 |                          265.29 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-8  | Hardware-1-1-8  |                1 |        8 |               1 |           1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   3792.92 |                           0.00 |                          214.96 |                           0.00 |                          750.78 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-9  | Hardware-1-1-9  |                1 |        9 |               1 |           1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   4919.47 |                           0.00 |                          320.86 |                           0.00 |                         1484.78 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-10 | Hardware-1-1-10 |                1 |       10 |               1 |           1 |         64 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   6830.33 |                           0.00 |                          488.64 |                           0.00 |                         2768.24 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
 
 ### Monitoring
 
@@ -565,31 +548,31 @@ behavior in `replace` is deprecated and will be removed in a future version. To 
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1  |        77.99 |      2.08 |           0.02 |                  4.02 |
-| Hardware-1-1-2-1  |        75.09 |      4.12 |           0.03 |                  3.39 |
-| Hardware-1-1-3-1  |        75.55 |      1.59 |           0.03 |                  4.03 |
-| Hardware-1-1-4-1  |        88.91 |      1.75 |           0.03 |                  4.03 |
-| Hardware-1-1-5-1  |       113.52 |      2.50 |           0.03 |                  4.03 |
-| Hardware-1-1-6-1  |        57.56 |      1.51 |           0.02 |                  0.02 |
-| Hardware-1-1-7-1  |        69.32 |      2.18 |           0.02 |                  0.02 |
-| Hardware-1-1-8-1  |        75.81 |      2.87 |           0.02 |                  0.02 |
-| Hardware-1-1-9-1  |        69.41 |      1.94 |           0.03 |                  0.03 |
-| Hardware-1-1-10-1 |        68.37 |      1.76 |           0.03 |                  0.03 |
+| Hardware-1-1-1-1  |        70.17 |      2.29 |           0.02 |                  0.02 |
+| Hardware-1-1-2-1  |        70.96 |      1.99 |           0.03 |                  4.03 |
+| Hardware-1-1-3-1  |        81.90 |      3.40 |           0.03 |                  4.03 |
+| Hardware-1-1-4-1  |        91.72 |      1.83 |           0.03 |                  4.03 |
+| Hardware-1-1-5-1  |       108.61 |      1.85 |           0.03 |                  4.03 |
+| Hardware-1-1-6-1  |        68.42 |      2.56 |           0.02 |                  0.02 |
+| Hardware-1-1-7-1  |        73.46 |      2.33 |           0.02 |                  0.02 |
+| Hardware-1-1-8-1  |        71.69 |      4.00 |           0.03 |                  0.03 |
+| Hardware-1-1-9-1  |        72.63 |      1.74 |           0.03 |                  0.03 |
+| Hardware-1-1-10-1 |        61.99 |      1.61 |           0.03 |                  0.04 |
 
 ### Execution phase: component benchmarker
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1  |         0.43 |      0.00 |           0.00 |                  0.00 |
-| Hardware-1-1-2-1  |         0.43 |      0.01 |           0.00 |                  0.00 |
-| Hardware-1-1-3-1  |         0.56 |      0.00 |           0.00 |                  0.00 |
-| Hardware-1-1-4-1  |         0.03 |      0.02 |           0.00 |                  0.00 |
-| Hardware-1-1-5-1  |         0.56 |      0.01 |           0.00 |                  0.00 |
-| Hardware-1-1-6-1  |         0.55 |      0.00 |           0.00 |                  0.00 |
-| Hardware-1-1-7-1  |         0.54 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-1-1  |         0.54 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1  |         0.57 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1  |         0.54 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1  |         0.57 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-5-1  |         0.58 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-6-1  |         0.44 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-7-1  |         0.58 |      0.01 |           0.00 |                  0.00 |
 | Hardware-1-1-8-1  |         0.55 |      0.02 |           0.00 |                  0.00 |
-| Hardware-1-1-9-1  |         0.55 |      0.02 |           0.00 |                  0.00 |
-| Hardware-1-1-10-1 |         0.54 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-9-1  |         0.55 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-10-1 |         0.50 |      0.01 |           0.00 |                  0.00 |
 
 ### Tests
 * TEST passed: No SUT container restarts

@@ -3,8 +3,8 @@
 ### Workload
 Hardware Benchmark (fio)
 * Type: hardware
-* Duration: 861s 
-* Code: 1783171774
+* Duration: 864s 
+* Code: 1783200536
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
   * Benchmark tool: fio.
@@ -32,81 +32,81 @@ Hardware Benchmark (fio)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:812496
+  * disk:831367
   * volume_size:50.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783171774
+    * code:1783200536
 * Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:809437
+  * disk:820536
   * volume_size:50.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783171774
+    * code:1783200536
 * Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:811103
+  * disk:827659
   * volume_size:50.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783171774
+    * code:1783200536
 * Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:813340
+  * disk:821051
   * volume_size:50.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783171774
+    * code:1783200536
 * Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:804670
+  * disk:825418
   * volume_size:50.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783171774
+    * code:1783200536
 * Hardware-1-1-6-1 uses docker image bexhoma/sut_hardware:0.10.2
   * RAM:2164173246464
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:805103
+  * disk:821889
   * volume_size:50.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783171774
+    * code:1783200536
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1783171774-8565b6d56b-snrzb: 0
+* bexhoma-sut-hardware-1-1783200536-f46bc844-kqq79: 0
 
 ### Workflow
 
@@ -134,23 +134,23 @@ Hardware Benchmark (fio)
 
 | DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
 |:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 | write             | 1M                |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                     78.22 |                           0.00 |                          101.19 |                           0.00 |                          166.72 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         62 | write             | 1M                |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    250.15 |                           0.00 |                          139.46 |                           0.00 |                          217.06 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         63 | write             | 4M                |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                     51.99 |                           0.00 |                          128.45 |                           0.00 |                          208.67 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         63 | write             | 4M                |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    153.99 |                           0.00 |                          221.25 |                           0.00 |                          438.30 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-5-1-1 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         62 | write             | 16M               |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                      3.34 |                           0.00 |                         1199.57 |                           0.00 |                         1551.89 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-6-1-1 | Hardware-1-1-6 | Hardware-1-1-6-1 |                1 |        6 |               1 |       1 |         63 | write             | 16M               |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                      3.08 |                           0.00 |                         5737.81 |                           0.00 |                         6006.24 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 | write             | 1M                |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                     76.80 |                           0.00 |                          104.33 |                           0.00 |                          164.63 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         63 | write             | 1M                |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    237.50 |                           0.00 |                          143.65 |                           0.00 |                          212.86 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         63 | write             | 4M                |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                     49.68 |                           0.00 |                          139.46 |                           0.00 |                          206.57 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         63 | write             | 4M                |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    142.58 |                           0.00 |                          235.93 |                           0.00 |                          362.81 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5-1-1 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         63 | write             | 16M               |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                      3.11 |                           0.00 |                         1182.79 |                           0.00 |                         1283.46 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6-1-1 | Hardware-1-1-6 | Hardware-1-1-6-1 |                1 |        6 |               1 |       1 |         63 | write             | 16M               |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                      3.08 |                           0.00 |                         5536.48 |                           0.00 |                         5737.81 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
 
 #### Per Phase
 
 | DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 | write             | 1M                |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                     78.22 |                           0.00 |                          101.19 |                           0.00 |                          166.72 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           1 |         62 | write             | 1M                |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    250.15 |                           0.00 |                          139.46 |                           0.00 |                          217.06 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           1 |         63 | write             | 4M                |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                     51.99 |                           0.00 |                          128.45 |                           0.00 |                          208.67 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           1 |         63 | write             | 4M                |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    153.99 |                           0.00 |                          221.25 |                           0.00 |                          438.30 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |           1 |         62 | write             | 16M               |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                      3.34 |                           0.00 |                         1199.57 |                           0.00 |                         1551.89 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
-| Hardware-1-1-6 | Hardware-1-1-6 |                1 |        6 |               1 |           1 |         63 | write             | 16M               |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                      3.08 |                           0.00 |                         5737.81 |                           0.00 |                         6006.24 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 | write             | 1M                |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                     76.80 |                           0.00 |                          104.33 |                           0.00 |                          164.63 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           1 |         63 | write             | 1M                |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    237.50 |                           0.00 |                          143.65 |                           0.00 |                          212.86 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           1 |         63 | write             | 4M                |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                     49.68 |                           0.00 |                          139.46 |                           0.00 |                          206.57 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           1 |         63 | write             | 4M                |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    142.58 |                           0.00 |                          235.93 |                           0.00 |                          362.81 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |           1 |         63 | write             | 16M               |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                      3.11 |                           0.00 |                         1182.79 |                           0.00 |                         1283.46 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6 | Hardware-1-1-6 |                1 |        6 |               1 |           1 |         63 | write             | 16M               |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                      3.08 |                           0.00 |                         5536.48 |                           0.00 |                         5737.81 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
 
 ### Monitoring
 
@@ -158,22 +158,22 @@ Hardware Benchmark (fio)
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |        62.07 |      1.80 |           0.03 |                  0.03 |
-| Hardware-1-1-2-1 |        67.44 |      3.67 |           0.04 |                  0.04 |
-| Hardware-1-1-3-1 |        60.81 |      1.90 |           0.04 |                  0.04 |
-| Hardware-1-1-4-1 |        69.60 |      1.90 |           0.08 |                  0.08 |
-| Hardware-1-1-5-1 |        67.19 |      2.02 |           0.08 |                  0.08 |
-| Hardware-1-1-6-1 |        75.37 |      2.12 |           0.27 |                  0.27 |
+| Hardware-1-1-1-1 |        62.71 |      2.49 |           0.03 |                  0.03 |
+| Hardware-1-1-2-1 |        67.90 |      1.91 |           0.04 |                  0.04 |
+| Hardware-1-1-3-1 |        59.10 |      1.61 |           0.04 |                  0.04 |
+| Hardware-1-1-4-1 |        72.89 |      2.15 |           0.09 |                  0.09 |
+| Hardware-1-1-5-1 |        64.14 |      1.67 |           0.09 |                  0.09 |
+| Hardware-1-1-6-1 |        62.89 |      2.54 |           0.27 |                  0.27 |
 
 ### Execution phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |         0.49 |      0.02 |           0.00 |                  0.00 |
-| Hardware-1-1-2-1 |         0.52 |      0.00 |           0.00 |                  0.00 |
-| Hardware-1-1-3-1 |         0.49 |      0.00 |           0.00 |                  0.00 |
-| Hardware-1-1-4-1 |         0.53 |      0.02 |           0.00 |                  0.00 |
-| Hardware-1-1-5-1 |         0.44 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-1-1 |         0.57 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1 |         0.57 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1 |         0.57 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1 |         0.44 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-5-1 |         0.56 |      0.02 |           0.00 |                  0.00 |
 | Hardware-1-1-6-1 |         0.53 |      0.02 |           0.00 |                  0.00 |
 
 ### Tests

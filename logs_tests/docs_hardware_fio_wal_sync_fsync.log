@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1783169597
-Experiment                    : starts at 2026-07-04 14:53:17.081366 (74680.8572201)
+Experiment                    : has code 1783198464
+Experiment                    : starts at 2026-07-04 22:54:24.470518 (103546.3336425)
 Experiment                    : This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
 Benchmark tool: fio.
 Test file size is '4G', duration per round is 60s.
@@ -28,56 +28,44 @@ Hardware-1                    : deployments ['sut']
 Hardware-1                    : stateful sets []
 Hardware-1                    : pvcs ['sut']
 Hardware-1                    : found labels on pvc = []
-Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1783169597
-Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1783169597
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1783198464
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1783198464
 Hardware-1                    : name of SUT PVC name = bexhoma-storage-hardware-hardware
 Hardware-1                    : storage bexhoma-storage-hardware-hardware should be removed
 - waiting 10s -               : done
 Hardware-1                    : storage bexhoma-storage-hardware-hardware is gone
 - waiting 30s -               : done
+Hardware-1                    : waits for health check to succeed
+- waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1783169597 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1783198464 initialized to 1.
 Hardware-1                    : benchmarks done 0 of 1. This will be client 1
 Hardware-1-1-1-1              : start benchmarking (benchmark_run=1)
 Hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783169597-77cb8dc746-lpnd4 and write to pvc bexhoma-storage-hardware-hardware
-Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783169597
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783198464-779ccffd68-ldt2x and write to pvc bexhoma-storage-hardware-hardware
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783198464
 - waiting 10s -               : done
-Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783169597-1-1-1-r94hf: found
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783198464-1-1-1-cf54m: found
 - waiting 30s -               : done
 Hardware-1                    : has running benchmarks
 - waiting 30s -               : done
-Hardware-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783169597/Hardware-1-1-1-1.config
+Hardware-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783198464/Hardware-1-1-1-1.config
 Hardware-1-1-1-1              : showing benchmarker times
-Hardware-1-1-1-1              : benchmarker timespan job from 1783169654 to 1783169733
-Hardware-1-1-1-1              : benchmarker timespan pods from 1783169657 to 1783169721
-Hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 64
-Hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1783169657, 1783169721)]
-Hardware-1-1-1-1              : found and updated times {'benchmarker': [(1783169657, 1783169721)]}
+Hardware-1-1-1-1              : benchmarker timespan job from 1783198553 to 1783198632
+Hardware-1-1-1-1              : benchmarker timespan pods from 1783198556 to 1783198618
+Hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 62
+Hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1783198556, 1783198618)]
+Hardware-1-1-1-1              : found and updated times {'benchmarker': [(1783198556, 1783198618)]}
 Hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
 Hardware-1-1-1-1              : collecting execution metrics of SUT at connection Hardware-1-1-1-1
-Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783169597(.*)", pod=~"(.*)hardware-1-1783169597(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783198464(.*)", pod=~"(.*)hardware-1-1783198464(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 Hardware-1-1-1-1              : collecting metrics of benchmarker at connection Hardware-1-1-1-1
-Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783169597(.*)", pod=~"(.*)hardware-1-1783169597(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783169597-77cb8dc746-lpnd4 and write to pvc bexhoma-storage-hardware-hardware
-bexhoma : C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\hardware.py:193: FutureWarning: 
-Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly 
-call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-In Zeile:1 Zeichen:1
-+ bexhoma hardware `
-+ ~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (C:\Users\Patric...asting', True)`:String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-  df[numeric_columns] = df[numeric_columns].replace('', 0).infer_objects(copy=False)
-C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\hardware.py:193: FutureWarning: Downcasting 
-behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call 
-`result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
-  df[numeric_columns] = df[numeric_columns].replace('', 0).infer_objects(copy=False)
+Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783198464(.*)", pod=~"(.*)hardware-1-1783198464(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1783198464-779ccffd68-ldt2x and write to pvc bexhoma-storage-hardware-hardware
 - waiting 30s -               : done
 Hardware-1                    : can be stopped
-Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1783169597-77cb8dc746-lpnd4
-Experiment                    : ends at 2026-07-04 14:56:18.187888 (74861.9639039) - 181.11s total
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1783198464-779ccffd68-ldt2x
+Experiment                    : ends at 2026-07-04 22:57:57.645453 (103759.5090523) - 213.18s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -88,8 +76,8 @@ Result workflow complete
 ### Workload
 Hardware Benchmark (fio)
 * Type: hardware
-* Duration: 182s 
-* Code: 1783169597
+* Duration: 214s 
+* Code: 1783198464
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
   * Benchmark tool: fio.
@@ -117,16 +105,16 @@ Hardware Benchmark (fio)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:820723
+  * disk:820118
   * volume_size:50.0G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783169597
+    * code:1783198464
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1783169597-77cb8dc746-lpnd4: 0
+* bexhoma-sut-hardware-1-1783198464-779ccffd68-ldt2x: 0
 
 ### Workflow
 
@@ -144,13 +132,13 @@ Hardware Benchmark (fio)
 
 | DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
 |:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         64 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                      1 |                     0.00 |                    102.45 |                           0.00 |                           33.16 |                           0.00 |                           66.32 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         62 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                      1 |                     0.00 |                     48.92 |                           0.00 |                           29.75 |                           0.00 |                          467.66 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
 
 #### Per Phase
 
 | DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         64 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                    102.45 |                           0.00 |                           33.16 |                           0.00 |                           66.32 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         62 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                     48.92 |                           0.00 |                           29.75 |                           0.00 |                          467.66 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
 
 ### Monitoring
 
@@ -158,13 +146,13 @@ Hardware Benchmark (fio)
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |        66.35 |      2.30 |           0.02 |                  0.02 |
+| Hardware-1-1-1-1 |        66.46 |      1.71 |           0.02 |                  0.02 |
 
 ### Execution phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |         0.55 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-1-1 |         0.44 |      0.00 |           0.00 |                  0.00 |
 
 ### Tests
 * TEST passed: No SUT container restarts
