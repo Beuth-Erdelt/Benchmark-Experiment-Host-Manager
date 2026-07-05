@@ -252,9 +252,18 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLTP 
 
 #### OLTP 7. Contention: fio ioengine sweep
 # Rules out a fio/libaio artifact before blaming the storage backend: if
-# io_uring (or plain sync) doesn't collapse the same way at the same
-# parameters, the finding is "libaio handles this contention pattern badly
-# on cephcsi", not "cephcsi is bad under contention".
+# io_uring doesn't collapse the same way at the same parameters, the finding
+# is "libaio handles this contention pattern badly on cephcsi", not "cephcsi
+# is bad under contention".
+# sync is deliberately excluded: fio's sync ioengine has no queue, so
+# combining it with -xfid 64 is an invalid pairing, not a real third
+# comparison point - the first run of this test produced 0.00 for every
+# metric on both storage classes and tripped -tr's zero-IOPS check (see
+# images/hardware/benchmarker/run_fio.sh, which now logs fio's exit code and
+# stderr and validates its JSON before parsing, so a repeat of this mistake
+# fails loudly instead of silently). A synchronous single-outstanding-request
+# baseline already exists at its own natural depth in tests 3/4 (WAL fsync/
+# fdatasync, -xfid 1); it does not belong in a depth=64 comparison.
 bexhoma hardware `
   -dbms Hardware                   <# hardware target(s) to test #> `
   -xht fio                         <# benchmark tool: fio (disk I/O) #> `
@@ -264,7 +273,7 @@ bexhoma hardware `
   -xfmx 70                         <# read percentage, matches test 6 #> `
   -xfbs 8k                         <# fio block size, matches test 6 #> `
   -xfid 64                         <# queue depth, matches test 6 #> `
-  -xfe sync,libaio,io_uring        <# ioengines to sweep (comma-separated) #> `
+  -xfe libaio,io_uring             <# ioengines to sweep (comma-separated); sync excluded, see comment above #> `
   -xfsy 1                          <# fsync after every write, matches test 6 #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
@@ -280,7 +289,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\storage_${storageClass}_oltp_contention_engine_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLTP contention engine sweep  engine=sync,libaio,io_uring"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLTP contention engine sweep  engine=libaio,io_uring"
 
 
 #### OLTP 8. Contention: queue-depth sweep
