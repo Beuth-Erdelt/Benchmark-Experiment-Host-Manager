@@ -50,7 +50,7 @@ RUN apk add --no-cache openssh fio sysbench libstdc++ \
     && echo "bench:bench" | chpasswd \
     && mkdir -p /home/bench/.ssh \
     && chmod 700 /home/bench/.ssh \
-    && printf 'PasswordAuthentication no\nUsePAM no\n' >> /etc/ssh/sshd_config
+    && printf 'PasswordAuthentication no\n' >> /etc/ssh/sshd_config
 
 COPY --from=sockperf-builder /src/sockperf /usr/local/bin/sockperf
 
