@@ -368,6 +368,10 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLTP 
 # shared's 16M write cliff (OLAP test 4) has a read-side counterpart at
 # larger sizes still - the first run found no cliff on the read side up to
 # 16M.
+# Added -nc 3: this test ran once per storage class in round 2 and its
+# cephcsi-vs-shared lean was cited in the PostgreSQL config recommendations -
+# repeat it before trusting that lean, the same way group-commit's repeated
+# numbers overturned round 1's single-shot conclusion there.
 bexhoma hardware `
   -dbms Hardware                   <# hardware target(s) to test #> `
   -xht fio                         <# benchmark tool: fio (disk I/O) #> `
@@ -379,6 +383,7 @@ bexhoma hardware `
   -xfe libaio                      <# fio ioengine #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1                           <# threads per benchmarking pod (fio numjobs), fixed #> `
+  -nc 3                            <# repeat 3x: this test's lean was cited in downstream recommendations #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
@@ -390,12 +395,13 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\storage_${storageClass}_olap_seqread_blocksize_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLAP seq-read block-size sweep  bs=16k..64M  iodepth=16"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLAP seq-read block-size sweep  bs=16k..64M  iodepth=16  x3"
 
 
 #### OLAP 2. Sequential-read queue-depth sweep (readahead effectiveness)
 # Extended to 64,128 (was 1..32): neither class had plateaued by depth 32 in
 # the first run.
+# Added -nc 3, same reasoning as OLAP test 1.
 bexhoma hardware `
   -dbms Hardware                   <# hardware target(s) to test #> `
   -xht fio                         <# benchmark tool: fio (disk I/O) #> `
@@ -407,6 +413,7 @@ bexhoma hardware `
   -xfe libaio                      <# fio ioengine #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1                           <# threads per benchmarking pod (fio numjobs), fixed #> `
+  -nc 3                            <# repeat 3x: this test's lean was cited in downstream recommendations #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
@@ -418,11 +425,14 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\storage_${storageClass}_olap_seqread_depth_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLAP seq-read depth sweep  bs=1M  iodepth=1..128"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLAP seq-read depth sweep  bs=1M  iodepth=1..128  x3"
 
 
 #### OLAP 3. Parallel sequential-scan proxy (concurrent scan workers)
-# Unchanged from the first run.
+# Added -nc 3: unchanged parameters from round 1, but its "cephcsi scales
+# better past 2 workers" finding was cited in the PostgreSQL config
+# recommendations (max_parallel_workers_per_gather) - same repeat-before-trust
+# reasoning as OLAP tests 1-2.
 bexhoma hardware `
   -dbms Hardware                   <# hardware target(s) to test #> `
   -xht fio                         <# benchmark tool: fio (disk I/O) #> `
@@ -434,6 +444,7 @@ bexhoma hardware `
   -xfe libaio                      <# fio ioengine #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1,2,4,8                     <# concurrent scan workers to sweep (comma-separated, fio numjobs) #> `
+  -nc 3                            <# repeat 3x: this test's lean was cited in downstream recommendations #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
@@ -445,7 +456,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\storage_${storageClass}_olap_parallel_scan.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLAP parallel scan proxy  bs=1M  iodepth=16  workers=1,2,4,8"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $storageClass OLAP parallel scan proxy  bs=1M  iodepth=16  workers=1,2,4,8  x3"
 
 
 #### OLAP 4. Bulk sequential-write throughput (bulk load / checkpoint writeback)
