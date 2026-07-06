@@ -131,6 +131,26 @@ Loads 1 GB of TPC-DS data (scale factor 1) and runs all 99 decision-support quer
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-DS.html
 
+### Hardware (fio)
+
+```bash
+bexhoma hardware run -ms 1 -dbms Hardware -xht fio -xts 1G -xtd 30 -xfrw randread -xfbs 4k -xfid 16 -xfe libaio -nbp 1 -nbt 1 -ne 1
+```
+
+Runs a single 30-second fio random-read test at 4k block size and queue depth 16 directly against a dedicated SUT container over SSH, bypassing any DBMS.
+
+See more details at https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#fio-disk-benchmarks
+
+### Hardware (sysbench)
+
+```bash
+bexhoma hardware run -ms 1 -dbms Hardware -xht sysbench -xtd 30 -nbp 1 -nbt 4 -ne 1
+```
+
+Runs a single 30-second sysbench CPU/memory test with 4 threads directly against a dedicated SUT container over SSH, bypassing any DBMS.
+
+See more details at https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#sysbench-cpu-noisy-neighbor-benchmarks
+
 ## Architecture
 
 Bexhoma deploys [Prometheus](https://prometheus.io/) for monitoring and [cAdvisor](https://github.com/google/cadvisor) for resource metrics alongside every DBMS container.
