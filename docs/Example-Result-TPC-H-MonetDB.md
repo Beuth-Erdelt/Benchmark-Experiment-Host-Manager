@@ -61,7 +61,7 @@ bexhoma tpch \
 
 ## Status Data Disk
 
-You can watch the status of the data disk via `bexperiments data`.
+You can watch the status of the data disk via `bexhoma data`.
 
 In the following example output we see we have generated TPC-H at SF=100 using 8 generators.
 The data set is split into 8 parts, each of about 14G size.
@@ -82,7 +82,7 @@ In total the data set has a size of 106G.
 
 ## Status Database and Benchmark
 
-You can watch the status of experiments via `bexperiments status`.
+You can watch the status of experiments via `bexhoma status`.
 
 In the following example output we see all components of bexhoma are up and running.
 The cluster stores a MonetDB database corresponding to TPC-H of SF=100.
@@ -222,11 +222,11 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
-To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
+To see the summary again you can simply call `bexhoma summary -e 1708411664` with the experiment code.
 
 ## List local results
 
-You can inspect a preview list of results via `bexperiments localresults`.
+You can inspect a preview list of results via `bexhoma localresults`.
 
 ```
 +------------+----------------------+------------------------------------------------------------------------------------------------+---------------------------------------------------+---------+-------------+---------------------+

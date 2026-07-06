@@ -94,7 +94,7 @@ This
 
 ### Status
 
-You can watch the status while benchmark is running via `bexperiments status`
+You can watch the status while benchmark is running via `bexhoma status`
 
 ```bash
 Dashboard: Running
@@ -329,7 +329,7 @@ Moreover the loading times (schema creation, ingestion and indexing), the geomet
 Please note that the results are not suitable for being published as official TPC-DS results.
 In particular the refresh streams are missing.
 
-To see the summary again you can simply call `bexperiments summary -e 1750150367` with the experiment code.
+To see the summary again you can simply call `bexhoma summary -e 1750150367` with the experiment code.
 
 For a more detailed query-wise evaluation you can call `dbmsbenchmarker read -r ~/benchmarks/1750150367 -e yes`.
 
@@ -346,16 +346,16 @@ Detailed evaluations can be done using DBMSBenchmarker
 * [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
 * [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
 
-You can connect to an evaluation server in the cluster by `bexperiments dashboard`.
+You can connect to an evaluation server in the cluster by `bexhoma dashboard`.
 This forwards ports, so you have
 * a DBMSBenchmarker dashboard in browser at http://localhost:8050
 * a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
-You can connect to a local evaluation server by `bexperiments localdashboard`.
+You can connect to a local evaluation server by `bexhoma localdashboard`.
 This forwards ports, so you have
 * a DBMSBenchmarker dashboard in browser at http://localhost:8050
 
-You can connect to a local jupyter server by `bexperiments jupyter`.
+You can connect to a local jupyter server by `bexhoma jupyter`.
 This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
@@ -1567,7 +1567,7 @@ bexhoma tpcds \
 
 ### Status Database and Benchmark
 
-You can watch the status of experiments via `bexperiments status`.
+You can watch the status of experiments via `bexhoma status`.
 
 In the following example output we see all components of bexhoma are up and running.
 The cluster stores a MonetDB database corresponding to TPC-DS of SF=30.

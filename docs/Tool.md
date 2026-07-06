@@ -1,11 +1,12 @@
 # Bexhoma Tool
 
-Boxhoma comes with a tool `bexperiments` (bexhoma experiments).
+Bexhoma comes with a CLI tool `bexhoma` for managing running experiments in a Kubernetes cluster.
+(`bexhoma` also dispatches to root-level benchmark scripts, e.g. `bexhoma tpch run`.)
 
 ```
 This tool helps managing running Bexhoma experiments in a Kubernetes cluster.
 
-usage: bexperiments [-h] [-db] [-e EXPERIMENT] [-c CONNECTION] [-v] [-cx CONTEXT] {stop,status,dashboard,localdashboard,localresults,jupyter,master,data,summary}
+usage: bexhoma [-h] [-db] [-e EXPERIMENT] [-c CONNECTION] [-v] [-cx CONTEXT] {stop,status,dashboard,localdashboard,localresults,jupyter,master,data,summary}
 
 This tool helps managing running Bexhoma experiments in a Kubernetes cluster.
 
@@ -27,7 +28,7 @@ options:
 
 ## Stop Experiment
 
-You can stop an experiment via `bexperiments stop -e 12345678` (remove components).
+You can stop an experiment via `bexhoma stop -e 12345678` (remove components).
 
 This means, all components (SUT, loader, monitoring, ...) of an experiment are removed from the cluster.
 This does not affect persistent storage.
@@ -38,7 +39,7 @@ If you leave out the `-e` option, all experiments are stopped.
 
 ## Connect to Cluster Dashboard
 
-You can connect to the dashboard in the cluster via `bexperiments dashboard`.
+You can connect to the dashboard in the cluster via `bexhoma dashboard`.
 
 This helps inspecting results stored in the cluster.
 
@@ -49,7 +50,7 @@ Password is `admin`.
 
 ## Connect to Local Dashboard
 
-You can connect to a local dashboard via `bexperiments localdashboard`.
+You can connect to a local dashboard via `bexhoma localdashboard`.
 
 This helps inspecting results stored on the local disk of the orchestrator.
 
@@ -58,7 +59,7 @@ You can open dashboard in browser at `http://localhost:8050`.
 
 ## Connect to Local Juypter
 
-You can connect to a local dashboard via `bexperiments jupyter`.
+You can connect to a local dashboard via `bexhoma jupyter`.
 
 This helps inspecting results stored on the local disk of the orchestrator.
 
@@ -68,14 +69,14 @@ Password is `admin`.
 
 ## Connect to Running DBMS
 
-You can connect to a SUT in the cluster via `bexperiments master -e 12345678 -c PostgreSQL`.
+You can connect to a SUT in the cluster via `bexhoma master -e 12345678 -c PostgreSQL`.
 
 It is then available at `localhost:9091`.
 
 
 ## Status Database and Benchmark
 
-You can watch the status of experiments via `bexperiments status`.
+You can watch the status of experiments via `bexhoma status`.
 
 
 
@@ -140,7 +141,7 @@ Cluster Prometheus: Running
 
 ## List local results
 
-You can inspect a preview list of results via `bexperiments localresults`.
+You can inspect a preview list of results via `bexhoma localresults`.
 
 ```
 +------------+----------------------+------------------------------------------------------------------------------------------------+---------------------------------------------------+---------+-------------+---------------------+
@@ -158,7 +159,7 @@ You can inspect a preview list of results via `bexperiments localresults`.
 
 ## Status Data Disk
 
-You can watch the status of the data disk via `bexperiments data`.
+You can watch the status of the data disk via `bexhoma data`.
 
 In the following example output we see we have generated TPC-H at SF=100 using 8 generators.
 The data set is split into 8 parts, each of about 14G size.
@@ -180,6 +181,6 @@ In total the data set has a size of 106G.
 
 ## Inspect Result
 
-You can see the summary of an experiment via `bexperiments summary -e 12345678`.
+You can see the summary of an experiment via `bexhoma summary -e 12345678`.
 
 

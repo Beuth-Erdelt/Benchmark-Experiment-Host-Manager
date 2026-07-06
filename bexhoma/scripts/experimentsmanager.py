@@ -11,6 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
+from bexhoma.scripts.cli import EXPERIMENT_MODES
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -25,6 +26,49 @@ import ast
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+#: ``status`` of a Kubernetes Job condition that marks it as completed.
+_JOB_COMPLETE_CONDITION_TYPE = 'Complete'
+
+
+def _labels(obj) -> dict:
+    """Return a Kubernetes object's metadata labels, or an empty dict if unset."""
+    return obj.metadata.labels or {}
+
+
+def _filter_by_labels(items: list, component: str = '', experiment: str = '', configuration: str = '') -> list:
+    """Filter already bulk-fetched Kubernetes objects by label, without any further API calls."""
+    filtered = []
+    for item in items:
+        labels = _labels(item)
+        if component and labels.get('component') != component:
+            continue
+        if experiment and labels.get('experiment') != experiment:
+            continue
+        if configuration and labels.get('configuration') != configuration:
+            continue
+        filtered.append(item)
+    return filtered
+
+
+def _pod_status_counts(pods: list) -> dict:
+    """Count already bulk-fetched Pod objects by their status phase."""
+    counts = {}
+    for pod in pods:
+        phase = pod.status.phase
+        counts[phase] = counts.get(phase, 0) + 1
+    return counts
+
+
+def _job_is_complete(job) -> bool:
+    """Return whether a bulk-fetched Job's completions target has been reached (mirrors ``Kubernetes.get_job_status``)."""
+    status = job.status
+    spec = job.spec
+    if status.succeeded is not None and spec.completions is not None and spec.completions <= status.succeeded:
+        return True
+    if status.succeeded is not None and status.succeeded > 0 and status.conditions:
+        return status.conditions[0].type == _JOB_COMPLETE_CONDITION_TYPE
+    return False
+
 
 def manage():
     description = """This tool helps managing running Bexhoma experiments in a Kubernetes cluster.
@@ -32,7 +76,7 @@ def manage():
     print(description)
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master','data','summary'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=EXPERIMENT_MODES)
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-fe', '--force-evaluate', help='force a re-evaluation of the results', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
@@ -150,11 +194,20 @@ def manage():
     elif args.mode == 'status':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         app = cluster.appname
+        # single bulk fetch per resource kind: every Pod and PVC is read once
+        # here and then filtered/grouped in memory below, instead of issuing
+        # one Kubernetes API call per pod/pvc/component/configuration as before
+        all_pods = cluster.list_pods_full(app=app)
+        all_pvcs = cluster.list_pvcs_full(app=app)
+        if args.verbose:
+            all_deployments = cluster.list_deployments_full(app=app)
+            all_stateful_sets = cluster.list_stateful_sets_full(app=app)
+            all_services = cluster.list_services_full(app=app)
+            all_jobs = cluster.list_jobs_full(app=app)
         # check dashboard
-        dashboard_name = cluster.get_dashboard_pod_name()
-        if len(dashboard_name) > 0:
-            status = cluster.get_pod_status(dashboard_name)
-            print("Dashboard: {}".format(status))
+        dashboard_pods = _filter_by_labels(all_pods, component='dashboard')
+        if dashboard_pods:
+            print("Dashboard: {}".format(dashboard_pods[0].status.phase))
             # get cluster monitoring Prometheus
             monitoring_running = cluster.is_monitoring_healthy()
             if monitoring_running:
@@ -165,124 +218,73 @@ def manage():
             print("Dashboard: {}".format("Not running"))
             print("Cluster Prometheus: {}".format("Unknown"))
         # check message queue
-        messagequeue_name = cluster.get_pods(component='messagequeue')
-        if len(messagequeue_name) > 0:
-            status = cluster.get_pod_status(messagequeue_name[0])
-            print("Message Queue: {}".format(status))
+        messagequeue_pods = _filter_by_labels(all_pods, component='messagequeue')
+        if messagequeue_pods:
+            print("Message Queue: {}".format(messagequeue_pods[0].status.phase))
         else:
             print("Message Queue: Not running")
         # get data directory
-        pvcs = cluster.get_pvc(app=app, component='data-source', experiment='', configuration='')
-        if len(pvcs) > 0:
+        if _filter_by_labels(all_pvcs, component='data-source'):
             print("Data directory: {}".format("Running"))
         else:
             print("Data directory: {}".format("Missing"))
         # get result directory
-        pvcs = cluster.get_pvc(app=app, component='results', experiment='', configuration='')
-        if len(pvcs) > 0:
+        if _filter_by_labels(all_pvcs, component='results'):
             print("Result directory: {}".format("Running"))
         else:
             print("Result directory: {}".format("Missing"))
         # get all storage volumes
-        pvcs = cluster.get_pvc(app=app, component='storage', experiment='', configuration='')
-        #print("PVCs", pvcs)
         volumes = {}
-        for pvc in pvcs:
-            volumes[pvc] = {}
-            pvcs_labels = cluster.get_pvc_labels(app=app, component='storage', experiment='', configuration='', pvc=pvc)
-            #print("PVCsLabels", pvcs_labels)
-            pvc_labels = pvcs_labels[0]
-            volumes[pvc]['configuration'] = pvc_labels['configuration']
-            volumes[pvc]['experiment'] = pvc_labels['experiment']
-            volumes[pvc]['loaded [s]'] = pvc_labels['loaded']
-            if 'timeLoading' in pvc_labels:
-                volumes[pvc]['timeLoading [s]'] = pvc_labels['timeLoading']
-            else:
-                volumes[pvc]['timeLoading [s]'] = ""
-            volumes[pvc]['dbms'] = pvc_labels['dbms']
-            #volumes[pvc]['labels'] = pvcs_label
-            pvcs_specs = cluster.get_pvc_specs(app=app, component='storage', experiment='', configuration='', pvc=pvc)
-            pvc_specs = pvcs_specs[0]
-            #print("PVCsSpecs", pvcs_specs)
-            #volumes[pvc]['specs'] = pvc_specs
-            volumes[pvc]['storage_class_name'] = pvc_specs.storage_class_name
-            volumes[pvc]['storage'] = pvc_specs.resources.requests['storage']
-            pvcs_status = cluster.get_pvc_status(app=app, component='storage', experiment='', configuration='', pvc=pvc)
-            #print("PVCsStatus", pvcs_status)
-            volumes[pvc]['status'] = pvcs_status[0].phase
-            if 'volume_size' in pvc_labels:
-                volumes[pvc]['size'] = pvc_labels['volume_size']
-            else:
-                volumes[pvc]['size'] = ""
-            if 'volume_used' in pvc_labels:
-                volumes[pvc]['used'] = pvc_labels['volume_used']
-            else:
-                volumes[pvc]['used'] = ""
-        #print(volumes)
+        for pvc in _filter_by_labels(all_pvcs, component='storage'):
+            pvc_labels = _labels(pvc)
+            name = pvc.metadata.name
+            volumes[name] = {}
+            volumes[name]['configuration'] = pvc_labels['configuration']
+            volumes[name]['experiment'] = pvc_labels['experiment']
+            volumes[name]['loaded [s]'] = pvc_labels['loaded']
+            volumes[name]['timeLoading [s]'] = pvc_labels.get('timeLoading', "")
+            volumes[name]['dbms'] = pvc_labels['dbms']
+            volumes[name]['storage_class_name'] = pvc.spec.storage_class_name
+            volumes[name]['storage'] = pvc.spec.resources.requests['storage']
+            volumes[name]['status'] = pvc.status.phase
+            volumes[name]['size'] = pvc_labels.get('volume_size', "")
+            volumes[name]['used'] = pvc_labels.get('volume_used', "")
         if len(volumes) > 0:
             df = pd.DataFrame(volumes).T
-            #print(df)
             df = df.reindex(index=evaluators.natural_sort(df.index))
             h = ['Volumes'] + list(df.columns)
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
         # get all worker volumes
-        pvcs = cluster.get_pvc(app=app, component='worker', experiment='', configuration='')
-        #print("PVCs", pvcs)
         volumes = {}
-        for pvc in pvcs:
-            volumes[pvc] = {}
-            pvcs_labels = cluster.get_pvc_labels(app=app, component='worker', experiment='', configuration='', pvc=pvc)
-            #print("PVCsLabels", pvcs_labels)
-            pvc_labels = pvcs_labels[0]
-            volumes[pvc]['configuration'] = pvc_labels['configuration']
-            volumes[pvc]['experiment'] = pvc_labels['experiment']
-            #volumes[pvc]['loaded [s]'] = pvc_labels['loaded']
-            #if 'timeLoading' in pvc_labels:
-            #    volumes[pvc]['timeLoading [s]'] = pvc_labels['timeLoading']
-            #else:
-            #    volumes[pvc]['timeLoading [s]'] = ""
-            volumes[pvc]['dbms'] = pvc_labels['dbms']
-            #volumes[pvc]['labels'] = pvcs_label
-            pvcs_specs = cluster.get_pvc_specs(app=app, component='worker', experiment='', configuration='', pvc=pvc)
-            pvc_specs = pvcs_specs[0]
-            #print("PVCsSpecs", pvcs_specs)
-            #volumes[pvc]['specs'] = pvc_specs
-            volumes[pvc]['storage_class_name'] = pvc_specs.storage_class_name
-            volumes[pvc]['storage'] = pvc_specs.resources.requests['storage']
-            pvcs_status = cluster.get_pvc_status(app=app, component='worker', experiment='', configuration='', pvc=pvc)
-            #print("PVCsStatus", pvcs_status)
-            volumes[pvc]['status'] = pvcs_status[0].phase
-            if 'volume_size' in pvc_labels:
-                volumes[pvc]['size'] = pvc_labels['volume_size']
-            else:
-                volumes[pvc]['size'] = ""
-            if 'volume_used' in pvc_labels:
-                volumes[pvc]['used'] = pvc_labels['volume_used']
-            else:
-                volumes[pvc]['used'] = ""
-        #print(volumes)
+        for pvc in _filter_by_labels(all_pvcs, component='worker'):
+            pvc_labels = _labels(pvc)
+            name = pvc.metadata.name
+            volumes[name] = {}
+            volumes[name]['configuration'] = pvc_labels['configuration']
+            volumes[name]['experiment'] = pvc_labels['experiment']
+            volumes[name]['dbms'] = pvc_labels['dbms']
+            volumes[name]['storage_class_name'] = pvc.spec.storage_class_name
+            volumes[name]['storage'] = pvc.spec.resources.requests['storage']
+            volumes[name]['status'] = pvc.status.phase
+            volumes[name]['size'] = pvc_labels.get('volume_size', "")
+            volumes[name]['used'] = pvc_labels.get('volume_used', "")
         if len(volumes) > 0:
             df = pd.DataFrame(volumes).T
-            #print(df)
             h = ['Volumes of Workers'] + list(df.columns)
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
-        # get all pods
-        pod_labels = cluster.get_pods_labels(app=app)
-        #print("Pod Labels", pod_labels)
-        experiment_set = set()
-        for pod, labels in pod_labels.items():
-            if 'experiment' in labels:
-                experiment_set.add(labels['experiment'])
-        #print(experiment_set)
+        # group already-fetched pods by experiment and configuration
+        experiment_set = {
+            _labels(pod)['experiment'] for pod in all_pods if 'experiment' in _labels(pod)
+        }
         for experiment in experiment_set:
             if args.verbose:
                 print(experiment)
             apps = {}
-            pod_labels = cluster.get_pods_labels(app=app, experiment=experiment)
-            configurations = set()
-            for pod, labels in pod_labels.items():
-                if 'configuration' in labels:
-                    configurations.add(labels['configuration'])
+            experiment_pods = _filter_by_labels(all_pods, experiment=experiment)
+            pod_labels = {pod.metadata.name: _labels(pod) for pod in experiment_pods}
+            configurations = {
+                labels['configuration'] for labels in pod_labels.values() if 'configuration' in labels
+            }
             for configuration in configurations:
                 logging.debug(configuration)
                 apps[configuration] = {}
@@ -290,201 +292,119 @@ def manage():
                 apps[configuration][component] = ''
                 apps[configuration]['loaded [s]'] = ''
                 if args.verbose:
-                    deployments = cluster.get_deployments(app=app, component=component, experiment=experiment, configuration=configuration)
+                    deployments = [d.metadata.name for d in _filter_by_labels(all_deployments, component=component, experiment=experiment, configuration=configuration)]
                     print("Deployments", deployments)
-                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
                     print("SUT Services", services)
-                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
-                    print("SUT Pods", pods)
+                    print("SUT Pods", [pod.metadata.name for pod in pods])
                 for pod in pods:
-                    status = cluster.get_pod_status(pod)
-                    #print(status)
-                    if pod in pod_labels and 'experimentRun' in pod_labels[pod]:
-                        experimentRun = '{}. '.format(pod_labels[pod]['experimentRun'])
-                    else:
-                        experimentRun = ''
+                    status = pod.status.phase
+                    labels = pod_labels[pod.metadata.name]
+                    experimentRun = '{}. '.format(labels['experimentRun']) if 'experimentRun' in labels else ''
                     apps[configuration][component] = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
-                    if pod in pod_labels and 'loaded' in pod_labels[pod]:
-                        if pod_labels[pod]['loaded'] == 'True':
-                            #apps[configuration]['loaded'] += "True"
-                            apps[configuration]['loaded [s]'] = pod_labels[pod]['timeLoading']#+' [s]'
-                        elif 'timeLoadingStart' in pod_labels[pod]:
-                            #apps[configuration]['loaded'] = 'Started at '+pod_labels[pod]['timeLoadingStart']
-                            dt_object = datetime.fromtimestamp(int(pod_labels[pod]['timeLoadingStart']))
+                    if 'loaded' in labels:
+                        if labels['loaded'] == 'True':
+                            apps[configuration]['loaded [s]'] = labels['timeLoading']
+                        elif 'timeLoadingStart' in labels:
+                            dt_object = datetime.fromtimestamp(int(labels['timeLoadingStart']))
                             t = dt_object.strftime('%Y-%m-%d %H:%M:%S')
                             apps[configuration]['loaded [s]'] = 'Started at '+t
-                        #if 'timeLoadingStart' in pod_labels[pod]:
-                        #    apps[configuration]['loaded'] += ' '+pod_labels[pod]['timeLoadingStart']
-                        #if 'timeLoadingEnd' in pod_labels[pod]:
-                        #    apps[configuration]['loaded'] += '-'+pod_labels[pod]['timeLoadingEnd']
-                        #if 'timeLoading' in pod_labels[pod]:
-                        #    apps[configuration]['loaded'] += '='+pod_labels[pod]['timeLoading']+'s'
-                    if pod in pod_labels and 'usecase' in pod_labels[pod]:
-                        apps[configuration]['use case'] = pod_labels[pod]['usecase']
-                    else:
-                        apps[configuration]['use case'] = ""
+                    apps[configuration]['use case'] = labels.get('usecase', "")
                 ############
                 component = 'worker'
                 apps[configuration][component] = ''
                 if args.verbose:
-                    stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+                    stateful_sets = [s.metadata.name for s in _filter_by_labels(all_stateful_sets, component=component, experiment=experiment, configuration=configuration)]
                     print("Stateful Sets", stateful_sets)
-                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
                     print("Worker Services", services)
-                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
-                    print("Worker Pods", pods)
-                num_pods = {}
-                for pod in pods:
-                    status = cluster.get_pod_status(pod)
-                    #print(status)
-                    #apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
-                    num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
-                #print(num_pods)
+                    print("Worker Pods", [pod.metadata.name for pod in pods])
+                num_pods = _pod_status_counts(pods)
                 for status in num_pods.keys():
-                        apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
+                    apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
                 ############
                 component = 'pool'
                 apps[configuration][component] = ''
                 if args.verbose:
-                    stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+                    stateful_sets = [s.metadata.name for s in _filter_by_labels(all_stateful_sets, component=component, experiment=experiment, configuration=configuration)]
                     print("Stateful Sets", stateful_sets)
-                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
                     print("Pooling Services", services)
-                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
-                    print("Pooling Pods", pods)
-                pods_per_status = {}
-                for pod in pods:
-                    status = cluster.get_pod_status(pod)
-                    pods_per_status[status] = pods_per_status[status]+1 if status in pods_per_status  else 1
-                    #print(status)
-                for status, number in pods_per_status.items():
-                    apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
-                ############
-                component = 'pool'
-                apps[configuration][component] = ''
-                if args.verbose:
-                    stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
-                    print("Stateful Sets", stateful_sets)
-                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
-                    print("Pooling Services", services)
-                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
-                if args.verbose:
-                    print("Pooling Pods", pods)
-                pods_per_status = {}
-                for pod in pods:
-                    status = cluster.get_pod_status(pod)
-                    pods_per_status[status] = pods_per_status[status]+1 if status in pods_per_status  else 1
-                    #print(status)
-                for status, number in pods_per_status.items():
-                    apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
-                ############
-                component = 'pool'
-                apps[configuration][component] = ''
-                if args.verbose:
-                    stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
-                    print("Stateful Sets", stateful_sets)
-                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
-                    print("Pooling Services", services)
-                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
-                if args.verbose:
-                    print("Pooling Pods", pods)
-                pods_per_status = {}
-                for pod in pods:
-                    status = cluster.get_pod_status(pod)
-                    pods_per_status[status] = pods_per_status[status]+1 if status in pods_per_status  else 1
-                    #print(status)
+                    print("Pooling Pods", [pod.metadata.name for pod in pods])
+                pods_per_status = _pod_status_counts(pods)
                 for status, number in pods_per_status.items():
                     apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
                 ############
                 component = 'maintaining'
                 apps[configuration][component] = ''
                 if args.verbose:
-                        stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
-                        print("Stateful Sets", stateful_sets)
-                        services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
-                        print("Maintaining Services", services)
-                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                    stateful_sets = [s.metadata.name for s in _filter_by_labels(all_stateful_sets, component=component, experiment=experiment, configuration=configuration)]
+                    print("Stateful Sets", stateful_sets)
+                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
+                    print("Maintaining Services", services)
+                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
-                        print("Maintaining Pods", pods)
-                num_pods = {}
-                for pod in pods:
-                        status = cluster.get_pod_status(pod)
-                        #print(status)
-                        #apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
-                        num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
-                #print(num_pods)
+                    print("Maintaining Pods", [pod.metadata.name for pod in pods])
+                num_pods = _pod_status_counts(pods)
                 for status in num_pods.keys():
-                        apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
+                    apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
                 ############
                 component = 'loading'
                 apps[configuration][component] = ''
                 if args.verbose:
-                        stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
-                        print("Stateful Sets", stateful_sets)
-                        services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
-                        print("Loading Services", services)
-                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                    stateful_sets = [s.metadata.name for s in _filter_by_labels(all_stateful_sets, component=component, experiment=experiment, configuration=configuration)]
+                    print("Stateful Sets", stateful_sets)
+                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
+                    print("Loading Services", services)
+                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
-                        print("Loading Pods", pods)
-                num_pods = {}
-                for pod in pods:
-                        status = cluster.get_pod_status(pod)
-                        #print(status)
-                        #apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
-                        num_pods[status] = 1 if not status in num_pods else num_pods[status]+1
-                #print(num_pods)
+                    print("Loading Pods", [pod.metadata.name for pod in pods])
+                num_pods = _pod_status_counts(pods)
                 for status in num_pods.keys():
-                        apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
+                    apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
                 ############
                 component = 'monitoring'
                 apps[configuration][component] = ''
                 if args.verbose:
-                    stateful_sets = cluster.get_stateful_sets(app=app, component=component, experiment=experiment, configuration=configuration)
+                    stateful_sets = [s.metadata.name for s in _filter_by_labels(all_stateful_sets, component=component, experiment=experiment, configuration=configuration)]
                     print("Stateful Sets", stateful_sets)
-                    services = cluster.get_services(app=app, component=component, experiment=experiment, configuration=configuration)
+                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
                     print("Monitoring Services", services)
-                pods = cluster.get_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
-                    print("Monitoring Pods", pods)
+                    print("Monitoring Pods", [pod.metadata.name for pod in pods])
                 for pod in pods:
-                    status = cluster.get_pod_status(pod)
-                    #print(status)
-                    apps[configuration][component] += "{pod} ({status})".format(pod='', status=status)
+                    apps[configuration][component] += "{pod} ({status})".format(pod='', status=pod.status.phase)
                 ############
                 component = 'benchmarker'
                 apps[configuration][component] = ''
                 if args.verbose:
-                    jobs = cluster.get_jobs(app=app, component=component, experiment=experiment, configuration=configuration)
+                    jobs = _filter_by_labels(all_jobs, component=component, experiment=experiment, configuration=configuration)
                     # status per job
                     for job in jobs:
-                        success = cluster.get_job_status(job)
-                        print(job, success)
-                # all pods to these jobs
-                pods = cluster.get_job_pods(app=app, component=component, experiment=experiment, configuration=configuration)
+                        print(job.metadata.name, _job_is_complete(job))
+                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
-                    print("Benchmarker Pods", pods)
+                    print("Benchmarker Pods", [pod.metadata.name for pod in pods])
                 num_pods = {}
                 for pod in pods:
-                    status = cluster.get_pod_status(pod)
-                    #print(status)
-                    if pod in pod_labels and 'client' in pod_labels[pod]:
-                        experimentRun = '{}. '.format(pod_labels[pod]['client'])
-                    else:
-                        experimentRun = ''
+                    status = pod.status.phase
+                    labels = pod_labels[pod.metadata.name]
+                    experimentRun = '{}. '.format(labels['client']) if 'client' in labels else ''
                     status_extended = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
                     num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1
-                    #apps[configuration][component] += "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status_extended)
                 for status in num_pods.keys():
                         apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)
-            #print(apps)
             df = pd.DataFrame(apps)
             df = df.T
             df.sort_index(inplace=True)
             df.index.name = experiment
-            #print(df)
             h = [df.index.name] + list(df.columns)
             if args.verbose:
                 # this shows all columns even if empty

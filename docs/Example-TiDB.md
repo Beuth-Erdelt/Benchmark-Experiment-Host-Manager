@@ -99,7 +99,7 @@ This
 
 ### Status
 
-You can watch the status while benchmark is running via `bexperiments status`
+You can watch the status while benchmark is running via `bexhoma status`
 
 ```bash
 Dashboard: Running
@@ -273,7 +273,7 @@ YCSB SF=1
 KeyError: "Only a column name can be used for the key in a dtype mappings argument. '[CLEANUP].Operations' not found in columns."
 ```
 
-To see the summary again you can simply call `bexperiments summary -e 1761748555` with the experiment code.
+To see the summary again you can simply call `bexhoma summary -e 1761748555` with the experiment code.
 
 ### Detailed Evaluation
 
@@ -281,7 +281,7 @@ Results are transformed into pandas DataFrames and can be inspected in detail.
 See for example
 * [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
 
-You can connect to an evaluation server locally by `bexperiments jupyter`.
+You can connect to an evaluation server locally by `bexhoma jupyter`.
 This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888
 

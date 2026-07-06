@@ -74,7 +74,7 @@ This
 
 ### Status
 
-You can watch the status while benchmark is running via `bexperiments status`
+You can watch the status while benchmark is running via `bexhoma status`
 
 ```bash
 Dashboard: Running
@@ -232,7 +232,7 @@ Moreover the loading times (schema creation, ingestion and indexing), the geomet
 Please note that the results are not suitable for being published as official TPC-H results.
 In particular the refresh streams are missing.
 
-To see the summary again you can simply call `bexperiments summary -e 1759316196` with the experiment code.
+To see the summary again you can simply call `bexhoma summary -e 1759316196` with the experiment code.
 
 ### Detailed Evaluation
 
@@ -241,16 +241,16 @@ Detailed evaluations can be done using DBMSBenchmarker
 * [Dashboard](https://dbmsbenchmarker.readthedocs.io/en/latest/Dashboard.html)
 * [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
 
-You can connect to an evaluation server in the cluster by `bexperiments dashboard`.
+You can connect to an evaluation server in the cluster by `bexhoma dashboard`.
 This forwards ports, so you have
 * a DBMSBenchmarker dashboard in browser at http://localhost:8050
 * a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
-You can connect to a local evaluation server by `bexperiments localdashboard`.
+You can connect to a local evaluation server by `bexhoma localdashboard`.
 This forwards ports, so you have
 * a DBMSBenchmarker dashboard in browser at http://localhost:8050
 
-You can connect to a local jupyter server by `bexperiments jupyter`.
+You can connect to a local jupyter server by `bexhoma jupyter`.
 This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888 containing the example notebooks
 
@@ -1380,7 +1380,7 @@ bexhoma tpch \
 
 ### Status Data Disk
 
-You can watch the status of the data disk via `bexperiments data`.
+You can watch the status of the data disk via `bexhoma data`.
 
 In the following example output we see we have generated TPC-H at SF=100 using 8 generators.
 The data set is split into 8 parts, each of about 14G size.
@@ -1401,7 +1401,7 @@ In total the data set has a size of 106G.
 
 ### Status Database and Benchmark
 
-You can watch the status of experiments via `bexperiments status`.
+You can watch the status of experiments via `bexhoma status`.
 
 In the following example output we see all components of bexhoma are up and running.
 The cluster stores a MonetDB database corresponding to TPC-H of SF=100.
@@ -1587,11 +1587,11 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
-To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
+To see the summary again you can simply call `bexhoma summary -e 1708411664` with the experiment code.
 
 ### List local results
 
-You can inspect a preview list of results via `bexperiments localresults`.
+You can inspect a preview list of results via `bexhoma localresults`.
 
 ```bash
 +------------+----------------------+------------------------------------------------------------------------------------------------+---------------------------------------------------+---------+-------------+---------------------+
