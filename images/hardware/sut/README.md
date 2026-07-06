@@ -5,14 +5,31 @@ hardware benchmark commands from the benchmarker container via SSH.
 
 The image installs sysbench and fio, creates a passwordless SSH user `bench`,
 and starts an SSH daemon as its entrypoint. The benchmarker connects to this
-container via SSH and invokes the tools directly; no Bexhoma coordination logic
-runs inside this image.
+container via SSH and invokes fio/sysbench directly; no Bexhoma coordination
+logic runs inside this image. It also starts a fixed pool of persistent
+`sockperf server` instances (see below) that the benchmarker's sockperf client
+connects to directly, without SSH.
 
 ## Included tools
 
 * **sysbench** — CPU and memory benchmarks.
 * **fio** — disk I/O benchmarks.
+* **sockperf** — network latency/throughput benchmarks; built from source in a
+  builder stage (not packaged for Alpine/musl), see the Dockerfile comments.
 * **OpenSSH server** — listens on port 22; accepts the benchmarker's key.
+
+## sockperf server pool
+
+`entrypoint.sh` starts one UDP and one TCP `sockperf server` per port in
+`[SOCKPERF_BASE_PORT, SOCKPERF_BASE_PORT + SOCKPERF_NUM_SERVERS)` (defaults:
+20000, 16 servers), all backgrounded before `sshd` takes over as the
+foreground process. This lets several benchmarker pods (`BEXHOMA_NUM_PODS > 1`)
+each connect to their own dedicated server — see
+`images/hardware/benchmarker/run_sockperf.sh`, which picks a port from
+`BEXHOMA_CHILD` — instead of contending on a single socket. The count is a
+static ceiling baked into this image and `k8s/deploymenttemplate-Hardware.yml`,
+not a per-experiment setting; pods wrap around (share a server) if a sweep
+ever asks for more pods than provisioned servers.
 
 ## SSH access
 

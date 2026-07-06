@@ -2,8 +2,8 @@
 # Dockerfile for Bexhoma - Benchmarker Hardware
 ######################################################################################
 #
-# This Dockerfile builds an image for a Bexhoma benchmarker running sysbench and fio
-# hardware workloads against a SUT container via SSH.
+# This Dockerfile builds an image for a Bexhoma benchmarker running sysbench, fio, or
+# sockperf hardware workloads against a SUT container.
 #
 # Base Image: alpine:3.20
 #
@@ -11,12 +11,31 @@
 # Email: patrick.erdelt@bht-berlin.de
 # Date: 2025-05-18
 # Version: 1.0
-# Description: Connects to a SUT container via SSH and runs sysbench (CPU/memory)
-#   or a single, ENV-configurable fio (disk I/O) workload. Configuration is supplied
-#   via environment variables. A Redis message queue is consulted for pod-assignment
-#   details. redis-cli and openssh-client are installed for queue interaction and SSH
-#   access; jq parses fio's JSON result into KEY:VALUE metrics and a CSV summary.
+# Description: Connects to a SUT container via SSH and runs sysbench (CPU/memory),
+#   a single ENV-configurable fio (disk I/O) workload, or a sockperf (network
+#   latency/throughput) workload directly over the SUT's sockperf port. Configuration
+#   is supplied via environment variables. A Redis message queue is consulted for
+#   pod-assignment details. redis-cli and openssh-client are installed for queue
+#   interaction and SSH access; jq parses fio's JSON result into KEY:VALUE metrics
+#   and a CSV summary.
 ######################################################################################
+
+######################################################################################
+# Build sockperf from source (not packaged for Alpine/musl) — same build as
+# images/hardware/sut/Dockerfile, kept in sync with it.
+######################################################################################
+FROM alpine:3.20 AS sockperf-builder
+RUN apk add --no-cache git gcc g++ make automake autoconf libtool linux-headers musl-dev
+RUN git clone --depth 1 https://github.com/Mellanox/sockperf.git /src
+WORKDIR /src
+RUN sed -i '/AC_SEARCH_LIBS(\[backtrace\]/d' configure.ac \
+    && sed -i '/#include <execinfo.h>/d' src/os_abstract.h \
+    && awk '/^void os_printf_backtrace\(void\) \{/{print; print "}"; f=1; next} f && /^\}/{f=0; next} f{next} {print}' src/os_abstract.cpp > /tmp/os_abstract.cpp \
+    && mv /tmp/os_abstract.cpp src/os_abstract.cpp \
+    && sed -i '1i #include <cstdio>' src/vma-xlio-redirect.cpp \
+    && sed -i '1i #include <sys/time.h>' src/ticks.h
+RUN ./autogen.sh && ./configure && make -j$(nproc)
+
 FROM alpine:3.20
 
 ######################################################################################
@@ -66,10 +85,28 @@ ENV HARDWARE_FIO_ENGINE=sync
 ENV HARDWARE_FIO_FSYNC=0
 ENV HARDWARE_FIO_RWMIXREAD=50
 
+# sockperf workload parameters (HARDWARE_TYPE=sockperf only)
+ENV HARDWARE_SOCKPERF_MODE=ul
+ENV HARDWARE_SOCKPERF_PROTOCOL=udp
+ENV HARDWARE_SOCKPERF_MSGSIZE=64
+ENV HARDWARE_SOCKPERF_MPS=max
+# Must stay numerically in sync with SOCKPERF_BASE_PORT/SOCKPERF_NUM_SERVERS in
+# images/hardware/sut/Dockerfile — same kind of manually-synced constant as
+# SSH_PORT=9091 already is between run_fio.sh/run_sysbench.sh and the SUT's
+# k8s Service (see k8s/deploymenttemplate-Hardware.yml).
+ENV SOCKPERF_BASE_PORT=20000
+ENV SOCKPERF_NUM_SERVERS=16
+
 ######################################################################################
-# Install SSH client, redis-cli and jq (for fio JSON result parsing)
+# Install SSH client, redis-cli, jq (for fio JSON result parsing), and
+# libstdc++ (sockperf's only runtime dependency)
 ######################################################################################
-RUN apk add --no-cache openssh-client bash redis jq
+RUN apk add --no-cache openssh-client bash redis jq libstdc++
+
+######################################################################################
+# Install sockperf binary (built in the sockperf-builder stage above)
+######################################################################################
+COPY --from=sockperf-builder /src/sockperf /usr/local/bin/sockperf
 
 ######################################################################################
 # Install SSH private key for SUT access
@@ -83,7 +120,8 @@ RUN chmod 600 /root/.ssh/id_ed25519
 ######################################################################################
 COPY run_sysbench.sh /usr/local/bin/run_sysbench.sh
 COPY run_fio.sh /usr/local/bin/run_fio.sh
-RUN chmod +x /usr/local/bin/run_sysbench.sh /usr/local/bin/run_fio.sh
+COPY run_sockperf.sh /usr/local/bin/run_sockperf.sh
+RUN chmod +x /usr/local/bin/run_sysbench.sh /usr/local/bin/run_fio.sh /usr/local/bin/run_sockperf.sh
 
 COPY benchmarker.sh /benchmarker.sh
 RUN chmod +x /benchmarker.sh

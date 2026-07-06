@@ -1,8 +1,9 @@
-# Benchmarker for hardware benchmarks (sysbench / fio)
+# Benchmarker for hardware benchmarks (sysbench / fio / sockperf)
 
 This folder contains the Dockerfile for a benchmarker that connects to a SUT
-container via SSH and runs sysbench (CPU and memory) or fio (disk I/O) workloads
-remotely.
+container and runs sysbench (CPU and memory) or fio (disk I/O) workloads over
+SSH, or a sockperf (network latency/throughput) workload directly against one
+of the SUT's persistent sockperf server instances (no SSH).
 
 ## Environment variables
 
@@ -45,13 +46,13 @@ same synchronized instant — the basis for co-located noisy-neighbor experiment
 
 ### SUT connection
 
-* `BEXHOMA_HOST`: Hostname of the SUT container. Injected automatically by bexhoma's manifest builder (`configurations/manifest.py`) with the SUT's real Kubernetes service DNS name; not set via the Dockerfile. SSH connects on port 9091, not 22 — `bexhoma-service` maps the SUT's real SSH port (22) to service port 9091 (`port-dbms`), the same port every other DBMS's client connects through.
-* `BEXHOMA_SUT_USER`: SSH user on the SUT (default `bench`).
-* `BEXHOMA_SUT_KEY`: Path to the SSH private key inside the benchmarker image (default `/root/.ssh/id_ed25519`).
+* `BEXHOMA_HOST`: Hostname of the SUT container. Injected automatically by bexhoma's manifest builder (`configurations/manifest.py`) with the SUT's real Kubernetes service DNS name; not set via the Dockerfile. SSH connects on port 9091, not 22 — `bexhoma-service` maps the SUT's real SSH port (22) to service port 9091 (`port-dbms`), the same port every other DBMS's client connects through. sockperf connects directly to `BEXHOMA_HOST` on one of its own dedicated ports instead (see below) — no SSH involved.
+* `BEXHOMA_SUT_USER`: SSH user on the SUT (default `bench`). Not used by sockperf.
+* `BEXHOMA_SUT_KEY`: Path to the SSH private key inside the benchmarker image (default `/root/.ssh/id_ed25519`). Not used by sockperf.
 
 ### Hardware benchmark parameters
 
-* `HARDWARE_TYPE`: Benchmark to run — `sysbench` or `fio`.
+* `HARDWARE_TYPE`: Benchmark to run — `sysbench`, `fio`, or `sockperf`.
 * `HARDWARE_THREADS`: Number of threads passed to sysbench (default `4`). Not used by fio.
 * `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/database/fio-test`). Not used by sysbench. `/database` is always present on the SUT (baked into `images/hardware/sut/Dockerfile`); whether it's backed by a real PVC or is just the SUT container's own ephemeral filesystem depends on `-rst` at deploy time — see `images/hardware/sut/README.md`.
 * `HARDWARE_SIZE`: Size of the fio test file (default `1G`). Not used by sysbench.
@@ -70,6 +71,14 @@ options exposed by `scripts/hardware-benchmark.sh`):
 * `HARDWARE_FIO_FSYNC`: Call `fsync` every N writes; `0` disables it (default `0`).
 * `HARDWARE_FIO_RWMIXREAD`: Percentage of reads when `HARDWARE_FIO_RW=randrw` (default `50`). Ignored for all other `HARDWARE_FIO_RW` values.
 
+### sockperf workload parameters (`HARDWARE_TYPE=sockperf` only)
+
+* `HARDWARE_SOCKPERF_MODE`: `ul` (under-load — fixed send rate, full latency percentiles) or `pp` (ping-pong — one message at a time; default `ul`).
+* `HARDWARE_SOCKPERF_PROTOCOL`: `udp` or `tcp` (default `udp`). The SUT runs one server of each protocol per port, so either can be selected without a separate port range.
+* `HARDWARE_SOCKPERF_MSGSIZE`: Message payload size in bytes (default `64`).
+* `HARDWARE_SOCKPERF_MPS`: Messages per second, or the literal `max` for uncapped (default `max`). Passed directly to sockperf's own `--mps` flag.
+* `SOCKPERF_BASE_PORT` / `SOCKPERF_NUM_SERVERS`: Must stay numerically in sync with the same-named `ENV` in `images/hardware/sut/Dockerfile` — used to compute which of the SUT's server instances this pod connects to (see below).
+
 ## Workloads
 
 ### sysbench (`HARDWARE_TYPE=sysbench`)
@@ -84,9 +93,22 @@ Runs two tests sequentially on the SUT via SSH:
 Runs one fio job on the SUT via SSH, configured entirely by the `HARDWARE_FIO_*`
 variables above, with `--direct=1 --time_based --group_reporting --output-format=json`.
 
+### sockperf (`HARDWARE_TYPE=sockperf`)
+
+Runs one `sockperf {ul|pp}` client directly against one of the SUT's persistent
+server instances (no SSH). The target port is derived from `BEXHOMA_CHILD`:
+
+```
+port = SOCKPERF_BASE_PORT + ((BEXHOMA_CHILD - 1) mod SOCKPERF_NUM_SERVERS)
+```
+
+so several benchmarker pods (`BEXHOMA_NUM_PODS > 1`) each get their own
+dedicated server instead of contending on one socket; if a sweep ever asks for
+more pods than provisioned servers, pods wrap around and share a server.
+
 ## Output
 
-Both workloads write their raw result(s) to `/results/$BEXHOMA_EXPERIMENT/`, named
+All three workloads write their raw result(s) to `/results/$BEXHOMA_EXPERIMENT/`, named
 `<tool>.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.<uuid>.<ext>` (consistent with the other
 Bexhoma benchmarker images):
 
@@ -94,7 +116,11 @@ Bexhoma benchmarker images):
 * **fio**: `fio.....json` (raw fio JSON report) and `fio.....csv` (one-row summary:
   IOPS, bandwidth, and 8 completion-latency percentiles — p01/p10/p50/p90/p95/p99/p999/p9999,
   in ms — per read/write direction).
+* **sockperf**: `sockperf.....fulllog.csv` (sockperf's own per-message `--full-log`) and
+  `sockperf.....csv` (one-row summary: avg/p50/p99/p999 latency in ms, message rate, and
+  dropped-message rate).
 
-Both scripts also echo a `KEY:VALUE` summary of the same metrics to stdout
+All three scripts also echo a `KEY:VALUE` summary of the same metrics to stdout
 (`HARDWARE_FIO_READ_IOPS`, `HARDWARE_FIO_READ_LAT_P99_MS`, `HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC`,
-etc.), so results can be scraped from the pod log without opening the result files.
+`HARDWARE_SOCKPERF_LATENCY_P99_MS`, `HARDWARE_SOCKPERF_MSG_RATE_PER_SEC`, etc.), so results can
+be scraped from the pod log without opening the result files.

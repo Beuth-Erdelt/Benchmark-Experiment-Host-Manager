@@ -1,9 +1,10 @@
 """
-Evaluator for Hardware (fio/sysbench) experiments.
+Evaluator for Hardware (fio/sysbench/sockperf) experiments.
 
 Provides :class:`HardwareEvaluator`, which extends :class:`LogEvaluator` to parse and
-aggregate fio disk I/O results (IOPS, bandwidth, completion-latency percentiles) and
-sysbench CPU/memory results (events/sec, throughput, completion latency) produced by
+aggregate fio disk I/O results (IOPS, bandwidth, completion-latency percentiles),
+sysbench CPU/memory results (events/sec, throughput, completion latency), and sockperf
+network results (latency percentiles, message rate, dropped-message rate) produced by
 ``images/hardware/benchmarker``.
 
 Authors: Patrick K. Erdelt
@@ -32,6 +33,8 @@ _KEYS_PARAMETERS = [
     'HARDWARE_FIO_RW', 'HARDWARE_FIO_BS', 'HARDWARE_FIO_IODEPTH',
     'HARDWARE_FIO_NUMJOBS', 'HARDWARE_FIO_ENGINE', 'HARDWARE_FIO_FSYNC',
     'HARDWARE_FIO_FDATASYNC', 'HARDWARE_FIO_RWMIXREAD',
+    'HARDWARE_SOCKPERF_MODE', 'HARDWARE_SOCKPERF_PROTOCOL',
+    'HARDWARE_SOCKPERF_MSGSIZE', 'HARDWARE_SOCKPERF_MPS', 'HARDWARE_SOCKPERF_PORT',
 ]
 _PERCENTILE_LABELS = ['P01', 'P10', 'P50', 'P90', 'P95', 'P99', 'P999', 'P9999']
 _KEYS_RESULTS = ['HARDWARE_FIO_READ_IOPS', 'HARDWARE_FIO_WRITE_IOPS',
@@ -43,6 +46,11 @@ _KEYS_RESULTS += [
     'HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC', 'HARDWARE_SYSBENCH_CPU_TOTAL_TIME_S',
     'HARDWARE_SYSBENCH_CPU_LAT_P95_MS', 'HARDWARE_SYSBENCH_MEMORY_OPS_PER_SEC',
     'HARDWARE_SYSBENCH_MEMORY_THROUGHPUT_MIBPS', 'HARDWARE_SYSBENCH_MEMORY_LAT_P95_MS',
+]
+_KEYS_RESULTS += [
+    'HARDWARE_SOCKPERF_LATENCY_AVG_MS', 'HARDWARE_SOCKPERF_LATENCY_P50_MS',
+    'HARDWARE_SOCKPERF_LATENCY_P99_MS', 'HARDWARE_SOCKPERF_LATENCY_P999_MS',
+    'HARDWARE_SOCKPERF_MSG_RATE_PER_SEC', 'HARDWARE_SOCKPERF_DROPPED_PER_SEC',
 ]
 
 _NATURAL_SORT_DIGIT_WIDTH = 10  # zero-pad width; comfortably covers phase strings like "Hardware-1-1-128"
@@ -179,6 +187,10 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_fio_iodepth': 'int', 'hardware_fio_numjobs': 'int',
             'hardware_fio_fsync': 'int', 'hardware_fio_fdatasync': 'int',
             'hardware_fio_rwmixread': 'int', 'tenant_id': 'int', 'duration': 'int',
+            'hardware_sockperf_mode': 'str', 'hardware_sockperf_protocol': 'str',
+            'hardware_sockperf_msgsize': 'int', 'hardware_sockperf_port': 'int',
+            # not 'int': the column may hold the literal "max" instead of a rate
+            'hardware_sockperf_mps': 'str',
         }
         for key in _KEYS_RESULTS:
             dtype_map[key.lower()] = 'float'
@@ -238,6 +250,12 @@ class HardwareEvaluator(LogEvaluator):
                                'hardware_fio_rwmixread']:
                 if fio_param in grp.columns:
                     dict_grp[fio_param] = grp[fio_param].iloc[0]
+            # sockperf_port is the exception: it varies per pod (each pod gets its own
+            # dedicated server, see run_sockperf.sh), so it's not copied here
+            for sockperf_param in ['hardware_sockperf_mode', 'hardware_sockperf_protocol',
+                                    'hardware_sockperf_msgsize', 'hardware_sockperf_mps']:
+                if sockperf_param in grp.columns:
+                    dict_grp[sockperf_param] = grp[sockperf_param].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             df_grp = pd.DataFrame(dict_grp, index=["-".join(map(str, key))])
             df_aggregated = pd.concat([df_aggregated, df_grp])
@@ -266,7 +284,12 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
             'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
             'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
-            'hardware_sysbench_memory_lat_p95_ms', 'errors',
+            'hardware_sysbench_memory_lat_p95_ms',
+            'hardware_sockperf_mode', 'hardware_sockperf_protocol', 'hardware_sockperf_msgsize',
+            'hardware_sockperf_mps', 'hardware_sockperf_port',
+            'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
+            'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
+            'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec', 'errors',
         ]
         df.fillna(0, inplace=True)
         df_plot = self.benchmarking_set_datatypes(df)
@@ -312,7 +335,12 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
                 'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
                 'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
-                'hardware_sysbench_memory_lat_p95_ms', 'errors',
+                'hardware_sysbench_memory_lat_p95_ms',
+                'hardware_sockperf_mode', 'hardware_sockperf_protocol', 'hardware_sockperf_msgsize',
+                'hardware_sockperf_mps',
+                'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
+                'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
+                'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec', 'errors',
             ]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -354,7 +382,12 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
                 'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
                 'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
-                'hardware_sysbench_memory_lat_p95_ms', 'errors',
+                'hardware_sysbench_memory_lat_p95_ms',
+                'hardware_sockperf_mode', 'hardware_sockperf_protocol', 'hardware_sockperf_msgsize',
+                'hardware_sockperf_mps',
+                'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
+                'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
+                'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec', 'errors',
             ]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -379,6 +412,9 @@ class HardwareEvaluator(LogEvaluator):
         memory sub-test can legitimately run with 0 CPU events only if
         ``HARDWARE_THREADS`` starves the CPU test, which does not happen with the
         image's fixed CPU-then-memory sequence, so 0 always indicates a failure).
+        A sockperf round with 0 message rate did not produce a usable measurement
+        (a connection failure or invalid argument combination, see run_sockperf.sh's
+        own validation) rather than a legitimate all-zero result.
 
         :param experiment: The owning experiment object.
         :param df_loading: Per-run loading DataFrame; always empty for Hardware.
@@ -410,4 +446,12 @@ class HardwareEvaluator(LogEvaluator):
                     passed,
                     "Execution Phase: every round has non-zero CPU events/sec" if passed
                     else "Execution Phase: at least one round has 0 CPU events/sec"
+                )
+            has_sockperf_columns = 'hardware_sockperf_msg_rate_per_sec' in df_reduced.columns
+            if hardware_type == 'sockperf' and not df_reduced.empty and has_sockperf_columns:
+                passed = not (df_reduced['hardware_sockperf_msg_rate_per_sec'] == 0).any()
+                experiment._record_test(
+                    passed,
+                    "Execution Phase: every round has non-zero sockperf message rate" if passed
+                    else "Execution Phase: at least one round has 0 sockperf message rate"
                 )

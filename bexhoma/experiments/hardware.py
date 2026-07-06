@@ -1,9 +1,10 @@
 """
-Experiment class for Hardware (fio/sysbench) benchmarks.
+Experiment class for Hardware (fio/sysbench/sockperf) benchmarks.
 
 Provides :class:`HardwareExperiment`, which extends :class:`MixedExperiment` to
-orchestrate raw hardware I/O (fio) and CPU/memory (sysbench) benchmarks against
-a dedicated SUT container inside a Kubernetes cluster. Unlike every other
+orchestrate raw hardware I/O (fio), CPU/memory (sysbench), and network
+latency/throughput (sockperf) benchmarks against a dedicated SUT container
+inside a Kubernetes cluster. Unlike every other
 experiment type, Hardware never loads data — there is no schema, no DDL, and
 no loader job template; ``experiment_dict_template["loader"]`` stays empty and
 ``loading_deactivated`` is set ``True`` unconditionally so
@@ -28,7 +29,7 @@ __all__ = ["HardwareExperiment"]
 
 class HardwareExperiment(MixedExperiment):
     """
-    Hardware experiment: orchestrates fio/sysbench benchmarks against a
+    Hardware experiment: orchestrates fio/sysbench/sockperf benchmarks against a
     dedicated SUT container inside a Kubernetes cluster.
 
     Registers a :class:`~bexhoma.benchmarks.hardware.Hardware` benchmark object

@@ -1,5 +1,5 @@
 """
-Collector for Hardware (fio/sysbench) experiments.
+Collector for Hardware (fio/sysbench/sockperf) experiments.
 
 Provides :class:`HardwareCollector`, a subclass of :class:`CollectorBase` that wires up
 :class:`evaluators.hardware` as the evaluator and overrides the performance aggregation
@@ -17,7 +17,7 @@ from .base import CollectorBase
 
 __all__ = ["HardwareCollector"]
 
-#: fio result columns shown in the default summary view.
+#: fio and sockperf result columns shown in the default summary view.
 _SUMMARY_COLS = [
     'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
     'hardware_fio_engine', 'hardware_fio_numjobs',
@@ -25,13 +25,16 @@ _SUMMARY_COLS = [
     'hardware_fio_read_bw_kbps', 'hardware_fio_write_bw_kbps',
     'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
     'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
+    'hardware_sockperf_mode', 'hardware_sockperf_protocol', 'hardware_sockperf_mps',
+    'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p99_ms',
+    'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec',
     'errors',
 ]
 
 
 class HardwareCollector(CollectorBase):
     """
-    Collector for Hardware (fio/sysbench) experiments.
+    Collector for Hardware (fio/sysbench/sockperf) experiments.
 
     Overrides :meth:`get_evaluator` to return a :class:`evaluators.hardware` instance and
     overrides the performance aggregation methods because the hardware evaluator's
@@ -126,13 +129,13 @@ class HardwareCollector(CollectorBase):
 
     def get_summary(self) -> pd.DataFrame:
         """
-        Returns a focused comparison table of key fio metrics across all experiment codes.
+        Returns a focused comparison table of key fio/sockperf metrics across all experiment codes.
 
         Calls :meth:`get_performance_aggregated_per_phase` and filters to the workload
-        parameter and key IOPS / bandwidth / tail-latency columns defined in
-        :data:`_SUMMARY_COLS`.  Columns absent from the aggregated result are silently skipped.
+        parameter and key IOPS / bandwidth / tail-latency / message-rate columns defined
+        in :data:`_SUMMARY_COLS`.  Columns absent from the aggregated result are silently skipped.
 
-        :return: DataFrame with one row per phase and the key fio comparison columns,
+        :return: DataFrame with one row per phase and the key fio/sockperf comparison columns,
                  or an empty DataFrame when no results are available.
         :rtype: pandas.DataFrame
         """

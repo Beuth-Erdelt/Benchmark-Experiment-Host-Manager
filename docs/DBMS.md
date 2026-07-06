@@ -815,17 +815,26 @@ See [Example: Cloud Database](Example-CloudDatabase.md) for a worked example.
 
 ## Hardware
 
-`Hardware` is not a DBMS — it benchmarks raw disk I/O (fio) or CPU/memory
-(sysbench) on a dedicated SUT container, bypassing any database engine
-entirely. The benchmarker connects to the SUT over SSH instead of JDBC or a
-CLI client, so there is no `loadData` command and no DDL scripts. Run it with
+`Hardware` is not a DBMS — it benchmarks raw disk I/O (fio), CPU/memory
+(sysbench), or network latency/throughput (sockperf) on a dedicated SUT
+container, bypassing any database engine entirely. The fio/sysbench
+benchmarker connects to the SUT over SSH; sockperf connects directly to one
+of a fixed pool of persistent `sockperf server` instances running on the SUT
+(see below). There is no `loadData` command and no DDL scripts. Run it with
 `python hardware.py run -dbms Hardware -xht fio ...` (see `hardware.py -h`
-for the full set of fio-specific flags).
+for the full set of fio/sysbench/sockperf-specific flags).
 
 **Deployment template:** [`k8s/deploymenttemplate-Hardware.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Hardware.yml)
 — mounts a PVC at `/database` on the SUT; the benchmarker's
 `HARDWARE_TEST_DIR` targets a subdirectory of this mount so fio measures the
-PVC-backed storage instead of the SUT container's ephemeral filesystem.
+PVC-backed storage instead of the SUT container's ephemeral filesystem. The
+same manifest also declares a static pool of `SOCKPERF_NUM_SERVERS` (default
+16) container/Service ports starting at `SOCKPERF_BASE_PORT` (default 20000),
+each running one UDP and one TCP `sockperf server` (started by
+`images/hardware/sut/entrypoint.sh`); a benchmarker pod picks its dedicated
+server via `BEXHOMA_CHILD` (see `images/hardware/benchmarker/run_sockperf.sh`),
+so several benchmarker pods can each reach a separate server instead of
+contending on one socket.
 
 **Configuration** (from `cluster.config`):
 
