@@ -156,7 +156,7 @@ Metrics are fetched after each phase and stored alongside benchmark results for 
 ### Dashboard
 
 An in-cluster dashboard (Dash / Plotly) serves as an interactive result browser.
-Results can also be inspected locally via the `bexperiments` CLI tool or Jupyter notebooks.
+Results can also be inspected locally via the `bexhoma` CLI tool or Jupyter notebooks.
 
 ---
 
@@ -234,9 +234,9 @@ Collectors are used when comparing results from several runs or parameter sweeps
 Metric aggregation follows the metric type: counters are reported as deltas, gauges as means.
 
 Results can be inspected via:
-- The `bexperiments` CLI tool (status, summary, local result list)
-- The in-cluster dashboard (`bexperiments dashboard`)
-- A local dashboard (`bexperiments localdashboard`)
+- The `bexhoma` CLI tool (status, summary, local result list)
+- The in-cluster dashboard (`bexhoma dashboard`)
+- A local dashboard (`bexhoma localdashboard`)
 - Jupyter notebooks (in `images/evaluator_dbmsbenchmarker/notebooks/`)
 
 ---

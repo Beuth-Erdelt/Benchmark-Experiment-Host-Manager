@@ -76,7 +76,7 @@ See [example results](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-
 ## Quickstart
 
 Each command below installs PostgreSQL, loads data, runs the benchmark, and prints a summary.
-Monitor progress with `bexperiments status` while running.
+Monitor progress with `bexhoma status` while running.
 
 ### YCSB
 

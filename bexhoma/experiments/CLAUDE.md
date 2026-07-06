@@ -502,7 +502,7 @@ The MRO for `tpch` is: `tpch → dbmsbenchmarker → mixed → base`.
 
 `tpch` overrides `show_summary()` (at `experiments/tpch.py`):
 1. If no `RefreshStreamBenchmark` is in `self.benchmarks` (post-hoc
-   `bexperiments summary` — `enable_refresh_stream()` was not called), creates
+   `bexhoma summary` — `enable_refresh_stream()` was not called), creates
    one on the fly with a fresh evaluator and **temporarily appends it** to
    `self.benchmarks`.
 2. Calls `super().show_summary()` — which is `dbmsbenchmarker.show_summary()`.

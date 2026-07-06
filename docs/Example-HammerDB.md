@@ -73,7 +73,7 @@ This
 
 ### Status
 
-You can watch the status while benchmark is running via `bexperiments status`
+You can watch the status while benchmark is running via `bexhoma status`
 
 ```bash
 Dashboard: Running
@@ -200,7 +200,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 We can see that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads) - but are a bit weaker.
 
-To see the summary again you can simply call `bexperiments summary -e 1708411664` with the experiment code.
+To see the summary again you can simply call `bexhoma summary -e 1708411664` with the experiment code.
 
 ### Detailed Evaluation
 
@@ -208,11 +208,11 @@ Results are transformed into pandas DataFrames and can be inspected in detail.
 See for example
 * [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
 
-You can connect to an evaluation server in the cluster by `bexperiments dashboard`.
+You can connect to an evaluation server in the cluster by `bexhoma dashboard`.
 This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888
 
-You can connect to an evaluation server locally by `bexperiments jupyter`.
+You can connect to an evaluation server locally by `bexhoma jupyter`.
 This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888
 

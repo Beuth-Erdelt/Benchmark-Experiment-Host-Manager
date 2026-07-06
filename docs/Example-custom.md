@@ -89,10 +89,10 @@ RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
 
 ## Status and Evaluation
 
-You can see the status of running experiments via `bexperiments status`
+You can see the status of running experiments via `bexhoma status`
 
 Finished experiments can be inspected locally or using the dashboard container.
-`bexperiments dashboard` forwards to dashboard to `localhost:8888`.
+`bexhoma dashboard` forwards to dashboard to `localhost:8888`.
 You can connect to a Jupyter server there (password is admin).
 
 There is a variety of evaluation tools included.

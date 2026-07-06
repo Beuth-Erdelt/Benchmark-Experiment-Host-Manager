@@ -141,7 +141,7 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
         :meth:`dbmsbenchmarker.show_summary` places the section right after
         ``### Execution → Per Phase``.
 
-        When called post-hoc via ``bexperiments summary`` (no
+        When called post-hoc via ``bexhoma summary`` (no
         :meth:`enable_refresh_stream`), a temporary
         :class:`~bexhoma.benchmarks.RefreshStreamBenchmark` is appended to
         ``self.benchmarks`` before delegating to ``super()``, so the same loop

@@ -11,6 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
+from bexhoma.scripts.cli import EXPERIMENT_MODES
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -32,7 +33,7 @@ def manage():
     print(description)
     # argparse
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=['stop','status','dashboard','localdashboard','localresults','jupyter','master','data','summary'])
+    parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=EXPERIMENT_MODES)
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-fe', '--force-evaluate', help='force a re-evaluation of the results', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
