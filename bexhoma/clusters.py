@@ -854,6 +854,210 @@ class Kubernetes():
                 configuration=configuration, pvc=pvc
             )
 
+    # Bulk resource fetch: each method below issues exactly one API call and
+    # returns the full objects (metadata, spec and status together), so that
+    # callers needing many pods/PVCs/etc. can filter and read them in memory
+    # instead of issuing one ``get_*``/``get_*_status`` round-trip each.
+    def _build_label_selector(self, app: str = '', component: str = '', experiment: str = '', configuration: str = '') -> str:
+        """
+        Build a Kubernetes label selector string from app/component/experiment/configuration.
+
+        :param app: ``app`` label value.
+        :type app: str
+        :param component: ``component`` label value.
+        :type component: str
+        :param experiment: ``experiment`` label value.
+        :type experiment: str
+        :param configuration: ``configuration`` label value.
+        :type configuration: str
+        :return: Comma-separated label selector string.
+        :rtype: str
+        """
+        label = 'app=' + app
+        if component:
+            label += ',component=' + component
+        if experiment:
+            label += ',experiment=' + experiment
+        if configuration:
+            label += ',configuration=' + configuration
+        return label
+
+    def list_pods_full(self, app: str = '', component: str = '', experiment: str = '', configuration: str = '') -> list:
+        """
+        Return full Pod objects matching the given label selectors in a single API call.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :type app: str
+        :param component: ``component`` label value.
+        :type component: str
+        :param experiment: ``experiment`` label value.
+        :type experiment: str
+        :param configuration: ``configuration`` label value.
+        :type configuration: str
+        :return: List of ``kubernetes.client.V1Pod`` objects.
+        :rtype: list
+        """
+        if not app:
+            app = self.appname
+        label = self._build_label_selector(app=app, component=component, experiment=experiment, configuration=configuration)
+        self.logger.debug(f'Kubernetes.list_pods_full({label})')
+        try:
+            api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
+            return api_response.items
+        except ApiException as e:
+            print(f"Exception when calling CoreV1Api->list_namespaced_pod for list_pods_full: {e}\n")
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.list_pods_full(app=app, component=component, experiment=experiment, configuration=configuration)
+
+    def list_pvcs_full(self, app: str = '', component: str = '', experiment: str = '', configuration: str = '') -> list:
+        """
+        Return full PersistentVolumeClaim objects matching the given label selectors in a single API call.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :type app: str
+        :param component: ``component`` label value.
+        :type component: str
+        :param experiment: ``experiment`` label value.
+        :type experiment: str
+        :param configuration: ``configuration`` label value.
+        :type configuration: str
+        :return: List of ``kubernetes.client.V1PersistentVolumeClaim`` objects.
+        :rtype: list
+        """
+        if not app:
+            app = self.appname
+        label = self._build_label_selector(app=app, component=component, experiment=experiment, configuration=configuration)
+        self.logger.debug(f'Kubernetes.list_pvcs_full({label})')
+        try:
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(self.namespace, label_selector=label)
+            return api_response.items
+        except ApiException as e:
+            print(f"Exception when calling CoreV1Api->list_namespaced_persistent_volume_claim for list_pvcs_full: {e}\n")
+            self.cluster_access()
+            self.wait(2)
+            return self.list_pvcs_full(app=app, component=component, experiment=experiment, configuration=configuration)
+
+    def list_deployments_full(self, app: str = '', component: str = '', experiment: str = '', configuration: str = '') -> list:
+        """
+        Return full Deployment objects matching the given label selectors in a single API call.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :type app: str
+        :param component: ``component`` label value.
+        :type component: str
+        :param experiment: ``experiment`` label value.
+        :type experiment: str
+        :param configuration: ``configuration`` label value.
+        :type configuration: str
+        :return: List of ``kubernetes.client.V1Deployment`` objects.
+        :rtype: list
+        """
+        if not app:
+            app = self.appname
+        label = self._build_label_selector(app=app, component=component, experiment=experiment, configuration=configuration)
+        self.logger.debug(f'Kubernetes.list_deployments_full({label})')
+        try:
+            api_response = self.v1apps.list_namespaced_deployment(self.namespace, label_selector=label)
+            return api_response.items
+        except ApiException as e:
+            print(f"Exception when calling AppsV1Api->list_namespaced_deployment for list_deployments_full: {e}\n")
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.list_deployments_full(app=app, component=component, experiment=experiment, configuration=configuration)
+
+    def list_stateful_sets_full(self, app: str = '', component: str = '', experiment: str = '', configuration: str = '') -> list:
+        """
+        Return full StatefulSet objects matching the given label selectors in a single API call.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :type app: str
+        :param component: ``component`` label value.
+        :type component: str
+        :param experiment: ``experiment`` label value.
+        :type experiment: str
+        :param configuration: ``configuration`` label value.
+        :type configuration: str
+        :return: List of ``kubernetes.client.V1StatefulSet`` objects.
+        :rtype: list
+        """
+        if not app:
+            app = self.appname
+        label = self._build_label_selector(app=app, component=component, experiment=experiment, configuration=configuration)
+        self.logger.debug(f'Kubernetes.list_stateful_sets_full({label})')
+        try:
+            api_response = self.v1apps.list_namespaced_stateful_set(self.namespace, label_selector=label)
+            return api_response.items
+        except ApiException as e:
+            print(f"Exception when calling AppsV1Api->list_namespaced_stateful_set for list_stateful_sets_full: {e}\n")
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.list_stateful_sets_full(app=app, component=component, experiment=experiment, configuration=configuration)
+
+    def list_services_full(self, app: str = '', component: str = '', experiment: str = '', configuration: str = '') -> list:
+        """
+        Return full Service objects matching the given label selectors in a single API call.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :type app: str
+        :param component: ``component`` label value.
+        :type component: str
+        :param experiment: ``experiment`` label value.
+        :type experiment: str
+        :param configuration: ``configuration`` label value.
+        :type configuration: str
+        :return: List of ``kubernetes.client.V1Service`` objects.
+        :rtype: list
+        """
+        if not app:
+            app = self.appname
+        label = self._build_label_selector(app=app, component=component, experiment=experiment, configuration=configuration)
+        self.logger.debug(f'Kubernetes.list_services_full({label})')
+        try:
+            api_response = self.v1core.list_namespaced_service(self.namespace, label_selector=label)
+            return api_response.items
+        except ApiException as e:
+            print(f"Exception when calling CoreV1Api->list_namespaced_service for list_services_full: {e}\n")
+            self.cluster_access()
+            self.wait(2)
+            return self.list_services_full(app=app, component=component, experiment=experiment, configuration=configuration)
+
+    def list_jobs_full(self, app: str = '', component: str = '', experiment: str = '', configuration: str = '') -> list:
+        """
+        Return full Job objects matching the given label selectors in a single API call.
+
+        Each returned object already carries ``spec.completions`` and
+        ``status.succeeded``/``status.conditions``, so callers can determine
+        completion without a further ``read_namespaced_job_status`` call per Job.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname``.
+        :type app: str
+        :param component: ``component`` label value.
+        :type component: str
+        :param experiment: ``experiment`` label value.
+        :type experiment: str
+        :param configuration: ``configuration`` label value.
+        :type configuration: str
+        :return: List of ``kubernetes.client.V1Job`` objects.
+        :rtype: list
+        """
+        if not app:
+            app = self.appname
+        label = self._build_label_selector(app=app, component=component, experiment=experiment, configuration=configuration)
+        self.logger.debug(f'Kubernetes.list_jobs_full({label})')
+        try:
+            api_response = self.v1batches.list_namespaced_job(self.namespace, label_selector=label)
+            return api_response.items
+        except ApiException as e:
+            print(f"Exception when calling BatchV1Api->list_namespaced_job for list_jobs_full: {e}\n")
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self.list_jobs_full(app=app, component=component, experiment=experiment, configuration=configuration)
+
     def get_stateful_set_pods(self, stateful_set=''):
         """
         Return names of Pods belonging to a given StatefulSet.
