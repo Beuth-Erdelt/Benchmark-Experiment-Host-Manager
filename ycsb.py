@@ -31,7 +31,7 @@ if __name__ == '__main__':
     parser.add_argument('-xnsr',  '--xnum-sut-replicas', help='number of SUT replicas per configuration', default=1, dest='num_sut_replicas')
     parser.add_argument('-xnpd',  '--xnum-pd-nodes', help='number of PD (Placement Driver) nodes, independent of -nw (TiDB only; keep odd)', default=3, dest='num_pd_nodes')
     parser.add_argument('-xnbf',  '--xnum-benchmarking-target-factors', help='comma-separated multipliers for the benchmarking ops target (target = -xtb × factor)', default="1", dest='num_benchmarking_target_factors')
-    parser.add_argument('-xnpp',  '--xnum-pooling-pods', help='comma-separated list of connection-pooler pod counts', default="", dest='num_pooling_pods')
+    parser.add_argument('-xnpp',  '--xnum-pooling-pods', help='comma-separated list of connection-pooler pod counts', default="1", dest='num_pooling_pods')
     parser.add_argument('-xnpi',  '--xnum-pooling-in', help='comma-separated list of max inbound connections per pooler pod', default="", dest='num_pooling_in')
     parser.add_argument('-xnpo',  '--xnum-pooling-out', help='comma-separated list of max outbound connections per pooler pod (to the DBMS)', default="", dest='num_pooling_out')
     parser.add_argument('-xwl',   '--xworkload', help='YCSB workload letter (a=read-heavy, b=read-mostly, c=read-only, d=read-latest, e=scan, f=read-modify-write)', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='', dest='workload')
@@ -140,9 +140,10 @@ if __name__ == '__main__':
     num_pooling_out = experiment.get_parameter_as_list('num_pooling_out')
     # if we want to loop over pooling pods, we only allow 1 configuration of loading pods (number and target)
     # this is because naming length is limited in k8s
-    if len(num_pooling_pods) > 0:
-        num_loading_pods = [num_loading_pods[0]]
-        num_loading_threads = [num_loading_threads[0]]
+    # deactivated: truncating the loading sweep silently drops requested configurations
+    #if len(num_pooling_pods) > 1:
+    #    num_loading_pods = [num_loading_pods[0]]
+    #    num_loading_threads = [num_loading_threads[0]]
     # set node labes for components
     if aws:
         # set node labes for components
