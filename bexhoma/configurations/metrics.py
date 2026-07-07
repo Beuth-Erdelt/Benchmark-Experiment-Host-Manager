@@ -91,6 +91,20 @@ class MetricsCollector:
                 worker_infos = cfg.host.get_host_all()
                 worker_infos['args'] = cfg.deployment_infos['statefulset'][component]['args']
                 c['worker'][component].append(worker_infos)
+        # additional Deployment-based components (e.g. pool), excluding sut itself
+        components_deployment = [
+            component for component in cfg.deployment_infos['deployment'].keys()
+            if component != 'sut'
+        ]
+        for component in components_deployment:
+            c['worker'][component] = []
+            pods_worker = cfg.get_worker_pods(component=component)
+            for pod in pods_worker:
+                cfg.pod_sut = pod
+                print("{:30s}: distributed system - get host info for worker {}".format(
+                    cfg.configuration, pod))
+                worker_infos = cfg.host.get_host_all()
+                c['worker'][component].append(worker_infos)
         c['sut'] = []
         pods = cfg.experiment.cluster.get_pods(
             component='sut', configuration=cfg.configuration, experiment=cfg.code)
