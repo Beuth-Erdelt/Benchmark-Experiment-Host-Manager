@@ -393,8 +393,9 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xnsr 3                       <# number of storage replicas #> `
+  -xnsr 3                       <# number of TiDB server (SQL frontend) replicas #> `
   -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD (Placement Driver) nodes #> `
   -nwr 3                        <# replication factor #> `
   -xop 1                        <# number of operations for the benchmark phase (x 1000) #> `
   -m                            <# collect SUT resource metrics #> `
@@ -416,8 +417,9 @@ bexhoma benchbase `
   -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 16                       <# threads per benchmarking pod #> `
-  -xnsr 3                       <# number of storage replicas #> `
+  -xnsr 3                       <# number of TiDB server (SQL frontend) replicas #> `
   -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD (Placement Driver) nodes #> `
   -nwr 3                        <# replication factor #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
