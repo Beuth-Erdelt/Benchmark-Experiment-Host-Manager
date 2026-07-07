@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB', 'Dragonfly'], default=[], nargs='*')
     parser.add_argument('-xnlf',  '--xnum-loading-target-factors', help='comma-separated multipliers for the loading ops target (target = -xtb × factor)', default="1", dest='num_loading_target_factors')
     parser.add_argument('-xnsr',  '--xnum-sut-replicas', help='number of SUT replicas per configuration', default=1, dest='num_sut_replicas')
+    parser.add_argument('-xnpd',  '--xnum-pd-nodes', help='number of PD (Placement Driver) nodes, independent of -nw (TiDB only; keep odd)', default=3, dest='num_pd_nodes')
     parser.add_argument('-xnbf',  '--xnum-benchmarking-target-factors', help='comma-separated multipliers for the benchmarking ops target (target = -xtb × factor)', default="1", dest='num_benchmarking_target_factors')
     parser.add_argument('-xnpp',  '--xnum-pooling-pods', help='comma-separated list of connection-pooler pod counts', default="", dest='num_pooling_pods')
     parser.add_argument('-xnpi',  '--xnum-pooling-in', help='comma-separated list of max inbound connections per pooler pod', default="", dest='num_pooling_in')
@@ -81,6 +82,7 @@ if __name__ == '__main__':
     num_worker_replicas = int(args.num_worker_replicas)
     num_worker_shards = int(args.num_worker_shards)
     num_sut_replicas = int(args.num_sut_replicas)
+    num_pd_nodes = int(args.num_pd_nodes)
     ##############
     ### specific to: YCSB
     ##############
@@ -530,7 +532,8 @@ if __name__ == '__main__':
                         storageConfiguration = 'tidb'
                         )
                     config.set_resources(
-                        replicas_sut = num_sut_replicas
+                        replicas_sut = num_sut_replicas,
+                        replicas_pd = num_pd_nodes
                     )
                     config.set_ddl_parameters(
                         num_worker_replicas = num_worker_replicas,
