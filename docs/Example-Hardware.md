@@ -3897,16 +3897,13 @@ bexhoma hardware \
 ```
 
 This sweeps `-nbp` from 1 to 16 pods under continuous max-rate load (`-xspm ul -xspr max`) with a
-generic 64-byte message. Aggregate throughput (Per Phase table, `hardware_sockperf_msg_rate_per_sec`)
-scales from 4,970 msg/s at 1 pod to 9,903 (2), 18,564 (4), 31,865 (8), and 56,037 msg/s at 16 pods
-— close to linear through 4 pods, then increasingly sublinear (1.72x and 1.76x per doubling at
-8 and 16) as the benchmarker pods themselves start burning more CPU driving the max-rate send loop
-(component benchmarker peak CPU rises from ~1.05 cores at 1 pod to ~24.91 cores at 16, while the
-SUT side stays comparatively low, ~0.19 to ~2.28 cores peak — the client side becomes the
-bottleneck, not the network or server). Per-pod latency also gets noisier at 16 pods: most children
-stay in the 0.17-0.45 ms range, but a few (children 3, 11-13, 15) jump to 1.7-1.9 ms average,
-suggesting contention starts showing up unevenly across the shared server pool at the top of the
-sweep rather than as a uniform slowdown.
+generic 64-byte message. Compare the summed `hardware_sockperf_msg_rate_per_sec` across the five
+rows of the Per Phase table to see whether aggregate throughput scales linearly with pod count or
+flattens out; the `-mc` CPU columns for the SUT deployment versus the benchmarker component show
+which side (server or client) would be driving any flattening. Within a single round, compare
+`hardware_sockperf_latency_avg_ms` across the Per Connection table's children (one row per pod) —
+a uniform value means the shared server pool is handling concurrent pods evenly, an uneven spread
+points to contention on specific servers.
 
 ### Result
 
@@ -4121,9 +4118,10 @@ bexhoma hardware \
 `-xspm pp` mirrors PostgreSQL's synchronous simple-query protocol: one connection sends, blocks
 for the reply, sends the next; `-xspr max` fires the next request the instant the previous reply
 lands, giving the single-connection round-trip latency ceiling — the network-latency analogue of
-the WAL fsync "single outstanding write" tests in the fio section above. With a single connection,
-average round-trip latency is **0.06 ms** (p50 0.04 ms, p99 0.18 ms, p999 0.21 ms), sustaining
-about 9,059 round trips per second.
+the WAL fsync "single outstanding write" tests in the fio section above.
+`hardware_sockperf_latency_avg_ms`/`_p50_ms`/`_p99_ms`/`_p999_ms` in the result table give this
+floor, and `hardware_sockperf_msg_rate_per_sec` reports how many round trips per second that
+translates to for a single connection — the baseline command 20 repeats at growing pod counts.
 
 ### Result
 
@@ -4240,10 +4238,12 @@ bexhoma hardware \
 `-xspm ul` (continuous one-way stream) models WAL streaming replication or a `COPY`/bulk result
 transfer rather than a request/reply cycle. `-xsps 8192` is PostgreSQL's page size (`BLCKSZ`) in
 bytes — the same 8k anchor already used throughout the fio section — so this becomes the
-network-throughput counterpart to those page-sized fio numbers. A single stream sustains
-**1,318 msg/s** at 8192 bytes each, roughly 10.3 MiB/s, with average latency 0.35 ms (p50 0.14 ms,
-p99 4.88 ms, p999 5.47 ms) — the wider p99/p999 spread compared to command 18's 64-byte ping-pong
-reflects the larger payload's own transfer time, not queuing contention (there is only one stream).
+network-throughput counterpart to those page-sized fio numbers.
+`hardware_sockperf_msg_rate_per_sec` multiplied by the message size gives an effective throughput
+figure comparable to fio's IOPS-at-blocksize numbers; comparing this round's `_p99_ms`/`_p999_ms`
+against command 18's narrower 64-byte percentiles shows how much of the tail latency here is
+payload transfer time rather than queuing (there is only one stream, so no concurrent-pod
+contention to separate out).
 
 ### Result
 
@@ -4358,17 +4358,14 @@ bexhoma hardware \
 ```
 
 Same shape as command 18 (ping-pong, tcp, 64-byte message — one synchronous request/reply loop
-per pod), but sweeping `-nbp 1,2,4,8,16` like command 17 instead of fixing it at 1. Per-pod average
-latency stays essentially flat across the whole sweep — **0.05 ms at 1 pod, 0.06 ms at 2 and 4,
-0.07-0.08 ms at 8, 0.06-0.09 ms at 16** — with no per-pod spike anywhere near the 1.7-1.9 ms jump
-command 17 showed at 16 pods. Aggregate throughput (Per Phase table) scales from 10,124 msg/s at
-1 pod to 17,741 (2), 37,714 (4), 61,677 (8), and 107,460 msg/s at 16 pods, consistently over 1.6x
-per doubling with no collapse. The contrast with command 17 is the point: a synchronous,
-self-paced request/reply pattern (each connection only sends after its previous reply arrives)
-never saturates the CPU/network the way command 17's uncapped continuous send does, so individual
-connection latency holds steady even as concurrency reaches 16 — evidence that, on this cluster,
-`max_connections`/pool-size growth alone is not what would degrade per-query latency; the
-continuous-throughput pattern in command 17 is.
+per pod), but sweeping `-nbp 1,2,4,8,16` like command 17 instead of fixing it at 1. Compare
+`hardware_sockperf_latency_avg_ms` (and its percentiles) per pod across the five rounds to see
+whether an individual connection's round-trip latency holds steady as concurrency grows or
+degrades; compare the summed `hardware_sockperf_msg_rate_per_sec` in the Per Phase table against
+command 17's to see whether this self-paced request/reply pattern scales differently than
+continuous max-rate send. This is the pairing that answers the `max_connections`/PgBouncer
+pool-size question directly: as concurrent connections grow, does throughput or does per-connection
+latency degrade first?
 
 ### Result
 
