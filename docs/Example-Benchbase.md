@@ -107,7 +107,7 @@ At the end of a benchmark you will see a summary like
 
 docs_benchbase_postgresql_scale.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -370,7 +370,7 @@ The result looks something like
 
 docs_benchbase_postgresql_monitoring.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -551,7 +551,7 @@ The result looks something like
 
 docs_benchbase_postgresql_storage.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -695,7 +695,7 @@ bexhoma benchbase \
 
 docs_benchbase_postgresql_keytime.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=160

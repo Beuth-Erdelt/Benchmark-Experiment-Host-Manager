@@ -1,15 +1,18 @@
 # Benchmark: Hardware
 
-`Hardware` is not a DBMS benchmark — it runs [fio](https://fio.readthedocs.io/) (disk I/O) or
-[sysbench](https://github.com/akopytov/sysbench) (CPU/memory) directly against a dedicated SUT
-container over SSH, bypassing any database engine entirely. There is no data loading phase and
-no `-dbms` engine choice beyond the single `Hardware` target (see [DBMS.md](DBMS.md#hardware)).
+`Hardware` is not a DBMS benchmark — it runs [fio](https://fio.readthedocs.io/) (disk I/O),
+[sysbench](https://github.com/akopytov/sysbench) (CPU/memory), or
+[sockperf](https://github.com/Mellanox/sockperf) (network latency/throughput) directly against a
+dedicated SUT container, bypassing any database engine entirely. There is no data loading phase
+and no `-dbms` engine choice beyond the single `Hardware` target (see [DBMS.md](DBMS.md#hardware)).
 
 The purpose of these benchmarks is not to rank hardware, but to **calibrate DBMS configuration**
-against the actual storage a cluster provides — for example finding the queue depth
+against the actual storage/network a cluster provides — for example finding the queue depth
 [PostgreSQL](https://www.postgresql.org/)'s `effective_io_concurrency` should target, a realistic
-`random_page_cost`, or the raw fsync latency that bounds commit throughput under
-`synchronous_commit=on`. This page walks through the fio sweeps in
+`random_page_cost`, the raw fsync latency that bounds commit throughput under
+`synchronous_commit=on`, or whether per-connection query latency holds steady as concurrent
+connections grow (relevant to `max_connections`/PgBouncer pool sizing). This page walks through
+the fio, sysbench, and sockperf sweeps in
 [`scripts/test-docs-hardware.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-hardware.ps1) /
 [`scripts/test-docs-hardware.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-hardware.sh)
 and explains what each one is for.
@@ -26,6 +29,9 @@ References:
 1. fio `--fsync` / `--fdatasync`: https://fio.readthedocs.io/en/latest/fio_doc.html#cmdoption-arg-fsync
 1. PostgreSQL WAL configuration: https://www.postgresql.org/docs/current/wal-configuration.html
 1. PostgreSQL `effective_io_concurrency`: https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-EFFECTIVE-IO-CONCURRENCY
+1. sockperf: https://github.com/Mellanox/sockperf
+1. PostgreSQL `max_connections`: https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS
+1. PgBouncer pool sizing: https://www.pgbouncer.org/config.html#pool_size
 
 ## Perform Benchmark
 
@@ -42,8 +48,9 @@ mkdir -p $LOG_DIR
 ```
 
 Unlike every other entry script, `hardware.py` has no loader — there is nothing to import
-before benchmarking, so every command below goes straight to `run`. The page covers two groups
-of commands: twelve `-xht fio` disk-I/O commands, and four `-xht sysbench` CPU/memory commands.
+before benchmarking, so every command below goes straight to `run`. The page covers three groups
+of commands: twelve `-xht fio` disk-I/O commands, four `-xht sysbench` CPU/memory commands, and
+four `-xht sockperf` network latency/throughput commands.
 
 The twelve fio commands all share the same `Hardware-1` SUT/PVC and run **sequentially**; two
 `hardware.py run` invocations must never overlap in time, because the PVC name is fixed
@@ -56,13 +63,17 @@ default, so `-rss` is sized per command to the largest single round it will run 
 default `50Gi`; the numjobs and group-commit sweeps go up to `80Gi`/`150Gi` since they sweep
 `numjobs` as high as 16/32).
 
-The four sysbench commands (13-16) are CPU/memory only — no disk I/O, so none of them use
-`-rst`/`-rss`/`-rsr` and the PVC-sharing constraint above doesn't apply to them.
+The four sysbench commands (13-16) and the four sockperf commands (17-20) are CPU/memory and
+network-only respectively — no disk I/O, so none of them use `-rst`/`-rss`/`-rsr` and the
+PVC-sharing constraint above doesn't apply to them. sockperf traffic also does not go over SSH the
+way fio/sysbench do — each benchmarker pod connects directly to a dedicated sockperf server on the
+SUT over the Kubernetes Service instead of executing commands on the SUT via SSH.
 
-The fio workload flags (`-xfrw`, `-xfbs`, `-xfid`, `-xfe`, `-xfsy`, `-xffd`, `-xfmx`) each accept
-a comma-separated list. Every combination across the lists is run as one more sequential round
-against the same SUT, so a parameter sweep is expressed as a single invocation instead of one
-process per value — see `python hardware.py -h` at the bottom of this page.
+The fio workload flags (`-xfrw`, `-xfbs`, `-xfid`, `-xfe`, `-xfsy`, `-xffd`, `-xfmx`) and the
+sockperf workload flags (`-xspm`, `-xspr`, `-xsps`, `-xspp`) each accept a comma-separated list.
+Every combination across the lists is run as one more sequential round against the same SUT, so a
+parameter sweep is expressed as a single invocation instead of one process per value — see
+`python hardware.py -h` at the bottom of this page.
 
 ---
 
@@ -117,7 +128,7 @@ of 2 anyway (NVMe queues, io_uring, RAID controllers).
 
 docs_hardware_fio_depth_sweep.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -533,7 +544,7 @@ bexhoma hardware \
 
 docs_hardware_fio_depth_sweep_refine.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -834,7 +845,7 @@ bexhoma hardware \
 
 docs_hardware_fio_numjobs_sweep.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -1134,7 +1145,7 @@ bexhoma hardware \
 
 docs_hardware_fio_blocksize_sweep.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -1510,7 +1521,7 @@ bexhoma hardware \
 
 docs_hardware_fio_depth_sweep_8k.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -1924,7 +1935,7 @@ bexhoma hardware \
 
 docs_hardware_fio_random_page_cost.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -2073,7 +2084,7 @@ bexhoma hardware \
 
 docs_hardware_fio_wal_sync_fsync.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -2203,7 +2214,7 @@ bexhoma hardware \
 
 docs_hardware_fio_wal_sync_fdatasync.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -2334,7 +2345,7 @@ bexhoma hardware \
 
 docs_hardware_fio_wal_group_commit.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -2558,7 +2569,7 @@ bexhoma hardware \
 
 docs_hardware_fio_wal_record_size.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -2761,7 +2772,7 @@ bexhoma hardware \
 
 docs_hardware_fio_checkpoint_writeback.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -2991,7 +3002,7 @@ bexhoma hardware \
 
 docs_hardware_fio_oltp_wal_contention_proxy.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (fio)
@@ -3153,7 +3164,7 @@ a fixed parameter in commands 14-16.
 
 docs_hardware_sysbench_cpu_quota_calibration.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (sysbench)
@@ -3329,7 +3340,7 @@ them (`pod_count`) changes.
 
 docs_hardware_sysbench_nbp_overhead_sweep.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (sysbench)
@@ -3492,7 +3503,7 @@ against.
 
 docs_hardware_sysbench_ne_saturation_sweep.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (sysbench)
@@ -3688,7 +3699,7 @@ from command 13 at the same thread count.
 
 docs_hardware_sysbench_noisy_neighbor.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Hardware Benchmark (sysbench)
@@ -3836,6 +3847,718 @@ Hardware Benchmark (sysbench)
 * TEST passed: Execution Phase: every round has non-zero CPU events/sec
 ```
 
+## Sockperf network benchmarks
+
+The four commands below (`-xht sockperf`) measure raw network latency/throughput using
+[sockperf](https://github.com/Mellanox/sockperf) against a static pool of 16 TCP+UDP server pairs
+running on the SUT (`SOCKPERF_NUM_SERVERS`, see
+[`images/hardware/sut/entrypoint.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hardware/sut/entrypoint.sh)).
+Unlike fio/sysbench, sockperf traffic does not go over SSH — each benchmarker pod connects
+directly to its own dedicated server (picked via `BEXHOMA_CHILD` modulo the server pool, so
+several pods never contend on one socket) over the SUT's Kubernetes Service. No disk I/O is
+involved, so none of these commands use `-rst`/`-rss`/`-rsr` either.
+
+All four commands use `-xspp tcp`, matching PostgreSQL's actual wire protocol (it is never UDP) —
+testing over UDP would skip exactly the overhead (TCP handshake, per-flow conntrack state through
+the Service, kernel socket buffers) that real DBMS connections actually pay.
+
+17 and 20 both sweep `-nbp 1,2,4,8,16` (capped at the 16-server pool: beyond that, pods start
+sharing a server via the `BEXHOMA_CHILD` modulo, which would confound scaling with server-side
+contention instead of measuring pure client/network scaling), but measure different things: 17
+uses `-xspm ul` (under-load, continuous send) to test whether *aggregate throughput* holds up as
+concurrent pods grow, while 20 uses `-xspm pp` (ping-pong) to test whether *each individual
+connection's round-trip latency* stays flat at the same pod counts. The two together separate
+"does the pipe still carry the same total traffic" from "does my query still come back just as
+fast" as concurrency grows — the latter is what `max_connections`/PgBouncer pool-size decisions
+actually depend on, and a pool can look fine on the first question while quietly degrading on the
+second. 18 and 19 instead fix `-nbp 1` and vary sockperf's message pattern/size to model one
+connection's shape in isolation: 18 is a single synchronous query round-trip loop, 19 is a single
+WAL-sender/`COPY`-style stream.
+
+### 17. Pod/client scaling sweep
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sockperf \
+  -xtd 60 \
+  -xspm ul \
+  -xspr max \
+  -xsps 64 \
+  -xspp tcp \
+  -nbp 1,2,4,8,16 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sockperf_pod_scaling_sweep.log
+```
+
+This sweeps `-nbp` from 1 to 16 pods under continuous max-rate load (`-xspm ul -xspr max`) with a
+generic 64-byte message. Aggregate throughput (Per Phase table, `hardware_sockperf_msg_rate_per_sec`)
+scales from 4,970 msg/s at 1 pod to 9,903 (2), 18,564 (4), 31,865 (8), and 56,037 msg/s at 16 pods
+— close to linear through 4 pods, then increasingly sublinear (1.72x and 1.76x per doubling at
+8 and 16) as the benchmarker pods themselves start burning more CPU driving the max-rate send loop
+(component benchmarker peak CPU rises from ~1.05 cores at 1 pod to ~24.91 cores at 16, while the
+SUT side stays comparatively low, ~0.19 to ~2.28 cores peak — the client side becomes the
+bottleneck, not the network or server). Per-pod latency also gets noisier at 16 pods: most children
+stay in the 0.17-0.45 ms range, but a few (children 3, 11-13, 15) jump to 1.7-1.9 ms average,
+suggesting contention starts showing up unevenly across the shared server pool at the top of the
+sweep rather than as a uniform slowdown.
+
+### Result
+
+docs_hardware_sockperf_pod_scaling_sweep.log
+```markdown
+## Show Summary
+
+### Workload
+Hardware Benchmark (sockperf)
+* Type: hardware
+* Duration: 906s 
+* Code: 1783597421
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), or network latency/throughput (sockperf) performance.
+  * Benchmark tool: sockperf.
+  * Duration per round is 60s.
+  * Mode(s) swept: ['ul'] (pp = ping-pong, ul = under-load).
+  * Protocol(s) swept: ['tcp'].
+  * Message size(s) swept: [64] bytes.
+  * Message rate(s) swept: ['max'] (messages/sec, or 'max' for uncapped).
+  * Experiment uses bexhoma version 0.10.4.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Benchmarking is tested with [1] threads, split into [1, 2, 4, 8, 16] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873765
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783597421
+* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873766
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783597421
+* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873567
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783597421
+* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873568
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783597421
+* Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873569
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783597421
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783597421-685ffdf4df-lg6mt: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (2 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (4 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (8 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (16 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (2 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (4 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (8 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (16 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS                | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_port |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:--------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-------------------------:|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1-1-1  | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20000 |                               0.16 |                               0.11 |                               0.60 |                                0.88 |                              4969.66 |                                0.00 |        0 |
+| Hardware-1-1-2-1-1  | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20000 |                               0.17 |                               0.14 |                               0.60 |                                0.85 |                              4833.95 |                                0.00 |        0 |
+| Hardware-1-1-2-1-2  | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       2 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20001 |                               0.21 |                               0.15 |                               0.81 |                                1.05 |                              5069.14 |                                0.00 |        0 |
+| Hardware-1-1-3-1-1  | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20000 |                               0.19 |                               0.14 |                               0.86 |                                1.12 |                              4479.16 |                                0.00 |        0 |
+| Hardware-1-1-3-1-2  | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       2 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20001 |                               0.20 |                               0.14 |                               0.79 |                                1.39 |                              5089.91 |                                0.00 |        0 |
+| Hardware-1-1-3-1-3  | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       3 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20002 |                               0.18 |                               0.14 |                               0.70 |                                1.00 |                              4554.76 |                                0.00 |        0 |
+| Hardware-1-1-3-1-4  | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       4 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20003 |                               0.20 |                               0.16 |                               0.82 |                                1.20 |                              4439.97 |                                0.00 |        0 |
+| Hardware-1-1-4-1-1  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         69 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20000 |                               0.18 |                               0.12 |                               0.78 |                                1.42 |                              4149.94 |                                0.00 |        0 |
+| Hardware-1-1-4-1-2  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       2 |         68 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20001 |                               0.20 |                               0.16 |                               0.83 |                                1.55 |                              3774.32 |                                0.00 |        0 |
+| Hardware-1-1-4-1-3  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       3 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20002 |                               0.16 |                               0.11 |                               0.75 |                                1.42 |                              4247.43 |                                0.00 |        0 |
+| Hardware-1-1-4-1-4  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       4 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20003 |                               0.18 |                               0.14 |                               0.76 |                                1.44 |                              3953.01 |                                0.00 |        0 |
+| Hardware-1-1-4-1-5  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       5 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20004 |                               0.17 |                               0.12 |                               0.75 |                                1.38 |                              4199.38 |                                0.00 |        0 |
+| Hardware-1-1-4-1-6  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       6 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20005 |                               0.20 |                               0.16 |                               0.87 |                                1.86 |                              3593.45 |                                0.00 |        0 |
+| Hardware-1-1-4-1-7  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       7 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20006 |                               0.19 |                               0.14 |                               0.83 |                                1.47 |                              4155.57 |                                0.00 |        0 |
+| Hardware-1-1-4-1-8  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       8 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20007 |                               0.19 |                               0.15 |                               0.77 |                                1.98 |                              3792.28 |                                0.00 |        0 |
+| Hardware-1-1-5-1-1  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         74 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20000 |                               0.23 |                               0.12 |                               1.65 |                                3.37 |                              2657.26 |                                0.00 |        0 |
+| Hardware-1-1-5-1-2  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       2 |         73 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20001 |                               0.31 |                               0.20 |                               1.73 |                                3.15 |                              3811.08 |                                0.00 |        0 |
+| Hardware-1-1-5-1-3  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       3 |         74 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20002 |                               1.71 |                               1.79 |                               4.10 |                                5.23 |                              4604.06 |                                0.00 |        0 |
+| Hardware-1-1-5-1-4  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       4 |         72 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20003 |                               0.28 |                               0.19 |                               1.74 |                                3.44 |                              2681.46 |                                0.00 |        0 |
+| Hardware-1-1-5-1-5  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       5 |         71 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20004 |                               0.34 |                               0.24 |                               1.80 |                                3.81 |                              2554.84 |                                0.00 |        0 |
+| Hardware-1-1-5-1-6  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       6 |         71 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20005 |                               0.24 |                               0.13 |                               1.69 |                                3.93 |                              2615.10 |                                0.00 |        0 |
+| Hardware-1-1-5-1-7  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       7 |         70 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20006 |                               0.32 |                               0.20 |                               1.68 |                                2.80 |                              3550.38 |                                0.00 |        0 |
+| Hardware-1-1-5-1-8  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       8 |         69 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20007 |                               0.44 |                               0.37 |                               1.73 |                                2.82 |                              3727.24 |                                0.00 |        0 |
+| Hardware-1-1-5-1-9  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       9 |         69 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20008 |                               0.26 |                               0.14 |                               1.61 |                                2.68 |                              3851.29 |                                0.00 |        0 |
+| Hardware-1-1-5-1-10 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      10 |         68 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20009 |                               0.27 |                               0.18 |                               1.69 |                                3.31 |                              3925.88 |                                0.00 |        0 |
+| Hardware-1-1-5-1-11 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      11 |         68 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20010 |                               1.92 |                               2.00 |                               4.51 |                                7.43 |                              3367.88 |                                0.00 |        0 |
+| Hardware-1-1-5-1-12 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      12 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20011 |                               1.78 |                               1.85 |                               4.16 |                                5.19 |                              4494.25 |                                0.00 |        0 |
+| Hardware-1-1-5-1-13 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      13 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20012 |                               1.87 |                               1.94 |                               4.47 |                                6.82 |                              3457.50 |                                0.00 |        0 |
+| Hardware-1-1-5-1-14 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      14 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20013 |                               0.29 |                               0.18 |                               1.75 |                                3.75 |                              3725.49 |                                0.00 |        0 |
+| Hardware-1-1-5-1-15 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      15 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20014 |                               1.88 |                               1.95 |                               4.41 |                                7.01 |                              3259.50 |                                0.00 |        0 |
+| Hardware-1-1-5-1-16 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      16 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                    20015 |                               0.45 |                               0.37 |                               1.80 |                                3.31 |                              3753.87 |                                0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                               0.16 |                               0.11 |                               0.60 |                                0.88 |                              4969.66 |                                0.00 |        0 |
+| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           2 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                               0.21 |                               0.15 |                               0.81 |                                1.05 |                              9903.09 |                                0.00 |        0 |
+| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           4 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                               0.20 |                               0.16 |                               0.86 |                                1.39 |                             18563.80 |                                0.00 |        0 |
+| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           8 |         69 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                               0.20 |                               0.16 |                               0.87 |                                1.98 |                             31865.38 |                                0.00 |        0 |
+| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |          16 |         74 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                          64 | max                     |                               1.92 |                               2.00 |                               4.51 |                                7.43 |                             56037.06 |                                0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        10.24 |      0.19 |           0.20 |                  0.20 |
+| Hardware-1-1-2-1 |        15.27 |      0.37 |           0.20 |                  0.20 |
+| Hardware-1-1-3-1 |        45.14 |      0.77 |           0.20 |                  0.20 |
+| Hardware-1-1-4-1 |        71.48 |      1.46 |           0.21 |                  0.21 |
+| Hardware-1-1-5-1 |       113.82 |      2.28 |           0.21 |                  0.21 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        41.18 |      1.05 |           0.10 |                  0.10 |
+| Hardware-1-1-2-1 |        51.75 |      2.91 |           0.10 |                  0.10 |
+| Hardware-1-1-3-1 |       157.43 |      6.08 |           0.10 |                  0.10 |
+| Hardware-1-1-4-1 |       224.92 |     12.51 |           0.10 |                  0.10 |
+| Hardware-1-1-5-1 |       535.28 |     24.91 |           0.10 |                  0.10 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero sockperf message rate
+```
+
+### 18. PostgreSQL simple-query round-trip latency (ping-pong, TCP)
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sockperf \
+  -xtd 60 \
+  -xspm pp \
+  -xspr max \
+  -xsps 64 \
+  -xspp tcp \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sockperf_postgresql_query_latency.log
+```
+
+`-xspm pp` mirrors PostgreSQL's synchronous simple-query protocol: one connection sends, blocks
+for the reply, sends the next; `-xspr max` fires the next request the instant the previous reply
+lands, giving the single-connection round-trip latency ceiling — the network-latency analogue of
+the WAL fsync "single outstanding write" tests in the fio section above. With a single connection,
+average round-trip latency is **0.06 ms** (p50 0.04 ms, p99 0.18 ms, p999 0.21 ms), sustaining
+about 9,059 round trips per second.
+
+### Result
+
+docs_hardware_sockperf_postgresql_query_latency.log
+```markdown
+## Show Summary
+
+### Workload
+Hardware Benchmark (sockperf)
+* Type: hardware
+* Duration: 203s 
+* Code: 1783598350
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), or network latency/throughput (sockperf) performance.
+  * Benchmark tool: sockperf.
+  * Duration per round is 60s.
+  * Mode(s) swept: ['pp'] (pp = ping-pong, ul = under-load).
+  * Protocol(s) swept: ['tcp'].
+  * Message size(s) swept: [64] bytes.
+  * Message rate(s) swept: ['max'] (messages/sec, or 'max' for uncapped).
+  * Experiment uses bexhoma version 0.10.4.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873767
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783598350
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783598350-5bc87c7bb9-qpppc: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_port |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-------------------------:|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20000 |                               0.06 |                               0.04 |                               0.18 |                                0.21 |                              9058.66 |                                0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         64 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                               0.06 |                               0.04 |                               0.18 |                                0.21 |                              9058.66 |                                0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |         5.85 |      0.17 |           0.20 |                  0.20 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        14.55 |      0.30 |           0.55 |                  0.55 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero sockperf message rate
+```
+
+### 19. PostgreSQL streaming/bulk throughput (WAL sender/COPY, TCP, 8k)
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sockperf \
+  -xtd 60 \
+  -xspm ul \
+  -xspr max \
+  -xsps 8192 \
+  -xspp tcp \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sockperf_postgresql_streaming_throughput.log
+```
+
+`-xspm ul` (continuous one-way stream) models WAL streaming replication or a `COPY`/bulk result
+transfer rather than a request/reply cycle. `-xsps 8192` is PostgreSQL's page size (`BLCKSZ`) in
+bytes — the same 8k anchor already used throughout the fio section — so this becomes the
+network-throughput counterpart to those page-sized fio numbers. A single stream sustains
+**1,318 msg/s** at 8192 bytes each, roughly 10.3 MiB/s, with average latency 0.35 ms (p50 0.14 ms,
+p99 4.88 ms, p999 5.47 ms) — the wider p99/p999 spread compared to command 18's 64-byte ping-pong
+reflects the larger payload's own transfer time, not queuing contention (there is only one stream).
+
+### Result
+
+docs_hardware_sockperf_postgresql_streaming_throughput.log
+```markdown
+## Show Summary
+
+### Workload
+Hardware Benchmark (sockperf)
+* Type: hardware
+* Duration: 170s 
+* Code: 1783598573
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), or network latency/throughput (sockperf) performance.
+  * Benchmark tool: sockperf.
+  * Duration per round is 60s.
+  * Mode(s) swept: ['ul'] (pp = ping-pong, ul = under-load).
+  * Protocol(s) swept: ['tcp'].
+  * Message size(s) swept: [8192] bytes.
+  * Message rate(s) swept: ['max'] (messages/sec, or 'max' for uncapped).
+  * Experiment uses bexhoma version 0.10.4.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873574
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783598573
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783598573-6f767ccbc5-lfsq5: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_port |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-------------------------:|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         62 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                        8192 | max                     |                    20000 |                               0.35 |                               0.14 |                               4.88 |                                5.47 |                              1318.47 |                                0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         62 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                        8192 | max                     |                               0.35 |                               0.14 |                               4.88 |                                5.47 |                              1318.47 |                                0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        17.34 |      0.37 |           0.20 |                  0.20 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        43.29 |      0.98 |           0.10 |                  0.10 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero sockperf message rate
+```
+
+### 20. PostgreSQL query latency under concurrent connections (ping-pong, TCP, `-nbp` sweep)
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sockperf \
+  -xtd 60 \
+  -xspm pp \
+  -xspr max \
+  -xsps 64 \
+  -xspp tcp \
+  -nbp 1,2,4,8,16 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sockperf_postgresql_latency_scaling_sweep.log
+```
+
+Same shape as command 18 (ping-pong, tcp, 64-byte message — one synchronous request/reply loop
+per pod), but sweeping `-nbp 1,2,4,8,16` like command 17 instead of fixing it at 1. Per-pod average
+latency stays essentially flat across the whole sweep — **0.05 ms at 1 pod, 0.06 ms at 2 and 4,
+0.07-0.08 ms at 8, 0.06-0.09 ms at 16** — with no per-pod spike anywhere near the 1.7-1.9 ms jump
+command 17 showed at 16 pods. Aggregate throughput (Per Phase table) scales from 10,124 msg/s at
+1 pod to 17,741 (2), 37,714 (4), 61,677 (8), and 107,460 msg/s at 16 pods, consistently over 1.6x
+per doubling with no collapse. The contrast with command 17 is the point: a synchronous,
+self-paced request/reply pattern (each connection only sends after its previous reply arrives)
+never saturates the CPU/network the way command 17's uncapped continuous send does, so individual
+connection latency holds steady even as concurrency reaches 16 — evidence that, on this cluster,
+`max_connections`/pool-size growth alone is not what would degrade per-query latency; the
+continuous-throughput pattern in command 17 is.
+
+### Result
+
+docs_hardware_sockperf_postgresql_latency_scaling_sweep.log
+```markdown
+## Show Summary
+
+### Workload
+Hardware Benchmark (sockperf)
+* Type: hardware
+* Duration: 880s 
+* Code: 1783598913
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), or network latency/throughput (sockperf) performance.
+  * Benchmark tool: sockperf.
+  * Duration per round is 60s.
+  * Mode(s) swept: ['pp'] (pp = ping-pong, ul = under-load).
+  * Protocol(s) swept: ['tcp'].
+  * Message size(s) swept: [64] bytes.
+  * Message rate(s) swept: ['max'] (messages/sec, or 'max' for uncapped).
+  * Experiment uses bexhoma version 0.10.4.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Benchmarking is tested with [1] threads, split into [1, 2, 4, 8, 16] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873581
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783598913
+* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873571
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783598913
+* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873572
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783598913
+* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873573
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783598913
+* Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873574
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783598913
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783598913-677b5c5c79-79vxp: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (2 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (4 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (8 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (16 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (2 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (4 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (8 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (16 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS                | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_port |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:--------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-------------------------:|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1-1-1  | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20000 |                               0.05 |                               0.04 |                               0.18 |                                0.20 |                             10124.16 |                                0.00 |        0 |
+| Hardware-1-1-2-1-1  | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20000 |                               0.06 |                               0.04 |                               0.19 |                                0.23 |                              8989.67 |                                0.00 |        0 |
+| Hardware-1-1-2-1-2  | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       2 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20001 |                               0.06 |                               0.04 |                               0.19 |                                0.23 |                              8751.78 |                                0.00 |        0 |
+| Hardware-1-1-3-1-1  | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20000 |                               0.05 |                               0.04 |                               0.19 |                                0.23 |                              9324.48 |                                0.00 |        0 |
+| Hardware-1-1-3-1-2  | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       2 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20001 |                               0.06 |                               0.04 |                               0.19 |                                0.23 |                              7936.14 |                                0.00 |        0 |
+| Hardware-1-1-3-1-3  | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       3 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20002 |                               0.05 |                               0.04 |                               0.18 |                                0.21 |                              9917.53 |                                0.00 |        0 |
+| Hardware-1-1-3-1-4  | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       4 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20003 |                               0.05 |                               0.04 |                               0.18 |                                0.21 |                             10536.26 |                                0.00 |        0 |
+| Hardware-1-1-4-1-1  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         70 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20000 |                               0.07 |                               0.05 |                               0.21 |                                0.25 |                              7033.85 |                                0.00 |        0 |
+| Hardware-1-1-4-1-2  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       2 |         69 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20001 |                               0.07 |                               0.04 |                               0.21 |                                0.25 |                              7302.25 |                                0.00 |        0 |
+| Hardware-1-1-4-1-3  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       3 |         68 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20002 |                               0.07 |                               0.05 |                               0.21 |                                0.25 |                              7047.86 |                                0.00 |        0 |
+| Hardware-1-1-4-1-4  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       4 |         68 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20003 |                               0.07 |                               0.05 |                               0.21 |                                0.25 |                              7240.82 |                                0.00 |        0 |
+| Hardware-1-1-4-1-5  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       5 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20004 |                               0.08 |                               0.05 |                               0.21 |                                0.26 |                              6574.69 |                                0.00 |        0 |
+| Hardware-1-1-4-1-6  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       6 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20005 |                               0.05 |                               0.04 |                               0.19 |                                0.24 |                              9115.40 |                                0.00 |        0 |
+| Hardware-1-1-4-1-7  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       7 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20006 |                               0.05 |                               0.04 |                               0.18 |                                0.23 |                              9981.98 |                                0.00 |        0 |
+| Hardware-1-1-4-1-8  | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       8 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20007 |                               0.07 |                               0.04 |                               0.21 |                                0.25 |                              7380.59 |                                0.00 |        0 |
+| Hardware-1-1-5-1-1  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         75 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20000 |                               0.08 |                               0.05 |                               0.25 |                                0.29 |                              6513.90 |                                0.00 |        0 |
+| Hardware-1-1-5-1-2  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       2 |         74 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20001 |                               0.08 |                               0.05 |                               0.25 |                                0.28 |                              6642.08 |                                0.00 |        0 |
+| Hardware-1-1-5-1-3  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       3 |         74 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20002 |                               0.08 |                               0.05 |                               0.25 |                                0.29 |                              6608.19 |                                0.00 |        0 |
+| Hardware-1-1-5-1-4  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       4 |         73 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20003 |                               0.08 |                               0.05 |                               0.25 |                                0.28 |                              6361.53 |                                0.00 |        0 |
+| Hardware-1-1-5-1-5  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       5 |         72 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20004 |                               0.08 |                               0.05 |                               0.25 |                                0.28 |                              6432.16 |                                0.00 |        0 |
+| Hardware-1-1-5-1-6  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       6 |         72 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20005 |                               0.07 |                               0.05 |                               0.25 |                                0.28 |                              6925.19 |                                0.00 |        0 |
+| Hardware-1-1-5-1-7  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       7 |         70 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20006 |                               0.08 |                               0.06 |                               0.26 |                                0.29 |                              6095.21 |                                0.00 |        0 |
+| Hardware-1-1-5-1-8  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       8 |         70 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20007 |                               0.09 |                               0.06 |                               0.26 |                                0.29 |                              5557.31 |                                0.00 |        0 |
+| Hardware-1-1-5-1-9  | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       9 |         70 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20008 |                               0.06 |                               0.05 |                               0.24 |                                0.28 |                              7731.07 |                                0.00 |        0 |
+| Hardware-1-1-5-1-10 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      10 |         69 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20009 |                               0.07 |                               0.05 |                               0.25 |                                0.28 |                              7441.31 |                                0.00 |        0 |
+| Hardware-1-1-5-1-11 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      11 |         69 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20010 |                               0.08 |                               0.05 |                               0.25 |                                0.28 |                              6260.27 |                                0.00 |        0 |
+| Hardware-1-1-5-1-12 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      12 |         68 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20011 |                               0.06 |                               0.05 |                               0.22 |                                0.27 |                              8862.54 |                                0.00 |        0 |
+| Hardware-1-1-5-1-13 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      13 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20012 |                               0.07 |                               0.05 |                               0.25 |                                0.28 |                              6750.51 |                                0.00 |        0 |
+| Hardware-1-1-5-1-14 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      14 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20013 |                               0.07 |                               0.05 |                               0.25 |                                0.28 |                              6708.82 |                                0.00 |        0 |
+| Hardware-1-1-5-1-15 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      15 |         66 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20014 |                               0.08 |                               0.06 |                               0.26 |                                0.29 |                              6184.27 |                                0.00 |        0 |
+| Hardware-1-1-5-1-16 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |      16 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                    20015 |                               0.08 |                               0.05 |                               0.25 |                                0.29 |                              6385.32 |                                0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                               0.05 |                               0.04 |                               0.18 |                                0.20 |                             10124.16 |                                0.00 |        0 |
+| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           2 |         65 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                               0.06 |                               0.04 |                               0.19 |                                0.23 |                             17741.45 |                                0.00 |        0 |
+| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           4 |         67 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                               0.06 |                               0.04 |                               0.19 |                                0.23 |                             37714.41 |                                0.00 |        0 |
+| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           8 |         70 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                               0.08 |                               0.05 |                               0.21 |                                0.26 |                             61677.45 |                                0.00 |        0 |
+| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |          16 |         75 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  0 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | pp                       | tcp                          |                          64 | max                     |                               0.09 |                               0.06 |                               0.26 |                                0.29 |                            107459.69 |                                0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |         5.46 |      0.17 |           0.20 |                  0.20 |
+| Hardware-1-1-2-1 |        17.60 |      0.34 |           0.20 |                  0.20 |
+| Hardware-1-1-3-1 |        40.23 |      0.68 |           0.20 |                  0.20 |
+| Hardware-1-1-4-1 |        75.12 |      1.32 |           0.20 |                  0.20 |
+| Hardware-1-1-5-1 |       127.93 |      2.61 |           0.20 |                  0.20 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        16.81 |      0.32 |           0.55 |                  0.55 |
+| Hardware-1-1-2-1 |        20.83 |      0.88 |           0.55 |                  0.55 |
+| Hardware-1-1-3-1 |        63.97 |      2.13 |           0.55 |                  0.55 |
+| Hardware-1-1-4-1 |        83.70 |      3.54 |           0.55 |                  0.55 |
+| Hardware-1-1-5-1 |       156.00 |      7.14 |           0.55 |                  0.55 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero sockperf message rate
+```
+
 ## Adjust Parameters
 
 There are various ways to change parameters.
@@ -3848,8 +4571,10 @@ https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/k8
 
 ### Benchmarker script
 
-The fio invocation itself lives in
-https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hardware/benchmarker/run_fio.sh
+The fio, sysbench, and sockperf invocations themselves live in
+https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hardware/benchmarker/run_fio.sh ,
+https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hardware/benchmarker/run_sysbench.sh ,
+and https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hardware/benchmarker/run_sockperf.sh
 
 ### Command line
 
@@ -3871,16 +4596,19 @@ usage: hardware.py [-h] [-aws] [-db] [-sl] [-ss] [-cx CONTEXT] [-e EXPERIMENT]
                    [-rnn [REQUEST_NODE_NAME]] [-rnl [REQUEST_NODE_LOADING]]
                    [-rnb [REQUEST_NODE_BENCHMARKING]] [-mtn MULTI_TENANT_NUM]
                    [-mtb MULTI_TENANT_BY] [-mtv] [-tr] [--set SETS]
-                   [-dbms [{Hardware} ...]] [-xht {fio,sysbench}]
+                   [-dbms [{Hardware} ...]] [-xht {fio,sysbench,sockperf}]
                    [-xts HARDWARE_SIZE] [-xtd HARDWARE_DURATION]
                    [-xfrw FIO_RW] [-xfbs FIO_BS] [-xfid FIO_IODEPTH]
                    [-xfe FIO_ENGINE] [-xfsy FIO_FSYNC] [-xffd FIO_FDATASYNC]
-                   [-xfmx FIO_RWMIXREAD]
+                   [-xfmx FIO_RWMIXREAD] [-xspm SOCKPERF_MODE]
+                   [-xspr SOCKPERF_MPS] [-xsps SOCKPERF_MSGSIZE]
+                   [-xspp SOCKPERF_PROTOCOL]
                    {run,start,summary}
 
-Run Hardware (fio/sysbench) benchmarks against a SUT in Kubernetes. Controls
-fio workload shape (read/write pattern, block size, queue depth, engine) or
-selects sysbench for CPU/memory benchmarking.
+Run Hardware (fio/sysbench/sockperf) benchmarks against a SUT in Kubernetes.
+Controls fio workload shape (read/write pattern, block size, queue depth,
+engine), selects sysbench for CPU/memory benchmarking, or selects sockperf for
+network latency/throughput benchmarking under a controlled send rate.
 
 positional arguments:
   {run,start,summary}   experiment phase: start SUT only, run the benchmark,
@@ -3971,13 +4699,13 @@ options:
                         container[dbms].max_worker_processes=128
   -dbms [{Hardware} ...], --dbms [{Hardware} ...]
                         hardware target(s) to test
-  -xht {fio,sysbench}, --xhardware-type {fio,sysbench}
-                        benchmark tool: fio (disk I/O) or sysbench
-                        (CPU/memory)
+  -xht {fio,sysbench,sockperf}, --xhardware-type {fio,sysbench,sockperf}
+                        benchmark tool: fio (disk I/O), sysbench (CPU/memory),
+                        or sockperf (network latency/throughput)
   -xts HARDWARE_SIZE, --xtest-size HARDWARE_SIZE
                         fio test file size (e.g. 1G, 64G)
   -xtd HARDWARE_DURATION, --xtest-duration HARDWARE_DURATION
-                        fio/sysbench run duration in seconds
+                        fio/sysbench/sockperf run duration in seconds
   -xfrw FIO_RW, --xfio-rw FIO_RW
                         comma-separated fio I/O patterns to sweep, each in
                         {write, read, randwrite, randread, randrw}
@@ -3998,4 +4726,16 @@ options:
   -xfmx FIO_RWMIXREAD, --xfio-rwmixread FIO_RWMIXREAD
                         comma-separated read percentages to sweep when
                         -xfrw=randrw
+  -xspm SOCKPERF_MODE, --xsockperf-mode SOCKPERF_MODE
+                        comma-separated sockperf modes to sweep, each in {pp,
+                        ul}
+  -xspr SOCKPERF_MPS, --xsockperf-mps SOCKPERF_MPS
+                        comma-separated message rates to sweep (messages/sec);
+                        each value is a positive integer or the literal "max"
+  -xsps SOCKPERF_MSGSIZE, --xsockperf-msgsize SOCKPERF_MSGSIZE
+                        comma-separated message payload sizes in bytes to
+                        sweep
+  -xspp SOCKPERF_PROTOCOL, --xsockperf-protocol SOCKPERF_PROTOCOL
+                        comma-separated sockperf protocols to sweep, each in
+                        {tcp, udp}
 ```

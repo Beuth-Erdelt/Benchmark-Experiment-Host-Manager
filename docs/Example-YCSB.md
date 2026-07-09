@@ -114,7 +114,7 @@ At the end of a benchmark you will see a summary like
 
 docs_ycsb_postgresql_loading.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -444,7 +444,7 @@ Each of the drivers has 64 threads and a target of twice or three times (`-ltf`)
 
 docs_ycsb_postgresql_benchmarking.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -641,7 +641,7 @@ If monitoring is activated, the summary also contains a section like this:
 
 docs_ycsb_postgresql_monitoring.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -901,7 +901,7 @@ The result looks something like
 
 docs_ycsb_postgresql_storage.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -1154,7 +1154,7 @@ The result looks something like
 
 docs_ycsb_postgresql_loading_patch.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -1280,7 +1280,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_wl_a.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1477,7 +1477,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_wl_b.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1674,7 +1674,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_wl_c.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -1880,7 +1880,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_wl_d.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -2055,7 +2055,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_wl_e.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -2223,7 +2223,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_wl_f.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=10

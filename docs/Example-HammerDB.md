@@ -102,7 +102,7 @@ At the end of a benchmark you will see a summary like
 
 docs_hammerdb_postgresql_scale.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -351,7 +351,7 @@ If monitoring is activated, the summary also contains a section like
 
 docs_hammerdb_postgresql_monitoring.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -533,7 +533,7 @@ The result looks something like
 
 docs_hammerdb_postgresql_storage.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -675,7 +675,7 @@ bexhoma hammerdb \
 
 docs_hammerdb_postgresql_keytime.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)

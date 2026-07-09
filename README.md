@@ -151,6 +151,16 @@ Runs a single 30-second sysbench CPU/memory test with 4 threads directly against
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#sysbench-cpu-noisy-neighbor-benchmarks
 
+### Hardware (sockperf)
+
+```bash
+bexhoma hardware run -ms 1 -dbms Hardware -xht sockperf -xtd 300 -xspm ul -xspr max -xsps 8192 -xspp tcp -nbp 1 -nbt 1 -ne 1
+```
+
+Runs a single 5-minute sockperf under-load test over TCP at message size 8192 bytes (PostgreSQL's page size, `BLCKSZ`) directly against a dedicated SUT container, bypassing any DBMS.
+
+See more details at https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#sockperf-network-benchmarks
+
 ## Architecture
 
 Bexhoma deploys [Prometheus](https://prometheus.io/) for monitoring and [cAdvisor](https://github.com/google/cadvisor) for resource metrics alongside every DBMS container.

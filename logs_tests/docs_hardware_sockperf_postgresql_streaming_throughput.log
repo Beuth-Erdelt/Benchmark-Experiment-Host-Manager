@@ -1,0 +1,146 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1783598573
+Experiment                    : starts at 2026-07-09 14:02:53.330622 (503647.2348892)
+Experiment                    : This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), or network latency/throughput (sockperf) performance.
+Benchmark tool: sockperf.
+Duration per round is 60s.
+Mode(s) swept: ['ul'] (pp = ping-pong, ul = under-load).
+Protocol(s) swept: ['tcp'].
+Message size(s) swept: [8192] bytes.
+Message rate(s) swept: ['max'] (messages/sec, or 'max' for uncapped).
+Experiment uses bexhoma version 0.10.4.
+System metrics are monitored by sidecar containers.
+Experiment is limited to DBMS ['Hardware'].
+Benchmarking is fixed to cl-worker19.
+SUT is fixed to cl-worker36.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Cluster monitoring            : is running
+Hardware-1                    : will start now
+Hardware-1                    : deployments ['sut']
+Hardware-1                    : stateful sets []
+Hardware-1                    : pvcs ['sut']
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1783598573
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1783598573
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1783598573 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 1. This will be client 1
+Hardware-1-1-1-1              : start benchmarking (benchmark_run=1)
+Hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1783598573
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1783598573-1-1-1-qmz75: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1783598573/Hardware-1-1-1-1.config
+Hardware-1-1-1-1              : showing benchmarker times
+Hardware-1-1-1-1              : benchmarker timespan job from 1783598621 to 1783598700
+Hardware-1-1-1-1              : benchmarker timespan pods from 1783598624 to 1783598686
+Hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 62
+Hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1783598624, 1783598686)]
+Hardware-1-1-1-1              : found and updated times {'benchmarker': [(1783598624, 1783598686)]}
+Hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1-1-1-1              : collecting execution metrics of SUT at connection Hardware-1-1-1-1
+Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783598573(.*)", pod=~"(.*)hardware-1-1783598573(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Hardware-1-1-1-1              : collecting metrics of benchmarker at connection Hardware-1-1-1-1
+Hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1783598573(.*)", pod=~"(.*)hardware-1-1783598573(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+Hardware-1                    : can be stopped
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1783598573-6f767ccbc5-lfsq5
+Experiment                    : ends at 2026-07-09 14:05:42.761262 (503816.6654537) - 169.43s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Hardware Benchmark (sockperf)
+* Type: hardware
+* Duration: 170s 
+* Code: 1783598573
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), or network latency/throughput (sockperf) performance.
+  * Benchmark tool: sockperf.
+  * Duration per round is 60s.
+  * Mode(s) swept: ['ul'] (pp = ping-pong, ul = under-load).
+  * Protocol(s) swept: ['tcp'].
+  * Message size(s) swept: [8192] bytes.
+  * Message rate(s) swept: ['max'] (messages/sec, or 'max' for uncapped).
+  * Experiment uses bexhoma version 0.10.4.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.4
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:873574
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783598573
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783598573-6f767ccbc5-lfsq5: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_port |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-------------------------:|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         62 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                      0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                        8192 | max                     |                    20000 |                               0.35 |                               0.14 |                               4.88 |                                5.47 |                              1318.47 |                                0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms | hardware_sockperf_mode   | hardware_sockperf_protocol   |   hardware_sockperf_msgsize | hardware_sockperf_mps   |   hardware_sockperf_latency_avg_ms |   hardware_sockperf_latency_p50_ms |   hardware_sockperf_latency_p99_ms |   hardware_sockperf_latency_p999_ms |   hardware_sockperf_msg_rate_per_sec |   hardware_sockperf_dropped_per_sec |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|:-------------------------|:-----------------------------|----------------------------:|:------------------------|-----------------------------------:|-----------------------------------:|-----------------------------------:|------------------------------------:|-------------------------------------:|------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         62 |                   |                   |                      0 |                       |                    0 |                        0 |                        0 |                     0.00 |                      0.00 |                           0.00 |                            0.00 |                           0.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 | ul                       | tcp                          |                        8192 | max                     |                               0.35 |                               0.14 |                               4.88 |                                5.47 |                              1318.47 |                                0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        17.34 |      0.37 |           0.20 |                  0.20 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        43.29 |      0.98 |           0.10 |                  0.10 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero sockperf message rate

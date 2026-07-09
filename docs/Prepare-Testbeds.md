@@ -123,7 +123,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB Start DBMS
@@ -164,7 +164,7 @@ PostgreSQL-1
 
 docs_ycsb_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB Start DBMS
@@ -225,7 +225,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB Data Loading SF=1
@@ -311,7 +311,7 @@ PostgreSQL-1
 
 docs_ycsb_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB Data Loading SF=1
@@ -425,7 +425,7 @@ bexhoma ycsb \
 
 docs_ycsb_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -561,7 +561,7 @@ YCSB SF=1
 
 docs_ycsb_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -725,7 +725,7 @@ bexhoma benchbase \
 
 docs_benchbase_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Start DBMS
@@ -767,7 +767,7 @@ PostgreSQL-1
 
 docs_benchbase_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Start DBMS
@@ -826,7 +826,7 @@ bexhoma benchbase \
 
 docs_benchbase_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Data tpcc Loading SF=1
@@ -896,7 +896,7 @@ PostgreSQL-1
 
 docs_benchbase_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Data tpcc Loading SF=1
@@ -988,7 +988,7 @@ bexhoma benchbase \
 
 docs_benchbase_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1104,7 +1104,7 @@ Benchbase Workload tpcc SF=1
 
 docs_benchbase_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1245,7 +1245,7 @@ bexhoma hammerdb \
 
 docs_hammerdb_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Start DBMS
@@ -1285,7 +1285,7 @@ PostgreSQL-1
 
 docs_hammerdb_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Start DBMS
@@ -1343,7 +1343,7 @@ bexhoma hammerdb \
 
 docs_hammerdb_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Data Loading SF=1 (warehouses for TPC-C)
@@ -1412,7 +1412,7 @@ PostgreSQL-1
 
 docs_hammerdb_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Data Loading SF=1 (warehouses for TPC-C)
@@ -1503,7 +1503,7 @@ bexhoma hammerdb \
 
 docs_hammerdb_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=1 (warehouses for TPC-C)
@@ -1611,7 +1611,7 @@ HammerDB Workload SF=1 (warehouses for TPC-C)
 
 docs_hammerdb_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 HammerDB Workload SF=1 (warehouses for TPC-C)
@@ -1742,7 +1742,7 @@ bexhoma tpch \
 
 docs_tpch_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Start DBMS
@@ -1782,7 +1782,7 @@ PostgreSQL-1
 
 docs_tpch_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Start DBMS
@@ -1841,7 +1841,7 @@ bexhoma tpch \
 
 docs_tpch_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Data Loading SF=1
@@ -1917,7 +1917,7 @@ PostgreSQL-1
 
 docs_tpch_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Data Loading SF=1
@@ -2024,7 +2024,7 @@ bexhoma tpch \
 
 docs_tpch_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -2180,7 +2180,7 @@ No warnings
 
 docs_tpch_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -2364,7 +2364,7 @@ bexhoma tpcds \
 
 docs_tpcds_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Start DBMS
@@ -2404,7 +2404,7 @@ PostgreSQL-1
 
 docs_tpcds_postgresql_start.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Start DBMS
@@ -2460,7 +2460,7 @@ bexhoma tpcds \
 
 docs_tpcds_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Data Loading SF=1
@@ -2536,7 +2536,7 @@ PostgreSQL-1
 
 docs_tpcds_postgresql_load.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Data Loading SF=1
@@ -2634,7 +2634,7 @@ bexhoma tpcds \
 
 docs_tpcds_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
@@ -2867,7 +2867,7 @@ No warnings
 
 docs_tpcds_postgresql_run.log
 ```markdown
-## Show Summary
+﻿## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
