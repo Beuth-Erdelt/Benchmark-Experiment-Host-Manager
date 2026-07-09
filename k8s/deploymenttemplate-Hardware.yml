@@ -23,38 +23,38 @@ spec:
   # sockperf server pool (SOCKPERF_BASE_PORT..+SOCKPERF_NUM_SERVERS-1, see
   # images/hardware/sut/Dockerfile); one TCP + one UDP entry per port so
   # run_sockperf.sh can pick either protocol without a separate port range.
-  - {port: 20000, protocol: TCP, name: sockperf-0-tcp, targetPort: 20000}
-  - {port: 20000, protocol: UDP, name: sockperf-0-udp, targetPort: 20000}
-  - {port: 20001, protocol: TCP, name: sockperf-1-tcp, targetPort: 20001}
-  - {port: 20001, protocol: UDP, name: sockperf-1-udp, targetPort: 20001}
-  - {port: 20002, protocol: TCP, name: sockperf-2-tcp, targetPort: 20002}
-  - {port: 20002, protocol: UDP, name: sockperf-2-udp, targetPort: 20002}
-  - {port: 20003, protocol: TCP, name: sockperf-3-tcp, targetPort: 20003}
-  - {port: 20003, protocol: UDP, name: sockperf-3-udp, targetPort: 20003}
-  - {port: 20004, protocol: TCP, name: sockperf-4-tcp, targetPort: 20004}
-  - {port: 20004, protocol: UDP, name: sockperf-4-udp, targetPort: 20004}
-  - {port: 20005, protocol: TCP, name: sockperf-5-tcp, targetPort: 20005}
-  - {port: 20005, protocol: UDP, name: sockperf-5-udp, targetPort: 20005}
-  - {port: 20006, protocol: TCP, name: sockperf-6-tcp, targetPort: 20006}
-  - {port: 20006, protocol: UDP, name: sockperf-6-udp, targetPort: 20006}
-  - {port: 20007, protocol: TCP, name: sockperf-7-tcp, targetPort: 20007}
-  - {port: 20007, protocol: UDP, name: sockperf-7-udp, targetPort: 20007}
-  - {port: 20008, protocol: TCP, name: sockperf-8-tcp, targetPort: 20008}
-  - {port: 20008, protocol: UDP, name: sockperf-8-udp, targetPort: 20008}
-  - {port: 20009, protocol: TCP, name: sockperf-9-tcp, targetPort: 20009}
-  - {port: 20009, protocol: UDP, name: sockperf-9-udp, targetPort: 20009}
-  - {port: 20010, protocol: TCP, name: sockperf-10-tcp, targetPort: 20010}
-  - {port: 20010, protocol: UDP, name: sockperf-10-udp, targetPort: 20010}
-  - {port: 20011, protocol: TCP, name: sockperf-11-tcp, targetPort: 20011}
-  - {port: 20011, protocol: UDP, name: sockperf-11-udp, targetPort: 20011}
-  - {port: 20012, protocol: TCP, name: sockperf-12-tcp, targetPort: 20012}
-  - {port: 20012, protocol: UDP, name: sockperf-12-udp, targetPort: 20012}
-  - {port: 20013, protocol: TCP, name: sockperf-13-tcp, targetPort: 20013}
-  - {port: 20013, protocol: UDP, name: sockperf-13-udp, targetPort: 20013}
-  - {port: 20014, protocol: TCP, name: sockperf-14-tcp, targetPort: 20014}
-  - {port: 20014, protocol: UDP, name: sockperf-14-udp, targetPort: 20014}
-  - {port: 20015, protocol: TCP, name: sockperf-15-tcp, targetPort: 20015}
-  - {port: 20015, protocol: UDP, name: sockperf-15-udp, targetPort: 20015}
+  - {port: 20000, protocol: TCP, name: port-sut-0-tcp, targetPort: 20000}
+  - {port: 20000, protocol: UDP, name: port-sut-0-udp, targetPort: 20000}
+  - {port: 20001, protocol: TCP, name: port-sut-1-tcp, targetPort: 20001}
+  - {port: 20001, protocol: UDP, name: port-sut-1-udp, targetPort: 20001}
+  - {port: 20002, protocol: TCP, name: port-sut-2-tcp, targetPort: 20002}
+  - {port: 20002, protocol: UDP, name: port-sut-2-udp, targetPort: 20002}
+  - {port: 20003, protocol: TCP, name: port-sut-3-tcp, targetPort: 20003}
+  - {port: 20003, protocol: UDP, name: port-sut-3-udp, targetPort: 20003}
+  - {port: 20004, protocol: TCP, name: port-sut-4-tcp, targetPort: 20004}
+  - {port: 20004, protocol: UDP, name: port-sut-4-udp, targetPort: 20004}
+  - {port: 20005, protocol: TCP, name: port-sut-5-tcp, targetPort: 20005}
+  - {port: 20005, protocol: UDP, name: port-sut-5-udp, targetPort: 20005}
+  - {port: 20006, protocol: TCP, name: port-sut-6-tcp, targetPort: 20006}
+  - {port: 20006, protocol: UDP, name: port-sut-6-udp, targetPort: 20006}
+  - {port: 20007, protocol: TCP, name: port-sut-7-tcp, targetPort: 20007}
+  - {port: 20007, protocol: UDP, name: port-sut-7-udp, targetPort: 20007}
+  - {port: 20008, protocol: TCP, name: port-sut-8-tcp, targetPort: 20008}
+  - {port: 20008, protocol: UDP, name: port-sut-8-udp, targetPort: 20008}
+  - {port: 20009, protocol: TCP, name: port-sut-9-tcp, targetPort: 20009}
+  - {port: 20009, protocol: UDP, name: port-sut-9-udp, targetPort: 20009}
+  - {port: 20010, protocol: TCP, name: port-sut-10-tcp, targetPort: 20010}
+  - {port: 20010, protocol: UDP, name: port-sut-10-udp, targetPort: 20010}
+  - {port: 20011, protocol: TCP, name: port-sut-11-tcp, targetPort: 20011}
+  - {port: 20011, protocol: UDP, name: port-sut-11-udp, targetPort: 20011}
+  - {port: 20012, protocol: TCP, name: port-sut-12-tcp, targetPort: 20012}
+  - {port: 20012, protocol: UDP, name: port-sut-12-udp, targetPort: 20012}
+  - {port: 20013, protocol: TCP, name: port-sut-13-tcp, targetPort: 20013}
+  - {port: 20013, protocol: UDP, name: port-sut-13-udp, targetPort: 20013}
+  - {port: 20014, protocol: TCP, name: port-sut-14-tcp, targetPort: 20014}
+  - {port: 20014, protocol: UDP, name: port-sut-14-udp, targetPort: 20014}
+  - {port: 20015, protocol: TCP, name: port-sut-15-tcp, targetPort: 20015}
+  - {port: 20015, protocol: UDP, name: port-sut-15-udp, targetPort: 20015}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
@@ -101,38 +101,38 @@ spec:
         - {name: SOCKPERF_BASE_PORT, value: "20000"}
         ports:
         - {containerPort: 22, name: ssh}
-        - {containerPort: 20000, name: sockperf-0-tcp, protocol: TCP}
-        - {containerPort: 20000, name: sockperf-0-udp, protocol: UDP}
-        - {containerPort: 20001, name: sockperf-1-tcp, protocol: TCP}
-        - {containerPort: 20001, name: sockperf-1-udp, protocol: UDP}
-        - {containerPort: 20002, name: sockperf-2-tcp, protocol: TCP}
-        - {containerPort: 20002, name: sockperf-2-udp, protocol: UDP}
-        - {containerPort: 20003, name: sockperf-3-tcp, protocol: TCP}
-        - {containerPort: 20003, name: sockperf-3-udp, protocol: UDP}
-        - {containerPort: 20004, name: sockperf-4-tcp, protocol: TCP}
-        - {containerPort: 20004, name: sockperf-4-udp, protocol: UDP}
-        - {containerPort: 20005, name: sockperf-5-tcp, protocol: TCP}
-        - {containerPort: 20005, name: sockperf-5-udp, protocol: UDP}
-        - {containerPort: 20006, name: sockperf-6-tcp, protocol: TCP}
-        - {containerPort: 20006, name: sockperf-6-udp, protocol: UDP}
-        - {containerPort: 20007, name: sockperf-7-tcp, protocol: TCP}
-        - {containerPort: 20007, name: sockperf-7-udp, protocol: UDP}
-        - {containerPort: 20008, name: sockperf-8-tcp, protocol: TCP}
-        - {containerPort: 20008, name: sockperf-8-udp, protocol: UDP}
-        - {containerPort: 20009, name: sockperf-9-tcp, protocol: TCP}
-        - {containerPort: 20009, name: sockperf-9-udp, protocol: UDP}
-        - {containerPort: 20010, name: sockperf-10-tcp, protocol: TCP}
-        - {containerPort: 20010, name: sockperf-10-udp, protocol: UDP}
-        - {containerPort: 20011, name: sockperf-11-tcp, protocol: TCP}
-        - {containerPort: 20011, name: sockperf-11-udp, protocol: UDP}
-        - {containerPort: 20012, name: sockperf-12-tcp, protocol: TCP}
-        - {containerPort: 20012, name: sockperf-12-udp, protocol: UDP}
-        - {containerPort: 20013, name: sockperf-13-tcp, protocol: TCP}
-        - {containerPort: 20013, name: sockperf-13-udp, protocol: UDP}
-        - {containerPort: 20014, name: sockperf-14-tcp, protocol: TCP}
-        - {containerPort: 20014, name: sockperf-14-udp, protocol: UDP}
-        - {containerPort: 20015, name: sockperf-15-tcp, protocol: TCP}
-        - {containerPort: 20015, name: sockperf-15-udp, protocol: UDP}
+        - {containerPort: 20000, name: port-sut-0-tcp, protocol: TCP}
+        - {containerPort: 20000, name: port-sut-0-udp, protocol: UDP}
+        - {containerPort: 20001, name: port-sut-1-tcp, protocol: TCP}
+        - {containerPort: 20001, name: port-sut-1-udp, protocol: UDP}
+        - {containerPort: 20002, name: port-sut-2-tcp, protocol: TCP}
+        - {containerPort: 20002, name: port-sut-2-udp, protocol: UDP}
+        - {containerPort: 20003, name: port-sut-3-tcp, protocol: TCP}
+        - {containerPort: 20003, name: port-sut-3-udp, protocol: UDP}
+        - {containerPort: 20004, name: port-sut-4-tcp, protocol: TCP}
+        - {containerPort: 20004, name: port-sut-4-udp, protocol: UDP}
+        - {containerPort: 20005, name: port-sut-5-tcp, protocol: TCP}
+        - {containerPort: 20005, name: port-sut-5-udp, protocol: UDP}
+        - {containerPort: 20006, name: port-sut-6-tcp, protocol: TCP}
+        - {containerPort: 20006, name: port-sut-6-udp, protocol: UDP}
+        - {containerPort: 20007, name: port-sut-7-tcp, protocol: TCP}
+        - {containerPort: 20007, name: port-sut-7-udp, protocol: UDP}
+        - {containerPort: 20008, name: port-sut-8-tcp, protocol: TCP}
+        - {containerPort: 20008, name: port-sut-8-udp, protocol: UDP}
+        - {containerPort: 20009, name: port-sut-9-tcp, protocol: TCP}
+        - {containerPort: 20009, name: port-sut-9-udp, protocol: UDP}
+        - {containerPort: 20010, name: port-sut-10-tcp, protocol: TCP}
+        - {containerPort: 20010, name: port-sut-10-udp, protocol: UDP}
+        - {containerPort: 20011, name: port-sut-11-tcp, protocol: TCP}
+        - {containerPort: 20011, name: port-sut-11-udp, protocol: UDP}
+        - {containerPort: 20012, name: port-sut-12-tcp, protocol: TCP}
+        - {containerPort: 20012, name: port-sut-12-udp, protocol: UDP}
+        - {containerPort: 20013, name: port-sut-13-tcp, protocol: TCP}
+        - {containerPort: 20013, name: port-sut-13-udp, protocol: UDP}
+        - {containerPort: 20014, name: port-sut-14-tcp, protocol: TCP}
+        - {containerPort: 20014, name: port-sut-14-udp, protocol: UDP}
+        - {containerPort: 20015, name: port-sut-15-tcp, protocol: TCP}
+        - {containerPort: 20015, name: port-sut-15-udp, protocol: UDP}
         readinessProbe:
           tcpSocket:
             port: 22

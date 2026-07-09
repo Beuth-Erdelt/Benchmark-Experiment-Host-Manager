@@ -13,6 +13,10 @@ if TYPE_CHECKING:
 
 __all__ = ['LifecycleManager']
 
+#: Service port names kept even when monitoring is inactive, since they carry
+#: SUT connectivity rather than monitoring traffic.
+SERVICE_PORT_NAMES_ALWAYS_KEPT = ('port-dbms', 'port-bus', 'port-web')
+
 
 class LifecycleManager:
     """Manages SUT, monitoring, maintaining, loading start/stop and port forwarding.
@@ -1039,20 +1043,14 @@ scrape_configs:
                 if not cfg.monitoring_active or (
                         cfg.experiment.cluster.monitor_cluster_exists
                         and not cfg.monitor_app_active):
+                    # port-dbms/port-bus/port-web and port-sut-* are functional
+                    # (SUT connectivity / Hardware benchmark traffic), not
+                    # monitoring sidecars, so they survive this monitoring-only
+                    # port cleanup - unlike e.g. port-monitoring (cadvisor).
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         if ('name' in ports
-                                and ports['name'] != 'port-dbms'
-                                and ports['name'] != 'port-bus'
-                                and ports['name'] != 'port-web'):
-                            del result[key]['spec']['ports'][i]
-                if not cfg.monitoring_active or (
-                        cfg.experiment.cluster.monitor_cluster_exists
-                        and not cfg.monitor_app_active):
-                    for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
-                        if ('name' in ports
-                                and ports['name'] != 'port-dbms'
-                                and ports['name'] != 'port-bus'
-                                and ports['name'] != 'port-web'):
+                                and ports['name'] not in SERVICE_PORT_NAMES_ALWAYS_KEPT
+                                and not ports['name'].startswith('port-sut-')):
                             del result[key]['spec']['ports'][i]
             ########################################
             # Kind=Deployment
