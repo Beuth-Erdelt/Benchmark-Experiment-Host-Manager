@@ -17,4 +17,11 @@ while [ "$i" -lt "$SOCKPERF_NUM_SERVERS" ]; do
     i=$((i + 1))
 done
 
+######################## Start netserver ########################
+# One instance is enough: netserver forks a child per incoming test session, so it
+# already serves many concurrent netperf clients (each pinned to its own data port
+# by run_netperf.sh) without needing a per-connection server pool.
+mkdir -p /var/log/netperf
+netserver -D -p "$NETPERF_CONTROL_PORT" >/var/log/netperf/netserver.log 2>&1 &
+
 exec /usr/sbin/sshd -D -e

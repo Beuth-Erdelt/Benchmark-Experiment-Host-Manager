@@ -7,15 +7,20 @@ The image installs sysbench and fio, creates a passwordless SSH user `bench`,
 and starts an SSH daemon as its entrypoint. The benchmarker connects to this
 container via SSH and invokes fio/sysbench directly; no Bexhoma coordination
 logic runs inside this image. It also starts a fixed pool of persistent
-`sockperf server` instances (see below) that the benchmarker's sockperf client
-connects to directly, without SSH.
+`sockperf server` instances and a single `netserver` instance (see below)
+that the benchmarker's sockperf/netperf clients connect to directly, without
+SSH.
 
 ## Included tools
 
 * **sysbench** — CPU and memory benchmarks.
 * **fio** — disk I/O benchmarks.
-* **sockperf** — network latency/throughput benchmarks; built from source in a
-  builder stage (not packaged for Alpine/musl), see the Dockerfile comments.
+* **sockperf** — single-connection network latency/throughput benchmarks; built
+  from source in a builder stage (not packaged for Alpine/musl), see the
+  Dockerfile comments.
+* **netperf** — many-concurrent-connection `TCP_RR`/`UDP_RR` request/response
+  benchmarks; also built from source (not packaged for Alpine/musl either;
+  builds cleanly with no source patches, verified locally).
 * **OpenSSH server** — listens on port 22; accepts the benchmarker's key.
 
 ## sockperf server pool
@@ -30,6 +35,19 @@ each connect to their own dedicated server — see
 static ceiling baked into this image and `k8s/deploymenttemplate-Hardware.yml`,
 not a per-experiment setting; pods wrap around (share a server) if a sweep
 ever asks for more pods than provisioned servers.
+
+## netserver
+
+`entrypoint.sh` also starts a single `netserver -D -p $NETPERF_CONTROL_PORT`
+instance (default port 12865), backgrounded alongside the sockperf pool.
+Unlike sockperf, one instance is enough: netserver forks a child per incoming
+test session natively, so it already serves many concurrent netperf clients.
+Each client instance still pins its own data-connection port explicitly (see
+`images/hardware/benchmarker/run_netperf.sh`) out of the fixed
+`[NETPERF_DATA_BASE_PORT, NETPERF_DATA_BASE_PORT + NETPERF_DATA_NUM_PORTS)`
+pool (defaults: 30000, 64 ports) — required because the k8s Service in
+`k8s/deploymenttemplate-Hardware.yml` only forwards explicitly declared ports,
+so an OS-assigned ephemeral data port would be unreachable through it.
 
 ## SSH access
 

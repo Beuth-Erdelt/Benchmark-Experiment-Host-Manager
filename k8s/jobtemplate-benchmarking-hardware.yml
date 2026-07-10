@@ -44,6 +44,7 @@ spec:
         - {name: HARDWARE_SOCKPERF_PROTOCOL, value: 'udp'}
         - {name: HARDWARE_SOCKPERF_MSGSIZE, value: '64'}
         - {name: HARDWARE_SOCKPERF_MPS, value: 'max'}
+        - {name: HARDWARE_NETPERF_PROTOCOL, value: 'tcp'}
         resources:
           #limits: {cpu: 4000m}
           #, memory: 16Gi}

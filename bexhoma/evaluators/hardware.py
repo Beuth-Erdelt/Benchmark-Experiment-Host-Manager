@@ -1,11 +1,12 @@
 """
-Evaluator for Hardware (fio/sysbench/sockperf) experiments.
+Evaluator for Hardware (fio/sysbench/sockperf/netperf) experiments.
 
 Provides :class:`HardwareEvaluator`, which extends :class:`LogEvaluator` to parse and
 aggregate fio disk I/O results (IOPS, bandwidth, completion-latency percentiles),
-sysbench CPU/memory results (events/sec, throughput, completion latency), and sockperf
-network results (latency percentiles, message rate, dropped-message rate) produced by
-``images/hardware/benchmarker``.
+sysbench CPU/memory results (events/sec, throughput, completion latency), sockperf
+single-connection network results (latency percentiles, message rate, dropped-message
+rate), and netperf many-concurrent-connection TCP_RR/UDP_RR results (aggregate
+transaction rate, latency percentiles) produced by ``images/hardware/benchmarker``.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -35,6 +36,7 @@ _KEYS_PARAMETERS = [
     'HARDWARE_FIO_FDATASYNC', 'HARDWARE_FIO_RWMIXREAD',
     'HARDWARE_SOCKPERF_MODE', 'HARDWARE_SOCKPERF_PROTOCOL',
     'HARDWARE_SOCKPERF_MSGSIZE', 'HARDWARE_SOCKPERF_MPS', 'HARDWARE_SOCKPERF_PORT',
+    'HARDWARE_NETPERF_PROTOCOL',
 ]
 _PERCENTILE_LABELS = ['P01', 'P10', 'P50', 'P90', 'P95', 'P99', 'P999', 'P9999']
 _KEYS_RESULTS = ['HARDWARE_FIO_READ_IOPS', 'HARDWARE_FIO_WRITE_IOPS',
@@ -51,6 +53,11 @@ _KEYS_RESULTS += [
     'HARDWARE_SOCKPERF_LATENCY_AVG_MS', 'HARDWARE_SOCKPERF_LATENCY_P50_MS',
     'HARDWARE_SOCKPERF_LATENCY_P99_MS', 'HARDWARE_SOCKPERF_LATENCY_P999_MS',
     'HARDWARE_SOCKPERF_MSG_RATE_PER_SEC', 'HARDWARE_SOCKPERF_DROPPED_PER_SEC',
+]
+_KEYS_RESULTS += [
+    'HARDWARE_NETPERF_TRANSACTION_RATE', 'HARDWARE_NETPERF_LATENCY_AVG_MS',
+    'HARDWARE_NETPERF_LATENCY_P50_MS', 'HARDWARE_NETPERF_LATENCY_P90_MS',
+    'HARDWARE_NETPERF_LATENCY_P99_MS', 'HARDWARE_NETPERF_INSTANCES_FAILED',
 ]
 
 _NATURAL_SORT_DIGIT_WIDTH = 10  # zero-pad width; comfortably covers phase strings like "Hardware-1-1-128"
@@ -191,6 +198,7 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_sockperf_msgsize': 'int', 'hardware_sockperf_port': 'int',
             # not 'int': the column may hold the literal "max" instead of a rate
             'hardware_sockperf_mps': 'str',
+            'hardware_netperf_protocol': 'str',
         }
         for key in _KEYS_RESULTS:
             dtype_map[key.lower()] = 'float'
@@ -232,6 +240,10 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_duration': 'max', 'hardware_fio_numjobs': 'sum',
                 'hardware_threads': 'sum', 'hardware_sysbench_cpu_total_time_s': 'max',
                 'tenant_id': 'min', 'duration': 'max',
+                # aggregate throughput across pods, same convention as fio's iops/sockperf's
+                # msg_rate; instances_failed is a count, summed like errors above
+                'hardware_netperf_transaction_rate': 'sum',
+                'hardware_netperf_instances_failed': 'sum',
             }
             for col in grp.columns:
                 if (col.endswith('_iops') or col.endswith('_kbps')
@@ -256,6 +268,8 @@ class HardwareEvaluator(LogEvaluator):
                                     'hardware_sockperf_msgsize', 'hardware_sockperf_mps']:
                 if sockperf_param in grp.columns:
                     dict_grp[sockperf_param] = grp[sockperf_param].iloc[0]
+            if 'hardware_netperf_protocol' in grp.columns:
+                dict_grp['hardware_netperf_protocol'] = grp['hardware_netperf_protocol'].iloc[0]
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             df_grp = pd.DataFrame(dict_grp, index=["-".join(map(str, key))])
             df_aggregated = pd.concat([df_aggregated, df_grp])
@@ -289,7 +303,11 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_sockperf_mps', 'hardware_sockperf_port',
             'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
             'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
-            'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec', 'errors',
+            'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec',
+            'hardware_netperf_protocol', 'hardware_netperf_transaction_rate',
+            'hardware_netperf_latency_avg_ms', 'hardware_netperf_latency_p50_ms',
+            'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
+            'hardware_netperf_instances_failed', 'errors',
         ]
         df.fillna(0, inplace=True)
         df_plot = self.benchmarking_set_datatypes(df)
@@ -340,7 +358,11 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_sockperf_mps',
                 'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
                 'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
-                'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec', 'errors',
+                'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec',
+                'hardware_netperf_protocol', 'hardware_netperf_transaction_rate',
+                'hardware_netperf_latency_avg_ms', 'hardware_netperf_latency_p50_ms',
+                'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
+                'hardware_netperf_instances_failed', 'errors',
             ]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -387,7 +409,11 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_sockperf_mps',
                 'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
                 'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
-                'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec', 'errors',
+                'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec',
+                'hardware_netperf_protocol', 'hardware_netperf_transaction_rate',
+                'hardware_netperf_latency_avg_ms', 'hardware_netperf_latency_p50_ms',
+                'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
+                'hardware_netperf_instances_failed', 'errors',
             ]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -454,4 +480,12 @@ class HardwareEvaluator(LogEvaluator):
                     passed,
                     "Execution Phase: every round has non-zero sockperf message rate" if passed
                     else "Execution Phase: at least one round has 0 sockperf message rate"
+                )
+            has_netperf_columns = 'hardware_netperf_transaction_rate' in df_reduced.columns
+            if hardware_type == 'netperf' and not df_reduced.empty and has_netperf_columns:
+                passed = not (df_reduced['hardware_netperf_transaction_rate'] == 0).any()
+                experiment._record_test(
+                    passed,
+                    "Execution Phase: every round has non-zero netperf transaction rate" if passed
+                    else "Execution Phase: at least one round has 0 netperf transaction rate"
                 )

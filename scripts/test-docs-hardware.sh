@@ -834,6 +834,147 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 16. Hardware sysbench noisy-neighbor t
 
 
 ###########################################
+########## Netperf network latency ########
+###########################################
+# The three commands below all use -xht netperf (many-concurrent-connection
+# TCP_RR/UDP_RR request/response, no disk I/O, so no -rst/-rss/-rsr needed)
+# against a single netserver instance (images/hardware/sut/entrypoint.sh) -
+# unlike sockperf below, netperf has no per-pod dedicated-server pool, because
+# netserver forks a child per test session natively. This is also why netperf
+# exists alongside sockperf at all: sockperf's client is limited to exactly
+# one connection per process (confirmed against upstream:
+# https://github.com/Mellanox/sockperf/issues/133), so "pod-count scaling"
+# in sockperf's commands 20/23 below never exceeds -nbp connections. netperf's
+# -nbt instead launches many *concurrent* TCP_RR connections from a single pod
+# (images/hardware/benchmarker/run_netperf.sh), so commands 18/19 below can
+# actually answer "does per-connection latency hold steady as concurrent
+# connections grow" and "does splitting a fixed connection count across pods
+# change anything" at realistic connection counts - the same questions
+# sockperf's commands 20/23 ask, but at up to 64 real connections instead of
+# at most 16.
+#
+# All three use -xnpp tcp (selects TCP_RR), matching PostgreSQL's wire
+# protocol, same reasoning as sockperf's -xspp tcp below. -xtd 60 gives every
+# round at least a minute, same reasoning as the sysbench/sockperf commands.
+
+
+#### 17. Netperf PostgreSQL single-connection round-trip latency baseline (TCP_RR)
+# TCP_RR is netperf's own description of "a user-space to user-space ping with
+# no think time" - synchronous, one transaction at a time - the same shape as
+# PostgreSQL's synchronous simple-query protocol, and the same test sockperf's
+# command 21 (ping-pong) targets with a different tool. This is the baseline
+# command 18 scales up from.
+# -dbms Hardware                hardware target(s) to test
+# -xht netperf                  benchmark tool: netperf (many-concurrent-connection request/response)
+# -xtd 60                       seconds per netperf round
+# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
+# -nbp 1                        benchmarking pod count, fixed (single connection)
+# -nbt 1                        concurrent TCP_RR connections, fixed (single-connection baseline)
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -m                            collect SUT resource metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod on this node
+bexhoma hardware \
+  -dbms Hardware \
+  -xht netperf \
+  -xtd 60 \
+  -xnpp tcp \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_netperf_postgresql_query_latency.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 17. Hardware netperf PostgreSQL query round-trip latency  protocol=tcp  nbt=1"
+
+
+#### 18. Netperf PostgreSQL concurrent-connection scaling (TCP_RR, -nbt sweep)
+# The test sockperf structurally cannot do: sweeps the number of *concurrent*
+# TCP_RR connections (1 to 64) within a single pod, holding pod count fixed at
+# 1. Compare each round's per-connection latency (avg/p50/p90/p99) against
+# command 17's single-connection baseline, and aggregate transaction rate
+# against 1x that baseline - directly the question PostgreSQL connection-pool
+# sizing (max_connections, PgBouncer pool size) depends on: does the network
+# path itself stay flat as concurrent connections grow, before any DBMS
+# connection/lock handling enters the picture. Capped at 64
+# (NETPERF_DATA_NUM_PORTS, see images/hardware/sut/Dockerfile): each
+# concurrent connection needs its own fixed data port for the k8s Service to
+# forward (netperf opens a fresh listening socket per test session, not one
+# shared listener - see run_netperf.sh), so the pool size is the hard ceiling.
+# -dbms Hardware                hardware target(s) to test
+# -xht netperf                  benchmark tool: netperf (many-concurrent-connection request/response)
+# -xtd 60                       seconds per netperf round
+# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
+# -nbp 1                        benchmarking pod count, fixed - isolates connection-count from pod-count
+# -nbt 1,8,16,32,64             concurrent TCP_RR connections to sweep, all within one pod
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -m                            collect SUT resource metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod on this node
+bexhoma hardware \
+  -dbms Hardware \
+  -xht netperf \
+  -xtd 60 \
+  -xnpp tcp \
+  -nbp 1 \
+  -nbt 1,8,16,32,64 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_netperf_postgresql_connection_scaling_sweep.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 18. Hardware netperf PostgreSQL connection scaling  protocol=tcp  nbt=1,8,16,32,64"
+
+
+#### 19. Netperf PostgreSQL pod-count scaling at fixed total concurrency (TCP_RR, -nbp sweep)
+# Holds total concurrent connections fixed at 64 (NETPERF_DATA_NUM_PORTS'
+# ceiling) and splits them across 1 vs 2 pods instead - the same "-nbp sweep at
+# constant total threads" shape used to investigate benchbase's PostgreSQL
+# pod-scaling result (docs_benchbase_postgresql_scale.log, Example-Benchbase.md):
+# there, 1 pod x 160 threads outperformed 2 pods x 80 threads by ~21% despite
+# identical total connection count. This command answers whether that came
+# from the network/Kubernetes path itself: if throughput here also drops
+# noticeably from 1x64 to 2x32, the network path is implicated; if it stays
+# flat, the benchbase-side degradation is not a Kubernetes-networking effect.
+# -dbms Hardware                hardware target(s) to test
+# -xht netperf                  benchmark tool: netperf (many-concurrent-connection request/response)
+# -xtd 60                       seconds per netperf round
+# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
+# -nbp 1,2                      benchmarking pod counts to compare
+# -nbt 64                       total concurrent TCP_RR connections, split evenly across pods
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -m                            collect SUT resource metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod(s) on this node
+bexhoma hardware \
+  -dbms Hardware \
+  -xht netperf \
+  -xtd 60 \
+  -xnpp tcp \
+  -nbp 1,2 \
+  -nbt 64 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_netperf_postgresql_pod_scaling_sweep.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 19. Hardware netperf PostgreSQL pod scaling  protocol=tcp  nbp=1,2  nbt=64"
+
+
+###########################################
 ######### Sockperf network latency ########
 ###########################################
 # The four commands below all use -xht sockperf (network latency/throughput,
@@ -843,24 +984,26 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 16. Hardware sysbench noisy-neighbor t
 # dedicated server via BEXHOMA_CHILD modulo (see run_sockperf.sh), so several
 # pods never contend on one socket. All four use -xspp tcp, matching
 # PostgreSQL's actual wire protocol (never UDP) - so pod-count scaling in
-# commands 17/20 is measured over the same connection-oriented path (TCP
+# commands 20/23 is measured over the same connection-oriented path (TCP
 # handshake, per-flow conntrack state through the Service, kernel socket
-# buffers) that real DBMS traffic uses, not UDP's connectionless one. 17 and
-# 20 both sweep -nbp, but measure different things: 17 (mode=ul) is aggregate
-# throughput under load, while 20 (mode=pp) is command 18's single-connection
+# buffers) that real DBMS traffic uses, not UDP's connectionless one. 20 and
+# 23 both sweep -nbp, but measure different things: 20 (mode=ul) is aggregate
+# throughput under load, while 23 (mode=pp) is command 21's single-connection
 # latency floor repeated at growing concurrency - the two together separate
 # "does aggregate throughput hold up" from "does each individual connection's
 # latency stay flat" as concurrent connections grow, which is exactly the
 # question PostgreSQL connection-pool sizing (max_connections, PgBouncer pool
-# size) depends on. 18/19 fix -nbp 1 to model one connection's shape (a single
-# synchronous query loop, a single WAL-sender/COPY stream) in isolation.
+# size) depends on. 21/22 fix -nbp 1 to model one connection's shape (a single
+# synchronous query loop, a single WAL-sender/COPY stream) in isolation. See
+# the netperf section above for the same questions asked at real (not just
+# per-pod) connection concurrency.
 #
 # -xtd 60 gives every round at least a minute, long enough for -m's Prometheus
 # scrape interval to sample it at least once, the same reasoning already used
 # for -xtd on the sysbench commands above.
 
 
-#### 17. Sockperf pod/client scaling sweep
+#### 20. Sockperf pod/client scaling sweep
 # -xspp tcp (not udp): pod-count scaling is meant to characterize the same
 # connection-oriented network path PostgreSQL actually uses, so it should not
 # skip TCP's handshake/conntrack/socket-buffer overhead by testing over UDP
@@ -900,10 +1043,10 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_pod_scaling_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 17. Hardware sockperf pod scaling sweep  mode=ul  protocol=tcp  msgsize=64  mps=max  nbp=1,2,4,8,16"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 20. Hardware sockperf pod scaling sweep  mode=ul  protocol=tcp  msgsize=64  mps=max  nbp=1,2,4,8,16"
 
 
-#### 18. Sockperf PostgreSQL simple-query round-trip latency (ping-pong, TCP)
+#### 21. Sockperf PostgreSQL simple-query round-trip latency (ping-pong, TCP)
 # -xspm pp mirrors PostgreSQL's synchronous simple-query protocol: one
 # connection sends, blocks for the reply, sends the next - -xspr max fires the
 # next request the instant the previous reply lands, giving the single-
@@ -941,10 +1084,10 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_query_latency.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 18. Hardware sockperf PostgreSQL query round-trip latency  mode=pp  protocol=tcp  msgsize=64"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 21. Hardware sockperf PostgreSQL query round-trip latency  mode=pp  protocol=tcp  msgsize=64"
 
 
-#### 19. Sockperf PostgreSQL streaming/bulk throughput (WAL sender/COPY, TCP, 8k)
+#### 22. Sockperf PostgreSQL streaming/bulk throughput (WAL sender/COPY, TCP, 8k)
 # -xspm ul (continuous one-way stream) models WAL streaming replication or a
 # COPY/bulk result transfer rather than a request/reply cycle. -xsps 8192 is
 # PostgreSQL's page size (BLCKSZ) in bytes - same 8k anchor already used
@@ -983,20 +1126,20 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_streaming_throughput.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 19. Hardware sockperf PostgreSQL streaming throughput  mode=ul  protocol=tcp  msgsize=8192"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 22. Hardware sockperf PostgreSQL streaming throughput  mode=ul  protocol=tcp  msgsize=8192"
 
 
-#### 20. Sockperf PostgreSQL query latency under concurrent connections (ping-pong, TCP, -nbp sweep)
-# Same shape as command 18 (ping-pong, tcp, msgsize=64 - one synchronous
-# request/reply loop per pod), but sweeping -nbp 1,2,4,8,16 like command 17
-# instead of fixing it at 1. Command 17 already shows whether aggregate
+#### 23. Sockperf PostgreSQL query latency under concurrent connections (ping-pong, TCP, -nbp sweep)
+# Same shape as command 21 (ping-pong, tcp, msgsize=64 - one synchronous
+# request/reply loop per pod), but sweeping -nbp 1,2,4,8,16 like command 20
+# instead of fixing it at 1. Command 20 already shows whether aggregate
 # throughput holds up as pod count grows; this shows whether each individual
 # connection's round-trip latency (avg/p50/p99/p999) stays flat as more
 # concurrent connections share the same SUT and network path, or degrades -
 # the more operationally relevant question for sizing max_connections/PgBouncer
 # pools, since a connection pool can be "aggregate throughput is fine" and
 # still be a bad experience per-query if per-connection latency creeps up.
-# Capped at -nbp 16 for the same server-pool reason as command 17.
+# Capped at -nbp 16 for the same server-pool reason as command 20.
 # -dbms Hardware                hardware target(s) to test
 # -xht sockperf                 benchmark tool: sockperf (network latency/throughput)
 # -xtd 60                       seconds per sockperf round
@@ -1029,7 +1172,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_latency_scaling_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 20. Hardware sockperf PostgreSQL query latency under concurrency  mode=pp  protocol=tcp  msgsize=64  nbp=1,2,4,8,16"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 23. Hardware sockperf PostgreSQL query latency under concurrency  mode=pp  protocol=tcp  msgsize=64  nbp=1,2,4,8,16"
 
 
 

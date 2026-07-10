@@ -147,6 +147,8 @@ elif [ "$HARDWARE_TYPE" = "fio" ]; then
     run_fio.sh
 elif [ "$HARDWARE_TYPE" = "sockperf" ]; then
     run_sockperf.sh
+elif [ "$HARDWARE_TYPE" = "netperf" ]; then
+    run_netperf.sh
 else
     echo "Unknown HARDWARE_TYPE: $HARDWARE_TYPE"
     exit 1

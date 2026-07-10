@@ -55,6 +55,145 @@ spec:
   - {port: 20014, protocol: UDP, name: port-sut-14-udp, targetPort: 20014}
   - {port: 20015, protocol: TCP, name: port-sut-15-tcp, targetPort: 20015}
   - {port: 20015, protocol: UDP, name: port-sut-15-udp, targetPort: 20015}
+  # netperf control port (single netserver instance, forks per connection) plus its
+  # fixed data-port pool (NETPERF_DATA_BASE_PORT..+NETPERF_DATA_NUM_PORTS-1, see
+  # images/hardware/sut/Dockerfile); run_netperf.sh pins each concurrent client
+  # instance's data connection to one of these via netperf's "-P local,remote" option,
+  # since only explicitly declared Service ports are forwarded.
+  # Port *names* below are unrelated to the actual port numbers: k8s caps port names
+  # at 15 chars, so they continue sockperf's "port-sut-<N>-tcp/udp" scheme starting at
+  # N=16 (sockperf already owns 0-15) purely to stay short, unique, and prefixed with
+  # "port-sut-" (required so lifecycle.py's monitoring-only port cleanup keeps them -
+  # see the code comment there). N does NOT correspond to NETPERF_DATA_BASE_PORT+N.
+  - {port: 12865, protocol: TCP, name: port-sut-ctrl, targetPort: 12865}
+  - {port: 30000, protocol: TCP, name: port-sut-16-tcp, targetPort: 30000}
+  - {port: 30000, protocol: UDP, name: port-sut-16-udp, targetPort: 30000}
+  - {port: 30001, protocol: TCP, name: port-sut-17-tcp, targetPort: 30001}
+  - {port: 30001, protocol: UDP, name: port-sut-17-udp, targetPort: 30001}
+  - {port: 30002, protocol: TCP, name: port-sut-18-tcp, targetPort: 30002}
+  - {port: 30002, protocol: UDP, name: port-sut-18-udp, targetPort: 30002}
+  - {port: 30003, protocol: TCP, name: port-sut-19-tcp, targetPort: 30003}
+  - {port: 30003, protocol: UDP, name: port-sut-19-udp, targetPort: 30003}
+  - {port: 30004, protocol: TCP, name: port-sut-20-tcp, targetPort: 30004}
+  - {port: 30004, protocol: UDP, name: port-sut-20-udp, targetPort: 30004}
+  - {port: 30005, protocol: TCP, name: port-sut-21-tcp, targetPort: 30005}
+  - {port: 30005, protocol: UDP, name: port-sut-21-udp, targetPort: 30005}
+  - {port: 30006, protocol: TCP, name: port-sut-22-tcp, targetPort: 30006}
+  - {port: 30006, protocol: UDP, name: port-sut-22-udp, targetPort: 30006}
+  - {port: 30007, protocol: TCP, name: port-sut-23-tcp, targetPort: 30007}
+  - {port: 30007, protocol: UDP, name: port-sut-23-udp, targetPort: 30007}
+  - {port: 30008, protocol: TCP, name: port-sut-24-tcp, targetPort: 30008}
+  - {port: 30008, protocol: UDP, name: port-sut-24-udp, targetPort: 30008}
+  - {port: 30009, protocol: TCP, name: port-sut-25-tcp, targetPort: 30009}
+  - {port: 30009, protocol: UDP, name: port-sut-25-udp, targetPort: 30009}
+  - {port: 30010, protocol: TCP, name: port-sut-26-tcp, targetPort: 30010}
+  - {port: 30010, protocol: UDP, name: port-sut-26-udp, targetPort: 30010}
+  - {port: 30011, protocol: TCP, name: port-sut-27-tcp, targetPort: 30011}
+  - {port: 30011, protocol: UDP, name: port-sut-27-udp, targetPort: 30011}
+  - {port: 30012, protocol: TCP, name: port-sut-28-tcp, targetPort: 30012}
+  - {port: 30012, protocol: UDP, name: port-sut-28-udp, targetPort: 30012}
+  - {port: 30013, protocol: TCP, name: port-sut-29-tcp, targetPort: 30013}
+  - {port: 30013, protocol: UDP, name: port-sut-29-udp, targetPort: 30013}
+  - {port: 30014, protocol: TCP, name: port-sut-30-tcp, targetPort: 30014}
+  - {port: 30014, protocol: UDP, name: port-sut-30-udp, targetPort: 30014}
+  - {port: 30015, protocol: TCP, name: port-sut-31-tcp, targetPort: 30015}
+  - {port: 30015, protocol: UDP, name: port-sut-31-udp, targetPort: 30015}
+  - {port: 30016, protocol: TCP, name: port-sut-32-tcp, targetPort: 30016}
+  - {port: 30016, protocol: UDP, name: port-sut-32-udp, targetPort: 30016}
+  - {port: 30017, protocol: TCP, name: port-sut-33-tcp, targetPort: 30017}
+  - {port: 30017, protocol: UDP, name: port-sut-33-udp, targetPort: 30017}
+  - {port: 30018, protocol: TCP, name: port-sut-34-tcp, targetPort: 30018}
+  - {port: 30018, protocol: UDP, name: port-sut-34-udp, targetPort: 30018}
+  - {port: 30019, protocol: TCP, name: port-sut-35-tcp, targetPort: 30019}
+  - {port: 30019, protocol: UDP, name: port-sut-35-udp, targetPort: 30019}
+  - {port: 30020, protocol: TCP, name: port-sut-36-tcp, targetPort: 30020}
+  - {port: 30020, protocol: UDP, name: port-sut-36-udp, targetPort: 30020}
+  - {port: 30021, protocol: TCP, name: port-sut-37-tcp, targetPort: 30021}
+  - {port: 30021, protocol: UDP, name: port-sut-37-udp, targetPort: 30021}
+  - {port: 30022, protocol: TCP, name: port-sut-38-tcp, targetPort: 30022}
+  - {port: 30022, protocol: UDP, name: port-sut-38-udp, targetPort: 30022}
+  - {port: 30023, protocol: TCP, name: port-sut-39-tcp, targetPort: 30023}
+  - {port: 30023, protocol: UDP, name: port-sut-39-udp, targetPort: 30023}
+  - {port: 30024, protocol: TCP, name: port-sut-40-tcp, targetPort: 30024}
+  - {port: 30024, protocol: UDP, name: port-sut-40-udp, targetPort: 30024}
+  - {port: 30025, protocol: TCP, name: port-sut-41-tcp, targetPort: 30025}
+  - {port: 30025, protocol: UDP, name: port-sut-41-udp, targetPort: 30025}
+  - {port: 30026, protocol: TCP, name: port-sut-42-tcp, targetPort: 30026}
+  - {port: 30026, protocol: UDP, name: port-sut-42-udp, targetPort: 30026}
+  - {port: 30027, protocol: TCP, name: port-sut-43-tcp, targetPort: 30027}
+  - {port: 30027, protocol: UDP, name: port-sut-43-udp, targetPort: 30027}
+  - {port: 30028, protocol: TCP, name: port-sut-44-tcp, targetPort: 30028}
+  - {port: 30028, protocol: UDP, name: port-sut-44-udp, targetPort: 30028}
+  - {port: 30029, protocol: TCP, name: port-sut-45-tcp, targetPort: 30029}
+  - {port: 30029, protocol: UDP, name: port-sut-45-udp, targetPort: 30029}
+  - {port: 30030, protocol: TCP, name: port-sut-46-tcp, targetPort: 30030}
+  - {port: 30030, protocol: UDP, name: port-sut-46-udp, targetPort: 30030}
+  - {port: 30031, protocol: TCP, name: port-sut-47-tcp, targetPort: 30031}
+  - {port: 30031, protocol: UDP, name: port-sut-47-udp, targetPort: 30031}
+  - {port: 30032, protocol: TCP, name: port-sut-48-tcp, targetPort: 30032}
+  - {port: 30032, protocol: UDP, name: port-sut-48-udp, targetPort: 30032}
+  - {port: 30033, protocol: TCP, name: port-sut-49-tcp, targetPort: 30033}
+  - {port: 30033, protocol: UDP, name: port-sut-49-udp, targetPort: 30033}
+  - {port: 30034, protocol: TCP, name: port-sut-50-tcp, targetPort: 30034}
+  - {port: 30034, protocol: UDP, name: port-sut-50-udp, targetPort: 30034}
+  - {port: 30035, protocol: TCP, name: port-sut-51-tcp, targetPort: 30035}
+  - {port: 30035, protocol: UDP, name: port-sut-51-udp, targetPort: 30035}
+  - {port: 30036, protocol: TCP, name: port-sut-52-tcp, targetPort: 30036}
+  - {port: 30036, protocol: UDP, name: port-sut-52-udp, targetPort: 30036}
+  - {port: 30037, protocol: TCP, name: port-sut-53-tcp, targetPort: 30037}
+  - {port: 30037, protocol: UDP, name: port-sut-53-udp, targetPort: 30037}
+  - {port: 30038, protocol: TCP, name: port-sut-54-tcp, targetPort: 30038}
+  - {port: 30038, protocol: UDP, name: port-sut-54-udp, targetPort: 30038}
+  - {port: 30039, protocol: TCP, name: port-sut-55-tcp, targetPort: 30039}
+  - {port: 30039, protocol: UDP, name: port-sut-55-udp, targetPort: 30039}
+  - {port: 30040, protocol: TCP, name: port-sut-56-tcp, targetPort: 30040}
+  - {port: 30040, protocol: UDP, name: port-sut-56-udp, targetPort: 30040}
+  - {port: 30041, protocol: TCP, name: port-sut-57-tcp, targetPort: 30041}
+  - {port: 30041, protocol: UDP, name: port-sut-57-udp, targetPort: 30041}
+  - {port: 30042, protocol: TCP, name: port-sut-58-tcp, targetPort: 30042}
+  - {port: 30042, protocol: UDP, name: port-sut-58-udp, targetPort: 30042}
+  - {port: 30043, protocol: TCP, name: port-sut-59-tcp, targetPort: 30043}
+  - {port: 30043, protocol: UDP, name: port-sut-59-udp, targetPort: 30043}
+  - {port: 30044, protocol: TCP, name: port-sut-60-tcp, targetPort: 30044}
+  - {port: 30044, protocol: UDP, name: port-sut-60-udp, targetPort: 30044}
+  - {port: 30045, protocol: TCP, name: port-sut-61-tcp, targetPort: 30045}
+  - {port: 30045, protocol: UDP, name: port-sut-61-udp, targetPort: 30045}
+  - {port: 30046, protocol: TCP, name: port-sut-62-tcp, targetPort: 30046}
+  - {port: 30046, protocol: UDP, name: port-sut-62-udp, targetPort: 30046}
+  - {port: 30047, protocol: TCP, name: port-sut-63-tcp, targetPort: 30047}
+  - {port: 30047, protocol: UDP, name: port-sut-63-udp, targetPort: 30047}
+  - {port: 30048, protocol: TCP, name: port-sut-64-tcp, targetPort: 30048}
+  - {port: 30048, protocol: UDP, name: port-sut-64-udp, targetPort: 30048}
+  - {port: 30049, protocol: TCP, name: port-sut-65-tcp, targetPort: 30049}
+  - {port: 30049, protocol: UDP, name: port-sut-65-udp, targetPort: 30049}
+  - {port: 30050, protocol: TCP, name: port-sut-66-tcp, targetPort: 30050}
+  - {port: 30050, protocol: UDP, name: port-sut-66-udp, targetPort: 30050}
+  - {port: 30051, protocol: TCP, name: port-sut-67-tcp, targetPort: 30051}
+  - {port: 30051, protocol: UDP, name: port-sut-67-udp, targetPort: 30051}
+  - {port: 30052, protocol: TCP, name: port-sut-68-tcp, targetPort: 30052}
+  - {port: 30052, protocol: UDP, name: port-sut-68-udp, targetPort: 30052}
+  - {port: 30053, protocol: TCP, name: port-sut-69-tcp, targetPort: 30053}
+  - {port: 30053, protocol: UDP, name: port-sut-69-udp, targetPort: 30053}
+  - {port: 30054, protocol: TCP, name: port-sut-70-tcp, targetPort: 30054}
+  - {port: 30054, protocol: UDP, name: port-sut-70-udp, targetPort: 30054}
+  - {port: 30055, protocol: TCP, name: port-sut-71-tcp, targetPort: 30055}
+  - {port: 30055, protocol: UDP, name: port-sut-71-udp, targetPort: 30055}
+  - {port: 30056, protocol: TCP, name: port-sut-72-tcp, targetPort: 30056}
+  - {port: 30056, protocol: UDP, name: port-sut-72-udp, targetPort: 30056}
+  - {port: 30057, protocol: TCP, name: port-sut-73-tcp, targetPort: 30057}
+  - {port: 30057, protocol: UDP, name: port-sut-73-udp, targetPort: 30057}
+  - {port: 30058, protocol: TCP, name: port-sut-74-tcp, targetPort: 30058}
+  - {port: 30058, protocol: UDP, name: port-sut-74-udp, targetPort: 30058}
+  - {port: 30059, protocol: TCP, name: port-sut-75-tcp, targetPort: 30059}
+  - {port: 30059, protocol: UDP, name: port-sut-75-udp, targetPort: 30059}
+  - {port: 30060, protocol: TCP, name: port-sut-76-tcp, targetPort: 30060}
+  - {port: 30060, protocol: UDP, name: port-sut-76-udp, targetPort: 30060}
+  - {port: 30061, protocol: TCP, name: port-sut-77-tcp, targetPort: 30061}
+  - {port: 30061, protocol: UDP, name: port-sut-77-udp, targetPort: 30061}
+  - {port: 30062, protocol: TCP, name: port-sut-78-tcp, targetPort: 30062}
+  - {port: 30062, protocol: UDP, name: port-sut-78-udp, targetPort: 30062}
+  - {port: 30063, protocol: TCP, name: port-sut-79-tcp, targetPort: 30063}
+  - {port: 30063, protocol: UDP, name: port-sut-79-udp, targetPort: 30063}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
@@ -99,6 +238,9 @@ spec:
         # images/hardware/sut/Dockerfile; not swept per-experiment
         - {name: SOCKPERF_NUM_SERVERS, value: "16"}
         - {name: SOCKPERF_BASE_PORT, value: "20000"}
+        - {name: NETPERF_CONTROL_PORT, value: "12865"}
+        - {name: NETPERF_DATA_BASE_PORT, value: "30000"}
+        - {name: NETPERF_DATA_NUM_PORTS, value: "64"}
         ports:
         - {containerPort: 22, name: ssh}
         - {containerPort: 20000, name: port-sut-0-tcp, protocol: TCP}
@@ -133,6 +275,135 @@ spec:
         - {containerPort: 20014, name: port-sut-14-udp, protocol: UDP}
         - {containerPort: 20015, name: port-sut-15-tcp, protocol: TCP}
         - {containerPort: 20015, name: port-sut-15-udp, protocol: UDP}
+        - {containerPort: 12865, name: port-sut-ctrl, protocol: TCP}
+        - {containerPort: 30000, name: port-sut-16-tcp, protocol: TCP}
+        - {containerPort: 30000, name: port-sut-16-udp, protocol: UDP}
+        - {containerPort: 30001, name: port-sut-17-tcp, protocol: TCP}
+        - {containerPort: 30001, name: port-sut-17-udp, protocol: UDP}
+        - {containerPort: 30002, name: port-sut-18-tcp, protocol: TCP}
+        - {containerPort: 30002, name: port-sut-18-udp, protocol: UDP}
+        - {containerPort: 30003, name: port-sut-19-tcp, protocol: TCP}
+        - {containerPort: 30003, name: port-sut-19-udp, protocol: UDP}
+        - {containerPort: 30004, name: port-sut-20-tcp, protocol: TCP}
+        - {containerPort: 30004, name: port-sut-20-udp, protocol: UDP}
+        - {containerPort: 30005, name: port-sut-21-tcp, protocol: TCP}
+        - {containerPort: 30005, name: port-sut-21-udp, protocol: UDP}
+        - {containerPort: 30006, name: port-sut-22-tcp, protocol: TCP}
+        - {containerPort: 30006, name: port-sut-22-udp, protocol: UDP}
+        - {containerPort: 30007, name: port-sut-23-tcp, protocol: TCP}
+        - {containerPort: 30007, name: port-sut-23-udp, protocol: UDP}
+        - {containerPort: 30008, name: port-sut-24-tcp, protocol: TCP}
+        - {containerPort: 30008, name: port-sut-24-udp, protocol: UDP}
+        - {containerPort: 30009, name: port-sut-25-tcp, protocol: TCP}
+        - {containerPort: 30009, name: port-sut-25-udp, protocol: UDP}
+        - {containerPort: 30010, name: port-sut-26-tcp, protocol: TCP}
+        - {containerPort: 30010, name: port-sut-26-udp, protocol: UDP}
+        - {containerPort: 30011, name: port-sut-27-tcp, protocol: TCP}
+        - {containerPort: 30011, name: port-sut-27-udp, protocol: UDP}
+        - {containerPort: 30012, name: port-sut-28-tcp, protocol: TCP}
+        - {containerPort: 30012, name: port-sut-28-udp, protocol: UDP}
+        - {containerPort: 30013, name: port-sut-29-tcp, protocol: TCP}
+        - {containerPort: 30013, name: port-sut-29-udp, protocol: UDP}
+        - {containerPort: 30014, name: port-sut-30-tcp, protocol: TCP}
+        - {containerPort: 30014, name: port-sut-30-udp, protocol: UDP}
+        - {containerPort: 30015, name: port-sut-31-tcp, protocol: TCP}
+        - {containerPort: 30015, name: port-sut-31-udp, protocol: UDP}
+        - {containerPort: 30016, name: port-sut-32-tcp, protocol: TCP}
+        - {containerPort: 30016, name: port-sut-32-udp, protocol: UDP}
+        - {containerPort: 30017, name: port-sut-33-tcp, protocol: TCP}
+        - {containerPort: 30017, name: port-sut-33-udp, protocol: UDP}
+        - {containerPort: 30018, name: port-sut-34-tcp, protocol: TCP}
+        - {containerPort: 30018, name: port-sut-34-udp, protocol: UDP}
+        - {containerPort: 30019, name: port-sut-35-tcp, protocol: TCP}
+        - {containerPort: 30019, name: port-sut-35-udp, protocol: UDP}
+        - {containerPort: 30020, name: port-sut-36-tcp, protocol: TCP}
+        - {containerPort: 30020, name: port-sut-36-udp, protocol: UDP}
+        - {containerPort: 30021, name: port-sut-37-tcp, protocol: TCP}
+        - {containerPort: 30021, name: port-sut-37-udp, protocol: UDP}
+        - {containerPort: 30022, name: port-sut-38-tcp, protocol: TCP}
+        - {containerPort: 30022, name: port-sut-38-udp, protocol: UDP}
+        - {containerPort: 30023, name: port-sut-39-tcp, protocol: TCP}
+        - {containerPort: 30023, name: port-sut-39-udp, protocol: UDP}
+        - {containerPort: 30024, name: port-sut-40-tcp, protocol: TCP}
+        - {containerPort: 30024, name: port-sut-40-udp, protocol: UDP}
+        - {containerPort: 30025, name: port-sut-41-tcp, protocol: TCP}
+        - {containerPort: 30025, name: port-sut-41-udp, protocol: UDP}
+        - {containerPort: 30026, name: port-sut-42-tcp, protocol: TCP}
+        - {containerPort: 30026, name: port-sut-42-udp, protocol: UDP}
+        - {containerPort: 30027, name: port-sut-43-tcp, protocol: TCP}
+        - {containerPort: 30027, name: port-sut-43-udp, protocol: UDP}
+        - {containerPort: 30028, name: port-sut-44-tcp, protocol: TCP}
+        - {containerPort: 30028, name: port-sut-44-udp, protocol: UDP}
+        - {containerPort: 30029, name: port-sut-45-tcp, protocol: TCP}
+        - {containerPort: 30029, name: port-sut-45-udp, protocol: UDP}
+        - {containerPort: 30030, name: port-sut-46-tcp, protocol: TCP}
+        - {containerPort: 30030, name: port-sut-46-udp, protocol: UDP}
+        - {containerPort: 30031, name: port-sut-47-tcp, protocol: TCP}
+        - {containerPort: 30031, name: port-sut-47-udp, protocol: UDP}
+        - {containerPort: 30032, name: port-sut-48-tcp, protocol: TCP}
+        - {containerPort: 30032, name: port-sut-48-udp, protocol: UDP}
+        - {containerPort: 30033, name: port-sut-49-tcp, protocol: TCP}
+        - {containerPort: 30033, name: port-sut-49-udp, protocol: UDP}
+        - {containerPort: 30034, name: port-sut-50-tcp, protocol: TCP}
+        - {containerPort: 30034, name: port-sut-50-udp, protocol: UDP}
+        - {containerPort: 30035, name: port-sut-51-tcp, protocol: TCP}
+        - {containerPort: 30035, name: port-sut-51-udp, protocol: UDP}
+        - {containerPort: 30036, name: port-sut-52-tcp, protocol: TCP}
+        - {containerPort: 30036, name: port-sut-52-udp, protocol: UDP}
+        - {containerPort: 30037, name: port-sut-53-tcp, protocol: TCP}
+        - {containerPort: 30037, name: port-sut-53-udp, protocol: UDP}
+        - {containerPort: 30038, name: port-sut-54-tcp, protocol: TCP}
+        - {containerPort: 30038, name: port-sut-54-udp, protocol: UDP}
+        - {containerPort: 30039, name: port-sut-55-tcp, protocol: TCP}
+        - {containerPort: 30039, name: port-sut-55-udp, protocol: UDP}
+        - {containerPort: 30040, name: port-sut-56-tcp, protocol: TCP}
+        - {containerPort: 30040, name: port-sut-56-udp, protocol: UDP}
+        - {containerPort: 30041, name: port-sut-57-tcp, protocol: TCP}
+        - {containerPort: 30041, name: port-sut-57-udp, protocol: UDP}
+        - {containerPort: 30042, name: port-sut-58-tcp, protocol: TCP}
+        - {containerPort: 30042, name: port-sut-58-udp, protocol: UDP}
+        - {containerPort: 30043, name: port-sut-59-tcp, protocol: TCP}
+        - {containerPort: 30043, name: port-sut-59-udp, protocol: UDP}
+        - {containerPort: 30044, name: port-sut-60-tcp, protocol: TCP}
+        - {containerPort: 30044, name: port-sut-60-udp, protocol: UDP}
+        - {containerPort: 30045, name: port-sut-61-tcp, protocol: TCP}
+        - {containerPort: 30045, name: port-sut-61-udp, protocol: UDP}
+        - {containerPort: 30046, name: port-sut-62-tcp, protocol: TCP}
+        - {containerPort: 30046, name: port-sut-62-udp, protocol: UDP}
+        - {containerPort: 30047, name: port-sut-63-tcp, protocol: TCP}
+        - {containerPort: 30047, name: port-sut-63-udp, protocol: UDP}
+        - {containerPort: 30048, name: port-sut-64-tcp, protocol: TCP}
+        - {containerPort: 30048, name: port-sut-64-udp, protocol: UDP}
+        - {containerPort: 30049, name: port-sut-65-tcp, protocol: TCP}
+        - {containerPort: 30049, name: port-sut-65-udp, protocol: UDP}
+        - {containerPort: 30050, name: port-sut-66-tcp, protocol: TCP}
+        - {containerPort: 30050, name: port-sut-66-udp, protocol: UDP}
+        - {containerPort: 30051, name: port-sut-67-tcp, protocol: TCP}
+        - {containerPort: 30051, name: port-sut-67-udp, protocol: UDP}
+        - {containerPort: 30052, name: port-sut-68-tcp, protocol: TCP}
+        - {containerPort: 30052, name: port-sut-68-udp, protocol: UDP}
+        - {containerPort: 30053, name: port-sut-69-tcp, protocol: TCP}
+        - {containerPort: 30053, name: port-sut-69-udp, protocol: UDP}
+        - {containerPort: 30054, name: port-sut-70-tcp, protocol: TCP}
+        - {containerPort: 30054, name: port-sut-70-udp, protocol: UDP}
+        - {containerPort: 30055, name: port-sut-71-tcp, protocol: TCP}
+        - {containerPort: 30055, name: port-sut-71-udp, protocol: UDP}
+        - {containerPort: 30056, name: port-sut-72-tcp, protocol: TCP}
+        - {containerPort: 30056, name: port-sut-72-udp, protocol: UDP}
+        - {containerPort: 30057, name: port-sut-73-tcp, protocol: TCP}
+        - {containerPort: 30057, name: port-sut-73-udp, protocol: UDP}
+        - {containerPort: 30058, name: port-sut-74-tcp, protocol: TCP}
+        - {containerPort: 30058, name: port-sut-74-udp, protocol: UDP}
+        - {containerPort: 30059, name: port-sut-75-tcp, protocol: TCP}
+        - {containerPort: 30059, name: port-sut-75-udp, protocol: UDP}
+        - {containerPort: 30060, name: port-sut-76-tcp, protocol: TCP}
+        - {containerPort: 30060, name: port-sut-76-udp, protocol: UDP}
+        - {containerPort: 30061, name: port-sut-77-tcp, protocol: TCP}
+        - {containerPort: 30061, name: port-sut-77-udp, protocol: UDP}
+        - {containerPort: 30062, name: port-sut-78-tcp, protocol: TCP}
+        - {containerPort: 30062, name: port-sut-78-udp, protocol: UDP}
+        - {containerPort: 30063, name: port-sut-79-tcp, protocol: TCP}
+        - {containerPort: 30063, name: port-sut-79-udp, protocol: UDP}
         readinessProbe:
           tcpSocket:
             port: 22

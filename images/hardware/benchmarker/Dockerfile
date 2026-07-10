@@ -12,12 +12,13 @@
 # Date: 2025-05-18
 # Version: 1.0
 # Description: Connects to a SUT container via SSH and runs sysbench (CPU/memory),
-#   a single ENV-configurable fio (disk I/O) workload, or a sockperf (network
-#   latency/throughput) workload directly over the SUT's sockperf port. Configuration
-#   is supplied via environment variables. A Redis message queue is consulted for
-#   pod-assignment details. redis-cli and openssh-client are installed for queue
-#   interaction and SSH access; jq parses fio's JSON result into KEY:VALUE metrics
-#   and a CSV summary.
+#   a single ENV-configurable fio (disk I/O) workload, a sockperf (single-connection
+#   network latency/throughput) workload, or a netperf (many-concurrent-connection
+#   TCP_RR/UDP_RR) workload directly over the SUT's sockperf/netserver ports.
+#   Configuration is supplied via environment variables. A Redis message queue is
+#   consulted for pod-assignment details. redis-cli and openssh-client are installed
+#   for queue interaction and SSH access; jq parses fio's JSON result into KEY:VALUE
+#   metrics and a CSV summary.
 ######################################################################################
 
 ######################################################################################
@@ -35,6 +36,18 @@ RUN sed -i '/AC_SEARCH_LIBS(\[backtrace\]/d' configure.ac \
     && sed -i '1i #include <cstdio>' src/vma-xlio-redirect.cpp \
     && sed -i '1i #include <sys/time.h>' src/ticks.h
 RUN ./autogen.sh && ./configure && make -j$(nproc)
+
+######################################################################################
+# Build netperf from source (not packaged for Alpine/musl either) — same build as
+# images/hardware/sut/Dockerfile, kept in sync with it. Only the client binary is
+# needed here (netserver runs on the SUT side).
+######################################################################################
+FROM alpine:3.20 AS netperf-builder
+RUN apk add --no-cache git gcc g++ make automake autoconf libtool linux-headers musl-dev
+RUN git clone --depth 1 https://github.com/HewlettPackard/netperf.git /src
+WORKDIR /src
+RUN ./autogen.sh && ./configure --enable-histogram
+RUN make -C src -j$(nproc)
 
 FROM alpine:3.20
 
@@ -97,6 +110,16 @@ ENV HARDWARE_SOCKPERF_MPS=max
 ENV SOCKPERF_BASE_PORT=20000
 ENV SOCKPERF_NUM_SERVERS=16
 
+# netperf workload parameters (HARDWARE_TYPE=netperf only); HARDWARE_THREADS above
+# doubles as the number of concurrent netperf client instances run_netperf.sh
+# launches per pod. NETPERF_CONTROL_PORT/DATA_BASE_PORT/DATA_NUM_PORTS must stay
+# numerically in sync with images/hardware/sut/Dockerfile, same convention as
+# SOCKPERF_BASE_PORT/SOCKPERF_NUM_SERVERS above.
+ENV HARDWARE_NETPERF_PROTOCOL=tcp
+ENV NETPERF_CONTROL_PORT=12865
+ENV NETPERF_DATA_BASE_PORT=30000
+ENV NETPERF_DATA_NUM_PORTS=64
+
 ######################################################################################
 # Install SSH client, redis-cli, jq (for fio JSON result parsing), and
 # libstdc++ (sockperf's only runtime dependency)
@@ -104,9 +127,10 @@ ENV SOCKPERF_NUM_SERVERS=16
 RUN apk add --no-cache openssh-client bash redis jq libstdc++
 
 ######################################################################################
-# Install sockperf binary (built in the sockperf-builder stage above)
+# Install sockperf/netperf binaries (built in the builder stages above)
 ######################################################################################
 COPY --from=sockperf-builder /src/sockperf /usr/local/bin/sockperf
+COPY --from=netperf-builder /src/src/netperf /usr/local/bin/netperf
 
 ######################################################################################
 # Install SSH private key for SUT access
@@ -121,7 +145,8 @@ RUN chmod 600 /root/.ssh/id_ed25519
 COPY run_sysbench.sh /usr/local/bin/run_sysbench.sh
 COPY run_fio.sh /usr/local/bin/run_fio.sh
 COPY run_sockperf.sh /usr/local/bin/run_sockperf.sh
-RUN chmod +x /usr/local/bin/run_sysbench.sh /usr/local/bin/run_fio.sh /usr/local/bin/run_sockperf.sh
+COPY run_netperf.sh /usr/local/bin/run_netperf.sh
+RUN chmod +x /usr/local/bin/run_sysbench.sh /usr/local/bin/run_fio.sh /usr/local/bin/run_sockperf.sh /usr/local/bin/run_netperf.sh
 
 COPY benchmarker.sh /benchmarker.sh
 RUN chmod +x /benchmarker.sh
