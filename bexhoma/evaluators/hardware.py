@@ -21,44 +21,66 @@ from .logger import LogEvaluator
 
 __all__ = ["HardwareEvaluator"]
 
-# KEY:VALUE lines echoed by benchmarker.sh (identity/scaling), run_fio.sh
-# (fio parameters/results) and run_sysbench.sh (sysbench results); see
-# images/hardware/benchmarker/*.sh.
+# KEY:VALUE lines echoed by benchmarker.sh (identity/scaling) and, depending on
+# HARDWARE_TYPE, exactly one of run_fio.sh/run_sysbench.sh/run_sockperf.sh/
+# run_netperf.sh (that type's parameters/results); see
+# images/hardware/benchmarker/*.sh. A pod only ever runs one tool
+# (benchmarker.sh dispatches on HARDWARE_TYPE), so log_to_df() looks up
+# HARDWARE_TYPE first and then only scans for that type's own keys below —
+# the other types' columns are absent from the resulting row entirely,
+# instead of being present and zero-filled.
 _KEYS_IDENTITY = [
     'BEXHOMA_CONNECTION', 'BEXHOMA_CONFIGURATION', 'BEXHOMA_EXPERIMENT',
     'BEXHOMA_EXPERIMENT_RUN', 'BEXHOMA_CLIENT', 'BEXHOMA_BENCHMARK_RUN',
     'BEXHOMA_CHILD', 'BEXHOMA_NUM_PODS',
 ]
-_KEYS_PARAMETERS = [
+_KEYS_COMMON_PARAMETERS = [
     'HARDWARE_TYPE', 'HARDWARE_SIZE', 'HARDWARE_DURATION', 'HARDWARE_THREADS',
-    'HARDWARE_FIO_RW', 'HARDWARE_FIO_BS', 'HARDWARE_FIO_IODEPTH',
-    'HARDWARE_FIO_NUMJOBS', 'HARDWARE_FIO_ENGINE', 'HARDWARE_FIO_FSYNC',
-    'HARDWARE_FIO_FDATASYNC', 'HARDWARE_FIO_RWMIXREAD',
-    'HARDWARE_SOCKPERF_MODE', 'HARDWARE_SOCKPERF_PROTOCOL',
-    'HARDWARE_SOCKPERF_MSGSIZE', 'HARDWARE_SOCKPERF_MPS', 'HARDWARE_SOCKPERF_PORT',
-    'HARDWARE_NETPERF_PROTOCOL',
 ]
+_KEYS_TYPE_PARAMETERS = {
+    'fio': [
+        'HARDWARE_FIO_RW', 'HARDWARE_FIO_BS', 'HARDWARE_FIO_IODEPTH',
+        'HARDWARE_FIO_NUMJOBS', 'HARDWARE_FIO_ENGINE', 'HARDWARE_FIO_FSYNC',
+        'HARDWARE_FIO_FDATASYNC', 'HARDWARE_FIO_RWMIXREAD',
+    ],
+    'sysbench': [],
+    'sockperf': [
+        'HARDWARE_SOCKPERF_MODE', 'HARDWARE_SOCKPERF_PROTOCOL',
+        'HARDWARE_SOCKPERF_MSGSIZE', 'HARDWARE_SOCKPERF_MPS', 'HARDWARE_SOCKPERF_PORT',
+    ],
+    'netperf': ['HARDWARE_NETPERF_PROTOCOL'],
+}
 _PERCENTILE_LABELS = ['P01', 'P10', 'P50', 'P90', 'P95', 'P99', 'P999', 'P9999']
-_KEYS_RESULTS = ['HARDWARE_FIO_READ_IOPS', 'HARDWARE_FIO_WRITE_IOPS',
-                 'HARDWARE_FIO_READ_BW_KBPS', 'HARDWARE_FIO_WRITE_BW_KBPS']
+_KEYS_FIO_RESULTS = ['HARDWARE_FIO_READ_IOPS', 'HARDWARE_FIO_WRITE_IOPS',
+                      'HARDWARE_FIO_READ_BW_KBPS', 'HARDWARE_FIO_WRITE_BW_KBPS']
 for _label in _PERCENTILE_LABELS:
-    _KEYS_RESULTS.append(f'HARDWARE_FIO_READ_LAT_{_label}_MS')
-    _KEYS_RESULTS.append(f'HARDWARE_FIO_WRITE_LAT_{_label}_MS')
-_KEYS_RESULTS += [
-    'HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC', 'HARDWARE_SYSBENCH_CPU_TOTAL_TIME_S',
-    'HARDWARE_SYSBENCH_CPU_LAT_P95_MS', 'HARDWARE_SYSBENCH_MEMORY_OPS_PER_SEC',
-    'HARDWARE_SYSBENCH_MEMORY_THROUGHPUT_MIBPS', 'HARDWARE_SYSBENCH_MEMORY_LAT_P95_MS',
+    _KEYS_FIO_RESULTS.append(f'HARDWARE_FIO_READ_LAT_{_label}_MS')
+    _KEYS_FIO_RESULTS.append(f'HARDWARE_FIO_WRITE_LAT_{_label}_MS')
+_KEYS_TYPE_RESULTS = {
+    'fio': _KEYS_FIO_RESULTS,
+    'sysbench': [
+        'HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC', 'HARDWARE_SYSBENCH_CPU_TOTAL_TIME_S',
+        'HARDWARE_SYSBENCH_CPU_LAT_P95_MS', 'HARDWARE_SYSBENCH_MEMORY_OPS_PER_SEC',
+        'HARDWARE_SYSBENCH_MEMORY_THROUGHPUT_MIBPS', 'HARDWARE_SYSBENCH_MEMORY_LAT_P95_MS',
+    ],
+    'sockperf': [
+        'HARDWARE_SOCKPERF_LATENCY_AVG_MS', 'HARDWARE_SOCKPERF_LATENCY_P50_MS',
+        'HARDWARE_SOCKPERF_LATENCY_P99_MS', 'HARDWARE_SOCKPERF_LATENCY_P999_MS',
+        'HARDWARE_SOCKPERF_MSG_RATE_PER_SEC', 'HARDWARE_SOCKPERF_DROPPED_PER_SEC',
+    ],
+    'netperf': [
+        'HARDWARE_NETPERF_TRANSACTION_RATE', 'HARDWARE_NETPERF_LATENCY_AVG_MS',
+        'HARDWARE_NETPERF_LATENCY_P50_MS', 'HARDWARE_NETPERF_LATENCY_P90_MS',
+        'HARDWARE_NETPERF_LATENCY_P99_MS', 'HARDWARE_NETPERF_INSTANCES_FAILED',
+    ],
+}
+# Full key set across all types, used where a superset is legitimately needed
+# (dtype casting, aggregation) and then filtered down to columns actually
+# present on the DataFrame at hand.
+_KEYS_PARAMETERS = _KEYS_COMMON_PARAMETERS + [
+    key for keys in _KEYS_TYPE_PARAMETERS.values() for key in keys
 ]
-_KEYS_RESULTS += [
-    'HARDWARE_SOCKPERF_LATENCY_AVG_MS', 'HARDWARE_SOCKPERF_LATENCY_P50_MS',
-    'HARDWARE_SOCKPERF_LATENCY_P99_MS', 'HARDWARE_SOCKPERF_LATENCY_P999_MS',
-    'HARDWARE_SOCKPERF_MSG_RATE_PER_SEC', 'HARDWARE_SOCKPERF_DROPPED_PER_SEC',
-]
-_KEYS_RESULTS += [
-    'HARDWARE_NETPERF_TRANSACTION_RATE', 'HARDWARE_NETPERF_LATENCY_AVG_MS',
-    'HARDWARE_NETPERF_LATENCY_P50_MS', 'HARDWARE_NETPERF_LATENCY_P90_MS',
-    'HARDWARE_NETPERF_LATENCY_P99_MS', 'HARDWARE_NETPERF_INSTANCES_FAILED',
-]
+_KEYS_RESULTS = [key for keys in _KEYS_TYPE_RESULTS.values() for key in keys]
 
 _NATURAL_SORT_DIGIT_WIDTH = 10  # zero-pad width; comfortably covers phase strings like "Hardware-1-1-128"
 
@@ -83,12 +105,17 @@ class HardwareEvaluator(LogEvaluator):
     Evaluator for a Hardware (fio) experiment.
 
     Parses per-pod log files for the ``KEY:VALUE`` parameter and result lines
-    echoed by ``benchmarker.sh``/``run_fio.sh``/``run_sysbench.sh`` and assembles
+    echoed by ``benchmarker.sh`` and whichever of ``run_fio.sh``/``run_sysbench.sh``/
+    ``run_sockperf.sh``/``run_netperf.sh`` matches ``HARDWARE_TYPE``, and assembles
     them into DataFrames. Aggregation over parallel pods follows the same pattern
-    as the other logger-based evaluators. A given experiment runs either fio or
-    sysbench rounds (``-xht`` is not swept), so the columns of the inactive tool
-    are always present but filled with ``0``, the same convention already used
-    for fio's own read/write split.
+    as the other logger-based evaluators. A given experiment runs a single
+    ``HARDWARE_TYPE`` for all of its rounds (``-xht`` is not swept), and each row
+    only carries that type's own parameter/result columns — the other three
+    types' columns are absent entirely, not present and zero-filled. Combining
+    rows/frames of different types (e.g. via ``collectors.hardware`` across
+    experiment codes) still works: ``pandas`` concatenation and the
+    ``in df.columns`` guards throughout this class treat missing columns as
+    ``NaN``, not ``0``.
 
     :param code: Experiment identifier — also the name of the result sub-folder.
     :param path: Root path that contains the result folders.
@@ -121,8 +148,15 @@ class HardwareEvaluator(LogEvaluator):
                 print(filename, "log is incomplete")
                 return pd.DataFrame()
             pod_name = filename[filename.rindex("-") + 1:-len(".log")]
+            hardware_type_match = re.findall(re.escape('HARDWARE_TYPE') + ':(.*?)\n', stdout)
+            hardware_type = hardware_type_match[-1] if hardware_type_match else ''
+            keys_for_type = (
+                _KEYS_IDENTITY + _KEYS_COMMON_PARAMETERS
+                + _KEYS_TYPE_PARAMETERS.get(hardware_type, [])
+                + _KEYS_TYPE_RESULTS.get(hardware_type, [])
+            )
             values = {}
-            for key in _KEYS_IDENTITY + _KEYS_PARAMETERS + _KEYS_RESULTS:
+            for key in keys_for_type:
                 match = re.findall(re.escape(key) + ':(.*?)\n', stdout)
                 values[key] = match[-1] if match else ''
             errors = re.findall('Error ', stdout)
@@ -153,7 +187,10 @@ class HardwareEvaluator(LogEvaluator):
                 'pod': pod_name, 'pod_count': pod_count, 'code': code, 'errors': num_errors,
                 'tenant_id': tenant_id, 'duration': duration,
             }
-            for key in _KEYS_PARAMETERS + _KEYS_RESULTS:
+            for key in (
+                _KEYS_COMMON_PARAMETERS + _KEYS_TYPE_PARAMETERS.get(hardware_type, [])
+                + _KEYS_TYPE_RESULTS.get(hardware_type, [])
+            ):
                 row[key.lower()] = values[key]
             df = pd.DataFrame([row])
             df.index.name = connection_name
@@ -170,6 +207,16 @@ class HardwareEvaluator(LogEvaluator):
         A read-only (or write-only) fio workload never echoes the opposing
         direction's ``KEY:VALUE`` lines, so :meth:`log_to_df` defaults those
         columns to ``''``; such blanks are treated as ``0`` here before casting.
+        Rows of a different ``HARDWARE_TYPE`` don't have a given type's columns
+        at all, so concatenating rows/frames of different types (e.g. across
+        ``collectors.hardware`` experiment codes, or a future per-round
+        ``HARDWARE_TYPE`` sweep within one experiment) leaves those cells
+        ``NaN`` instead; this method treats such ``NaN`` the same as an
+        empty-string blank — ``0`` for numeric columns, ``''`` for string
+        columns — rather than the default ``astype('str')`` behaviour of
+        turning ``NaN`` into the literal text ``'nan'``. Callers must not
+        blanket-``fillna(0)`` beforehand, since that would turn string-column
+        ``NaN`` into the literal text ``'0'`` before this method ever sees it.
 
         Adds a ``tenant_id`` column (value ``-1``) and a ``duration`` column (value
         ``0``) when absent, so DataFrames loaded from older pickles (predating
@@ -202,9 +249,12 @@ class HardwareEvaluator(LogEvaluator):
         }
         for key in _KEYS_RESULTS:
             dtype_map[key.lower()] = 'float'
+        # narrow to columns actually present: a given row only carries its own
+        # HARDWARE_TYPE's columns, and DataFrame.astype(dict) raises KeyError
+        # for dict keys that aren't columns
+        dtype_map = {column: dtype for column, dtype in dtype_map.items() if column in df.columns}
         numeric_columns = [
-            column for column, dtype in dtype_map.items()
-            if dtype in ('int', 'float') and column in df.columns
+            column for column, dtype in dtype_map.items() if dtype in ('int', 'float')
         ]
         df = df.copy()
         # replace('', 0) on an all-blank object column emits pandas' downcasting
@@ -213,6 +263,12 @@ class HardwareEvaluator(LogEvaluator):
         # fired. to_numeric()+fillna() sidesteps replace() entirely and also
         # copes with any stray non-numeric string, not just exact ''.
         df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce').fillna(0)
+        # a row from one HARDWARE_TYPE has no column at all for another type's
+        # string parameters; concatenating rows of different types (e.g. across
+        # collectors.hardware experiment codes) leaves those cells NaN, and
+        # astype('str') would otherwise turn NaN into the literal string 'nan'
+        string_columns = [column for column, dtype in dtype_map.items() if dtype == 'str']
+        df[string_columns] = df[string_columns].fillna('')
         df_typed = df.astype(dtype_map)
         return df_typed
 
@@ -245,6 +301,10 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_netperf_transaction_rate': 'sum',
                 'hardware_netperf_instances_failed': 'sum',
             }
+            # narrow to columns actually present: a given phase group only
+            # carries its own HARDWARE_TYPE's columns, and grp.agg(dict) raises
+            # KeyError for dict keys that aren't columns
+            aggregate = {col: how for col, how in aggregate.items() if col in grp.columns}
             for col in grp.columns:
                 if (col.endswith('_iops') or col.endswith('_kbps')
                         or col.endswith('_per_sec') or col.endswith('_mibps')):
@@ -309,7 +369,6 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
             'hardware_netperf_instances_failed', 'errors',
         ]
-        df.fillna(0, inplace=True)
         df_plot = self.benchmarking_set_datatypes(df)
         df_plot_filtered = pd.DataFrame()
         for col in columns:
@@ -336,7 +395,6 @@ class HardwareEvaluator(LogEvaluator):
         df = self.get_df_benchmarking()
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
-            df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(
@@ -389,7 +447,6 @@ class HardwareEvaluator(LogEvaluator):
         df = self.get_df_benchmarking()
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
-            df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'client', 'pod_count']).round(2)

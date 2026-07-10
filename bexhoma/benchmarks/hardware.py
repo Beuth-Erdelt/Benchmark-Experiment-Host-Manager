@@ -1,5 +1,5 @@
 """
-Benchmark class for Hardware (fio/sysbench/sockperf) experiments.
+Benchmark class for Hardware (fio/sysbench/sockperf/netperf) experiments.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -17,7 +17,7 @@ __all__ = ["Hardware"]
 class Hardware(Benchmark):
     """
     Benchmark class for raw hardware I/O, CPU, and network benchmarks run via
-    fio/sysbench/sockperf against a dedicated SUT container (no DBMS, no data loading).
+    fio/sysbench/sockperf/netperf against a dedicated SUT container (no DBMS, no data loading).
     """
 
     def __init__(self) -> None:
@@ -60,7 +60,7 @@ class Hardware(Benchmark):
         if mode == 'run':
             experiment.set_workload(
                 name=f'Hardware Benchmark ({hardware_type})',
-                info='This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), or network latency/throughput (sockperf) performance.',
+                info='This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.',
                 type='hardware',
                 defaultParameters={'HARDWARE_TYPE': hardware_type},
             )
@@ -117,6 +117,11 @@ class Hardware(Benchmark):
                 experiment.workload['info'] += f"\nProtocol(s) swept: {list_sockperf_protocol}."
                 experiment.workload['info'] += f"\nMessage size(s) swept: {list_sockperf_msgsize} bytes."
                 experiment.workload['info'] += f"\nMessage rate(s) swept: {list_sockperf_mps} (messages/sec, or 'max' for uncapped)."
+            elif hardware_type == 'netperf':
+                list_netperf_protocol = args.netperf_protocol.split(",")
+                experiment.workload['info'] += f"\nDuration per round is {args.hardware_duration}s."
+                experiment.workload['info'] += f"\nProtocol(s) swept: {list_netperf_protocol} (selects TCP_RR/UDP_RR)."
+                experiment.workload['info'] += "\nConcurrent client instances per pod controlled via HARDWARE_THREADS (see images/hardware/benchmarker/run_netperf.sh)."
 
     def test_results(self, experiment) -> None:
         """
