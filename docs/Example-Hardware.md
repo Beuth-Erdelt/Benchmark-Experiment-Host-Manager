@@ -3878,16 +3878,12 @@ than one shared listener, so this is a hard, not incidental, ceiling on concurre
 commands use `-xnpp tcp` (selects `TCP_RR`), matching PostgreSQL's actual wire protocol, same
 reasoning as sockperf's `-xspp tcp` below.
 
-17 fixes both pod count and connection count at 1 to establish the single-connection round-trip
-latency floor. 18 then sweeps the number of *concurrent* connections (1 to 64) within that single
-pod — the test sockperf structurally cannot do — to see whether per-connection latency holds
-steady as concurrency grows, directly the question PostgreSQL connection-pool sizing
-(`max_connections`, PgBouncer pool size) depends on. 19 instead holds total concurrency fixed at 64
-and splits it across 1 vs 2 pods, the same "-nbp sweep at constant total threads" shape used to
-investigate benchbase's PostgreSQL pod-scaling result
-([`docs_benchbase_postgresql_scale.log`](Example-Benchbase.md)): there, 1 pod × 160 threads
-outperformed 2 pods × 80 threads by ~21% throughput and ~27% latency despite identical total
-connection count. Command 19 answers whether that came from the network/Kubernetes path itself.
+17 fixes both pod count and connection count at 1, to establish a single-connection baseline. 18
+sweeps the number of concurrent connections (1 to 64) within a single pod — a test sockperf cannot
+do, since its client is limited to one connection per process. 19 holds total connection count
+fixed and instead splits it across 1 vs 2 pods, the same "-nbp sweep at constant total threads"
+shape used for pod-count comparisons elsewhere in this repo (e.g.
+[`Example-Benchbase.md`](Example-Benchbase.md)).
 
 ### 17. Single-connection round-trip latency baseline (TCP_RR)
 
@@ -3907,9 +3903,8 @@ bexhoma hardware \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_query_latency.log
 ```
 
-This is the calibration point commands 18 and 19 scale up from: one connection, blocking
-request/reply, no think time — the network-latency floor a single PostgreSQL connection's simple
-queries would see on this cluster before any DBMS-side processing is added on top.
+This runs a single `TCP_RR` connection between one benchmarking pod and the SUT, synchronous
+request/reply with no think time, for 60 seconds — the baseline commands 18 and 19 build on.
 
 ### Result
 
@@ -3997,6 +3992,9 @@ Hardware Benchmark (netperf)
 * TEST passed: Execution Phase: every round has non-zero netperf transaction rate
 ```
 
+`hardware_netperf_transaction_rate` and the `hardware_netperf_latency_*_ms` columns report the
+observed transaction rate and round-trip latency for this connection.
+
 ### 18. Concurrent-connection scaling (TCP_RR, `-nbt` sweep)
 
 ```bash
@@ -4015,16 +4013,8 @@ bexhoma hardware \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_connection_scaling_sweep.log
 ```
 
-Compare the five rows of the Per Phase table: `hardware_netperf_transaction_rate` scales from
-9,256/s at 1 connection to 280,261/s at 64 (30×, sub-linear — each additional connection buys less
-marginal throughput as concurrency grows, visible directly in the SUT/benchmarker CPU columns
-climbing faster than the connection count). `hardware_netperf_latency_avg_ms` creeps up gently
-through 32 connections (0.11ms → 0.28ms) but `hardware_netperf_latency_p99_ms` jumps sharply at 64
-(0.61ms → 2.08ms, more than 3×) — a real tail-latency inflection point, not a gradual trend. For
-sizing `max_connections`/PgBouncer pools, this is the shape to look for: a pool sized comfortably
-under the inflection point (here, roughly ≤32 connections against this SUT/network) keeps
-per-query latency predictable; growing past it trades a shrinking throughput gain for a
-disproportionate tail-latency cost.
+This runs 1, 8, 16, 32, and 64 concurrent `TCP_RR` connections from a single benchmarking pod, one
+round per value.
 
 ### Result
 
@@ -4184,6 +4174,9 @@ Hardware Benchmark (netperf)
 * TEST passed: Execution Phase: every round has non-zero netperf transaction rate
 ```
 
+Compare `hardware_netperf_transaction_rate` and `hardware_netperf_latency_*_ms` across the five
+rows of the Per Phase table to see how they change as connection count grows.
+
 ### 19. Pod-count scaling at fixed total concurrency (TCP_RR, `-nbp` sweep)
 
 ```bash
@@ -4202,23 +4195,10 @@ bexhoma hardware \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_pod_scaling_sweep.log
 ```
 
-This is the command that answers the question this whole netperf section exists to ask. Compare
-against `docs/Example-Benchbase.md`'s PostgreSQL pod-scaling result at the same 1-vs-2-pod, same
-total-connection-count shape:
-
-| | 1 pod (aggregate) | 2 pods (aggregate) | Δ |
-|---|---|---|---|
-| **benchbase/PostgreSQL** (160 threads) | 8248.83 req/s | 6481.57 req/s | **-21.4%** throughput, +27% avg latency |
-| **netperf** (64 connections, this run) | 273,146.51 trans/s | 269,094.10 trans/s | **-1.5%** throughput, +44% avg latency, +97% p99 latency |
-
-Aggregate throughput barely moves for netperf — nowhere near benchbase's 21% drop — while
-benchbase's PostgreSQL run (and, per earlier investigation, MySQL too) degrades substantially on
-the identical 1-vs-2-pod, constant-total-connections change. Since netperf carries no database
-engine in the loop at all, this is evidence that the throughput degradation seen in both DBMS
-engines is not a Kubernetes-networking effect — it points back toward the engines' own
-connection/lock handling instead. netperf's own latency *did* rise somewhat here (avg +44%, p99
-nearly doubling), so splitting pods is not entirely free at the network layer either — but the
-throughput signal, which is what benchbase actually degraded on, stayed flat.
+This runs 64 concurrent `TCP_RR` connections split across 1 and then 2 benchmarking pods, keeping
+the total connection count constant — the same shape as the pod-count comparisons used for other
+benchmark types in this repo (e.g. [`Example-Benchbase.md`](Example-Benchbase.md)), but with no
+database engine in the loop.
 
 ### Result
 
@@ -4324,6 +4304,10 @@ Hardware Benchmark (netperf)
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: every round has non-zero netperf transaction rate
 ```
+
+Compare `hardware_netperf_transaction_rate` and `hardware_netperf_latency_*_ms` between the two
+rows of the Per Phase table to see how they change when the same total connection count is split
+across more pods.
 
 ## Sockperf network benchmarks
 
