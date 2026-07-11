@@ -68,6 +68,11 @@ SELECTOR_RE = re.compile(
     re.IGNORECASE
 )
 
+# A counter-based CPU metric needs at least two scrape samples inside the phase
+# window to compute a non-degenerate difference; with fewer, the delta is 0.0
+# or NaN regardless of actual load, so the 0/NaN test would be a false positive.
+MIN_MONITORING_SAMPLES = 2
+
 def parse_set_arg(s: str) -> Tuple[dict, str]:
     """
     Parse a single ``--set`` argument of the form ``<selector>=<value>``.
@@ -2746,17 +2751,24 @@ class ExperimentBase():
             self._record_test(passed_warnings, "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)")
             self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
         self._print_test_summary()
-    def show_summary_monitoring_table(self, evaluate: object, component: str) -> list:
+    def show_summary_monitoring_table(self, evaluate: object, component: str) -> Tuple[list, bool]:
         """
         Build a list of DataFrames containing CPU and RAM monitoring metrics for one component.
 
         :param evaluate: Evaluator object exposing get_monitoring_metric().
         :param component: Component name used as the metric scope (e.g. 'loading', 'stream').
-        :return: List of single-column DataFrames, one per collected metric.
+        :return: List of single-column DataFrames (one per collected metric), and a flag that is
+                 ``True`` when at least one connection had fewer than :data:`MIN_MONITORING_SAMPLES`
+                 scrapes of ``total_cpu_util_s`` inside the phase window (the phase ran shorter than
+                 the Prometheus scrape interval, so a 0/NaN CPU delta is not necessarily a real gap).
+        :rtype: tuple[list, bool]
         """
         df_monitoring = list()
+        insufficient_samples = False
         ##########
         df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component=component)
+        if not df.empty and (df.count() < MIN_MONITORING_SAMPLES).any():
+            insufficient_samples = True
         df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
         #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
         df_cleaned = pd.DataFrame(df)
@@ -2787,7 +2799,7 @@ class ExperimentBase():
         df_cleaned.columns = ["Max RAM Cached [Gb]"]
         if not df_cleaned.empty:
             df_monitoring.append(df_cleaned.copy())
-        return df_monitoring
+        return df_monitoring, insufficient_samples
     def show_summary_monitoring(self) -> None:
         """
         Print monitoring tables for all registered monitoring components and record test results.
@@ -2801,7 +2813,7 @@ class ExperimentBase():
         optional_components = self.workload.get('optional_monitoring_components', [])
         header_printed = False
         for component, title in self.workload['monitoring_components'].items():
-            df_monitoring = self.show_summary_monitoring_table(self.evaluator, component)
+            df_monitoring, insufficient_samples = self.show_summary_monitoring_table(self.evaluator, component)
             if len(df_monitoring) > 0:
                 if not header_printed:
                     print("\n### Monitoring")
@@ -2815,6 +2827,10 @@ class ExperimentBase():
                 if not passed and component in optional_components:
                     # Data generator produces no CPU load when data is pre-existing; skip test.
                     self._record_skipped_test(f"{title} contains 0 or NaN in CPU [CPUs] (data pre-existing)")
+                elif not passed and insufficient_samples:
+                    # Phase ran shorter than one Prometheus scrape interval, so the counter
+                    # delta cannot reliably reflect actual CPU usage; skip rather than fail.
+                    self._record_skipped_test(f"{title} contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)")
                 else:
                     suffix = "no 0 or NaN" if passed else "0 or NaN"
                     self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
@@ -2826,7 +2842,7 @@ class ExperimentBase():
         evaluate.load_experiment(code=code, silent=True)
         if (self.monitoring_active or self.cluster.monitor_cluster_active):
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluate, "loading")
+            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "loading")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - SUT")
@@ -2838,7 +2854,7 @@ class ExperimentBase():
                     test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluate, "loader")
+            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "loader")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Ingestion - Loader")
@@ -2850,7 +2866,7 @@ class ExperimentBase():
                     test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluate, "stream")
+            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "stream")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - SUT")
@@ -2862,7 +2878,7 @@ class ExperimentBase():
                     test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
             #####################
-            df_monitoring = self.show_summary_monitoring_table(evaluate, "benchmarker")
+            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "benchmarker")
             ##########
             if len(df_monitoring) > 0:
                 print("\n### Execution - Benchmarker")

@@ -73,7 +73,7 @@ The sections have consistent meaning across all benchmark types:
 | **Execution - Benchmarker** | `run` | CPU and RAM consumed by the driver pods during benchmarking |
 | **Tests** | all modes | Automated sanity checks — e.g., no zero throughput, no NaN metrics, workflow matches plan |
 
-A `TEST failed` line does not necessarily abort the experiment; it flags a condition worth investigating (e.g., a query error in TPC-DS Q90, or a monitoring gap).
+A `TEST failed` line does not necessarily abort the experiment; it flags a condition worth investigating (e.g., a query error in TPC-DS Q90, or a monitoring gap). A `TEST skipped` line means the check was inconclusive rather than failing — e.g. a component with pre-existing data produces no CPU load, or a phase ran shorter than one Prometheus scrape interval so a CPU counter delta of 0 cannot be distinguished from a real gap.
 
 ---
 
@@ -1625,7 +1625,7 @@ HammerDB Workload SF=1 (warehouses for TPC-C)
 | PostgreSQL-1-1-1-1 |        89.07 |      0.35 |           0.23 |                  0.24 |
 
 ### Tests
-* TEST failed: Loading phase: SUT deployment contains 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: SUT deployment contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
@@ -1733,7 +1733,7 @@ HammerDB Workload SF=1 (warehouses for TPC-C)
 | PostgreSQL-1-1-1-1 |        89.07 |      0.35 |           0.23 |                  0.24 |
 
 ### Tests
-* TEST failed: Loading phase: SUT deployment contains 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: SUT deployment contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
@@ -2200,8 +2200,8 @@ No warnings
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Execution phase: SUT deployment contains 0 or NaN in CPU [CPUs]
-* TEST failed: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs]
+* TEST skipped: Execution phase: SUT deployment contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
+* TEST skipped: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
@@ -2356,8 +2356,8 @@ No warnings
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Execution phase: SUT deployment contains 0 or NaN in CPU [CPUs]
-* TEST failed: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs]
+* TEST skipped: Execution phase: SUT deployment contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
+* TEST skipped: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN

@@ -69,18 +69,18 @@ spec:
   #selector:
   #  app: cockroachdb
 ---
-#apiVersion: policy/v1beta1
-#kind: PodDisruptionBudget
-#metadata:
-#  name: cockroachdb-budget
-#  labels:
-#    app: cockroachdb
-#spec:
-#  selector:
-#    matchLabels:
-#      app: cockroachdb
-#  maxUnavailable: 1
-#---
+# maxUnavailable: 1 keeps a majority (2 of 3) of CockroachDB nodes available
+# during voluntary disruptions (node drains, evictions) on this shared cluster.
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -139,20 +139,25 @@ spec:
           name: grpc
         - containerPort: 8080
           name: http
-# We recommend that you do not configure a liveness probe on a production environment, as this can impact the availability of production databases.
-#       livenessProbe:
-#         httpGet:
-#           path: "/health"
-#           port: http
-#         initialDelaySeconds: 30
-#         periodSeconds: 5
+# CockroachDB's own guidance against a liveness probe assumes a production
+# cluster where a hung node should keep serving reads to healthy ranges rather
+# than be killed. On this shared benchmarking cluster a hung node just returns
+# errors to clients for the rest of the run, so a lenient probe (60s grace) is
+# used to recover automatically instead.
+        livenessProbe:
+          httpGet:
+            path: "/health"
+            port: http
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          failureThreshold: 6
         readinessProbe:
           httpGet:
             path: "/health?ready=1"
             port: http
           initialDelaySeconds: 10
-          periodSeconds: 5
-          failureThreshold: 2
+          periodSeconds: 10
+          failureThreshold: 5
         volumeMounts:
         - {mountPath: /cockroach/cockroach-data/extern/data, name: benchmark-data-volume}
         - name: bxw
@@ -185,8 +190,8 @@ spec:
             --advertise-host $(hostname -f)
             --http-addr 0.0.0.0
             --join $(expr $BEXHOMA_WORKER_LIST)
-            --cache $(expr $MEMORY_LIMIT_MIB / 4)MiB
-            --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 4)MiB
+            --cache $(expr $MEMORY_LIMIT_MIB / 5)MiB
+            --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 5)MiB
       - name: cadvisor
         image: gcr.io/cadvisor/cadvisor:v0.47.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
