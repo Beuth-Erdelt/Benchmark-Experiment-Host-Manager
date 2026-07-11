@@ -97,11 +97,6 @@ bexhoma tpcds `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-1
-Start-Sleep -Seconds 30
-
-
 #### TCP-DS Persistent Storage (Example-TPC-DS.md)
 bexhoma tpcds `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -118,6 +113,7 @@ bexhoma tpcds `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -131,11 +127,6 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS storage  sf=
 ###########################################
 ############# TPC-DS MonetDB ##############
 ###########################################
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-30
-Start-Sleep -Seconds 30
 
 
 #### TCP-DS Power 30 (Example-TPC-DS.md)

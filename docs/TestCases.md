@@ -552,11 +552,6 @@ No warnings
 #### TPC-H Throughput Test
 
 ```bash
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
-```
-
-
-```bash
 bexhoma tpch \
   -dbms PostgreSQL \
   -sf 10 \
@@ -1384,10 +1379,6 @@ No warnings
 
 #### TPC-H Throughput Test
 
-```
-kubectl delete pvc bexhoma-storage-mysql-tpch-1
-```
-
 ```bash
 bexhoma tpch \
   -dbms MySQL \
@@ -2171,10 +2162,6 @@ No warnings
 #### TPC-H Throughput Test
 
 ```bash
-kubectl delete pvc bexhoma-storage-mariadb-tpch-1
-```
-
-```bash
 bexhoma tpch \
   -dbms MariaDB \
   -sf 1 \
@@ -2192,6 +2179,7 @@ bexhoma tpch \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -3446,11 +3434,6 @@ No warnings
 #### TPC-H Throughput Test
 
 ```bash
-kubectl delete pvc bexhoma-storage-postgresql-tpcds-1
-```
-
-
-```bash
 bexhoma tpcds \
   -dbms PostgreSQL \
   -sf 10 \
@@ -3468,6 +3451,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 150Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4132,10 +4116,6 @@ No warnings
 
 #### TPC-DS Throughput Test
 
-```
-kubectl delete pvc bexhoma-storage-mysql-tpcds-1
-```
-
 ```bash
 bexhoma tpcds \
   -dbms MySQL \
@@ -4154,6 +4134,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 150Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4966,10 +4947,6 @@ No warnings
 #### TPC-DS Throughput Test
 
 ```bash
-kubectl delete pvc bexhoma-storage-mariadb-tpcds-1
-```
-
-```bash
 bexhoma tpcds \
   -dbms MariaDB \
   -sf 1 \
@@ -4987,6 +4964,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -6913,13 +6891,6 @@ Benchbase Workload tpcc SF=16
 
 #### Benchbase Persistency
 
-
-Make sure, the database does not exist:
-```bash
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
-sleep 10
-```
-
 ```bash
 bexhoma benchbase \
   -dbms PostgreSQL \
@@ -6934,6 +6905,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -7561,13 +7533,6 @@ Benchbase Workload tpcc SF=16
 
 #### Benchbase Persistency
 
-
-Make sure, the database does not exist:
-```bash
-kubectl delete pvc bexhoma-storage-mysql-benchbase-16
-sleep 10
-```
-
 ```bash
 bexhoma benchbase \
   -dbms MySQL \
@@ -7582,6 +7547,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -8152,13 +8118,6 @@ Benchbase Workload tpcc SF=16
 
 #### Benchbase Persistency
 
-
-Make sure, the database does not exist:
-```bash
-kubectl delete pvc bexhoma-storage-mariadb-benchbase-16
-sleep 10
-```
-
 ```bash
 bexhoma benchbase \
   -dbms MariaDB \
@@ -8173,6 +8132,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

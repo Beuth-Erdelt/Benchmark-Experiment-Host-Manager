@@ -188,11 +188,6 @@ bexhoma tpch \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL monitoring  sf=10"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mysql-tpch-1
-sleep 30
-
-
 #### TCP-H Throughput Test - MySQL (TestCases.md)
 # -dbms MySQL                   DBMS under test
 # -sf 10                        scaling factor (controls database size in GB)
@@ -382,11 +377,6 @@ bexhoma tpch \
   run &>$LOG_DIR/testcase_tpch_postgresql_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL monitoring  sf=10"
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
-sleep 30
 
 
 #### TCP-H Throughput Test - PostgreSQL (TestCases.md)
@@ -580,11 +570,6 @@ bexhoma tpch \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB monitoring  sf=1"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mariadb-tpch-1
-sleep 30
-
-
 #### TCP-H Throughput Test - MariaDB (TestCases.md)
 # -dbms MariaDB                 DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -604,6 +589,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -626,6 +612,7 @@ bexhoma tpch \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -776,11 +763,6 @@ bexhoma tpcds \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL monitoring  sf=10"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mysql-tpcds-1
-sleep 30
-
-
 #### TCP-DS Throughput Test - MySQL (TestCases.md)
 # -dbms MySQL                   DBMS under test
 # -sf 10                        scaling factor (controls database size in GB)
@@ -800,6 +782,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 150Gi                    size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -822,6 +805,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 150Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -925,11 +909,6 @@ bexhoma tpcds \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL monitoring  sf=10"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-tpcds-1
-sleep 30
-
-
 #### TCP-DS Throughput Test - PostgreSQL (TestCases.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (controls database size in GB)
@@ -949,6 +928,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 150Gi                    size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -971,6 +951,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 150Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1074,11 +1055,6 @@ bexhoma tpcds \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB monitoring  sf=1"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mariadb-tpcds-1
-sleep 30
-
-
 #### TCP-DS Throughput Test - MariaDB (TestCases.md)
 # -dbms MariaDB                 DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -1098,6 +1074,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1120,6 +1097,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1215,11 +1193,6 @@ bexhoma tpcds \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB monitoring  sf=3"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-3
-sleep 30
-
-
 #### TCP-DS Throughput Test - MonetDB (TestCases.md)
 # -dbms MonetDB                 DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
@@ -1237,6 +1210,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1257,17 +1231,13 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/testcase_tpcds_monetdb_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=3  ne=1,2"
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpcds-100
-sleep 30
 
 
 #### TCP-DS Power Test Large - MonetDB (TestCases.md)
@@ -1287,6 +1257,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 1000Gi                   size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1307,6 +1278,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1404,11 +1376,6 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL simple  sf=16"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
-sleep 30
-
-
 #### Benchbase Persistency (TestCases.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 16                        scaling factor (controls database size in GB)
@@ -1422,6 +1389,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1440,6 +1408,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1578,11 +1547,6 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL simple  sf=16"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mysql-benchbase-16
-sleep 30
-
-
 #### Benchbase Persistency (TestCases.md)
 # -dbms MySQL                   DBMS under test
 # -sf 16                        scaling factor (controls database size in GB)
@@ -1596,6 +1560,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1614,6 +1579,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1752,11 +1718,6 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB simple  sf=16"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mariadb-benchbase-16
-sleep 30
-
-
 #### Benchbase Persistency (TestCases.md)
 # -dbms MariaDB                 DBMS under test
 # -sf 16                        scaling factor (controls database size in GB)
@@ -1770,6 +1731,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1788,6 +1750,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1922,11 +1885,6 @@ bexhoma hammerdb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL simple  sf=16"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
-sleep 30
-
-
 #### HammerDB Monitoring (TestCases.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 16                        scaling factor (controls database size in GB)
@@ -1940,6 +1898,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1958,6 +1917,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -2169,11 +2129,6 @@ bexhoma hammerdb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB simple  sf=16"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mariadb-hammerdb-16
-sleep 30
-
-
 #### HammerDB Monitoring (TestCases.md)
 # -dbms MariaDB                 DBMS under test
 # -sf 16                        scaling factor (controls database size in GB)
@@ -2187,6 +2142,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -2205,6 +2161,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -2304,11 +2261,6 @@ bexhoma ycsb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL loader scaling  sf=1"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-ycsb-1
-sleep 30
-
-
 #### YCSB Loader Test for Persistency (TestCases.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -2325,6 +2277,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -2346,6 +2299,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -2543,11 +2497,6 @@ bexhoma ycsb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL loader scaling  sf=1"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mysql-ycsb-1
-sleep 30
-
-
 #### YCSB Loader Test for Persistency (TestCases.md)
 # -dbms MySQL                   DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -2564,6 +2513,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -2585,6 +2535,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -2782,11 +2733,6 @@ bexhoma ycsb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB loader scaling  sf=1"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-mariadb-ycsb-1
-sleep 30
-
-
 #### YCSB Loader Test for Persistency (TestCases.md)
 # -dbms MariaDB                 DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -2803,6 +2749,7 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -2824,6 +2771,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

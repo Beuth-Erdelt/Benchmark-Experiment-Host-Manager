@@ -178,9 +178,6 @@ sleep 30
 install_yugabytedb no
 sleep 30
 
-kubectl delete pvc bexhoma-storage-yugabytedb-ycsb-1
-sleep 30
-
 #### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records x 1000)
@@ -199,6 +196,7 @@ sleep 30
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -222,6 +220,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

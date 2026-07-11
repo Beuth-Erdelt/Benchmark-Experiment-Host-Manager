@@ -48,11 +48,6 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 #### Schema-Per-Tenant
 
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-postgresql-schema-2-tpch-1
-```
-
 Example for power test with 2 tenants, each having a dedicated schema in the same database:
 ```bash
 bexhoma tpch \
@@ -252,11 +247,6 @@ No warnings
 
 #### Database-Per-Tenant
 
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-postgresql-database-2-tpch-1
-```
-
 Example for power test with 2 tenants, each having a dedicated database in the same DBMS:
 ```bash
 bexhoma tpch \
@@ -455,12 +445,6 @@ No warnings
 
 
 #### Container-Per-Tenant
-
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-postgresql-0-2-tpch-1
-kubectl delete pvc bexhoma-storage-postgresql-1-2-tpch-1
-```
 
 Example for power test with 2 tenants, each having a dedicated DBMS:
 ```bash
@@ -667,11 +651,6 @@ No warnings
 
 
 #### Database-Per-Tenant - Multiple Loaders
-
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-postgresql-database-2-tpch-1
-```
 
 We set 8 loaders per tenant (2 tenants):
 ```bash
@@ -1018,11 +997,6 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 #### Schema-Per-Tenant
 
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
-```
-
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated schema in the same database.
 The execution phase is run twice.
 ```bash
@@ -1157,11 +1131,6 @@ Benchbase Workload tpcc SF=1
 
 #### Database-Per-Tenant
 
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-1
-```
-
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated database in the same DBMS.
 The execution phase is run twice.
 ```bash
@@ -1295,12 +1264,6 @@ Benchbase Workload tpcc SF=1
 
 
 #### Container-Per-Tenant
-
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-postgresql-0-2-benchbase-tpcc-1
-kubectl delete pvc bexhoma-storage-postgresql-1-2-benchbase-tpcc-1
-```
 
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated DBMS.
 The execution phase is run twice.
@@ -1493,11 +1456,6 @@ An extensive example for an evaluation is in the [repository](https://github.com
 
 #### Database-Per-Tenant
 
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-mysql-benchbase-tpcc-1
-```
-
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated database in the same DBMS.
 The execution phase is run twice.
 ```bash
@@ -1630,12 +1588,6 @@ Benchbase Workload tpcc SF=1
 
 
 #### Container-Per-Tenant
-
-At first we remove old storage (or via `-rsr`)
-```
-kubectl delete pvc bexhoma-storage-mysql-0-2-benchbase-tpcc-1
-kubectl delete pvc bexhoma-storage-mysql-1-2-benchbase-tpcc-1
-```
 
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated DBMS.
 The execution phase is run twice.

@@ -513,6 +513,7 @@ bexhoma hammerdb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -648,11 +649,6 @@ Also note the size descreases from first to second run (PostgreSQL does some cle
 We can activate waiting times before and after execution of transactions with `-xkey` to follow TPC-C specifications more closely.
 Also also make sure, the number of driver threads (`-nbt`) is 10 times the number of warehouses (`-sf`).
 
-We at first remove persistent storage
-```bash
-kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
-```
-
 The keying and thinking times can be activated via `-xkey`:
 
 ```bash
@@ -673,6 +669,7 @@ bexhoma hammerdb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

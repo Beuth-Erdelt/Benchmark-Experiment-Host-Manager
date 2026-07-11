@@ -92,11 +92,6 @@ bexhoma hammerdb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB monitoring  sf=16  nbp=1,2"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
-sleep 30
-
-
 #### HammerDB Persistent Storage (Example-HammerDB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 16                        scaling factor (number of warehouses)
@@ -111,6 +106,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -130,17 +126,13 @@ bexhoma hammerdb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB storage  sf=16  nbp=1  nc=2"
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
-sleep 30
 
 
 #### HammerDB Keying and Thinking Time (Example-HammerDB.md)
@@ -160,6 +152,7 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -182,6 +175,7 @@ bexhoma hammerdb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

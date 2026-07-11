@@ -96,11 +96,6 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 # we have to be sure the "cloud service" is ready
 Start-Sleep -Seconds 300
 
-# delete pvc of placeholder
-kubectl delete pvc bexhoma-storage-databaseservice-ycsb-5
-
-Start-Sleep -Seconds 10
-
 
 #### YCSB Persistent Storage (Example-CloudDatabase.md)
 bexhoma ycsb `
@@ -121,6 +116,7 @@ bexhoma ycsb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `

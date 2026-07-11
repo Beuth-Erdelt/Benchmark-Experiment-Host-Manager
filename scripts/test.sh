@@ -117,10 +117,6 @@ nohup python tpch.py -ms 1 -tr \
 #sleep 600
 wait_process "tpch"
 
-#### Delete persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
-sleep 30
-
 
 ### TPC-H Throughput Test (TestCases.md)
 nohup python tpch.py -ms 1 -tr \
@@ -135,6 +131,7 @@ nohup python tpch.py -ms 1 -tr \
   -ne 1,2 \
   -nc 2 \
   -m -mc \
+  -rsr \
   -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/testcase_tpch_postgresql_3.log &
 
@@ -183,10 +180,6 @@ nohup python benchbase.py -ms 1 -tr \
 wait_process "benchbase"
 
 
-#### Delete persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
-sleep 30
-
 ### Benchbase Persistency (TestCases.md)
 nohup python benchbase.py -ms 1 -tr \
   -sf 16 \
@@ -199,6 +192,7 @@ nohup python benchbase.py -ms 1 -tr \
   -xnbf 8 \
   -ne 1 \
   -nc 2 \
+  -rsr \
   -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/testcase_benchbase_postgresql_2.log &
 
@@ -283,10 +277,6 @@ nohup python hammerdb.py -ms 1 -tr \
 
 wait_process "hammerdb"
 
-#### Delete persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-hammerdb-16
-sleep 30
-
 
 ### HammerDB Monitoring (TestCases.md)
 nohup python hammerdb.py -ms 1 -tr \
@@ -300,6 +290,7 @@ nohup python hammerdb.py -ms 1 -tr \
   -ne 1 \
   -nc 1 \
   -m -mc \
+  -rsr \
   -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/testcase_hammerdb_postgresql_2.log &
 
@@ -378,11 +369,6 @@ nohup python ycsb.py -ms 1 -tr \
 wait_process "ycsb"
 
 
-
-#### Delete persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-ycsb-1
-sleep 30
-
 ### YCSB Loader Test for Persistency (TestCases.md)
 nohup python ycsb.py -ms 1 -tr \
   -sf 1 \
@@ -398,6 +384,7 @@ nohup python ycsb.py -ms 1 -tr \
   -xnbf 1 \
   -ne 1 \
   -nc 2 \
+  -rsr \
   -rst shared -rss 30Gi \
   run </dev/null &>$LOG_DIR/testcase_ycsb_postgresql_2.log &
 
