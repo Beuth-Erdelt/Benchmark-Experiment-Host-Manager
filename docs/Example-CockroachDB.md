@@ -129,7 +129,7 @@ At the end of a benchmark you will see a summary like
 
 docs_ycsb_cockroachdb_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -382,7 +382,7 @@ The result looks something like
 
 docs_ycsb_cockroachdb_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -630,7 +630,7 @@ The result looks something like
 
 docs_ycsb_cockroachdb_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=10
@@ -872,7 +872,7 @@ bexhoma benchbase \
 
 docs_benchbase_cockroachdb_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -1059,7 +1059,7 @@ bexhoma benchbase \
 
 docs_benchbase_cockroachdb_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128
@@ -1412,7 +1412,7 @@ bexhoma benchbase \
 
 docs_benchbase_cockroachdb_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=128

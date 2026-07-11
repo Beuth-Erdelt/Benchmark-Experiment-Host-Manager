@@ -117,13 +117,15 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_ycsb_postgresql_start.log
 ```
 
 docs_ycsb_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB Start DBMS
@@ -164,7 +166,7 @@ PostgreSQL-1
 
 docs_ycsb_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB Start DBMS
@@ -219,13 +221,16 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_ycsb_postgresql_load.log
 ```
 
 docs_ycsb_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB Data Loading SF=1
@@ -311,7 +316,7 @@ PostgreSQL-1
 
 docs_ycsb_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB Data Loading SF=1
@@ -419,13 +424,16 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_run.log
 ```
 
 docs_ycsb_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -561,7 +569,7 @@ YCSB SF=1
 
 docs_ycsb_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=1
@@ -719,13 +727,15 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_benchbase_postgresql_start.log
 ```
 
 docs_benchbase_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Start DBMS
@@ -767,7 +777,7 @@ PostgreSQL-1
 
 docs_benchbase_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Start DBMS
@@ -820,13 +830,16 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_benchbase_postgresql_load.log
 ```
 
 docs_benchbase_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Data tpcc Loading SF=1
@@ -896,7 +909,7 @@ PostgreSQL-1
 
 docs_benchbase_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Data tpcc Loading SF=1
@@ -982,13 +995,16 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_run.log
 ```
 
 docs_benchbase_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1104,7 +1120,7 @@ Benchbase Workload tpcc SF=1
 
 docs_benchbase_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1239,13 +1255,15 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_hammerdb_postgresql_start.log
 ```
 
 docs_hammerdb_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Start DBMS
@@ -1285,7 +1303,7 @@ PostgreSQL-1
 
 docs_hammerdb_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Start DBMS
@@ -1337,13 +1355,16 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_hammerdb_postgresql_load.log
 ```
 
 docs_hammerdb_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Data Loading SF=1 (warehouses for TPC-C)
@@ -1412,7 +1433,7 @@ PostgreSQL-1
 
 docs_hammerdb_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Data Loading SF=1 (warehouses for TPC-C)
@@ -1497,13 +1518,16 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_run.log
 ```
 
 docs_hammerdb_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=1 (warehouses for TPC-C)
@@ -1611,7 +1635,7 @@ HammerDB Workload SF=1 (warehouses for TPC-C)
 
 docs_hammerdb_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=1 (warehouses for TPC-C)
@@ -1736,13 +1760,15 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_tpch_postgresql_start.log
 ```
 
 docs_tpch_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Start DBMS
@@ -1782,7 +1808,7 @@ PostgreSQL-1
 
 docs_tpch_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Start DBMS
@@ -1835,13 +1861,16 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_tpch_postgresql_load.log
 ```
 
 docs_tpch_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Data Loading SF=1
@@ -1917,7 +1946,7 @@ PostgreSQL-1
 
 docs_tpch_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Data Loading SF=1
@@ -2018,13 +2047,16 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_run.log
 ```
 
 docs_tpch_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -2180,7 +2212,7 @@ No warnings
 
 docs_tpch_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
@@ -2358,13 +2390,15 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_tpcds_postgresql_start.log
 ```
 
 docs_tpcds_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Start DBMS
@@ -2404,7 +2438,7 @@ PostgreSQL-1
 
 docs_tpcds_postgresql_start.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Start DBMS
@@ -2454,13 +2488,16 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_tpcds_postgresql_load.log
 ```
 
 docs_tpcds_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Data Loading SF=1
@@ -2536,7 +2573,7 @@ PostgreSQL-1
 
 docs_tpcds_postgresql_load.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Data Loading SF=1
@@ -2628,13 +2665,16 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_run.log
 ```
 
 docs_tpcds_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1
@@ -2867,7 +2907,7 @@ No warnings
 
 docs_tpcds_postgresql_run.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-DS Queries SF=1

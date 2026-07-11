@@ -73,7 +73,7 @@ The result looks something like
 
 docs_benchbase_postgresql_collector_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -296,7 +296,7 @@ The result looks something like
 
 docs_benchbase_postgresql_collector_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -529,7 +529,7 @@ The result looks something like
 
 docs_benchbase_postgresql_collector_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
@@ -778,7 +778,7 @@ The result looks something like
 
 docs_benchbase_postgresql_collector_tenants_schema.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1013,7 +1013,7 @@ The result looks something like
 
 docs_benchbase_postgresql_collector_tenants_database.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1248,7 +1248,7 @@ The result looks something like
 
 docs_benchbase_postgresql_collector_tenants_container.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=1
@@ -1586,7 +1586,7 @@ The result looks something like
 
 docs_tpch_postgresql_collector_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -1876,7 +1876,7 @@ The result looks something like
 
 docs_tpch_postgresql_collector_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=6
@@ -2166,7 +2166,7 @@ The result looks something like
 
 docs_tpch_postgresql_collector_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=6
@@ -2468,7 +2468,7 @@ The result looks something like
 
 docs_tpch_postgresql_collector_tenants_schema.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -2814,7 +2814,7 @@ The result looks something like
 
 docs_tpch_postgresql_collector_tenants_database.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -3160,7 +3160,7 @@ The result looks something like
 
 docs_tpch_postgresql_collector_tenants_container.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 TPC-H Queries SF=3
@@ -3543,7 +3543,7 @@ The result looks something like
 
 docs_ycsb_postgresql_collector_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -3786,7 +3786,7 @@ The result looks something like
 
 docs_ycsb_postgresql_collector_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -4029,7 +4029,7 @@ The result looks something like
 
 docs_ycsb_postgresql_collector_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 YCSB SF=3
@@ -4289,7 +4289,7 @@ The result looks something like
 
 docs_hammerdb_postgresql_collector_1.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -4497,7 +4497,7 @@ The result looks something like
 
 docs_hammerdb_postgresql_collector_2.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
@@ -4705,7 +4705,7 @@ The result looks something like
 
 docs_hammerdb_postgresql_collector_3.log
 ```markdown
-﻿## Show Summary
+## Show Summary
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
