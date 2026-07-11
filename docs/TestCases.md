@@ -12861,3 +12861,1983 @@ YCSB SF=1
 
 
 
+## Hardware
+
+`Hardware` runs fio, sysbench, sockperf, or netperf directly against a dedicated SUT container,
+bypassing any database engine entirely — see [Example-Hardware.md](Example-Hardware.md) for what
+each tool is for, how to use it in bexhoma, and typical use cases for all four tools. All sysbench,
+netperf, and sockperf examples are covered there; the eight fio sweeps below are the ones that did
+not fit as "typical examples" on that page (queue-depth/numjobs/block-size refinement, the
+PostgreSQL-page-size depth sweep, WAL `fdatasync`/group-commit/record-size sweeps, checkpoint
+writeback bandwidth, and the OLTP/WAL contention proxy).
+
+**The results are not official benchmark results.
+Exact performance depends on a number of parameters, including the underlying storage class,
+node hardware, and cluster load at the time of the run.
+These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
+
+You will have to change the node selectors to names of nodes that exist in your cluster
+(or leave the corresponding parameters out):
+```bash
+BEXHOMA_NODE_SUT="cl-worker36"
+BEXHOMA_NODE_BENCHMARK="cl-worker19"
+LOG_DIR="./logs_tests"
+BEXHOMA_MS=1
+BEXHOMA_STORAGE_CLASS="shared"
+
+mkdir -p $LOG_DIR
+```
+
+### Fio
+
+#### 1. Depth-sweep refinement around the elbow
+
+The coarse sweep above only localizes the elbow to "somewhere between 64 and 128" — each doubling
+step covers a wide range. This does a linear pass inside that bracket to pinpoint the actual knee
+instead of just the bracket containing it.
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw randread,randwrite \
+  -xfbs 4k \
+  -xfid 64,80,96,112,128 \
+  -xfe libaio \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/testcase_hardware_fio_depth_sweep_refine.log
+```
+
+10 rounds (2 patterns × 5 depths) ≈ 10 minutes.
+
+##### Result
+
+testcase_hardware_fio_depth_sweep_refine.log
+```markdown
+﻿## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 1436s 
+* Code: 1783194420
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: fio.
+  * Test file size is '4G', duration per round is 60s.
+  * I/O pattern(s) swept: ['randread', 'randwrite'].
+  * Block size(s) swept: ['4k'].
+  * Queue depth(s) swept: [64, 80, 96, 112, 128].
+  * I/O engine(s) swept: ['libaio'].
+  * Fsync interval(s) swept: [0].
+  * Fdatasync interval(s) swept: [0].
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:822252
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-10-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:830607
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:825422
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:830646
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:826119
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:821292
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-6-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:819472
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-7-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:819602
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-8-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:817519
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+* Hardware-1-1-9-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:827330
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783194420
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783194420-65c8bf6b44-5bmdx: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 7: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 8: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 9: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 10: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 7: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 8: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 9: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 10: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS                | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1  | Hardware-1-1-1  | Hardware-1-1-1-1  |                1 |        1 |               1 |       1 |         72 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                  3313.16 |                      0.00 |                          50.59 |                            0.00 |                         175.11 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1  | Hardware-1-1-2  | Hardware-1-1-2-1  |                1 |        2 |               1 |       1 |         71 | randread          | 4k                |                     80 | libaio                |                    0 |                        0 |                       50 |                      1 |                  4361.20 |                      0.00 |                          49.02 |                            0.00 |                         206.57 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1  | Hardware-1-1-3  | Hardware-1-1-3-1  |                1 |        3 |               1 |       1 |         72 | randread          | 4k                |                     96 | libaio                |                    0 |                        0 |                       50 |                      1 |                  4002.56 |                      0.00 |                          65.27 |                            0.00 |                         396.36 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1  | Hardware-1-1-4  | Hardware-1-1-4-1  |                1 |        4 |               1 |       1 |         72 | randread          | 4k                |                    112 | libaio                |                    0 |                        0 |                       50 |                      1 |                  4200.43 |                      0.00 |                          79.17 |                            0.00 |                         413.14 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5-1-1  | Hardware-1-1-5  | Hardware-1-1-5-1  |                1 |        5 |               1 |       1 |         70 | randread          | 4k                |                    128 | libaio                |                    0 |                        0 |                       50 |                      1 |                  5286.49 |                      0.00 |                          78.12 |                            0.00 |                         438.30 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6-1-1  | Hardware-1-1-6  | Hardware-1-1-6-1  |                1 |        6 |               1 |       1 |         65 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   1822.94 |                           0.00 |                          141.56 |                           0.00 |                          250.61 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-7-1-1  | Hardware-1-1-7  | Hardware-1-1-7-1  |                1 |        7 |               1 |       1 |         64 | randwrite         | 4k                |                     80 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   2241.12 |                           0.00 |                          152.04 |                           0.00 |                          250.61 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-8-1-1  | Hardware-1-1-8  | Hardware-1-1-8-1  |                1 |        8 |               1 |       1 |         63 | randwrite         | 4k                |                     96 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   2578.38 |                           0.00 |                          152.04 |                           0.00 |                          263.19 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-9-1-1  | Hardware-1-1-9  | Hardware-1-1-9-1  |                1 |        9 |               1 |       1 |         63 | randwrite         | 4k                |                    112 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   2552.31 |                           0.00 |                          173.02 |                           0.00 |                          341.84 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-10-1-1 | Hardware-1-1-10 | Hardware-1-1-10-1 |                1 |       10 |               1 |       1 |         64 | randwrite         | 4k                |                    128 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   3076.56 |                           0.00 |                          168.82 |                           0.00 |                          291.50 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1  | Hardware-1-1-1  |                1 |        1 |               1 |           1 |         72 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  3313.16 |                      0.00 |                          50.59 |                            0.00 |                         175.11 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2  | Hardware-1-1-2  |                1 |        2 |               1 |           1 |         71 | randread          | 4k                |                     80 | libaio                |                    0 |                        0 |                       50 |                  4361.20 |                      0.00 |                          49.02 |                            0.00 |                         206.57 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3  | Hardware-1-1-3  |                1 |        3 |               1 |           1 |         72 | randread          | 4k                |                     96 | libaio                |                    0 |                        0 |                       50 |                  4002.56 |                      0.00 |                          65.27 |                            0.00 |                         396.36 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4  | Hardware-1-1-4  |                1 |        4 |               1 |           1 |         72 | randread          | 4k                |                    112 | libaio                |                    0 |                        0 |                       50 |                  4200.43 |                      0.00 |                          79.17 |                            0.00 |                         413.14 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5  | Hardware-1-1-5  |                1 |        5 |               1 |           1 |         70 | randread          | 4k                |                    128 | libaio                |                    0 |                        0 |                       50 |                  5286.49 |                      0.00 |                          78.12 |                            0.00 |                         438.30 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6  | Hardware-1-1-6  |                1 |        6 |               1 |           1 |         65 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   1822.94 |                           0.00 |                          141.56 |                           0.00 |                          250.61 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-7  | Hardware-1-1-7  |                1 |        7 |               1 |           1 |         64 | randwrite         | 4k                |                     80 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   2241.12 |                           0.00 |                          152.04 |                           0.00 |                          250.61 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-8  | Hardware-1-1-8  |                1 |        8 |               1 |           1 |         63 | randwrite         | 4k                |                     96 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   2578.38 |                           0.00 |                          152.04 |                           0.00 |                          263.19 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-9  | Hardware-1-1-9  |                1 |        9 |               1 |           1 |         63 | randwrite         | 4k                |                    112 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   2552.31 |                           0.00 |                          173.02 |                           0.00 |                          341.84 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-10 | Hardware-1-1-10 |                1 |       10 |               1 |           1 |         64 | randwrite         | 4k                |                    128 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   3076.56 |                           0.00 |                          168.82 |                           0.00 |                          291.50 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1  |        67.31 |      2.51 |           0.02 |                  0.02 |
+| Hardware-1-1-2-1  |        75.69 |      4.20 |           0.02 |                  0.02 |
+| Hardware-1-1-3-1  |        75.00 |      3.93 |           0.03 |                  2.17 |
+| Hardware-1-1-4-1  |        64.23 |      1.85 |           0.02 |                  0.02 |
+| Hardware-1-1-5-1  |        72.15 |      2.09 |           0.03 |                  4.03 |
+| Hardware-1-1-6-1  |        66.85 |      3.03 |           0.02 |                  0.02 |
+| Hardware-1-1-7-1  |        62.88 |      2.02 |           0.02 |                  0.02 |
+| Hardware-1-1-8-1  |        73.73 |      2.75 |           0.02 |                  0.02 |
+| Hardware-1-1-9-1  |        69.06 |      2.72 |           0.02 |                  0.02 |
+| Hardware-1-1-10-1 |        68.84 |      1.95 |           0.02 |                  0.02 |
+
+### Execution phase: component benchmarker
+
+| DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1  |         0.50 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1  |         0.54 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1  |         0.52 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1  |         0.54 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-5-1  |         0.52 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-6-1  |         0.53 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-7-1  |         0.47 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-8-1  |         0.44 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-9-1  |         0.53 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-10-1 |         0.51 |      0.01 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS
+```
+
+`-rnn` pins the SUT pod to a specific node; without it, the scheduler may place different commands
+on different nodes, so results are only directly comparable across commands if `-rnn` is set
+consistently.
+
+---
+
+#### 2. Numjobs sweep at fixed queue depth (elbow check)
+
+Fixes `-xfid 64` (the elbow found above) and sweeps `-nbt` (numjobs per pod) instead of depth: if
+IOPS keep climbing with more threads at the same depth, 64 was a per-queue submission limit, not
+a real device ceiling; if IOPS stay flat, 64 is the actual hardware limit.
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw randread,randwrite \
+  -xfbs 4k \
+  -xfid 64 \
+  -xfe libaio \
+  -nbp 1 \
+  -nbt 1,2,4,8,16 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 80Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/testcase_hardware_fio_numjobs_sweep.log
+```
+
+##### Result
+
+testcase_hardware_fio_numjobs_sweep.log
+```markdown
+﻿## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 1662s 
+* Code: 1783190728
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: fio.
+  * Test file size is '4G', duration per round is 60s.
+  * I/O pattern(s) swept: ['randread', 'randwrite'].
+  * Block size(s) swept: ['4k'].
+  * Queue depth(s) swept: [64].
+  * I/O engine(s) swept: ['libaio'].
+  * Fsync interval(s) swept: [0].
+  * Fdatasync interval(s) swept: [0].
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type shared and size 80Gi. Persistent storage is removed at experiment start.
+  * Benchmarking is tested with [1, 2, 4, 8, 16] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:823734
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-10-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:815983
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:826418
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:821858
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:828969
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:821433
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-6-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:818500
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-7-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:827363
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-8-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:818057
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+* Hardware-1-1-9-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:821903
+  * volume_size:80.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783190728
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783190728-748c5bf8b6-6grqm: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 7: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 8: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 9: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 10: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 7: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 8: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 9: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 10: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS                | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1  | Hardware-1-1-1  | Hardware-1-1-1-1  |                1 |        1 |               1 |       1 |         71 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                  4338.31 |                      0.00 |                          54.26 |                            0.00 |                         152.04 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1  | Hardware-1-1-2  | Hardware-1-1-2-1  |                1 |        2 |               1 |       1 |         79 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      2 |                  4703.97 |                      0.00 |                          89.65 |                            0.00 |                         497.03 |                            0.00 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1  | Hardware-1-1-3  | Hardware-1-1-3-1  |                1 |        3 |               1 |       1 |         94 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      4 |                  5166.99 |                      0.00 |                         113.77 |                            0.00 |                         952.11 |                            0.00 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1  | Hardware-1-1-4  | Hardware-1-1-4-1  |                1 |        4 |               1 |       1 |        122 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      8 |                  5773.17 |                      0.00 |                         196.08 |                            0.00 |                        1803.55 |                            0.00 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5-1-1  | Hardware-1-1-5  | Hardware-1-1-5-1  |                1 |        5 |               1 |       1 |        187 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     16 |                  5295.18 |                      0.00 |                        1333.79 |                            0.00 |                        4731.17 |                            0.00 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6-1-1  | Hardware-1-1-6  | Hardware-1-1-6-1  |                1 |        6 |               1 |       1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   1878.38 |                           0.00 |                          141.56 |                           0.00 |                          256.90 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-7-1-1  | Hardware-1-1-7  | Hardware-1-1-7-1  |                1 |        7 |               1 |       1 |         64 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      2 |                     0.00 |                   3213.22 |                           0.00 |                          168.82 |                           0.00 |                          265.29 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-8-1-1  | Hardware-1-1-8  | Hardware-1-1-8-1  |                1 |        8 |               1 |       1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      4 |                     0.00 |                   3792.92 |                           0.00 |                          214.96 |                           0.00 |                          750.78 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-9-1-1  | Hardware-1-1-9  | Hardware-1-1-9-1  |                1 |        9 |               1 |       1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      8 |                     0.00 |                   4919.47 |                           0.00 |                          320.86 |                           0.00 |                         1484.78 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-10-1-1 | Hardware-1-1-10 | Hardware-1-1-10-1 |                1 |       10 |               1 |       1 |         64 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     16 |                     0.00 |                   6830.33 |                           0.00 |                          488.64 |                           0.00 |                         2768.24 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1  | Hardware-1-1-1  |                1 |        1 |               1 |           1 |         71 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  4338.31 |                      0.00 |                          54.26 |                            0.00 |                         152.04 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2  | Hardware-1-1-2  |                1 |        2 |               1 |           1 |         79 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  4703.97 |                      0.00 |                          89.65 |                            0.00 |                         497.03 |                            0.00 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3  | Hardware-1-1-3  |                1 |        3 |               1 |           1 |         94 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  5166.99 |                      0.00 |                         113.77 |                            0.00 |                         952.11 |                            0.00 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4  | Hardware-1-1-4  |                1 |        4 |               1 |           1 |        122 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  5773.17 |                      0.00 |                         196.08 |                            0.00 |                        1803.55 |                            0.00 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5  | Hardware-1-1-5  |                1 |        5 |               1 |           1 |        187 | randread          | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  5295.18 |                      0.00 |                        1333.79 |                            0.00 |                        4731.17 |                            0.00 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6  | Hardware-1-1-6  |                1 |        6 |               1 |           1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   1878.38 |                           0.00 |                          141.56 |                           0.00 |                          256.90 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-7  | Hardware-1-1-7  |                1 |        7 |               1 |           1 |         64 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   3213.22 |                           0.00 |                          168.82 |                           0.00 |                          265.29 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-8  | Hardware-1-1-8  |                1 |        8 |               1 |           1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   3792.92 |                           0.00 |                          214.96 |                           0.00 |                          750.78 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-9  | Hardware-1-1-9  |                1 |        9 |               1 |           1 |         63 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   4919.47 |                           0.00 |                          320.86 |                           0.00 |                         1484.78 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-10 | Hardware-1-1-10 |                1 |       10 |               1 |           1 |         64 | randwrite         | 4k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   6830.33 |                           0.00 |                          488.64 |                           0.00 |                         2768.24 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1  |        70.17 |      2.29 |           0.02 |                  0.02 |
+| Hardware-1-1-2-1  |        70.96 |      1.99 |           0.03 |                  4.03 |
+| Hardware-1-1-3-1  |        81.90 |      3.40 |           0.03 |                  4.03 |
+| Hardware-1-1-4-1  |        91.72 |      1.83 |           0.03 |                  4.03 |
+| Hardware-1-1-5-1  |       108.61 |      1.85 |           0.03 |                  4.03 |
+| Hardware-1-1-6-1  |        68.42 |      2.56 |           0.02 |                  0.02 |
+| Hardware-1-1-7-1  |        73.46 |      2.33 |           0.02 |                  0.02 |
+| Hardware-1-1-8-1  |        71.69 |      4.00 |           0.03 |                  0.03 |
+| Hardware-1-1-9-1  |        72.63 |      1.74 |           0.03 |                  0.03 |
+| Hardware-1-1-10-1 |        61.99 |      1.61 |           0.03 |                  0.04 |
+
+### Execution phase: component benchmarker
+
+| DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1  |         0.54 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1  |         0.57 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1  |         0.54 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1  |         0.57 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-5-1  |         0.58 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-6-1  |         0.44 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-7-1  |         0.58 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-8-1  |         0.55 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-9-1  |         0.55 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-10-1 |         0.50 |      0.01 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS
+```
+
+The Per Phase table lists one row per `-nbt` (numjobs) value, at the fixed queue depth set by
+`-xfid`.
+
+---
+
+#### 3. Depth sweep at PostgreSQL's page size (8k)
+
+The sweeps above use `bs=4k` as a generic device-IOPS probe. PostgreSQL always issues 8kB pages
+(`BLCKSZ`), so this re-anchors the depth sweep at the actual unit of I/O Postgres uses — the
+number that calibrates `effective_io_concurrency` / `maintenance_io_concurrency`, PostgreSQL's
+own prefetch-depth knobs.
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw randread,randwrite \
+  -xfbs 8k \
+  -xfid 1,2,4,8,16,32,64,128 \
+  -xfe libaio \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/testcase_hardware_fio_depth_sweep_8k.log
+```
+
+##### Result
+
+testcase_hardware_fio_depth_sweep_8k.log
+```markdown
+﻿## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 2212s 
+* Code: 1783195883
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: fio.
+  * Test file size is '4G', duration per round is 60s.
+  * I/O pattern(s) swept: ['randread', 'randwrite'].
+  * Block size(s) swept: ['8k'].
+  * Queue depth(s) swept: [1, 2, 4, 8, 16, 32, 64, 128].
+  * I/O engine(s) swept: ['libaio'].
+  * Fsync interval(s) swept: [0].
+  * Fdatasync interval(s) swept: [0].
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:822044
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-10-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:825002
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-11-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:816640
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-12-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:823446
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-13-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:824851
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-14-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:826533
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-15-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:825407
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-16-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:820455
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:823479
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:829372
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:826037
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:829244
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-6-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:825635
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-7-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:823397
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-8-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:819244
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+* Hardware-1-1-9-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:821267
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783195883
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783195883-97d957696-qdj82: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 7: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 8: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 9: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 10: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 11: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 12: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 13: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 14: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 15: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 16: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 7: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 8: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 9: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 10: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 11: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 12: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 13: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 14: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 15: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 16: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS                | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1  | Hardware-1-1-1  | Hardware-1-1-1-1  |                1 |        1 |               1 |       1 |         70 | randread          | 8k                |                      1 | libaio                |                    0 |                        0 |                       50 |                      1 |                    61.98 |                      0.00 |                          36.44 |                            0.00 |                          90.70 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1  | Hardware-1-1-2  | Hardware-1-1-2-1  |                1 |        2 |               1 |       1 |         69 | randread          | 8k                |                      2 | libaio                |                    0 |                        0 |                       50 |                      1 |                   167.54 |                      0.00 |                          32.11 |                            0.00 |                          76.02 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1  | Hardware-1-1-3  | Hardware-1-1-3-1  |                1 |        3 |               1 |       1 |         70 | randread          | 8k                |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                   403.22 |                      0.00 |                          26.35 |                            0.00 |                          66.32 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1  | Hardware-1-1-4  | Hardware-1-1-4-1  |                1 |        4 |               1 |       1 |         72 | randread          | 8k                |                      8 | libaio                |                    0 |                        0 |                       50 |                      1 |                   546.25 |                      0.00 |                          35.39 |                            0.00 |                         117.96 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5-1-1  | Hardware-1-1-5  | Hardware-1-1-5-1  |                1 |        5 |               1 |       1 |         70 | randread          | 8k                |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                  1337.27 |                      0.00 |                          42.21 |                            0.00 |                         107.48 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6-1-1  | Hardware-1-1-6  | Hardware-1-1-6-1  |                1 |        6 |               1 |       1 |         70 | randread          | 8k                |                     32 | libaio                |                    0 |                        0 |                       50 |                      1 |                  2537.31 |                      0.00 |                          31.33 |                            0.00 |                          91.75 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-7-1-1  | Hardware-1-1-7  | Hardware-1-1-7-1  |                1 |        7 |               1 |       1 |         71 | randread          | 8k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                  4781.67 |                      0.00 |                          43.25 |                            0.00 |                         127.40 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-8-1-1  | Hardware-1-1-8  | Hardware-1-1-8-1  |                1 |        8 |               1 |       1 |         71 | randread          | 8k                |                    128 | libaio                |                    0 |                        0 |                       50 |                      1 |                  4743.46 |                      0.00 |                          66.85 |                            0.00 |                         734.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-9-1-1  | Hardware-1-1-9  | Hardware-1-1-9-1  |                1 |        9 |               1 |       1 |         63 | randwrite         | 8k                |                      1 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    100.86 |                           0.00 |                           38.01 |                           0.00 |                           71.83 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-10-1-1 | Hardware-1-1-10 | Hardware-1-1-10-1 |                1 |       10 |               1 |       1 |         63 | randwrite         | 8k                |                      2 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    172.16 |                           0.00 |                           43.78 |                           0.00 |                           83.36 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-11-1-1 | Hardware-1-1-11 | Hardware-1-1-11-1 |                1 |       11 |               1 |       1 |         63 | randwrite         | 8k                |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    279.84 |                           0.00 |                           50.59 |                           0.00 |                          112.72 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-12-1-1 | Hardware-1-1-12 | Hardware-1-1-12-1 |                1 |       12 |               1 |       1 |         63 | randwrite         | 8k                |                      8 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    490.15 |                           0.00 |                           55.84 |                           0.00 |                          149.95 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-13-1-1 | Hardware-1-1-13 | Hardware-1-1-13-1 |                1 |       13 |               1 |       1 |         65 | randwrite         | 8k                |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    696.68 |                           0.00 |                           70.78 |                           0.00 |                          193.99 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-14-1-1 | Hardware-1-1-14 | Hardware-1-1-14-1 |                1 |       14 |               1 |       1 |         63 | randwrite         | 8k                |                     32 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   1175.87 |                           0.00 |                           88.60 |                           0.00 |                          223.35 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-15-1-1 | Hardware-1-1-15 | Hardware-1-1-15-1 |                1 |       15 |               1 |       1 |         64 | randwrite         | 8k                |                     64 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   1859.32 |                           0.00 |                          122.16 |                           0.00 |                          246.42 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-16-1-1 | Hardware-1-1-16 | Hardware-1-1-16-1 |                1 |       16 |               1 |       1 |         64 | randwrite         | 8k                |                    128 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                   2449.04 |                           0.00 |                          162.53 |                           0.00 |                          434.11 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1  | Hardware-1-1-1  |                1 |        1 |               1 |           1 |         70 | randread          | 8k                |                      1 | libaio                |                    0 |                        0 |                       50 |                    61.98 |                      0.00 |                          36.44 |                            0.00 |                          90.70 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2  | Hardware-1-1-2  |                1 |        2 |               1 |           1 |         69 | randread          | 8k                |                      2 | libaio                |                    0 |                        0 |                       50 |                   167.54 |                      0.00 |                          32.11 |                            0.00 |                          76.02 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3  | Hardware-1-1-3  |                1 |        3 |               1 |           1 |         70 | randread          | 8k                |                      4 | libaio                |                    0 |                        0 |                       50 |                   403.22 |                      0.00 |                          26.35 |                            0.00 |                          66.32 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4  | Hardware-1-1-4  |                1 |        4 |               1 |           1 |         72 | randread          | 8k                |                      8 | libaio                |                    0 |                        0 |                       50 |                   546.25 |                      0.00 |                          35.39 |                            0.00 |                         117.96 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5  | Hardware-1-1-5  |                1 |        5 |               1 |           1 |         70 | randread          | 8k                |                     16 | libaio                |                    0 |                        0 |                       50 |                  1337.27 |                      0.00 |                          42.21 |                            0.00 |                         107.48 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6  | Hardware-1-1-6  |                1 |        6 |               1 |           1 |         70 | randread          | 8k                |                     32 | libaio                |                    0 |                        0 |                       50 |                  2537.31 |                      0.00 |                          31.33 |                            0.00 |                          91.75 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-7  | Hardware-1-1-7  |                1 |        7 |               1 |           1 |         71 | randread          | 8k                |                     64 | libaio                |                    0 |                        0 |                       50 |                  4781.67 |                      0.00 |                          43.25 |                            0.00 |                         127.40 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-8  | Hardware-1-1-8  |                1 |        8 |               1 |           1 |         71 | randread          | 8k                |                    128 | libaio                |                    0 |                        0 |                       50 |                  4743.46 |                      0.00 |                          66.85 |                            0.00 |                         734.00 |                            0.00 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-9  | Hardware-1-1-9  |                1 |        9 |               1 |           1 |         63 | randwrite         | 8k                |                      1 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    100.86 |                           0.00 |                           38.01 |                           0.00 |                           71.83 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-10 | Hardware-1-1-10 |                1 |       10 |               1 |           1 |         63 | randwrite         | 8k                |                      2 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    172.16 |                           0.00 |                           43.78 |                           0.00 |                           83.36 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-11 | Hardware-1-1-11 |                1 |       11 |               1 |           1 |         63 | randwrite         | 8k                |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    279.84 |                           0.00 |                           50.59 |                           0.00 |                          112.72 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-12 | Hardware-1-1-12 |                1 |       12 |               1 |           1 |         63 | randwrite         | 8k                |                      8 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    490.15 |                           0.00 |                           55.84 |                           0.00 |                          149.95 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-13 | Hardware-1-1-13 |                1 |       13 |               1 |           1 |         65 | randwrite         | 8k                |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    696.68 |                           0.00 |                           70.78 |                           0.00 |                          193.99 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-14 | Hardware-1-1-14 |                1 |       14 |               1 |           1 |         63 | randwrite         | 8k                |                     32 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   1175.87 |                           0.00 |                           88.60 |                           0.00 |                          223.35 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-15 | Hardware-1-1-15 |                1 |       15 |               1 |           1 |         64 | randwrite         | 8k                |                     64 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   1859.32 |                           0.00 |                          122.16 |                           0.00 |                          246.42 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-16 | Hardware-1-1-16 |                1 |       16 |               1 |           1 |         64 | randwrite         | 8k                |                    128 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                   2449.04 |                           0.00 |                          162.53 |                           0.00 |                          434.11 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1  |        73.15 |      2.30 |           0.02 |                  0.02 |
+| Hardware-1-1-2-1  |        65.66 |      2.04 |           0.03 |                  4.03 |
+| Hardware-1-1-3-1  |        73.03 |      2.69 |           0.02 |                  0.02 |
+| Hardware-1-1-4-1  |        65.29 |      1.79 |           0.02 |                  0.02 |
+| Hardware-1-1-5-1  |        71.24 |      1.98 |           0.02 |                  0.02 |
+| Hardware-1-1-6-1  |        65.16 |      2.14 |           0.02 |                  0.02 |
+| Hardware-1-1-7-1  |        72.52 |      4.75 |           0.02 |                  0.02 |
+| Hardware-1-1-8-1  |        75.68 |      2.36 |           0.03 |                  2.44 |
+| Hardware-1-1-9-1  |        65.55 |      2.49 |           0.02 |                  0.02 |
+| Hardware-1-1-10-1 |        68.96 |      2.28 |           0.08 |                  0.08 |
+| Hardware-1-1-11-1 |        66.96 |      1.66 |           0.02 |                  0.02 |
+| Hardware-1-1-12-1 |        58.58 |      1.69 |           0.02 |                  0.02 |
+| Hardware-1-1-13-1 |        65.96 |      1.79 |           0.02 |                  0.02 |
+| Hardware-1-1-14-1 |        64.07 |      2.03 |           0.03 |                  0.03 |
+| Hardware-1-1-15-1 |        67.91 |      1.47 |           0.02 |                  0.02 |
+| Hardware-1-1-16-1 |        64.59 |      1.68 |           0.02 |                  0.02 |
+
+### Execution phase: component benchmarker
+
+| DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1  |         0.49 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1  |         0.50 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1  |         0.52 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1  |         0.54 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-5-1  |         0.52 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-6-1  |         0.48 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-7-1  |         0.55 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-8-1  |         0.43 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-9-1  |         0.58 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-10-1 |         0.51 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-11-1 |         0.54 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-12-1 |         0.44 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-13-1 |         0.50 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-14-1 |         0.52 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-15-1 |         0.50 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-16-1 |         0.57 |      0.01 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS
+```
+
+The Per Phase table lists one row per queue depth, at the 8k block size set by `-xfbs`.
+
+---
+
+#### 4. WAL sync-write latency (fdatasync)
+
+Same as above but `fdatasync` instead of `fsync`. fdatasync skips the inode-metadata sync fsync
+does, and is PostgreSQL's Linux default (`wal_sync_method=fdatasync`) — compare its latency
+against the fsync run above to confirm it is actually cheaper on this storage.
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw write \
+  -xfbs 8k \
+  -xfid 1 \
+  -xfe libaio \
+  -xffd 1 \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/testcase_hardware_fio_wal_sync_fdatasync.log
+```
+
+##### Result
+
+testcase_hardware_fio_wal_sync_fdatasync.log
+```markdown
+﻿## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 182s 
+* Code: 1783198702
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: fio.
+  * Test file size is '4G', duration per round is 60s.
+  * I/O pattern(s) swept: ['write'].
+  * Block size(s) swept: ['8k'].
+  * Queue depth(s) swept: [1].
+  * I/O engine(s) swept: ['libaio'].
+  * Fsync interval(s) swept: [0].
+  * Fdatasync interval(s) swept: [1].
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:825046
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783198702
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783198702-85dd59cf54-f67jc: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 | write             | 8k                |                      1 | libaio                |                    0 |                        1 |                       50 |                      1 |                     0.00 |                    177.61 |                           0.00 |                           25.03 |                           0.00 |                           58.46 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 | write             | 8k                |                      1 | libaio                |                    0 |                        1 |                       50 |                     0.00 |                    177.61 |                           0.00 |                           25.03 |                           0.00 |                           58.46 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        64.00 |      2.58 |           0.02 |                  0.02 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |         0.50 |      0.01 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS
+```
+
+`hardware_fio_write_iops` and the write latency percentiles are the relevant columns to compare
+against the WAL sync-write fsync example in Example-Hardware.md.
+
+---
+
+#### 5. WAL group-commit scaling
+
+Same sync-write profile, sweeping concurrent committing backends (`-nbt`) instead of a single
+one. If aggregate fsyncs/sec keeps climbing with more concurrent writers, the storage/controller
+coalesces concurrent commits well; if it flattens immediately, tune `commit_delay` /
+`commit_siblings` in Postgres to force batching in software instead.
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw write \
+  -xfbs 8k \
+  -xfid 1 \
+  -xfe libaio \
+  -xfsy 1 \
+  -nbp 1 \
+  -nbt 1,2,4,8,16,32 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 150Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/testcase_hardware_fio_wal_group_commit.log
+```
+
+##### Result
+
+testcase_hardware_fio_wal_group_commit.log
+```markdown
+﻿## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 856s 
+* Code: 1783198907
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: fio.
+  * Test file size is '4G', duration per round is 60s.
+  * I/O pattern(s) swept: ['write'].
+  * Block size(s) swept: ['8k'].
+  * Queue depth(s) swept: [1].
+  * I/O engine(s) swept: ['libaio'].
+  * Fsync interval(s) swept: [1].
+  * Fdatasync interval(s) swept: [0].
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type shared and size 150Gi. Persistent storage is removed at experiment start.
+  * Benchmarking is tested with [1, 2, 4, 8, 16, 32] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:826576
+  * volume_size:150.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783198907
+* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:824462
+  * volume_size:150.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783198907
+* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:824318
+  * volume_size:150.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783198907
+* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:818035
+  * volume_size:150.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783198907
+* Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:823012
+  * volume_size:150.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783198907
+* Hardware-1-1-6-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:824871
+  * volume_size:150.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783198907
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783198907-565b848d8d-p7zpw: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         64 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                      1 |                     0.00 |                     64.94 |                           0.00 |                           17.43 |                           0.00 |                          429.92 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                      2 |                     0.00 |                    181.98 |                           0.00 |                           57.93 |                           0.00 |                          100.14 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                      4 |                     0.00 |                    476.06 |                           0.00 |                           50.07 |                           0.00 |                           74.97 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                      8 |                     0.00 |                    852.53 |                           0.00 |                           50.59 |                           0.00 |                          104.33 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5-1-1 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     16 |                     0.00 |                   1396.17 |                           0.00 |                           50.07 |                           0.00 |                           91.75 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6-1-1 | Hardware-1-1-6 | Hardware-1-1-6-1 |                1 |        6 |               1 |       1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     32 |                     0.00 |                   2593.54 |                           0.00 |                           58.46 |                           0.00 |                          115.87 |                 32 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         64 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                     64.94 |                           0.00 |                           17.43 |                           0.00 |                          429.92 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                    181.98 |                           0.00 |                           57.93 |                           0.00 |                          100.14 |                  2 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                    476.06 |                           0.00 |                           50.07 |                           0.00 |                           74.97 |                  4 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                    852.53 |                           0.00 |                           50.59 |                           0.00 |                          104.33 |                  8 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |           1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                   1396.17 |                           0.00 |                           50.07 |                           0.00 |                           91.75 |                 16 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6 | Hardware-1-1-6 |                1 |        6 |               1 |           1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                   2593.54 |                           0.00 |                           58.46 |                           0.00 |                          115.87 |                 32 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        64.08 |      2.65 |           0.02 |                  0.02 |
+| Hardware-1-1-2-1 |        63.25 |      1.56 |           0.02 |                  0.02 |
+| Hardware-1-1-3-1 |        60.88 |      1.96 |           0.02 |                  0.02 |
+| Hardware-1-1-4-1 |        69.21 |      1.75 |           0.02 |                  0.02 |
+| Hardware-1-1-5-1 |        69.16 |      2.91 |           0.03 |                  0.03 |
+| Hardware-1-1-6-1 |        71.18 |      3.49 |           0.04 |                  0.04 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |         0.56 |      0.00 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1 |         0.57 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1 |         0.49 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1 |         0.57 |      0.04 |           0.00 |                  0.00 |
+| Hardware-1-1-5-1 |         0.62 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-6-1 |         0.52 |      0.04 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS
+```
+
+The Per Phase table lists one row per concurrent-writer count set by `-nbt`.
+
+---
+
+#### 6. WAL record-size sweep
+
+Same sync-write profile, sweeping the WAL record size instead of backend count. Bigger
+transactions (or post-checkpoint `full_page_writes` bursts) write more before fsync — this shows
+how sync-write latency grows with record size.
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw write \
+  -xfbs 1k,8k,16k,32k,64k \
+  -xfid 1 \
+  -xfe libaio \
+  -xfsy 1 \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/testcase_hardware_fio_wal_record_size.log
+```
+
+##### Result
+
+testcase_hardware_fio_wal_record_size.log
+```markdown
+﻿## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 723s 
+* Code: 1783199789
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: fio.
+  * Test file size is '4G', duration per round is 60s.
+  * I/O pattern(s) swept: ['write'].
+  * Block size(s) swept: ['1k', '8k', '16k', '32k', '64k'].
+  * Queue depth(s) swept: [1].
+  * I/O engine(s) swept: ['libaio'].
+  * Fsync interval(s) swept: [1].
+  * Fdatasync interval(s) swept: [0].
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:823240
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783199789
+* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:831169
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783199789
+* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:824028
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783199789
+* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:827995
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783199789
+* Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:819882
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783199789
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783199789-d99d9b8c8-dmq44: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 | write             | 1k                |                      1 | libaio                |                    1 |                        0 |                       50 |                      1 |                     0.00 |                     84.38 |                           0.00 |                           52.17 |                           0.00 |                           79.17 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                      1 |                     0.00 |                    145.23 |                           0.00 |                           33.42 |                           0.00 |                           63.70 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         63 | write             | 16k               |                      1 | libaio                |                    1 |                        0 |                       50 |                      1 |                     0.00 |                     94.12 |                           0.00 |                           33.42 |                           0.00 |                           63.18 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         63 | write             | 32k               |                      1 | libaio                |                    1 |                        0 |                       50 |                      1 |                     0.00 |                    127.30 |                           0.00 |                           35.39 |                           0.00 |                           74.97 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5-1-1 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         62 | write             | 64k               |                      1 | libaio                |                    1 |                        0 |                       50 |                      1 |                     0.00 |                     53.67 |                           0.00 |                           65.80 |                           0.00 |                           88.60 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 | write             | 1k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                     84.38 |                           0.00 |                           52.17 |                           0.00 |                           79.17 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           1 |         63 | write             | 8k                |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                    145.23 |                           0.00 |                           33.42 |                           0.00 |                           63.70 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           1 |         63 | write             | 16k               |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                     94.12 |                           0.00 |                           33.42 |                           0.00 |                           63.18 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           1 |         63 | write             | 32k               |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                    127.30 |                           0.00 |                           35.39 |                           0.00 |                           74.97 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |           1 |         62 | write             | 64k               |                      1 | libaio                |                    1 |                        0 |                       50 |                     0.00 |                     53.67 |                           0.00 |                           65.80 |                           0.00 |                           88.60 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        69.84 |      2.70 |           0.02 |                  0.02 |
+| Hardware-1-1-2-1 |        63.40 |      1.72 |           0.02 |                  0.02 |
+| Hardware-1-1-3-1 |        62.02 |      1.64 |           0.02 |                  0.02 |
+| Hardware-1-1-4-1 |        69.61 |      1.90 |           0.02 |                  0.02 |
+| Hardware-1-1-5-1 |        61.78 |      1.75 |           0.02 |                  0.02 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |         0.45 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1 |         0.55 |      0.01 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1 |         0.52 |      0.04 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1 |         0.44 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-5-1 |         0.52 |      0.02 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS
+```
+
+The Per Phase table lists one row per block size set by `-xfbs`, at fixed queue depth 1.
+
+---
+
+#### 7. Checkpoint writeback bandwidth
+
+Large-block sequential writes without a per-write fsync, approximating how fast
+checkpointer/bgwriter can flush dirty pages during a checkpoint.
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw write \
+  -xfbs 1M,4M,16M \
+  -xfid 4,16 \
+  -xfe libaio \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/testcase_hardware_fio_checkpoint_writeback.log
+```
+
+##### Result
+
+testcase_hardware_fio_checkpoint_writeback.log
+```markdown
+﻿## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 864s 
+* Code: 1783200536
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: fio.
+  * Test file size is '4G', duration per round is 60s.
+  * I/O pattern(s) swept: ['write'].
+  * Block size(s) swept: ['1M', '4M', '16M'].
+  * Queue depth(s) swept: [4, 16].
+  * I/O engine(s) swept: ['libaio'].
+  * Fsync interval(s) swept: [0].
+  * Fdatasync interval(s) swept: [0].
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:831367
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783200536
+* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:820536
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783200536
+* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:827659
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783200536
+* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:821051
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783200536
+* Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:825418
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783200536
+* Hardware-1-1-6-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:821889
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783200536
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783200536-f46bc844-kqq79: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 5: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 6: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 | write             | 1M                |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                     76.80 |                           0.00 |                          104.33 |                           0.00 |                          164.63 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         63 | write             | 1M                |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    237.50 |                           0.00 |                          143.65 |                           0.00 |                          212.86 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         63 | write             | 4M                |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                     49.68 |                           0.00 |                          139.46 |                           0.00 |                          206.57 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         63 | write             | 4M                |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                    142.58 |                           0.00 |                          235.93 |                           0.00 |                          362.81 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5-1-1 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         63 | write             | 16M               |                      4 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                      3.11 |                           0.00 |                         1182.79 |                           0.00 |                         1283.46 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6-1-1 | Hardware-1-1-6 | Hardware-1-1-6-1 |                1 |        6 |               1 |       1 |         63 | write             | 16M               |                     16 | libaio                |                    0 |                        0 |                       50 |                      1 |                     0.00 |                      3.08 |                           0.00 |                         5536.48 |                           0.00 |                         5737.81 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 | write             | 1M                |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                     76.80 |                           0.00 |                          104.33 |                           0.00 |                          164.63 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           1 |         63 | write             | 1M                |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    237.50 |                           0.00 |                          143.65 |                           0.00 |                          212.86 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           1 |         63 | write             | 4M                |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                     49.68 |                           0.00 |                          139.46 |                           0.00 |                          206.57 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           1 |         63 | write             | 4M                |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                    142.58 |                           0.00 |                          235.93 |                           0.00 |                          362.81 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |           1 |         63 | write             | 16M               |                      4 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                      3.11 |                           0.00 |                         1182.79 |                           0.00 |                         1283.46 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+| Hardware-1-1-6 | Hardware-1-1-6 |                1 |        6 |               1 |           1 |         63 | write             | 16M               |                     16 | libaio                |                    0 |                        0 |                       50 |                     0.00 |                      3.08 |                           0.00 |                         5536.48 |                           0.00 |                         5737.81 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        62.71 |      2.49 |           0.03 |                  0.03 |
+| Hardware-1-1-2-1 |        67.90 |      1.91 |           0.04 |                  0.04 |
+| Hardware-1-1-3-1 |        59.10 |      1.61 |           0.04 |                  0.04 |
+| Hardware-1-1-4-1 |        72.89 |      2.15 |           0.09 |                  0.09 |
+| Hardware-1-1-5-1 |        64.14 |      1.67 |           0.09 |                  0.09 |
+| Hardware-1-1-6-1 |        62.89 |      2.54 |           0.27 |                  0.27 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |         0.57 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1 |         0.57 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1 |         0.57 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1 |         0.44 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-5-1 |         0.56 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-6-1 |         0.53 |      0.02 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS
+```
+
+The Per Phase table lists one row per block size/queue depth combination; bandwidth can be
+derived from `hardware_fio_write_iops × hardware_fio_bs`.
+
+---
+
+#### 8. OLTP/WAL contention proxy
+
+A single-profile approximation of foreground OLTP traffic contending with WAL flushes on one
+queue: mixed random read/write with fsync on the write side. This is **not** the same as true
+concurrent checkpoint+WAL+OLTP contention — that needs several parallel benchmarker jobs with
+different fio profiles running in the same round, which bexhoma does not yet support for Hardware
+(the closest existing precedent is the TPC-H refresh-stream mechanism, see
+`bexhoma/experiments/CLAUDE.md` §8, which could be adapted for this in the future). This proxy is
+what is achievable today with the single-profile-per-round model used throughout this page.
+
+```bash
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw randrw \
+  -xfmx 70 \
+  -xfbs 8k \
+  -xfid 64 \
+  -xfe libaio \
+  -xfsy 1 \
+  -nbp 1 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/testcase_hardware_fio_oltp_wal_contention_proxy.log
+```
+
+##### Result
+
+testcase_hardware_fio_oltp_wal_contention_proxy.log
+```markdown
+﻿## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 183s 
+* Code: 1783201425
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio) or CPU/memory (sysbench) performance.
+  * Benchmark tool: fio.
+  * Test file size is '4G', duration per round is 60s.
+  * I/O pattern(s) swept: ['randrw'].
+  * Block size(s) swept: ['8k'].
+  * Queue depth(s) swept: [64].
+  * I/O engine(s) swept: ['libaio'].
+  * Fsync interval(s) swept: [1].
+  * Fdatasync interval(s) swept: [0].
+  * Read mix percentage(s) swept: [70].
+  * Experiment uses bexhoma version 0.10.2.
+  * System metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.2
+  * RAM:2164173246464
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:831834
+  * volume_size:50.0G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1783201425
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1783201425-655946dbcb-qxgkb: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         72 | randrw            | 8k                |                     64 | libaio                |                    1 |                        0 |                       70 |                      1 |                  1955.51 |                    835.77 |                          49.02 |                          100.14 |                         170.92 |                          316.67 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         72 | randrw            | 8k                |                     64 | libaio                |                    1 |                        0 |                       70 |                  1955.51 |                    835.77 |                          49.02 |                          100.14 |                         170.92 |                          316.67 |                  1 |                                   0.00 |                                 0.00 |                               0.00 |                                   0.00 |                                        0.00 |                                  0.00 |        0 |
+
+### Monitoring
+
+### Execution phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |        70.17 |      1.80 |           0.02 |                  0.02 |
+
+### Execution phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| Hardware-1-1-1-1 |         0.50 |      0.00 |           0.00 |                  0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS
+```
+
+`hardware_fio_read_iops` and `hardware_fio_write_iops` in the single result row can be compared
+against the isolated `randread` result from the PostgreSQL-page-size depth sweep above at the same depth and block size.
+
+#### Which fio sweep informs which PostgreSQL parameter
+
+Covers all twelve fio sweeps across [Example-Hardware.md](Example-Hardware.md#fio) and the eight
+above.
+
+| Sweep | Informs |
+|---|---|
+| Depth sweep + refinement | `effective_io_concurrency`, `maintenance_io_concurrency` |
+| Numjobs sweep | `max_parallel_workers_per_gather` and friends |
+| Block-size sweep | Reasoning about checkpoint/bgwriter I/O coalescing |
+| 8k depth sweep, `random_page_cost` calibration | `effective_io_concurrency` at the real page size; `random_page_cost` |
+| WAL sync fsync/fdatasync | `wal_sync_method`, expected max commit rate |
+| WAL group commit | `commit_delay`, `commit_siblings` |
+| WAL record-size sweep | Expectations around `full_page_writes` bursts and large transactions |
+| Checkpoint writeback bandwidth | `checkpoint_completion_target`, `max_wal_size` |
+| OLTP/WAL contention proxy | Sanity check under mixed load |
+
