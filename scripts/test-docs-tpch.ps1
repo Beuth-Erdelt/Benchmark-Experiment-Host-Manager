@@ -92,11 +92,6 @@ bexhoma tpch `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
-Start-Sleep -Seconds 30
-
-
 #### TCP-H Persistent Storage (Example-TPC-H.md)
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -110,6 +105,7 @@ bexhoma tpch `
   -xdt                          <# disable result type checking #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -149,11 +145,6 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H fractional  s
 ###########################################
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpch-100
-Start-Sleep -Seconds 30
-
-
 #### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
 bexhoma tpch `
   -dbms MonetDB                 <# DBMS under test #> `
@@ -172,6 +163,7 @@ bexhoma tpch `
   -t 3600                       <# query timeout in seconds #> `
   -lr 256Gi                     <# RAM limit for the SUT container #> `
   -rr 256Gi                     <# RAM requested for the SUT container #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 1000Gi                   <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `

@@ -13,6 +13,10 @@ if TYPE_CHECKING:
 
 __all__ = ['LifecycleManager']
 
+#: Service port names kept even when monitoring is inactive, since they carry
+#: SUT connectivity rather than monitoring traffic.
+SERVICE_PORT_NAMES_ALWAYS_KEPT = ('port-dbms', 'port-bus', 'port-web')
+
 
 class LifecycleManager:
     """Manages SUT, monitoring, maintaining, loading start/stop and port forwarding.
@@ -610,15 +614,16 @@ scrape_configs:
         for stateful_set in ssets:
             cfg.deployment_infos['statefulset'][stateful_set] = {}
             worker_name = cfg.get_worker_name(component=stateful_set)
+            num_worker_component = cfg.get_num_worker(component=stateful_set)
             cfg.deployment_infos['statefulset'][stateful_set]['name'] = worker_name
             cfg.deployment_infos['statefulset'][stateful_set]['name_service'] = (
                 cfg.get_worker_name(component=stateful_set))
             cfg.deployment_infos['statefulset'][stateful_set]['pods'] = [
-                f"{worker_name}-{i}" for i in range(cfg.num_worker)]
+                f"{worker_name}-{i}" for i in range(num_worker_component)]
             cfg.deployment_infos['statefulset'][stateful_set]['containers'] = []
             if use_storage and not use_ramdisk:
                 list_of_workers_pvcs = []
-                for worker in range(cfg.num_worker):
+                for worker in range(num_worker_component):
                     worker_full_name = "bxw-{name_worker}-{worker_number}".format(
                         name_worker=worker_name, worker_number=worker)
                     list_of_workers_pvcs.append(worker_full_name)
@@ -698,8 +703,9 @@ scrape_configs:
             if cfg.docker == "TiDB":
                 name_worker = cfg.get_worker_name(component='pd')
                 name_service_headless = name_worker
+                num_pd = cfg.get_num_worker(component='pd')
                 list_initial_cluster = []
-                for worker in range(cfg.num_worker):
+                for worker in range(num_pd):
                     clusternode_full_name = (
                         "{name_worker}-{worker_number}=http://{name_worker}-{worker_number}"
                         ".{worker_service}:2380".format(
@@ -711,8 +717,9 @@ scrape_configs:
         for statefulset_name, statefulset in cfg.deployment_infos['statefulset'].items():
             name_worker = statefulset['name']
             name_service_headless = name_worker
+            num_worker_component = cfg.get_num_worker(component=statefulset_name)
             list_of_workers = []
-            for worker in range(cfg.num_worker):
+            for worker in range(num_worker_component):
                 worker_full_name = "{name_worker}-{worker_number}.{worker_service}{worker_port}".format(
                     name_worker=name_worker, worker_number=worker,
                     worker_service=name_service_headless, worker_port=worker_port)
@@ -724,6 +731,7 @@ scrape_configs:
                 list_of_workers_as_string_space)
             env['BEXHOMA_{}_NAME'.format(statefulset_name.upper())] = (
                 "{name_worker}".format(name_worker=name_worker))
+            env['BEXHOMA_{}_REPLICAS'.format(statefulset_name.upper())] = str(num_worker_component)
             env['BEXHOMA_{}_SERVICE'.format(statefulset_name.upper())] = (
                 "{worker_service}".format(worker_service=name_service_headless))
         with open(sut_manifest_file) as stream:
@@ -808,7 +816,7 @@ scrape_configs:
                 dep['metadata']['labels']['volume'] = cfg.volume
                 for label_key, label_value in cfg.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
-                dep['spec']['replicas'] = cfg.num_worker
+                dep['spec']['replicas'] = cfg.get_num_worker(component=statefulset_type)
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 if 'initContainers' in dep['spec']['template']['spec']:
@@ -920,7 +928,7 @@ scrape_configs:
                         del result[key]['spec']['volumeClaimTemplates']
                     else:
                         list_of_workers_pvcs = []
-                        for worker in range(cfg.num_worker):
+                        for worker in range(cfg.get_num_worker(component=statefulset_type)):
                             worker_full_name = "bxw-{name_worker}-{worker_number}".format(
                                 name_worker=name_worker_stateful_set, worker_number=worker)
                             list_of_workers_pvcs.append(worker_full_name)
@@ -1035,20 +1043,14 @@ scrape_configs:
                 if not cfg.monitoring_active or (
                         cfg.experiment.cluster.monitor_cluster_exists
                         and not cfg.monitor_app_active):
+                    # port-dbms/port-bus/port-web and port-sut-* are functional
+                    # (SUT connectivity / Hardware benchmark traffic), not
+                    # monitoring sidecars, so they survive this monitoring-only
+                    # port cleanup - unlike e.g. port-monitoring (cadvisor).
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         if ('name' in ports
-                                and ports['name'] != 'port-dbms'
-                                and ports['name'] != 'port-bus'
-                                and ports['name'] != 'port-web'):
-                            del result[key]['spec']['ports'][i]
-                if not cfg.monitoring_active or (
-                        cfg.experiment.cluster.monitor_cluster_exists
-                        and not cfg.monitor_app_active):
-                    for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
-                        if ('name' in ports
-                                and ports['name'] != 'port-dbms'
-                                and ports['name'] != 'port-bus'
-                                and ports['name'] != 'port-web'):
+                                and ports['name'] not in SERVICE_PORT_NAMES_ALWAYS_KEPT
+                                and not ports['name'].startswith('port-sut-')):
                             del result[key]['spec']['ports'][i]
             ########################################
             # Kind=Deployment

@@ -1,8 +1,11 @@
-# Benchmarker for hardware benchmarks (sysbench / fio)
+# Benchmarker for hardware benchmarks (sysbench / fio / sockperf / netperf)
 
 This folder contains the Dockerfile for a benchmarker that connects to a SUT
-container via SSH and runs sysbench (CPU and memory) or fio (disk I/O) workloads
-remotely.
+container and runs sysbench (CPU and memory) or fio (disk I/O) workloads over
+SSH, a sockperf (single-connection network latency/throughput) workload
+directly against one of the SUT's persistent sockperf server instances, or a
+netperf (many-concurrent-connection TCP_RR/UDP_RR request/response) workload
+directly against the SUT's netserver instance (no SSH for either).
 
 ## Environment variables
 
@@ -45,14 +48,16 @@ same synchronized instant — the basis for co-located noisy-neighbor experiment
 
 ### SUT connection
 
-* `BEXHOMA_HOST`: Hostname of the SUT container. Injected automatically by bexhoma's manifest builder (`configurations/manifest.py`) with the SUT's real Kubernetes service DNS name; not set via the Dockerfile. SSH connects on port 9091, not 22 — `bexhoma-service` maps the SUT's real SSH port (22) to service port 9091 (`port-dbms`), the same port every other DBMS's client connects through.
-* `BEXHOMA_SUT_USER`: SSH user on the SUT (default `bench`).
-* `BEXHOMA_SUT_KEY`: Path to the SSH private key inside the benchmarker image (default `/root/.ssh/id_ed25519`).
+* `BEXHOMA_HOST`: Hostname of the SUT container. Injected automatically by bexhoma's manifest builder (`configurations/manifest.py`) with the SUT's real Kubernetes service DNS name; not set via the Dockerfile. SSH connects on port 9091, not 22 — `bexhoma-service` maps the SUT's real SSH port (22) to service port 9091 (`port-dbms`), the same port every other DBMS's client connects through. sockperf connects directly to `BEXHOMA_HOST` on one of its own dedicated ports instead (see below) — no SSH involved.
+* `BEXHOMA_SUT_USER`: SSH user on the SUT (default `bench`). Not used by sockperf.
+* `BEXHOMA_SUT_KEY`: Path to the SSH private key inside the benchmarker image (default `/root/.ssh/id_ed25519`). Not used by sockperf.
 
 ### Hardware benchmark parameters
 
-* `HARDWARE_TYPE`: Benchmark to run — `sysbench` or `fio`.
-* `HARDWARE_THREADS`: Number of threads passed to sysbench (default `4`). Not used by fio.
+* `HARDWARE_TYPE`: Benchmark to run — `sysbench`, `fio`, `sockperf`, or `netperf`.
+* `HARDWARE_THREADS`: Number of threads passed to sysbench (default `4`); also the number
+  of concurrent netperf `TCP_RR`/`UDP_RR` client instances `run_netperf.sh` launches
+  per pod (see below). Not used by fio.
 * `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/database/fio-test`). Not used by sysbench. `/database` is always present on the SUT (baked into `images/hardware/sut/Dockerfile`); whether it's backed by a real PVC or is just the SUT container's own ephemeral filesystem depends on `-rst` at deploy time — see `images/hardware/sut/README.md`.
 * `HARDWARE_SIZE`: Size of the fio test file (default `1G`). Not used by sysbench.
 * `HARDWARE_DURATION`: Runtime in seconds (default `30`) — fio's `--runtime` (time-based, so actual runtime matches) and, since both sysbench sub-tests pass `--time=$HARDWARE_DURATION`, an upper bound for each of the CPU and memory phases. The memory phase can finish earlier than `HARDWARE_DURATION` if `--memory-total-size` (10G) transfers before the time limit.
@@ -70,6 +75,22 @@ options exposed by `scripts/hardware-benchmark.sh`):
 * `HARDWARE_FIO_FSYNC`: Call `fsync` every N writes; `0` disables it (default `0`).
 * `HARDWARE_FIO_RWMIXREAD`: Percentage of reads when `HARDWARE_FIO_RW=randrw` (default `50`). Ignored for all other `HARDWARE_FIO_RW` values.
 
+### sockperf workload parameters (`HARDWARE_TYPE=sockperf` only)
+
+* `HARDWARE_SOCKPERF_MODE`: `ul` (under-load — fixed send rate, full latency percentiles) or `pp` (ping-pong — one message at a time; default `ul`).
+* `HARDWARE_SOCKPERF_PROTOCOL`: `udp` or `tcp` (default `udp`). The SUT runs one server of each protocol per port, so either can be selected without a separate port range.
+* `HARDWARE_SOCKPERF_MSGSIZE`: Message payload size in bytes (default `64`).
+* `HARDWARE_SOCKPERF_MPS`: Messages per second, or the literal `max` for uncapped (default `max`). Passed directly to sockperf's own `--mps` flag.
+* `SOCKPERF_BASE_PORT` / `SOCKPERF_NUM_SERVERS`: Must stay numerically in sync with the same-named `ENV` in `images/hardware/sut/Dockerfile` — used to compute which of the SUT's server instances this pod connects to (see below).
+
+### netperf workload parameters (`HARDWARE_TYPE=netperf` only)
+
+* `HARDWARE_NETPERF_PROTOCOL`: `tcp` or `udp` (default `tcp`) — selects the `TCP_RR`
+  or `UDP_RR` netperf test type.
+* `NETPERF_CONTROL_PORT` / `NETPERF_DATA_BASE_PORT` / `NETPERF_DATA_NUM_PORTS`: Must
+  stay numerically in sync with the same-named `ENV` in `images/hardware/sut/Dockerfile`
+  — used to compute each concurrent client instance's fixed data port (see below).
+
 ## Workloads
 
 ### sysbench (`HARDWARE_TYPE=sysbench`)
@@ -84,9 +105,48 @@ Runs two tests sequentially on the SUT via SSH:
 Runs one fio job on the SUT via SSH, configured entirely by the `HARDWARE_FIO_*`
 variables above, with `--direct=1 --time_based --group_reporting --output-format=json`.
 
+### sockperf (`HARDWARE_TYPE=sockperf`)
+
+Runs one `sockperf {ul|pp}` client directly against one of the SUT's persistent
+server instances (no SSH). The target port is derived from `BEXHOMA_CHILD`:
+
+```
+port = SOCKPERF_BASE_PORT + ((BEXHOMA_CHILD - 1) mod SOCKPERF_NUM_SERVERS)
+```
+
+so several benchmarker pods (`BEXHOMA_NUM_PODS > 1`) each get their own
+dedicated server instead of contending on one socket; if a sweep ever asks for
+more pods than provisioned servers, pods wrap around and share a server.
+
+### netperf (`HARDWARE_TYPE=netperf`)
+
+Unlike sockperf, netperf has no built-in way to run multiple concurrent connections
+from one client process (confirmed against upstream:
+[Mellanox/sockperf#133](https://github.com/Mellanox/sockperf/issues/133) shows sockperf
+has the same limitation; netperf's own manual, "Care and Feeding of Netperf" §7, documents
+running many concurrent instances as the supported way to get aggregate concurrency).
+So `run_netperf.sh` launches `HARDWARE_THREADS` concurrent `netperf -t {TCP_RR|UDP_RR}`
+client instances in the background against a **single** SUT netserver instance (netserver
+forks a child per incoming session natively, so one instance already serves many
+concurrent clients — no per-pod server pool needed here, unlike sockperf's above). Each
+instance is pinned to its own data-connection port via netperf's test-specific
+`-P local,remote` option (verified against upstream that the server honors the requested
+remote port), since the k8s Service only forwards explicitly declared ports and an
+OS-assigned ephemeral data port would be unreachable:
+
+```
+port = NETPERF_DATA_BASE_PORT + (BEXHOMA_CHILD - 1) * HARDWARE_THREADS + <instance index>
+```
+
+so several benchmarker pods each get a disjoint slice of the shared
+`[NETPERF_DATA_BASE_PORT, NETPERF_DATA_BASE_PORT + NETPERF_DATA_NUM_PORTS)` pool — safe
+because every pod in one round is launched with the same `HARDWARE_THREADS` value.
+`run_netperf.sh` exits with an error instead of silently colliding if a sweep asks for
+more total concurrent instances than the pool has ports for.
+
 ## Output
 
-Both workloads write their raw result(s) to `/results/$BEXHOMA_EXPERIMENT/`, named
+All workloads write their raw result(s) to `/results/$BEXHOMA_EXPERIMENT/`, named
 `<tool>.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.<uuid>.<ext>` (consistent with the other
 Bexhoma benchmarker images):
 
@@ -94,7 +154,17 @@ Bexhoma benchmarker images):
 * **fio**: `fio.....json` (raw fio JSON report) and `fio.....csv` (one-row summary:
   IOPS, bandwidth, and 8 completion-latency percentiles — p01/p10/p50/p90/p95/p99/p999/p9999,
   in ms — per read/write direction).
+* **sockperf**: `sockperf.....fulllog.csv` (sockperf's own per-message `--full-log`) and
+  `sockperf.....csv` (one-row summary: avg/p50/p99/p999 latency in ms, message rate, and
+  dropped-message rate).
+* **netperf**: `netperf.....csv` (one-row summary, aggregated across all
+  `HARDWARE_THREADS` concurrent instances: test type, instance count, aggregate
+  transaction rate, avg/p50/p90/p99 latency in ms — the worst-observed latency across
+  instances, same "max across parallel units" convention as sockperf's cross-pod
+  aggregation — and how many instances failed).
 
-Both scripts also echo a `KEY:VALUE` summary of the same metrics to stdout
+All scripts also echo a `KEY:VALUE` summary of the same metrics to stdout
 (`HARDWARE_FIO_READ_IOPS`, `HARDWARE_FIO_READ_LAT_P99_MS`, `HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC`,
-etc.), so results can be scraped from the pod log without opening the result files.
+`HARDWARE_SOCKPERF_LATENCY_P99_MS`, `HARDWARE_SOCKPERF_MSG_RATE_PER_SEC`,
+`HARDWARE_NETPERF_TRANSACTION_RATE`, `HARDWARE_NETPERF_LATENCY_P99_MS`, etc.), so results
+can be scraped from the pod log without opening the result files.

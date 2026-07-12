@@ -86,11 +86,6 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-16
-sleep 30
-
-
 #### Benchbase Persistent Storage (Example-Benchbase.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 16                        scaling factor (controls database size)
@@ -102,6 +97,7 @@ sleep 30
 # -nbt 160                      threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -118,17 +114,13 @@ bexhoma benchbase \
   -nbt 160 \
   -ms $BEXHOMA_MS \
   -tr \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
-
-
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-160
-sleep 30
 
 
 #### Benchbase Keying and Thinking Time (Example-Benchbase.md)
@@ -148,11 +140,13 @@ sleep 30
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 100Gi                    size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=2000 raise connection limit above -nbt terminals
 bexhoma benchbase \
   -dbms PostgreSQL \
   -sf 160 \
@@ -170,9 +164,11 @@ bexhoma benchbase \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
+  -rsr \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=2000 \
   run &>$LOG_DIR/docs_benchbase_postgresql_keytime.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,10"

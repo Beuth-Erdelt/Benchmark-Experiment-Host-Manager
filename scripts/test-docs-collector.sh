@@ -325,6 +325,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHO
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
+# -xqr 3                        number of times to repeat each query
 # -nc 2                         number of repeated runs per configuration
 # -ne 1,2                       parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
@@ -347,6 +348,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHO
 bexhoma tpch \
   -dbms PostgreSQL \
   -sf 3 \
+  -xqr 3 \
   -nc 2 \
   -ne 1,2 \
   -nlp 8 \
@@ -563,6 +565,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NU
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
+# -xqr 3                        number of times to repeat each query
 # -nc 2                         number of repeated runs per configuration
 # -ne "1,1"                     parallel client counts for loading and benchmarking
 # -nlp 1                        number of data loader pods
@@ -589,6 +592,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NU
 bexhoma tpch \
   -dbms PostgreSQL \
   -sf 3 \
+  -xqr 3 \
   -nc 2 \
   -ne "1,1" \
   -nlp 1 \
@@ -736,7 +740,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 # -nlt 64                       threads per loader pod
 # -nbp 1,8                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xop 1                        scaling factor for operations (number of operations x 100000)
+# -xop 8                        scaling factor for operations (number of operations x 100000)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -759,7 +763,7 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1,8 \
   -nbt 64 \
-  -xop 1 \
+  -xop 8 \
   -m \
   -ma \
   -mc \

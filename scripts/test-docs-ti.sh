@@ -33,8 +33,9 @@ source ./scripts/testfunctions.sh
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xnsr 3                       number of storage replicas
+# -xnsr 3                       number of TiDB server (SQL frontend) replicas
 # -nw 3                         number of worker nodes in the cluster
+# -xnpd 3                       number of PD (Placement Driver) nodes
 # -nwr 3                        number of worker node replicas
 # -xop 1                        number of operations for the benchmark phase (x 1000)
 # -m                            collect SUT resource metrics
@@ -59,6 +60,7 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
   -xop 1 \
   -m \
@@ -80,8 +82,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
 # -xnbf 16                      throughput target as a multiple of the base ops/s
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
-# -xnsr 3                       number of storage replicas
+# -xnsr 3                       number of TiDB server (SQL frontend) replicas
 # -nw 3                         number of worker nodes in the cluster
+# -xnpd 3                       number of PD (Placement Driver) nodes
 # -nwr 3                        number of worker node replicas
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
@@ -100,6 +103,7 @@ bexhoma benchbase \
   -nbt 16 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
   -m \
   -mc \

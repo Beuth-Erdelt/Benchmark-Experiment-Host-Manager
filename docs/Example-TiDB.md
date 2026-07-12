@@ -14,6 +14,21 @@ A Kubernetes Service exposes TiDB for external communication within the cluster,
 
 This can be managed by bexhoma.
 
+## Scaling TiDB Components
+
+TiDB has three independently deployed components, and bexhoma exposes an independent scaling flag for each of them:
+
+| Component | Kubernetes kind | Flag | Default | Notes |
+|---|---|---|---|---|
+| TiKV (storage) | StatefulSet, `component: tikv` | `-nw` / `--num-worker` | 0 | The storage/sharding layer - this is the "worker" count used for every distributed DBMS in bexhoma. |
+| PD (Placement Driver) | StatefulSet, `component: pd` | `-xnpd` / `--xnum-pd-nodes` | 3 | Cluster metadata/scheduling nodes. Sized independently of `-nw`, since PD and TiKV serve different roles and typically need different counts (PD is usually kept at a small odd number for quorum, e.g. 3 or 5; TiKV scales with storage/throughput needs). |
+| TiDB server (SQL frontend) | Deployment, `component: sut` | `-xnsr` / `--xnum-sut-replicas` | 1 | Stateless SQL frontend; scales independently of storage. |
+
+Example: `-nw 6 -xnpd 3 -xnsr 2` deploys 6 TiKV nodes, 3 PD nodes, and 2 `tidb-server` pods.
+
+Two more scaling-related flags exist but are **not** pod-count knobs for TiDB:
+* `-nwr` / `--num-worker-replicas` sets PD's `max-replicas` raft configuration (`SET CONFIG pd max-replicas = {num_worker_replicas}`, run once as part of the init schema) - the number of Raft replicas TiKV keeps per data region, a data-durability setting independent of how many TiKV/PD pods are actually running. It is exposed as `BEXHOMA_REPLICAS` on the SUT pods and in the eval summary, but no container in the TiDB manifest uses it as a pod count.
+* `-nws` / `--num-worker-shards` currently has **no effect** for TiDB - it's a DDL parameter only wired up for Citus (`SET citus.shard_count = ...`). It is still parsed (shared across all entry scripts) but the TiDB init schema does not reference it.
 
 **The results are not official benchmark results.
 Exact performance depends on a number of parameters.
@@ -63,6 +78,7 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
   -xop 1 \
   -m \
@@ -77,7 +93,7 @@ bexhoma ycsb \
 
 This
 * loops over `n` in [8] and `t` in [4]
-  * starts a clean instance of TiDB (`-dbms`) with 3 workers (`-nw`), i.e., PD and TiKV, with 3 main pods (`-xnsr`), i.e. TiDB, and replication factor 3 (`-nwr`)
+  * starts a clean instance of TiDB (`-dbms`) with 3 TiKV nodes (`-nw`), 3 PD nodes (`-xnpd`), 3 tidb-server pods (`-xnsr`), and a PD raft replication factor of 3 (`-nwr`) - see [Scaling TiDB Components](#scaling-tidb-components)
     * data directory inside a Docker container
   * creates YCSB schema in each database
   * starts `n` loader pods per DBMS
@@ -357,7 +373,7 @@ If data should be loaded, bexhoma at first creates a schema according to: https:
 
 TPC-C is performed at 16 warehouses.
 The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
-TiDB has 3 workers (TiDB, PD and TiKV).
+TiDB has 3 tidb-server pods (`-xnsr`), 3 TiKV nodes (`-nw`), and 3 PD nodes (`-xnpd`) - see [Scaling TiDB Components](#scaling-tidb-components).
 
 ```bash
 bexhoma benchbase \
@@ -370,6 +386,7 @@ bexhoma benchbase \
   -nbt 16 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
   -m \
   -mc \

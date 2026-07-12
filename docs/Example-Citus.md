@@ -809,10 +809,9 @@ Benchbase Workload tpcc SF=16
 
 TPC-C is performed at 128 warehouses.
 The 64 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
-At first, we remove old PVC:
+At first, we remove old PVC of the workers:
 
 ```bash
-kubectl delete pvc bexhoma-storage-citus-benchbase-128
 kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-0
 kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-1
 kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-2
@@ -837,6 +836,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -rsr \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -3435,10 +3435,9 @@ TEST passed: Workflow as planned
 
 ### TPC-H More Complex Example
 
-At first we remove possibly existing PVC:
+At first we remove possibly existing PVC of the workers:
 
 ```bash
-kubectl delete pvc bexhoma-storage-citus-tpch-10
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
@@ -3466,6 +3465,7 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -tr \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -3870,10 +3870,9 @@ Citus provides the option to make a table using columnar storage via `USING COLU
 For Bexhoma's TPC-H, you can activate makeing the distributed tables `orders` and `lineitem` use columnar storage via `-xcol`.
 Note that this also means there will be no foreign key constraints and no indexes on these tables.
 
-At first we remove possibly existing PVC:
+At first we remove possibly existing PVC of the workers:
 
 ```bash
-kubectl delete pvc bexhoma-storage-citus-tpch-10
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
@@ -3900,6 +3899,7 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -tr \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

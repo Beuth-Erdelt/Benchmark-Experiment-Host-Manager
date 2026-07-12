@@ -210,6 +210,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT contai
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
+  -xqr 3                        <# number of times to repeat each query #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
@@ -358,6 +359,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database  
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
+  -xqr 3                        <# number of times to repeat each query #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -ne "1,1"                     <# parallel client counts for loading and benchmarking #> `
   -nlp 1                        <# number of data loader pods #> `
@@ -465,7 +467,7 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# scaling factor for operations (number of operations x 100000) #> `
+  -xop 8                        <# scaling factor for operations (number of operations x 100000) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `

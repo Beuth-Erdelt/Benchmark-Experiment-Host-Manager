@@ -113,6 +113,7 @@ class ComponentStatus:
                 components = list(self._config.deployment_infos['statefulset'].keys())
                 for component in components:
                     num_ready = 0
+                    num_expected = self._config.get_num_worker(component=component)
                     pods_worker = self._config.get_worker_pods(
                         component=component, only_stateful=True)
                     for pod in pods_worker:
@@ -122,9 +123,9 @@ class ComponentStatus:
                             if ready:
                                 num_ready = num_ready + 1
                     print("{:30s}: found {} / {} running workers (component {})".format(
-                        self._config.configuration, num_ready, self._config.num_worker, component))
+                        self._config.configuration, num_ready, num_expected, component))
                     self._config.are_worker_ready = (
-                        self._config.are_worker_ready and (num_ready == self._config.num_worker))
+                        self._config.are_worker_ready and (num_ready == num_expected))
                 if self._config.are_worker_ready:
                     self._config.attach_worker()
             all_ready = all_ready and self._config.are_worker_ready

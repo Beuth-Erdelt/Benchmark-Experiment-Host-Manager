@@ -48,7 +48,6 @@ bexhoma ycsb `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Citus  sf=1  nbp=1"
 
-kubectl delete pvc bexhoma-storage-citus-ycsb-1
 kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-0
 kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-1
 kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-2
@@ -76,6 +75,7 @@ bexhoma ycsb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -112,7 +112,6 @@ bexhoma benchbase `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus  sf=16  nbp=1,2"
 
-kubectl delete pvc bexhoma-storage-citus-benchbase-tpcc-128
 kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-0
 kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-1
 kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-2
@@ -135,6 +134,7 @@ bexhoma benchbase `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 100Gi                    <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -200,7 +200,6 @@ bexhoma hammerdb `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus  sf=16  nbp=1"
 
-kubectl delete pvc bexhoma-storage-citus-hammerdb-128
 kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-0
 kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-1
 kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-2
@@ -226,6 +225,7 @@ bexhoma hammerdb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -235,7 +235,6 @@ bexhoma hammerdb `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
-kubectl delete pvc bexhoma-storage-citus-hammerdb-500
 kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-0
 kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-1
 kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-2
@@ -261,6 +260,7 @@ bexhoma hammerdb `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 200Gi                    <# size of the persistent volume claim #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -302,7 +302,6 @@ bexhoma tpch `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus  sf=1  nbp=1"
 
-kubectl delete pvc bexhoma-storage-citus-tpch-10
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
@@ -329,6 +328,7 @@ bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 14400                      <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -338,7 +338,6 @@ bexhoma tpch `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus storage  sf=10  ne=1,1  nc=2"
 
-kubectl delete pvc bexhoma-storage-citus-tpch-10
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
 kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
@@ -363,6 +362,7 @@ bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 14400                      <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `

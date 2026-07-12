@@ -192,6 +192,13 @@ Two configuration keys in `cluster.config` compensate for this:
 
 See [Config.md](Config.md) for how to set these values.
 
+If a loading or execution phase runs shorter than one scrape interval, fewer than two
+samples may land inside the phase window, so the `CPU [CPUs]` counter delta in the
+summary tables reads `0.0` (or `NaN`) even when the SUT was genuinely busy — the
+`total_cpu_util` gauge column (`Max CPU`) still reflects real usage in that case. The
+automated sanity check in `show_summary()` detects this and records the corresponding
+test as `skipped` rather than `failed` (see [Prepare-Testbeds.md](Prepare-Testbeds.md)).
+
 ---
 
 ## Monitoring Summary Tables

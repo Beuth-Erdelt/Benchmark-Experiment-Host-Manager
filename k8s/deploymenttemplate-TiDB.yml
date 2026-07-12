@@ -29,7 +29,10 @@
 #   * podManagementPolicy: Parallel on PD  -> avoids the etcd quorum deadlock
 #     (sequential start can never reach quorum). Also on TiKV (faster start).
 #   * Replica-count agnostic: the PD init container builds --initial-cluster
-#     dynamically from BEXHOMA_REPLICAS, so 1, 3, 5, ... PD pods all work.
+#     dynamically from BEXHOMA_PD_REPLICAS, so 1, 3, 5, ... PD pods all work.
+#     BEXHOMA_PD_REPLICAS is sized independently of BEXHOMA_REPLICAS (the SQL/
+#     raft replication factor, i.e. -nwr) - it always equals the PD StatefulSet's
+#     actual pod count (-xnpd), which is what quorum bootstrap needs.
 #   * Init container is now NON-DESTRUCTIVE: it only composes the
 #     --initial-cluster string. It never touches the data directory.
 #   * startup / liveness / readiness probes on every component.
@@ -58,7 +61,7 @@
 #   kubectl apply -f this-file
 # After that, normal restarts need none of this - intact data dirs just rejoin.
 #
-# BEXHOMA_REPLICAS MUST equal .spec.replicas of the PD StatefulSet.
+# BEXHOMA_PD_REPLICAS MUST equal .spec.replicas of the PD StatefulSet.
 # =============================================================================
 ---
 apiVersion: v1
@@ -131,7 +134,7 @@ metadata:
   labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
 spec:
   serviceName: bexhoma-pd                # matches the headless Service name
-  replicas: 3                            # keep ODD; BEXHOMA_REPLICAS must equal this
+  replicas: 3                            # keep ODD; BEXHOMA_PD_REPLICAS must equal this
   podManagementPolicy: Parallel          # REQUIRED: sequential start can't reach quorum
   revisionHistoryLimit: 10
   minReadySeconds: 10
@@ -173,7 +176,7 @@ spec:
           set -ex
           SVC="${BEXHOMA_PD_SERVICE}"
           PREFIX=$(echo "$POD_NAME" | sed 's/-[0-9]*$//')
-          REPLICAS="${BEXHOMA_REPLICAS:-3}"
+          REPLICAS="${BEXHOMA_PD_REPLICAS:-3}"
 
           # Build the etcd initial-cluster string for N replicas (N >= 1).
           INITIAL_CLUSTER=""
@@ -207,7 +210,7 @@ spec:
               fieldPath: metadata.namespace
         - name: BEXHOMA_PD_SERVICE
           value: bexhoma-pd
-        - name: BEXHOMA_REPLICAS         # MUST equal .spec.replicas above
+        - name: BEXHOMA_PD_REPLICAS       # MUST equal .spec.replicas above
           value: "3"
         securityContext:
           allowPrivilegeEscalation: false

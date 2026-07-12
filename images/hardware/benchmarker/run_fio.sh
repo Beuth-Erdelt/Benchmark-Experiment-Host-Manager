@@ -61,7 +61,18 @@ esac
 
 ######################## Run fio benchmark ########################
 echo "=== fio: rw=$HARDWARE_FIO_RW bs=$HARDWARE_FIO_BS iodepth=$HARDWARE_FIO_IODEPTH numjobs=$HARDWARE_FIO_NUMJOBS engine=$HARDWARE_FIO_ENGINE fsync=$HARDWARE_FIO_FSYNC fdatasync=$HARDWARE_FIO_FDATASYNC ==="
-FIO_JSON="$(ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "fio $FIO_ARGS")"
+# stderr is captured to a file instead of being left to flow into the pod's own
+# stderr (which is otherwise indistinguishable from this script's own output):
+# a warning fio prints instead of/ahead of its JSON report is the most likely
+# cause of a downstream "invalid JSON" failure, and without this it would be
+# lost by the time that failure is noticed.
+FIO_STDERR_FILE="$(mktemp)"
+FIO_JSON="$(ssh ${SSH_OPTS} "${BEXHOMA_SUT_USER}@${BEXHOMA_HOST}" "fio $FIO_ARGS" 2>"$FIO_STDERR_FILE")"
+FIO_EXIT=$?
+echo "=== fio exit code: $FIO_EXIT ==="
+echo "=== fio stderr ==="
+cat "$FIO_STDERR_FILE"
+rm -f "$FIO_STDERR_FILE"
 
 ######################## Remove fio test files from the SUT ########################
 # Without an explicit --filename, fio names one file per numjobs thread
@@ -99,6 +110,21 @@ RESULT_CSV="/results/$BEXHOMA_EXPERIMENT/fio.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT
 echo "$FIO_JSON" > "$RESULT_JSON"
 echo "$RESULT_JSON"
 
+######################## Validate fio output before parsing ########################
+# A non-zero exit code or non-JSON stdout (e.g. a warning fio printed instead of
+# its report, or an invalid --ioengine/--iodepth combination) would otherwise
+# surface only as the same "jq: parse error" repeated once per field extraction
+# below, with every field then silently defaulting to blank/0 and no indication
+# of the actual cause. Validate once up front and fail loudly with the raw
+# output instead.
+if jq empty "$RESULT_JSON" >/dev/null 2>&1; then
+    FIO_VALID=1
+else
+    FIO_VALID=0
+    echo "ERROR: fio did not return valid JSON (exit code $FIO_EXIT). Raw output was:"
+    echo "$FIO_JSON"
+fi
+
 ######################## Transform result for evaluation ########################
 # ns_to_ms: fio reports completion latency percentiles in nanoseconds; jq does the
 # unit conversion directly so the image does not need a separate awk/bc dependency.
@@ -108,10 +134,17 @@ percentile_ms() {
     jq -r ".jobs[0].${direction}.clat_ns.percentile[\"${percentile}\"] // 0 | . / 1000000" "$RESULT_JSON"
 }
 
-read_iops=$(jq -r '.jobs[0].read.iops // 0' "$RESULT_JSON")
-write_iops=$(jq -r '.jobs[0].write.iops // 0' "$RESULT_JSON")
-read_bw_kbps=$(jq -r '.jobs[0].read.bw // 0' "$RESULT_JSON")
-write_bw_kbps=$(jq -r '.jobs[0].write.bw // 0' "$RESULT_JSON")
+if [ "$FIO_VALID" = "1" ]; then
+    read_iops=$(jq -r '.jobs[0].read.iops // 0' "$RESULT_JSON")
+    write_iops=$(jq -r '.jobs[0].write.iops // 0' "$RESULT_JSON")
+    read_bw_kbps=$(jq -r '.jobs[0].read.bw // 0' "$RESULT_JSON")
+    write_bw_kbps=$(jq -r '.jobs[0].write.bw // 0' "$RESULT_JSON")
+else
+    read_iops=0
+    write_iops=0
+    read_bw_kbps=0
+    write_bw_kbps=0
+fi
 
 # Eight percentiles per direction: p1/p10 (best case), p50 (median), p90/p95/p99
 # (standard SLO markers), p999/p9999 (extreme tail, relevant for WAL fsync latency).
@@ -121,8 +154,13 @@ PERCENTILE_LABELS=("p01" "p10" "p50" "p90" "p95" "p99" "p999" "p9999")
 read_lat=()
 write_lat=()
 for percentile in "${PERCENTILES[@]}"; do
-    read_lat+=("$(percentile_ms read "$percentile")")
-    write_lat+=("$(percentile_ms write "$percentile")")
+    if [ "$FIO_VALID" = "1" ]; then
+        read_lat+=("$(percentile_ms read "$percentile")")
+        write_lat+=("$(percentile_ms write "$percentile")")
+    else
+        read_lat+=("0")
+        write_lat+=("0")
+    fi
 done
 
 ######################## Echo KEY:VALUE summary ########################

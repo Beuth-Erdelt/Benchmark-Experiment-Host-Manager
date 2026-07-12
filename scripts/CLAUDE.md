@@ -95,7 +95,7 @@ Within each group the flags are listed alphabetically except where noted.
 | E — Sweep dimensions | `-nc`, `-ne` | repetitions, parallel client counts |
 | F — Loading parallelism | `-nlp`, `-nlt` | pods then threads |
 | G — Benchmarking parallelism | `-nbp`, `-nbt` | pods then threads |
-| H — SUT topology | `-xnsr`, `-nw`, `-nwr`, `-nws` | replicas, worker nodes/replicas/shards |
+| H — SUT topology | `-xnsr`, `-nw`, `-xnpd`, `-nwr`, `-nws` | SUT replicas, worker nodes, PD nodes (TiDB only), worker replicas/shards |
 | I — Connection pooling | `-xnpp`, `-xnpi`, `-xnpo` | pod count, inbound, outbound |
 | J — Post-load init | `-xii`, `-xic`, `-xis`, `-xcol` | **logical order** (indexes → constraints → statistics → columnar) |
 | K — Query/load modifiers | `-xlit`, `-xnls`, `-xrcp`, `-xshq` | alphabetical |

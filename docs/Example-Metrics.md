@@ -2831,6 +2831,7 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
   -xop 1 \
   -m \
@@ -3100,6 +3101,7 @@ bexhoma benchbase \
   -nbt 16 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
   -m \
   -mc \

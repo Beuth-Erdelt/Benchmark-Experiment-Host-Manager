@@ -73,7 +73,7 @@ The sections have consistent meaning across all benchmark types:
 | **Execution - Benchmarker** | `run` | CPU and RAM consumed by the driver pods during benchmarking |
 | **Tests** | all modes | Automated sanity checks — e.g., no zero throughput, no NaN metrics, workflow matches plan |
 
-A `TEST failed` line does not necessarily abort the experiment; it flags a condition worth investigating (e.g., a query error in TPC-DS Q90, or a monitoring gap).
+A `TEST failed` line does not necessarily abort the experiment; it flags a condition worth investigating (e.g., a query error in TPC-DS Q90, or a monitoring gap). A `TEST skipped` line means the check was inconclusive rather than failing — e.g. a component with pre-existing data produces no CPU load, or a phase ran shorter than one Prometheus scrape interval so a CPU counter delta of 0 cannot be distinguished from a real gap.
 
 ---
 
@@ -117,6 +117,8 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_ycsb_postgresql_start.log
 ```
@@ -219,6 +221,9 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_ycsb_postgresql_load.log
 ```
@@ -419,6 +424,9 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_run.log
 ```
@@ -719,6 +727,8 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_benchbase_postgresql_start.log
 ```
@@ -820,6 +830,9 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_benchbase_postgresql_load.log
 ```
@@ -982,6 +995,9 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_run.log
 ```
@@ -1239,6 +1255,8 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_hammerdb_postgresql_start.log
 ```
@@ -1337,6 +1355,9 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_hammerdb_postgresql_load.log
 ```
@@ -1497,6 +1518,9 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_run.log
 ```
@@ -1736,6 +1760,8 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_tpch_postgresql_start.log
 ```
@@ -1835,6 +1861,9 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_tpch_postgresql_load.log
 ```
@@ -2018,6 +2047,9 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_run.log
 ```
@@ -2358,6 +2390,8 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_tpcds_postgresql_start.log
 ```
@@ -2454,6 +2488,9 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_tpcds_postgresql_load.log
 ```
@@ -2628,6 +2665,9 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -ss \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_run.log
 ```

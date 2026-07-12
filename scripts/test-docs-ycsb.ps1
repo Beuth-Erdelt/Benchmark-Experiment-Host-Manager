@@ -98,11 +98,6 @@ bexhoma ycsb `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB monitoring  sf=3  nbp=1,8"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-ycsb-1
-Start-Sleep -Seconds 30
-
-
 #### YCSB Persistent Storage (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -119,6 +114,7 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `

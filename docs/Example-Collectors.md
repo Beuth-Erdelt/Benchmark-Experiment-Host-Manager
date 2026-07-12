@@ -1565,7 +1565,7 @@ Benchbase Workload tpcc SF=1
 ```bash
 bexhoma tpch \
   -dbms PostgreSQL \
-  -sf 3 -nc 2 -ne 1,2 \
+  -sf 3 -xqr 3 -nc 2 -ne 1,2 \
   -nlp 8 -nbp 1 \
   -xii -xic -xis \
   -m -ma -mc \
@@ -1578,6 +1578,7 @@ bexhoma tpch \
 
 This
 * loads TPC-H data at SF=3 using 8 parallel loader pods (`-nlp 8`) into a fresh 30Gi volume
+* repeats each query 3 times (`-xqr 3`) so even the single-stream configuration runs long enough for resource monitoring to capture samples
 * runs 2 experiment iterations (`-nc 2`) each with two stream configurations (`-ne 1,2`): 1 then 2 concurrent benchmarking pods
 * sets indexes, constraints, and statistics after loading (`-xii -xic -xis`)
 * verifies workflow matches plan (`-tr`)
@@ -3140,7 +3141,7 @@ No warnings
 ```bash
 bexhoma tpch \
   -dbms PostgreSQL \
-  -sf 3 -nc 2 \
+  -sf 3 -xqr 3 -nc 2 \
   -ne "1,1" \
   -nlp 1 -nlt 1 \
   -nbp 1 -nbt 64 \
@@ -3154,7 +3155,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_container.log
 ```
 
-Each tenant gets its own DBMS container (`-mtb container`) with its own 15Gi volume. `-ne "1,1"` means 1 loader and 1 benchmarker pod per tenant.
+Each tenant gets its own DBMS container (`-mtb container`) with its own 15Gi volume. `-ne "1,1"` means 1 loader and 1 benchmarker pod per tenant. `-xqr 3` repeats each query 3 times so the single-stream-per-tenant configuration still runs long enough for resource monitoring to capture samples.
 
 The result looks something like
 
@@ -4015,7 +4016,7 @@ bexhoma ycsb \
   -nc 2 -ne 1 \
   -nlp 8 -nlt 64 \
   -nbp 1,8 -nbt 64 \
-  -xop 1 \
+  -xop 8 \
   -m -ma -mc \
   -ms $BEXHOMA_MS -tr \
   -rss 50Gi \
@@ -4023,7 +4024,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_3.log
 ```
 
-Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`).
+Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`), and `-xop 8` raises the operation count so execution still runs long enough for resource monitoring to capture samples now that the loading phase is skipped.
 
 The result looks something like
 

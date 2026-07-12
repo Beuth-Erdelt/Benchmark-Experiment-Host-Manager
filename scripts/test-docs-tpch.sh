@@ -129,11 +129,6 @@ bexhoma tpch \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H throughput  sf=1  ne=1,2"
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-postgresql-tpch-1
-sleep 30
-
-
 #### TCP-H Persistent Storage (Example-TPC-H.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -146,6 +141,7 @@ sleep 30
 # -xdt                          disable result type checking
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -161,6 +157,7 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -tr \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -226,11 +223,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H refresh  sf=1  ne=3"
 ###########################################
 
 
-#### Remove persistent storage
-kubectl delete pvc bexhoma-storage-monetdb-tpch-100
-sleep 30
-
-
 #### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
 # -dbms MonetDB                 DBMS under test
 # -sf 100                       scaling factor (controls database size in GB)
@@ -248,6 +240,7 @@ sleep 30
 # -t 3600                       query timeout in seconds
 # -lr 256Gi                     RAM limit for the SUT container
 # -rr 256Gi                     RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 1000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -268,6 +261,7 @@ bexhoma tpch \
   -t 3600 \
   -lr 256Gi \
   -rr 256Gi \
+  -rsr \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

@@ -53,6 +53,7 @@ bexhoma tpch \
   -t 3600 \
   -lr 256Gi \
   -rr 256Gi \
+  -rsr \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

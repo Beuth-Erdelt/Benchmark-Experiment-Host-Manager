@@ -738,6 +738,22 @@ class SutConfiguration:
             configuration=storageConfiguration,
         )
 
+    def get_num_worker(self, component: str = 'worker') -> int:
+        """Return the resolved replica count for a StatefulSet-kind component.
+
+        Falls back to :attr:`num_worker` when no ``replicas_<component>`` override
+        was set via :meth:`set_resources`. This is what lets a SUT with a single
+        StatefulSet component (e.g. CockroachDB's or Redis's ``worker``) keep
+        using ``-nw`` unchanged, while a SUT with several independently-sized
+        StatefulSet components (e.g. TiDB's ``pd`` and ``tikv``) can size each
+        one separately by setting ``replicas_<component>`` via :meth:`set_resources`.
+
+        :param component: Component label of the StatefulSet, e.g. ``'worker'`` or ``'pd'``.
+        :return: Number of replicas to run for this component.
+        :rtype: int
+        """
+        return self.resources.get('replicas_{}'.format(component), self.num_worker)
+
     def get_worker_pods(self, component: str = 'worker', only_stateful: bool = False) -> list:
         """Return a list of all worker pod names for the current SUT.
 
