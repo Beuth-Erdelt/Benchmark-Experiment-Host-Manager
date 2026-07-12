@@ -1223,9 +1223,15 @@ scrape_configs:
                         nodeSelectors = cfg.resources['nodeSelector'].copy()
                     else:
                         nodeSelectors = {}
-                    num_replicas_pooling = 0
-                    if 'replicas_pooling' in cfg.resources:
-                        num_replicas_pooling = cfg.resources['replicas_pooling']
+                    # Per-component replica overrides (e.g. replicas_pd, replicas_pooling)
+                    # must survive this reset: StatefulSet documents earlier in the
+                    # template (patched later because this loop runs in reverse) still
+                    # need cfg.get_num_worker() to see them.
+                    replicas_overrides = {
+                        resource_key: resource_value
+                        for resource_key, resource_value in cfg.resources.items()
+                        if resource_key.startswith('replicas_')
+                    }
                     node_selector_pool = cfg.resources.get('nodeSelector_pool')
                     cfg.resources = {}
                     cfg.resources['requests'] = {}
@@ -1238,8 +1244,7 @@ scrape_configs:
                     cfg.resources['nodeSelector'] = {}
                     cfg.resources['nodeSelector']['cpu'] = node_cpu
                     cfg.resources['nodeSelector']['gpu'] = node_gpu
-                    if num_replicas_pooling > 0:
-                        cfg.resources['replicas_pooling'] = num_replicas_pooling
+                    cfg.resources.update(replicas_overrides)
                     if node_selector_pool is not None:
                         cfg.resources['nodeSelector_pool'] = node_selector_pool
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu
