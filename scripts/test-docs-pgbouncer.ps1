@@ -47,6 +47,7 @@ bexhoma ycsb `
   -rss 80Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnp $BEXHOMA_NODE_LOAD       <# schedule pooling pods on this node (same as loaders) #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_1.log" -Encoding utf8
 

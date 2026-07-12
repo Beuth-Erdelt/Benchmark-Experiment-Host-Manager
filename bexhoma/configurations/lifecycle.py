@@ -1187,6 +1187,11 @@ scrape_configs:
                     if 'replicas_pooling' in cfg.resources:
                         num_replicas_pooling = cfg.resources['replicas_pooling']
                         result[key]['spec']['replicas'] = num_replicas_pooling
+                    if 'nodeSelector_pool' in cfg.resources:
+                        if dep['spec']['template']['spec'].get('nodeSelector') is None:
+                            dep['spec']['template']['spec']['nodeSelector'] = {}
+                        for node_selector_key, node_selector_value in cfg.resources['nodeSelector_pool'].items():
+                            dep['spec']['template']['spec']['nodeSelector'][node_selector_key] = node_selector_value
                 if deployment_type == 'sut':
                     if 'replicas_sut' in cfg.resources:
                         num_replicas_sut = cfg.resources['replicas_sut']
@@ -1221,6 +1226,7 @@ scrape_configs:
                     num_replicas_pooling = 0
                     if 'replicas_pooling' in cfg.resources:
                         num_replicas_pooling = cfg.resources['replicas_pooling']
+                    node_selector_pool = cfg.resources.get('nodeSelector_pool')
                     cfg.resources = {}
                     cfg.resources['requests'] = {}
                     cfg.resources['requests']['cpu'] = req_cpu
@@ -1234,6 +1240,8 @@ scrape_configs:
                     cfg.resources['nodeSelector']['gpu'] = node_gpu
                     if num_replicas_pooling > 0:
                         cfg.resources['replicas_pooling'] = num_replicas_pooling
+                    if node_selector_pool is not None:
+                        cfg.resources['nodeSelector_pool'] = node_selector_pool
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu'] = limit_cpu
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory'] = req_mem

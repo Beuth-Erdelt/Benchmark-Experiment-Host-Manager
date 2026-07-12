@@ -68,6 +68,7 @@ def make_base_parser():
     p.add_argument('-rnn', '--request-node-name', help='pin the SUT pod to this Kubernetes node', default=None, nargs='?', const=None)
     p.add_argument('-rnl', '--request-node-loading', help='pin loader pods to this Kubernetes node', default=None, nargs='?', const=None)
     p.add_argument('-rnb', '--request-node-benchmarking', help='pin benchmarker pods to this Kubernetes node', default=None, nargs='?', const=None)
+    p.add_argument('-rnp', '--request-node-pooling', help='pin pooling pods to this Kubernetes node', default=None, nargs='?', const=None)
     p.add_argument('-mtn', '--multi-tenant-num', help='number of tenants for multi-tenant experiments', default=0)
     p.add_argument('-mtb', '--multi-tenant-by', help='tenancy granularity: schema, database, or container', default='')
     p.add_argument('-mtv', '--multi-tenant-volume', help='allocate a separate persistent volume per tenant', action='store_true', default=False)

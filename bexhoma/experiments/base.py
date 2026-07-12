@@ -470,6 +470,7 @@ class ExperimentBase():
         request_node_name = args.request_node_name
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
+        request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
@@ -570,8 +571,15 @@ class ExperimentBase():
                     'cpu': cpu_type,
                     'gpu': '',
                     'kubernetes.io/hostname': request_node_name
-                })        
+                })
             self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        # fix pooling
+        if request_node_pooling:
+            self.set_resources(
+                nodeSelector_pool = {
+                    'kubernetes.io/hostname': request_node_pooling
+                })
+            self.workload['info'] = self.workload['info']+"\nPooling is fixed to {}.".format(request_node_pooling)
         if numRun > 1:
             self.workload['info'] = self.workload['info']+"\nEach query is repeated {} times.".format(numRun)
         if skip_loading:

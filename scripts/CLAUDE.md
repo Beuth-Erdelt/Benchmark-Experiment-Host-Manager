@@ -104,4 +104,4 @@ Within each group the flags are listed alphabetically except where noted.
 | N — Experiment control | `-ms`, `-sl`, `-ss`, `-t`, `-tr` | alphabetical |
 | O — SUT resources | `-lc`, `-lr`, `-rc`, `-rr` / `-rct`, `-rg`, `-rgt` / `-rsr`, `-rss`, `-rst` | three sub-groups: RAM+CPU, node labels, storage — alphabetical within each |
 | P — Multi-tenancy | `-mtb`, `-mtn`, `-mtv` | alphabetical |
-| Q — Node pinning | `-rnn`, `-rnl`, `-rnb` | **flow order** (SUT → loaders → benchmarkers); always on one line in `.sh` |
+| Q — Node pinning | `-rnn`, `-rnl`, `-rnp`, `-rnb` | **flow order** (SUT → loaders → pooling → benchmarkers); always on one line in `.sh` |
