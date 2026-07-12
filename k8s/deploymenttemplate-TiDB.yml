@@ -106,25 +106,25 @@ spec:
 # quorum / majority of stores available during voluntary disruptions (node
 # drains, upgrades). With 1-2 replicas you have no HA anyway - prefer an ODD
 # PD count (1, 3, 5) so etcd can form a majority.
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: bexhoma-pd
-  labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels: {app: bexhoma, component: pd, configuration: default, experiment: default}
----
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: bexhoma-tikv
-  labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
+# apiVersion: policy/v1
+# kind: PodDisruptionBudget
+# metadata:
+#   name: bexhoma-pd
+#   labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+# spec:
+#   maxUnavailable: 1
+#   selector:
+#     matchLabels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+# ---
+# apiVersion: policy/v1
+# kind: PodDisruptionBudget
+# metadata:
+#   name: bexhoma-tikv
+#   labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
+# spec:
+#   maxUnavailable: 1
+#   selector:
+#     matchLabels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
 ---
 # --- PD (Placement Driver / etcd) StatefulSet --------------------------------
 apiVersion: apps/v1
