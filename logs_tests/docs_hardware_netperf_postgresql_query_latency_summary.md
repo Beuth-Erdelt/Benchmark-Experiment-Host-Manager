@@ -3,8 +3,8 @@
 ### Workload
 Hardware Benchmark (netperf)
 * Type: hardware
-* Duration: 206s 
-* Code: 1783788702
+* Duration: 238s 
+* Code: 1783815862
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
   * Benchmark tool: netperf.
@@ -27,15 +27,15 @@ Hardware Benchmark (netperf)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062635
+  * disk:1062832
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783788702
+    * code:1783815862
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1783788702-76cc8db968-rkbh5: 0
+* bexhoma-sut-hardware-1-1783815862-65cbdfb4fb-ldwn6: 0
 
 ### Workflow
 
@@ -53,13 +53,13 @@ Hardware Benchmark (netperf)
 
 | DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration |   hardware_threads | hardware_netperf_protocol   |   hardware_netperf_transaction_rate |   hardware_netperf_latency_avg_ms |   hardware_netperf_latency_p50_ms |   hardware_netperf_latency_p90_ms |   hardware_netperf_latency_p99_ms |   hardware_netperf_instances_failed |   errors |
 |:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|-------------------:|:----------------------------|------------------------------------:|----------------------------------:|----------------------------------:|----------------------------------:|----------------------------------:|------------------------------------:|---------:|
-| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         60 |                  1 | tcp                         |                            10729.41 |                              0.09 |                              0.08 |                              0.11 |                              0.41 |                                0.00 |        0 |
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         61 |                  1 | tcp                         |                             8758.24 |                              0.11 |                              0.09 |                              0.26 |                              0.38 |                                0.00 |        0 |
 
 #### Per Phase
 
 | DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration |   hardware_threads | hardware_netperf_protocol   |   hardware_netperf_transaction_rate |   hardware_netperf_latency_avg_ms |   hardware_netperf_latency_p50_ms |   hardware_netperf_latency_p90_ms |   hardware_netperf_latency_p99_ms |   hardware_netperf_instances_failed |   errors |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|-------------------:|:----------------------------|------------------------------------:|----------------------------------:|----------------------------------:|----------------------------------:|----------------------------------:|------------------------------------:|---------:|
-| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         60 |                  1 | tcp                         |                            10729.41 |                              0.09 |                              0.08 |                              0.11 |                              0.41 |                                0.00 |        0 |
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         61 |                  1 | tcp                         |                             8758.24 |                              0.11 |                              0.08 |                              0.26 |                              0.38 |                                0.00 |        0 |
 
 ### Monitoring
 
@@ -67,13 +67,13 @@ Hardware Benchmark (netperf)
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |         6.79 |      0.19 |           0.20 |                  0.20 |
+| Hardware-1-1-1-1 |         7.71 |      0.17 |           0.20 |                  0.21 |
 
 ### Execution phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |        18.76 |      0.34 |           0.00 |                  0.00 |
+| Hardware-1-1-1-1 |        11.43 |      0.31 |           0.00 |                  0.00 |
 
 ### Tests
 * TEST passed: No SUT container restarts

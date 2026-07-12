@@ -3,8 +3,8 @@
 ### Workload
 Hardware Benchmark (sysbench)
 * Type: hardware
-* Duration: 709s 
-* Code: 1783787574
+* Duration: 730s 
+* Code: 1783814697
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
   * Benchmark tool: sysbench.
@@ -28,55 +28,55 @@ Hardware Benchmark (sysbench)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062552
+  * disk:1062818
   * cpu_list:0-223
   * requests_cpu:2
   * requests_memory:16Gi
   * limits_cpu:2
   * eval_parameters
-    * code:1783787574
+    * code:1783814697
 * Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.4
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062562
+  * disk:1062819
   * cpu_list:0-223
   * requests_cpu:2
   * requests_memory:16Gi
   * limits_cpu:2
   * eval_parameters
-    * code:1783787574
+    * code:1783814697
 * Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.4
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062569
+  * disk:1062820
   * cpu_list:0-223
   * requests_cpu:2
   * requests_memory:16Gi
   * limits_cpu:2
   * eval_parameters
-    * code:1783787574
+    * code:1783814697
 * Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.4
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062575
+  * disk:1062820
   * cpu_list:0-223
   * requests_cpu:2
   * requests_memory:16Gi
   * limits_cpu:2
   * eval_parameters
-    * code:1783787574
+    * code:1783814697
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1783787574-6b6b9879d6-gxtwf: 0
+* bexhoma-sut-hardware-1-1783814697-69c476b458-24skd: 0
 
 ### Workflow
 
@@ -100,30 +100,30 @@ Hardware Benchmark (sysbench)
 
 | DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
 |:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         62 |                  2 |                                2295.14 |                                60.00 |                               1.27 |                             6462537.67 |                                     6311.07 |                                  0.00 |        0 |
-| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         69 |                  2 |                                 927.17 |                                60.00 |                               1.73 |                             1634261.79 |                                     1595.96 |                                  0.00 |        0 |
-| Hardware-1-1-2-1-2 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       2 |         69 |                  2 |                                 919.71 |                                60.00 |                               1.58 |                             1527470.30 |                                     1491.67 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         73 |                  2 |                                 453.17 |                                60.00 |                              26.20 |                             1172392.97 |                                     1144.92 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-2 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       2 |         71 |                  2 |                                 458.42 |                                60.04 |                              26.20 |                             1322546.05 |                                     1291.55 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-3 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       3 |         72 |                  2 |                                 460.63 |                                60.00 |                              26.20 |                             1172366.98 |                                     1144.89 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-4 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       4 |         73 |                  2 |                                 453.64 |                                60.00 |                              26.20 |                              984569.59 |                                      961.49 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         86 |                  2 |                                 232.82 |                                60.00 |                              64.47 |                              559209.07 |                                      546.10 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-2 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       2 |         86 |                  2 |                                 228.02 |                                60.02 |                              64.47 |                              530002.05 |                                      517.58 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-3 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       3 |         83 |                  2 |                                 234.08 |                                60.02 |                              64.47 |                              596716.58 |                                      582.73 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-4 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       4 |         84 |                  2 |                                 221.57 |                                60.03 |                              64.47 |                              566711.38 |                                      553.43 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-5 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       5 |         82 |                  2 |                                 223.82 |                                60.06 |                              64.47 |                              598934.85 |                                      584.90 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-6 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       6 |         83 |                  2 |                                 224.39 |                                60.00 |                              64.47 |                              578922.70 |                                      565.35 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-7 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       7 |         82 |                  2 |                                 228.91 |                                60.02 |                              64.47 |                              554127.68 |                                      541.14 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-8 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       8 |         80 |                  2 |                                 231.41 |                                60.00 |                              64.47 |                              601754.31 |                                      587.65 |                                  0.00 |        0 |
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 |                  2 |                                2327.85 |                                60.00 |                               1.25 |                             4519198.20 |                                     4413.28 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         65 |                  2 |                                1196.63 |                                60.00 |                               1.30 |                             3496153.84 |                                     3414.21 |                                  0.00 |        0 |
+| Hardware-1-1-2-1-2 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       2 |         69 |                  2 |                                1182.24 |                                60.00 |                               1.30 |                             1574692.31 |                                     1537.79 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         72 |                  2 |                                 595.38 |                                60.00 |                               7.98 |                             1450708.98 |                                     1416.71 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-2 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       2 |         75 |                  2 |                                 610.61 |                                60.07 |                               7.98 |                              912273.03 |                                      890.89 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-3 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       3 |         72 |                  2 |                                 612.80 |                                60.00 |                               7.98 |                             1153357.27 |                                     1126.33 |                                  0.00 |        0 |
+| Hardware-1-1-3-1-4 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       4 |         72 |                  2 |                                 604.80 |                                60.00 |                               7.98 |                             1024798.28 |                                     1000.78 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         78 |                  2 |                                 298.69 |                                60.01 |                              80.03 |                              852319.94 |                                      832.34 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-2 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       2 |         79 |                  2 |                                 272.38 |                                60.00 |                              81.48 |                              873092.49 |                                      852.63 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-3 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       3 |         79 |                  2 |                                 296.64 |                                60.00 |                              80.03 |                              760471.69 |                                      742.65 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-4 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       4 |         80 |                  2 |                                 296.62 |                                60.00 |                              80.03 |                              727100.88 |                                      710.06 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-5 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       5 |         78 |                  2 |                                 294.82 |                                60.01 |                              80.03 |                              765363.73 |                                      747.43 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-6 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       6 |         76 |                  2 |                                 299.66 |                                60.00 |                              80.03 |                              838578.28 |                                      818.92 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-7 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       7 |         78 |                  2 |                                 285.68 |                                60.00 |                              80.03 |                              747198.39 |                                      729.69 |                                  0.00 |        0 |
+| Hardware-1-1-4-1-8 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       8 |         76 |                  2 |                                 284.80 |                                60.01 |                              80.03 |                              754763.63 |                                      737.07 |                                  0.00 |        0 |
 
 #### Per Phase
 
 | DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         62 |                  2 |                                2295.14 |                                60.00 |                               1.27 |                             6462537.67 |                                     6311.07 |                                  0.00 |        0 |
-| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           2 |         69 |                  4 |                                1846.88 |                                60.00 |                               1.73 |                             3161732.09 |                                     3087.63 |                                  0.00 |        0 |
-| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           4 |         73 |                  8 |                                1825.86 |                                60.04 |                              26.20 |                             4651875.59 |                                     4542.85 |                                  0.00 |        0 |
-| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           8 |         86 |                 16 |                                1825.02 |                                60.06 |                              64.47 |                             4586378.62 |                                     4478.88 |                                  0.00 |        0 |
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 |                  2 |                                2327.85 |                                60.00 |                               1.25 |                             4519198.20 |                                     4413.28 |                                  0.00 |        0 |
+| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           2 |         69 |                  4 |                                2378.87 |                                60.00 |                               1.30 |                             5070846.15 |                                     4952.00 |                                  0.00 |        0 |
+| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           4 |         75 |                  8 |                                2423.59 |                                60.07 |                               7.98 |                             4541137.56 |                                     4434.71 |                                  0.00 |        0 |
+| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           8 |         80 |                 16 |                                2329.29 |                                60.01 |                              81.48 |                             6318889.03 |                                     6170.79 |                                  0.00 |        0 |
 
 ### Monitoring
 
@@ -131,19 +131,19 @@ Hardware Benchmark (sysbench)
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |       121.43 |      1.98 |           0.21 |                  0.21 |
-| Hardware-1-1-2-1 |       112.60 |      2.00 |           0.21 |                  0.21 |
-| Hardware-1-1-3-1 |       108.79 |      2.00 |           0.22 |                  0.22 |
-| Hardware-1-1-4-1 |       138.35 |      2.00 |           0.23 |                  0.23 |
+| Hardware-1-1-1-1 |        79.99 |      2.00 |           0.21 |                  0.21 |
+| Hardware-1-1-2-1 |       111.03 |      2.00 |           0.21 |                  0.21 |
+| Hardware-1-1-3-1 |       131.88 |      2.00 |           0.22 |                  0.22 |
+| Hardware-1-1-4-1 |        99.31 |      2.00 |           0.23 |                  0.23 |
 
 ### Execution phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |         0.51 |      0.02 |           0.00 |                  0.00 |
-| Hardware-1-1-2-1 |         1.12 |      0.03 |           0.00 |                  0.00 |
-| Hardware-1-1-3-1 |         2.35 |      0.03 |           0.00 |                  0.00 |
-| Hardware-1-1-4-1 |         5.34 |      0.04 |           0.00 |                  0.00 |
+| Hardware-1-1-1-1 |         0.56 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1 |         1.17 |      0.02 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1 |         2.42 |      0.06 |           0.00 |                  0.00 |
+| Hardware-1-1-4-1 |         5.17 |      0.00 |           0.00 |                  0.00 |
 
 ### Tests
 * TEST passed: No SUT container restarts

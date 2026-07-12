@@ -3,8 +3,8 @@
 ### Workload
 Hardware Benchmark (netperf)
 * Type: hardware
-* Duration: 771s 
-* Code: 1783788932
+* Duration: 747s 
+* Code: 1783816119
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
   * Benchmark tool: netperf.
@@ -27,63 +27,63 @@ Hardware Benchmark (netperf)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062644
+  * disk:1062834
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783788932
+    * code:1783816119
 * Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.4
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062649
+  * disk:1062834
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783788932
+    * code:1783816119
 * Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.4
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062652
+  * disk:1062835
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783788932
+    * code:1783816119
 * Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.4
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062855
+  * disk:1062835
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783788932
+    * code:1783816119
 * Hardware-1-1-5-1 uses docker image bexhoma/sut_hardware:0.10.4
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062662
+  * disk:1062836
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1783788932
+    * code:1783816119
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1783788932-6b5665fbc4-ffq67: 0
+* bexhoma-sut-hardware-1-1783816119-654989dc44-2wsdf: 0
 
 ### Workflow
 
@@ -109,21 +109,21 @@ Hardware Benchmark (netperf)
 
 | DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration |   hardware_threads | hardware_netperf_protocol   |   hardware_netperf_transaction_rate |   hardware_netperf_latency_avg_ms |   hardware_netperf_latency_p50_ms |   hardware_netperf_latency_p90_ms |   hardware_netperf_latency_p99_ms |   hardware_netperf_instances_failed |   errors |
 |:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|-------------------:|:----------------------------|------------------------------------:|----------------------------------:|----------------------------------:|----------------------------------:|----------------------------------:|------------------------------------:|---------:|
-| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         61 |                  1 | tcp                         |                            10988.02 |                              0.09 |                              0.08 |                              0.11 |                              0.39 |                                0.00 |        0 |
-| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         61 |                  8 | tcp                         |                            62936.79 |                              0.15 |                              0.10 |                              0.35 |                              0.46 |                                0.00 |        0 |
-| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         62 |                 16 | tcp                         |                            94324.63 |                              0.22 |                              0.13 |                              0.43 |                              0.53 |                                0.00 |        0 |
-| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         64 |                 32 | tcp                         |                           207481.08 |                              0.17 |                              0.15 |                              0.24 |                              0.45 |                                0.00 |        0 |
-| Hardware-1-1-5-1-1 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         68 |                 64 | tcp                         |                           278951.29 |                              0.51 |                              0.31 |                              1.04 |                              3.70 |                                0.00 |        0 |
+| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         60 |                  1 | tcp                         |                             8735.47 |                              0.11 |                              0.08 |                              0.27 |                              0.38 |                                0.00 |        0 |
+| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         62 |                  8 | tcp                         |                            65369.99 |                              0.13 |                              0.10 |                              0.33 |                              0.46 |                                0.00 |        0 |
+| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         62 |                 16 | tcp                         |                           117147.15 |                              0.16 |                              0.11 |                              0.37 |                              0.50 |                                0.00 |        0 |
+| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         65 |                 32 | tcp                         |                           181885.25 |                              0.23 |                              0.17 |                              0.45 |                              0.64 |                                0.00 |        0 |
+| Hardware-1-1-5-1-1 | Hardware-1-1-5 | Hardware-1-1-5-1 |                1 |        5 |               1 |       1 |         69 |                 64 | tcp                         |                           251881.02 |                              0.36 |                              0.35 |                              0.76 |                              2.04 |                                0.00 |        0 |
 
 #### Per Phase
 
 | DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration |   hardware_threads | hardware_netperf_protocol   |   hardware_netperf_transaction_rate |   hardware_netperf_latency_avg_ms |   hardware_netperf_latency_p50_ms |   hardware_netperf_latency_p90_ms |   hardware_netperf_latency_p99_ms |   hardware_netperf_instances_failed |   errors |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|-------------------:|:----------------------------|------------------------------------:|----------------------------------:|----------------------------------:|----------------------------------:|----------------------------------:|------------------------------------:|---------:|
-| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         61 |                  1 | tcp                         |                            10988.02 |                              0.09 |                              0.08 |                              0.11 |                              0.39 |                                0.00 |        0 |
-| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           1 |         61 |                  8 | tcp                         |                            62936.79 |                              0.15 |                              0.10 |                              0.35 |                              0.46 |                                0.00 |        0 |
-| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           1 |         62 |                 16 | tcp                         |                            94324.63 |                              0.22 |                              0.13 |                              0.43 |                              0.53 |                                0.00 |        0 |
-| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           1 |         64 |                 32 | tcp                         |                           207481.08 |                              0.17 |                              0.15 |                              0.24 |                              0.45 |                                0.00 |        0 |
-| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |           1 |         68 |                 64 | tcp                         |                           278951.30 |                              0.51 |                              0.31 |                              1.04 |                              3.70 |                                0.00 |        0 |
+| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         60 |                  1 | tcp                         |                             8735.47 |                              0.11 |                              0.08 |                              0.26 |                              0.38 |                                0.00 |        0 |
+| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           1 |         62 |                  8 | tcp                         |                            65369.99 |                              0.13 |                              0.10 |                              0.33 |                              0.46 |                                0.00 |        0 |
+| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           1 |         62 |                 16 | tcp                         |                           117147.15 |                              0.16 |                              0.11 |                              0.37 |                              0.50 |                                0.00 |        0 |
+| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           1 |         65 |                 32 | tcp                         |                           181885.25 |                              0.23 |                              0.17 |                              0.45 |                              0.64 |                                0.00 |        0 |
+| Hardware-1-1-5 | Hardware-1-1-5 |                1 |        5 |               1 |           1 |         69 |                 64 | tcp                         |                           251881.02 |                              0.36 |                              0.35 |                              0.76 |                              2.04 |                                0.00 |        0 |
 
 ### Monitoring
 
@@ -131,21 +131,21 @@ Hardware Benchmark (netperf)
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |         7.21 |      0.18 |           0.20 |                  0.21 |
-| Hardware-1-1-2-1 |        50.84 |      1.26 |           0.21 |                  0.21 |
-| Hardware-1-1-3-1 |       138.66 |      2.38 |           0.21 |                  0.21 |
-| Hardware-1-1-4-1 |       138.51 |      3.93 |           0.21 |                  0.21 |
-| Hardware-1-1-5-1 |       260.17 |      5.54 |           0.22 |                  0.22 |
+| Hardware-1-1-1-1 |         5.39 |      0.15 |           0.20 |                  0.20 |
+| Hardware-1-1-2-1 |        70.63 |      1.29 |           0.21 |                  0.21 |
+| Hardware-1-1-3-1 |       140.24 |      2.46 |           0.21 |                  0.21 |
+| Hardware-1-1-4-1 |       235.34 |      4.18 |           0.21 |                  0.21 |
+| Hardware-1-1-5-1 |       315.17 |      5.41 |           0.22 |                  0.22 |
 
 ### Execution phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |         7.32 |      0.39 |           0.00 |                  0.00 |
-| Hardware-1-1-2-1 |       116.43 |      3.02 |           0.00 |                  0.00 |
-| Hardware-1-1-3-1 |       172.15 |      6.77 |           0.01 |                  0.01 |
-| Hardware-1-1-4-1 |       745.77 |     18.32 |           0.01 |                  0.01 |
-| Hardware-1-1-5-1 |       708.58 |     37.48 |           0.02 |                  0.02 |
+| Hardware-1-1-1-1 |        13.05 |      0.29 |           0.00 |                  0.00 |
+| Hardware-1-1-2-1 |        92.18 |      2.93 |           0.00 |                  0.00 |
+| Hardware-1-1-3-1 |       266.56 |      8.53 |           0.01 |                  0.01 |
+| Hardware-1-1-4-1 |       513.82 |     17.45 |           0.01 |                  0.01 |
+| Hardware-1-1-5-1 |      1014.53 |     35.66 |           0.02 |                  0.02 |
 
 ### Tests
 * TEST passed: No SUT container restarts
