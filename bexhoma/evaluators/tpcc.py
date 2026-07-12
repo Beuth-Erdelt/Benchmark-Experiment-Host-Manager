@@ -334,7 +334,7 @@ class TpccEvaluator(LogEvaluator):
         Applies :meth:`benchmarking_set_datatypes` and selects the columns used
         for the per-connection summary table (experiment run, terminals, target,
         client, child, time, errors, throughput, goodput, efficiency, and
-        latency percentiles), then sorts by ``(experiment_run, client, child)``.
+        latency percentiles), then naturally sorts by the connection name.
 
         :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or ``None``
                  if there are no benchmarking results.
@@ -353,7 +353,8 @@ class TpccEvaluator(LogEvaluator):
             for col in columns:
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(['experiment_run', 'client'])
+            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
+            df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
