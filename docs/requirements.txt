@@ -12,3 +12,4 @@ urllib3==2.7.0
 myst-parser
 pygments>=2.20.0 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
+mistune>=3.3.0 # not directly required, pinned by Snyk to avoid a vulnerability
