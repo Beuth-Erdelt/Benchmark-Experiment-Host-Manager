@@ -50,6 +50,16 @@ bexhoma tpch \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql.log
 ```
 
@@ -384,6 +394,16 @@ bexhoma tpch \
   -rr 64Gi \
   -rss 150Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_monitoring.log
 ```
 
@@ -570,8 +590,20 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_throughput.log
 ```
 
@@ -753,10 +785,22 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_storage.log
 ```
 The following status shows we have a volumes of type `shared`.
@@ -1134,9 +1178,21 @@ bexhoma tpch \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -xrs 3 \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_refresh.log
 ```
 

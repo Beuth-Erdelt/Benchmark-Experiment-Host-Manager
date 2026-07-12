@@ -23,7 +23,7 @@
 
 bexhoma ycsb `
   -dbms PGBouncer               <# DBMS under test #> `
-  -sf 16                        <# scaling factor (number of records x 1000) #> `
+  -sf 32                        <# scaling factor (number of records x 1000) #> `
   -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 11                      <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -51,7 +51,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=16  nbp=16"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=32  nbp=16"
 
 
 bexhoma ycsb `

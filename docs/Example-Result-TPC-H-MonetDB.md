@@ -51,7 +51,9 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
+  -lc 16 \
   -lr 256Gi \
+  -rc 16 \
   -rr 256Gi \
   -rsr \
   -rss 1000Gi \
@@ -271,7 +273,9 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
+  -lc 16 \
   -lr 256Gi \
+  -rc 16 \
   -rr 256Gi \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -480,7 +484,9 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
+  -lc 16 \
   -lr 256Gi \
+  -rc 16 \
   -rr 256Gi \
   -rss 1000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \

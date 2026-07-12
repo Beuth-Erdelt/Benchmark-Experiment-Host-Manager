@@ -100,7 +100,6 @@ spec:
   clusterIP: None
   publishNotReadyAddresses: true
   selector: {app: bexhoma, component: tikv, configuration: default, experiment: default}
----
 # --- Disruption budgets -------------------------------------------------------
 # maxUnavailable: 1 is replica-count agnostic: with >=3 PD/TiKV pods it keeps a
 # quorum / majority of stores available during voluntary disruptions (node
@@ -576,6 +575,12 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
+            # DAC_OVERRIDE is required here: the startup script yum-installs
+            # the mysql client at container start, and without this capability
+            # root cannot bypass the restrictive mode bits on /usr/lib64 in the
+            # base image, so rpm's cpio unpack fails with mkdir/symlink
+            # permission errors (see https://bugzilla.redhat.com/show_bug.cgi?id=1885103).
+            add: ["DAC_OVERRIDE"]
         # NOTE: the original limits.memory was 1Gi, which is REJECTED because it
         # is below the 16Gi request. Raised to 16Gi. The 100m CPU request/limit
         # is very low for a SQL layer under load - raise it for real benchmarks.

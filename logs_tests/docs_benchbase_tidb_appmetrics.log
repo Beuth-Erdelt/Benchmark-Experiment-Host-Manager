@@ -2,249 +2,223 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1772840860
-Experiment                    : starts at 2026-03-07 00:47:41.998280 (785601.6576298)
+Experiment                    : has code 1783893680
+Experiment                    : starts at 2026-07-13 00:01:21.078645 (46817.8544065)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-Experiment uses bexhoma version 0.9.1.
+Experiment uses bexhoma version 0.10.5.
 System metrics are monitored by a cluster-wide installation.
-Application metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['TiDB'].
 Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker14.
+Database uses ephemeral storage of size 50Gi.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Cluster monitoring            : is running
-TiDB-1-1-1024                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+TiDB-1                        : will start now
+TiDB-1                        : deployments ['sut']
+TiDB-1                        : stateful sets ['pd', 'tikv']
+TiDB-1                        : pvcs []
+TiDB-1                        : name of SUT pods = bexhoma-sut-tidb-1-1783893680
+TiDB-1                        : name of SUT service = bexhoma-sut-tidb-1-1783893680
+TiDB-1                        : name of worker pods = bexhoma-worker-tidb-benchbase-tpcc-16
+TiDB-1                        : name of worker service headless = bexhoma-worker-tidb-benchbase-tpcc-16
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+TiDB-1                        : waits for health check to succeed
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+TiDB-1                        : worker pods found: ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : found 3 / 3 running workers (component pd)
+TiDB-1                        : worker pods found: ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : found 3 / 3 running workers (component tikv)
+TiDB-1                        : is not loaded yet
+TiDB-1                        : will start loading but not before 2026-07-12 22:03:31 (that is in 60 secs)
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+TiDB-1                        : is not loaded yet
+TiDB-1                        : will start loading but not before 2026-07-12 22:03:31
 - waiting 30s -               : done
-TiDB-1-1-1024                 : will start now
-TiDB-1-1-1024                 : deployments ['sut']
-TiDB-1-1-1024                 : stateful sets ['pd', 'tikv']
-TiDB-1-1-1024                 : pvcs []
-TiDB-1-1-1024                 : name of SUT pods = bexhoma-sut-tidb-1-1-1024-1772840860
-TiDB-1-1-1024                 : name of SUT service = bexhoma-sut-tidb-1-1-1024-1772840860
-TiDB-1-1-1024                 : name of worker pods = bexhoma-worker-tidb-benchbase-tpcc-16
-TiDB-1-1-1024                 : name of worker service headless = bexhoma-worker-tidb-benchbase-tpcc-16
+TiDB-1                        : is not loaded yet
+TiDB-1                        : connect to pod bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-bbs8w to load scripts
+TiDB-1                        : start asynch loading scripts of type loaded
+TiDB-1                        : is loading
 - waiting 30s -               : done
-TiDB-1-1-1024                 : waits for monitoring
-TiDB-1-1-1024                 : wants to monitor all components in cluster
-TiDB-1-1-1024                 : starts monitoring with prometheus pod
-TiDB-1-1-1024                 : need application monitoring for sut
-TiDB-1-1-1024                 : need application monitoring for pd
-TiDB-1-1-1024                 : need application monitoring for tikv
-TiDB-1-1-1024                 : worker pods found: []
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): []
+TiDB-1                        : is loading
 - waiting 30s -               : done
-TiDB-1-1-1024                 : worker pods found: ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : found 3 / 3 running workers (component pd)
-TiDB-1-1-1024                 : worker pods found: ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : found 3 / 3 running workers (component tikv)
-TiDB-1-1-1024                 : is not loaded yet
-TiDB-1-1-1024                 : will start loading but not before 2026-03-06 23:52:13 (that is in 60 secs)
+TiDB-1                        : is loading
 - waiting 30s -               : done
-TiDB-1-1-1024                 : is not loaded yet
-TiDB-1-1-1024                 : will start loading but not before 2026-03-06 23:52:13
+TiDB-1                        : is loading
 - waiting 30s -               : done
-TiDB-1-1-1024                 : is not loaded yet
-TiDB-1-1-1024                 : connect to pod bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-5kbnl to load scripts
-TiDB-1-1-1024                 : start asynch loading scripts of type loaded
-TiDB-1-1-1024                 : is loading
+TiDB-1                        : is loading
 - waiting 30s -               : done
-TiDB-1-1-1024                 : is loading
+TiDB-1                        : is loading
 - waiting 30s -               : done
-TiDB-1-1-1024                 : is loading
+TiDB-1                        : is loading
 - waiting 30s -               : done
-TiDB-1-1-1024                 : is loading
+TiDB-1                        : is loading
 - waiting 30s -               : done
-TiDB-1-1-1024                 : is loading
-- waiting 30s -               : done
-TiDB-1-1-1024                 : is loading
-- waiting 30s -               : done
-TiDB-1-1-1024                 : is loading
-- waiting 30s -               : done
-TiDB-1-1-1024                 : showing loader times
-TiDB-1-1-1024                 : generator times (start/end per pod and container) []
-TiDB-1-1-1024                 : loader times (start/end per pod and container) [(1772841152, 1772841397)]
-TiDB-1-1-1024                 : total times (start/end per pod and container) [(1772841152, 1772841397)]
-TiDB-1-1-1024                 : loader timespan (first to last [s]) = 245
-TiDB-1-1-1024                 : connect to pod bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-5kbnl to load scripts
-TiDB-1-1-1024                 : start asynch loading scripts of type indexed
-TiDB-1-1-1024                 : is loading
+TiDB-1                        : showing loader times
+TiDB-1                        : generator times (start/end per pod and container) []
+TiDB-1                        : loader times (start/end per pod and container) [(1783893845, 1783894063)]
+TiDB-1                        : total times (start/end per pod and container) [(1783893845, 1783894063)]
+TiDB-1                        : loader timespan (first to last [s]) = 218
+TiDB-1                        : connect to pod bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-bbs8w to load scripts
+TiDB-1                        : start asynch loading scripts of type indexed
+TiDB-1                        : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-TiDB-1-1-1024                 : benchmarks done 0 of 1. This will be client 1
-TiDB-1-1-1024                 : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mysql', 'BEXHOMA_DATABASE': 'test', 'BENCHBASE_TARGET': 16384, 'BENCHBASE_TERMINALS': 16, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 3, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-TiDB-1-1-1024-1               : start benchmarking
-TiDB-1-1-1024                 : worker pods found: ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-0
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-1
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-2
-TiDB-1-1-1024                 : worker pods found: ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-0
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-1
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-2
-TiDB-1-1-1024                 : distributed system - get host info for sut bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-5kbnl
-TiDB-1-1-1024                 : distributed system - get host info for sut bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-c4kch
-TiDB-1-1-1024                 : distributed system - get host info for sut bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-ltm5d
-TiDB-1-1-1024-1               : needs monitoring (common metrics) for deployment sut
-TiDB-1-1-1024-1               : needs monitoring (custom metrics) for stateful set pd
-TiDB-1-1-1024-1               : needs monitoring (custom metrics) for stateful set tikv
-TiDB-1-1-1024                 : need application metrics for sut
-TiDB-1-1-1024                 : load application metrics of type tidb
-TiDB-1-1-1024                 : need application metrics for pd
-TiDB-1-1-1024                 : load application metrics of type pd
-TiDB-1-1-1024                 : need application metrics for tikv
-TiDB-1-1-1024                 : load application metrics of type tikv
-TiDB-1-1-1024                 : benchmarking results in folder C:\data\benchmarks/1772840860
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-TiDB-1-1783893680 initialized to 1.
+TiDB-1                        : benchmarks done 0 of 1. This will be client 1
+TiDB-1-1-1-1                  : start benchmarking (benchmark_run=1)
+TiDB-1                        : worker pods found: ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-0
+TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-1
+TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-2
+TiDB-1                        : worker pods found: ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-0
+TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-1
+TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-2
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-bbs8w
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-fz7fv
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-jc5df
+TiDB-1-1-1-1                  : needs monitoring (common metrics) for deployment sut
+TiDB-1-1-1-1                  : needs monitoring (custom metrics) for stateful set pd
+TiDB-1-1-1-1                  : needs monitoring (custom metrics) for stateful set tikv
+TiDB-1                        : benchmarking results in folder D:\data\benchmarks/1783893680
 - waiting 10s -               : done
-TiDB-1-1-1024                 : benchmarking is waiting for job bexhoma-benchmarker-tidb-1-1-1024-1772840860-1-1-mzm8c: found
-TiDB-1-1-1024-1               : needs monitoring (common metrics) for deployment sut
-TiDB-1-1-1024-1               : collecting loading metrics of SUT at connection TiDB-1-1-1024-1
-TiDB-1-1-1024-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1-1024-1772840860(.*)", pod=~"(.*)tidb-1-1-1024-1772840860(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-1               : needs monitoring (custom metrics) for stateful set pd
-TiDB-1-1-1024-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-1               : needs monitoring (custom metrics) for stateful set tikv
-TiDB-1-1-1024-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-1               : collecting metrics of data injector at connection TiDB-1-1-1024-1
-TiDB-1-1-1024-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1-1024-1772840860(.*)", pod=~"(.*)tidb-1-1-1024-1772840860(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1                        : benchmarking is waiting for job bexhoma-benchmarker-tidb-1-1783893680-1-1-1-p8cqn: found
+TiDB-1-1-1-1                  : needs monitoring (common metrics) for deployment sut
+TiDB-1-1-1-1                  : collecting loading metrics of SUT at connection TiDB-1-1-1-1
+TiDB-1-1-1-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1783893680(.*)", pod=~"(.*)tidb-1-1783893680(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-1-1                  : needs monitoring (custom metrics) for stateful set pd
+TiDB-1-1-1-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-1-1                  : needs monitoring (custom metrics) for stateful set tikv
+TiDB-1-1-1-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-1-1                  : collecting metrics of data injector at connection TiDB-1-1-1-1
+TiDB-1-1-1-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1783893680(.*)", pod=~"(.*)tidb-1-1783893680(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
-timing_benchmarker [(1772841545, 1772841847)]
-TiDB-1-1-1024-1               : showing benchmarker times
-TiDB-1-1-1024-1               : benchmarker timespan job from 1772841542 to 1772841873
-TiDB-1-1-1024-1               : benchmarker timespan pods from 1772841545 to 1772841847
-TiDB-1-1-1024-1               : benchmarker timespan (start to end single container [s]) = 302
-TiDB-1-1-1024-1               : benchmarker times (start/end per pod and container) = [(1772841545, 1772841847)]
-TiDB-1-1-1024-1               : found and updated times {'benchmarker': [(1772841545, 1772841847)]}
-TiDB-1-1-1024-1               : needs monitoring (common metrics) for deployment sut
-TiDB-1-1-1024-1               : collecting execution metrics of SUT at connection TiDB-1-1-1024-1
-TiDB-1-1-1024-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1-1024-1772840860(.*)", pod=~"(.*)tidb-1-1-1024-1772840860(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-1               : needs monitoring (custom metrics) for stateful set pd
-TiDB-1-1-1024-1               : collecting execution metrics of pd at connection TiDB-1-1-1024-1
-TiDB-1-1-1024-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-1               : needs monitoring (custom metrics) for stateful set tikv
-TiDB-1-1-1024-1               : collecting execution metrics of tikv at connection TiDB-1-1-1024-1
-TiDB-1-1-1024-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-1               : collecting metrics of benchmarker at connection TiDB-1-1-1024-1
-TiDB-1-1-1024-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1-1024-1772840860(.*)", pod=~"(.*)tidb-1-1-1024-1772840860(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1                        : has running benchmarks
+- waiting 30s -               : done
+TiDB-1-1-1-1                  : wrote benchmarking_timespans to D:/data/benchmarks/1783893680/TiDB-1-1-1-1.config
+TiDB-1-1-1-1                  : showing benchmarker times
+TiDB-1-1-1-1                  : benchmarker timespan job from 1783894204 to 1783894539
+TiDB-1-1-1-1                  : benchmarker timespan pods from 1783894206 to 1783894508
+TiDB-1-1-1-1                  : benchmarker timespan (start to end single container [s]) = 302
+TiDB-1-1-1-1                  : benchmarker times (start/end per pod and container) = [(1783894206, 1783894508)]
+TiDB-1-1-1-1                  : found and updated times {'benchmarker': [(1783894206, 1783894508)]}
+TiDB-1-1-1-1                  : needs monitoring (common metrics) for deployment sut
+TiDB-1-1-1-1                  : collecting execution metrics of SUT at connection TiDB-1-1-1-1
+TiDB-1-1-1-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1783893680(.*)", pod=~"(.*)tidb-1-1783893680(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-1-1                  : needs monitoring (custom metrics) for stateful set pd
+TiDB-1-1-1-1                  : collecting execution metrics of pd at connection TiDB-1-1-1-1
+TiDB-1-1-1-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-1-1                  : needs monitoring (custom metrics) for stateful set tikv
+TiDB-1-1-1-1                  : collecting execution metrics of tikv at connection TiDB-1-1-1-1
+TiDB-1-1-1-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-1-1                  : collecting metrics of benchmarker at connection TiDB-1-1-1-1
+TiDB-1-1-1-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1783893680(.*)", pod=~"(.*)tidb-1-1783893680(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-TiDB-1-1-1024                 : benchmarks done 0 of 1. This will be client 2
-TiDB-1-1-1024                 : we will change parameters of benchmark as {'SF': '16', 'BENCHBASE_BENCH': 'tpcc', 'BENCHBASE_PROFILE': 'mysql', 'BEXHOMA_DATABASE': 'test', 'BENCHBASE_TARGET': 8192, 'BENCHBASE_TERMINALS': 8, 'BENCHBASE_TIME': 300, 'BENCHBASE_ISOLATION': 'TRANSACTION_READ_COMMITTED', 'BENCHBASE_BATCHSIZE': 128, 'BEXHOMA_USER': 'root', 'BEXHOMA_PASSWORD': '', 'BEXHOMA_REPLICAS': 3, 'BENCHBASE_STATUS_INTERVAL': 0, 'BENCHBASE_KEY_AND_THINK': 'false'}
-TiDB-1-1-1024-2               : start benchmarking
-TiDB-1-1-1024                 : worker pods found: ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-0
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-1
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-2
-TiDB-1-1-1024                 : worker pods found: ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-0
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-1
-TiDB-1-1-1024                 : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-2
-TiDB-1-1-1024                 : distributed system - get host info for sut bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-5kbnl
-TiDB-1-1-1024                 : distributed system - get host info for sut bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-c4kch
-TiDB-1-1-1024                 : distributed system - get host info for sut bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-ltm5d
-TiDB-1-1-1024-2               : needs monitoring (common metrics) for deployment sut
-TiDB-1-1-1024-2               : needs monitoring (custom metrics) for stateful set pd
-TiDB-1-1-1024-2               : needs monitoring (custom metrics) for stateful set tikv
-TiDB-1-1-1024                 : need application metrics for sut
-TiDB-1-1-1024                 : load application metrics of type tidb
-TiDB-1-1-1024                 : need application metrics for pd
-TiDB-1-1-1024                 : load application metrics of type pd
-TiDB-1-1-1024                 : need application metrics for tikv
-TiDB-1-1-1024                 : load application metrics of type tikv
-TiDB-1-1-1024                 : benchmarking results in folder C:\data\benchmarks/1772840860
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-TiDB-1-1783893680 initialized to 2.
+TiDB-1                        : benchmarks done 0 of 1. This will be client 2
+TiDB-1-1-2-1                  : start benchmarking (benchmark_run=1)
+TiDB-1                        : worker pods found: ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-0
+TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-1
+TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-benchbase-tpcc-16-2
+TiDB-1                        : worker pods found: ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-0
+TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-1
+TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-benchbase-tpcc-16-2
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-bbs8w
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-fz7fv
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-jc5df
+TiDB-1-1-2-1                  : needs monitoring (common metrics) for deployment sut
+TiDB-1-1-2-1                  : needs monitoring (custom metrics) for stateful set pd
+TiDB-1-1-2-1                  : needs monitoring (custom metrics) for stateful set tikv
+TiDB-1                        : benchmarking results in folder D:\data\benchmarks/1783893680
 - waiting 10s -               : done
-TiDB-1-1-1024                 : benchmarking is waiting for job bexhoma-benchmarker-tidb-1-1-1024-1772840860-1-2-5knv9: found
-TiDB-1-1-1024-2               : needs monitoring (common metrics) for deployment sut
-TiDB-1-1-1024-2               : collecting loading metrics of SUT at connection TiDB-1-1-1024-2
-TiDB-1-1-1024-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1-1024-1772840860(.*)", pod=~"(.*)tidb-1-1-1024-1772840860(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-2               : needs monitoring (custom metrics) for stateful set pd
-TiDB-1-1-1024-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-2               : needs monitoring (custom metrics) for stateful set tikv
-TiDB-1-1-1024-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-2               : collecting metrics of data injector at connection TiDB-1-1-1024-2
-TiDB-1-1-1024-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1-1024-1772840860(.*)", pod=~"(.*)tidb-1-1-1024-1772840860(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1                        : benchmarking is waiting for job bexhoma-benchmarker-tidb-1-1783893680-1-2-1-rf222: .found
+TiDB-1-1-2-1                  : needs monitoring (common metrics) for deployment sut
+TiDB-1-1-2-1                  : collecting loading metrics of SUT at connection TiDB-1-1-2-1
+TiDB-1-1-2-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1783893680(.*)", pod=~"(.*)tidb-1-1783893680(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-2-1                  : needs monitoring (custom metrics) for stateful set pd
+TiDB-1-1-2-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-2-1                  : needs monitoring (custom metrics) for stateful set tikv
+TiDB-1-1-2-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-2-1                  : collecting metrics of data injector at connection TiDB-1-1-2-1
+TiDB-1-1-2-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1783893680(.*)", pod=~"(.*)tidb-1-1783893680(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : has running benchmarks
-timing_benchmarker [(1772842034, 1772842335), (1772842033, 1772842335)]
-TiDB-1-1-1024-2               : showing benchmarker times
-TiDB-1-1-1024-2               : benchmarker timespan job from 1772842030 to 1772842360
-TiDB-1-1-1024-2               : benchmarker timespan pods from 1772842033 to 1772842335
-TiDB-1-1-1024-2               : benchmarker timespan (start to end single container [s]) = 302
-TiDB-1-1-1024-2               : benchmarker times (start/end per pod and container) = [(1772842034, 1772842335), (1772842033, 1772842335)]
-TiDB-1-1-1024-2               : found and updated times {'benchmarker': [(1772842034, 1772842335), (1772842033, 1772842335)]}
-TiDB-1-1-1024-2               : needs monitoring (common metrics) for deployment sut
-TiDB-1-1-1024-2               : collecting execution metrics of SUT at connection TiDB-1-1-1024-2
-TiDB-1-1-1024-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1-1024-1772840860(.*)", pod=~"(.*)tidb-1-1-1024-1772840860(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-2               : needs monitoring (custom metrics) for stateful set pd
-TiDB-1-1-1024-2               : collecting execution metrics of pd at connection TiDB-1-1-1024-2
-TiDB-1-1-1024-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-2               : needs monitoring (custom metrics) for stateful set tikv
-TiDB-1-1-1024-2               : collecting execution metrics of tikv at connection TiDB-1-1-1024-2
-TiDB-1-1-1024-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
-TiDB-1-1-1024-2               : collecting metrics of benchmarker at connection TiDB-1-1-1024-2
-TiDB-1-1-1024-2               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1-1024-1772840860(.*)", pod=~"(.*)tidb-1-1-1024-1772840860(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1                        : has running benchmarks
 - waiting 30s -               : done
-TiDB-1-1-1024                 : can be stopped
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-5kbnl
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-c4kch
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-sut-tidb-1-1-1024-1772840860-7c7f9bb85c-ltm5d
-TiDB-1-1-1024                 : worker pods found: ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-pd-tidb-benchbase-tpcc-16-0
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-pd-tidb-benchbase-tpcc-16-1
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-pd-tidb-benchbase-tpcc-16-2
-TiDB-1-1-1024                 : worker pods found: ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-tikv-tidb-benchbase-tpcc-16-0
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-tikv-tidb-benchbase-tpcc-16-1
-TiDB-1-1-1024                 : had 0 restarts at worker bexhoma-tikv-tidb-benchbase-tpcc-16-2
-Experiment                    : ends at 2026-03-07 01:13:59.569106 (787179.2288464) - 1577.57s total
+TiDB-1-1-2-1                  : wrote benchmarking_timespans to D:/data/benchmarks/1783893680/TiDB-1-1-2-1.config
+TiDB-1-1-2-1                  : showing benchmarker times
+TiDB-1-1-2-1                  : benchmarker timespan job from 1783894676 to 1783895028
+TiDB-1-1-2-1                  : benchmarker timespan pods from 1783894692 to 1783894996
+TiDB-1-1-2-1                  : benchmarker timespan (start to end single container [s]) = 304
+TiDB-1-1-2-1                  : benchmarker times (start/end per pod and container) = [(1783894692, 1783894996), (1783894692, 1783894996)]
+TiDB-1-1-2-1                  : found and updated times {'benchmarker': [(1783894692, 1783894996), (1783894692, 1783894996)]}
+TiDB-1-1-2-1                  : needs monitoring (common metrics) for deployment sut
+TiDB-1-1-2-1                  : collecting execution metrics of SUT at connection TiDB-1-1-2-1
+TiDB-1-1-2-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1783893680(.*)", pod=~"(.*)tidb-1-1783893680(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-2-1                  : needs monitoring (custom metrics) for stateful set pd
+TiDB-1-1-2-1                  : collecting execution metrics of pd at connection TiDB-1-1-2-1
+TiDB-1-1-2-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-pd-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-2-1                  : needs monitoring (custom metrics) for stateful set tikv
+TiDB-1-1-2-1                  : collecting execution metrics of tikv at connection TiDB-1-1-2-1
+TiDB-1-1-2-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", pod=~"(.*)bexhoma-tikv-tidb-benchbase-tpcc-16-(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+TiDB-1-1-2-1                  : collecting metrics of benchmarker at connection TiDB-1-1-2-1
+TiDB-1-1-2-1                  : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)tidb-1-1783893680(.*)", pod=~"(.*)tidb-1-1783893680(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+TiDB-1                        : can be stopped
+TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-bbs8w
+TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-fz7fv
+TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-jc5df
+TiDB-1                        : worker pods found: ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-benchbase-tpcc-16-0', 'bexhoma-pd-tidb-benchbase-tpcc-16-1', 'bexhoma-pd-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : had 0 restarts at worker bexhoma-pd-tidb-benchbase-tpcc-16-0
+TiDB-1                        : had 0 restarts at worker bexhoma-pd-tidb-benchbase-tpcc-16-1
+TiDB-1                        : had 0 restarts at worker bexhoma-pd-tidb-benchbase-tpcc-16-2
+TiDB-1                        : worker pods found: ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-benchbase-tpcc-16-0', 'bexhoma-tikv-tidb-benchbase-tpcc-16-1', 'bexhoma-tikv-tidb-benchbase-tpcc-16-2']
+TiDB-1                        : had 0 restarts at worker bexhoma-tikv-tidb-benchbase-tpcc-16-0
+TiDB-1                        : had 0 restarts at worker bexhoma-tikv-tidb-benchbase-tpcc-16-1
+TiDB-1                        : had 0 restarts at worker bexhoma-tikv-tidb-benchbase-tpcc-16-2
+Experiment                    : ends at 2026-07-13 00:24:59.147448 (48235.922857) - 1418.07s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -254,313 +228,312 @@ Result workflow complete
 
 ### Workload
 Benchbase Workload tpcc SF=16
-    Type: benchbase
-    Duration: 1578s 
-    Code: 1772840860
-    Intro: Benchbase runs a TPC-C experiment.
-    This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-    Benchbase data is generated and loaded using several threads.
-    Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-    Experiment uses bexhoma version 0.9.1.
-    System metrics are monitored by a cluster-wide installation.
-    Application metrics are monitored by sidecar containers.
-    Experiment is limited to DBMS ['TiDB'].
-    Import is handled by 1 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker14.
-    Loading is tested with [1] threads, split into [1] pods.
-    Benchmarking is tested with [16] threads, split into [1, 2] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: benchbase
+* Duration: 1419s 
+* Code: 1783893680
+* Benchbase runs a TPC-C experiment.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads.
+  * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+  * Experiment uses bexhoma version 0.10.5.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['TiDB'].
+  * Import is handled by 1 processes (pods).
+  * Database uses ephemeral storage of size 50Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [16] threads, split into [1, 2] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
 
 ### Connections
-TiDB-1-1-1024-1 uses docker image pingcap/tidb:v7.1.0
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:148720
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    sut 0
-        RAM:541008474112
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-164-generic
-        node:cl-worker14
-        disk:148720
-        cpu_list:0-63
-    sut 1
-        RAM:541008474112
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-164-generic
-        node:cl-worker14
-        disk:148720
-        cpu_list:0-63
-    sut 2
-        RAM:541008474112
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-164-generic
-        node:cl-worker14
-        disk:148720
-        cpu_list:0-63
-    pd 0
-        RAM:2164173209600
-        CPU:INTEL(R) XEON(R) PLATINUM 8570
-        Cores:224
-        host:6.8.0-90-generic
-        node:cl-worker36
-        disk:724538
-        cpu_list:0-223
-    pd 1
-        RAM:540590821376
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-90-generic
-        node:cl-worker24
-        disk:174949
-        cpu_list:0-95
-    pd 2
-        RAM:540590817280
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-90-generic
-        node:cl-worker23
-        disk:1196808
-        cpu_list:0-95
-    tikv 0
-        RAM:2164173209600
-        CPU:INTEL(R) XEON(R) PLATINUM 8570
-        Cores:224
-        host:6.8.0-90-generic
-        node:cl-worker36
-        disk:724539
-        cpu_list:0-223
-    tikv 1
-        RAM:540590817280
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-90-generic
-        node:cl-worker23
-        disk:1196808
-        cpu_list:0-95
-    tikv 2
-        RAM:1081965416448
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1093-nvidia
-        node:cl-worker27
-        disk:1334107
-        cpu_list:0-255
-    eval_parameters
-                code:1772840860
-                BEXHOMA_REPLICAS:3
-                BEXHOMA_WORKERS:3
-TiDB-1-1-1024-2 uses docker image pingcap/tidb:v7.1.0
-    RAM:541008474112
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-164-generic
-    node:cl-worker14
-    disk:148720
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:16Gi
-    client:2
-    numExperiment:1
-    sut 0
-        RAM:541008474112
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-164-generic
-        node:cl-worker14
-        disk:148720
-        cpu_list:0-63
-    sut 1
-        RAM:541008474112
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-164-generic
-        node:cl-worker14
-        disk:148720
-        cpu_list:0-63
-    sut 2
-        RAM:541008474112
-        CPU:AMD Opteron(tm) Processor 6378
-        Cores:64
-        host:5.15.0-164-generic
-        node:cl-worker14
-        disk:148720
-        cpu_list:0-63
-    pd 0
-        RAM:2164173209600
-        CPU:INTEL(R) XEON(R) PLATINUM 8570
-        Cores:224
-        host:6.8.0-90-generic
-        node:cl-worker36
-        disk:722552
-        cpu_list:0-223
-    pd 1
-        RAM:540590821376
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-90-generic
-        node:cl-worker24
-        disk:174952
-        cpu_list:0-95
-    pd 2
-        RAM:540590817280
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-90-generic
-        node:cl-worker23
-        disk:1196584
-        cpu_list:0-95
-    tikv 0
-        RAM:2164173209600
-        CPU:INTEL(R) XEON(R) PLATINUM 8570
-        Cores:224
-        host:6.8.0-90-generic
-        node:cl-worker36
-        disk:722556
-        cpu_list:0-223
-    tikv 1
-        RAM:540590817280
-        CPU:AMD EPYC 7352 24-Core Processor
-        Cores:96
-        host:6.8.0-90-generic
-        node:cl-worker23
-        disk:1196585
-        cpu_list:0-95
-    tikv 2
-        RAM:1081965416448
-        CPU:AMD EPYC 7742 64-Core Processor
-        Cores:256
-        host:5.15.0-1093-nvidia
-        node:cl-worker27
-        disk:1332317
-        cpu_list:0-255
-    eval_parameters
-                code:1772840860
-                BEXHOMA_REPLICAS:3
-                BEXHOMA_WORKERS:3
+* TiDB-1-1-1-1 uses docker image pingcap/tidb:v7.1.6
+  * RAM:1077382598656
+  * CPU:AMD EPYC 7742 64-Core Processor
+  * Cores:256
+  * host:6.8.0-1058-nvidia
+  * node:cl-worker28
+  * disk:582341
+  * cpu_list:0-255
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * sut 0
+    * RAM:1077382598656
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-1058-nvidia
+    * node:cl-worker28
+    * disk:577312
+    * cpu_list:0-255
+  * sut 1
+    * RAM:540590804992
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-124-generic
+    * node:cl-worker24
+    * disk:142627
+    * cpu_list:0-95
+  * sut 2
+    * RAM:540590841856
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-117-generic
+    * node:cl-worker25
+    * disk:161794
+    * cpu_list:0-95
+  * pd 0
+    * RAM:540590841856
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-117-generic
+    * node:cl-worker25
+    * disk:161794
+    * cpu_list:0-95
+  * pd 1
+    * RAM:540597907456
+    * CPU:Intel(R) Xeon(R) 6767P
+    * Cores:256
+    * host:6.8.0-124-generic
+    * node:cl-worker39
+    * disk:320597
+    * cpu_list:0-255
+  * pd 2
+    * RAM:540590804992
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-124-generic
+    * node:cl-worker24
+    * disk:142627
+    * cpu_list:0-95
+  * tikv 0
+    * RAM:540590804992
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-124-generic
+    * node:cl-worker24
+    * disk:142627
+    * cpu_list:0-95
+  * tikv 1
+    * RAM:1081742745600
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-117-generic
+    * node:cl-worker29
+    * disk:965701
+    * cpu_list:0-127
+  * tikv 2
+    * RAM:2164173213696
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-111-generic
+    * node:cl-worker36
+    * disk:1111265
+    * cpu_list:0-223
+  * eval_parameters
+    * code:1783893680
+    * BEXHOMA_REPLICAS:3
+    * BEXHOMA_WORKERS:3
+* TiDB-1-1-2-1 uses docker image pingcap/tidb:v7.1.6
+  * RAM:1077382598656
+  * CPU:AMD EPYC 7742 64-Core Processor
+  * Cores:256
+  * host:6.8.0-1058-nvidia
+  * node:cl-worker28
+  * disk:579884
+  * cpu_list:0-255
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * sut 0
+    * RAM:1077382598656
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-1058-nvidia
+    * node:cl-worker28
+    * disk:578508
+    * cpu_list:0-255
+  * sut 1
+    * RAM:540590804992
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-124-generic
+    * node:cl-worker24
+    * disk:141199
+    * cpu_list:0-95
+  * sut 2
+    * RAM:540590841856
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-117-generic
+    * node:cl-worker25
+    * disk:161795
+    * cpu_list:0-95
+  * pd 0
+    * RAM:540590841856
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-117-generic
+    * node:cl-worker25
+    * disk:161795
+    * cpu_list:0-95
+  * pd 1
+    * RAM:540597907456
+    * CPU:Intel(R) Xeon(R) 6767P
+    * Cores:256
+    * host:6.8.0-124-generic
+    * node:cl-worker39
+    * disk:320603
+    * cpu_list:0-255
+  * pd 2
+    * RAM:540590804992
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-124-generic
+    * node:cl-worker24
+    * disk:141230
+    * cpu_list:0-95
+  * tikv 0
+    * RAM:540590804992
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-124-generic
+    * node:cl-worker24
+    * disk:141466
+    * cpu_list:0-95
+  * tikv 1
+    * RAM:1081742745600
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-117-generic
+    * node:cl-worker29
+    * disk:964905
+    * cpu_list:0-127
+  * tikv 2
+    * RAM:2164173213696
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-111-generic
+    * node:cl-worker36
+    * disk:1109491
+    * cpu_list:0-223
+  * eval_parameters
+    * code:1783893680
+    * BEXHOMA_REPLICAS:3
+    * BEXHOMA_WORKERS:3
 
-### Execution
-
-#### Per Pod
-                   experiment_run  terminals  target  client  child   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-connection_pod                                                                                                                                                                                                                                                               
-TiDB-1-1-1024-1-1               1         16   16384       1      1  300.0           0                    284.479903                 283.173237         0.0                                                     120500.0                                              56225.0
-TiDB-1-1-1024-2-1               1          8    8192       2      1  300.0           0                    132.453299                 131.119966         0.0                                                     137658.0                                              60372.0
-TiDB-1-1-1024-2-2               1          8    8192       2      2  300.0           0                    134.706630                 133.229964         0.0                                                     136249.0                                              59362.0
-
-#### Aggregated Parallel
-                 experiment_run  terminals  target  pod_count   time  num_errors  Throughput (requests/second)  Goodput (requests/second)  efficiency  Latency Distribution.95th Percentile Latency (microseconds)  Latency Distribution.Average Latency (microseconds)
-TiDB-1-1-1024-1               1         16   16384          1  300.0           0                        284.48                     283.17         0.0                                                     120500.0                                              56225.0
-TiDB-1-1-1024-2               1         16   16384          2  300.0           0                        267.16                     264.35         0.0                                                     137658.0                                              59867.0
+### SUT Container Restarts
+* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-bbs8w: 0
+* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-fz7fv: 0
+* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-jc5df: 0
+* bexhoma-pd-tidb-benchbase-tpcc-16-0: 0
+* bexhoma-pd-tidb-benchbase-tpcc-16-1: 0
+* bexhoma-pd-tidb-benchbase-tpcc-16-2: 0
+* bexhoma-tikv-tidb-benchbase-tpcc-16-0: 0
+* bexhoma-tikv-tidb-benchbase-tpcc-16-1: 0
+* bexhoma-tikv-tidb-benchbase-tpcc-16-2: 0
 
 ### Workflow
 
 #### Actual
-DBMS TiDB-1-1-1024 - Pods [[1, 2]]
+
+* DBMS TiDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS TiDB-1 - Experiment 1 Client 2: benchbase (2 pods)
 
 #### Planned
-DBMS TiDB-1-1-1024 - Pods [[1, 2]]
+
+* DBMS TiDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS TiDB-1 - Experiment 1 Client 2: benchbase (2 pods)
 
 ### Loading
-                 time_load  terminals  pods  Throughput [SF/h]
-TiDB-1-1-1024-1      245.0        1.0   1.0         235.102041
-TiDB-1-1-1024-2      245.0        1.0   2.0         235.102041
+
+#### Per Run
+
+|          |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:---------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| TiDB-1-1 |                1 | 16.00 |      485.00 |           1.00 |            0.00 |        218.00 |          266.00 |              1 |           1 |             | None           |             0 | False         |              118.76 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS           | phase      | job          |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------|:-----------|:-------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| TiDB-1-1-1-1-1 | TiDB-1-1-1 | TiDB-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         346.82 |                      345.22 |         0.00 |                                                     129138.00 |                                              45625.00 |
+| TiDB-1-1-2-1-1 | TiDB-1-1-2 | TiDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                         167.67 |                      165.79 |         0.00 |                                                     119802.00 |                                              47297.00 |
+| TiDB-1-1-2-1-2 | TiDB-1-1-2 | TiDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                         168.23 |                      166.45 |         0.00 |                                                     123754.00 |                                              47407.00 |
+
+#### Per Phase
+
+| DBMS       | phase      |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------|:-----------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| TiDB-1-1-1 | TiDB-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         346.82 |                      345.22 |         0.00 |                                                     129138.00 |                                              45625.00 |
+| TiDB-1-1-2 | TiDB-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                         335.90 |                      332.24 |         0.00 |                                                     123754.00 |                                              47352.00 |
 
 ### Monitoring
 
 ### Loading phase: SUT deployment
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     1599.63     11.2          2.81                 3.07
-TiDB-1-1-1024-2     1599.63     11.2          2.81                 3.07
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| TiDB-1-1-1-1 |      1045.59 |      8.60 |           3.99 |                  4.32 |
+| TiDB-1-1-2-1 |      1045.59 |      8.60 |           3.99 |                  4.32 |
 
 ### Loading phase: component pd
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1       76.92     0.36           0.3                  0.3
-TiDB-1-1-1024-2       76.92     0.36           0.3                  0.3
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| TiDB-1-1-1-1 |       119.00 |      0.55 |           0.33 |                  0.33 |
+| TiDB-1-1-2-1 |       119.00 |      0.55 |           0.33 |                  0.33 |
 
 ### Loading phase: component tikv
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     1768.17    12.01          9.63                29.16
-TiDB-1-1-1024-2     1768.17    12.01          9.63                29.16
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| TiDB-1-1-1-1 |      2840.89 |     18.27 |          10.96 |                 30.53 |
+| TiDB-1-1-2-1 |      2840.89 |     18.27 |          10.96 |                 30.53 |
 
 ### Loading phase: component loader
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     1041.97     9.76          0.38                 0.38
-TiDB-1-1-1024-2     1041.97     9.76          0.38                 0.38
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| TiDB-1-1-1-1 |       136.53 |      1.55 |           0.68 |                  0.68 |
+| TiDB-1-1-2-1 |       136.53 |      1.55 |           0.68 |                  0.68 |
 
 ### Execution phase: SUT deployment
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     3394.86    12.09           0.9                 1.15
-TiDB-1-1-1024-2     2979.46    11.07           0.9                 1.16
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| TiDB-1-1-1-1 |      2304.24 |      9.02 |           2.10 |                  2.44 |
+| TiDB-1-1-2-1 |      2166.24 |      8.52 |           2.82 |                  3.16 |
 
 ### Execution phase: component pd
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1      237.67     0.91          0.31                 0.32
-TiDB-1-1-1024-2      231.88     0.92          0.32                 0.32
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| TiDB-1-1-1-1 |       361.50 |      1.41 |           0.32 |                  0.32 |
+| TiDB-1-1-2-1 |       372.91 |      1.37 |           0.32 |                  0.33 |
 
 ### Execution phase: component tikv
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1     1289.46     5.25         12.09                31.37
-TiDB-1-1-1024-2     1269.16     5.46         13.43                31.93
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| TiDB-1-1-1-1 |      3910.02 |     16.52 |          14.30 |                 32.54 |
+| TiDB-1-1-2-1 |      3875.33 |     15.20 |          16.49 |                 35.40 |
 
 ### Execution phase: component benchmarker
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-TiDB-1-1-1024-1      209.87     1.11          0.32                 0.32
-TiDB-1-1-1024-2      263.50     0.85          0.32                 0.32
 
-### Application Metrics
-
-#### Loading phase: SUT deployment
-                 TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]
-TiDB-1-1-1024-1                                 432.95                          19.4
-TiDB-1-1-1024-2                                 432.95                          19.4
-
-#### Loading phase: component pd
-                 PD Cluster Leader Count  PD Leader Balance Actions [ops]
-TiDB-1-1-1024-1                      118                               44
-TiDB-1-1-1024-2                      118                               44
-
-#### Loading phase: component tikv
-                 TiKV Store Used [%]  TiKV Compaction Time Median [s]  TiKV Compaction Flow [Gi]  TiKV Compaction Pending [Gi]
-TiDB-1-1-1024-1                 0.18                         68746.15                       13.4                          1.57
-TiDB-1-1-1024-2                 0.18                         68746.15                       13.4                          1.57
-
-#### Execution phase: SUT deployment
-                 TiDB SQL Statement Throughput [ops/s]  TiDB Avg Query Duration [ms]
-TiDB-1-1-1024-1                                6799.77                         19.15
-TiDB-1-1-1024-2                                4318.23                          3.39
-
-#### Execution phase: component pd
-                 PD Cluster Leader Count  PD Leader Balance Actions [ops]
-TiDB-1-1-1024-1                      119                               10
-TiDB-1-1-1024-2                      122                                0
-
-#### Execution phase: component tikv
-                 TiKV Store Used [%]  TiKV Compaction Time Median [s]  TiKV Compaction Flow [Gi]  TiKV Compaction Pending [Gi]
-TiDB-1-1-1024-1                 0.24                          37575.0                       2.46                          0.73
-TiDB-1-1-1024-2                 0.30                          36411.0                       2.77                          0.70
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| TiDB-1-1-1-1 |       219.99 |      0.93 |           0.50 |                  0.50 |
+| TiDB-1-1-2-1 |       219.99 |      1.85 |           0.50 |                  0.50 |
 
 ### Tests
-TEST passed: Throughput (requests/second) contains no 0 or NaN
-TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
-TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
-TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
+* TEST passed: No SUT container restarts
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST passed: Workflow as planned
