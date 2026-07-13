@@ -180,6 +180,7 @@ elif [ "$BENCHBASE_BENCH" == "twitter" ]; then
     FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_twitter_config.xml
 elif [ "$BENCHBASE_BENCH" == "chbenchmark" ]; then
     FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_chbenchmark_config.xml
+    BENCHBASE_BENCH="tpcc,chbenchmark"
 elif [ "$BENCHBASE_BENCH" == "ycsb" ]; then
     FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_ycsb_config.xml
 else
