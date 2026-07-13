@@ -42,12 +42,17 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
         image: monetdb/monetdb:Dec2025-SP1
         env:
           - {name: MDB_DB_ADMIN_PASS, value: 'monetdb'}
           - {name: MDB_CREATE_DBS, value: 'demo'}
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "monetdbd stop /var/monetdb5/dbfarm"]
         ports:
         - {containerPort: 50000}
         resources:
