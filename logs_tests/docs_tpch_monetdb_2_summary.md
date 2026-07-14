@@ -2,186 +2,195 @@
 
 ### Workload
 TPC-H Queries SF=100
-    Type: tpch
-    Duration: 5469s 
-    Code: 1766264884
-    This includes the reading queries of TPC-H.
-    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-    TPC-H (SF=100) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q22.
-    All instances use the same query parameters.
-    Timeout per query is 3600.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.19.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['MonetDB'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 1000Gi.
-    Loading is tested with [8] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1, 1] times the number of benchmarking pods.
-    Experiment is run 2 times.
+* Type: tpch
+* Duration: 6522s 
+* Code: 1784031723
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=100) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 3600.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.5.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['MonetDB'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * Database is persisted to disk of type cephcsi and size 1000Gi.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1, 1] times the number of benchmarking pods.
+  * Experiment is run 2 times.
 
 ### Connections
-MonetDB-BHT-8-1-1-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:541008486400
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:435028
-    volume_size:1000G
-    volume_used:194G
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:256Gi
-    limits_memory:256Gi
-    eval_parameters
-        code:1766264884
-MonetDB-BHT-8-1-2-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:541008486400
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:435028
-    volume_size:1000G
-    volume_used:200G
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:256Gi
-    limits_memory:256Gi
-    eval_parameters
-        code:1766264884
-MonetDB-BHT-8-2-1-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:541008486400
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:435028
-    volume_size:1000G
-    volume_used:191G
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:256Gi
-    limits_memory:256Gi
-    eval_parameters
-        code:1766264884
-MonetDB-BHT-8-2-2-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:541008486400
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-160-generic
-    node:cl-worker11
-    disk:435028
-    volume_size:1000G
-    volume_used:191G
-    cpu_list:0-63
-    requests_cpu:4
-    requests_memory:256Gi
-    limits_memory:256Gi
-    eval_parameters
-        code:1766264884
+* MonetDB-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:1199512
+  * cpu_list:0-223
+  * requests_cpu:16
+  * requests_memory:256Gi
+  * limits_cpu:16
+  * limits_memory:256Gi
+  * eval_parameters
+    * code:1784031723
+* MonetDB-1-1-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:1199623
+  * cpu_list:0-223
+  * requests_cpu:16
+  * requests_memory:256Gi
+  * limits_cpu:16
+  * limits_memory:256Gi
+  * eval_parameters
+    * code:1784031723
+* MonetDB-1-2-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:1199627
+  * cpu_list:0-223
+  * requests_cpu:16
+  * requests_memory:256Gi
+  * limits_cpu:16
+  * limits_memory:256Gi
+  * eval_parameters
+    * code:1784031723
+* MonetDB-1-2-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:1199547
+  * cpu_list:0-223
+  * requests_cpu:16
+  * requests_memory:256Gi
+  * limits_cpu:16
+  * limits_memory:256Gi
+  * eval_parameters
+    * code:1784031723
+
+### SUT Container Restarts
+* bexhoma-sut-monetdb-1-1784031723-8696dddc47-bx4kf: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 2: tpch (1 pods)
+* DBMS MonetDB-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS MonetDB-1 - Experiment 2 Client 2: tpch (1 pods)
+
+#### Planned
+
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 2: tpch (1 pods)
+* DBMS MonetDB-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS MonetDB-1 - Experiment 2 Client 2: tpch (1 pods)
+
+### Loading
+
+#### Per Run
+
+|             |   experiment_run |     SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:------------|-----------------:|-------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MonetDB-1-1 |                1 | 100.00 |    19615.00 |          11.00 |           20.00 |       2047.00 |        17533.00 |              0 |           0 |             | None           |             0 | False         |               18.35 |
+| MonetDB-1-2 |                2 | 100.00 |    19615.00 |          11.00 |           20.00 |       2047.00 |        17533.00 |              0 |           0 |             | None           |             0 | False         |               18.35 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |     SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
+|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-------:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
+| MonetDB-1-1-1-1-1 | MonetDB-1       | MonetDB-1-1-1 | MonetDB-1-1-1-1 |                1 |        1 |               1 |           1 | 100.00 |               22 |       2555 |           29.30 |            12545.21 |           3099.80 |          -1 | MonetDB-1-1-1-1-1 |
+| MonetDB-1-1-2-1-1 | MonetDB-1       | MonetDB-1-1-2 | MonetDB-1-1-2-1 |                1 |        2 |               1 |           1 | 100.00 |               22 |        404 |            4.55 |            87693.30 |          19603.96 |          -1 | MonetDB-1-1-2-1-1 |
+| MonetDB-1-2-1-1-1 | MonetDB-1       | MonetDB-1-2-1 | MonetDB-1-2-1-1 |                2 |        1 |               1 |           1 | 100.00 |               22 |       2321 |           25.18 |            14662.83 |           3412.32 |          -1 | MonetDB-1-2-1-1-1 |
+| MonetDB-1-2-2-1-1 | MonetDB-1       | MonetDB-1-2-2 | MonetDB-1-2-2-1 |                2 |        2 |               1 |           1 | 100.00 |               22 |        430 |            4.67 |            86100.83 |          18418.60 |          -1 | MonetDB-1-2-2-1-1 |
+
+#### Per Phase
+
+|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |     SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-------:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| MonetDB-1-1-1 | MonetDB-1-1-1 |                1 |        1 |               1 |           1 | 100.00 |               22 |       2555 |           29.30 |            12545.21 |           3099.80 |          -1 |
+| MonetDB-1-1-2 | MonetDB-1-1-2 |                1 |        2 |               1 |           1 | 100.00 |               22 |        404 |            4.55 |            87693.30 |          19603.96 |          -1 |
+| MonetDB-1-2-1 | MonetDB-1-2-1 |                2 |        1 |               1 |           1 | 100.00 |               22 |       2321 |           25.18 |            14662.83 |           3412.32 |          -1 |
+| MonetDB-1-2-2 | MonetDB-1-2-2 |                2 |        2 |               1 |           1 | 100.00 |               22 |        430 |            4.67 |            86100.83 |          18418.60 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   MonetDB-1-1-1-1-1 |   MonetDB-1-1-2-1-1 |   MonetDB-1-2-1-1-1 |   MonetDB-1-2-2-1-1 |
+|:----------------------------------------------------|--------------------:|--------------------:|--------------------:|--------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |           380507.57 |            90166.21 |           343853.46 |            94150.05 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |            39231.68 |              503.30 |            38819.07 |              505.91 |
+| Shipping Priority (TPC-H Q3)                        |           159098.82 |             5773.04 |           156006.22 |             4681.90 |
+| Order Priority Checking Query (TPC-H Q4)            |           146030.20 |             7882.44 |           138574.18 |             8816.53 |
+| Local Supplier Volume (TPC-H Q5)                    |            16031.75 |             3267.06 |            11083.36 |             6807.39 |
+| Forecasting Revenue Change (TPC-H Q6)               |             1254.08 |             1332.36 |             1124.13 |             1059.84 |
+| Volume Shipping Query (TPC-H Q7)                    |             5744.71 |             4260.30 |             5906.07 |             4019.69 |
+| National Market Share (TPC-H Q8)                    |           192159.04 |            12041.34 |           180176.18 |            12662.47 |
+| Product Type Profit Measure (TPC-H Q9)              |            40472.91 |             5168.41 |            34297.40 |             4148.17 |
+| Returned Item Reporting Query (TPC-H Q10)           |            74701.23 |             8165.85 |            61954.80 |             8937.97 |
+| Important Stock Identification (TPC-H Q11)          |            11122.38 |              469.77 |             8195.91 |              466.09 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |             9910.23 |             1073.95 |             3073.33 |             1390.82 |
+| Customer Distribution (TPC-H Q13)                   |           317306.27 |            24164.25 |           263381.00 |            26818.89 |
+| Promotion Effect Query (TPC-H Q14)                  |              754.77 |              653.23 |              749.29 |              743.20 |
+| Top Supplier Query (TPC-H Q15)                      |            12347.46 |             1537.04 |             7246.03 |             1668.07 |
+| Parts/Supplier Relationship (TPC-H Q16)             |             3641.21 |             2854.27 |             4290.91 |             2646.84 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |           505277.90 |             1581.20 |           537225.61 |             2117.78 |
+| Large Volume Customer (TPC-H Q18)                   |            44862.74 |             7737.06 |            48272.88 |             8162.54 |
+| Discounted Revenue (TPC-H Q19)                      |             2725.01 |             3260.81 |             2298.18 |             1276.69 |
+| Potential Part Promotion (TPC-H Q20)                |            11586.14 |             3290.00 |            10210.86 |             2633.67 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |           546989.89 |           197237.61 |           429840.06 |           212197.41 |
+| Global Sales Opportunity Query (TPC-H Q22)          |            10919.43 |             1769.46 |            11616.96 |             2474.70 |
 
 ### Errors (failed queries)
+
 No errors
 
 ### Warnings (result mismatch)
+
 No warnings
 
-### Latency of Timer Execution [ms]
-DBMS                                                 MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-2-1
-Pricing Summary Report (TPC-H Q1)                              549549.41            260209.34            578653.77            264735.80
-Minimum Cost Supplier Query (TPC-H Q2)                          42306.77             10951.74             32501.27              2746.34
-Shipping Priority (TPC-H Q3)                                    90708.15             12778.58             91178.45             16965.86
-Order Priority Checking Query (TPC-H Q4)                       283253.19             15478.34            283887.15             17613.10
-Local Supplier Volume (TPC-H Q5)                                18697.65             10415.83             14428.72             11579.56
-Forecasting Revenue Change (TPC-H Q6)                            7361.56              6095.61              8652.73              5382.30
-Forecasting Revenue Change (TPC-H Q7)                           16336.24              9143.63             15459.23              9450.72
-National Market Share (TPC-H Q8)                                94125.12             37114.12            102768.30             31268.26
-Product Type Profit Measure (TPC-H Q9)                          38201.54             19209.55             30080.80             14801.36
-Forecasting Revenue Change (TPC-H Q10)                          62375.89             28933.41             64577.43             23692.00
-Important Stock Identification (TPC-H Q11)                       6359.39              1533.86              6090.28              1313.25
-Shipping Modes and Order Priority (TPC-H Q12)                    5202.66              5448.33              4831.43              4747.70
-Customer Distribution (TPC-H Q13)                              283971.26            106841.51            300937.85            121793.67
-Forecasting Revenue Change (TPC-H Q14)                           7650.03              7489.91              6719.45              7015.28
-Top Supplier Query (TPC-H Q15)                                  11460.24              8642.87              8348.77              6982.36
-Parts/Supplier Relationship (TPC-H Q16)                         13207.73             14273.21             13936.28             12632.37
-Small-Quantity-Order Revenue (TPC-H Q17)                        67556.67             15239.49             52364.87             15640.76
-Large Volume Customer (TPC-H Q18)                               39887.95             22682.11             43599.12             23056.39
-Discounted Revenue (TPC-H Q19)                                   6938.53              7979.88              9728.93              8475.90
-Potential Part Promotion (TPC-H Q20)                             9865.10              8175.36             12462.07              6892.81
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)             27200.51             21193.03             31069.92             23114.13
-Global Sales Opportunity Query (TPC-H Q22)                       6246.48              8008.67              7408.76              6112.32
+### Monitoring
 
-### Loading [s]
-                     timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1-1          25.0         1596.0        12.0     8270.0    9906.0
-MonetDB-BHT-8-1-2-1          25.0         1596.0        12.0     8270.0    9906.0
-MonetDB-BHT-8-2-1-1          25.0         1596.0        12.0     8270.0    9906.0
-MonetDB-BHT-8-2-2-1          25.0         1596.0        12.0     8270.0    9906.0
+### Execution phase: SUT deployment
 
-### Geometric Mean of Medians of Timer Run [s]
-                     Geo Times [s]
-DBMS                              
-MonetDB-BHT-8-1-1-1          29.12
-MonetDB-BHT-8-1-2-1          14.88
-MonetDB-BHT-8-2-1-1          28.92
-MonetDB-BHT-8-2-2-1          13.42
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MonetDB-1-1-1-1 |       986.35 |      2.51 |         120.22 |                120.22 |
+| MonetDB-1-1-2-1 |       857.75 |      7.19 |         181.10 |                181.10 |
+| MonetDB-1-2-1-1 |      1871.10 |      5.75 |         136.40 |                136.40 |
+| MonetDB-1-2-2-1 |       902.30 |      6.21 |         193.39 |                193.39 |
 
-### Power@Size ((3600*SF)/(geo times))
-                     Power@Size [~Q/h]
-DBMS                                  
-MonetDB-BHT-8-1-1-1           12624.90
-MonetDB-BHT-8-1-2-1           25409.73
-MonetDB-BHT-8-2-1-1           12749.63
-MonetDB-BHT-8-2-2-1           28319.38
+### Execution phase: component benchmarker
 
-### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
-                                                   time [s]  count     SF  Throughput@Size
-DBMS              SF    num_experiment num_client                                         
-MonetDB-BHT-8-1-1 100.0 1              1               1716      1  100.0          4615.38
-MonetDB-BHT-8-1-2 100.0 1              2                660      1  100.0         12000.00
-MonetDB-BHT-8-2-1 100.0 2              1               1748      1  100.0          4530.89
-MonetDB-BHT-8-2-2 100.0 2              2                655      1  100.0         12091.60
-
-### Workflow
-                             orig_name     SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MonetDB-BHT-8-1-1-1  MonetDB-BHT-8-1-1  100.0     8               1           1       1766265026     1766266742
-MonetDB-BHT-8-1-2-1  MonetDB-BHT-8-1-2  100.0     8               1           2       1766266833     1766267493
-MonetDB-BHT-8-2-1-1  MonetDB-BHT-8-2-1  100.0     8               2           1       1766267753     1766269501
-MonetDB-BHT-8-2-2-1  MonetDB-BHT-8-2-2  100.0     8               2           2       1766269612     1766270267
-
-#### Actual
-DBMS MonetDB-BHT-8 - Pods [[1, 1], [1, 1]]
-
-#### Planned
-DBMS MonetDB-BHT-8 - Pods [[1, 1], [1, 1]]
-
-### Execution - SUT
-                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1-1     7045.82    22.22         63.81               107.45
-MonetDB-BHT-8-1-2     4987.48    19.27         81.85               176.92
-MonetDB-BHT-8-2-1    13350.19    19.77         88.76               115.40
-MonetDB-BHT-8-2-2     4322.33    19.74         89.75               177.76
-
-### Execution - Benchmarker
-                   CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1-1       28.75     0.11          0.38                 0.39
-MonetDB-BHT-8-1-2       28.75     0.16          0.41                 0.42
-MonetDB-BHT-8-2-1       31.11     0.17          0.41                 0.42
-MonetDB-BHT-8-2-2       28.62     0.13          0.39                 0.40
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| MonetDB-1-1-1-1 |        31.80 |      0.21 |           0.40 |                  0.42 |
+| MonetDB-1-1-2-1 |        31.80 |      0.43 |           0.40 |                  0.42 |
+| MonetDB-1-2-1-1 |        32.37 |      0.32 |           0.40 |                  0.42 |
+| MonetDB-1-2-2-1 |        32.37 |      0.29 |           0.40 |                  0.42 |
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST passed: No SQL errors
-TEST passed: No SQL warnings
-TEST passed: Workflow as planned
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: No SUT container restarts
+* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned

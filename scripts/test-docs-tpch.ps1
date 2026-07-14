@@ -188,6 +188,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H fractional  s
 ############# TPC-H MonetDB ###############
 ###########################################
 
+## $BEXHOMA_STORAGE_CLASS    = "cephcsi"
 
 #### TCP-H Power 100 (Example-Result-TPC-H-MonetDB.md)
 bexhoma tpch `
