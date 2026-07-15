@@ -110,6 +110,11 @@ class RefreshStreamBenchmark(Benchmark):
         :meth:`~bexhoma.experiments.base.base.end_benchmarking` writes the
         ``benchmarking_timespans`` field to the connection's ``.config`` file.
 
+        Also prints the ``#### Reset`` subsection (via
+        :meth:`~bexhoma.benchmarks.base.Benchmark._show_reset_section`) for this
+        stream's own connections, since this class overrides :meth:`show_summary`
+        instead of just the shared hooks and would otherwise skip it.
+
         Silently returns when no timing data is available.
 
         :param experiment: The owning experiment object.
@@ -125,10 +130,8 @@ class RefreshStreamBenchmark(Benchmark):
             )
             if col in df_conn.columns
         ]
-        df_section = df_conn[
-            (df_conn['benchmark_run'].astype(int) == self.benchmark_index)
-            & df_conn['benchmark_duration'].notna()
-        ][display_cols]
+        df_run = df_conn[df_conn['benchmark_run'].astype(int) == self.benchmark_index]
+        df_section = df_run[df_run['benchmark_duration'].notna()][display_cols]
         if df_section.empty:
             return
         if 'connection' in df_section.columns:
@@ -136,3 +139,4 @@ class RefreshStreamBenchmark(Benchmark):
         df_section = df_section.rename(columns={'pods': 'pod_count'})
         print(f"\n### {self.name}\n")
         print(df_section.to_markdown(index=True))
+        self._show_reset_section(df_run)

@@ -484,6 +484,10 @@ if __name__ == '__main__':
                         name_format = 'MySQL-{threads}-{pods}-{target}'
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                         config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
+                        if type_of_benchmark == 'tpcc':
+                            # Run ANALYZE TABLE before each benchmarking round to
+                            # keep optimizer statistics fresh between rounds.
+                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'mysql-'+config.tenant_per+"-"+str(config.num_tenants)
@@ -548,6 +552,10 @@ if __name__ == '__main__':
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS A')
+                    if type_of_benchmark == 'tpcc':
+                        # Run ANALYZE TABLE before each benchmarking round to
+                        # keep optimizer statistics fresh between rounds.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     config.set_storage(
                         storageConfiguration = 'mariadb'
                         )
@@ -594,6 +602,9 @@ if __name__ == '__main__':
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
+                        # YSQL has no CHECKPOINT; ANALYZE VERBOSE refreshes
+                        # planner statistics before each benchmarking round.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
@@ -660,6 +671,10 @@ if __name__ == '__main__':
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
+                    if type_of_benchmark == 'tpcc':
+                        # Pebble has no user-invokable checkpoint; ANALYZE
+                        # refreshes planner statistics before each round.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(
@@ -716,6 +731,11 @@ if __name__ == '__main__':
                     name_format = 'TiDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
+                    if type_of_benchmark == 'tpcc':
+                        # TiKV has no user-invokable checkpoint; ANALYZE TABLE
+                        # forces fresh histograms before each round instead of
+                        # relying on TiDB's async auto-analyze job timing.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(
@@ -825,6 +845,9 @@ if __name__ == '__main__':
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
+                        # CHECKPOINT only reaches the coordinator; VACUUM ANALYZE
+                        # refreshes planner statistics before each round.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(
