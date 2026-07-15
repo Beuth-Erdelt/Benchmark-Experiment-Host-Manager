@@ -1654,7 +1654,7 @@ class ExperimentBase():
                             for config_tmp in self.configurations:
                                 config_tmp.tenant_started_to_index = True
                                 try:
-                                    config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
+                                    config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='index')
                                 except RuntimeError as exc:
                                     print("{:30s}: index script upload failed: {}".format(config_tmp.configuration, exc))
                                     config_tmp.loading_finished = True
@@ -2643,16 +2643,16 @@ class ExperimentBase():
             times = {}
             for c, connection in evaluate.benchmarks.dbms.items():
                 times[c]={}
-                if 'timeGenerate' in connection.connectiondata:
-                    times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
-                if 'timeIngesting' in connection.connectiondata:
-                    times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
-                if 'timeSchema' in connection.connectiondata:
-                    times[c]['timeSchema'] = connection.connectiondata['timeSchema']
-                if 'timeIndex' in connection.connectiondata:
-                    times[c]['timeIndex'] = connection.connectiondata['timeIndex']
-                if 'timeLoad' in connection.connectiondata:
-                    times[c]['timeLoad'] = connection.connectiondata['timeLoad']
+                if 'time_generated' in connection.connectiondata:
+                    times[c]['time_generated'] = connection.connectiondata['time_generated']
+                if 'time_ingested' in connection.connectiondata:
+                    times[c]['time_ingested'] = connection.connectiondata['time_ingested']
+                if 'time_schema' in connection.connectiondata:
+                    times[c]['time_schema'] = connection.connectiondata['time_schema']
+                if 'time_index' in connection.connectiondata:
+                    times[c]['time_index'] = connection.connectiondata['time_index']
+                if 'time_loading' in connection.connectiondata:
+                    times[c]['time_loading'] = connection.connectiondata['time_loading']
             df = pd.DataFrame(times)
             df = df.reindex(sorted(df.columns), axis=1)
             df = df.round(2).T

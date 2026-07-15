@@ -116,7 +116,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         loading_times = {}
         for conn_name, connection in self.evaluation.benchmarks.dbms.items():
             loading_times[conn_name] = {}
-            for time_key in ('timeGenerate', 'timeIngesting', 'timeSchema', 'timeIndex', 'timeLoad'):
+            for time_key in ('time_generated', 'time_ingested', 'time_schema', 'time_index', 'time_loading'):
                 if time_key in connection.connectiondata:
                     loading_times[conn_name][time_key] = connection.connectiondata[time_key]
         df = pd.DataFrame(loading_times)

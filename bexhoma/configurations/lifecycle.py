@@ -555,10 +555,12 @@ scrape_configs:
                     print("{:30s}: storage {} exists".format(configuration, volume))
                     pvc_labels = pvcs_labels[0]
                     copy_labels = [
-                        'loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd',
-                        'indexed', 'time_generated', 'time_indexed', 'time_ingested',
+                        'loaded', 'schema', 'data', 'index',
+                        'time_loading', 'time_loading_start', 'time_loading_end',
+                        'time_schema', 'time_data', 'time_index',
+                        'time_generated', 'time_ingested',
                         'time_initconstraints', 'time_initindexes', 'time_initschema',
-                        'time_initstatistics', 'time_loaded',
+                        'time_initstatistics',
                     ]
                     return {label: value for label, value in pvc_labels.items()
                             if label in copy_labels}
