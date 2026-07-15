@@ -388,6 +388,7 @@ class EvaluatorBase:
             'time_generate': float(c['time_generated']),
             'time_ingest': float(c['time_ingested']),
             'time_postload': float(c['time_index']),
+            'time_reset': float(c.get('time_reset', 0) or 0),
             'terminals': loading_parameters.get('BENCHBASE_TERMINALS', loading_parameters.get('HAMMERDB_VUSERS', 0)),
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,

@@ -43,6 +43,7 @@ class BenchmarkRunner:
         only_prepare: bool = False,
         benchmark_run: str = '',
         template_override: str = '',
+        reset_seconds: float = 0.0,
     ) -> None:
         """Start a benchmarker job pod, upload configs, and optionally wait for it.
 
@@ -64,6 +65,8 @@ class BenchmarkRunner:
         :param only_prepare: When True, upload configs but do not submit the job.
         :param benchmark_run: 1-based parallel benchmark index within one client round.
         :param template_override: When non-empty, overrides the default YAML job template.
+        :param reset_seconds: Seconds spent running this connection's reset script
+            (0 if none ran), recorded on the connection as ``time_reset``.
         """
         cfg = self._config
         cfg.logger.debug('BenchmarkRunner.run_pod()')
@@ -104,6 +107,7 @@ class BenchmarkRunner:
         c = cfg.metrics.get_connection_config(
             connection, alias, dialect,
             serverip=service_host, monitoring_host=monitoring_host)
+        c['time_reset'] = reset_seconds
         if len(cfg.loading_parameters) > 0:
             cfg.connection_parameter['loading_parameters'] = cfg.loading_parameters.copy()
         if len(cfg.benchmarking_parameters) > 0:

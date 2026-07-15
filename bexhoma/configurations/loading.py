@@ -737,7 +737,7 @@ class LoadingCoordinator:
                     time_type = key[len("time_"):]
                     cfg.times_scripts[time_type] = float(value)
 
-    def exec_reset_script(self, script_type: str, scripts: list) -> None:
+    def exec_reset_script(self, script_type: str, scripts: list) -> int:
         """Execute reset scripts synchronously in the SUT pod before a benchmarking round.
 
         Unlike :meth:`load_data`, this method runs in the caller's thread and
@@ -758,16 +758,26 @@ class LoadingCoordinator:
         - ``<script_type>=True``
         - ``time_<script_type>=<elapsed_seconds>``
 
+        Unlike the loading-phase labels in :meth:`check`, this is pod-only, not
+        also written to the PVC: a reset is tied to one specific benchmarking
+        round of one specific experiment run, whereas a PVC can be reused across
+        reruns/experiments, so a stale ``reset_<run>_<client>_<idx>`` label left on
+        the volume from a previous run could be misread as belonging to the
+        current one.
+
         :param script_type: Label key written on completion (e.g. ``'reset_1_1_1'``).
         :param scripts: List of script filenames to execute (from the calling
             entry's ``resetscript`` list).
+        :return: Elapsed seconds spent running the scripts (0 if none ran), so the
+            caller can attach it to the connection about to be submitted.
+        :rtype: int
         """
         cfg = self._config
         if not scripts:
-            return
+            return 0
         if 'loadData' not in cfg.dockertemplate:
             print("{:30s}: no loadData command found, skipping reset".format(cfg.configuration))
-            return
+            return 0
         self.prepare_init_dbms(scripts)
         pods = cfg.experiment.cluster.get_pods(
             component='sut', configuration=cfg.configuration, experiment=cfg.code)
@@ -824,6 +834,7 @@ class LoadingCoordinator:
         cfg.experiment.cluster.kubectl(
             'label pod {} --overwrite {}=True time_{}={}'.format(
                 cfg.pod_sut, script_type, script_type, elapsed))
+        return elapsed
 
     def load_data(
         self,

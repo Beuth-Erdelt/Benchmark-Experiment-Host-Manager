@@ -1754,8 +1754,9 @@ class ExperimentBase():
                             benchmark_index = bm_idx + 1
                             connection = f"{config.configuration}-{experimentRun}-{client}-{benchmark_index}"
                             print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
+                            reset_seconds = 0
                             if self.resetscript_active and bench_entry.get("resetscript"):
-                                config.loader.exec_reset_script(
+                                reset_seconds = config.loader.exec_reset_script(
                                     'reset_{}_{}_{}'.format(experimentRun, client, benchmark_index),
                                     bench_entry["resetscript"])
                             if bench_entry.get("parameters"):
@@ -1771,6 +1772,7 @@ class ExperimentBase():
                                 parallelism=bench_entry["parallelism"],
                                 benchmark_run=str(benchmark_index),
                                 template_override=bench_entry.get("template", ""),
+                                reset_seconds=reset_seconds,
                             )
                         _benchmark_just_submitted = True
                     elif not _use_experiment_dict and len(config.benchmark_list) > 0:
@@ -1794,8 +1796,9 @@ class ExperimentBase():
                             self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
                             print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                        reset_seconds = 0
                         if self.resetscript_active and config.resetscript:
-                            config.loader.exec_reset_script(
+                            reset_seconds = config.loader.exec_reset_script(
                                 'reset_{}_{}'.format(experimentRun, client), config.resetscript)
                         if len(config.benchmarking_parameters_list) > 0:
                             benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
@@ -1803,7 +1806,7 @@ class ExperimentBase():
                             config.set_benchmarking_parameters(**benchmarking_parameters)
                         connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                         print("{:30s}: start benchmarking".format(connection))
-                        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
+                        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds)
                         _benchmark_just_submitted = True
                     else:
                         # no list element left
