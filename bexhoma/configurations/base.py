@@ -99,6 +99,7 @@ class SutConfiguration:
                 self.experiment.volume]['initscripts'][self.indexing]            #: Indexing script definition dict.
         else:
             self.indexscript = []                                                #: Empty when no separate indexing step is configured.
+        self.resetscript = []                                                    #: Scripts exec'd synchronously before each benchmarking round (e.g. CHECKPOINT, VACUUM).
         self.alias = alias                                                       #: Human-readable alias for this configuration in result reports.
         if num_experiment_to_apply is not None:
             self.num_experiment_to_apply = num_experiment_to_apply              #: Number of benchmarking runs to perform.

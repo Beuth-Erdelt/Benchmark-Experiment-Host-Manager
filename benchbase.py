@@ -248,6 +248,10 @@ if __name__ == '__main__':
                         name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                         config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
+                        if type_of_benchmark == 'tpcc':
+                            # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
+                            # to produce a consistent, cold-cache starting state.
+                            config.resetscript = ['reset-benchbase.sql']
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)

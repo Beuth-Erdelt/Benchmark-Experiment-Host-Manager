@@ -737,6 +737,71 @@ class LoadingCoordinator:
                     time_type = key[len("time_"):]
                     cfg.times_scripts[time_type] = float(value)
 
+    def exec_reset_script(self, script_type: str) -> None:
+        """Execute reset scripts synchronously in the SUT pod before a benchmarking round.
+
+        Unlike :meth:`load_data`, this method runs in the caller's thread and
+        blocks until every script has finished.  It is intended for lightweight
+        pre-benchmark maintenance (e.g. ``CHECKPOINT``, ``VACUUM ANALYZE``) where
+        spawning an async thread is unnecessary.
+
+        On completion the SUT pod is labelled with:
+
+        - ``<script_type>=True``
+        - ``time_<script_type>=<elapsed_seconds>``
+
+        :param script_type: Label key written on completion (e.g. ``'reset_1_1'``).
+        """
+        cfg = self._config
+        scripts = cfg.resetscript
+        if not scripts:
+            return
+        if 'loadData' not in cfg.dockertemplate:
+            print("{:30s}: no loadData command found, skipping reset".format(cfg.configuration))
+            return
+        self.prepare_init_dbms(scripts)
+        pods = cfg.experiment.cluster.get_pods(
+            component='sut', configuration=cfg.configuration, experiment=cfg.code)
+        cfg.pod_sut = pods[0]
+        service_name = cfg.get_service_sut(configuration=cfg.configuration)
+        c = cfg.dockertemplate['template']
+        database = (c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC']
+                    else cfg.experiment.volume)
+        scriptfolder = '/tmp/'
+        shellcommand = 'if [ -f {s} ]; then sh {s}; else exit 0; fi'
+        t_start = default_timer()
+        for script in scripts:
+            filename, file_extension = os.path.splitext(script)
+            if file_extension.lower() == '.sql':
+                cmd = cfg.dockertemplate['loadData'].format(
+                    scriptname=scriptfolder + script,
+                    service_name=service_name,
+                    namespace=cfg.experiment.cluster.namespace,
+                    database=database,
+                )
+            elif file_extension.lower() == '.sh':
+                cmd = shellcommand.format(s=scriptfolder + script)
+            else:
+                continue
+            _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd)
+            for suffix, content in (('.log', stdout), ('.error', stderr)):
+                if content:
+                    log_path = (
+                        cfg.experiment.path
+                        + '/{app}-reset-{configuration}-{filename}-{database}'
+                          '{ext}{suffix}'.format(
+                              app=cfg.appname, configuration=cfg.configuration,
+                              filename=filename, database=database,
+                              ext=file_extension.lower(), suffix=suffix).lower())
+                    with open(log_path, 'w') as fh:
+                        fh.write(content)
+        elapsed = int(default_timer() - t_start)
+        print("{:30s}: reset ({}) completed in {}s".format(
+            cfg.configuration, script_type, elapsed))
+        cfg.experiment.cluster.kubectl(
+            'label pod {} --overwrite {}=True time_{}={}'.format(
+                cfg.pod_sut, script_type, script_type, elapsed))
+
     def load_data(
         self,
         scripts: list,
