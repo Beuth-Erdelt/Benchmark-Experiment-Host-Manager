@@ -251,7 +251,7 @@ if __name__ == '__main__':
                         if type_of_benchmark == 'tpcc':
                             # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
                             # to produce a consistent, cold-cache starting state.
-                            config.resetscript = ['reset-benchbase.sql']
+                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)

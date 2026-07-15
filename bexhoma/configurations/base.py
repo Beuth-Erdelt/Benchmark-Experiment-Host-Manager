@@ -99,7 +99,7 @@ class SutConfiguration:
                 self.experiment.volume]['initscripts'][self.indexing]            #: Indexing script definition dict.
         else:
             self.indexscript = []                                                #: Empty when no separate indexing step is configured.
-        self.resetscript = []                                                    #: Scripts exec'd synchronously before each benchmarking round (e.g. CHECKPOINT, VACUUM).
+        self.resetscript = []                                                    #: Scripts exec'd synchronously before each round on the legacy (non experiment_dict) benchmark_list path.
         self.alias = alias                                                       #: Human-readable alias for this configuration in result reports.
         if num_experiment_to_apply is not None:
             self.num_experiment_to_apply = num_experiment_to_apply              #: Number of benchmarking runs to perform.
@@ -309,6 +309,7 @@ class SutConfiguration:
                         'target':           tmpl.get('target', 'sut'),
                         'parameters':       {**tmpl['parameters'], **per_round_params},
                         'fixed_parallelism': tmpl.get('fixed_parallelism', False),
+                        'resetscript':      tmpl.get('resetscript', []),
                     }
                     for tmpl in template_entries
                 ]
@@ -344,6 +345,7 @@ class SutConfiguration:
                 'num_pods':    pod_count,
                 'target':      tmpl.get('target', 'sut'),
                 'parameters':  {**tmpl['parameters'], **merged_env_vars},
+                'resetscript': tmpl.get('resetscript', []),
             }
             for tmpl in template_entries
         ]
@@ -356,6 +358,7 @@ class SutConfiguration:
         benchmarker: str,
         parallelism: int = 1,
         target: str = 'sut',
+        resetscript: list = None,
         **env_vars,
     ) -> None:
         """Add a parallel benchmark to the last client round.
@@ -370,6 +373,8 @@ class SutConfiguration:
             ``'dbmsbenchmarker'``).
         :param parallelism: Number of pods.
         :param target: Component the job runs against (default ``'sut'``).
+        :param resetscript: Scripts exec'd synchronously on the SUT before this
+            entry's pod is submitted (e.g. ``['reset-benchbase.sql']``).
         :param env_vars: ENV vars injected into the container.
         """
         if not self.experiment_dict['benchmarker']:
@@ -382,8 +387,28 @@ class SutConfiguration:
             'num_pods':    parallelism,
             'target':      target,
             'parameters':  env_vars,
+            'resetscript': resetscript if resetscript is not None else [],
         }
         self.experiment_dict['benchmarker'][-1].append(entry)
+
+    def set_benchmark_resetscript(self, scripts: list, name: str = None) -> None:
+        """Attach a reset-script list to entries of the benchmarker round template.
+
+        Sets ``resetscript`` on entries of ``experiment_dict["benchmarker"][0]``,
+        which :meth:`add_benchmark_list` and :meth:`add_benchmarking_parameters`
+        use as the template for every subsequent round, so calling this once
+        before either of them applies the scripts to all rounds.
+
+        :param scripts: List of script filenames exec'd synchronously on the SUT
+            before this entry's pod is submitted (e.g. ``['reset-benchbase.sql']``).
+        :param name: Name of the entry to target; ``None`` targets every entry
+            in the round template.
+        """
+        if not self.experiment_dict['benchmarker'] or not self.experiment_dict['benchmarker'][0]:
+            return
+        for entry in self.experiment_dict['benchmarker'][0]:
+            if name is None or entry['name'] == name:
+                entry['resetscript'] = scripts
 
     def add_loading_parameters(
         self,

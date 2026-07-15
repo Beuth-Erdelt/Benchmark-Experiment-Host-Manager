@@ -191,6 +191,7 @@ class ExperimentBase():
         self.maintaining_active = False                                 # Bool, tells if maintaining is active
         self.num_maintaining = 0                                        # number of maintaining pods in parallel
         self.num_maintaining_pods = 0                                   # number of maintaining pods in total
+        self.resetscript_active = True                                  # Bool, tells if configured reset scripts should run
         self.script = ""                                                # name of the script collection for creating schema
         self.initscript = []                                            # list of scripts for creating schema
         self.indexing = ""                                              # name of the script collection for creating indexes
@@ -472,6 +473,7 @@ class ExperimentBase():
         request_node_benchmarking = args.request_node_benchmarking
         request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
+        self.resetscript_active = not args.no_reset_script
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
         multi_tenant_volume = args.multi_tenant_volume
@@ -1748,13 +1750,14 @@ class ExperimentBase():
                             self.cluster.set_pod_counter(queue=exp_bm_key, value=total_exp_pods)
                             print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_exp_pods))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
-                        if config.resetscript:
-                            config.loader.exec_reset_script(
-                                'reset_{}_{}'.format(experimentRun, client))
                         for bm_idx, bench_entry in enumerate(client_round):
                             benchmark_index = bm_idx + 1
                             connection = f"{config.configuration}-{experimentRun}-{client}-{benchmark_index}"
                             print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
+                            if self.resetscript_active and bench_entry.get("resetscript"):
+                                config.loader.exec_reset_script(
+                                    'reset_{}_{}_{}'.format(experimentRun, client, benchmark_index),
+                                    bench_entry["resetscript"])
                             if bench_entry.get("parameters"):
                                 # Assign directly to avoid the side effect in
                                 # set_benchmarking_parameters() that overwrites
@@ -1791,9 +1794,9 @@ class ExperimentBase():
                             self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
                             print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
-                        if config.resetscript:
+                        if self.resetscript_active and config.resetscript:
                             config.loader.exec_reset_script(
-                                'reset_{}_{}'.format(experimentRun, client))
+                                'reset_{}_{}'.format(experimentRun, client), config.resetscript)
                         if len(config.benchmarking_parameters_list) > 0:
                             benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
                             print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))

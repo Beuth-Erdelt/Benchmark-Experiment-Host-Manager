@@ -737,7 +737,7 @@ class LoadingCoordinator:
                     time_type = key[len("time_"):]
                     cfg.times_scripts[time_type] = float(value)
 
-    def exec_reset_script(self, script_type: str) -> None:
+    def exec_reset_script(self, script_type: str, scripts: list) -> None:
         """Execute reset scripts synchronously in the SUT pod before a benchmarking round.
 
         Unlike :meth:`load_data`, this method runs in the caller's thread and
@@ -745,15 +745,24 @@ class LoadingCoordinator:
         pre-benchmark maintenance (e.g. ``CHECKPOINT``, ``VACUUM ANALYZE``) where
         spawning an async thread is unnecessary.
 
+        Honors the same tenancy model as :meth:`load_data` / :meth:`prepare_init_dbms`:
+        for ``tenant_per == 'schema'`` each script runs once per tenant against the
+        tenant-filled file :meth:`prepare_init_dbms` already uploaded (``<tenant>-<script>``);
+        for ``tenant_per == 'database'`` each script runs once per tenant against
+        database ``tenant_<n>``; for ``tenant_per == 'container'`` no fan-out is needed
+        here because each container tenant is already a separate :class:`SutConfiguration`
+        (and therefore a separate call to this method) upstream.
+
         On completion the SUT pod is labelled with:
 
         - ``<script_type>=True``
         - ``time_<script_type>=<elapsed_seconds>``
 
-        :param script_type: Label key written on completion (e.g. ``'reset_1_1'``).
+        :param script_type: Label key written on completion (e.g. ``'reset_1_1_1'``).
+        :param scripts: List of script filenames to execute (from the calling
+            entry's ``resetscript`` list).
         """
         cfg = self._config
-        scripts = cfg.resetscript
         if not scripts:
             return
         if 'loadData' not in cfg.dockertemplate:
@@ -765,33 +774,47 @@ class LoadingCoordinator:
         cfg.pod_sut = pods[0]
         service_name = cfg.get_service_sut(configuration=cfg.configuration)
         c = cfg.dockertemplate['template']
-        database = (c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC']
-                    else cfg.experiment.volume)
+        default_database = (c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC']
+                             else cfg.experiment.volume)
         scriptfolder = '/tmp/'
         shellcommand = 'if [ -f {s} ]; then sh {s}; else exit 0; fi'
+        # (script, script-as-uploaded-in-pod, target database, tenant tag for log naming)
+        targets = []
+        if cfg.num_tenants > 0 and cfg.tenant_per == 'schema':
+            for tenant in range(cfg.num_tenants):
+                for script in scripts:
+                    targets.append((script, f'{tenant}-{script}', default_database, str(tenant)))
+        elif cfg.num_tenants > 0 and cfg.tenant_per == 'database':
+            for tenant in range(cfg.num_tenants):
+                for script in scripts:
+                    targets.append((script, script, f'tenant_{tenant}', str(tenant)))
+        else:
+            for script in scripts:
+                targets.append((script, script, default_database, ''))
         t_start = default_timer()
-        for script in scripts:
+        for script, script_in_pod, database, tenant_tag in targets:
             filename, file_extension = os.path.splitext(script)
             if file_extension.lower() == '.sql':
                 cmd = cfg.dockertemplate['loadData'].format(
-                    scriptname=scriptfolder + script,
+                    scriptname=scriptfolder + script_in_pod,
                     service_name=service_name,
                     namespace=cfg.experiment.cluster.namespace,
                     database=database,
                 )
             elif file_extension.lower() == '.sh':
-                cmd = shellcommand.format(s=scriptfolder + script)
+                cmd = shellcommand.format(s=scriptfolder + script_in_pod)
             else:
                 continue
             _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd)
             for suffix, content in (('.log', stdout), ('.error', stderr)):
                 if content:
+                    tenant_infix = f'-{tenant_tag}' if tenant_tag else ''
                     log_path = (
                         cfg.experiment.path
-                        + '/{app}-reset-{configuration}-{filename}-{database}'
+                        + '/{app}-reset-{configuration}{tenant}-{filename}-{database}'
                           '{ext}{suffix}'.format(
                               app=cfg.appname, configuration=cfg.configuration,
-                              filename=filename, database=database,
+                              tenant=tenant_infix, filename=filename, database=database,
                               ext=file_extension.lower(), suffix=suffix).lower())
                     with open(log_path, 'w') as fh:
                         fh.write(content)

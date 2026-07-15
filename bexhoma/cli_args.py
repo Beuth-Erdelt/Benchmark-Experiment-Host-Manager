@@ -37,6 +37,7 @@ def make_base_parser():
     p.add_argument('-db',  '--debug', help='enable debug logging', action='store_true')
     p.add_argument('-sl',  '--skip-loading', help='skip data loading and start benchmarking immediately', action='store_true', default=False)
     p.add_argument('-ss',  '--skip-shutdown', help='keep SUT pods running after the experiment finishes', action='store_true', default=False)
+    p.add_argument('-nrs', '--no-reset-script', help='disable configured reset scripts (e.g. CHECKPOINT/VACUUM) even if set on a benchmarker entry', action='store_true', default=False)
     p.add_argument('-cx',  '--context', help='kubectl context to use (default: current context)', default=None)
     p.add_argument('-e',   '--experiment', help='resume an existing experiment by its code', default=None)
     p.add_argument('-m',   '--monitoring', help='enable Prometheus monitoring for the SUT', action='store_true')
