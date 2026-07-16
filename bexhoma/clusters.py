@@ -83,6 +83,7 @@ class Kubernetes():
         docker=None,
         script=None,
         queryfile=None,
+        connect=True,
     ):
         """
         Initialise the Kubernetes cluster manager.
@@ -97,6 +98,9 @@ class Kubernetes():
         :param docker: Docker image key in ``config['dockers']``.
         :param script: Init-script key within the chosen volume.
         :param queryfile: Path to the DBMSBenchmarker query config file.
+        :param connect: Whether to establish Kubernetes API access via :meth:`cluster_access`.
+            Set to ``False`` for purely local operations (e.g. reading stored results)
+            that do not need a live cluster connection.
         """
         self.logger = logging.getLogger('bexhoma')
         self.clusterconfig = clusterconfig
@@ -168,7 +172,8 @@ class Kubernetes():
         self.set_experiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.set_experiment(instance, volume, docker, script)
         self.set_code(code)
-        self.cluster_access()
+        if connect:
+            self.cluster_access()
         self.experiments = []
 
     def cluster_access(self):
@@ -2468,6 +2473,7 @@ class AWS(Kubernetes):
         docker=None,
         script=None,
         queryfile=None,
+        connect=True,
     ):
         """
         Construct a new :class:`AWS` cluster manager.
@@ -2482,6 +2488,7 @@ class AWS(Kubernetes):
         :param docker: Docker image key in ``config['dockers']``.
         :param script: Init-script key within the chosen volume.
         :param queryfile: Path to the DBMSBenchmarker query config file.
+        :param connect: Whether to establish Kubernetes API access via :meth:`cluster_access`.
         """
         self.code = code
         super().__init__(
@@ -2495,6 +2502,7 @@ class AWS(Kubernetes):
             docker=docker,
             script=script,
             queryfile=queryfile,
+            connect=connect,
         )
         # context doubles as the EKS cluster name for eksctl commands
         self.cluster = self.context

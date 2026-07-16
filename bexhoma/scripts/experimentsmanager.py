@@ -119,7 +119,9 @@ def manage():
             cluster.kubectl('delete all -l experiment='+args.experiment)
     elif args.mode == 'summary':
         if not args.experiment is None:
-            cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+            # -fe re-evaluates by executing a command inside the running dashboard pod,
+            # which needs a live cluster connection; a plain summary only reads local files.
+            cluster = clusters.Kubernetes(clusterconfig, context=args.context, connect=args.force_evaluate)
             resultfolder = cluster.config['benchmarker']['resultfolder']
             code = args.experiment
             with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
