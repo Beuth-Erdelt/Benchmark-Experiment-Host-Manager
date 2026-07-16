@@ -99,7 +99,6 @@ def manage():
     if args.mode == 'stop':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         if args.experiment is None:
-            experiment = experiments.base(cluster=cluster, code=cluster.code)
             if connection is None:
                 connection = ''
             cluster.stop_sut(configuration=connection)

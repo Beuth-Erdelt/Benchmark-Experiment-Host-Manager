@@ -121,7 +121,7 @@ def load_data_asynch(
                                     namespace=namespace, database=db),
                     pod_sut, context)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'
+                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stdout.log'
                     .format(app=app, configuration=configuration,
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
@@ -129,7 +129,7 @@ def load_data_asynch(
                     with open(filename_log, 'w') as file:
                         file.write(stdout)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.error'
+                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stderr.log'
                     .format(app=app, configuration=configuration,
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
@@ -143,7 +143,7 @@ def load_data_asynch(
                                         namespace=namespace, database=db),
                     pod_sut, context)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}{database}{extension}.log'
+                    path + '/{app}-loading-{configuration}-{filename}{database}{extension}.stdout.log'
                     .format(app=app, configuration=configuration,
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
@@ -151,7 +151,7 @@ def load_data_asynch(
                     with open(filename_log, 'w') as file:
                         file.write(stdout)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}{database}{extension}.error'
+                    path + '/{app}-loading-{configuration}-{filename}{database}{extension}.stderr.log'
                     .format(app=app, configuration=configuration,
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
@@ -394,7 +394,7 @@ class LoadingCoordinator:
                             filename_in_resultfolder = (
                                 cfg.experiment.path
                                 + '/{app}-loading-{configuration}-{tenant}-{filename}'
-                                  '-{database}{extension}'.format(
+                                  '-{database}{extension}.log'.format(
                                     app=cfg.appname, configuration=cfg.configuration,
                                     filename=filename_base, database=database,
                                     tenant=tenant,
@@ -416,7 +416,7 @@ class LoadingCoordinator:
             filename_base, file_extension = os.path.splitext(script)
             filename_in_resultfolder = (
                 cfg.experiment.path
-                + '/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(
+                + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(
                     app=cfg.appname, configuration=cfg.configuration,
                     filename=filename_base, database=database,
                     extension=file_extension.lower()).lower())
@@ -467,7 +467,7 @@ class LoadingCoordinator:
                         filename_base, file_extension = os.path.splitext(script)
                         filename_in_resultfolder = (
                             cfg.experiment.path
-                            + '/{app}-loading-{configuration}-{filename}-{database}{extension}'
+                            + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'
                             .format(app=cfg.appname, configuration=cfg.configuration,
                                     filename=filename_base, database=database,
                                     extension=file_extension.lower()).lower())
@@ -481,7 +481,7 @@ class LoadingCoordinator:
                 filename_base, file_extension = os.path.splitext(script)
                 filename_in_resultfolder = (
                     cfg.experiment.path
-                    + '/{app}-loading-{configuration}-{filename}-{database}{extension}'.format(
+                    + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(
                         app=cfg.appname, configuration=cfg.configuration,
                         filename=filename_base, database=database,
                         extension=file_extension.lower()).lower())
@@ -816,7 +816,7 @@ class LoadingCoordinator:
             else:
                 continue
             _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd)
-            for suffix, content in (('.log', stdout), ('.error', stderr)):
+            for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
                 if content:
                     tenant_infix = f'-{tenant_tag}' if tenant_tag else ''
                     log_path = (

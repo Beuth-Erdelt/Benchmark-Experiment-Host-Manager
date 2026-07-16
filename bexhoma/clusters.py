@@ -2374,9 +2374,9 @@ class Kubernetes():
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         if number is not None:
-            filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.describe"
+            filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.describe.log"
         else:
-            filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe"
+            filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe.log"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:
@@ -2395,10 +2395,10 @@ class Kubernetes():
         :param pod_name: Name of the Pod.
         :param container: Accepted for API compatibility but ignored — ``kubectl describe``
             is not container-sensitive.
-        :return: ``True`` if the ``.describe`` file exists on disk.
+        :return: ``True`` if the ``.describe.log`` file exists on disk.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe"
+        filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe.log"
         return os.path.isfile(filename_log)
 
     def store_pod_log(self, pod_name, container='', number=None):
