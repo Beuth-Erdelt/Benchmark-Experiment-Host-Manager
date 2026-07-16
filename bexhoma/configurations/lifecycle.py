@@ -555,10 +555,12 @@ scrape_configs:
                     print("{:30s}: storage {} exists".format(configuration, volume))
                     pvc_labels = pvcs_labels[0]
                     copy_labels = [
-                        'loaded', 'timeLoading', 'timeLoadingStart', 'timeLoadingEnd',
-                        'indexed', 'time_generated', 'time_indexed', 'time_ingested',
+                        'loaded', 'schema', 'data', 'index',
+                        'time_loading', 'time_loading_start', 'time_loading_end',
+                        'time_schema', 'time_data', 'time_index',
+                        'time_generated', 'time_ingested',
                         'time_initconstraints', 'time_initindexes', 'time_initschema',
-                        'time_initstatistics', 'time_loaded',
+                        'time_initstatistics',
                     ]
                     return {label: value for label, value in pvc_labels.items()
                             if label in copy_labels}
@@ -1187,6 +1189,11 @@ scrape_configs:
                     if 'replicas_pooling' in cfg.resources:
                         num_replicas_pooling = cfg.resources['replicas_pooling']
                         result[key]['spec']['replicas'] = num_replicas_pooling
+                    if 'nodeSelector_pool' in cfg.resources:
+                        if dep['spec']['template']['spec'].get('nodeSelector') is None:
+                            dep['spec']['template']['spec']['nodeSelector'] = {}
+                        for node_selector_key, node_selector_value in cfg.resources['nodeSelector_pool'].items():
+                            dep['spec']['template']['spec']['nodeSelector'][node_selector_key] = node_selector_value
                 if deployment_type == 'sut':
                     if 'replicas_sut' in cfg.resources:
                         num_replicas_sut = cfg.resources['replicas_sut']
@@ -1218,9 +1225,16 @@ scrape_configs:
                         nodeSelectors = cfg.resources['nodeSelector'].copy()
                     else:
                         nodeSelectors = {}
-                    num_replicas_pooling = 0
-                    if 'replicas_pooling' in cfg.resources:
-                        num_replicas_pooling = cfg.resources['replicas_pooling']
+                    # Per-component replica overrides (e.g. replicas_pd, replicas_pooling)
+                    # must survive this reset: StatefulSet documents earlier in the
+                    # template (patched later because this loop runs in reverse) still
+                    # need cfg.get_num_worker() to see them.
+                    replicas_overrides = {
+                        resource_key: resource_value
+                        for resource_key, resource_value in cfg.resources.items()
+                        if resource_key.startswith('replicas_')
+                    }
+                    node_selector_pool = cfg.resources.get('nodeSelector_pool')
                     cfg.resources = {}
                     cfg.resources['requests'] = {}
                     cfg.resources['requests']['cpu'] = req_cpu
@@ -1232,8 +1246,9 @@ scrape_configs:
                     cfg.resources['nodeSelector'] = {}
                     cfg.resources['nodeSelector']['cpu'] = node_cpu
                     cfg.resources['nodeSelector']['gpu'] = node_gpu
-                    if num_replicas_pooling > 0:
-                        cfg.resources['replicas_pooling'] = num_replicas_pooling
+                    cfg.resources.update(replicas_overrides)
+                    if node_selector_pool is not None:
+                        cfg.resources['nodeSelector_pool'] = node_selector_pool
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu'] = limit_cpu
                     dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory'] = req_mem

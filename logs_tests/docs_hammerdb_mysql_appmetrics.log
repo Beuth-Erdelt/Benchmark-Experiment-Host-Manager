@@ -2,19 +2,20 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1781472802
-Experiment                    : starts at 2026-06-14 23:33:23.470616 (338305.8580687)
+Experiment                    : has code 1783883479
+Experiment                    : starts at 2026-07-12 21:11:19.964565 (36616.7400155)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-Experiment uses bexhoma version 0.9.13.
+Experiment uses bexhoma version 0.10.5.
 System metrics are monitored by a cluster-wide installation.
 Application metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['MySQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
 Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Database uses ephemeral storage of size 50Gi.
 Loading is tested with [16] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
@@ -24,8 +25,10 @@ MySQL-1                       : will start now
 MySQL-1                       : deployments ['sut']
 MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1781472802
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1781472802
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1783883479
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1783883479
+- waiting 30s -               : done
+MySQL-1                       : is pending
 - waiting 30s -               : done
 MySQL-1                       : waits for monitoring
 MySQL-1                       : wants to monitor all components in cluster
@@ -38,22 +41,20 @@ MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
 - waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-07-12 19:16:34 (that is in 120 secs)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-14 21:38:39 (that is in 120 secs)
+MySQL-1                       : will start loading but not before 2026-07-12 19:16:34
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-14 21:38:39
+MySQL-1                       : will start loading but not before 2026-07-12 19:16:34
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-14 21:38:39
+MySQL-1                       : will start loading but not before 2026-07-12 19:16:34
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-14 21:38:39
-- waiting 30s -               : done
-MySQL-1                       : is not loaded yet
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1781472802-5b847d8f74-6qkgj to load scripts
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1783883479-b9f6c6886-7vmw4 to load scripts
 MySQL-1                       : start asynch loading scripts of type loaded
 MySQL-1                       : is loading
 - waiting 30s -               : done
@@ -61,38 +62,31 @@ MySQL-1                       : is loading
 - waiting 30s -               : done
 MySQL-1                       : showing loader times
 MySQL-1                       : generator times (start/end per pod and container) []
-MySQL-1                       : loader times (start/end per pod and container) [(1781473135, 1781473184)]
-MySQL-1                       : total times (start/end per pod and container) [(1781473135, 1781473184)]
-MySQL-1                       : loader timespan (first to last [s]) = 49
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1781472802-5b847d8f74-6qkgj to load scripts
+MySQL-1                       : loader times (start/end per pod and container) [(1783883810, 1783883864)]
+MySQL-1                       : total times (start/end per pod and container) [(1783883810, 1783883864)]
+MySQL-1                       : loader timespan (first to last [s]) = 54
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1783883479-b9f6c6886-7vmw4 to load scripts
 MySQL-1                       : start asynch loading scripts of type indexed
 MySQL-1                       : is loading
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-1781472802 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1783883479 initialized to 1.
 MySQL-1                       : benchmarks done 0 of 1. This will be client 1
 MySQL-1-1-1-1                 : start benchmarking (benchmark_run=1)
 MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 MySQL-1                       : need application metrics for sut
 MySQL-1                       : load application metrics of type mysql
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1781472802
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1783883479
 - waiting 10s -               : done
-MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1781472802-1-1-1-hjg47: found
+MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1783883479-1-1-1-k7d2n: found
 MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 MySQL-1-1-1-1                 : collecting loading metrics of SUT at connection MySQL-1-1-1-1
-MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781472802(.*)", pod=~"(.*)mysql-1-1781472802(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1783883479(.*)", pod=~"(.*)mysql-1-1783883479(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 MySQL-1-1-1-1                 : collecting metrics of data injector at connection MySQL-1-1-1-1
-MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781472802(.*)", pod=~"(.*)mysql-1-1781472802(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1783883479(.*)", pod=~"(.*)mysql-1-1783883479(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
-Exception when calling BatchV1Api->list_namespaced_job: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'b4ede27e-ceef-4d53-a58e-847bd907f4f6', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Sun, 14 Jun 2026 21:41:37 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
-- waiting 2s -                : done
+MySQL-1                       : has running benchmarks
+- waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
@@ -117,33 +111,34 @@ MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
+MySQL-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1783883479/MySQL-1-1-1-1.config
 MySQL-1-1-1-1                 : showing benchmarker times
-MySQL-1-1-1-1                 : benchmarker timespan job from 1781473247 to 1781473699
-MySQL-1-1-1-1                 : benchmarker timespan pods from 1781473249 to 1781473689
-MySQL-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 440
-MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1781473249, 1781473689)]
-MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1781473249, 1781473689)]}
+MySQL-1-1-1-1                 : benchmarker timespan job from 1783883920 to 1783884405
+MySQL-1-1-1-1                 : benchmarker timespan pods from 1783883922 to 1783884366
+MySQL-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 444
+MySQL-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1783883922, 1783884366)]
+MySQL-1-1-1-1                 : found and updated times {'benchmarker': [(1783883922, 1783884366)]}
 MySQL-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 MySQL-1-1-1-1                 : collecting execution metrics of SUT at connection MySQL-1-1-1-1
-MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781472802(.*)", pod=~"(.*)mysql-1-1781472802(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1783883479(.*)", pod=~"(.*)mysql-1-1783883479(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 MySQL-1-1-1-1                 : collecting metrics of benchmarker at connection MySQL-1-1-1-1
-MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781472802(.*)", pod=~"(.*)mysql-1-1781472802(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1783883479(.*)", pod=~"(.*)mysql-1-1783883479(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-1781472802 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MySQL-1-1783883479 initialized to 2.
 MySQL-1                       : benchmarks done 0 of 1. This will be client 2
 MySQL-1-1-2-1                 : start benchmarking (benchmark_run=1)
 MySQL-1-1-2-1                 : needs monitoring (common metrics) for deployment sut
 MySQL-1                       : need application metrics for sut
 MySQL-1                       : load application metrics of type mysql
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1781472802
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1783883479
 - waiting 10s -               : done
-MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1781472802-1-2-1-qnp8h: found
+MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1783883479-1-2-1-fz5tm: found
 MySQL-1-1-2-1                 : needs monitoring (common metrics) for deployment sut
 MySQL-1-1-2-1                 : collecting loading metrics of SUT at connection MySQL-1-1-2-1
-MySQL-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781472802(.*)", pod=~"(.*)mysql-1-1781472802(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1783883479(.*)", pod=~"(.*)mysql-1-1783883479(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 MySQL-1-1-2-1                 : collecting metrics of data injector at connection MySQL-1-1-2-1
-MySQL-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781472802(.*)", pod=~"(.*)mysql-1-1781472802(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1783883479(.*)", pod=~"(.*)mysql-1-1783883479(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
@@ -169,21 +164,22 @@ MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 - waiting 30s -               : done
+MySQL-1-1-2-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1783883479/MySQL-1-1-2-1.config
 MySQL-1-1-2-1                 : showing benchmarker times
-MySQL-1-1-2-1                 : benchmarker timespan job from 1781473757 to 1781474210
-MySQL-1-1-2-1                 : benchmarker timespan pods from 1781473760 to 1781474195
-MySQL-1-1-2-1                 : benchmarker timespan (start to end single container [s]) = 435
-MySQL-1-1-2-1                 : benchmarker times (start/end per pod and container) = [(1781473760, 1781474195), (1781473761, 1781474195)]
-MySQL-1-1-2-1                 : found and updated times {'benchmarker': [(1781473760, 1781474195), (1781473761, 1781474195)]}
+MySQL-1-1-2-1                 : benchmarker timespan job from 1783884462 to 1783884922
+MySQL-1-1-2-1                 : benchmarker timespan pods from 1783884465 to 1783884903
+MySQL-1-1-2-1                 : benchmarker timespan (start to end single container [s]) = 438
+MySQL-1-1-2-1                 : benchmarker times (start/end per pod and container) = [(1783884466, 1783884903), (1783884465, 1783884903)]
+MySQL-1-1-2-1                 : found and updated times {'benchmarker': [(1783884466, 1783884903), (1783884465, 1783884903)]}
 MySQL-1-1-2-1                 : needs monitoring (common metrics) for deployment sut
 MySQL-1-1-2-1                 : collecting execution metrics of SUT at connection MySQL-1-1-2-1
-MySQL-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781472802(.*)", pod=~"(.*)mysql-1-1781472802(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1783883479(.*)", pod=~"(.*)mysql-1-1783883479(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 MySQL-1-1-2-1                 : collecting metrics of benchmarker at connection MySQL-1-1-2-1
-MySQL-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1781472802(.*)", pod=~"(.*)mysql-1-1781472802(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+MySQL-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1783883479(.*)", pod=~"(.*)mysql-1-1783883479(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
 - waiting 30s -               : done
 MySQL-1                       : can be stopped
-MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1781472802-5b847d8f74-6qkgj
-Experiment                    : ends at 2026-06-14 23:57:36.212425 (339758.600204) - 1452.74s total
+MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1783883479-b9f6c6886-7vmw4
+Experiment                    : ends at 2026-07-12 21:36:10.696777 (38107.4721293) - 1490.73s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -194,20 +190,21 @@ Result workflow complete
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 1453s 
-* Code: 1781472802
+* Duration: 1491s 
+* Code: 1783883479
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-  * Experiment uses bexhoma version 0.9.13.
+  * Experiment uses bexhoma version 0.10.5.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker19.
   * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [16] threads, split into [1] pods.
   * Benchmarking is tested with [16] threads, split into [1, 2] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
@@ -215,49 +212,54 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 ### Connections
 * MySQL-1-1-1-1 uses docker image mysql:8.4.0
-  * RAM:540492877824
-  * Cores:128
+  * RAM:2164173213696
+  * Cores:224
   * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:240891
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * node:cl-worker36
+  * disk:1105753
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781472802
+    * code:1783883479
 * MySQL-1-1-2-1 uses docker image mysql:8.4.0
-  * RAM:540492877824
-  * Cores:128
+  * RAM:2164173213696
+  * Cores:224
   * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:258825
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * node:cl-worker36
+  * disk:1107715
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1781472802
+    * code:1783883479
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1783883479-b9f6c6886-7vmw4: 0 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MySQL-1 - Pods [[1, 2]]
+* DBMS MySQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: hammerdb (2 pods)
 
 #### Planned
 
-* DBMS MySQL-1 - Pods [[1, 2]]
+* DBMS MySQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: hammerdb (2 pods)
 
 ### Loading
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MySQL-1-1 |                1 |   16 |      128.00 |           8.00 |            0.00 |         49.00 |           71.00 |              1 |          16 |             | None           |             0 | False         |              450.00 |
+|           |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:----------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| MySQL-1-1 |                1 | 16.00 |      133.00 |           9.00 |            0.00 |         54.00 |           70.00 |              1 |          16 |             | None           |             0 | False         |              433.08 |
 
 ### Execution
 
@@ -265,16 +267,16 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS            | phase       | job           |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
 |:----------------|:------------|:--------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
-| MySQL-1-1-1-1-1 | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 169236 | 393189 |         0.00 |          5 |        0 |       4.02 |       5.74 |
-| MySQL-1-1-2-1-1 | MySQL-1-1-2 | MySQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 | 166645 | 387243 |         0.00 |          5 |        0 |       3.91 |       5.56 |
-| MySQL-1-1-2-1-1 | MySQL-1-1-2 | MySQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 | 166597 | 387114 |         0.00 |          5 |        0 |       3.92 |       5.59 |
+| MySQL-1-1-1-1-1 | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 265908 | 616752 |         0.00 |          5 |        0 |       2.54 |       3.29 |
+| MySQL-1-1-2-1-1 | MySQL-1-1-2 | MySQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 | 268600 | 623860 |         0.00 |          5 |        0 |       2.48 |       3.29 |
+| MySQL-1-1-2-1-2 | MySQL-1-1-2 | MySQL-1-1-2-1 |                1 |        8 |        2 |               1 |       2 | 268709 | 624142 |         0.00 |          5 |        0 |       2.51 |       3.33 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:------------|:------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
-| MySQL-1-1-1 | MySQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |       4.02 |       5.74 |         0.00 | 169236.00 | 393189.00 |          5 |        0 |
-| MySQL-1-1-2 | MySQL-1-1-2 |                1 |       16 |        2 |               1 |           2 |       3.92 |       5.59 |         0.00 | 166621.00 | 387178.50 |          5 |        0 |
+| MySQL-1-1-1 | MySQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |       2.54 |       3.28 |         0.00 | 265908.00 | 616752.00 |          5 |        0 |
+| MySQL-1-1-2 | MySQL-1-1-2 |                1 |       16 |        2 |               1 |           2 |       2.51 |       3.33 |         0.00 | 268654.50 | 624001.00 |          5 |        0 |
 
 ### Monitoring
 
@@ -282,29 +284,29 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       246.47 |      5.93 |          22.26 |                 25.25 |
-| MySQL-1-1-2-1 |       246.47 |      5.93 |          22.26 |                 25.25 |
+| MySQL-1-1-1-1 |        96.64 |      2.03 |          22.23 |                 24.14 |
+| MySQL-1-1-2-1 |        96.64 |      2.03 |          22.23 |                 24.14 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       368.80 |      9.18 |           0.17 |                  0.17 |
-| MySQL-1-1-2-1 |       368.80 |      9.18 |           0.17 |                  0.17 |
+| MySQL-1-1-1-1 |       396.60 |     10.87 |           0.17 |                  0.17 |
+| MySQL-1-1-2-1 |       396.60 |     10.87 |           0.17 |                  0.17 |
 
 ### Execution phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |      4532.66 |     11.19 |          24.14 |                 52.24 |
-| MySQL-1-1-2-1 |      4471.39 |     11.37 |          25.60 |                 64.00 |
+| MySQL-1-1-1-1 |      4061.50 |     10.04 |          24.46 |                 39.84 |
+| MySQL-1-1-2-1 |      3831.44 |      9.65 |          26.61 |                 54.88 |
 
 ### Execution phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       590.05 |      1.57 |           0.83 |                  0.83 |
-| MySQL-1-1-2-1 |       590.05 |      3.20 |           0.83 |                  0.83 |
+| MySQL-1-1-1-1 |      1063.80 |      2.67 |           1.83 |                  1.83 |
+| MySQL-1-1-2-1 |      1063.80 |      4.78 |           1.83 |                  1.83 |
 
 ### Application Metrics
 
@@ -312,17 +314,18 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
 |:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                     499.13 |                     0.01 |                0.00 |                    0.00 |
-| MySQL-1-1-2-1 |                           1.00 |                     499.13 |                     0.01 |                0.00 |                    0.00 |
+| MySQL-1-1-1-1 |                           1.00 |                     485.37 |                     0.01 |                0.00 |                    0.00 |
+| MySQL-1-1-2-1 |                           1.00 |                     485.37 |                     0.01 |                0.00 |                    0.00 |
 
 #### Execution phase: SUT deployment
 
 | DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
 |:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                  935795.44 |                     0.01 |                0.00 |                    0.00 |
-| MySQL-1-1-2-1 |                           0.00 |                  923585.57 |                     0.01 |                0.00 |                    0.00 |
+| MySQL-1-1-1-1 |                           1.00 |                 1497434.76 |                     0.01 |                0.00 |                    0.00 |
+| MySQL-1-1-2-1 |                           0.00 |                 1480331.98 |                     0.01 |                0.00 |                    0.00 |
 
 ### Tests
+* TEST passed: No SUT container restarts
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]

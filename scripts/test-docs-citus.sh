@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 # -dbms Citus                   DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -35,7 +35,7 @@ source ./scripts/testfunctions.sh
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 1                        number of worker node replicas
 # -nws 48                       number of shards per worker node
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -78,7 +78,7 @@ sleep 30
 
 
 # -dbms Citus                   DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -92,7 +92,7 @@ sleep 30
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 1                        number of worker node replicas
 # -nws 48                       number of shards per worker node
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations

@@ -42,12 +42,19 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
+      securityContext:
+        fsGroup: 5000
       containers:
       - name: dbms
-        image: monetdb/monetdb:Dec2025-SP1
+        image: monetdb/monetdb:Dec2025-SP3
         env:
           - {name: MDB_DB_ADMIN_PASS, value: 'monetdb'}
           - {name: MDB_CREATE_DBS, value: 'demo'}
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "monetdbd stop /var/monetdb5/dbfarm"]
         ports:
         - {containerPort: 50000}
         resources:
@@ -56,7 +63,7 @@ spec:
           #, ephemeral-storage: "1536Gi"}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
-        - {mountPath: /var/monetdb5, name: benchmark-storage-volume}
+        - {mountPath: /var/monetdb5/dbfarm, name: benchmark-storage-volume}
       - name: cadvisor
         image: gcr.io/cadvisor/cadvisor:v0.47.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]

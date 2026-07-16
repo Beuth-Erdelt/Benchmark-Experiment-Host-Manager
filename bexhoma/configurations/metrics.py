@@ -64,11 +64,11 @@ class MetricsCollector:
         c['docker'] = cfg.docker
         c['script'] = cfg.script
         c['info'] = info
-        c['timeLoad'] = cfg.time_loading
-        c['timeGenerate'] = cfg.time_generating
-        c['timeIngesting'] = cfg.time_ingesting
-        c['timeSchema'] = cfg.time_schema
-        c['timeIndex'] = cfg.time_index
+        c['time_loading'] = cfg.time_loading
+        c['time_generated'] = cfg.time_generating
+        c['time_ingested'] = cfg.time_ingesting
+        c['time_schema'] = cfg.time_schema
+        c['time_index'] = cfg.time_index
         c['script_times'] = cfg.times_scripts
         c['priceperhourdollar'] = 0.0 + cfg.dockertemplate['priceperhourdollar']
         # collect host information

@@ -93,6 +93,28 @@ class Benchmark:
             return df
         return pd.DataFrame()
 
+    def _show_reset_section(self, df_connections: pd.DataFrame) -> None:
+        """
+        Print the ``#### Reset`` subsection: reset-script duration per connection.
+
+        Reads the ``time_reset`` column from ``df_connections`` (populated by
+        :meth:`evaluators.base.LogEvaluator.add_connection_to_result` whenever a
+        ``resetscript`` ran before that connection's round was submitted). This
+        column carries no benchmark-tool-specific data, so the section applies to
+        any benchmark type that sets a ``resetscript`` on a benchmarker entry, not
+        just Benchbase TPC-C. Prints nothing when no connection triggered a reset.
+
+        :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
+        """
+        if df_connections.empty or 'time_reset' not in df_connections.columns:
+            return
+        df_reset = df_connections[df_connections['time_reset'] > 0][
+            ['phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'time_reset']
+        ]
+        if not df_reset.empty:
+            print("\n#### Reset\n")
+            print(df_reset.to_markdown(index=False, floatfmt=".2f"))
+
     def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> dict:
         """
         Print benchmark-specific sections after ``### Execution → Per Phase``.
@@ -126,10 +148,11 @@ class Benchmark:
         connections_sorted, monitoring_applications = experiment.show_summary_header()
         workflow_actual: dict = {}
         workflow_planned: dict = {}
+        df_connections = pd.DataFrame()
         if experiment.benchmarking_is_active():
             print("\n### Workflow")
-            df_conn = self.evaluator.get_connections_of_experiment()
-            workflow_actual = self.evaluator.reconstruct_workflow(df_conn)
+            df_connections = self.evaluator.get_connections_of_experiment()
+            workflow_actual = self.evaluator.reconstruct_workflow(df_connections)
             workflow_planned = experiment.workload['workflow_planned']
             if workflow_actual:
                 print("\n#### Actual\n")
@@ -167,6 +190,7 @@ class Benchmark:
                 df_phase = self.evaluator.get_summary_benchmark_per_phase()
             print(df_phase.to_markdown(index=True, floatfmt=".2f"))
             df_aggregated_reduced = df_phase.copy()
+            self._show_reset_section(df_connections)
         extra_context = self._show_extra_sections(experiment, df_aggregated_reduced)
         experiment.show_summary_monitoring()
         if len(monitoring_applications) > 0:

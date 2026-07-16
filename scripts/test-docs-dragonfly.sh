@@ -22,7 +22,7 @@ source ./scripts/testfunctions.sh
 
 # Single host Dragonfly
 # -dbms Dragonfly               DBMS under test
-# -sf 3                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -33,7 +33,7 @@ source ./scripts/testfunctions.sh
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
-# -xop 1                        number of operations for the benchmark phase (x 1000)
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -73,7 +73,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=3  nbp=1"
 
 # Cluster of 3 Dragonfly instances
 # -dbms Dragonfly               DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -85,7 +85,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=3  nbp=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
 # -nw 3                         number of worker nodes in the cluster
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -128,7 +128,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
 
 # Cluster of 3 Dragonfly instances and replication
 # -dbms Dragonfly               DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -141,7 +141,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
 # -nbt 128                      threads per benchmarking pod
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 1                        number of worker node replicas
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -179,7 +179,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 replication  
 
 # Single host Dragonfly with PVC
 # -dbms Dragonfly               DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -190,7 +190,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 replication  
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -234,7 +234,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single PVC  sf=1  nbp=1
 
 # Cluster of 3 Dragonfly instances and PVC
 # -dbms Dragonfly               DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -246,7 +246,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single PVC  sf=1  nbp=1
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
 # -nw 3                         number of worker nodes in the cluster
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes

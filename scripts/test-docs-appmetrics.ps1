@@ -47,7 +47,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase PostgreSQ
 #### YCSB Application Metrics (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 3                         <# scaling factor (number of records x 1000) #> `
+  -sf 3                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2,3                     <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -178,7 +178,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MySQL app
 #### YCSB MySQL Application Metrics
 bexhoma ycsb `
   -dbms MySQL                   <# DBMS under test #> `
-  -sf 3                         <# scaling factor (number of records x 1000) #> `
+  -sf 3                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2,3                     <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -288,7 +288,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MySQL appm
 
 bexhoma ycsb `
   -dbms CockroachDB             <# DBMS under test #> `
-  -sf 10                        <# scaling factor (number of records x 1000) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -301,7 +301,7 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -nw 3                         <# number of worker nodes #> `
   -nwr 3                        <# replication factor #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -348,7 +348,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Cockroach
 
 bexhoma ycsb `
   -dbms Redis                   <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -361,7 +361,7 @@ bexhoma ycsb `
   -nbt 128                      <# threads per benchmarking pod #> `
   -nw 3                         <# number of worker nodes #> `
   -nwr 1                        <# replication factor #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -382,7 +382,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Redis appmetri
 
 bexhoma ycsb `
   -dbms TiDB                    <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 1                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -397,7 +397,7 @@ bexhoma ycsb `
   -nw 3                         <# number of worker nodes #> `
   -xnpd 3                       <# number of PD (Placement Driver) nodes #> `
   -nwr 3                        <# replication factor #> `
-  -xop 1                        <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -438,7 +438,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB appm
 
 bexhoma ycsb `
   -dbms PGBouncer               <# DBMS under test #> `
-  -sf 16                        <# scaling factor (number of records x 1000) #> `
+  -sf 16                        <# scaling factor (number of records in millions) #> `
   -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 11                      <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -452,7 +452,7 @@ bexhoma ycsb `
   -xnpp 4                       <# number of PGBouncer pool instances #> `
   -xnpi 128                     <# pool size (incoming connections) #> `
   -xnpo 64                      <# pool size (outgoing connections) #> `
-  -xop 16                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 16                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `

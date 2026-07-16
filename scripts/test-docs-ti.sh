@@ -22,7 +22,7 @@ source ./scripts/testfunctions.sh
 
 #### YCSB Ingestion (Example-TiDB.md)
 # -dbms TiDB                    DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
@@ -37,7 +37,7 @@ source ./scripts/testfunctions.sh
 # -nw 3                         number of worker nodes in the cluster
 # -xnpd 3                       number of PD (Placement Driver) nodes
 # -nwr 3                        number of worker node replicas
-# -xop 1                        number of operations for the benchmark phase (x 1000)
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations

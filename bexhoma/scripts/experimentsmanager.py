@@ -242,7 +242,7 @@ def manage():
             volumes[name]['configuration'] = pvc_labels['configuration']
             volumes[name]['experiment'] = pvc_labels['experiment']
             volumes[name]['loaded [s]'] = pvc_labels['loaded']
-            volumes[name]['timeLoading [s]'] = pvc_labels.get('timeLoading', "")
+            volumes[name]['timeLoading [s]'] = pvc_labels.get('time_loading', "")
             volumes[name]['dbms'] = pvc_labels['dbms']
             volumes[name]['storage_class_name'] = pvc.spec.storage_class_name
             volumes[name]['storage'] = pvc.spec.resources.requests['storage']
@@ -306,9 +306,9 @@ def manage():
                     apps[configuration][component] = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
                     if 'loaded' in labels:
                         if labels['loaded'] == 'True':
-                            apps[configuration]['loaded [s]'] = labels['timeLoading']
-                        elif 'timeLoadingStart' in labels:
-                            dt_object = datetime.fromtimestamp(int(labels['timeLoadingStart']))
+                            apps[configuration]['loaded [s]'] = labels['time_loading']
+                        elif 'time_loading_start' in labels:
+                            dt_object = datetime.fromtimestamp(int(labels['time_loading_start']))
                             t = dt_object.strftime('%Y-%m-%d %H:%M:%S')
                             apps[configuration]['loaded [s]'] = 'Started at '+t
                     apps[configuration]['use case'] = labels.get('usecase', "")

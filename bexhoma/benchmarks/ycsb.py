@@ -108,6 +108,8 @@ class YCSB(Benchmark):
             experiment.workload['info'] += f"\nFactors for loading are {num_loading_target_factors}."
         if experiment.benchmarking_is_active():
             experiment.workload['info'] += f"\nFactors for benchmarking are {num_benchmarking_target_factors}."
+            if args.activate_reset:
+                experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
 
     def test_results(self, experiment) -> None:
         """

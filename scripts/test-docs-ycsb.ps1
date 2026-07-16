@@ -24,7 +24,7 @@
 #### YCSB Scale Loading (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -49,7 +49,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading  sf=1 
 #### YCSB Scale Benchmarking (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2,3                     <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -74,7 +74,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB benchmarking  
 #### YCSB Monitoring (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 3                         <# scaling factor (number of records x 1000) #> `
+  -sf 3                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2,3                     <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -101,7 +101,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB monitoring  sf
 #### YCSB Persistent Storage (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2,3                     <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -128,7 +128,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB storage  sf=1 
 #### YCSB Custom Loading Parameters (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50%% read / 50%% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2                       <# throughput target as a multiple of the base ops/s #> `
@@ -148,6 +148,32 @@ bexhoma ycsb `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading patch  sf=1  nlp=1"
 
 
+#### YCSB Reset Script (Example-YCSB.md)
+bexhoma ycsb `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
+  -xtb 1024                     <# base ops/s used to compute throughput targets #> `
+  -xnbf 1                       <# throughput target as a multiple of the base ops/s #> `
+  -xnlf 1                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1,2                       <# two rounds so the reset script runs twice #> `
+  -nlp 1                        <# number of data loader pods #> `
+  -nlt 8                        <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep #> `
+  -nbt 8                        <# threads per benchmarking pod #> `
+  -ar                           <# activate configured reset scripts before each round #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 10Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_reset.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset script  sf=1  ne=1,2"
+
+
 ###########################################
 ############## All Workloads ##############
 ###########################################
@@ -156,7 +182,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading patch 
 #### YCSB Workload A (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 10                        <# scaling factor (number of records x 1000) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -185,7 +211,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload a  sf
 #### YCSB Workload B (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 10                        <# scaling factor (number of records x 1000) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl b                        <# YCSB workload template (b = 95% read / 5% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -214,7 +240,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload b  sf
 #### YCSB Workload C (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 10                        <# scaling factor (number of records x 1000) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -243,7 +269,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload c  sf
 #### YCSB Workload D (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 10                        <# scaling factor (number of records x 1000) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl d                        <# YCSB workload template (d = read latest) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -273,7 +299,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload d  sf
 #### YCSB Workload E (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 10                        <# scaling factor (number of records x 1000) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl e                        <# YCSB workload template (e = scan) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -303,7 +329,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload e  sf
 #### YCSB Workload F (Example-YCSB.md)
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 10                        <# scaling factor (number of records x 1000) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl f                        <# YCSB workload template (f = read-modify-write) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `

@@ -174,6 +174,9 @@ if __name__ == '__main__':
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 #, configuration=config_name
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS D')
+                # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
+                # to produce a consistent, cold-cache starting state.
+                config.set_benchmark_resetscript(['reset-tpcc.sql'])
                 config.set_storage(
                     storageConfiguration = 'postgresql'
                 )
@@ -213,6 +216,9 @@ if __name__ == '__main__':
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 #, configuration=config_name
                 config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS D')
+                # Run ANALYZE TABLE before each benchmarking round to keep
+                # optimizer statistics fresh between rounds.
+                config.set_benchmark_resetscript(['reset-tpcc.sql'])
                 config.set_storage(
                     storageConfiguration = 'mysql'
                 )
@@ -255,6 +261,9 @@ if __name__ == '__main__':
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 #, configuration=config_name
                 config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MariaDB', alias='DBMS D')
+                # Run ANALYZE TABLE before each benchmarking round to keep
+                # optimizer statistics fresh between rounds.
+                config.set_benchmark_resetscript(['reset-tpcc.sql'])
                 config.set_storage(
                     storageConfiguration = 'mariadb'
                 )
@@ -300,6 +309,9 @@ if __name__ == '__main__':
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 #, configuration=config_name
                 config = configurations.default(experiment=experiment, docker='Citus', dialect='Citus', alias='DBMS D', worker=num_worker)
+                # CHECKPOINT only reaches the coordinator; VACUUM ANALYZE
+                # refreshes planner statistics before each round.
+                config.set_benchmark_resetscript(['reset-tpcc.sql'])
                 config.set_storage(
                     storageConfiguration = 'citus'
                     )

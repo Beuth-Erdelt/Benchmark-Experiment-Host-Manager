@@ -198,6 +198,9 @@ if __name__ == '__main__':
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                     # , configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
+                    # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
+                    # to produce a consistent, cold-cache starting state.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     config.set_storage(
                         storageConfiguration = 'postgresql'
                         )
@@ -337,6 +340,9 @@ if __name__ == '__main__':
                     name_format = 'MySQL-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS B')
+                    # Run ANALYZE TABLE before each benchmarking round to keep
+                    # optimizer statistics fresh between rounds.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
@@ -373,6 +379,9 @@ if __name__ == '__main__':
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
                     # , configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C')
+                    # Run ANALYZE TABLE before each benchmarking round to keep
+                    # optimizer statistics fresh between rounds.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     config.set_storage(
                         storageConfiguration = 'mariadb'
                         )
@@ -413,6 +422,9 @@ if __name__ == '__main__':
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='YugabyteDB', alias='DBMS D')
                     config.monitoring_sut = False # should not be monitored since only dummy
+                    # YSQL has no CHECKPOINT; ANALYZE VERBOSE refreshes
+                    # planner statistics before each benchmarking round.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
                         )
@@ -473,6 +485,9 @@ if __name__ == '__main__':
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
+                    # Pebble has no user-invokable checkpoint; ANALYZE
+                    # refreshes planner statistics before each round.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(
@@ -527,6 +542,10 @@ if __name__ == '__main__':
                     name_format = 'TiDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
+                    # TiKV has no user-invokable checkpoint; ANALYZE TABLE
+                    # forces fresh histograms before each round instead of
+                    # relying on TiDB's async auto-analyze job timing.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(
@@ -630,6 +649,10 @@ if __name__ == '__main__':
                         docker = 'Dragonfly'
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker=docker, alias='DBMS KV', worker=num_worker_inc_replicas)
+                    config.path_experiment_docker = 'Dragonfly'          # reset script lives here regardless of single/cluster mode
+                    # Dragonfly is a pure in-memory store: reset is a SAVE
+                    # snapshot, there is no planner/statistics concept.
+                    config.set_benchmark_resetscript(['save-snapshot.sh'])
                     BEXHOMA_DBMS_TYPE = "redis"
                     if num_worker > 0:
                         #config.sut_template = "deploymenttemplate-DragonflyCluster.yml"
@@ -761,6 +784,9 @@ if __name__ == '__main__':
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS F', worker=num_worker)
+                    # CHECKPOINT only reaches the coordinator; VACUUM and
+                    # ANALYZE refresh planner statistics before each round.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(

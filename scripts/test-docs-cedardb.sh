@@ -56,7 +56,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB monitoring  sf=3"
 
 #### YCSB Scale Loading (Example-YCSB.md)
 # -dbms CedarDB                 DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2                       throughput target as a multiple of the base ops/s

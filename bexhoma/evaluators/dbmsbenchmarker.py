@@ -116,7 +116,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         loading_times = {}
         for conn_name, connection in self.evaluation.benchmarks.dbms.items():
             loading_times[conn_name] = {}
-            for time_key in ('timeGenerate', 'timeIngesting', 'timeSchema', 'timeIndex', 'timeLoad'):
+            for time_key in ('time_generated', 'time_ingested', 'time_schema', 'time_index', 'time_loading'):
                 if time_key in connection.connectiondata:
                     loading_times[conn_name][time_key] = connection.connectiondata[time_key]
         df = pd.DataFrame(loading_times)
@@ -448,21 +448,20 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         return df_aggregated_reduced
     def get_summary_benchmark_per_connection(self):
         """
-        Returns benchmarking results with one row per pod, filtered to the key
-        display columns.
+        Returns benchmarking results with one row per pod.
 
-        Applies :meth:`benchmarking_set_datatypes` and selects the columns used
-        for the per-connection summary table (experiment run, terminals, target,
-        client, child, time, errors, throughput, goodput, efficiency, and
-        latency percentiles), then sorts by ``(experiment_run, client, child)``.
+        Drops the ``code`` and ``connection`` columns, then naturally sorts by
+        the connection name.
 
-        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or ``None``
-                 if there are no benchmarking results.
-        :rtype: pandas.DataFrame or None
+        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
         """
         df = self.get_df_benchmarking()
         df.drop('code', axis=1, inplace=True, errors='ignore')
         df.drop('connection', axis=1, inplace=True, errors='ignore')
+        df = df.rename_axis(index="DBMS")
+        df = df.reindex(index=natural_sort(df.index))
         return df
     def get_summary_loading_per_run(self):
         """

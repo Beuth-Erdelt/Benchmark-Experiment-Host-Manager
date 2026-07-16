@@ -23,7 +23,7 @@
 
 bexhoma ycsb `
   -dbms PGBouncer               <# DBMS under test #> `
-  -sf 16                        <# scaling factor (number of records x 1000) #> `
+  -sf 32                        <# scaling factor (number of records in millions) #> `
   -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 11                      <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -37,7 +37,7 @@ bexhoma ycsb `
   -xnpp 4                       <# number of PGBouncer pool instances #> `
   -xnpi 128                     <# pool size (incoming connections) #> `
   -xnpo 64                      <# pool size (outgoing connections) #> `
-  -xop 16                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 16                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -47,15 +47,16 @@ bexhoma ycsb `
   -rss 80Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnp $BEXHOMA_NODE_LOAD       <# schedule pooling pods on this node (same as loaders) #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=16  nbp=16"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=32  nbp=16"
 
 
 bexhoma ycsb `
   -dbms PGBouncer               <# DBMS under test #> `
-  -sf 16                        <# scaling factor (number of records x 1000) #> `
+  -sf 16                        <# scaling factor (number of records in millions) #> `
   -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 11                      <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -69,7 +70,7 @@ bexhoma ycsb `
   -xnpp 4                       <# number of PGBouncer pool instances #> `
   -xnpi 128                     <# pool size (incoming connections) #> `
   -xnpo 64                      <# pool size (outgoing connections) #> `
-  -xop 16                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 16                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `

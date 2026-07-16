@@ -100,31 +100,30 @@ spec:
   clusterIP: None
   publishNotReadyAddresses: true
   selector: {app: bexhoma, component: tikv, configuration: default, experiment: default}
----
 # --- Disruption budgets -------------------------------------------------------
 # maxUnavailable: 1 is replica-count agnostic: with >=3 PD/TiKV pods it keeps a
 # quorum / majority of stores available during voluntary disruptions (node
 # drains, upgrades). With 1-2 replicas you have no HA anyway - prefer an ODD
 # PD count (1, 3, 5) so etcd can form a majority.
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: bexhoma-pd
-  labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels: {app: bexhoma, component: pd, configuration: default, experiment: default}
----
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: bexhoma-tikv
-  labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
+# apiVersion: policy/v1
+# kind: PodDisruptionBudget
+# metadata:
+#   name: bexhoma-pd
+#   labels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+# spec:
+#   maxUnavailable: 1
+#   selector:
+#     matchLabels: {app: bexhoma, component: pd, configuration: default, experiment: default}
+# ---
+# apiVersion: policy/v1
+# kind: PodDisruptionBudget
+# metadata:
+#   name: bexhoma-tikv
+#   labels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
+# spec:
+#   maxUnavailable: 1
+#   selector:
+#     matchLabels: {app: bexhoma, component: tikv, configuration: default, experiment: default}
 ---
 # --- PD (Placement Driver / etcd) StatefulSet --------------------------------
 apiVersion: apps/v1
@@ -576,6 +575,12 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop: ["ALL"]
+            # DAC_OVERRIDE is required here: the startup script yum-installs
+            # the mysql client at container start, and without this capability
+            # root cannot bypass the restrictive mode bits on /usr/lib64 in the
+            # base image, so rpm's cpio unpack fails with mkdir/symlink
+            # permission errors (see https://bugzilla.redhat.com/show_bug.cgi?id=1885103).
+            add: ["DAC_OVERRIDE"]
         # NOTE: the original limits.memory was 1Gi, which is REJECTED because it
         # is below the 16Gi request. Raised to 16Gi. The 100m CPU request/limit
         # is very low for a SQL layer under load - raise it for real benchmarks.

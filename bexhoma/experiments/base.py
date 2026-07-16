@@ -191,6 +191,7 @@ class ExperimentBase():
         self.maintaining_active = False                                 # Bool, tells if maintaining is active
         self.num_maintaining = 0                                        # number of maintaining pods in parallel
         self.num_maintaining_pods = 0                                   # number of maintaining pods in total
+        self.resetscript_active = False                                 # Bool, tells if configured reset scripts should run
         self.script = ""                                                # name of the script collection for creating schema
         self.initscript = []                                            # list of scripts for creating schema
         self.indexing = ""                                              # name of the script collection for creating indexes
@@ -470,7 +471,9 @@ class ExperimentBase():
         request_node_name = args.request_node_name
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
+        request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
+        self.resetscript_active = args.activate_reset
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
         multi_tenant_volume = args.multi_tenant_volume
@@ -570,8 +573,15 @@ class ExperimentBase():
                     'cpu': cpu_type,
                     'gpu': '',
                     'kubernetes.io/hostname': request_node_name
-                })        
+                })
             self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        # fix pooling
+        if request_node_pooling:
+            self.set_resources(
+                nodeSelector_pool = {
+                    'kubernetes.io/hostname': request_node_pooling
+                })
+            self.workload['info'] = self.workload['info']+"\nPooling is fixed to {}.".format(request_node_pooling)
         if numRun > 1:
             self.workload['info'] = self.workload['info']+"\nEach query is repeated {} times.".format(numRun)
         if skip_loading:
@@ -1646,7 +1656,7 @@ class ExperimentBase():
                             for config_tmp in self.configurations:
                                 config_tmp.tenant_started_to_index = True
                                 try:
-                                    config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='indexed')
+                                    config_tmp.loader.load_data(scripts=config_tmp.indexscript, time_offset=config_tmp.time_loading, time_start_int=config_tmp.time_loading_start, script_type='index')
                                 except RuntimeError as exc:
                                     print("{:30s}: index script upload failed: {}".format(config_tmp.configuration, exc))
                                     config_tmp.loading_finished = True
@@ -1744,6 +1754,11 @@ class ExperimentBase():
                             benchmark_index = bm_idx + 1
                             connection = f"{config.configuration}-{experimentRun}-{client}-{benchmark_index}"
                             print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
+                            reset_seconds = 0
+                            if self.resetscript_active and bench_entry.get("resetscript"):
+                                reset_seconds = config.loader.exec_reset_script(
+                                    'reset_{}_{}_{}'.format(experimentRun, client, benchmark_index),
+                                    bench_entry["resetscript"])
                             if bench_entry.get("parameters"):
                                 # Assign directly to avoid the side effect in
                                 # set_benchmarking_parameters() that overwrites
@@ -1757,6 +1772,7 @@ class ExperimentBase():
                                 parallelism=bench_entry["parallelism"],
                                 benchmark_run=str(benchmark_index),
                                 template_override=bench_entry.get("template", ""),
+                                reset_seconds=reset_seconds,
                             )
                         _benchmark_just_submitted = True
                     elif not _use_experiment_dict and len(config.benchmark_list) > 0:
@@ -1780,13 +1796,17 @@ class ExperimentBase():
                             self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
                             print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+                        reset_seconds = 0
+                        if self.resetscript_active and config.resetscript:
+                            reset_seconds = config.loader.exec_reset_script(
+                                'reset_{}_{}'.format(experimentRun, client), config.resetscript)
                         if len(config.benchmarking_parameters_list) > 0:
                             benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
                             print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
                             config.set_benchmarking_parameters(**benchmarking_parameters)
                         connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
                         print("{:30s}: start benchmarking".format(connection))
-                        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism)
+                        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds)
                         _benchmark_just_submitted = True
                     else:
                         # no list element left
@@ -2635,16 +2655,16 @@ class ExperimentBase():
             times = {}
             for c, connection in evaluate.benchmarks.dbms.items():
                 times[c]={}
-                if 'timeGenerate' in connection.connectiondata:
-                    times[c]['timeGenerate'] = connection.connectiondata['timeGenerate']
-                if 'timeIngesting' in connection.connectiondata:
-                    times[c]['timeIngesting'] = connection.connectiondata['timeIngesting']
-                if 'timeSchema' in connection.connectiondata:
-                    times[c]['timeSchema'] = connection.connectiondata['timeSchema']
-                if 'timeIndex' in connection.connectiondata:
-                    times[c]['timeIndex'] = connection.connectiondata['timeIndex']
-                if 'timeLoad' in connection.connectiondata:
-                    times[c]['timeLoad'] = connection.connectiondata['timeLoad']
+                if 'time_generated' in connection.connectiondata:
+                    times[c]['time_generated'] = connection.connectiondata['time_generated']
+                if 'time_ingested' in connection.connectiondata:
+                    times[c]['time_ingested'] = connection.connectiondata['time_ingested']
+                if 'time_schema' in connection.connectiondata:
+                    times[c]['time_schema'] = connection.connectiondata['time_schema']
+                if 'time_index' in connection.connectiondata:
+                    times[c]['time_index'] = connection.connectiondata['time_index']
+                if 'time_loading' in connection.connectiondata:
+                    times[c]['time_loading'] = connection.connectiondata['time_loading']
             df = pd.DataFrame(times)
             df = df.reindex(sorted(df.columns), axis=1)
             df = df.round(2).T
