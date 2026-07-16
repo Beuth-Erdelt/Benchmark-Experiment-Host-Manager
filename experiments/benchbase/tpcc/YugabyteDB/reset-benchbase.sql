@@ -6,7 +6,10 @@
 -- Purpose: Pre-benchmark reset for Benchbase TPC-C on YugabyteDB. YSQL does
 --          not implement CHECKPOINT, so only ANALYZE VERBOSE runs here to
 --          refresh planner statistics on every TPC-C table before each round.
+--          \timing reports elapsed time per statement on stdout; VERBOSE
+--          reports row counts as NOTICEs, which ysqlsh sends to stderr.
 
+\timing on
 ANALYZE VERBOSE customer;
 ANALYZE VERBOSE district;
 ANALYZE VERBOSE history;

@@ -6,16 +6,19 @@
 -- Purpose: Pre-benchmark reset for Benchbase TPC-C on Citus. CHECKPOINT only
 --          flushes the coordinator node reached by this connection; worker
 --          nodes checkpoint on their own schedule. VACUUM ANALYZE refreshes
---          planner statistics on every TPC-C table before each round.
+--          planner statistics on every TPC-C table before each round. \timing
+--          reports elapsed time per statement on stdout; VERBOSE reports
+--          page/tuple counts as NOTICEs, which psql sends to stderr.
 
+\timing on
 CHECKPOINT;
 
-VACUUM ANALYZE customer;
-VACUUM ANALYZE district;
-VACUUM ANALYZE history;
-VACUUM ANALYZE warehouse;
-VACUUM ANALYZE stock;
-VACUUM ANALYZE new_order;
-VACUUM ANALYZE oorder;
-VACUUM ANALYZE order_line;
-VACUUM ANALYZE item;
+VACUUM VERBOSE ANALYZE customer;
+VACUUM VERBOSE ANALYZE district;
+VACUUM VERBOSE ANALYZE history;
+VACUUM VERBOSE ANALYZE warehouse;
+VACUUM VERBOSE ANALYZE stock;
+VACUUM VERBOSE ANALYZE new_order;
+VACUUM VERBOSE ANALYZE oorder;
+VACUUM VERBOSE ANALYZE order_line;
+VACUUM VERBOSE ANALYZE item;

@@ -5,7 +5,10 @@
 -- See LICENSE for details.
 -- Purpose: Pre-benchmark reset for Benchbase TPC-C on PostgreSQL.
 --          Flushes dirty pages to disk and collects fresh statistics so each
---          benchmarking round starts from a consistent, cold state.
+--          benchmarking round starts from a consistent, cold state. \timing
+--          reports elapsed time per statement on stdout; VERBOSE reports
+--          page/tuple counts as NOTICEs, which psql sends to stderr.
 
+\timing on
 CHECKPOINT;
-VACUUM ANALYZE;
+VACUUM VERBOSE ANALYZE;

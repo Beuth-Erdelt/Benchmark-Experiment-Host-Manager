@@ -6,8 +6,11 @@
 -- Purpose: Pre-benchmark reset for YCSB on Citus. CHECKPOINT only flushes
 --          the coordinator node reached by this connection; worker nodes
 --          checkpoint on their own schedule. VACUUM and ANALYZE refresh
---          planner statistics on usertable before each round.
+--          planner statistics on usertable before each round. \timing
+--          reports elapsed time per statement on stdout; VERBOSE reports
+--          page/tuple counts as NOTICEs, which psql sends to stderr.
 
+\timing on
 CHECKPOINT;
-VACUUM usertable;
-ANALYZE usertable;
+VACUUM VERBOSE usertable;
+ANALYZE VERBOSE usertable;

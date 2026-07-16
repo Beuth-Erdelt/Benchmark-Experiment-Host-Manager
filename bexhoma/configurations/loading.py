@@ -821,9 +821,9 @@ class LoadingCoordinator:
                     tenant_infix = f'-{tenant_tag}' if tenant_tag else ''
                     log_path = (
                         cfg.experiment.path
-                        + '/{app}-reset-{configuration}{tenant}-{filename}-{database}'
+                        + '/{app}-{script_type}-{configuration}{tenant}-{filename}-{database}'
                           '{ext}{suffix}'.format(
-                              app=cfg.appname, configuration=cfg.configuration,
+                              app=cfg.appname, script_type=script_type, configuration=cfg.configuration,
                               tenant=tenant_infix, filename=filename, database=database,
                               ext=file_extension.lower(), suffix=suffix).lower())
                     with open(log_path, 'w') as fh:

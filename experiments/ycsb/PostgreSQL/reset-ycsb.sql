@@ -5,7 +5,10 @@
 -- See LICENSE for details.
 -- Purpose: Pre-benchmark reset for YCSB on PostgreSQL. Flushes dirty pages
 --          to disk and collects fresh statistics on usertable so each
---          benchmarking round starts from a consistent, cold state.
+--          benchmarking round starts from a consistent, cold state. \timing
+--          reports elapsed time per statement on stdout; VERBOSE reports
+--          page/tuple counts as NOTICEs, which psql sends to stderr.
 
+\timing on
 CHECKPOINT;
-VACUUM ANALYZE usertable;
+VACUUM VERBOSE ANALYZE usertable;
