@@ -2087,16 +2087,43 @@ class Kubernetes():
 
     def stop_dashboard(self, app='', component='dashboard'):
         """
-        Stop the dashboard Deployment and its Service.
+        Stop the dashboard Deployment and its Service if running.
 
         :param app: ``app`` label value.  Defaults to ``self.appname`` via sub-calls.
         :param component: ``component`` label value.  Defaults to ``dashboard``.
         """
         self.logger.debug('Kubernetes.stop_dashboard()')
+        if not len(self.get_dashboard_pod_name()):
+            print(f"{'Dashboard':30s}: is not running")
+            return
+        print(f"{'Dashboard':30s}: is stopping...", end="", flush=True)
         for deployment in self.get_deployments(app=app, component=component):
             self.delete_deployment(deployment)
         for service in self.get_services(app=app, component=component):
             self.delete_service(service)
+        while self.is_dashboard_running():
+            self.wait(10, silent=True)
+        print("done")
+
+    def stop_messagequeue(self, app='', component='messagequeue'):
+        """
+        Stop the message-queue Deployment and its Service if running.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname`` via sub-calls.
+        :param component: ``component`` label value.  Defaults to ``messagequeue``.
+        """
+        self.logger.debug('Kubernetes.stop_messagequeue()')
+        if not self.is_messagequeue_running(component=component):
+            print(f"{'Message Queue':30s}: is not running")
+            return
+        print(f"{'Message Queue':30s}: is stopping...", end="", flush=True)
+        for deployment in self.get_deployments(app=app, component=component):
+            self.delete_deployment(deployment)
+        for service in self.get_services(app=app, component=component):
+            self.delete_service(service)
+        while self.is_messagequeue_running(component=component):
+            self.wait(10, silent=True)
+        print("done")
 
     def stop_maintaining(self, experiment='', configuration=''):
         """

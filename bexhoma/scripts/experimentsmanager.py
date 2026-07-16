@@ -77,6 +77,7 @@ def manage():
     # argparse
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=EXPERIMENT_MODES)
+    parser.add_argument('action', help='for mode dashboard/messagequeue: start or shut down the component; omit to port-forward the dashboard', nargs='?', choices=['start', 'shutdown'], default=None)
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-fe', '--force-evaluate', help='force a re-evaluation of the results', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
@@ -147,7 +148,18 @@ def manage():
                 experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
-        cluster.forward_dashboard_ports()
+        if args.action == 'start':
+            cluster.start_dashboard()
+        elif args.action == 'shutdown':
+            cluster.stop_dashboard()
+        else:
+            cluster.forward_dashboard_ports()
+    elif args.mode == 'messagequeue':
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        if args.action == 'shutdown':
+            cluster.stop_messagequeue()
+        else:
+            cluster.start_messagequeue()
     elif args.mode == 'localdashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         import sys
