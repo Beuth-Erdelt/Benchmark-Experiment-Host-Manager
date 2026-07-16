@@ -17,7 +17,9 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white)
-![Workloads](https://img.shields.io/badge/Workloads-TPC--C%20%7C%20TPC--H%20%7C%20TPC--DS%20%7C%20YCSB-informational)
+
+![DB Workloads](https://img.shields.io/badge/DB%20Workloads-TPC--C%20%7C%20TPC--H%20%7C%20TPC--DS%20%7C%20YCSB-informational)
+![Micro-Benchmarks](https://img.shields.io/badge/Micro--Benchmarks-fio%20%7C%20sysbench%20%7C%20netperf%20%7C%20sockperf-informational)
 
 # Benchmark Experiment Host Manager (Bexhoma)
 
