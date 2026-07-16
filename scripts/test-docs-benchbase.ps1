@@ -86,6 +86,27 @@ bexhoma benchbase `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
 
 
+#### Benchbase Reset Script (Example-Benchbase.md)
+bexhoma benchbase `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 4                         <# scaling factor (controls database size) #> `
+  -xsd 2                        <# benchmark duration in minutes #> `
+  -xtb 1024                     <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 1                       <# throughput target as a multiple of the base ops/s #> `
+  -nc 2                         <# number of repeated runs per configuration -- reset runs before each #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 40                       <# threads per benchmarking pod (10x warehouses) #> `
+  -ar                           <# activate configured reset scripts before each round #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_reset.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset script  sf=4  nc=2"
+
+
 #### Benchbase Keying and Thinking Time (Example-Benchbase.md)
 bexhoma benchbase `
   -dbms PostgreSQL              <# DBMS under test #> `

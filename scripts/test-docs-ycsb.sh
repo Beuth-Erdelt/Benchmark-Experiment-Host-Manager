@@ -231,6 +231,49 @@ bexhoma ycsb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading patch  sf=1  nlp=1"
 
 
+#### YCSB Reset Script (Example-YCSB.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (number of records x 1000)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 1024                     base ops/s used to compute throughput targets
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -xnlf 1                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1,2                       two rounds so the reset script runs twice
+# -nlp 1                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep
+# -nbt 8                        threads per benchmarking pod
+# -ar                           activate configured reset scripts before each round
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xwl a \
+  -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 1 \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 8 \
+  -ar \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_postgresql_reset.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset script  sf=1  ne=1,2"
+
+
 ###########################################
 ############## All Workloads ##############
 ###########################################

@@ -1292,6 +1292,148 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+## Reset Scripts
+
+For repeated benchmarking rounds against the same database, bloat and stale planner statistics can drift the result away from the first round.
+Bexhoma can run a pre-benchmark reset script (`CHECKPOINT` + `VACUUM ANALYZE` on `usertable` for PostgreSQL) before each round to start every round from a comparable state.
+The feature is off by default; pass `-ar` to activate it.
+
+Example (`-ne 1,2` sweeps two rounds, so the reset script runs twice):
+```bash
+bexhoma ycsb \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xwl a \
+  -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 1 \
+  -nlt 8 \
+  -nbp 1 \
+  -nbt 8 \
+  -ar \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_postgresql_reset.log
+```
+
+The reset script's own stdout/stderr is saved next to the other per-DBMS SQL script logs in the result folder, one pair of files per round, e.g. `bexhoma-reset_1_1_1-postgresql-1-reset-ycsb-postgres.sql.log` / `.error`.
+
+The result looks something like
+
+docs_ycsb_postgresql_reset.log
+```markdown
+## Show Summary
+
+### Workload
+YCSB SF=1
+* Type: ycsb
+* Duration: 41s 
+* Code: 1784200013
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 1000.
+  * Batch size is ''.
+  * Target is based on multiples of '1024'.
+  * Factors for loading are [1].
+  * Factors for benchmarking are [1].
+  * Experiment uses bexhoma version 0.10.4.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker19.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [8] threads, split into [1] pods.
+  * Benchmarking is tested with [8] threads, split into [1] pods.
+  * Benchmarking is run as [1, 2] times the number of benchmarking pods.
+  * Experiment is run once.
+
+### Connections
+* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
+  * RAM:2164173213696
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-111-generic
+  * node:cl-worker36
+  * disk:1062778
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * eval_parameters
+    * code:1784200013
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1784200013-8c55969b5-kb4qr: 0 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: ycsb (2 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: ycsb (2 pods)
+
+### Loading
+
+#### Per Connection
+
+| connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| PostgreSQL-1-1-0-1-1 |             1.00 |      8.00 |  1024.00 |        1.00 |         0.00 |                         1832.44 |                  546.00 |               1000.00 |                                87.00 | 1.00 |                6.60 |
+
+#### Per Run
+
+| DBMS           |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| PostgreSQL-1-1 |             1.00 |      8.00 |  1024.00 |        1.00 |         0.00 | 1.00 |                6.60 |                         1832.44 |                  546.00 |               1000.00 |                                87.00 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS                 | phase            | job                | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:---------------------|:-----------------|:-------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       1 |         8 |     1024 |           1 |            0 |                         1774.29 |                  563.00 |               502  |                               79.00 |               498  |                               193.00 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       1 |         4 |      512 |           2 |            0 |                          912.06 |                  548.00 |               251  |                               84.00 |               249  |                               201.00 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       2 |         4 |      512 |           2 |            0 |                          909.71 |                  550.00 |               249  |                               88.00 |               251  |                               197.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------------|:-----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |         8 |     1024 |               1 |           1 |            0 |                         1774.29 |                  563.00 |                502 |                               79.00 |                498 |                               193.00 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |         8 |      512 |               1 |           2 |            0 |                         1821.77 |                  550.00 |                500 |                               88.00 |                500 |                               201.00 |
+
+#### Reset
+
+| phase            | job                |   experiment_run |   client |   benchmark_run |   time_reset |
+|:-----------------|:--------------------|------------------:|---------:|-----------------:|-------------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |                1 |         0.00 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        2 |                1 |         0.00 |
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column
+```
+
+At this scale (SF=1, 1000 rows) `CHECKPOINT` and `VACUUM ANALYZE` complete in well under a second, so `time_reset` rounds to `0`.
+On a larger, longer-running dataset this section is where you'd see the reset cost start to matter relative to the benchmarking duration itself.
+
 ## All Workloads
 
 ### Workload A
