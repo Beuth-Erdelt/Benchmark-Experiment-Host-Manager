@@ -127,7 +127,7 @@ of 2 anyway (NVMe queues, io_uring, RAID controllers).
 
 ##### Show results
 
-docs_hardware_fio_depth_sweep.log
+[docs_hardware_fio_depth_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_fio_depth_sweep_summary.md)
 ```markdown
 ## Show Summary
 
@@ -541,7 +541,7 @@ bexhoma hardware \
 
 ##### Show results
 
-docs_hardware_fio_blocksize_sweep.log
+[docs_hardware_fio_blocksize_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_fio_blocksize_sweep_summary.md)
 ```markdown
 ## Show Summary
 
@@ -917,7 +917,7 @@ bexhoma hardware \
 
 ##### Show results
 
-docs_hardware_fio_random_page_cost.log
+[docs_hardware_fio_random_page_cost.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_fio_random_page_cost_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1066,7 +1066,7 @@ bexhoma hardware \
 
 ##### Show results
 
-docs_hardware_fio_wal_sync_fsync.log
+[docs_hardware_fio_wal_sync_fsync.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_fio_wal_sync_fsync_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1219,7 +1219,7 @@ a fixed parameter in commands 14-16.
 
 ##### Show results
 
-docs_hardware_sysbench_cpu_quota_calibration.log
+[docs_hardware_sysbench_cpu_quota_calibration.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sysbench_cpu_quota_calibration_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1400,7 +1400,7 @@ them (`pod_count`) changes.
 
 ##### Show results
 
-docs_hardware_sysbench_nbp_overhead_sweep.log
+[docs_hardware_sysbench_nbp_overhead_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sysbench_nbp_overhead_sweep_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1569,7 +1569,7 @@ against.
 
 ##### Show results
 
-docs_hardware_sysbench_ne_saturation_sweep.log
+[docs_hardware_sysbench_ne_saturation_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sysbench_ne_saturation_sweep_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1771,7 +1771,7 @@ from command 13 at the same thread count.
 
 ##### Show results
 
-docs_hardware_sysbench_noisy_neighbor.log
+[docs_hardware_sysbench_noisy_neighbor.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sysbench_noisy_neighbor_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1977,7 +1977,7 @@ request/reply with no think time, for 60 seconds — the baseline commands 18 an
 
 ##### Show results
 
-docs_hardware_netperf_postgresql_query_latency.log
+[docs_hardware_netperf_postgresql_query_latency.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_netperf_postgresql_query_latency_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2092,7 +2092,7 @@ round per value.
 
 ##### Show results
 
-docs_hardware_netperf_postgresql_connection_scaling_sweep.log
+[docs_hardware_netperf_postgresql_connection_scaling_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_netperf_postgresql_connection_scaling_sweep_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2281,7 +2281,7 @@ database engine in the loop.
 
 ##### Show results
 
-docs_hardware_netperf_postgresql_pod_scaling_sweep.log
+[docs_hardware_netperf_postgresql_pod_scaling_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_netperf_postgresql_pod_scaling_sweep_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2449,7 +2449,7 @@ points to contention on specific servers.
 
 ##### Show results
 
-docs_hardware_sockperf_pod_scaling_sweep.log
+[docs_hardware_sockperf_pod_scaling_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sockperf_pod_scaling_sweep_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2673,7 +2673,7 @@ translates to for a single connection — the baseline command 23 repeats at gro
 
 ##### Show results
 
-docs_hardware_sockperf_postgresql_query_latency.log
+[docs_hardware_sockperf_postgresql_query_latency.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sockperf_postgresql_query_latency_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2801,7 +2801,7 @@ contention to separate out).
 
 ##### Show results
 
-docs_hardware_sockperf_postgresql_streaming_throughput.log
+[docs_hardware_sockperf_postgresql_streaming_throughput.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sockperf_postgresql_streaming_throughput_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2928,7 +2928,7 @@ latency degrade first?
 
 ##### Show results
 
-docs_hardware_sockperf_postgresql_latency_scaling_sweep.log
+[docs_hardware_sockperf_postgresql_latency_scaling_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sockperf_postgresql_latency_scaling_sweep_summary.md)
 ```markdown
 ## Show Summary
 

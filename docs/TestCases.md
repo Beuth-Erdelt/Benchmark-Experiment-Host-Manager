@@ -48,7 +48,7 @@ bexhoma tpch \
 
 yields (after ca. 120 minutes) something like
 
-testcase_tpch_compare.log
+[testcase_tpch_compare.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_compare_summary.md)
 ```markdown
 ## Show Summary
 
@@ -248,7 +248,7 @@ bexhoma tpch \
 
 yields (after ca. 10 minutes) something like
 
-testcase_tpch_postgresql_1.log
+[testcase_tpch_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -393,7 +393,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_postgresql_2.log
+[testcase_tpch_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -578,7 +578,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_postgresql_3.log
+[testcase_tpch_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -872,7 +872,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_postgresql_ramdisk.log
+[testcase_tpch_postgresql_ramdisk.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_ramdisk_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1078,7 +1078,7 @@ bexhoma tpch \
 
 yields (after ca. 10 minutes) something like
 
-testcase_tpch_mysql_1.log
+[testcase_tpch_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1222,7 +1222,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_mysql_2.log
+[testcase_tpch_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1406,7 +1406,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_mysql_3.log
+[testcase_tpch_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1660,7 +1660,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_mysql_ramdisk.log
+[testcase_tpch_mysql_ramdisk.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_ramdisk_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1859,7 +1859,7 @@ bexhoma tpch \
 
 yields (after ca. 10 minutes) something like
 
-testcase_tpch_mariadb_1.log
+[testcase_tpch_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2004,7 +2004,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_mariadb_2.log
+[testcase_tpch_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2188,7 +2188,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_mariadb_3.log
+[testcase_tpch_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2482,7 +2482,7 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpch_mariadb_ramdisk.log
+[testcase_tpch_mariadb_ramdisk.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_ramdisk_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2677,7 +2677,7 @@ bexhoma tpcds \
 
 yields (after ca. 520 minutes) something like
 
-testcase_tpcds_compare.log
+[testcase_tpcds_compare.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_compare_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2962,7 +2962,7 @@ bexhoma tpcds \
 
 yields (after ca. 10 minutes) something like
 
-testcase_tpcds_postgresql_1.log
+[testcase_tpcds_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3189,7 +3189,7 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpcds_postgresql_2.log
+[testcase_tpcds_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3460,7 +3460,7 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpcds_postgresql_3.log
+[testcase_tpcds_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3843,7 +3843,7 @@ bexhoma tpcds \
 
 yields (after ca. 10 minutes) something like
 
-testcase_tpcds_mysql_1.log
+[testcase_tpcds_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3988,7 +3988,7 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpcds_mysql_2.log
+[testcase_tpcds_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -4143,7 +4143,7 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpcds_mysql_3.log
+[testcase_tpcds_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -4475,7 +4475,7 @@ bexhoma tpcds \
 
 yields (after ca. 10 minutes) something like
 
-testcase_tpcds_mariadb_1.log
+[testcase_tpcds_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -4708,7 +4708,7 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpcds_mariadb_2.log
+[testcase_tpcds_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -4973,7 +4973,7 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpcds_mariadb_3.log
+[testcase_tpcds_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -5358,7 +5358,7 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpcds_monetdb_1.log
+[testcase_tpcds_monetdb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -5581,7 +5581,7 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-testcase_tpcds_monetdb_2.log
+[testcase_tpcds_monetdb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -5843,7 +5843,7 @@ bexhoma tpcds \
 
 yields (after ca. 20 minutes) something like
 
-testcase_tpcds_monetdb_3.log
+[testcase_tpcds_monetdb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -6152,7 +6152,7 @@ bexhoma tpcds \
 
 yields (after ca. 110 minutes) something like
 
-testcase_tpcds_monetdb_4.log
+[testcase_tpcds_monetdb_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_4_summary.md)
 ```markdown
 ## Show Summary
 
@@ -6368,7 +6368,7 @@ bexhoma tpcds \
 
 yields (after ca. 360 minutes) something like
 
-testcase_tpcds_monetdb_5.log
+[testcase_tpcds_monetdb_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_5_summary.md)
 ```markdown
 ## Show Summary
 
@@ -6811,7 +6811,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_postgresql_1.log
+[testcase_benchbase_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -6914,7 +6914,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_postgresql_2.log
+[testcase_benchbase_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -7038,7 +7038,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_postgresql_3.log
+[testcase_benchbase_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -7172,7 +7172,7 @@ bexhoma benchbase \
 
 yields (after ca. 30 minutes) something like
 
-testcase_benchbase_postgresql_4.log
+[testcase_benchbase_postgresql_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_4_summary.md)
 ```markdown
 ## Show Summary
 
@@ -7454,7 +7454,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_mysql_1.log
+[testcase_benchbase_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -7556,7 +7556,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_mysql_2.log
+[testcase_benchbase_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -7663,7 +7663,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_mysql_3.log
+[testcase_benchbase_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -7796,7 +7796,7 @@ bexhoma benchbase \
 
 yields (after ca. 30 minutes) something like
 
-testcase_benchbase_mysql_4.log
+[testcase_benchbase_mysql_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_4_summary.md)
 ```markdown
 ## Show Summary
 
@@ -8039,7 +8039,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_mariadb_1.log
+[testcase_benchbase_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -8141,7 +8141,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_mariadb_2.log
+[testcase_benchbase_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -8267,7 +8267,7 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-testcase_benchbase_mariadb_3.log
+[testcase_benchbase_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -8400,7 +8400,7 @@ bexhoma benchbase \
 
 yields (after ca. 30 minutes) something like
 
-testcase_benchbase_mariadb_4.log
+[testcase_benchbase_mariadb_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_4_summary.md)
 ```markdown
 ## Show Summary
 
@@ -8695,7 +8695,7 @@ bexhoma hammerdb \
 
 yields (after ca. 10 minutes)
 
-testcase_hammerdb_postgresql_1.log
+[testcase_hammerdb_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -8796,7 +8796,7 @@ bexhoma hammerdb \
 
 yields (after ca. 15 minutes)
 
-testcase_hammerdb_postgresql_2.log
+[testcase_hammerdb_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -8931,7 +8931,7 @@ bexhoma hammerdb \
 
 yields (after ca. 60 minutes)
 
-testcase_hammerdb_postgresql_3.log
+[testcase_hammerdb_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -9213,7 +9213,7 @@ bexhoma hammerdb \
 
 yields (after ca. 10 minutes)
 
-testcase_hammerdb_mysql_1.log
+[testcase_hammerdb_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -9319,7 +9319,7 @@ bexhoma hammerdb \
 
 yields (after ca. 15 minutes)
 
-testcase_hammerdb_mysql_2.log
+[testcase_hammerdb_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -9457,7 +9457,7 @@ bexhoma hammerdb \
 
 yields (after ca. 60 minutes)
 
-testcase_hammerdb_mysql_3.log
+[testcase_hammerdb_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -9677,7 +9677,7 @@ bexhoma hammerdb \
 
 yields (after ca. 10 minutes)
 
-testcase_hammerdb_mariadb_1.log
+[testcase_hammerdb_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -9778,7 +9778,7 @@ bexhoma hammerdb \
 
 yields (after ca. 15 minutes)
 
-testcase_hammerdb_mariadb_2.log
+[testcase_hammerdb_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -9913,7 +9913,7 @@ bexhoma hammerdb \
 
 yields (after ca. 60 minutes)
 
-testcase_hammerdb_mariadb_3.log
+[testcase_hammerdb_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -10198,7 +10198,7 @@ bexhoma ycsb \
 
 yields (after ca. 15 minutes) something like
 
-testcase_ycsb_postgresql_1.log
+[testcase_ycsb_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -10403,7 +10403,7 @@ bexhoma ycsb \
 
 yields (after ca. 10 minutes) something like
 
-testcase_ycsb_postgresql_2.log
+[testcase_ycsb_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -10555,7 +10555,7 @@ bexhoma ycsb \
 
 yields (after ca. 15 minutes) something like
 
-testcase_ycsb_postgresql_3.log
+[testcase_ycsb_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -10851,7 +10851,7 @@ bexhoma ycsb \
 
 yields (after ca. 5 minutes) something like
 
-testcase_ycsb_postgresql_4.log
+[testcase_ycsb_postgresql_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_4_summary.md)
 ```markdown
 ## Show Summary
 
@@ -10947,7 +10947,7 @@ bexhoma ycsb \
 
 yields (after ca. 10 minutes) something like
 
-testcase_ycsb_postgresql_5.log
+[testcase_ycsb_postgresql_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_5_summary.md)
 ```markdown
 ## Show Summary
 
@@ -11105,7 +11105,7 @@ bexhoma ycsb \
 
 yields (after ca. 165 minutes) something like
 
-testcase_ycsb_mysql_1.log
+[testcase_ycsb_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -11299,7 +11299,7 @@ bexhoma ycsb \
 
 yields (after ca. 310 minutes) something like
 
-testcase_ycsb_mysql_2.log
+[testcase_ycsb_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -11443,7 +11443,7 @@ bexhoma ycsb \
 
 yields (after ca. 240 minutes) something like
 
-testcase_ycsb_mysql_3.log
+[testcase_ycsb_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -11713,7 +11713,7 @@ bexhoma ycsb \
 
 yields (after ca. 35 minutes) something like
 
-testcase_ycsb_mysql_4.log
+[testcase_ycsb_mysql_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_4_summary.md)
 ```markdown
 ## Show Summary
 
@@ -11827,7 +11827,7 @@ bexhoma ycsb \
 
 yields (after ca. 70 minutes) something like
 
-testcase_ycsb_mysql_5.log
+[testcase_ycsb_mysql_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_5_summary.md)
 ```markdown
 ## Show Summary
 
@@ -11978,7 +11978,7 @@ bexhoma ycsb \
 
 yields (after ca. 45 minutes) something like
 
-testcase_ycsb_mariadb_1.log
+[testcase_ycsb_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -12136,7 +12136,7 @@ bexhoma ycsb \
 
 yields (after ca. 70 minutes) something like
 
-testcase_ycsb_mariadb_2.log
+[testcase_ycsb_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -12280,7 +12280,7 @@ bexhoma ycsb \
 
 yields (after ca. 120 minutes) something like
 
-testcase_ycsb_mariadb_3.log
+[testcase_ycsb_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -12561,7 +12561,7 @@ bexhoma ycsb \
 
 yields (after ca. 25 minutes) something like
 
-testcase_ycsb_mariadb_4.log
+[testcase_ycsb_mariadb_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_4_summary.md)
 ```markdown
 ## Show Summary
 
@@ -12686,7 +12686,7 @@ bexhoma ycsb \
 
 yields (after ca. 45 minutes) something like
 
-testcase_ycsb_mariadb_5.log
+[testcase_ycsb_mariadb_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_5_summary.md)
 ```markdown
 ## Show Summary
 
@@ -12883,7 +12883,7 @@ bexhoma hardware \
 
 ##### Result
 
-testcase_hardware_fio_depth_sweep_refine.log
+[testcase_hardware_fio_depth_sweep_refine.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_depth_sweep_refine_summary.md)
 ```markdown
 ## Show Summary
 
@@ -13184,7 +13184,7 @@ bexhoma hardware \
 
 ##### Result
 
-testcase_hardware_fio_numjobs_sweep.log
+[testcase_hardware_fio_numjobs_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_numjobs_sweep_summary.md)
 ```markdown
 ## Show Summary
 
@@ -13485,7 +13485,7 @@ bexhoma hardware \
 
 ##### Result
 
-testcase_hardware_fio_depth_sweep_8k.log
+[testcase_hardware_fio_depth_sweep_8k.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_depth_sweep_8k_summary.md)
 ```markdown
 ## Show Summary
 
@@ -13899,7 +13899,7 @@ bexhoma hardware \
 
 ##### Result
 
-testcase_hardware_fio_wal_sync_fdatasync.log
+[testcase_hardware_fio_wal_sync_fdatasync.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_sync_fdatasync_summary.md)
 ```markdown
 ## Show Summary
 
@@ -14030,7 +14030,7 @@ bexhoma hardware \
 
 ##### Result
 
-testcase_hardware_fio_wal_group_commit.log
+[testcase_hardware_fio_wal_group_commit.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_group_commit_summary.md)
 ```markdown
 ## Show Summary
 
@@ -14254,7 +14254,7 @@ bexhoma hardware \
 
 ##### Result
 
-testcase_hardware_fio_wal_record_size.log
+[testcase_hardware_fio_wal_record_size.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_record_size_summary.md)
 ```markdown
 ## Show Summary
 
@@ -14457,7 +14457,7 @@ bexhoma hardware \
 
 ##### Result
 
-testcase_hardware_fio_checkpoint_writeback.log
+[testcase_hardware_fio_checkpoint_writeback.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_checkpoint_writeback_summary.md)
 ```markdown
 ## Show Summary
 
@@ -14687,7 +14687,7 @@ bexhoma hardware \
 
 ##### Result
 
-testcase_hardware_fio_oltp_wal_contention_proxy.log
+[testcase_hardware_fio_oltp_wal_contention_proxy.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_oltp_wal_contention_proxy_summary.md)
 ```markdown
 ## Show Summary
 

@@ -119,7 +119,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_ycsb_pgbouncer_1.log
+[docs_ycsb_pgbouncer_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_pgbouncer_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -386,7 +386,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-docs_ycsb_pgbouncer_2.log
+[docs_ycsb_pgbouncer_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_pgbouncer_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -711,7 +711,7 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-docs_benchbase_pgbouncer_newconn.log
+[docs_benchbase_pgbouncer_newconn.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_pgbouncer_newconn_summary.md)
 ```markdown
 ## Show Summary
 
@@ -841,7 +841,7 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-docs_benchbase_pgbouncer_newconn_pool.log
+[docs_benchbase_pgbouncer_newconn_pool.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_pgbouncer_newconn_pool_summary.md)
 ```markdown
 ## Show Summary
 

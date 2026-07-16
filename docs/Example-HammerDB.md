@@ -102,7 +102,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_hammerdb_postgresql_scale.log
+[docs_hammerdb_postgresql_scale.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_scale_summary.md)
 ```markdown
 ## Show Summary
 
@@ -356,7 +356,7 @@ bexhoma hammerdb \
 
 If monitoring is activated, the summary also contains a section like
 
-docs_hammerdb_postgresql_monitoring.log
+[docs_hammerdb_postgresql_monitoring.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_monitoring_summary.md)
 ```markdown
 ## Show Summary
 
@@ -544,7 +544,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-docs_hammerdb_postgresql_storage.log
+[docs_hammerdb_postgresql_storage.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_storage_summary.md)
 ```markdown
 ## Show Summary
 
@@ -687,7 +687,7 @@ bexhoma hammerdb \
 
 ## Evaluate Results
 
-docs_hammerdb_postgresql_keytime.log
+[docs_hammerdb_postgresql_keytime.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_keytime_summary.md)
 ```markdown
 ## Show Summary
 

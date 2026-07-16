@@ -142,7 +142,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_ycsb_tidb_1.log
+[docs_ycsb_tidb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_tidb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -493,7 +493,7 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-docs_benchbase_tidb_1.log
+[docs_benchbase_tidb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_tidb_1_summary.md)
 ```markdown
 ## Show Summary
 

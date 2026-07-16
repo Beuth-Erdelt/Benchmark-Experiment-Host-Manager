@@ -115,7 +115,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_tpch_postgresql.log
+[docs_tpch_postgresql.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_summary.md)
 ```markdown
 ## Show Summary
 
@@ -410,7 +410,7 @@ bexhoma tpch \
 
 If monitoring is activated, the summary also contains a section like this:
 
-docs_tpch_postgresql_monitoring.log
+[docs_tpch_postgresql_monitoring.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_monitoring_summary.md)
 ```markdown
 ## Show Summary
 
@@ -611,7 +611,7 @@ bexhoma tpch \
 
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
-docs_tpch_postgresql_throughput.log
+[docs_tpch_postgresql_throughput.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_throughput_summary.md)
 ```markdown
 ## Show Summary
 
@@ -847,7 +847,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-docs_tpch_postgresql_storage.log
+[docs_tpch_postgresql_storage.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_storage_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1023,7 +1023,7 @@ bexhoma tpch \
 
 results in
 
-docs_tpch_postgresql_fractional.log
+[docs_tpch_postgresql_fractional.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_fractional_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1208,7 +1208,7 @@ bexhoma tpch \
 
 Use `-xrso N` to skip the first N already-applied refresh sets and continue from where a previous run stopped.
 
-docs_tpch_postgresql_refresh.log
+[docs_tpch_postgresql_refresh.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_refresh_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1493,7 +1493,7 @@ Cluster Prometheus: Running
 
 At the end of a benchmark you will see a summary like
 
-docs_tpch_monetdb_1.log
+[docs_tpch_monetdb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1714,7 +1714,7 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-docs_tpch_monetdb_2.log
+[docs_tpch_monetdb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1952,7 +1952,7 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-docs_tpch_monetdb_3.log
+[docs_tpch_monetdb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_3_summary.md)
 ```markdown
 ## Show Summary
 

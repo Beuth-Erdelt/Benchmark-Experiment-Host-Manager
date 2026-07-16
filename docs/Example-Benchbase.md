@@ -105,7 +105,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_scale.log
+[docs_benchbase_postgresql_scale.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_scale_summary.md)
 ```markdown
 ## Show Summary
 
@@ -369,7 +369,7 @@ bexhoma benchbase \
 
 The result looks something like
 
-docs_benchbase_postgresql_monitoring.log
+[docs_benchbase_postgresql_monitoring.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_monitoring_summary.md)
 ```markdown
 ## Show Summary
 
@@ -552,7 +552,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-docs_benchbase_postgresql_storage.log
+[docs_benchbase_postgresql_storage.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_storage_summary.md)
 ```markdown
 ## Show Summary
 
@@ -689,7 +689,7 @@ The reset script's own stdout/stderr is saved next to the other per-DBMS SQL scr
 
 The result looks something like
 
-docs_benchbase_postgresql_reset.log
+[docs_benchbase_postgresql_reset.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_reset_summary.md)
 ```markdown
 ## Show Summary
 
@@ -834,7 +834,7 @@ bexhoma benchbase \
 
 ## Evaluate Results
 
-docs_benchbase_postgresql_keytime.log
+[docs_benchbase_postgresql_keytime.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_keytime_summary.md)
 ```markdown
 ## Show Summary
 

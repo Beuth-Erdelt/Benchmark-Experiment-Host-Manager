@@ -123,7 +123,7 @@ bexhoma ycsb \
   start &>$LOG_DIR/docs_ycsb_postgresql_start.log
 ```
 
-docs_ycsb_postgresql_start.log
+[docs_ycsb_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -164,7 +164,7 @@ PostgreSQL-1
 ### Tests
 ```
 
-docs_ycsb_postgresql_start.log
+[docs_ycsb_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -228,7 +228,7 @@ bexhoma ycsb \
   load &>$LOG_DIR/docs_ycsb_postgresql_load.log
 ```
 
-docs_ycsb_postgresql_load.log
+[docs_ycsb_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -314,7 +314,7 @@ PostgreSQL-1
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 ```
 
-docs_ycsb_postgresql_load.log
+[docs_ycsb_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -431,7 +431,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_postgresql_run.log
 ```
 
-docs_ycsb_postgresql_run.log
+[docs_ycsb_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -567,7 +567,7 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
-docs_ycsb_postgresql_run.log
+[docs_ycsb_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -733,7 +733,7 @@ bexhoma benchbase \
   start &>$LOG_DIR/docs_benchbase_postgresql_start.log
 ```
 
-docs_benchbase_postgresql_start.log
+[docs_benchbase_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -775,7 +775,7 @@ PostgreSQL-1
 * TEST skipped: Throughput (requests/second) (benchmarking phase not active)
 ```
 
-docs_benchbase_postgresql_start.log
+[docs_benchbase_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -837,7 +837,7 @@ bexhoma benchbase \
   load &>$LOG_DIR/docs_benchbase_postgresql_load.log
 ```
 
-docs_benchbase_postgresql_load.log
+[docs_benchbase_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -907,7 +907,7 @@ PostgreSQL-1
 * TEST skipped: Throughput (requests/second) (benchmarking phase not active)
 ```
 
-docs_benchbase_postgresql_load.log
+[docs_benchbase_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1002,7 +1002,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_postgresql_run.log
 ```
 
-docs_benchbase_postgresql_run.log
+[docs_benchbase_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1118,7 +1118,7 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Workflow as planned
 ```
 
-docs_benchbase_postgresql_run.log
+[docs_benchbase_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1261,7 +1261,7 @@ bexhoma hammerdb \
   start &>$LOG_DIR/docs_hammerdb_postgresql_start.log
 ```
 
-docs_hammerdb_postgresql_start.log
+[docs_hammerdb_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1301,7 +1301,7 @@ PostgreSQL-1
 ### Tests
 ```
 
-docs_hammerdb_postgresql_start.log
+[docs_hammerdb_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1362,7 +1362,7 @@ bexhoma hammerdb \
   load &>$LOG_DIR/docs_hammerdb_postgresql_load.log
 ```
 
-docs_hammerdb_postgresql_load.log
+[docs_hammerdb_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1431,7 +1431,7 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-docs_hammerdb_postgresql_load.log
+[docs_hammerdb_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1525,7 +1525,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_hammerdb_postgresql_run.log
 ```
 
-docs_hammerdb_postgresql_run.log
+[docs_hammerdb_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1633,7 +1633,7 @@ HammerDB Workload SF=1 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
-docs_hammerdb_postgresql_run.log
+[docs_hammerdb_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1766,7 +1766,7 @@ bexhoma tpch \
   start &>$LOG_DIR/docs_tpch_postgresql_start.log
 ```
 
-docs_tpch_postgresql_start.log
+[docs_tpch_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1806,7 +1806,7 @@ PostgreSQL-1
 ### Tests
 ```
 
-docs_tpch_postgresql_start.log
+[docs_tpch_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1868,7 +1868,7 @@ bexhoma tpch \
   load &>$LOG_DIR/docs_tpch_postgresql_load.log
 ```
 
-docs_tpch_postgresql_load.log
+[docs_tpch_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1944,7 +1944,7 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-docs_tpch_postgresql_load.log
+[docs_tpch_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2054,7 +2054,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_postgresql_run.log
 ```
 
-docs_tpch_postgresql_run.log
+[docs_tpch_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2210,7 +2210,7 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
-docs_tpch_postgresql_run.log
+[docs_tpch_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2396,7 +2396,7 @@ bexhoma tpcds \
   start &>$LOG_DIR/docs_tpcds_postgresql_start.log
 ```
 
-docs_tpcds_postgresql_start.log
+[docs_tpcds_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2436,7 +2436,7 @@ PostgreSQL-1
 ### Tests
 ```
 
-docs_tpcds_postgresql_start.log
+[docs_tpcds_postgresql_start.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_start_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2495,7 +2495,7 @@ bexhoma tpcds \
   load &>$LOG_DIR/docs_tpcds_postgresql_load.log
 ```
 
-docs_tpcds_postgresql_load.log
+[docs_tpcds_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2571,7 +2571,7 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-docs_tpcds_postgresql_load.log
+[docs_tpcds_postgresql_load.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_load_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2672,7 +2672,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_tpcds_postgresql_run.log
 ```
 
-docs_tpcds_postgresql_run.log
+[docs_tpcds_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2905,7 +2905,7 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
-docs_tpcds_postgresql_run.log
+[docs_tpcds_postgresql_run.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_run_summary.md)
 ```markdown
 ## Show Summary
 

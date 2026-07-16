@@ -183,7 +183,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_ycsb_databaseservice_1.log
+[docs_ycsb_databaseservice_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -298,7 +298,7 @@ bexhoma ycsb \
 
 This skips loading (`-sl`), as data is already present in the database.
 
-docs_ycsb_databaseservice_2.log
+[docs_ycsb_databaseservice_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -436,7 +436,7 @@ If data is delete somehow, this PVC information will be outdated and wrong.
 
 This approach helps bexhoma to persist status information, but it does not persist data inside the Cloud database.
 
-docs_ycsb_databaseservice_3.log
+[docs_ycsb_databaseservice_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -623,7 +623,7 @@ bexhoma benchbase \
 
 yields
 
-docs_benchbase_databaseservice_1.log
+[docs_benchbase_databaseservice_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_databaseservice_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -746,7 +746,7 @@ bexhoma benchbase \
 
 yields
 
-docs_benchbase_databaseservice_2.log
+[docs_benchbase_databaseservice_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_databaseservice_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -869,7 +869,7 @@ bexhoma tpch \
 
 yields
 
-docs_tpch_databaseservice_1.log
+[docs_tpch_databaseservice_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1015,7 +1015,7 @@ bexhoma tpch \
 
 yields
 
-docs_tpch_databaseservice_2.log
+[docs_tpch_databaseservice_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1180,7 +1180,7 @@ bexhoma tpch \
 
 yields
 
-docs_tpch_databaseservice_3.log
+[docs_tpch_databaseservice_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1333,7 +1333,7 @@ bexhoma tpch \
 
 yields
 
-docs_tpch_databaseservice_4.log
+[docs_tpch_databaseservice_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_4_summary.md)
 ```markdown
 ## Show Summary
 

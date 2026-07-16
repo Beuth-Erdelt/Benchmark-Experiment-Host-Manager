@@ -71,7 +71,7 @@ This
 
 The result looks something like
 
-docs_benchbase_postgresql_collector_1.log
+[docs_benchbase_postgresql_collector_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_collector_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -294,7 +294,7 @@ Same as test 1 but with `nbp=4,8` (4 or 8 benchmarking pods) and `xnbf=20` (targ
 
 The result looks something like
 
-docs_benchbase_postgresql_collector_2.log
+[docs_benchbase_postgresql_collector_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_collector_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -527,7 +527,7 @@ Same parameters as test 2 but without `-rsr -rst`. The persistent volume from th
 
 The result looks something like
 
-docs_benchbase_postgresql_collector_3.log
+[docs_benchbase_postgresql_collector_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_collector_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -776,7 +776,7 @@ This
 
 The result looks something like
 
-docs_benchbase_postgresql_collector_tenants_schema.log
+[docs_benchbase_postgresql_collector_tenants_schema.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_collector_tenants_schema_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1011,7 +1011,7 @@ Same as schema isolation but each tenant gets its own PostgreSQL database (`-mtb
 
 The result looks something like
 
-docs_benchbase_postgresql_collector_tenants_database.log
+[docs_benchbase_postgresql_collector_tenants_database.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_collector_tenants_database_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1246,7 +1246,7 @@ Each tenant gets its own separate DBMS container (`-mtb container`). `-ne "1,1"`
 
 The result looks something like
 
-docs_benchbase_postgresql_collector_tenants_container.log
+[docs_benchbase_postgresql_collector_tenants_container.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_collector_tenants_container_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1585,7 +1585,7 @@ This
 
 The result looks something like
 
-docs_tpch_postgresql_collector_1.log
+[docs_tpch_postgresql_collector_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_collector_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1875,7 +1875,7 @@ Same as test 1 but doubles the scaling factor to SF=6. The PVC is recreated (`-r
 
 The result looks something like
 
-docs_tpch_postgresql_collector_2.log
+[docs_tpch_postgresql_collector_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_collector_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2165,7 +2165,7 @@ Same parameters as test 2 but without `-rsr -rst`. The persistent volume is reus
 
 The result looks something like
 
-docs_tpch_postgresql_collector_3.log
+[docs_tpch_postgresql_collector_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_collector_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2467,7 +2467,7 @@ Runs TPC-H with 2 tenants isolated by schema, each loaded by 1 of 2 parallel loa
 
 The result looks something like
 
-docs_tpch_postgresql_collector_tenants_schema.log
+[docs_tpch_postgresql_collector_tenants_schema.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_collector_tenants_schema_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2813,7 +2813,7 @@ Same as schema isolation but each tenant gets its own PostgreSQL database (`-mtb
 
 The result looks something like
 
-docs_tpch_postgresql_collector_tenants_database.log
+[docs_tpch_postgresql_collector_tenants_database.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_collector_tenants_database_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3159,7 +3159,7 @@ Each tenant gets its own DBMS container (`-mtb container`) with its own 15Gi vol
 
 The result looks something like
 
-docs_tpch_postgresql_collector_tenants_container.log
+[docs_tpch_postgresql_collector_tenants_container.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_collector_tenants_container_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3542,7 +3542,7 @@ This
 
 The result looks something like
 
-docs_ycsb_postgresql_collector_1.log
+[docs_ycsb_postgresql_collector_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_collector_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3785,7 +3785,7 @@ Same as test 1 but with `xnbf=3` (target factor 3 × 16384). The PVC is recreate
 
 The result looks something like
 
-docs_ycsb_postgresql_collector_2.log
+[docs_ycsb_postgresql_collector_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_collector_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -4028,7 +4028,7 @@ Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`), 
 
 The result looks something like
 
-docs_ycsb_postgresql_collector_3.log
+[docs_ycsb_postgresql_collector_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_collector_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -4288,7 +4288,7 @@ This
 
 The result looks something like
 
-docs_hammerdb_postgresql_collector_1.log
+[docs_hammerdb_postgresql_collector_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_collector_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -4496,7 +4496,7 @@ Same as test 1 but with `nbt=32` virtual users per benchmarking pod. The PVC is 
 
 The result looks something like
 
-docs_hammerdb_postgresql_collector_2.log
+[docs_hammerdb_postgresql_collector_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_collector_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -4704,7 +4704,7 @@ Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`). 
 
 The result looks something like
 
-docs_hammerdb_postgresql_collector_3.log
+[docs_hammerdb_postgresql_collector_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_collector_3_summary.md)
 ```markdown
 ## Show Summary
 

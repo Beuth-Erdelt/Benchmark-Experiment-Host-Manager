@@ -122,7 +122,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_ycsb_redis_1.log
+[docs_ycsb_redis_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -296,7 +296,7 @@ bexhoma ycsb \
 
 yields something like
 
-docs_ycsb_redis_2.log
+[docs_ycsb_redis_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -495,7 +495,7 @@ bexhoma ycsb \
 
 yields something like
 
-docs_ycsb_redis_3.log
+[docs_ycsb_redis_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -741,7 +741,7 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-docs_ycsb_redis_4.log
+[docs_ycsb_redis_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_4_summary.md)
 ```markdown
 ## Show Summary
 
@@ -944,7 +944,7 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 
 The result looks something like
 
-docs_ycsb_redis_5.log
+[docs_ycsb_redis_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_5_summary.md)
 ```markdown
 ## Show Summary
 

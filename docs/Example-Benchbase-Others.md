@@ -79,7 +79,7 @@ This
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_twitter_simple.log
+[docs_benchbase_postgresql_twitter_simple.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_twitter_simple_summary.md)
 ```markdown
 ## Show Summary
 
@@ -193,7 +193,7 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-docs_benchbase_postgresql_twitter_scale.log
+[docs_benchbase_postgresql_twitter_scale.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_twitter_scale_summary.md)
 ```markdown
 ## Show Summary
 
@@ -456,7 +456,7 @@ This
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_chbenchmark_simple.log
+[docs_benchbase_postgresql_chbenchmark_simple.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_chbenchmark_simple_summary.md)
 ```markdown
 ## Show Summary
 
@@ -573,7 +573,7 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-docs_benchbase_postgresql_chbenchmark_scale.log
+[docs_benchbase_postgresql_chbenchmark_scale.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_chbenchmark_scale_summary.md)
 ```markdown
 ## Show Summary
 
@@ -793,7 +793,7 @@ This
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_ycsb_c.log
+[docs_benchbase_postgresql_ycsb_c.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_c_summary.md)
 ```markdown
 ## Show Summary
 
@@ -919,7 +919,7 @@ bexhoma benchbase \
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_ycsb_a.log
+[docs_benchbase_postgresql_ycsb_a.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_a_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1044,7 +1044,7 @@ bexhoma benchbase \
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_ycsb_b.log
+[docs_benchbase_postgresql_ycsb_b.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_b_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1174,7 +1174,7 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_ycsb_d.log
+[docs_benchbase_postgresql_ycsb_d.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_d_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1285,7 +1285,7 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_ycsb_e.log
+[docs_benchbase_postgresql_ycsb_e.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_e_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1392,7 +1392,7 @@ bexhoma benchbase \
 
 At the end of a benchmark you will see a summary like
 
-docs_benchbase_postgresql_ycsb_f.log
+[docs_benchbase_postgresql_ycsb_f.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_f_summary.md)
 ```markdown
 ## Show Summary
 

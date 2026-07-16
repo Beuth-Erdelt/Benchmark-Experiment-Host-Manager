@@ -120,7 +120,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_ycsb_citus_1.log
+[docs_ycsb_citus_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_citus_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -355,7 +355,7 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 
 The result looks something like
 
-docs_ycsb_citus_2.log
+[docs_ycsb_citus_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_citus_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -654,7 +654,7 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-docs_benchbase_citus_1.log
+[docs_benchbase_citus_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -845,7 +845,7 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-docs_benchbase_citus_2.log
+[docs_benchbase_citus_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1288,7 +1288,7 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-docs_benchbase_citus_3.log
+[docs_benchbase_citus_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -1992,7 +1992,7 @@ bexhoma hammerdb \
 
 ### Evaluate Results
 
-docs_hammerdb_citus_1.log
+[docs_hammerdb_citus_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2127,7 +2127,7 @@ bexhoma hammerdb \
 
 ### Evaluate Results
 
-docs_hammerdb_citus_2.log
+[docs_hammerdb_citus_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -2597,7 +2597,7 @@ bexhoma hammerdb \
 
 ### Evaluate Results
 
-docs_hammerdb_citus_3.log
+[docs_hammerdb_citus_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3282,7 +3282,7 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-docs_tpch_citus_1.log
+[docs_tpch_citus_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3474,7 +3474,7 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-docs_tpch_citus_2.log
+[docs_tpch_citus_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -3908,7 +3908,7 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-docs_tpch_citus_3.log
+[docs_tpch_citus_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_3_summary.md)
 ```markdown
 ## Show Summary
 

@@ -182,7 +182,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_ycsb_yugabytedb_1.log
+[docs_ycsb_yugabytedb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -368,7 +368,7 @@ bexhoma ycsb \
 
 This skips loading (`-sl`), as data is already present in the database.
 
-docs_ycsb_yugabytedb_2.log
+[docs_ycsb_yugabytedb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_2_summary.md)
 ```markdown
 ## Show Summary
 
@@ -531,7 +531,7 @@ If YugabyteDB is restarted or data is delete somehow, this PVC information will 
 
 This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
 
-docs_ycsb_yugabytedb_3.log
+[docs_ycsb_yugabytedb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_3_summary.md)
 ```markdown
 ## Show Summary
 
@@ -784,7 +784,7 @@ bexhoma benchbase \
 
 yields
 
-docs_benchbase_yugabytedb_1.log
+[docs_benchbase_yugabytedb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_1_summary.md)
 ```markdown
 ## Show Summary
 
@@ -950,7 +950,7 @@ bexhoma benchbase \
 
 yields
 
-docs_benchbase_yugabytedb_2.log
+[docs_benchbase_yugabytedb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_2_summary.md)
 ```markdown
 
 ```
