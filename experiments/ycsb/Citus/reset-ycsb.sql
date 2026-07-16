@@ -8,9 +8,13 @@
 --          checkpoint on their own schedule. VACUUM and ANALYZE refresh
 --          planner statistics on usertable before each round. \timing
 --          reports elapsed time per statement on stdout; VERBOSE reports
---          page/tuple counts as NOTICEs, which psql sends to stderr.
+--          page/tuple counts as NOTICEs, which psql sends to stderr. The
+--          pg_stat_reset* calls zero the cumulative activity counters, but
+--          (like CHECKPOINT) only for the coordinator this connection reaches.
 
 \timing on
 CHECKPOINT;
 VACUUM VERBOSE usertable;
 ANALYZE VERBOSE usertable;
+SELECT pg_stat_reset();
+SELECT pg_stat_reset_shared('bgwriter');

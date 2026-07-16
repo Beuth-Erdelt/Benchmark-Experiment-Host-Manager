@@ -5,6 +5,10 @@
 -- See LICENSE for details.
 -- Purpose: Pre-benchmark reset for YCSB on MariaDB. InnoDB has no
 --          user-invokable checkpoint; ANALYZE TABLE refreshes optimizer
---          statistics on usertable before each benchmarking round.
+--          statistics on usertable before each benchmarking round. FLUSH
+--          STATUS zeros the cumulative SHOW GLOBAL STATUS counters so the
+--          upcoming round's stats aren't mixed with earlier rounds.
 
 ANALYZE TABLE usertable;
+
+FLUSH STATUS;

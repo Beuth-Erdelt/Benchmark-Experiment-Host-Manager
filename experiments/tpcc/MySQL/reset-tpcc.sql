@@ -7,7 +7,9 @@
 --          user-invokable checkpoint; ANALYZE TABLE refreshes optimizer
 --          statistics on every TPC-C table before each round. The warehouse
 --          table uses the MEMORY engine (see experiments/tpcc/README.md), so
---          its ANALYZE has no persisted dirty pages to act on.
+--          its ANALYZE has no persisted dirty pages to act on. FLUSH STATUS
+--          zeros the cumulative SHOW GLOBAL STATUS counters so the upcoming
+--          round's stats aren't mixed with earlier rounds.
 
 ANALYZE TABLE customer;
 ANALYZE TABLE district;
@@ -18,3 +20,5 @@ ANALYZE TABLE new_order;
 ANALYZE TABLE orders;
 ANALYZE TABLE order_line;
 ANALYZE TABLE item;
+
+FLUSH STATUS;
