@@ -191,7 +191,7 @@ class ExperimentBase():
         self.maintaining_active = False                                 # Bool, tells if maintaining is active
         self.num_maintaining = 0                                        # number of maintaining pods in parallel
         self.num_maintaining_pods = 0                                   # number of maintaining pods in total
-        self.resetscript_active = True                                  # Bool, tells if configured reset scripts should run
+        self.resetscript_active = False                                 # Bool, tells if configured reset scripts should run
         self.script = ""                                                # name of the script collection for creating schema
         self.initscript = []                                            # list of scripts for creating schema
         self.indexing = ""                                              # name of the script collection for creating indexes
@@ -473,7 +473,7 @@ class ExperimentBase():
         request_node_benchmarking = args.request_node_benchmarking
         request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
-        self.resetscript_active = not args.no_reset_script
+        self.resetscript_active = args.activate_reset
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
         multi_tenant_volume = args.multi_tenant_volume
