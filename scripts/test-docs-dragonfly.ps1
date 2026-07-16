@@ -24,7 +24,7 @@
 # Single host Dragonfly
 bexhoma ycsb `
   -dbms Dragonfly               <# DBMS under test #> `
-  -sf 3                         <# scaling factor (number of records x 1000) #> `
+  -sf 3                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -35,7 +35,7 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -54,7 +54,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly sing
 # Cluster of 3 Dragonfly instances
 bexhoma ycsb `
   -dbms Dragonfly               <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -66,7 +66,7 @@ bexhoma ycsb `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
   -nw 3                         <# number of worker nodes #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -86,7 +86,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly clus
 # Cluster of 3 Dragonfly instances and replication
 bexhoma ycsb `
   -dbms Dragonfly               <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -99,7 +99,7 @@ bexhoma ycsb `
   -nbt 128                      <# threads per benchmarking pod #> `
   -nw 3                         <# number of worker nodes #> `
   -nwr 1                        <# replication factor #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -116,7 +116,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly clus
 # Single host Dragonfly with PVC
 bexhoma ycsb `
   -dbms Dragonfly               <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -127,7 +127,7 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -148,7 +148,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly sing
 # Cluster of 3 Dragonfly instances and PVC
 bexhoma ycsb `
   -dbms Dragonfly               <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -160,7 +160,7 @@ bexhoma ycsb `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
   -nw 3                         <# number of worker nodes #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `

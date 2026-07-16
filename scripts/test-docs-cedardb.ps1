@@ -42,7 +42,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H CedarDB monit
 #### YCSB Scale Loading (Example-YCSB.md)
 bexhoma ycsb `
   -dbms CedarDB                 <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2                       <# benchmarking throughput target as a multiple of the base ops/s #> `

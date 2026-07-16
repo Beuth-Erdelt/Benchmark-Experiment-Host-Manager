@@ -24,7 +24,7 @@
 #### YCSB Ingestion (Example-CockroachDB.md)
 bexhoma ycsb `
   -dbms CockroachDB             <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -37,7 +37,7 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -nw 3                         <# number of worker nodes #> `
   -nwr 3                        <# replication factor #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -56,7 +56,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB in
 #### YCSB PVC (Example-CockroachDB.md)
 bexhoma ycsb `
   -dbms CockroachDB             <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records x 1000) #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -69,7 +69,7 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -nw 3                         <# number of worker nodes #> `
   -nwr 3                        <# replication factor #> `
-  -xop 1                        <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -90,7 +90,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB st
 #### YCSB Scale (Example-CockroachDB.md)
 bexhoma ycsb `
   -dbms CockroachDB             <# DBMS under test #> `
-  -sf 10                        <# scaling factor (number of records x 1000) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -103,7 +103,7 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -nw 3                         <# number of worker nodes #> `
   -nwr 3                        <# replication factor #> `
-  -xop 10                       <# number of operations for the benchmark phase (x 1000) #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `

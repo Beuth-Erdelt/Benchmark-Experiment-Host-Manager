@@ -624,7 +624,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_N
 
 #### YCSB Monitoring (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
-# -sf 3                         scaling factor (number of records x 100000)
+# -sf 3                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2                       benchmarking throughput target as a multiple of the base ops/s
@@ -677,7 +677,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
 
 #### YCSB Monitoring (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
-# -sf 3                         scaling factor (number of records x 100000)
+# -sf 3                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 3                       benchmarking throughput target as a multiple of the base ops/s
@@ -729,7 +729,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
 
 #### YCSB Monitoring (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
-# -sf 3                         scaling factor (number of records x 100000)
+# -sf 3                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 3                       benchmarking throughput target as a multiple of the base ops/s

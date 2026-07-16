@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 # -dbms PGBouncer               DBMS under test
-# -sf 32                        scaling factor (number of records x 1000)
+# -sf 32                        scaling factor (number of records in millions)
 # -xwl c                        YCSB workload template (c = 100%% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 11                      throughput target as a multiple of the base ops/s
@@ -35,7 +35,7 @@ source ./scripts/testfunctions.sh
 # -xnpp 4                       number of PGBouncer proxy pods
 # -xnpi 128                     maximum incoming connections per PGBouncer instance
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
-# -xop 16                       number of operations for the benchmark phase (x 1000)
+# -xop 16                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -78,7 +78,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer  sf=32  nbp=16"
 
 
 # -dbms PGBouncer               DBMS under test
-# -sf 16                        scaling factor (number of records x 1000)
+# -sf 16                        scaling factor (number of records in millions)
 # -xwl c                        YCSB workload template (c = 100%% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 11                      throughput target as a multiple of the base ops/s
@@ -92,7 +92,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer  sf=32  nbp=16"
 # -xnpp 4                       number of PGBouncer proxy pods
 # -xnpi 128                     maximum incoming connections per PGBouncer instance
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
-# -xop 16                       number of operations for the benchmark phase (x 1000)
+# -xop 16                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations

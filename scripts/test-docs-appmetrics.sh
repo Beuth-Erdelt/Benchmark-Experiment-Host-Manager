@@ -59,7 +59,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL appmetrics  sf=16
 
 #### YCSB Application Metrics (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
-# -sf 3                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2,3                     throughput target as a multiple of the base ops/s
@@ -267,7 +267,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL appmetrics  sf=16  nbp
 
 #### YCSB MySQL Application Metrics
 # -dbms MySQL                   DBMS under test
-# -sf 3                         scaling factor (number of records x 1000)
+# -sf 3                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2,3                     throughput target as a multiple of the base ops/s
@@ -443,7 +443,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL appmetrics  sf=16  nbp=
 
 
 # -dbms CockroachDB             DBMS under test
-# -sf 10                        scaling factor (number of records x 1000)
+# -sf 10                        scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -456,7 +456,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL appmetrics  sf=16  nbp=
 # -nbt 64                       threads per benchmarking pod
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 3                        number of worker node replicas
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -541,7 +541,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB appmetrics  sf=1
 
 
 # -dbms Redis                   DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -554,7 +554,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB appmetrics  sf=1
 # -nbt 128                      threads per benchmarking pod
 # -nw 3                         number of worker nodes in the cluster
 # -nwr 1                        number of worker node replicas
-# -xop 10                       number of operations for the benchmark phase (x 1000)
+# -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -596,7 +596,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis appmetrics  sf=1  nbp=1"
 
 
 # -dbms TiDB                    DBMS under test
-# -sf 1                         scaling factor (number of records x 1000)
+# -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
@@ -611,7 +611,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis appmetrics  sf=1  nbp=1"
 # -nw 3                         number of worker nodes in the cluster
 # -xnpd 3                       number of PD (Placement Driver) nodes
 # -nwr 3                        number of worker node replicas
-# -xop 1                        number of operations for the benchmark phase (x 1000)
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -691,7 +691,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=
 
 
 # -dbms PGBouncer               DBMS under test
-# -sf 16                        scaling factor (number of records x 1000)
+# -sf 16                        scaling factor (number of records in millions)
 # -xwl c                        YCSB workload template (c = 100%% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 11                      throughput target as a multiple of the base ops/s
@@ -705,7 +705,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=
 # -xnpp 4                       number of PGBouncer proxy pods
 # -xnpi 128                     maximum incoming connections per PGBouncer instance
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
-# -xop 16                       number of operations for the benchmark phase (x 1000)
+# -xop 16                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
