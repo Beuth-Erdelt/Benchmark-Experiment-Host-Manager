@@ -111,6 +111,8 @@ class Benchbase(Benchmark):
                 experiment.workload['info'] += " There is a reconnect for each transaction."
             if SD:
                 experiment.workload['info'] += f" Benchmarking runs for {int(SD / 60)} minutes."
+            if args.activate_reset:
+                experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
 
     def test_results(self, experiment) -> None:
         """

@@ -100,6 +100,8 @@ class TPCC(Benchmark):
                 experiment.workload['info'] += " Benchmarking has keying and thinking times activated."
             if extra_latency:
                 experiment.workload['info'] += " Benchmarking also logs latencies."
+            if args.activate_reset:
+                experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
 
     def test_results(self, experiment) -> None:
         """
