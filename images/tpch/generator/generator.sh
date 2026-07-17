@@ -90,8 +90,11 @@ then
 		# data is not split into parts
 		destination_raw=/data/tpch/SF$SF
 	fi
-	if [ -d "$destination_raw" ] && [ -f "$destination_raw/nation.tbl" ]; then
-		### raw folder and nation table exist ###
+	shopt -s nullglob
+	existing_tbl_files=("$destination_raw"/*.tbl)
+	shopt -u nullglob
+	if [ -d "$destination_raw" ] && [ ${#existing_tbl_files[@]} -gt 0 ]; then
+		### raw folder exists and contains generated .tbl files ###
 		if test $STORE_RAW_DATA_RECREATE -gt 0
 		then
 			echo "Recreate raw folder"

@@ -93,8 +93,11 @@ then
 		# data is not split into parts
 		destination_raw=/data/tpcds/SF$SF/
 	fi
-	if [ -d "$destination_raw" ]; then
-		### raw folder exists ###
+	shopt -s nullglob
+	existing_dat_files=("$destination_raw"*.dat)
+	shopt -u nullglob
+	if [ -d "$destination_raw" ] && [ ${#existing_dat_files[@]} -gt 0 ]; then
+		### raw folder exists and contains generated .dat files ###
 		if test $STORE_RAW_DATA_RECREATE -gt 0
 		then
 			echo "Recreate raw folder"
