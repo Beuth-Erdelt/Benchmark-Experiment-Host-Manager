@@ -112,7 +112,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-[docs_ycsb_postgresql_loading.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_loading_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_loading_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_loading.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -281,6 +283,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 We can see that the overall throughput is very close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
 The runtime is between 8 seconds and 1 minute.
 
@@ -442,7 +446,9 @@ bexhoma ycsb \
 This loads a YCSB data set with 8 pods (`-lnp`) of 64 threads in total.
 Each of the drivers has 64 threads and a target of twice or three times (`-ltf`) the base, that is 16384.
 
-[docs_ycsb_postgresql_benchmarking.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_benchmarking_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_benchmarking_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_benchmarking.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -609,6 +615,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 ## Monitoring
 
 [Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
@@ -639,7 +647,9 @@ bexhoma ycsb \
 
 If monitoring is activated, the summary also contains a section like this:
 
-[docs_ycsb_postgresql_monitoring.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_monitoring_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_monitoring_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_monitoring.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -849,6 +859,8 @@ YCSB SF=3
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
@@ -900,7 +912,9 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-[docs_ycsb_postgresql_storage.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_storage_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_storage_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_storage.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1165,6 +1179,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 Note the added section about `volume_size` and `volume_used` in the connections section.
 
 
@@ -1200,7 +1216,9 @@ bexhoma ycsb \
 
 The result looks something like
 
-[docs_ycsb_postgresql_loading_patch.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_loading_patch_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_loading_patch_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_loading_patch.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1292,6 +1310,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 ## Reset Scripts
 
 For repeated benchmarking rounds against the same database, bloat and stale planner statistics can drift the result away from the first round.
@@ -1325,7 +1345,9 @@ The reset script's own stdout/stderr is saved next to the other per-DBMS SQL scr
 
 The result looks something like
 
-[docs_ycsb_postgresql_reset.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_reset_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_reset_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_reset.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1446,6 +1468,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 At this scale (SF=1, 1000 rows) `CHECKPOINT` and `VACUUM ANALYZE` complete in well under a second, so `time_reset` rounds to `0`.
 On a larger, longer-running dataset this section is where you'd see the reset cost start to matter relative to the benchmarking duration itself.
 
@@ -1483,7 +1507,9 @@ bexhoma ycsb \
 
 ### Evaluate Results
 
-[docs_ycsb_postgresql_wl_a.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_a_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_a_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_a.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1646,6 +1672,8 @@ YCSB SF=10
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 ### Workload B
@@ -1680,7 +1708,9 @@ bexhoma ycsb \
 
 ### Evaluate Results
 
-[docs_ycsb_postgresql_wl_b.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_b_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_b_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_b.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1843,6 +1873,8 @@ YCSB SF=10
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 ### Workload C
@@ -1877,7 +1909,9 @@ bexhoma ycsb \
 
 ### Evaluate Results
 
-[docs_ycsb_postgresql_wl_c.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_c_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_c_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_c.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2040,6 +2074,8 @@ YCSB SF=10
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 ### Workload D
@@ -2083,7 +2119,9 @@ bexhoma ycsb \
 
 ### Evaluate Results
 
-[docs_ycsb_postgresql_wl_d.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_d_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_d_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_d.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2217,6 +2255,8 @@ YCSB SF=10
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 ### Workload E
@@ -2258,7 +2298,9 @@ bexhoma ycsb \
 
 ### Evaluate Results
 
-[docs_ycsb_postgresql_wl_e.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_e_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_e_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_e.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2392,6 +2434,8 @@ YCSB SF=10
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 ### Workload F
@@ -2426,7 +2470,9 @@ bexhoma ycsb \
 
 ### Evaluate Results
 
-[docs_ycsb_postgresql_wl_f.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_f_summary.md)
+<details>
+<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_f_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_f.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2588,6 +2634,8 @@ YCSB SF=10
 * TEST passed: Workflow as planned
 * TEST failed: Execution Phase: contains FAILED column
 ```
+
+</details>
 
 
 
