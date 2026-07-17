@@ -115,7 +115,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-[docs_tpch_postgresql.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -237,6 +239,8 @@ No warnings
 * TEST passed: No SQL warnings
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
 Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
@@ -410,7 +414,9 @@ bexhoma tpch \
 
 If monitoring is activated, the summary also contains a section like this:
 
-[docs_tpch_postgresql_monitoring.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_monitoring_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_monitoring_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_monitoring.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -571,6 +577,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 PostgreSQL is fast, so we cannot see a lot (metrics are fetched every 30 seconds).
 
@@ -611,7 +619,9 @@ bexhoma tpch \
 
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
-[docs_tpch_postgresql_throughput.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_throughput_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_throughput_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_throughput.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -767,6 +777,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 All executions use the same database, so loading times are the same.
 
 Per default, all 3 streams use the same random parameters (like DELTA in Q1) and run in ordering Q1-Q22.
@@ -847,7 +859,9 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-[docs_tpch_postgresql_storage.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_storage_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_storage_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_storage.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -993,6 +1007,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
@@ -1023,7 +1039,9 @@ bexhoma tpch \
 
 results in
 
-[docs_tpch_postgresql_fractional.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_fractional_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_fractional_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_fractional.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1167,6 +1185,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -1208,7 +1228,9 @@ bexhoma tpch \
 
 Use `-xrso N` to skip the first N already-applied refresh sets and continue from where a previous run stopped.
 
-[docs_tpch_postgresql_refresh.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_refresh_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_refresh_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_refresh.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1362,6 +1384,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 The added `### tpch_refresh` section shows the wall-clock timing of the parallel refresh stream job: when it started, when it ended, and the total duration in seconds.
 
 
@@ -1493,7 +1517,9 @@ Cluster Prometheus: Running
 
 At the end of a benchmark you will see a summary like
 
-[docs_tpch_monetdb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_1_summary.md" target="_blank" rel="noopener">docs_tpch_monetdb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1656,6 +1682,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 To see the summary again you can simply call `bexhoma summary -e 1708411664` with the experiment code.
 
 ### List local results
@@ -1714,7 +1742,9 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-[docs_tpch_monetdb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_2_summary.md" target="_blank" rel="noopener">docs_tpch_monetdb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1914,6 +1944,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### Perform Benchmark - Throughput Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
@@ -1952,7 +1984,9 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-[docs_tpch_monetdb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_3_summary.md" target="_blank" rel="noopener">docs_tpch_monetdb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2160,6 +2194,8 @@ No warnings
 * TEST passed: No SQL warnings
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.

@@ -105,7 +105,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_scale.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_scale_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_scale_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_scale.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -205,6 +207,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 We can see that the overall throughput is close to the target and that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads).
 
@@ -369,7 +373,9 @@ bexhoma benchbase \
 
 The result looks something like
 
-[docs_benchbase_postgresql_monitoring.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_monitoring_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_monitoring_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_monitoring.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -505,6 +511,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
@@ -552,7 +560,9 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-[docs_benchbase_postgresql_storage.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_storage_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_storage_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_storage.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -657,6 +667,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 Also note the size increases from first to second run (benchmark writes data).
@@ -689,7 +701,9 @@ The reset script's own stdout/stderr is saved next to the other per-DBMS SQL scr
 
 The result looks something like
 
-[docs_benchbase_postgresql_reset.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_reset_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_reset_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_reset.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -796,6 +810,8 @@ Benchbase Workload tpcc SF=4
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 The `#### Reset` section appears once per experiment repeat (`-nc 2`), right after `#### Per Phase`.
 At SF=4 the 9 TPC-C tables are small, so `CHECKPOINT` + `VACUUM ANALYZE` finish in about 2 seconds here; at larger scaling factors this cost grows with table size and is worth comparing against the benchmarking duration itself.
 
@@ -834,7 +850,9 @@ bexhoma benchbase \
 
 ## Evaluate Results
 
-[docs_benchbase_postgresql_keytime.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_keytime_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_keytime_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_keytime.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1038,6 +1056,8 @@ Benchbase Workload tpcc SF=160
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 Now also efficiency is computed via `0.45 * 60. * 100. * Goodput (requests/second) / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
 * 45% is the average portion of new orders in the set of transactions

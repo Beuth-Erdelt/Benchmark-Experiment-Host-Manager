@@ -35,8 +35,12 @@ for filename in os.listdir(md_directory):
 """
 
 
-# Regular expression to match: [<filename>.log](<url>)\n```markdown\n...``` blocks
-pattern = re.compile(r'\[(?P<logfile>[\w\-.\/]+\.log)\]\((?P<url>[^)\s]+)\)\n```markdown\n(.*?)\n```', re.DOTALL)
+# Regular expression to match:
+# <details>\n<summary>Show <a href="<url>">...</a></summary>\n\n```markdown\n...```\n\n</details>
+pattern = re.compile(
+    r'<details>\n<summary>Show <a href="(?P<url>[^"\s]+)"(?P<link_attrs>[^>]*)>(?P<logfile>[\w\-.\/]+\.log)</a></summary>\n\n```markdown\n(.*?)\n```\n\n</details>',
+    re.DOTALL,
+)
 
 missing_summary_files = []
 
@@ -49,6 +53,7 @@ for filename in os.listdir(md_directory):
         def replace_block(match):
             log_marker = match.group('logfile')
             link_url = match.group('url')
+            link_attrs = match.group('link_attrs')
             base_name = os.path.splitext(log_marker)[0]
             summary_filename = f"{base_name}_summary.md"
             summary_path = os.path.join(logs_directory, summary_filename)
@@ -56,7 +61,10 @@ for filename in os.listdir(md_directory):
             if os.path.exists(summary_path):
                 with open(summary_path, 'r', encoding='utf-8') as log_f:
                     log_content = log_f.read().strip()
-                return f"[{log_marker}]({link_url})\n```markdown\n{log_content}\n```"
+                return (
+                    f'<details>\n<summary>Show <a href="{link_url}"{link_attrs}>{log_marker}</a></summary>\n\n'
+                    f'```markdown\n{log_content}\n```\n\n</details>'
+                )
             else:
                 print(f"Warning: Summary file not found - {summary_path}")
                 missing_summary_files.append(summary_path)

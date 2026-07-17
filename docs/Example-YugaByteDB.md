@@ -182,7 +182,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-[docs_ycsb_yugabytedb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_1_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -324,6 +326,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 To see the summary again you can simply call `bexhoma summary -e 1730133803` with the experiment code.
 
 ### Detailed Evaluation
@@ -368,7 +372,9 @@ bexhoma ycsb \
 
 This skips loading (`-sl`), as data is already present in the database.
 
-[docs_ycsb_yugabytedb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_2_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -467,6 +473,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ## Monitoring
 
@@ -531,7 +539,9 @@ If YugabyteDB is restarted or data is delete somehow, this PVC information will 
 
 This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
 
-[docs_ycsb_yugabytedb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_3_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -679,6 +689,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 ### Persist YugabyteDB
 
 If you want YugabyteDB to have real persistent storage, remove the line `storage.ephemeral=true,\` from the installation.
@@ -784,7 +796,9 @@ bexhoma benchbase \
 
 yields
 
-[docs_benchbase_yugabytedb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_1_summary.md" target="_blank" rel="noopener">docs_benchbase_yugabytedb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -909,6 +923,8 @@ TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU 
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### Benchbase Example Explained
 
 The setup is the same as for YCSB (see above).
@@ -950,10 +966,14 @@ bexhoma benchbase \
 
 yields
 
-[docs_benchbase_yugabytedb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_2_summary.md" target="_blank" rel="noopener">docs_benchbase_yugabytedb_2.log</a></summary>
+
 ```markdown
 
 ```
+
+</details>
 
 
 

@@ -79,7 +79,9 @@ This
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_twitter_simple.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_twitter_simple_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_twitter_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_twitter_simple.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -156,6 +158,8 @@ Benchbase Workload twitter SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### SQL Scrips
 
 The SQL scripts for pre and post ingestion can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/benchbase/twitter
@@ -193,7 +197,9 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-[docs_benchbase_postgresql_twitter_scale.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_twitter_scale_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_twitter_scale_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_twitter_scale.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -380,6 +386,8 @@ Benchbase Workload twitter SF=1600
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -456,7 +464,9 @@ This
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_chbenchmark_simple.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_chbenchmark_simple_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_chbenchmark_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_chbenchmark_simple.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -538,6 +548,8 @@ Benchbase Workload chbenchmark SF=10
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### SQL Scrips
 
 The SQL scripts for pre and post ingestion can be found in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/benchbase/chbenchmark
@@ -573,7 +585,9 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-[docs_benchbase_postgresql_chbenchmark_scale.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_chbenchmark_scale_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_chbenchmark_scale_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_chbenchmark_scale.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -727,6 +741,8 @@ Benchbase Workload chbenchmark SF=100
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 ## YCSB Benchmark
@@ -793,7 +809,9 @@ This
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_ycsb_c.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_c_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_c_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_ycsb_c.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -889,6 +907,8 @@ Benchbase Workload ycsb SF=1000
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 ### YCSB Simple Testrun Workload A
@@ -919,7 +939,9 @@ bexhoma benchbase \
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_ycsb_a.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_a_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_a_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_ycsb_a.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1015,6 +1037,8 @@ Benchbase Workload ycsb SF=1000
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### YCSB Simple Testrun Workload B
 
@@ -1044,7 +1068,9 @@ bexhoma benchbase \
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_ycsb_b.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_b_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_b_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_ycsb_b.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1140,6 +1166,8 @@ Benchbase Workload ycsb SF=1000
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -1174,7 +1202,9 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_ycsb_d.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_d_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_d_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_ycsb_d.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1251,6 +1281,8 @@ Benchbase Workload ycsb SF=1000
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -1285,7 +1317,9 @@ Other than the original YCSB tool, Benchbase does not offer an option to limit t
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_ycsb_e.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_e_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_e_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_ycsb_e.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1362,6 +1396,8 @@ Benchbase Workload ycsb SF=1000
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -1392,7 +1428,9 @@ bexhoma benchbase \
 
 At the end of a benchmark you will see a summary like
 
-[docs_benchbase_postgresql_ycsb_f.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_f_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_ycsb_f_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_ycsb_f.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1487,6 +1525,8 @@ Benchbase Workload ycsb SF=1000
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 
 

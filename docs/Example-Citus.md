@@ -120,7 +120,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-[docs_ycsb_citus_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_citus_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_citus_1_summary.md" target="_blank" rel="noopener">docs_ycsb_citus_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -269,6 +271,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 To see the summary again you can simply call `bexhoma summary -e 1730133803` with the experiment code.
 
 ### Detailed Evaluation
@@ -355,7 +359,9 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 
 The result looks something like
 
-[docs_ycsb_citus_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_citus_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_citus_2_summary.md" target="_blank" rel="noopener">docs_ycsb_citus_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -568,6 +574,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ## YCSB Example Explained
 
@@ -654,7 +662,9 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-[docs_benchbase_citus_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_1_summary.md" target="_blank" rel="noopener">docs_benchbase_citus_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -805,6 +815,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### Benchbase More Complex
 
 TPC-C is performed at 128 warehouses.
@@ -845,7 +857,9 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-[docs_benchbase_citus_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_2_summary.md" target="_blank" rel="noopener">docs_benchbase_citus_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1238,6 +1252,8 @@ Benchbase Workload tpcc SF=128
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 ### Benchbase Realistic
@@ -1288,7 +1304,9 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-[docs_benchbase_citus_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_citus_3_summary.md" target="_blank" rel="noopener">docs_benchbase_citus_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1951,6 +1969,8 @@ In Zeile:1 Zeichen:1
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -1992,7 +2012,9 @@ bexhoma hammerdb \
 
 ### Evaluate Results
 
-[docs_hammerdb_citus_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_1_summary.md" target="_blank" rel="noopener">docs_hammerdb_citus_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2098,6 +2120,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### HammerDB More Complex Example
 
 ```bash
@@ -2127,7 +2151,9 @@ bexhoma hammerdb \
 
 ### Evaluate Results
 
-[docs_hammerdb_citus_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_2_summary.md" target="_blank" rel="noopener">docs_hammerdb_citus_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2524,6 +2550,8 @@ HammerDB Workload SF=128 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### HammerDB Referenced Paper
 
@@ -2597,7 +2625,9 @@ bexhoma hammerdb \
 
 ### Evaluate Results
 
-[docs_hammerdb_citus_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_citus_3_summary.md" target="_blank" rel="noopener">docs_hammerdb_citus_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3218,6 +3248,8 @@ TEST passed: NOPM contains no 0 or NaN
 TEST failed: Workflow not as planned
 ```
 
+</details>
+
 
 ## TPC-H
 
@@ -3282,7 +3314,9 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-[docs_tpch_citus_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_1_summary.md" target="_blank" rel="noopener">docs_tpch_citus_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3433,6 +3467,8 @@ TEST passed: No SQL warnings
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### TPC-H More Complex Example
 
 At first we remove possibly existing PVC of the workers:
@@ -3474,7 +3510,9 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-[docs_tpch_citus_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_2_summary.md" target="_blank" rel="noopener">docs_tpch_citus_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3863,6 +3901,8 @@ TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]
 TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 ```
 
+</details>
+
 
 ### TPC-H Test Columnar Storage
 
@@ -3908,7 +3948,9 @@ bexhoma tpch \
 
 ### Evaluate Results
 
-[docs_tpch_citus_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_citus_3_summary.md" target="_blank" rel="noopener">docs_tpch_citus_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -4466,6 +4508,8 @@ TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
 TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]
 TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 ```
+
+</details>
 
 
 

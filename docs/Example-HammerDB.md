@@ -102,7 +102,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-[docs_hammerdb_postgresql_scale.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_scale_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_scale_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_scale.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -202,6 +204,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: NOPM contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 We can see that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads) - but are a bit weaker.
 
@@ -356,7 +360,9 @@ bexhoma hammerdb \
 
 If monitoring is activated, the summary also contains a section like
 
-[docs_hammerdb_postgresql_monitoring.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_monitoring_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_monitoring_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_monitoring.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -492,6 +498,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
@@ -544,7 +552,9 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-[docs_hammerdb_postgresql_storage.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_storage_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_storage_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_storage.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -649,6 +659,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 Also note the size descreases from first to second run (PostgreSQL does some cleaning?).
@@ -687,7 +699,9 @@ bexhoma hammerdb \
 
 ## Evaluate Results
 
-[docs_hammerdb_postgresql_keytime.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_keytime_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_keytime_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_keytime.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -872,6 +886,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: NOPM contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 Now also efficiency is computed via `100. * NOPM / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
 * 100 makes it a percentage value

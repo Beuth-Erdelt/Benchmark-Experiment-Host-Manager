@@ -113,7 +113,7 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 At the end of a benchmark you will see a summary like
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_loading_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_loading.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_loading_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_loading.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -447,7 +447,7 @@ This loads a YCSB data set with 8 pods (`-lnp`) of 64 threads in total.
 Each of the drivers has 64 threads and a target of twice or three times (`-ltf`) the base, that is 16384.
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_benchmarking_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_benchmarking.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_benchmarking_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_benchmarking.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -648,7 +648,7 @@ bexhoma ycsb \
 If monitoring is activated, the summary also contains a section like this:
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_monitoring_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_monitoring.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_monitoring_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_monitoring.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -913,7 +913,7 @@ All other instances just use the database without generating and loading data.
 The result looks something like
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_storage_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_storage.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_storage_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_storage.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1217,7 +1217,7 @@ bexhoma ycsb \
 The result looks something like
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_loading_patch_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_loading_patch.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_loading_patch_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_loading_patch.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1346,7 +1346,7 @@ The reset script's own stdout/stderr is saved next to the other per-DBMS SQL scr
 The result looks something like
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_reset_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_reset.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_reset_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_reset.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1508,7 +1508,7 @@ bexhoma ycsb \
 ### Evaluate Results
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_a_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_a.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_a_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_a.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1709,7 +1709,7 @@ bexhoma ycsb \
 ### Evaluate Results
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_b_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_b.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_b_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_b.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1910,7 +1910,7 @@ bexhoma ycsb \
 ### Evaluate Results
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_c_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_c.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_c_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_c.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -2120,7 +2120,7 @@ bexhoma ycsb \
 ### Evaluate Results
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_d_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_d.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_d_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_d.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -2299,7 +2299,7 @@ bexhoma ycsb \
 ### Evaluate Results
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_e_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_e.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_e_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_e.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -2471,7 +2471,7 @@ bexhoma ycsb \
 ### Evaluate Results
 
 <details>
-<summary><a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_f_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_f.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_wl_f_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_wl_f.log</a></summary>
 
 ```markdown
 ## Show Summary

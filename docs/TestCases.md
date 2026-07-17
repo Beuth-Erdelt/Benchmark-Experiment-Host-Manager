@@ -48,7 +48,9 @@ bexhoma tpch \
 
 yields (after ca. 120 minutes) something like
 
-[testcase_tpch_compare.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_compare_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_compare_summary.md" target="_blank" rel="noopener">testcase_tpch_compare.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -220,6 +222,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### PostgreSQL
 
@@ -248,7 +252,9 @@ bexhoma tpch \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_tpch_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_1_summary.md" target="_blank" rel="noopener">testcase_tpch_postgresql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -365,6 +371,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### TPC-H Monitoring
 
@@ -393,7 +401,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_2_summary.md" target="_blank" rel="noopener">testcase_tpch_postgresql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -549,6 +559,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-H Throughput Test
 
 ```bash
@@ -578,7 +590,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_3_summary.md" target="_blank" rel="noopener">testcase_tpch_postgresql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -841,6 +855,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### TPC-H RAM Disk Test
 
@@ -872,7 +888,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_postgresql_ramdisk.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_ramdisk_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_postgresql_ramdisk_summary.md" target="_blank" rel="noopener">testcase_tpch_postgresql_ramdisk.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1044,6 +1062,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -1078,7 +1098,9 @@ bexhoma tpch \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_tpch_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_1_summary.md" target="_blank" rel="noopener">testcase_tpch_mysql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1194,6 +1216,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### TPC-H Monitoring
 
@@ -1222,7 +1246,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_2_summary.md" target="_blank" rel="noopener">testcase_tpch_mysql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1377,6 +1403,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-H Throughput Test
 
 ```bash
@@ -1406,7 +1434,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_3_summary.md" target="_blank" rel="noopener">testcase_tpch_mysql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1628,6 +1658,8 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 #### TPC-H RAM Disk Test
@@ -1660,7 +1692,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_mysql_ramdisk.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_ramdisk_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mysql_ramdisk_summary.md" target="_blank" rel="noopener">testcase_tpch_mysql_ramdisk.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1831,6 +1865,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### MariaDB
 
@@ -1859,7 +1895,9 @@ bexhoma tpch \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_tpch_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_1_summary.md" target="_blank" rel="noopener">testcase_tpch_mariadb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1976,6 +2014,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### TPC-H Monitoring
 
@@ -2004,7 +2044,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_2_summary.md" target="_blank" rel="noopener">testcase_tpch_mariadb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2159,6 +2201,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-H Throughput Test
 
 ```bash
@@ -2188,7 +2232,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_3_summary.md" target="_blank" rel="noopener">testcase_tpch_mariadb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2445,6 +2491,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -2482,7 +2530,9 @@ bexhoma tpch \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpch_mariadb_ramdisk.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_ramdisk_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpch_mariadb_ramdisk_summary.md" target="_blank" rel="noopener">testcase_tpch_mariadb_ramdisk.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2640,6 +2690,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -2677,7 +2729,9 @@ bexhoma tpcds \
 
 yields (after ca. 520 minutes) something like
 
-[testcase_tpcds_compare.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_compare_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_compare_summary.md" target="_blank" rel="noopener">testcase_tpcds_compare.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2934,6 +2988,8 @@ TPC-DS Queries SF=1
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### PostgreSQL
 
@@ -2962,7 +3018,9 @@ bexhoma tpcds \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_tpcds_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_1_summary.md" target="_blank" rel="noopener">testcase_tpcds_postgresql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3161,6 +3219,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### TPC-DS Monitoring
 
@@ -3189,7 +3249,9 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpcds_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_2_summary.md" target="_blank" rel="noopener">testcase_tpcds_postgresql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3431,6 +3493,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-H Throughput Test
 
 ```bash
@@ -3460,7 +3524,9 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpcds_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_postgresql_3_summary.md" target="_blank" rel="noopener">testcase_tpcds_postgresql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3810,6 +3876,8 @@ TPC-DS Queries SF=10
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -3843,7 +3911,9 @@ bexhoma tpcds \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_tpcds_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_1_summary.md" target="_blank" rel="noopener">testcase_tpcds_mysql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3959,6 +4029,8 @@ _show_extra_sections
 KeyError: 'ySQL-1-1-1-1-1'
 ```
 
+</details>
+
 
 #### TPC-DS Monitoring
 
@@ -3988,7 +4060,9 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpcds_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_2_summary.md" target="_blank" rel="noopener">testcase_tpcds_mysql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -4114,6 +4188,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-DS Throughput Test
 
 ```bash
@@ -4143,7 +4219,9 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpcds_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mysql_3_summary.md" target="_blank" rel="noopener">testcase_tpcds_mysql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -4443,6 +4521,8 @@ TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]
 TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 ```
 
+</details>
+
 
 
 
@@ -4475,7 +4555,9 @@ bexhoma tpcds \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_tpcds_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_1_summary.md" target="_blank" rel="noopener">testcase_tpcds_mariadb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -4680,6 +4762,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### TPC-DS Monitoring
 
@@ -4708,7 +4792,9 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpcds_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_2_summary.md" target="_blank" rel="noopener">testcase_tpcds_mariadb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -4944,6 +5030,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-DS Throughput Test
 
 ```bash
@@ -4973,7 +5061,9 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpcds_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_mariadb_3_summary.md" target="_blank" rel="noopener">testcase_tpcds_mariadb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -5332,6 +5422,8 @@ TPC-DS Queries SF=1
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### MonetDB
 
@@ -5358,7 +5450,9 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpcds_monetdb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_1_summary.md" target="_blank" rel="noopener">testcase_tpcds_monetdb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -5556,6 +5650,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-DS Monitoring
 
 ```bash
@@ -5581,7 +5677,9 @@ bexhoma tpcds \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_tpcds_monetdb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_2_summary.md" target="_blank" rel="noopener">testcase_tpcds_monetdb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -5817,6 +5915,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-DS Throughput Test
 
 ```bash
@@ -5843,7 +5943,9 @@ bexhoma tpcds \
 
 yields (after ca. 20 minutes) something like
 
-[testcase_tpcds_monetdb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_3_summary.md" target="_blank" rel="noopener">testcase_tpcds_monetdb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -6126,6 +6228,8 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-DS Power Test Large
 
 ```bash
@@ -6152,7 +6256,9 @@ bexhoma tpcds \
 
 yields (after ca. 110 minutes) something like
 
-[testcase_tpcds_monetdb_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_4_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_4_summary.md" target="_blank" rel="noopener">testcase_tpcds_monetdb_4.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -6342,6 +6448,8 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### TPC-DS Throughput Test Large
 
 ```bash
@@ -6368,7 +6476,9 @@ bexhoma tpcds \
 
 yields (after ca. 360 minutes) something like
 
-[testcase_tpcds_monetdb_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_5_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_tpcds_monetdb_5_summary.md" target="_blank" rel="noopener">testcase_tpcds_monetdb_5.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -6768,6 +6878,8 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -6811,7 +6923,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_1_summary.md" target="_blank" rel="noopener">testcase_benchbase_postgresql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -6888,6 +7002,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Benchbase Persistency
 
@@ -6914,7 +7030,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_2_summary.md" target="_blank" rel="noopener">testcase_benchbase_postgresql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -7011,6 +7129,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Benchbase Monitoring
 
@@ -7038,7 +7158,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_3_summary.md" target="_blank" rel="noopener">testcase_benchbase_postgresql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -7146,6 +7268,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### Benchbase Complex
 
 ```bash
@@ -7172,7 +7296,9 @@ bexhoma benchbase \
 
 yields (after ca. 30 minutes) something like
 
-[testcase_benchbase_postgresql_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_4_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_postgresql_4_summary.md" target="_blank" rel="noopener">testcase_benchbase_postgresql_4.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -7418,6 +7544,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -7454,7 +7582,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_1_summary.md" target="_blank" rel="noopener">testcase_benchbase_mysql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -7530,6 +7660,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Benchbase Persistency
 
@@ -7556,7 +7688,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_2_summary.md" target="_blank" rel="noopener">testcase_benchbase_mysql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -7636,6 +7770,8 @@ TEST passed: Throughput (requests/second) contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Benchbase Monitoring
 
@@ -7663,7 +7799,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_3_summary.md" target="_blank" rel="noopener">testcase_benchbase_mysql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -7770,6 +7908,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### Benchbase Complex
 
 ```bash
@@ -7796,7 +7936,9 @@ bexhoma benchbase \
 
 yields (after ca. 30 minutes) something like
 
-[testcase_benchbase_mysql_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_4_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mysql_4_summary.md" target="_blank" rel="noopener">testcase_benchbase_mysql_4.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -8003,6 +8145,8 @@ TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -8039,7 +8183,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_1_summary.md" target="_blank" rel="noopener">testcase_benchbase_mariadb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -8115,6 +8261,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Benchbase Persistency
 
@@ -8141,7 +8289,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_2_summary.md" target="_blank" rel="noopener">testcase_benchbase_mariadb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -8240,6 +8390,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Benchbase Monitoring
 
@@ -8267,7 +8419,9 @@ bexhoma benchbase \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_benchbase_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_3_summary.md" target="_blank" rel="noopener">testcase_benchbase_mariadb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -8374,6 +8528,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### Benchbase Complex
 
 ```bash
@@ -8400,7 +8556,9 @@ bexhoma benchbase \
 
 yields (after ca. 30 minutes) something like
 
-[testcase_benchbase_mariadb_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_4_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_benchbase_mariadb_4_summary.md" target="_blank" rel="noopener">testcase_benchbase_mariadb_4.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -8654,6 +8812,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -8695,7 +8855,9 @@ bexhoma hammerdb \
 
 yields (after ca. 10 minutes)
 
-[testcase_hammerdb_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_1_summary.md" target="_blank" rel="noopener">testcase_hammerdb_postgresql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -8771,6 +8933,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### HammerDB Monitoring
 
@@ -8796,7 +8960,9 @@ bexhoma hammerdb \
 
 yields (after ca. 15 minutes)
 
-[testcase_hammerdb_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_2_summary.md" target="_blank" rel="noopener">testcase_hammerdb_postgresql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -8906,6 +9072,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### HammerDB Complex
 
 ```bash
@@ -8931,7 +9099,9 @@ bexhoma hammerdb \
 
 yields (after ca. 60 minutes)
 
-[testcase_hammerdb_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_postgresql_3_summary.md" target="_blank" rel="noopener">testcase_hammerdb_postgresql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -9185,6 +9355,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -9213,7 +9385,9 @@ bexhoma hammerdb \
 
 yields (after ca. 10 minutes)
 
-[testcase_hammerdb_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_1_summary.md" target="_blank" rel="noopener">testcase_hammerdb_mysql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -9293,6 +9467,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### HammerDB Monitoring
 
@@ -9319,7 +9495,9 @@ bexhoma hammerdb \
 
 yields (after ca. 15 minutes)
 
-[testcase_hammerdb_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_2_summary.md" target="_blank" rel="noopener">testcase_hammerdb_mysql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -9432,6 +9610,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### HammerDB Complex
 
 ```bash
@@ -9457,7 +9637,9 @@ bexhoma hammerdb \
 
 yields (after ca. 60 minutes)
 
-[testcase_hammerdb_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mysql_3_summary.md" target="_blank" rel="noopener">testcase_hammerdb_mysql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -9650,6 +9832,8 @@ TEST passed: NOPM contains no 0 or NaN
 TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -9677,7 +9861,9 @@ bexhoma hammerdb \
 
 yields (after ca. 10 minutes)
 
-[testcase_hammerdb_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_1_summary.md" target="_blank" rel="noopener">testcase_hammerdb_mariadb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -9753,6 +9939,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### HammerDB Monitoring
 
@@ -9778,7 +9966,9 @@ bexhoma hammerdb \
 
 yields (after ca. 15 minutes)
 
-[testcase_hammerdb_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_2_summary.md" target="_blank" rel="noopener">testcase_hammerdb_mariadb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -9888,6 +10078,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 #### HammerDB Complex
 
 ```bash
@@ -9913,7 +10105,9 @@ bexhoma hammerdb \
 
 yields (after ca. 60 minutes)
 
-[testcase_hammerdb_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hammerdb_mariadb_3_summary.md" target="_blank" rel="noopener">testcase_hammerdb_mariadb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -10153,6 +10347,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -10198,7 +10394,9 @@ bexhoma ycsb \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_ycsb_postgresql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_1_summary.md" target="_blank" rel="noopener">testcase_ycsb_postgresql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -10376,6 +10574,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 ### YCSB Loader Test for Persistency
 
 ```bash
@@ -10403,7 +10603,9 @@ bexhoma ycsb \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_ycsb_postgresql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_2_summary.md" target="_blank" rel="noopener">testcase_ycsb_postgresql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -10527,6 +10729,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ### YCSB Execution for Scaling and Repetition
 
@@ -10555,7 +10759,9 @@ bexhoma ycsb \
 
 yields (after ca. 15 minutes) something like
 
-[testcase_ycsb_postgresql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_3_summary.md" target="_blank" rel="noopener">testcase_ycsb_postgresql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -10823,6 +11029,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ### YCSB Execution Different Workload
 
@@ -10851,7 +11059,9 @@ bexhoma ycsb \
 
 yields (after ca. 5 minutes) something like
 
-[testcase_ycsb_postgresql_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_4_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_4_summary.md" target="_blank" rel="noopener">testcase_ycsb_postgresql_4.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -10918,6 +11128,8 @@ TEST passed: Workflow as planned
 TEST failed: Result contains FAILED column
 ```
 
+</details>
+
 ### YCSB Execution Monitoring
 
 ```bash
@@ -10947,7 +11159,9 @@ bexhoma ycsb \
 
 yields (after ca. 10 minutes) something like
 
-[testcase_ycsb_postgresql_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_5_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_postgresql_5_summary.md" target="_blank" rel="noopener">testcase_ycsb_postgresql_5.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -11075,6 +11289,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ### MySQL
 
@@ -11105,7 +11321,9 @@ bexhoma ycsb \
 
 yields (after ca. 165 minutes) something like
 
-[testcase_ycsb_mysql_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_1_summary.md" target="_blank" rel="noopener">testcase_ycsb_mysql_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -11272,6 +11490,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 #### YCSB Loader Test for Persistency
 
 ```bash
@@ -11299,7 +11519,9 @@ bexhoma ycsb \
 
 yields (after ca. 310 minutes) something like
 
-[testcase_ycsb_mysql_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_2_summary.md" target="_blank" rel="noopener">testcase_ycsb_mysql_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -11416,6 +11638,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 #### YCSB Execution for Scaling and Repetition
 
 ```bash
@@ -11443,7 +11667,9 @@ bexhoma ycsb \
 
 yields (after ca. 240 minutes) something like
 
-[testcase_ycsb_mysql_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_3_summary.md" target="_blank" rel="noopener">testcase_ycsb_mysql_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -11686,6 +11912,8 @@ YCSB SF=1
 * TEST failed: Execution Phase: contains FAILED column
 ```
 
+</details>
+
 #### YCSB Execution Different Workload
 
 ```bash
@@ -11713,7 +11941,9 @@ bexhoma ycsb \
 
 yields (after ca. 35 minutes) something like
 
-[testcase_ycsb_mysql_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_4_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_4_summary.md" target="_blank" rel="noopener">testcase_ycsb_mysql_4.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -11798,6 +12028,8 @@ YCSB SF=1
 * TEST failed: Execution Phase: contains FAILED column
 ```
 
+</details>
+
 #### YCSB Execution Monitoring
 
 ```bash
@@ -11827,7 +12059,9 @@ bexhoma ycsb \
 
 yields (after ca. 70 minutes) something like
 
-[testcase_ycsb_mysql_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_5_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mysql_5_summary.md" target="_blank" rel="noopener">testcase_ycsb_mysql_5.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -11948,6 +12182,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ### MariaDB
 
@@ -11978,7 +12214,9 @@ bexhoma ycsb \
 
 yields (after ca. 45 minutes) something like
 
-[testcase_ycsb_mariadb_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_1_summary.md" target="_blank" rel="noopener">testcase_ycsb_mariadb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -12109,6 +12347,8 @@ TEST passed: Workflow as planned
 TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 #### YCSB Loader Test for Persistency
 
 ```bash
@@ -12136,7 +12376,9 @@ bexhoma ycsb \
 
 yields (after ca. 70 minutes) something like
 
-[testcase_ycsb_mariadb_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_2_summary.md" target="_blank" rel="noopener">testcase_ycsb_mariadb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -12253,6 +12495,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 #### YCSB Execution for Scaling and Repetition
 
 ```bash
@@ -12280,7 +12524,9 @@ bexhoma ycsb \
 
 yields (after ca. 120 minutes) something like
 
-[testcase_ycsb_mariadb_3.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_3_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_3_summary.md" target="_blank" rel="noopener">testcase_ycsb_mariadb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -12534,6 +12780,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 #### YCSB Execution Different Workload
 
 ```bash
@@ -12561,7 +12809,9 @@ bexhoma ycsb \
 
 yields (after ca. 25 minutes) something like
 
-[testcase_ycsb_mariadb_4.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_4_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_4_summary.md" target="_blank" rel="noopener">testcase_ycsb_mariadb_4.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -12657,6 +12907,8 @@ YCSB SF=1
 * TEST failed: Execution Phase: contains FAILED column
 ```
 
+</details>
+
 #### YCSB Execution Monitoring
 
 ```bash
@@ -12686,7 +12938,9 @@ bexhoma ycsb \
 
 yields (after ca. 45 minutes) something like
 
-[testcase_ycsb_mariadb_5.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_5_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_ycsb_mariadb_5_summary.md" target="_blank" rel="noopener">testcase_ycsb_mariadb_5.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -12818,6 +13072,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 
@@ -12883,7 +13139,9 @@ bexhoma hardware \
 
 ##### Result
 
-[testcase_hardware_fio_depth_sweep_refine.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_depth_sweep_refine_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_depth_sweep_refine_summary.md" target="_blank" rel="noopener">testcase_hardware_fio_depth_sweep_refine.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -13147,6 +13405,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 `-rnn` pins the SUT pod to a specific node; without it, the scheduler may place different commands
 on different nodes, so results are only directly comparable across commands if `-rnn` is set
 consistently.
@@ -13184,7 +13444,9 @@ bexhoma hardware \
 
 ##### Result
 
-[testcase_hardware_fio_numjobs_sweep.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_numjobs_sweep_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_numjobs_sweep_summary.md" target="_blank" rel="noopener">testcase_hardware_fio_numjobs_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -13448,6 +13710,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 The Per Phase table lists one row per `-nbt` (numjobs) value, at the fixed queue depth set by
 `-xfid`.
 
@@ -13485,7 +13749,9 @@ bexhoma hardware \
 
 ##### Result
 
-[testcase_hardware_fio_depth_sweep_8k.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_depth_sweep_8k_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_depth_sweep_8k_summary.md" target="_blank" rel="noopener">testcase_hardware_fio_depth_sweep_8k.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -13863,6 +14129,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 The Per Phase table lists one row per queue depth, at the 8k block size set by `-xfbs`.
 
 ---
@@ -13899,7 +14167,9 @@ bexhoma hardware \
 
 ##### Result
 
-[testcase_hardware_fio_wal_sync_fdatasync.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_sync_fdatasync_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_sync_fdatasync_summary.md" target="_blank" rel="noopener">testcase_hardware_fio_wal_sync_fdatasync.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -13992,6 +14262,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 `hardware_fio_write_iops` and the write latency percentiles are the relevant columns to compare
 against the WAL sync-write fsync example in Example-Hardware.md.
 
@@ -14030,7 +14302,9 @@ bexhoma hardware \
 
 ##### Result
 
-[testcase_hardware_fio_wal_group_commit.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_group_commit_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_group_commit_summary.md" target="_blank" rel="noopener">testcase_hardware_fio_wal_group_commit.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -14218,6 +14492,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 The Per Phase table lists one row per concurrent-writer count set by `-nbt`.
 
 ---
@@ -14254,7 +14530,9 @@ bexhoma hardware \
 
 ##### Result
 
-[testcase_hardware_fio_wal_record_size.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_record_size_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_wal_record_size_summary.md" target="_blank" rel="noopener">testcase_hardware_fio_wal_record_size.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -14423,6 +14701,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 The Per Phase table lists one row per block size set by `-xfbs`, at fixed queue depth 1.
 
 ---
@@ -14457,7 +14737,9 @@ bexhoma hardware \
 
 ##### Result
 
-[testcase_hardware_fio_checkpoint_writeback.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_checkpoint_writeback_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_checkpoint_writeback_summary.md" target="_blank" rel="noopener">testcase_hardware_fio_checkpoint_writeback.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -14645,6 +14927,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 The Per Phase table lists one row per block size/queue depth combination; bandwidth can be
 derived from `hardware_fio_write_iops × hardware_fio_bs`.
 
@@ -14687,7 +14971,9 @@ bexhoma hardware \
 
 ##### Result
 
-[testcase_hardware_fio_oltp_wal_contention_proxy.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_oltp_wal_contention_proxy_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/testcase_hardware_fio_oltp_wal_contention_proxy_summary.md" target="_blank" rel="noopener">testcase_hardware_fio_oltp_wal_contention_proxy.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -14780,6 +15066,8 @@ Hardware Benchmark (fio)
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
+
+</details>
 
 `hardware_fio_read_iops` and `hardware_fio_write_iops` in the single result row can be compared
 against the isolated `randread` result from the PostgreSQL-page-size depth sweep above at the same depth and block size.

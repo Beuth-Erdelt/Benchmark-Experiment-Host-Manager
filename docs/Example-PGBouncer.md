@@ -119,7 +119,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-[docs_ycsb_pgbouncer_1.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_pgbouncer_1_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_pgbouncer_1_summary.md" target="_blank" rel="noopener">docs_ycsb_pgbouncer_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -308,6 +310,8 @@ YCSB SF=32
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 To see the summary again you can simply call `bexhoma summary -e 1745062608` with the experiment code.
 
 ### Detailed Evaluation
@@ -386,7 +390,9 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-[docs_ycsb_pgbouncer_2.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_pgbouncer_2_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_pgbouncer_2_summary.md" target="_blank" rel="noopener">docs_ycsb_pgbouncer_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -626,6 +632,8 @@ YCSB SF=16
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ## YCSB Example Explained
 
@@ -711,7 +719,9 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-[docs_benchbase_pgbouncer_newconn.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_pgbouncer_newconn_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_pgbouncer_newconn_summary.md" target="_blank" rel="noopener">docs_benchbase_pgbouncer_newconn.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -812,6 +822,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### Benchbase Reconnect via Pool
 
 TPC-C is performed at 16 warehouses.
@@ -841,7 +853,9 @@ bexhoma benchbase \
 
 ### Evaluate Results
 
-[docs_benchbase_pgbouncer_newconn_pool.log](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_pgbouncer_newconn_pool_summary.md)
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_pgbouncer_newconn_pool_summary.md" target="_blank" rel="noopener">docs_benchbase_pgbouncer_newconn_pool.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -954,6 +968,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 
 
