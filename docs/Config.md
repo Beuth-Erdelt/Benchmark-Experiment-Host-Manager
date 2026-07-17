@@ -48,10 +48,11 @@ Copy it to `cluster.config` and adjust the sections below before running any exp
         'appname': 'bexhoma',
         'context': {
             'my-context': {
-                'namespace':    'my-namespace',
-                'clustername':  'My Cluster',
-                'service_sut':  '{service}.{namespace}.svc.cluster.local',
-                'port':         9091,
+                'namespace':       'my-namespace',
+                'clustername':     'My Cluster',
+                'service_sut':     '{service}.{namespace}.svc.cluster.local',
+                'port':            9091,
+                'storage_classes': ['local-hdd', 'shared', 'cephcsi'],
             },
         },
         'monitor': { ... },   # see below
@@ -67,6 +68,7 @@ Copy it to `cluster.config` and adjust the sections below before running any exp
 | `context.<name>.clustername` | Human-readable label shown in experiment summaries and reports. |
 | `context.<name>.service_sut` | DNS name template for reaching the SUT (System Under Test) service from within the cluster. The placeholders `{service}` and `{namespace}` are filled in automatically. The default follows the standard Kubernetes in-cluster DNS pattern. |
 | `context.<name>.port` | Port on the local machine used when forwarding traffic to the SUT via `kubectl port-forward`. Defaults to `9091`. This is also the port exposed by all SUT services inside the cluster. |
+| `context.<name>.storage_classes` | Optional list of Kubernetes StorageClass names available in this cluster for the SUT persistent volume, e.g. `['local-hdd', 'shared', 'cephcsi']`. Each name must match an actual `StorageClass` object in the cluster. Passed via `-rst`/`--request-storage-type`. `''`/unset (ephemeral storage) and `'ramdisk'` (in-memory) are always valid and do not need to be listed here. |
 
 To use a **second cluster** simply add another entry under `context`:
 

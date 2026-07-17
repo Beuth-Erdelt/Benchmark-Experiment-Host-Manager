@@ -466,6 +466,12 @@ class ExperimentBase():
         gpu_type = str(args.request_gpu_type)
         gpus = str(args.request_gpu)
         request_storage_type = args.request_storage_type
+        valid_storage_types = self.cluster.get_available_storage_types()
+        if request_storage_type not in valid_storage_types:
+            raise ValueError(
+                f"Invalid --request-storage-type {request_storage_type!r} for cluster context "
+                f"{self.cluster.context!r}. Valid values: {valid_storage_types}."
+            )
         request_storage_size = args.request_storage_size
         request_storage_remove = args.request_storage_remove
         request_node_name = args.request_node_name

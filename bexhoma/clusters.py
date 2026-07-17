@@ -121,6 +121,7 @@ class Kubernetes():
         self.contextdata = {}
         self.host = 'localhost'
         self.port = None
+        self.storage_classes = []
 
         if context is None:
             try:
@@ -131,6 +132,7 @@ class Kubernetes():
                 self.namespace = self.contextdata['namespace']
                 self.appname = self.config['credentials']['k8s']['appname']
                 self.yamlfolder = yamlfolder
+                self.storage_classes = self.contextdata.get('storage_classes', [])
             except Exception:
                 print("WARN: No Kubernetes context found")
 
@@ -197,6 +199,21 @@ class Kubernetes():
             )
         except Exception:
             print("WARN: Could not connect to Kubernetes")
+
+    def get_available_storage_types(self) -> list:
+        """
+        Return the SUT persistent-volume storage class names valid for the current cluster context.
+
+        ``None`` and ``''`` (ephemeral / no PVC) and ``'ramdisk'`` (in-memory, handled specially by
+        :meth:`~bexhoma.configurations.base.SutConfiguration.use_ramdisk`) are always valid,
+        independent of the cluster. Any other value must be declared in the cluster configuration
+        file under ``credentials.k8s.context.<name>.storage_classes``, since actual Kubernetes
+        StorageClass names differ from cluster to cluster.
+
+        :return: Valid values for ``--request-storage-type``.
+        :rtype: list
+        """
+        return [None, '', 'ramdisk'] + list(self.storage_classes)
 
     def set_code(self, code):
         """
