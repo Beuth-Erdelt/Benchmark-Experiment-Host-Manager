@@ -45,6 +45,7 @@ def make_base_parser():
     p.add_argument('-mc',  '--monitoring-cluster', help='enable node-level monitoring for the entire cluster', action='store_true', default=False)
     p.add_argument('-ms',  '--max-sut', help='maximum number of DBMS configurations to run in parallel cluster-wide (default: no limit)', default=None)
     p.add_argument('-mse', '--max-sut-experiment', help='maximum number of DBMS configurations in this experiment to run in parallel (default: no limit)', default=None)
+    p.add_argument('-et',  '--experiment-timeout', help='maximum wall-clock duration of the experiment in minutes; when exceeded, the experiment is stopped and all its components are removed from the cluster (default: no limit)', type=int, default=None)
     p.add_argument('-nc',  '--num-config', help='number of experiment repetitions per configuration', default=1)
     p.add_argument('-ne',  '--num-query-executors', help='comma-separated list of parallel client counts to sweep', default="1")
     p.add_argument('-nw',  '--num-worker', help='number of worker nodes for distributed DBMS', default=0)

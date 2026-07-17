@@ -73,6 +73,9 @@ SELECTOR_RE = re.compile(
 # or NaN regardless of actual load, so the 0/NaN test would be a false positive.
 MIN_MONITORING_SAMPLES = 2
 
+#: Divisor to convert the ``--experiment-timeout`` CLI value (minutes) to seconds.
+SECONDS_PER_MINUTE = 60
+
 def parse_set_arg(s: str) -> Tuple[dict, str]:
     """
     Parse a single ``--set`` argument of the form ``<selector>=<value>``.
@@ -151,6 +154,7 @@ class ExperimentBase():
         self.pod_dashboard = ""                                         # name of the dashboard pod
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
+        self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
         self.num_maintaining_pods = 0                                   # number of maintaining pods in total (pre-initialized; redeclared below)
         self.num_tenants = 0                                            # number of tenants for multi-tenant experiments
@@ -480,6 +484,8 @@ class ExperimentBase():
         request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
         self.resetscript_active = args.activate_reset
+        if args.experiment_timeout is not None:
+            self.max_experiment_minutes = int(args.experiment_timeout)
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
         multi_tenant_volume = args.multi_tenant_volume
@@ -1230,6 +1236,20 @@ class ExperimentBase():
             status = self.cluster.get_pod_status(p)
             print(p, status)
             self.cluster.delete_pod(p)
+    def remove_experiment(self) -> None:
+        """
+        Stop every component of this experiment and remove it from the cluster.
+
+        Calls all per-component ``stop_*`` methods and then deletes any
+        remaining Kubernetes objects labeled with this experiment's code,
+        mirroring the teardown of ``bexhoma-experiments stop -e <code>``.
+        """
+        self.stop_benchmarker()
+        self.stop_maintaining()
+        self.stop_loading()
+        self.stop_monitoring()
+        self.stop_sut()
+        self.cluster.kubectl('delete all -l experiment='+self.code)
     def start_monitoring(self):
         """
         Start monitoring for all dbms configurations of this experiment.
@@ -1469,6 +1489,11 @@ class ExperimentBase():
         5) at the same time as 4. run benchmarker jobs corresponding to list given via add_benchmark_list()
         6) remove everything when done
 
+        If ``self.max_experiment_minutes`` is set (via ``--experiment-timeout``),
+        the elapsed wall-clock time is checked at every iteration; once it is
+        reached, the experiment is aborted via :meth:`remove_experiment` and this
+        method returns early, regardless of which phase is currently running.
+
         :param intervals: Seconds to wait before checking change of status
         :param stop_after_starting: stops after phase 2)
         :param stop_after_loading: stops after phase 3)
@@ -1488,10 +1513,17 @@ class ExperimentBase():
                     json.dump(config.experiment_dict, _f, indent=2)
         intervals_wait = 0
         do = True
+        experiment_start_time = datetime.utcnow()
         while do:
             #time.sleep(intervals)
             self.wait(intervals_wait)
             intervals_wait = intervals
+            if self.max_experiment_minutes is not None:
+                elapsed_minutes = (datetime.utcnow() - experiment_start_time).total_seconds() / SECONDS_PER_MINUTE
+                if elapsed_minutes >= self.max_experiment_minutes:
+                    print("{:30s}: exceeded maximum timeout of {} minutes ({:.1f} elapsed) - stopping and removing all components".format("Experiment", self.max_experiment_minutes, elapsed_minutes))
+                    self.remove_experiment()
+                    return
             _benchmark_just_submitted = False
             # count number of running and pending pods
             num_pods_running_experiment = len(self.cluster.get_pods(app=self.appname, component='sut', experiment=self.code, status='Running'))
