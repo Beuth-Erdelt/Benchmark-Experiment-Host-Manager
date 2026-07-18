@@ -233,12 +233,17 @@ counter has no `EXPERIMENT_RUN`/`CLIENT` segment because loading has exactly one
 `(CONFIGURATION, EXPERIMENT)` — unlike benchmarking, there is no `-ne`-style sweep that would
 create multiple loading rounds to disambiguate.
 
-When a configuration's `experiment_dict['loader']` has more than one entry (multiple parallel
-loading Jobs, added via `SutConfiguration.add_loading_parameters()`), each entry's own job
-counter/messagequeue keys are suffixed by the entry's 1-based position (`data_job`) so
-concurrent Jobs with different pod counts never share countdown state; that same position is
-forwarded as `benchmark_run` when building the Job/pod name. The loader round counter itself is
-shared and unsuffixed, sized to the sum of `num_pods` across all entries.
+Every loader entry's own job counter/messagequeue/per-pod-config keys are suffixed by the
+entry's 1-based position (`data_job`) — **always**, even when `experiment_dict['loader']` has
+only one entry, so concurrent Jobs with different pod counts never share countdown state. This
+mirrors how the benchmarker side always includes `benchmark_run` in its job names/keys (e.g.
+`PostgreSQL-1-1-1`) regardless of whether a refresh stream is active — no "only if there's more
+than one entry" branch to forget on either the Python or the shell side. The same `data_job`
+value is forwarded as `benchmark_run` when building the Job/pod name, and as the `BEXHOMA_DATA_JOB`
+env var so the pod's shell script can reconstruct the identical suffix (default `1` via
+`${BEXHOMA_DATA_JOB:-1}`, for standalone/manual invocations). The loader **round** counter itself
+stays shared and unsuffixed (by design — see above), sized to the sum of `num_pods` across all
+entries.
 
 ### Rules per pod type
 

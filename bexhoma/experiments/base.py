@@ -1921,7 +1921,19 @@ class ExperimentBase():
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply
                             config.experiment_done = True
                 else:
-                    print("{:30s}: is loading".format(config.configuration))
+                    progress = ""
+                    if len(config.experiment_dict['loader']) > 1:
+                        sut_labels = self.cluster.get_pods_labels(
+                            app=self.cluster.appname, component='sut',
+                            experiment=self.code, configuration=config.configuration)
+                        if len(sut_labels) > 0:
+                            labels = next(iter(sut_labels.values()))
+                            num_data_jobs = labels.get('num_data_jobs')
+                            num_data_jobs_ready = labels.get('num_data_jobs_ready', '0')
+                            if num_data_jobs:
+                                progress = " ({}/{} parallel loading jobs done)".format(
+                                    num_data_jobs_ready, num_data_jobs)
+                    print("{:30s}: is loading{}".format(config.configuration, progress))
             _we_have_running_benchmarks = False
             _we_have_incomplete_jobs = False
             for config in self.configurations:

@@ -296,8 +296,15 @@ class LoadingCoordinator:
         for data_job, loader_entry in enumerate(loader_entries, start=1):
             entry_parallelism = loader_entry.get('parallelism', 1)
             entry_num_pods = loader_entry.get('num_pods', entry_parallelism)
-            benchmark_run = str(data_job) if num_data_jobs > 1 else ''
-            suffix = '-{}'.format(data_job) if num_data_jobs > 1 else ''
+            # Always suffixed by data_job, even when there is only one entry —
+            # matching how the benchmarker side always includes benchmark_run
+            # in its job names/keys (e.g. "PostgreSQL-1-1-1") regardless of
+            # whether a refresh stream makes it a "real" multi-entry round.
+            # Keeping this unconditional means every loader/generator shell
+            # script can unconditionally use $BEXHOMA_DATA_JOB, with no
+            # "only if there's more than one entry" branch to forget to add.
+            benchmark_run = str(data_job)
+            suffix = '-{}'.format(data_job)
             redisQueue = '{}-{}-{}-{}{}'.format(
                 app, component, cfg.configuration, cfg.code, suffix)
             for i in range(1, entry_parallelism + 1):
@@ -315,11 +322,13 @@ class LoadingCoordinator:
             loader_key = '{}-{}-job-{}-{}{}'.format(
                 app, 'loader-podcount', cfg.configuration, cfg.code, suffix)
             cfg.experiment.cluster.set_pod_counter(queue=loader_key, value=entry_num_pods)
+            entry_env = dict(loader_entry.get('parameters', {}))
+            entry_env['BEXHOMA_DATA_JOB'] = str(data_job)
             job = cfg.manifest.create_manifest_loading(
                 app=app, component='loading', experiment=experiment,
                 configuration=configuration, parallelism=entry_parallelism,
                 num_pods=entry_num_pods, benchmark_run=benchmark_run,
-                env=loader_entry.get('parameters', {}),
+                env=entry_env,
                 template_override=loader_entry.get('template', ''))
             cfg.logger.debug("Deploy " + job)
             cfg.experiment.cluster.create_object_from_file(job)
@@ -609,6 +618,20 @@ class LoadingCoordinator:
                     # process is the only writer of this label.
                     num_data_jobs = len(cfg.experiment_dict['loader']) or 1
                     is_last_data_job = num_data_jobs <= 1
+                    # Job names are always suffixed with the 1-based loader-entry
+                    # position (data_job — see start_pod()); recover the entry's
+                    # human-readable name from it so log output says which of the
+                    # (possibly parallel) loaders this status refers to.
+                    loader_name = ''
+                    data_job_idx = None
+                    try:
+                        data_job_idx = int(job.rsplit('-', 1)[-1])
+                    except ValueError:
+                        data_job_idx = None
+                    if data_job_idx is not None and 1 <= data_job_idx <= len(cfg.experiment_dict['loader']):
+                        loader_name = cfg.experiment_dict['loader'][data_job_idx - 1].get('name', '')
+                    else:
+                        data_job_idx = None
                     if len(pod_labels) > 0:
                         pod = next(iter(pod_labels.keys()))
                         if 'time_loading_start' in pod_labels[pod]:
@@ -624,9 +647,26 @@ class LoadingCoordinator:
                         if num_data_jobs > 1:
                             new_ready = int(pod_labels[pod].get('num_data_jobs_ready', 0)) + 1
                             is_last_data_job = new_ready >= num_data_jobs
+                            done_label = (
+                                ' data_job_{}_done=True'.format(data_job_idx)
+                                if data_job_idx is not None else ''
+                            )
                             cfg.experiment.cluster.kubectl(
-                                'label pods {} --overwrite num_data_jobs={} num_data_jobs_ready={}'.format(
-                                    pod, num_data_jobs, new_ready))
+                                'label pods {} --overwrite num_data_jobs={} num_data_jobs_ready={}{}'.format(
+                                    pod, num_data_jobs, new_ready, done_label))
+                            # Per-entry data_job_{i}_done labels (written above, persisted on the
+                            # pod, and read back here from the labels fetched at the top of this
+                            # iteration) let us name exactly which entries remain, rather than just
+                            # "all other entries" — those may include ones that already finished in
+                            # an earlier check() call.
+                            still_loading = [
+                                entry.get('name', str(i))
+                                for i, entry in enumerate(cfg.experiment_dict['loader'], start=1)
+                                if i != data_job_idx and pod_labels[pod].get('data_job_{}_done'.format(i)) != 'True'
+                            ] if not is_last_data_job else []
+                            print("{:30s}: loader '{}' finished ({}/{} parallel loading jobs done{})".format(
+                                cfg.configuration, loader_name or job, new_ready, num_data_jobs,
+                                "; still loading: " + ", ".join(still_loading) if still_loading else ""))
                     for pod in pods:
                         status = cfg.experiment.cluster.get_pod_status(pod)
                         cfg.experiment.cluster.logger.debug(
@@ -652,7 +692,8 @@ class LoadingCoordinator:
                         experiment=experiment, configuration=configuration)
                     if len(pods_sut) > 0:
                         pod_sut = pods_sut[0]
-                        print("{:30s}: showing loader times".format(cfg.configuration))
+                        print("{:30s}: showing loader times{}".format(
+                            cfg.configuration, " ({})".format(loader_name) if loader_name else ""))
                         timing_datagenerator, timing_sensor, timing_total = (
                             cfg.experiment.get_job_timing_loading(job))
                         print("{:30s}: generator times (start/end per pod and container) {}".format(
