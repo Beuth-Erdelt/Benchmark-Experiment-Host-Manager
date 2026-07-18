@@ -67,18 +67,12 @@ class TpchYcsbParallelTestExperiment(TpchExperiment):
             script=script)
         self.ycsb_rows = ycsb_rows
         self.add_benchmark(benchmarks.YCSB(SF=str(ycsb_rows // 1000000 or 1)))
-        # Second parallel loading job: loads YCSB's usertable while the TPC-H
-        # loader entry (index 0, already in the template) loads TPC-H's tables
-        # — both against the same SUT, at the same time.
-        self.experiment_dict_template["loader"].append({
-            "name":        "ycsb-loader",
-            "benchmarker": "ycsb",
-            "template":    "jobtemplate-loading-ycsb.yml",
-            "parallelism": 1,
-            "num_pods":    1,
-            "target":      "sut",
-            "parameters":  {},
-        })
+        # The second parallel loading job (YCSB) is added later, per-config, via
+        # SutConfiguration.add_loading_parameters() in the __main__ block below —
+        # NOT here. Adding it to experiment_dict_template as well would double it
+        # up (add_configuration() deep-copies this template into every config's
+        # own experiment_dict, so the config-level add_loading_parameters() call
+        # would then append a *third* loader entry on top of these two).
         # Second parallel benchmarking job in round 1: runs the YCSB workload
         # while the "tpch" entry (already in the template) runs the query
         # stream — both start together (round counter), same as the existing
@@ -102,6 +96,7 @@ if __name__ == '__main__':
     """
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase', choices=['run', 'start', 'load', 'summary'], default='run')
+    parser.add_argument('-dbms', '--dbms', help='fixed to PostgreSQL for this demo; present only because ExperimentBase.prepare_testbed() reads args.dbms', default=[], nargs='*')
     parser.add_argument('-yr', '--ycsb-rows', help='number of YCSB rows/operations to load and run (kept small; this is a demo)', default=10000, type=int, dest='ycsb_rows')
     # TPC-H-specific args read by benchmarks.TPCH.configure_workload()
     parser.add_argument('-xlit', '--xlimit-import-table', help='import only this table', default='', dest='limit_import_table')
@@ -167,6 +162,17 @@ if __name__ == '__main__':
         BEXHOMA_SYNCH_GENERATE=1,
         TRANSFORM_RAW_DATA=1,
         TPCH_TABLE=args.limit_import_table,
+        # ycsb/generator/generator.sh (acting as the YCSB loader) needs these;
+        # YCSB_ROWS is used directly, not just as an SF-derived fallback, and
+        # YCSB_STATUS is compared with `test $YCSB_STATUS -ne 0` with no
+        # default, so it must always be set or the script errors out.
+        YCSB_STATUS=1,
+        YCSB_WORKLOAD=args.workload,
+        YCSB_ROWS=ycsb_rows,
+        YCSB_BATCHSIZE=args.scaling_batchsize,
+        YCSB_STATUS_INTERVAL=10,
+        YCSB_INSERTORDER=args.extra_insert_order,
+        YCSB_MAX_EXECUTION=0,
     )
     experiment.set_default_benchmarking_parameters(
         SF=SF,
@@ -175,7 +181,7 @@ if __name__ == '__main__':
         DBMSBENCHMARKER_DEV=int(args.debug),
         BEXHOMA_SYNCH_LOAD=1,
         YCSB_STATUS=1,
-        YCSB_WORKLOAD="a",
+        YCSB_WORKLOAD=args.workload,
         YCSB_ROWS=ycsb_rows,
         YCSB_OPERATIONS=ycsb_operations,
         YCSB_BATCHSIZE=args.scaling_batchsize,
