@@ -422,7 +422,11 @@ class SutConfiguration:
     ) -> None:
         """Add a parallel loader entry to the experiment dict.
 
-        All loader entries run simultaneously during the loading phase.
+        All loader entries run simultaneously during the loading phase, each as
+        an independent Kubernetes Job (see :meth:`.loading.LoadingCoordinator.start_pod`).
+        Experiment-wide :attr:`~bexhoma.experiments.base.default_loading_parameters`
+        are merged in first, same as :meth:`set_loading_parameters` does for the
+        primary (index-0) entry; ``env_vars`` win on conflict.
 
         :param name: Short identifier for this loader entry.
         :param template: K8s job template filename.
@@ -433,6 +437,7 @@ class SutConfiguration:
         :param target: Component the job runs against (default ``'sut'``).
         :param env_vars: ENV vars injected into the container.
         """
+        parameters = {**self.experiment.default_loading_parameters, **env_vars}
         entry = {
             'name':        name,
             'benchmarker': benchmarker,
@@ -440,7 +445,7 @@ class SutConfiguration:
             'parallelism': parallelism,
             'num_pods':    num_pods if num_pods is not None else parallelism,
             'target':      target,
-            'parameters':  env_vars,
+            'parameters':  parameters,
         }
         self.experiment_dict['loader'].append(entry)
 

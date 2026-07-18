@@ -239,14 +239,39 @@ class LoadingCoordinator:
         parallelism: int = 1,
         num_pods: int = 1,
     ) -> None:
-        """Start a Kubernetes loading job (parallel data ingestion).
+        """Start one Kubernetes loading job per entry in ``experiment_dict['loader']``.
+
+        Each entry runs as an independent, concurrently-submitted Job sized by
+        its own ``parallelism``/``num_pods`` (populated via
+        :meth:`SutConfiguration.set_loading` for the primary entry and
+        :meth:`SutConfiguration.add_loading_parameters` for additional ones).
+        When ``experiment_dict['loader']`` has no entries at all, a single job
+        is submitted from ``parallelism``/``num_pods`` directly, matching the
+        legacy (non ``experiment_dict``) behaviour.
+
+        A round counter — sized to the sum of ``num_pods`` across all entries,
+        the same unit each entry's own job counter already uses — is always
+        initialised once before any job is submitted, so every entry's pods
+        start their actual workload at the same wall-clock moment (mirrors the
+        benchmarker round counter). It is set unconditionally, even for a
+        single entry, so loader/generator pods can wait on it without needing
+        to know how many loader entries exist; with one entry it simply equals
+        that entry's own job counter. When more than one entry is configured,
+        each entry's own job-counter/queue keys are additionally suffixed by
+        its 1-based position (``data_job``) so concurrent jobs with different
+        pod counts never share countdown state, and that same position is
+        forwarded as ``benchmark_run`` to
+        :meth:`.manifest.ManifestBuilder.create_manifest_loading` so each
+        job/pod gets a distinct name.
 
         :param app: App label.
         :param component: Component label (default ``'loading'``).
         :param experiment: Experiment code.
         :param configuration: DBMS configuration name.
-        :param parallelism: Number of parallel pods.
-        :param num_pods: Total pods that must complete.
+        :param parallelism: Number of parallel pods; used only as a fallback
+            when ``experiment_dict['loader']`` has no entries.
+        :param num_pods: Total pods that must complete; used only as a
+            fallback when ``experiment_dict['loader']`` has no entries.
         """
         cfg = self._config
         if len(app) == 0:
@@ -256,26 +281,48 @@ class LoadingCoordinator:
         if len(experiment) == 0:
             experiment = cfg.code
         cfg.logger.debug("LoadingCoordinator.start_pod({})".format(configuration))
-        redisQueue = '{}-{}-{}-{}'.format(app, component, cfg.configuration, cfg.code)
-        for i in range(1, cfg.num_loading + 1):
-            cfg.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-        if cfg.experiment_dict['loader']:
-            loader_entry = cfg.experiment_dict['loader'][0]
-            cfg._push_pod_configs(
-                queue_key=redisQueue,
-                num_pods=cfg.num_loading,
-                parameters=loader_entry.get('parameters', {}),
-                pod_parameters=loader_entry.get('pod_parameters', []),
-            )
-        redisQueue = '{}-{}-job-{}-{}'.format(app, 'generator-podcount', cfg.configuration, cfg.code)
-        cfg.experiment.cluster.set_pod_counter(queue=redisQueue, value=num_pods)
-        redisQueue = '{}-{}-job-{}-{}'.format(app, 'loader-podcount', cfg.configuration, cfg.code)
-        cfg.experiment.cluster.set_pod_counter(queue=redisQueue, value=num_pods)
-        job = cfg.manifest.create_manifest_loading(
-            app=app, component='loading', experiment=experiment,
-            configuration=configuration, parallelism=parallelism, num_pods=num_pods)
-        cfg.logger.debug("Deploy " + job)
-        cfg.experiment.cluster.create_object_from_file(job)
+        loader_entries = cfg.experiment_dict['loader'] or [
+            {'parallelism': parallelism, 'num_pods': num_pods}]
+        num_data_jobs = len(loader_entries)
+        # Always initialised (even for a single entry) so loader/generator pods can
+        # unconditionally wait on this key without needing to know num_data_jobs
+        # themselves; with one entry it just equals that entry's own job counter.
+        round_key = '{}-loader-podcount-round-{}-{}'.format(
+            app, cfg.configuration, cfg.code)
+        total_pods = sum(
+            entry.get('num_pods', entry.get('parallelism', 1))
+            for entry in loader_entries)
+        cfg.experiment.cluster.set_pod_counter(queue=round_key, value=total_pods)
+        for data_job, loader_entry in enumerate(loader_entries, start=1):
+            entry_parallelism = loader_entry.get('parallelism', 1)
+            entry_num_pods = loader_entry.get('num_pods', entry_parallelism)
+            benchmark_run = str(data_job) if num_data_jobs > 1 else ''
+            suffix = '-{}'.format(data_job) if num_data_jobs > 1 else ''
+            redisQueue = '{}-{}-{}-{}{}'.format(
+                app, component, cfg.configuration, cfg.code, suffix)
+            for i in range(1, entry_parallelism + 1):
+                cfg.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
+            if 'parameters' in loader_entry:
+                cfg._push_pod_configs(
+                    queue_key=redisQueue,
+                    num_pods=entry_parallelism,
+                    parameters=loader_entry.get('parameters', {}),
+                    pod_parameters=loader_entry.get('pod_parameters', []),
+                )
+            generator_key = '{}-{}-job-{}-{}{}'.format(
+                app, 'generator-podcount', cfg.configuration, cfg.code, suffix)
+            cfg.experiment.cluster.set_pod_counter(queue=generator_key, value=entry_num_pods)
+            loader_key = '{}-{}-job-{}-{}{}'.format(
+                app, 'loader-podcount', cfg.configuration, cfg.code, suffix)
+            cfg.experiment.cluster.set_pod_counter(queue=loader_key, value=entry_num_pods)
+            job = cfg.manifest.create_manifest_loading(
+                app=app, component='loading', experiment=experiment,
+                configuration=configuration, parallelism=entry_parallelism,
+                num_pods=entry_num_pods, benchmark_run=benchmark_run,
+                env=loader_entry.get('parameters', {}),
+                template_override=loader_entry.get('template', ''))
+            cfg.logger.debug("Deploy " + job)
+            cfg.experiment.cluster.create_object_from_file(job)
 
     def start_exec(self, delay: int = 0) -> bool:
         """Start data ingestion by running init scripts directly inside the SUT pod.
@@ -555,6 +602,13 @@ class LoadingCoordinator:
                     pod_labels = cfg.experiment.cluster.get_pods_labels(
                         app=app, component='sut',
                         experiment=experiment, configuration=configuration)
+                    # With more than one loader entry, several loading Jobs run
+                    # concurrently; only the one that pushes num_data_jobs_ready to
+                    # num_data_jobs may finalize (write data=True, trigger indexing).
+                    # Safe without a distributed lock because a single orchestrator
+                    # process is the only writer of this label.
+                    num_data_jobs = len(cfg.experiment_dict['loader']) or 1
+                    is_last_data_job = num_data_jobs <= 1
                     if len(pod_labels) > 0:
                         pod = next(iter(pod_labels.keys()))
                         if 'time_loading_start' in pod_labels[pod]:
@@ -567,6 +621,12 @@ class LoadingCoordinator:
                             if key.startswith("time_"):
                                 time_type = key[len("time_"):]
                                 cfg.times_scripts[time_type] = float(value)
+                        if num_data_jobs > 1:
+                            new_ready = int(pod_labels[pod].get('num_data_jobs_ready', 0)) + 1
+                            is_last_data_job = new_ready >= num_data_jobs
+                            cfg.experiment.cluster.kubectl(
+                                'label pods {} --overwrite num_data_jobs={} num_data_jobs_ready={}'.format(
+                                    pod, num_data_jobs, new_ready))
                     for pod in pods:
                         status = cfg.experiment.cluster.get_pod_status(pod)
                         cfg.experiment.cluster.logger.debug(
@@ -585,7 +645,8 @@ class LoadingCoordinator:
                         cfg.experiment.cluster.delete_pod(pod)
                     cfg.experiment.end_loading(job)
                     cfg.experiment.cluster.delete_job(job)
-                    loading_pods_active = False
+                    if is_last_data_job:
+                        loading_pods_active = False
                     pods_sut = cfg.experiment.cluster.get_pods(
                         app=app, component='sut',
                         experiment=experiment, configuration=configuration)
@@ -654,12 +715,13 @@ class LoadingCoordinator:
                         cfg.experiment.cluster.logger.debug(cfg.time_loading_start)
                         cfg.experiment.cluster.logger.debug(cfg.time_loading_end)
                         cfg.experiment.cluster.logger.debug(cfg.time_loading)
+                        data_label = ' data=True' if is_last_data_job else ''
                         fullcommand = (
                             'label pods ' + pod_sut
-                            + ' --overwrite data=True time_loading_end="{}" time_loading_start="{}"'
-                              ' time_ingested={} time_loading={} time_generated={}'.format(
+                            + ' --overwrite time_loading_end="{}" time_loading_start="{}"'
+                              ' time_ingested={} time_loading={} time_generated={}{}'.format(
                                 cfg.time_loading_end, cfg.time_loading_start,
-                                loader_time, cfg.time_loading, generator_time))
+                                loader_time, cfg.time_loading, generator_time, data_label))
                         cfg.experiment.cluster.kubectl(fullcommand)
                         use_storage = cfg.use_storage()
                         use_ramdisk = cfg.use_ramdisk()
@@ -668,13 +730,13 @@ class LoadingCoordinator:
                             if volume:
                                 fullcommand = (
                                     'label pvc ' + volume
-                                    + ' --overwrite data=True time_loading_end="{}"'
+                                    + ' --overwrite time_loading_end="{}"'
                                       ' time_loading_start="{}" time_ingested={}'
-                                      ' time_loading={} time_generated={}'.format(
+                                      ' time_loading={} time_generated={}{}'.format(
                                         cfg.time_loading_end, cfg.time_loading_start,
-                                        loader_time, cfg.time_loading, generator_time))
+                                        loader_time, cfg.time_loading, generator_time, data_label))
                                 cfg.experiment.cluster.kubectl(fullcommand)
-                    if len(cfg.indexscript):
+                    if is_last_data_job and len(cfg.indexscript):
                         if cfg.tenant_per == 'container' and not cfg.loading_finished:
                             cfg.tenant_ready_to_index = True
                         else:

@@ -218,17 +218,27 @@ further negative, but the wait condition is still satisfied immediately.
 | Level | Scope | Key format |
 |---|---|---|
 | **Job** | All pods within one Kubernetes Job | `bexhoma-{type}-podcount-job-{CONNECTION}-{EXPERIMENT}` |
-| **Round** | All benchmarker pods within one configuration's client round (e.g. query stream + refresh stream) | `bexhoma-benchmarker-podcount-round-{EXPERIMENT_RUN}-{CLIENT}-{CONFIGURATION}-{EXPERIMENT}` |
+| **Round** | All benchmarker pods within one configuration's client round (e.g. query stream + refresh stream); all loader pods across every entry of one configuration's (single) loading phase (e.g. two parallel loading Jobs) | Benchmarker: `bexhoma-benchmarker-podcount-round-{EXPERIMENT_RUN}-{CLIENT}-{CONFIGURATION}-{EXPERIMENT}`; Loader: `bexhoma-loader-podcount-round-{CONFIGURATION}-{EXPERIMENT}` |
 | **Experiment** | All pods of all configurations in the same phase; container tenancy only | `bexhoma-{type}-podcount-exp-{EXPERIMENT}` |
 
 `{type}` is `benchmarker`, `loader`, or `generator`.  `{CONNECTION}` maps to
 `self.configuration` / `$BEXHOMA_CONNECTION`.  `{EXPERIMENT}` maps to `self.code` /
 `$BEXHOMA_EXPERIMENT`.
 
-The round counter key is unique per `(EXPERIMENT_RUN, CLIENT, CONFIGURATION, EXPERIMENT)` quad.
-The `CONFIGURATION` segment scopes the counter to a single SUT so that benchmarkers of
+The benchmarker round counter key is unique per `(EXPERIMENT_RUN, CLIENT, CONFIGURATION, EXPERIMENT)`
+quad. The `CONFIGURATION` segment scopes the counter to a single SUT so that benchmarkers of
 different parallel configurations never share a round counter. The remaining fields prevent
-stale values from one round affecting the next (the core fix for #720).
+stale values from one round affecting the next (the core fix for #720). The loader round
+counter has no `EXPERIMENT_RUN`/`CLIENT` segment because loading has exactly one round per
+`(CONFIGURATION, EXPERIMENT)` — unlike benchmarking, there is no `-ne`-style sweep that would
+create multiple loading rounds to disambiguate.
+
+When a configuration's `experiment_dict['loader']` has more than one entry (multiple parallel
+loading Jobs, added via `SutConfiguration.add_loading_parameters()`), each entry's own job
+counter/messagequeue keys are suffixed by the entry's 1-based position (`data_job`) so
+concurrent Jobs with different pod counts never share countdown state; that same position is
+forwarded as `benchmark_run` when building the Job/pod name. The loader round counter itself is
+shared and unsuffixed, sized to the sum of `num_pods` across all entries.
 
 ### Rules per pod type
 
@@ -238,16 +248,26 @@ stale values from one round affecting the next (the core fix for #720).
 2. Round counter — unconditional.
 3. Experiment counter — only when `BEXHOMA_TENANT_BY=container`.
 
-**Loader pods** wait conditionally on `BEXHOMA_SYNCH_LOAD > 0`:
+**Loader pods** wait conditionally on `BEXHOMA_SYNCH_LOAD > 0`, in order:
 
 1. Job counter.
-2. Experiment counter — only when `BEXHOMA_TENANT_BY=container`.
+2. Round counter — always initialized by Python (even for a single loader entry, where it
+   equals that entry's own job counter), so the pod script does not need to know how many
+   loader entries exist.
+3. Experiment counter — only when `BEXHOMA_TENANT_BY=container`.
 
 **Generator pods** wait conditionally on `BEXHOMA_SYNCH_GENERATE > 0`
 (TPC-H/TPC-DS) or `BEXHOMA_SYNCH_LOAD != 0` (YCSB, Benchbase):
 
 1. Job counter.
 2. Experiment counter — only when `BEXHOMA_TENANT_BY=container`.
+
+The loader round counter is only waited on by the pod script that performs the actual
+data-loading workload (the TPC-H/TPC-DS `loader.sh` scripts; the YCSB/Benchbase
+`generator.sh` scripts, which perform the load themselves). The pure TPC-H/TPC-DS
+data-*generation* step (`generator.sh`, gated by `BEXHOMA_SYNCH_GENERATE`) does not wait on
+it, because that step can exit early when cached raw data already exists — a barrier placed
+there could hang forever waiting for a peer that skipped its own decrement.
 
 The experiment counter for generators uses the `generator-podcount-exp` key;
 for loaders (including the YCSB generator which does `ycsb load`) it uses the
@@ -257,13 +277,26 @@ for loaders (including the YCSB generator which does `ycsb load`) it uses the
 
 | Counter | Method | Value |
 |---|---|---|
-| Loader job counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | `num_pods` |
-| Generator job counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | `num_pods` |
+| Loader job counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | Per-entry `num_pods` |
+| Loader round counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | Sum of `num_pods` across every entry in `experiment_dict['loader']` |
+| Generator job counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | Per-entry `num_pods` |
 | Benchmarker job counter | `configurations/benchmarking.py::BenchmarkRunner.run_pod()` | `parallelism` |
-| Round counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client` | Sum of `parallelism` across all configs for this round |
-| Loader/generator experiment counter | `experiments/base.py::work_benchmark_list()` when all container-tenancy configs are ready to load | Sum of `num_loading_pods` across all active configs |
+| Benchmarker round counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client` | Sum of `parallelism` across all configs for this round |
+| Loader/generator experiment counter | `experiments/base.py::work_benchmark_list()` when all container-tenancy configs are ready to load | Sum of loader pod counts (across all entries) across all active configs |
 | Benchmarker experiment counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client`, when `self.tenant_per == 'container'` | Same as round counter value |
 
 The loader and generator experiment counters are both initialized to `total_loading_pods`
 so that each key can be independently decremented by its own pod type without one type's
 counter interfering with the other's.
+
+### Multiple parallel loading Jobs and finalization
+
+With more than one `experiment_dict['loader']` entry, several loader Kubernetes Jobs run
+concurrently for the same configuration. `LoadingCoordinator.check()` (`configurations/loading.py`)
+tracks how many of them have finished via a `num_data_jobs_ready` label on the SUT pod,
+incremented once per finished Job. Only the Job whose increment reaches `num_data_jobs`
+(`len(experiment_dict['loader'])`) writes the terminal `data=True` label and triggers the
+index-phase kickoff; earlier finishers only clean up their own pods/logs. This is safe without
+Redis (a plain `kubectl label --overwrite`) because a single orchestrator process is the only
+writer of that label — unlike the pod-to-pod counters above, which coordinate genuinely
+independent processes and therefore need Redis's atomic `decr`.

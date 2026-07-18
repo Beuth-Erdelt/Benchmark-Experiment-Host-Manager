@@ -1667,9 +1667,15 @@ class ExperimentBase():
                         if ready:
                             print("#### Starting to load")
                             # Initialize experiment-level loader counter to total loading pods
-                            # across all configurations (count-down to zero).
+                            # across all configurations (count-down to zero). A configuration
+                            # with several parallel loader entries (experiment_dict['loader'])
+                            # contributes the sum of all its entries' pod counts, not just the
+                            # primary entry's num_loading_pods.
                             total_loading_pods = sum(
-                                config_tmp.num_loading_pods
+                                (sum(
+                                    entry.get('num_pods', entry.get('parallelism', 1))
+                                    for entry in config_tmp.experiment_dict['loader']
+                                ) if config_tmp.experiment_dict['loader'] else config_tmp.num_loading_pods)
                                 for config_tmp in self.configurations
                                 if config_tmp.loading_active
                             )

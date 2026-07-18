@@ -44,7 +44,10 @@ No multi-tenant logic in the TPC-DS generator (unlike TPC-H generator).
 ## Loader execution flow (common)
 1. Read `BEXHOMA_CHILD` from `/tmp/tpcds/BEXHOMA_CHILD`.
 2. Determine `destination_raw` path.
-3. If BEXHOMA_SYNCH_LOAD=1: sync on `bexhoma-loader-podcount-<CONNECTION>-<EXPERIMENT>`.
+3. If BEXHOMA_SYNCH_LOAD=1: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
+   then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
+   initialized by Python; only meaningful with more than one parallel loader entry — see
+   `bexhoma/CLAUDE.md`).
 4. Loop over `.dat` files; strip pod suffix from filename to get table name in multi-pod mode.
 5. If TPCDS_TABLE is set: only load that table.
 6. Execute DBMS-specific command; retry on transient errors (MonetDB).

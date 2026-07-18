@@ -535,6 +535,7 @@ class ManifestBuilder:
         configuration: str = '',
         parallelism: int = 1,
         alias: str = '',
+        env: dict = {},
         num_pods: int = 1,
         connection: str = '',
         benchmark_run: str = '',
@@ -542,12 +543,21 @@ class ManifestBuilder:
     ) -> str:
         """Create a loading job manifest.
 
+        Template resolution priority: ``template_override`` > ``self.jobtemplate_loading``
+        (config-level) > ``self.experiment.jobtemplate_loading`` (experiment-level) >
+        default ``"jobtemplate-loading.yml"``.
+
         :param app: App label.
         :param component: Component label (default ``'loading'``).
         :param experiment: Experiment code.
         :param configuration: DBMS configuration name.
         :param parallelism: Number of parallel pods.
         :param alias: Alias (unused, kept for API symmetry).
+        :param env: Extra environment variables merged into the job ENV; take
+            precedence over :attr:`SutConfiguration.loading_parameters` on conflict,
+            so a non-primary :class:`~bexhoma.configurations.loading.LoadingCoordinator`
+            entry (see :meth:`SutConfiguration.add_loading_parameters`) does not
+            inherit the primary entry's env vars where they collide.
         :param num_pods: Total pods that must complete (``spec.completions``).
         :param connection: Connection name label.
         :param benchmark_run: Loader index forwarded to :meth:`create_manifest_job`.
@@ -567,13 +577,13 @@ class ManifestBuilder:
         cfg.logger.debug('ManifestBuilder.create_manifest_loading()')
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        env = {
+        base_env = {
             'BEXHOMA_TIME_NOW': now_string,
             'BEXHOMA_TIME_START': 0,
         }
         if len(cfg.loading_parameters):
             cfg.connection_parameter['loading_parameters'] = cfg.loading_parameters
-        env = {**env, **cfg.loading_parameters}
+        env = {**base_env, **cfg.loading_parameters, **env}
         cfg.logger.debug("create_manifest_loading:env={}".format(env))
         template = "jobtemplate-loading.yml"
         if len(cfg.experiment.jobtemplate_loading) > 0:

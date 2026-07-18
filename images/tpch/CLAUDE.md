@@ -45,7 +45,10 @@ images/tpch/
 1. Read `BEXHOMA_CHILD` from `/tmp/tpch/BEXHOMA_CHILD`.
 2. Determine `destination_raw` path (same logic as generator).
 3. Multi-tenant handling (PostgreSQL loader only; mysql/mariadb/monetdb loaders do not have this).
-4. If BEXHOMA_SYNCH_LOAD=1: sync on `bexhoma-loader-podcount-<CONNECTION>-<EXPERIMENT>`.
+4. If BEXHOMA_SYNCH_LOAD=1: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
+   then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
+   initialized by Python, even for a single loader entry; only meaningful when the SUT
+   configuration has more than one parallel loader entry — see `bexhoma/CLAUDE.md`).
    PostgreSQL loader additionally syncs on `bexhoma-loader-podcount-<EXPERIMENT>` when BEXHOMA_TENANT_BY=container.
 5. Loop over `.tbl` files; skip `nation` and `region` for pods > 1 in non-tenant mode.
 6. If TPCH_TABLE is set: only load that table.

@@ -128,6 +128,20 @@ then
             sleep 1
         fi
     done
+    ######################## Wait until all pods of round are ready ########################
+    echo "Decrementing round counter bexhoma-loader-podcount-round-$BEXHOMA_CONFIGURATION-$BEXHOMA_EXPERIMENT"
+    redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-loader-podcount-round-$BEXHOMA_CONFIGURATION-$BEXHOMA_EXPERIMENT"
+    while : ; do
+        PODS_MISSING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-round-$BEXHOMA_CONFIGURATION-$BEXHOMA_EXPERIMENT)"
+        echo "Pods still missing in round: $PODS_MISSING"
+        if [[ "$PODS_MISSING" =~ ^-?[0-9]+$ ]] && test "$PODS_MISSING" -le 0
+        then
+            echo "OK, all pods in round are ready."
+            break
+        else
+            sleep 1
+        fi
+    done
     ######################## Wait until all pods of experiment are ready ########################
     if [ "$BEXHOMA_TENANT_BY" = "container" ]; then
         echo "Decrementing experiment counter bexhoma-loader-podcount-exp-$BEXHOMA_EXPERIMENT"
