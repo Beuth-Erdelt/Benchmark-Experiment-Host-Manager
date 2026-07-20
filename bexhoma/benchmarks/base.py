@@ -244,11 +244,27 @@ class Benchmark:
 
     def test_results(self, experiment) -> None:
         """
-        Validate benchmark results and print pass/fail assertions.
+        Validate results and print workflow completion status.
+
+        Compares the experiment's full planned workflow
+        (:meth:`~bexhoma.experiments.base.ExperimentBase.get_workflow_list`)
+        against this benchmark's evaluator's reconstructed actual workflow.
+        Both cover the whole client round, not just this benchmark's own
+        entries (see :meth:`~bexhoma.evaluators.logger.LogEvaluator.test_results`),
+        so the comparison is correct whether this benchmark is the primary or a
+        co-running secondary benchmark. Override for a benchmark with no
+        per-query results of its own to validate, e.g.
+        :class:`~bexhoma.benchmarks.refresh.RefreshStreamBenchmark`.
 
         :param experiment: The owning experiment object.
         """
-        raise NotImplementedError
+        experiment.cluster.logger.debug(f'{type(self).__name__}.test_results()')
+        self.evaluator.test_results()
+        workflow = experiment.get_workflow_list()
+        if workflow == self.evaluator.workflow:
+            print("Result workflow complete")
+        else:
+            print("Result workflow not complete")
 
 
 class DBMSBenchmarkerBenchmark(Benchmark):
@@ -283,20 +299,6 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             benchmark_run=benchmark_run,
             name=self.name,
         )
-
-    def test_results(self, experiment) -> None:
-        """
-        Validate DBMSBenchmarker results and print workflow completion status.
-
-        :param experiment: The owning experiment object.
-        """
-        experiment.cluster.logger.debug('DBMSBenchmarkerBenchmark.test_results()')
-        self.evaluator.test_results()
-        workflow = experiment.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")
 
     def _prepare_evaluator(self, experiment) -> None:
         """

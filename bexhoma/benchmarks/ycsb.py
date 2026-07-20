@@ -112,20 +112,6 @@ class YCSB(Benchmark):
             if args.activate_reset:
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
 
-    def test_results(self, experiment) -> None:
-        """
-        Validate YCSB results and print workflow completion status.
-
-        :param experiment: The owning experiment object.
-        """
-        experiment.cluster.logger.debug('YCSB.test_results()')
-        self.evaluator.test_results()
-        workflow = experiment.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")
-
     def _show_loading_sections(self, experiment, is_multitenant: bool) -> 'pd.DataFrame':
         """
         Print Per Connection and Per Run loading tables for YCSB.

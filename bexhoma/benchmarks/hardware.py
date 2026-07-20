@@ -123,17 +123,3 @@ class Hardware(Benchmark):
                 experiment.workload['info'] += f"\nDuration per round is {args.hardware_duration}s."
                 experiment.workload['info'] += f"\nProtocol(s) swept: {list_netperf_protocol} (selects TCP_RR/UDP_RR)."
                 experiment.workload['info'] += "\nConcurrent client instances per pod controlled via HARDWARE_THREADS (see images/hardware/benchmarker/run_netperf.sh)."
-
-    def test_results(self, experiment) -> None:
-        """
-        Validate Hardware results and print workflow completion status.
-
-        :param experiment: The owning experiment object.
-        """
-        experiment.cluster.logger.debug('Hardware.test_results()')
-        self.evaluator.test_results()
-        workflow = experiment.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")

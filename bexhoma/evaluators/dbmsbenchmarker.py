@@ -129,27 +129,17 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         return df
     def test_results(self):
         """
-        Validates results by loading and reconstructing the workflow.
+        Refreshes the inspector, then validates results via :meth:`LogEvaluator.test_results`.
 
-        Reconstructs the workflow from :meth:`get_connections_of_experiment`
-        rather than :meth:`get_df_benchmarking`: the latter's column set has
-        ``pod_count`` (post-aggregation) but no ``pods`` column, which
-        :meth:`reconstruct_workflow` requires.
+        The inspector is reloaded here (in addition to construction time) because
+        this may be called well after construction, e.g. from a post-hoc
+        ``bexhoma summary`` command, when newer results may be on disk.
 
         :return: ``0`` on success, ``1`` if an exception is raised.
         :rtype: int
         """
-        try:
-            self.load_inspector()
-            if self.include_benchmarking:
-                df = self.get_connections_of_experiment()
-                self.workflow = self.reconstruct_workflow(df)
-            if self.include_loading:
-                self.get_df_loading()
-            return 0
-        except Exception as exc:
-            print(exc)
-            return 1
+        self.load_inspector()
+        return super().test_results()
     def get_df_benchmarking(self):
         """
         Returns the DataFrame containing all benchmarking-phase results.
