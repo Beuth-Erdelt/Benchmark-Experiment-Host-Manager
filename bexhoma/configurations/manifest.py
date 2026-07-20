@@ -429,7 +429,13 @@ class ManifestBuilder:
         :param client: Sequential client-round index.
         :param parallelism: Number of parallel pods.
         :param alias: Alias name forwarded to dbmsbenchmarker.
-        :param env: Extra environment variables merged into the job ENV.
+        :param env: Extra environment variables merged into the job ENV; take
+            precedence over :attr:`SutConfiguration.benchmarking_parameters` on
+            conflict, so a non-primary round entry (e.g. a benchmark registered
+            via ``experiment.add_benchmark()`` alongside the primary, such as the
+            TPC-H refresh stream or a co-running different-tool benchmark) can
+            override a shared default like ``SF`` instead of inheriting a value
+            that may not even be valid for its own tool's format.
         :param template: Optional YAML template filename override.
         :param num_pods: Total pod count.
         :param benchmark_run: Parallel benchmark index within a client round.
@@ -456,7 +462,7 @@ class ManifestBuilder:
             'DBMSBENCHMARKER_SLEEP': str(60),
             'DBMSBENCHMARKER_ALIAS': alias,
         }
-        env = {**base_env, **env, **cfg.loading_parameters, **cfg.benchmarking_parameters}
+        env = {**base_env, **cfg.loading_parameters, **cfg.benchmarking_parameters, **env}
         if len(template) == 0:
             if len(cfg.experiment.jobtemplate_benchmarking) > 0:
                 template = cfg.experiment.jobtemplate_benchmarking

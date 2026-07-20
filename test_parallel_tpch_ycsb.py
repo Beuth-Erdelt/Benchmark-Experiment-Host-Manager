@@ -10,16 +10,10 @@ benchmarking Jobs in one client round, using the same mechanism that already
 powers the TPC-H refresh stream).
 
 This is a demonstration/test script, not a production experiment type: it is
-not wired into bexhoma.experiments, and its combined "Show Summary" only shows
-the full TPC-H result tables. YCSB's own result aggregation (throughput,
-latencies) is not printed, because YCSB's Benchmark class implements a full
-show_summary() (via the Benchmark base template) rather than the
-show_summary_section() hook the generic multi-benchmark loop calls for
-non-primary benchmarks — the same hook the existing TPC-H refresh stream
-benchmark overrides. YCSB's raw pod logs and per-connection .config files are
-still captured normally; only the pretty-printed aggregate table is missing.
-Check the job logs directly (or benchmarks.YCSB's own evaluator offline) for
-YCSB numbers.
+not wired into bexhoma.experiments. Its combined "Show Summary" prints both
+TPC-H's full result tables (as the primary benchmark) and a "### ycsb" section
+with YCSB's own Per Connection / Per Phase / Reset results, via
+Benchmark.show_summary_section().
 
 Usage:
     python test_parallel_tpch_ycsb.py run -sf 1
@@ -85,7 +79,12 @@ class TpchYcsbParallelTestExperiment(TpchExperiment):
             "num_pods":          1,
             "fixed_parallelism": True,
             "target":            "sut",
-            "parameters":        {},
+            # Overrides the shared, config-wide SF broadcast from
+            # experiment.set_default_benchmarking_parameters(), which carries
+            # TPC-H's (possibly fractional, e.g. "0.1") SF. YCSB's own
+            # evaluator casts SF to int, so this entry needs its own
+            # integer-safe value instead of inheriting TPC-H's.
+            "parameters":        {"SF": str(ycsb_rows // 1000000 or 1)},
         })
 
 
@@ -150,6 +149,20 @@ if __name__ == '__main__':
         experiment_design="parallel-loading-and-benchmarking",
     )
     experiment.prepare_testbed(command_args)
+    # MixedExperiment.prepare_testbed() calls configure_workload() on every
+    # registered benchmark in order (TPCH then YCSB); both call set_workload()
+    # with the same keys (name/info/type/defaultParameters), so YCSB's call
+    # — running second — silently overwrites TPCH's. Restore a combined,
+    # accurate description now that both have run.
+    experiment.set_workload(
+        name=f"TPC-H + YCSB parallel loading/benchmarking test SF={SF}",
+        info=(
+            "TEST ONLY: loads TPC-H and YCSB into the same PostgreSQL database in "
+            "parallel, then runs the TPC-H query stream and a YCSB workload in "
+            "parallel. " + experiment.workload.get('info', '')
+        ),
+        type='tpch',
+    )
     # Combined defaults, broadcast to every loading/benchmarking Job for this
     # config (TPC-H's loader/benchmarker ignore the YCSB_* keys and vice versa
     # — same cross-tool broadcast pattern the TPC-H refresh stream already

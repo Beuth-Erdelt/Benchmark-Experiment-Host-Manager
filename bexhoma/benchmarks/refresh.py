@@ -65,6 +65,7 @@ class RefreshStreamBenchmark(Benchmark):
             include_loading=False,
             include_benchmarking=True,
             benchmark_run=benchmark_run,
+            name=self.name,
         )
 
     def configure_workload(self, experiment, parameter: dict) -> None:
@@ -99,8 +100,9 @@ class RefreshStreamBenchmark(Benchmark):
         Print a timing table for this refresh stream's client rounds.
 
         Reads :meth:`~bexhoma.evaluators.base.base.get_connections_of_experiment`
-        from the base evaluator, filters to rows whose ``benchmark_run`` equals
-        :attr:`benchmark_index`, and prints ``phase``, ``job``,
+        from the base evaluator, filters to rows that
+        :meth:`~bexhoma.evaluators.base.EvaluatorBase.is_own_benchmark` identifies
+        as belonging to this benchmark, and prints ``phase``, ``job``,
         ``experiment_run``, ``client``, ``benchmark_run``, ``pod_count``
         (from the ``pods`` column), ``benchmark_begin``, ``benchmark_end``,
         and ``benchmark_duration``.
@@ -130,7 +132,11 @@ class RefreshStreamBenchmark(Benchmark):
             )
             if col in df_conn.columns
         ]
-        df_run = df_conn[df_conn['benchmark_run'].astype(int) == self.benchmark_index]
+        df_run = df_conn[df_conn.apply(
+            lambda row: self.evaluator.is_own_benchmark(
+                row['configuration'], int(row['client']), int(row['benchmark_run'])),
+            axis=1,
+        )]
         df_section = df_run[df_run['benchmark_duration'].notna()][display_cols]
         if df_section.empty:
             return

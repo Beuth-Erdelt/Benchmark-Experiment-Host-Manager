@@ -59,8 +59,10 @@ class EvaluatorBase:
     :param include_loading: Whether loading-phase results are expected.
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     :param benchmark_run: 1-based position in the benchmark sequence; 0 means unset.
+    :param name: Short identifier matching the ``"name"`` field of this
+        benchmark's experiment dict entries; empty means unset.
     """
-    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0):
+    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0, name: str = ''):
         """
         :param code: Experiment identifier — also the name of the result sub-folder.
         :param path: Root path that contains the result folders.
@@ -68,17 +70,167 @@ class EvaluatorBase:
         :param include_benchmarking: Whether benchmarking-phase results are expected.
         :param benchmark_run: 1-based position of this evaluator in the benchmark sequence; 0 means unset.
         :type benchmark_run: int
+        :param name: Short identifier matching the ``"name"`` field of this
+            benchmark's experiment dict entries; empty means unset.
+        :type name: str
         """
         self.path = path + "/" + code
         self.code = code
         self.include_loading = include_loading
         self.include_benchmarking = include_benchmarking
         self.benchmark_run: int = benchmark_run
+        self.name: str = name
+        self._experiment_dict_cache: dict = {}
         self.experiment = None
         self.workflow = dict()
         self.workflow_errors = dict()
         self.num_missing_benchmarking_dfs = 0
         self.num_missing_loading_dfs = 0
+
+    def _load_experiment_dict(self, configuration: str) -> dict:
+        """
+        Load and cache the persisted experiment dict for one configuration.
+
+        Reads ``bexhoma-experiment-dict-{configuration}.json``, written once per
+        configuration at the start of every run (see
+        ``experiments/base.py::work_benchmark_list()``), so the exact round/entry
+        layout that was actually submitted can be consulted after the fact.
+
+        :param configuration: SUT configuration name.
+        :type configuration: str
+        :return: Parsed experiment dict, or an empty dict if the file is absent
+                 or unreadable.
+        :rtype: dict
+        """
+        if configuration not in self._experiment_dict_cache:
+            # Matched case-insensitively: configuration names reconstructed from a
+            # Kubernetes job/pod name (see transform_all_logs_benchmarking() and
+            # transform_all_logs_loading()) are lower-cased by
+            # SutConfiguration.generate_component_name(), but the file was written
+            # with the configuration's original casing (e.g. "PostgreSQL-A2").
+            result = {}
+            target = f"bexhoma-experiment-dict-{configuration}.json".lower()
+            try:
+                for entry in os.listdir(self.path):
+                    if entry.lower() == target:
+                        with open(f"{self.path}/{entry}", 'r') as f:
+                            result = json.load(f)
+                        break
+            except (OSError, ValueError):
+                result = {}
+            self._experiment_dict_cache[configuration] = result
+        return self._experiment_dict_cache[configuration]
+
+    def is_own_benchmark(self, configuration: str, client: int, benchmark_run: int) -> bool:
+        """
+        Decide whether a connection identified by ``(configuration, client, benchmark_run)``
+        belongs to this evaluator's own benchmark.
+
+        Looks up ``experiment_dict['benchmarker'][client - 1][benchmark_run - 1]['name']``
+        from the persisted per-configuration experiment dict (see
+        :meth:`_load_experiment_dict`) and compares it to :attr:`name`. This is robust to
+        ``benchmark_run`` denoting a different benchmark type in different rounds (e.g. a
+        benchmark that runs alone in one round and alongside another benchmark in a
+        different round) — unlike a raw ``benchmark_run == self.benchmark_run`` comparison,
+        which assumes every round has the same entries in the same order.
+
+        Falls back to ``benchmark_run == self.benchmark_run`` when :attr:`name` is unset
+        or the experiment dict lookup fails (e.g. offline results predating this
+        mechanism), preserving the prior behaviour.
+
+        :param configuration: SUT configuration name.
+        :type configuration: str
+        :param client: 1-based client round number.
+        :type client: int
+        :param benchmark_run: 1-based position within that round.
+        :type benchmark_run: int
+        :return: Whether this connection belongs to this evaluator's benchmark.
+        :rtype: bool
+        """
+        if self.name:
+            resolved_name = self.get_benchmark_name_at(configuration, client, benchmark_run)
+            if resolved_name is not None:
+                return resolved_name == self.name
+        if self.benchmark_run > 0:
+            return benchmark_run == self.benchmark_run
+        return True
+
+    def get_benchmark_name_at(self, configuration: str, client: int, benchmark_run: int):
+        """
+        Resolve the ``name`` field of the experiment dict entry at ``(configuration,
+        client, benchmark_run)``.
+
+        :param configuration: SUT configuration name.
+        :type configuration: str
+        :param client: 1-based client round number.
+        :type client: int
+        :param benchmark_run: 1-based position within that round.
+        :type benchmark_run: int
+        :return: The entry's ``name``, or ``None`` if the experiment dict is
+                 unavailable or the indices are out of range.
+        :rtype: str or None
+        """
+        experiment_dict = self._load_experiment_dict(configuration)
+        try:
+            entry = experiment_dict['benchmarker'][client - 1][benchmark_run - 1]
+            return entry.get('name')
+        except (KeyError, IndexError, TypeError):
+            return None
+
+    def is_own_loading(self, configuration: str, data_job: int) -> bool:
+        """
+        Decide whether a loader connection identified by ``(configuration, data_job)``
+        belongs to this evaluator's own benchmark.
+
+        Looks up ``experiment_dict['loader'][data_job - 1]`` from the persisted
+        per-configuration experiment dict (see :meth:`_load_experiment_dict`) and
+        matches it against :attr:`name`. Unlike benchmarker entries (whose ``name``
+        directly matches the owning benchmark's own name, e.g. ``'ycsb'``), loader
+        entries name themselves after the experiment type with a conventional
+        ``'-loader'`` suffix (e.g. ``'tpcc-loader'``), which does not always equal
+        the benchmark's name (e.g. TPC-C's own benchmark is named ``'hammerdb'``,
+        see :class:`~bexhoma.benchmarks.tpcc.TPCC`). So a match is accepted either
+        via the entry's ``name`` with that suffix stripped, or via its
+        ``benchmarker`` field (the tool identifier, e.g. ``'hammerdb'``).
+
+        Falls back to ``data_job == self.benchmark_run`` when :attr:`name` is unset
+        or the experiment dict lookup fails, preserving the prior behaviour.
+
+        :param configuration: SUT configuration name.
+        :type configuration: str
+        :param data_job: 1-based position of the loader entry (``BEXHOMA_DATA_JOB``).
+        :type data_job: int
+        :return: Whether this connection belongs to this evaluator's benchmark.
+        :rtype: bool
+        """
+        if self.name:
+            entry = self._get_loader_entry(configuration, data_job)
+            if entry is not None:
+                entry_name = entry.get('name', '')
+                if entry_name.endswith('-loader'):
+                    entry_name = entry_name[:-len('-loader')]
+                return self.name in (entry_name, entry.get('benchmarker'))
+        if self.benchmark_run > 0:
+            return data_job == self.benchmark_run
+        return True
+
+    def _get_loader_entry(self, configuration: str, data_job: int):
+        """
+        Resolve the experiment dict loader entry at ``(configuration, data_job)``.
+
+        :param configuration: SUT configuration name.
+        :type configuration: str
+        :param data_job: 1-based position of the loader entry.
+        :type data_job: int
+        :return: The entry dict, or ``None`` if the experiment dict is
+                 unavailable or the index is out of range.
+        :rtype: dict or None
+        """
+        experiment_dict = self._load_experiment_dict(configuration)
+        try:
+            return experiment_dict['loader'][data_job - 1]
+        except (KeyError, IndexError, TypeError):
+            return None
 
     def log_to_df(self, filename):
         """
@@ -128,9 +280,10 @@ class EvaluatorBase:
         """
         Iterates over all benchmarker log files and calls :meth:`end_benchmarking` for each.
 
-        When ``self.benchmark_run > 0``, only processes log files whose jobname ends
-        with the matching benchmark index (last ``-``-separated component), so that
-        each evaluator in a multi-benchmark experiment only ingests its own logs.
+        Only processes log files that :meth:`is_own_benchmark` identifies as belonging to
+        this evaluator's own benchmark (resolved via the persisted experiment dict, or by
+        raw ``benchmark_run`` position when that lookup is unavailable), so that each
+        evaluator in a multi-benchmark experiment only ingests its own logs.
         """
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
@@ -138,22 +291,31 @@ class EvaluatorBase:
             if filename.startswith("bexhoma-benchmarker") and filename.endswith(".dbmsbenchmarker.log"):
                 inner = filename[len("bexhoma-benchmarker-"):-len(".dbmsbenchmarker.log")]
                 jobname = inner[:inner.rindex("-")]
-                if self.benchmark_run > 0:
-                    try:
-                        file_benchmark_run = int(jobname.split("-")[-1])
-                    except (ValueError, IndexError):
-                        file_benchmark_run = 1
-                    if file_benchmark_run != self.benchmark_run:
-                        continue
+                # jobname (lower-cased by SutConfiguration.generate_component_name()) is
+                # "{configuration}-{experiment}-{experiment_run}-{client}-{benchmark_run}" —
+                # drop all 4 trailing segments to recover configuration, which may itself
+                # contain dashes.
+                parts = jobname.split("-")
+                try:
+                    file_benchmark_run = int(parts[-1])
+                    file_client = int(parts[-2])
+                    file_configuration = "-".join(parts[:-4])
+                except (ValueError, IndexError):
+                    file_benchmark_run = 1
+                    file_client = 0
+                    file_configuration = ''
+                if not self.is_own_benchmark(file_configuration, file_client, file_benchmark_run):
+                    continue
                 self.end_benchmarking(jobname)
 
     def transform_all_logs_loading(self):
         """
         Iterates over all loader sensor log files and calls :meth:`end_loading` for each.
 
-        When ``self.benchmark_run > 0``, only processes log files whose jobname ends
-        with the matching benchmark index, so that each evaluator only ingests its own
-        loading logs.
+        Only processes log files that :meth:`is_own_loading` identifies as belonging to
+        this evaluator's own benchmark (resolved via the persisted experiment dict, or by
+        raw ``benchmark_run`` position when that lookup is unavailable), so that each
+        evaluator only ingests its own loading logs.
         """
         directory = os.fsencode(self.path)
         for file in os.listdir(directory):
@@ -161,13 +323,18 @@ class EvaluatorBase:
             if filename.startswith("bexhoma-loading") and filename.endswith(".sensor.log"):
                 inner = filename[len("bexhoma-loading-"):-len(".sensor.log")]
                 jobname = inner[:inner.rindex("-")]
-                if self.benchmark_run > 0:
-                    try:
-                        file_benchmark_run = int(jobname.split("-")[-1])
-                    except (ValueError, IndexError):
-                        file_benchmark_run = 1
-                    if file_benchmark_run != self.benchmark_run:
-                        continue
+                # jobname is "{configuration}-{experiment}-{experiment_run}-1-{data_job}" —
+                # same 4 trailing segments as the benchmarker job name (client is always
+                # '1' for loading jobs; see LoadingCoordinator.start_pod()).
+                parts = jobname.split("-")
+                try:
+                    file_data_job = int(parts[-1])
+                    file_configuration = "-".join(parts[:-4])
+                except (ValueError, IndexError):
+                    file_data_job = 1
+                    file_configuration = ''
+                if not self.is_own_loading(file_configuration, file_data_job):
+                    continue
                 self.end_loading(jobname)
     def end_benchmarking(self, jobname):
         """
@@ -250,10 +417,12 @@ class EvaluatorBase:
         """
         Reconstructs the actual experiment workflow from connection metadata.
 
-        Reads ``benchmark_sequence`` from ``queries.config`` to map each
-        ``benchmark_run`` index to its benchmarker type, then groups the
-        DataFrame by ``(configuration, experiment_run, client, benchmark_run)``
-        to produce a structure that mirrors the planned workflow format::
+        Resolves each ``(configuration, client, benchmark_run)`` to its benchmarker
+        type via :meth:`get_benchmark_name_at` (falling back to ``benchmark_sequence``
+        from ``queries.config`` when the persisted experiment dict is unavailable),
+        then groups the DataFrame by ``(configuration, experiment_run, client,
+        benchmark_run)`` to produce a structure that mirrors the planned workflow
+        format::
 
             {
                 'MySQL-24-4-1024': [
@@ -297,8 +466,11 @@ class EvaluatorBase:
             if client not in configs[config_name][experiment_run]:
                 configs[config_name][experiment_run][client] = {}
             if benchmark_run not in configs[config_name][experiment_run][client]:
+                resolved_name = self.get_benchmark_name_at(config_name, client, benchmark_run)
+                if resolved_name is None:
+                    resolved_name = bm_sequence.get(benchmark_run, str(benchmark_run))
                 configs[config_name][experiment_run][client][benchmark_run] = {
-                    'type': bm_sequence.get(benchmark_run, str(benchmark_run)),
+                    'type': resolved_name,
                     'pods': pods,
                 }
         workflow: dict = {}

@@ -120,7 +120,7 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
             ``jobtemplate-benchmarking-tpch-refresh-MySQL.yml``).
         """
         self.experiment_dict_template["benchmarker"][0].append({
-            "name":             "tpch-refresh",
+            "name":             "tpch_refresh",
             "benchmarker":      "tpch_refresh",
             "template":         template,
             "parallelism":      1,

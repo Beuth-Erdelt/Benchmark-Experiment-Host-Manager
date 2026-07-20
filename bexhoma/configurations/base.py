@@ -584,14 +584,18 @@ class SutConfiguration:
         """Set ENV vars for the benchmarking component.
 
         Merges experiment-wide defaults first; per-configuration ``kwargs`` win on conflict.
-        Also updates all entries in the first benchmarker round in ``experiment_dict``.
+        Also broadcasts onto every entry in the first benchmarker round in
+        ``experiment_dict`` — an entry's own pre-existing ``parameters`` (e.g. a
+        co-running different-tool benchmark's own ``SF`` override) win over this
+        broadcast on conflict, mirroring the precedence ``create_manifest_benchmarking()``
+        applies at job-submission time.
 
         :param kwargs: Parameter dict.
         """
         self.benchmarking_parameters = {**self.experiment.default_benchmarking_parameters, **kwargs}
         if self.experiment_dict['benchmarker'] and self.experiment_dict['benchmarker'][0]:
             for entry in self.experiment_dict['benchmarker'][0]:
-                entry['parameters'].update(self.benchmarking_parameters)
+                entry['parameters'] = {**self.benchmarking_parameters, **entry['parameters']}
 
     def set_nodes(self, **kwargs) -> None:
         """Set node selector parameters for experiment components.

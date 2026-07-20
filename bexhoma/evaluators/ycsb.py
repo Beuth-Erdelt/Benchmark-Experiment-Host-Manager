@@ -46,7 +46,7 @@ class YcsbEvaluator(LogEvaluator):
     :param include_loading: Ignored; loading is always enabled for this evaluator.
     :param include_benchmarking: Ignored; benchmarking is always enabled.
     """
-    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0):
+    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0, name: str = ''):
         """
         :param code: Experiment identifier — also the name of the result sub-folder.
         :param path: Root path that contains the result folders.
@@ -54,8 +54,11 @@ class YcsbEvaluator(LogEvaluator):
         :param include_benchmarking: Ignored; benchmarking is always enabled.
         :param benchmark_run: 1-based position in the benchmark sequence; 0 means unset.
         :type benchmark_run: int
+        :param name: Short identifier matching the ``"name"`` field of this
+            benchmark's experiment dict entries; empty means unset.
+        :type name: str
         """
-        super().__init__(code, path, True, True, benchmark_run=benchmark_run)
+        super().__init__(code, path, True, True, benchmark_run=benchmark_run, name=name)
     def log_to_df(self, filename):
         """
         Parses a YCSB pod log file into a single-row DataFrame.

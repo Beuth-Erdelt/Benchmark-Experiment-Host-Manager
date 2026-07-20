@@ -43,6 +43,7 @@ class YCSB(Benchmark):
             include_loading=False,
             include_benchmarking=True,
             benchmark_run=benchmark_run,
+            name=self.name,
         )
 
     def configure_workload(self, experiment, parameter: dict) -> None:

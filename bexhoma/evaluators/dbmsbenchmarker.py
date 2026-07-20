@@ -69,7 +69,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
     :param include_loading: Unused; loading is always enabled for this evaluator.
     :param include_benchmarking: Unused; benchmarking is always enabled.
     """
-    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0):
+    def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0, name: str = ''):
         """
         Initialises the inspector before delegating to the parent constructor.
 
@@ -79,10 +79,13 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         :param include_benchmarking: Ignored; always ``True``.
         :param benchmark_run: 1-based position in the benchmark sequence; 0 means unset.
         :type benchmark_run: int
+        :param name: Short identifier matching the ``"name"`` field of this
+            benchmark's experiment dict entries; empty means unset.
+        :type name: str
         """
         self.evaluation = None
         self.path_base = path
-        super().__init__(code, path, True, True, benchmark_run=benchmark_run)
+        super().__init__(code, path, True, True, benchmark_run=benchmark_run, name=name)
         self.load_inspector()
     def load_inspector(self):
         """
@@ -128,13 +131,18 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         """
         Validates results by loading and reconstructing the workflow.
 
+        Reconstructs the workflow from :meth:`get_connections_of_experiment`
+        rather than :meth:`get_df_benchmarking`: the latter's column set has
+        ``pod_count`` (post-aggregation) but no ``pods`` column, which
+        :meth:`reconstruct_workflow` requires.
+
         :return: ``0`` on success, ``1`` if an exception is raised.
         :rtype: int
         """
         try:
             self.load_inspector()
             if self.include_benchmarking:
-                df = self.get_df_benchmarking()
+                df = self.get_connections_of_experiment()
                 self.workflow = self.reconstruct_workflow(df)
             if self.include_loading:
                 self.get_df_loading()
@@ -184,6 +192,17 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             orig_name = connection_data['orig_name']
             configuration = connection_data.get('configuration', '-')
             benchmark_run_num = str(int(connection_data['parameter'].get('numBenchmark', 0) or 0))
+            client_num = int(connection_data['parameter']['client'])
+            if not self.is_own_benchmark(configuration, client_num, int(benchmark_run_num or 0)):
+                # connections.config is shared across every benchmarker entry of this
+                # configuration's round, so it also carries connections belonging to a
+                # co-running benchmark of a different type (e.g. YCSB registered
+                # alongside this DBMSBenchmarker-based benchmark via add_benchmark()).
+                # The DBMSBenchmarker inspector cube has no real query/timing data for
+                # those foreign connections, so skip them rather than asking the
+                # library about a connection it doesn't understand (mirrors the
+                # is_own_benchmark() filtering LogEvaluator already does for its own logs).
+                continue
             if benchmark_run_num and orig_name.endswith('-' + benchmark_run_num):
                 phase_id = orig_name[:-len('-' + benchmark_run_num)]
             else:
@@ -199,8 +218,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             df_row['pods'] = int(loading_params['PODS_PARALLEL'])
             df_row['experiment_run'] = int(connection_data['parameter']['numExperiment'])
             df_row['benchmark_run'] = int(connection_data['parameter'].get('numBenchmark', 0) or 0)
-            client = int(connection_data['parameter']['client'])
-            df_row['client'] = client
+            df_row['client'] = client_num
             tenant_by = loading_params.get('BEXHOMA_TENANT_BY', '')
             tenant_num = int(loading_params.get('BEXHOMA_TENANT_NUM', 0))
             if tenant_by in ('schema', 'database') and tenant_num > 0:

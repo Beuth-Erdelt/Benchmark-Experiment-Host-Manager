@@ -1323,20 +1323,15 @@ class ExperimentBase():
         """
         if 'workflow_planned' in self.workload:
             return self.workload['workflow_planned']
-        bm_name_by_index = (
-            {bm.benchmark_index: bm.name for bm in self.benchmarks}
-            if getattr(self, 'benchmarks', None)
-            else {}
-        )
         workflow = {}
         for configuration in self.configurations:
             rounds = [
                 [
                     {
-                        'type': bm_name_by_index.get(i + 1, entry['benchmarker']),
+                        'type': entry['name'],
                         'pods': entry['parallelism'],
                     }
-                    for i, entry in enumerate(round_entries)
+                    for entry in round_entries
                 ]
                 for round_entries in configuration.experiment_dict['benchmarker']
             ]
