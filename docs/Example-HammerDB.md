@@ -111,13 +111,13 @@ At the end of a benchmark you will see a summary like
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 1358s 
-* Code: 1783808193
+* Duration: 1376s 
+* Code: 1784528640
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.10.4.
+  * Experiment uses bexhoma version 0.10.6.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker19.
@@ -136,31 +136,31 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1079942
+  * disk:384903
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783808193
+    * code:1784528640
 * PostgreSQL-1-1-2-1 uses docker image postgres:18.3
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1102359
+  * disk:400270
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783808193
+    * code:1784528640
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783808193-88bc9dc78-kcc9v: 0 0
+* bexhoma-sut-postgresql-1-1784528640-779ddd9667-xxr98: 0 0
 
 ### Workflow
 
@@ -180,7 +180,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 |                |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 16.00 |      167.00 |           1.00 |            0.00 |         59.00 |          107.00 |              1 |          16 |             | None           |             0 | False         |              344.91 |
+| PostgreSQL-1-1 |                1 | 16.00 |      118.00 |           1.00 |            0.00 |         39.00 |           78.00 |              1 |          16 |             | None           |             0 | False         |              488.14 |
 
 ### Execution
 
@@ -188,16 +188,16 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 308820 | 710626 |         0.00 |          5 |        0 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       2 |  48101 | 110660 |         0.00 |          5 |        0 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 |  48068 | 110586 |         0.00 |          5 |        0 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 239416 | 550430 |         0.00 |          5 |        0 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 |  48021 | 110162 |         0.00 |          5 |        0 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       2 |  48000 | 110386 |         0.00 |          5 |        0 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|----------:|----------:|-----------:|---------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |         0.00 | 308820.00 | 710626.00 |          5 |        0 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |       16 |        2 |               1 |           2 |         0.00 |  48084.50 | 110623.00 |          5 |        0 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |         0.00 | 239416.00 | 550430.00 |          5 |        0 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |       16 |        2 |               1 |           2 |         0.00 |  48010.50 | 110274.00 |          5 |        0 |
 
 ### Tests
 * TEST passed: No SUT container restarts
@@ -369,13 +369,13 @@ If monitoring is activated, the summary also contains a section like
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 1427s 
-* Code: 1783809557
+* Duration: 1420s 
+* Code: 1784530024
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-  * Experiment uses bexhoma version 0.10.4.
+  * Experiment uses bexhoma version 0.10.6.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
@@ -395,31 +395,31 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1082047
+  * disk:376562
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783809557
+    * code:1784530024
 * PostgreSQL-1-1-2-1 uses docker image postgres:18.3
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1112482
+  * disk:400845
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783809557
+    * code:1784530024
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783809557-7c448fbf87-h2qpd: 0 0
+* bexhoma-sut-postgresql-1-1784530024-6b65857cd8-2r49l: 0 0
 
 ### Workflow
 
@@ -439,7 +439,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 |                |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 16.00 |      123.00 |           1.00 |            0.00 |         49.00 |           73.00 |              1 |          16 |             | None           |             0 | False         |              468.29 |
+| PostgreSQL-1-1 |                1 | 16.00 |      118.00 |           1.00 |            0.00 |         39.00 |           78.00 |              1 |          16 |             | None           |             0 | False         |              488.14 |
 
 ### Execution
 
@@ -447,16 +447,16 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 292235 | 671063 |         0.00 |          5 |        0 |       2.00 |       3.16 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 |  56056 | 128945 |         0.00 |          5 |        0 |       1.64 |       3.23 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       2 |  56081 | 128925 |         0.00 |          5 |        0 |       1.62 |       3.24 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 241035 | 554440 |         0.00 |          5 |        0 |       2.11 |       3.43 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 |  49734 | 114463 |         0.00 |          5 |        0 |       1.79 |      21.39 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       2 |  49722 | 114416 |         0.00 |          5 |        0 |       1.81 |      21.12 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |       2.00 |       3.16 |         0.00 | 292235.00 | 671063.00 |          5 |        0 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |       16 |        2 |               1 |           2 |       1.64 |       3.24 |         0.00 |  56068.50 | 128935.00 |          5 |        0 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |       2.11 |       3.43 |         0.00 | 241035.00 | 554440.00 |          5 |        0 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |       16 |        2 |               1 |           2 |       1.81 |      21.38 |         0.00 |  49728.00 | 114439.50 |          5 |        0 |
 
 ### Monitoring
 
@@ -464,29 +464,29 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        42.25 |      0.91 |           1.67 |                  2.37 |
-| PostgreSQL-1-1-2-1 |        42.25 |      0.91 |           1.67 |                  2.37 |
+| PostgreSQL-1-1-1-1 |        34.49 |      0.70 |           1.67 |                  2.38 |
+| PostgreSQL-1-1-2-1 |        34.49 |      0.70 |           1.67 |                  2.38 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       401.69 |     12.32 |           0.16 |                  0.16 |
-| PostgreSQL-1-1-2-1 |       401.69 |     12.32 |           0.16 |                  0.16 |
+| PostgreSQL-1-1-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
+| PostgreSQL-1-1-2-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
 
 ### Execution phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      2144.33 |      6.01 |           5.79 |                  9.99 |
-| PostgreSQL-1-1-2-1 |      5912.89 |     14.80 |           6.70 |                 11.60 |
+| PostgreSQL-1-1-1-1 |      1861.39 |      5.03 |           5.10 |                  8.70 |
+| PostgreSQL-1-1-2-1 |      5792.13 |     14.12 |           6.07 |                 10.39 |
 
 ### Execution phase: component benchmarker
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      1077.64 |      2.86 |           1.90 |                  1.90 |
-| PostgreSQL-1-1-2-1 |      1077.64 |      3.18 |           1.90 |                  1.90 |
+| PostgreSQL-1-1-1-1 |       618.17 |      1.74 |           1.58 |                  1.58 |
+| PostgreSQL-1-1-2-1 |       618.17 |      2.06 |           1.58 |                  1.58 |
 
 ### Tests
 * TEST passed: No SUT container restarts
@@ -561,13 +561,13 @@ The result looks something like
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 1811s 
-* Code: 1783811010
+* Duration: 1909s 
+* Code: 1784553215
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-  * Experiment uses bexhoma version 0.10.4.
+  * Experiment uses bexhoma version 0.10.6.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker19.
@@ -586,7 +586,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062793
+  * disk:411457
   * volume_size:50G
   * volume_used:3.3G
   * cpu_list:0-223
@@ -595,26 +595,26 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783811010
+    * code:1784553215
 * PostgreSQL-1-2-1-1 uses docker image postgres:18.3
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062806
+  * disk:411230
   * volume_size:50G
-  * volume_used:4.3G
+  * volume_used:3.5G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783811010
+    * code:1784553215
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783811010-6b7d7ff4b5-bwwjj: 0 0
+* bexhoma-sut-postgresql-1-1784553215-68c4d45694-nxh6x: 0 0
 
 ### Workflow
 
@@ -634,8 +634,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 |                |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 16.00 |      312.00 |           1.00 |            0.00 |        140.00 |          171.00 |              1 |           8 |             | None           |             0 | False         |              184.62 |
-| PostgreSQL-1-2 |                2 | 16.00 |      312.00 |           1.00 |            0.00 |        140.00 |          171.00 |              1 |           8 |             | None           |             0 | False         |              184.62 |
+| PostgreSQL-1-1 |                1 | 16.00 |      261.00 |           1.00 |            0.00 |        260.00 |            0.00 |              1 |           8 |             | None           |             0 | False         |              220.69 |
+| PostgreSQL-1-2 |                2 | 16.00 |      544.00 |           1.00 |            0.00 |        260.00 |          283.00 |              1 |           8 |             | None           |             0 | False         |              105.88 |
 
 ### Execution
 
@@ -643,15 +643,15 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |   TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|------:|-------------:|-----------:|---------:|-----------:|-----------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 |  15687 | 36162 |         0.00 |          5 |        0 |      75.42 |     158.19 |
-| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |       16 |        1 |               1 |       1 |  14088 | 32348 |         0.00 |          5 |        0 |     117.29 |     216.25 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 |   3749 |  8560 |         0.00 |          5 |        0 |     401.96 |     616.19 |
+| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |       16 |        1 |               1 |       1 |   3063 |  7056 |         0.00 |          5 |        0 |     476.97 |    1201.72 |
 
 #### Per Phase
 
-| DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |     NOPM |      TPM |   duration |   errors |
-|:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|---------:|---------:|-----------:|---------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |      75.42 |     158.19 |         0.00 | 15687.00 | 36162.00 |          5 |        0 |
-| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |       16 |        1 |               1 |           1 |     117.29 |     216.26 |         0.00 | 14088.00 | 32348.00 |          5 |        0 |
+| DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |    NOPM |     TPM |   duration |   errors |
+|:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|--------:|--------:|-----------:|---------:|
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |     401.96 |     616.19 |         0.00 | 3749.00 | 8560.00 |          5 |        0 |
+| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |       16 |        1 |               1 |           1 |     476.97 |    1201.72 |         0.00 | 3063.00 | 7056.00 |          5 |        0 |
 
 ### Tests
 * TEST passed: No SUT container restarts
@@ -708,13 +708,13 @@ bexhoma hammerdb \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 7122s 
-* Code: 1783812827
+* Duration: 7155s 
+* Code: 1784555132
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 20 minutes. Benchmarking has keying and thinking times activated. Benchmarking also logs latencies.
-  * Experiment uses bexhoma version 0.10.4.
+  * Experiment uses bexhoma version 0.10.6.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
@@ -734,7 +734,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062812
+  * disk:410441
   * volume_size:50G
   * volume_used:3.3G
   * cpu_list:0-223
@@ -743,14 +743,14 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783812827
+    * code:1784555132
 * PostgreSQL-1-1-2-1 uses docker image postgres:18.3
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062819
+  * disk:410179
   * volume_size:50G
   * volume_used:3.3G
   * cpu_list:0-223
@@ -759,14 +759,14 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783812827
+    * code:1784555132
 * PostgreSQL-1-2-1-1 uses docker image postgres:18.3
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062837
+  * disk:409589
   * volume_size:50G
   * volume_used:3.4G
   * cpu_list:0-223
@@ -775,14 +775,14 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783812827
+    * code:1784555132
 * PostgreSQL-1-2-2-1 uses docker image postgres:18.3
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:1062852
+  * disk:409124
   * volume_size:50G
   * volume_used:3.4G
   * cpu_list:0-223
@@ -791,10 +791,10 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * requests_memory:64Gi
   * limits_memory:64Gi
   * eval_parameters
-    * code:1783812827
+    * code:1784555132
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783812827-6ddd97b4b9-dxwhb: 0 0
+* bexhoma-sut-postgresql-1-1784555132-7798ff6456-9tqd6: 0 0
 
 ### Workflow
 
@@ -818,8 +818,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 |                |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 16.00 |      364.00 |           1.00 |            0.00 |        160.00 |          203.00 |              1 |           8 |             | None           |             0 | False         |              158.24 |
-| PostgreSQL-1-2 |                2 | 16.00 |      364.00 |           1.00 |            0.00 |        160.00 |          203.00 |              1 |           8 |             | None           |             0 | False         |              158.24 |
+| PostgreSQL-1-1 |                1 | 16.00 |      662.00 |           1.00 |            0.00 |        310.00 |          351.00 |              1 |           8 |             | None           |             0 | False         |               87.01 |
+| PostgreSQL-1-2 |                2 | 16.00 |      662.00 |           1.00 |            0.00 |        310.00 |          351.00 |              1 |           8 |             | None           |             0 | False         |               87.01 |
 
 ### Execution
 
@@ -827,21 +827,21 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |   TPM |   efficiency |   duration |   errors |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|------:|-------------:|-----------:|---------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |      160 |        1 |               1 |       1 |    201 |   468 |        97.69 |         20 |        0 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |       80 |        2 |               1 |       2 |    199 |   458 |         0.00 |         20 |        0 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |       80 |        2 |               1 |       1 |    198 |   458 |         0.00 |         20 |        0 |
-| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |      160 |        1 |               1 |       1 |    201 |   465 |        97.69 |         20 |        0 |
-| PostgreSQL-1-2-2-1-1 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |       80 |        2 |               1 |       1 |    200 |   458 |         0.00 |         20 |        0 |
-| PostgreSQL-1-2-2-1-2 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |       80 |        2 |               1 |       2 |    200 |   458 |         0.00 |         20 |        0 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |      160 |        1 |               1 |       1 |    203 |   468 |        98.66 |         20 |        0 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |       80 |        2 |               1 |       1 |    200 |   462 |         0.00 |         20 |        0 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |       80 |        2 |               1 |       2 |    200 |   462 |         0.00 |         20 |        0 |
+| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |      160 |        1 |               1 |       1 |    200 |   458 |        97.20 |         20 |        0 |
+| PostgreSQL-1-2-2-1-1 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |       80 |        2 |               1 |       1 |    200 |   467 |         0.00 |         20 |        0 |
+| PostgreSQL-1-2-2-1-2 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |       80 |        2 |               1 |       2 |    200 |   467 |         0.00 |         20 |        0 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |   NOPM |    TPM |   duration |   errors |
 |:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|-------:|-------:|-----------:|---------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |      160 |        1 |               1 |           1 |        97.69 | 201.00 | 468.00 |         20 |        0 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |      160 |        2 |               1 |           2 |        96.47 | 198.50 | 458.00 |         20 |        0 |
-| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |      160 |        1 |               1 |           1 |        97.69 | 201.00 | 465.00 |         20 |        0 |
-| PostgreSQL-1-2-2 | PostgreSQL-1-2-2 |                2 |      160 |        2 |               1 |           2 |        97.20 | 200.00 | 458.00 |         20 |        0 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |      160 |        1 |               1 |           1 |        98.66 | 203.00 | 468.00 |         20 |        0 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |      160 |        2 |               1 |           2 |        97.20 | 200.00 | 462.00 |         20 |        0 |
+| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |      160 |        1 |               1 |           1 |        97.20 | 200.00 | 458.00 |         20 |        0 |
+| PostgreSQL-1-2-2 | PostgreSQL-1-2-2 |                2 |      160 |        2 |               1 |           2 |        97.20 | 200.00 | 467.00 |         20 |        0 |
 
 ### Monitoring
 
@@ -849,33 +849,33 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        34.60 |      0.26 |           1.69 |                  3.23 |
-| PostgreSQL-1-1-2-1 |        34.60 |      0.26 |           1.69 |                  3.23 |
+| PostgreSQL-1-1-1-1 |        42.65 |      0.15 |           1.69 |                  3.23 |
+| PostgreSQL-1-1-2-1 |        42.65 |      0.15 |           1.69 |                  3.23 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       320.41 |      5.77 |           0.09 |                  0.09 |
-| PostgreSQL-1-1-2-1 |       320.41 |      5.77 |           0.09 |                  0.09 |
+| PostgreSQL-1-1-1-1 |       268.37 |      2.68 |           0.09 |                  0.09 |
+| PostgreSQL-1-1-2-1 |       268.37 |      2.68 |           0.09 |                  0.09 |
 
 ### Execution phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        14.79 |      0.02 |           2.73 |                  4.33 |
-| PostgreSQL-1-1-2-1 |        14.74 |      0.05 |           2.88 |                  4.50 |
-| PostgreSQL-1-2-1-1 |        16.50 |      0.04 |           1.61 |                  3.11 |
-| PostgreSQL-1-2-2-1 |        15.53 |      0.03 |           1.97 |                  3.55 |
+| PostgreSQL-1-1-1-1 |        15.43 |      0.03 |           2.72 |                  4.32 |
+| PostgreSQL-1-1-2-1 |        15.49 |      0.04 |           2.83 |                  4.45 |
+| PostgreSQL-1-2-1-1 |        15.97 |      0.03 |           1.57 |                  3.02 |
+| PostgreSQL-1-2-2-1 |        15.59 |      0.04 |           1.93 |                  3.49 |
 
 ### Execution phase: component benchmarker
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        22.86 |      0.14 |           0.63 |                  0.63 |
-| PostgreSQL-1-1-2-1 |        22.86 |      0.14 |           0.62 |                  0.63 |
-| PostgreSQL-1-2-1-1 |        21.94 |      0.07 |           0.63 |                  0.63 |
-| PostgreSQL-1-2-2-1 |        21.94 |      0.12 |           0.63 |                  0.63 |
+| PostgreSQL-1-1-1-1 |        21.92 |      0.09 |           0.58 |                  0.58 |
+| PostgreSQL-1-1-2-1 |        21.93 |      0.19 |           0.57 |                  0.58 |
+| PostgreSQL-1-2-1-1 |        20.41 |      0.07 |           0.58 |                  0.58 |
+| PostgreSQL-1-2-2-1 |        20.41 |      0.16 |           0.58 |                  0.58 |
 
 ### Tests
 * TEST passed: No SUT container restarts
