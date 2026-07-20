@@ -320,11 +320,19 @@ class ManifestBuilder:
         env = {**env_default, **env}
         cfg.logger.debug('ManifestBuilder.create_manifest_job({})'.format(jobname))
         cfg.logger.debug(env)
+        # Suffixed by benchmark_run (when given) so that two entries sharing the same
+        # (app, component, configuration, experimentRun, client) — e.g. two parallel
+        # loader entries, always client=1, distinguished only by data_job/benchmark_run,
+        # or two parallel benchmarker entries in the same client round — get their own
+        # manifest file on disk instead of the later one silently overwriting the earlier
+        # one's.
+        benchmark_run_suffix = '-{}'.format(benchmark_run) if benchmark_run else ''
         job_experiment = (
             cfg.experiment.path
-            + '/{app}-{component}-{configuration}-{experimentRun}-{client}.yml'.format(
+            + '/{app}-{component}-{configuration}-{experimentRun}-{client}{benchmark_run_suffix}.yml'.format(
                 app=app, component=component, configuration=configuration,
-                experimentRun=experimentRun, client=client).lower()
+                experimentRun=experimentRun, client=client,
+                benchmark_run_suffix=benchmark_run_suffix).lower()
         )
         try:
             result = self.get_patched_yaml(
