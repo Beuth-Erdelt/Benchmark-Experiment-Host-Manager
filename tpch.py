@@ -36,7 +36,7 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB', 'pg_duck'], default=[], nargs='*')
     parser.add_argument('-xlit',  '--xlimit-import-table', help='import only this table (useful for partial re-loads)', default='', dest='limit_import_table')
     parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query', action='store_true', default=False, dest='datatransfer')
     parser.add_argument('-xqr',   '--xnum-query-runs', help='number of times to repeat each query', default=1, dest='num_run')
@@ -282,6 +282,24 @@ if __name__ == '__main__':
                 config = configurations.default(experiment=experiment, docker='CedarDB', dialect='PostgreSQL', alias='DBMS A2')
                 config.set_storage(
                     storageConfiguration = 'cedardb'
+                    )
+                if skip_loading:
+                    config.loading_deactivated = True
+                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("pg_duck" in args.dbms):
+                # pg_duck (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's DDL scripts and loading job)
+                name_format = 'pg_duck-{cluster}-{pods}'
+                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                config = configurations.default(experiment=experiment, docker='pg_duck', dialect='PostgreSQL', alias='DBMS A2')
+                config.path_experiment_docker = 'PostgreSQL'   # pg_duckdb IS PostgreSQL: reuse its DDL/init scripts
+                config.set_storage(
+                    storageConfiguration = 'pg_duck'
                     )
                 if skip_loading:
                     config.loading_deactivated = True

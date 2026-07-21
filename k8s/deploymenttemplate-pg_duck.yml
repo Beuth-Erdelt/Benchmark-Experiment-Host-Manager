@@ -1,0 +1,187 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 5432}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  - {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 9187}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-pg-duck
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
+      priorityClassName: important
+      initContainers:
+        - name: fix-permissions
+          image: busybox:stable
+          command:
+            - sh
+            - -c
+            - |
+                echo "Running chmod on tenants:"
+                ls -l /tenant_* 2>/dev/null || echo "No tenant directories found"
+                chown -v -R 999:999 /tenant_* && chmod -v 700 /tenant_* /tenant_* 2>&1 || true
+          volumeMounts:
+          - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
+      containers:
+      - name: dbms
+        image: pgduckdb/pgduckdb:18-v1.1.1
+        env:
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        # pg_ctl: cannot be run as root
+        lifecycle:
+          postStart:
+            exec:
+              # pg_duckdb ships as a loadable extension, not baked into the image's schema;
+              # it must be activated once per fresh data directory before any DDL/DML runs.
+              command: ["/bin/sh", "-c", "until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do sleep 1; done; psql -h localhost -p 5432 -U postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_duckdb;'"]
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/18/bin/pg_ctl stop -m smart -t 120"]
+        readinessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - "-c"
+              - >
+                if pg_isready -h localhost -p 5432 -U postgres > /dev/null; then
+                  recovery_status=$(psql -h localhost -p 5432 -U postgres -t -c "SELECT pg_is_in_recovery();" | xargs);
+                  [ "$recovery_status" = "f" ] && exit 0 || exit 1;
+                else
+                  exit 1;
+                fi
+          initialDelaySeconds: 15
+          periodSeconds: 60
+          successThreshold: 3
+        ports:
+        - {containerPort: 5432}
+        securityContext:
+          allowPrivilegeEscalation: false
+        resources:
+          limits: {cpu: 16000m, memory: 50Gi}
+          requests: {cpu: 1000m, memory: 50Gi}
+        volumeMounts:
+        - {mountPath: /data, name: benchmark-data-volume}
+        - {mountPath: /dev/shm, name: dshm}
+        - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
+        args:
+          # --- Connection & Worker Processes ---
+          - "-c"
+          - "shared_preload_libraries=pg_duckdb"      # https://github.com/duckdb/pg_duckdb
+          - "-c"
+          - "max_connections=640"       # https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS
+          - "-c"
+          - "max_worker_processes=16"    # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-WORKER-PROCESSES
+          - "-c"
+          - "max_parallel_workers=16"    # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-WORKERS
+          - "-c"
+          - "max_parallel_workers_per_gather=8"  # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-WORKERS-PER-GATHER
+          - "-c"
+          - "max_parallel_maintenance_workers=4" # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAX-PARALLEL-MAINTENANCE-WORKERS
+
+          # --- Memory Settings ---
+          - "-c"
+          - "shared_buffers=16GB"        # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-SHARED-BUFFERS
+          - "-c"
+          - "effective_cache_size=40GB"  # https://www.postgresql.org/docs/current/runtime-config-query.html#GUC-EFFECTIVE-CACHE-SIZE
+          - "-c"
+          - "work_mem=512MB"             # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-WORK-MEM
+          - "-c"
+          - "maintenance_work_mem=2GB"   # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-MAINTENANCE-WORK-MEM
+
+          # --- Autovacuum ---
+          - "-c"
+          - "autovacuum=off"                          # https://www.postgresql.org/docs/current/runtime-config-autovacuum.html#GUC-AUTOVACUUM
+
+          # --- WAL & Checkpoints (Ceph-optimized) ---
+          - "-c"
+          - "wal_level=minimal"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-WAL-LEVEL
+          - "-c"
+          - "max_wal_senders=0"                       # https://www.postgresql.org/docs/current/runtime-config-replication.html#GUC-MAX-WAL-SENDERS
+          - "-c"
+          - "max_wal_size=32GB"                       # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-MAX-WAL-SIZE
+          - "-c"
+          - "checkpoint_timeout=1h"                    # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-TIMEOUT
+          - "-c"
+          - "checkpoint_completion_target=1.0"        # https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-CHECKPOINT-COMPLETION-TARGET
+
+          # --- Locks and Limits ---
+          - "-c"
+          - "lock_timeout=30s"
+          - "-c"
+          - "idle_in_transaction_session_timeout=30000"
+      - name: monitor-application
+        image: prometheuscommunity/postgres-exporter:v0.19.1
+        command: ["postgres_exporter"]
+        env:
+          - name: DATA_SOURCE_URI
+            value: "localhost:5432/?sslmode=disable"
+          - name: DATA_SOURCE_USER
+            value: "postgres"
+          - name: DATA_SOURCE_PASS
+            value: ""
+        ports:
+          - containerPort: 9187
+        resources:
+          requests: {cpu: 1000m, memory: 4Gi}
+          limits: {cpu: 1000m, memory: 4Gi}
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory
