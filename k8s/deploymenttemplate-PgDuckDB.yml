@@ -65,16 +65,19 @@ spec:
           value: trust
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        - name: DUCKDB_FORCE_EXECUTION
+          value: "false"
         # pg_ctl: cannot be run as root
         lifecycle:
           postStart:
             exec:
               # pg_duckdb ships as a loadable extension, not baked into the image's schema;
               # it must be activated once per fresh data directory before any DDL/DML runs.
-              # duckdb.force_execution is set as a role-level default (persisted in
+              # duckdb.force_execution (governed by the DUCKDB_FORCE_EXECUTION env var, set
+              # via tpch.py's -xdfe flag) is a role-level default (persisted in
               # pg_db_role_setting) so every later connection as `postgres` picks it up
               # without needing a per-session SET.
-              command: ["/bin/sh", "-c", "until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do sleep 1; done; psql -h localhost -p 5432 -U postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_duckdb;' -c 'ALTER ROLE postgres SET duckdb.force_execution = true;'"]
+              command: ["/bin/sh", "-c", "until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do sleep 1; done; psql -h localhost -p 5432 -U postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_duckdb;'; if [ \"$DUCKDB_FORCE_EXECUTION\" = \"true\" ]; then psql -h localhost -p 5432 -U postgres -c 'ALTER ROLE postgres SET duckdb.force_execution = true;'; fi"]
           preStop:
             exec:
               command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/18/bin/pg_ctl stop -m smart -t 120"]
