@@ -65,6 +65,8 @@ class TPCC(Benchmark):
         SD = int(args.scaling_duration)
         extra_latency = int(args.extra_latency)
         extra_keying = int(args.extra_keying)
+        datatransfer = args.datatransfer
+        num_rampup_time = int(args.num_rampup_time)
         if mode == 'run':
             experiment.set_workload(
                 name=f'HammerDB Workload SF={SF} (warehouses for TPC-C)',
@@ -97,10 +99,14 @@ class TPCC(Benchmark):
         if experiment.benchmarking_is_active():
             if SD:
                 experiment.workload['info'] += f" Benchmarking runs for {SD} minutes."
+            if num_rampup_time:
+                experiment.workload['info'] += f" Ramp-up period is {num_rampup_time} minutes before measurements begin."
             if extra_keying:
                 experiment.workload['info'] += " Benchmarking has keying and thinking times activated."
             if extra_latency:
                 experiment.workload['info'] += " Benchmarking also logs latencies."
+            if datatransfer:
+                experiment.workload['info'] += " Data transfer volume per query is also measured."
             if args.activate_reset:
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
 

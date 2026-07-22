@@ -483,6 +483,11 @@ class ExperimentBase():
         request_node_benchmarking = args.request_node_benchmarking
         request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
+        skip_shutdown = args.skip_shutdown
+        test_result = args.test_result
+        num_worker = int(args.num_worker)
+        num_worker_replicas = int(args.num_worker_replicas)
+        num_worker_shards = int(args.num_worker_shards)
         self.resetscript_active = args.activate_reset
         if args.experiment_timeout is not None:
             self.max_experiment_minutes = int(args.experiment_timeout)
@@ -622,6 +627,27 @@ class ExperimentBase():
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
         if self.max_sut is not None:
             self.workload['info'] = self.workload['info']+"\nMaximum DBMS per experiment is {}.".format(self.max_sut)
+        if self.cluster.max_sut is not None:
+            self.workload['info'] = self.workload['info']+"\nMaximum DBMS across the whole cluster is {}.".format(self.cluster.max_sut)
+        if self.max_experiment_minutes is not None:
+            self.workload['info'] = self.workload['info']+"\nExperiment is aborted and removed from the cluster after {} minutes.".format(self.max_experiment_minutes)
+        if skip_shutdown:
+            self.workload['info'] = self.workload['info']+"\nSUT pods are kept running after the experiment finishes."
+        if test_result:
+            self.workload['info'] = self.workload['info']+"\nResults are validated against basic correctness requirements."
+        if len(self.dbms_args) > 0:
+            self.workload['info'] = self.workload['info']+"\nDeployment parameter overrides: {}.".format(self.dbms_args)
+        if num_worker > 0:
+            self.workload['info'] = self.workload['info']+"\nDistributed DBMS uses {} worker nodes, {} replicas and {} shards per node.".format(num_worker, num_worker_replicas, num_worker_shards)
+        self.workload['info'] = self.workload['info']+"\nSUT requests {} CPU and {} RAM.".format(cpu, memory)
+        if cpu_limit != '0':
+            self.workload['info'] = self.workload['info']+" CPU limit is {}.".format(cpu_limit)
+        if memory_limit != '0':
+            self.workload['info'] = self.workload['info']+" RAM limit is {}.".format(memory_limit)
+        if cpu_type:
+            self.workload['info'] = self.workload['info']+"\nSUT node must carry label cpu={}.".format(cpu_type)
+        if gpu_type:
+            self.workload['info'] = self.workload['info']+"\nSUT requests {} GPU(s) on a node labeled gpu={}.".format(gpus, gpu_type)
         self.workload['benchmarking_active'] = self.benchmarking_is_active()
         self.workload['loading_active'] = self.loading_is_active()
     def generate_port_forward(self, service: str) -> str:

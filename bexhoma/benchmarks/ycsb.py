@@ -70,6 +70,10 @@ class YCSB(Benchmark):
         target_base = int(args.target_base)
         extra_insert_order = args.extra_insert_order
         batchsize = args.scaling_batchsize
+        scaling_logging = int(args.scaling_logging)
+        max_execution_time = int(args.max_execution_time)
+        num_sut_replicas = int(args.num_sut_replicas)
+        num_pd_nodes = int(args.num_pd_nodes)
         num_loading_target_factors = experiment.get_parameter_as_list('num_loading_target_factors')
         num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
@@ -111,6 +115,12 @@ class YCSB(Benchmark):
             experiment.workload['info'] += f"\nFactors for benchmarking are {num_benchmarking_target_factors}."
             if args.activate_reset:
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
+            if max_execution_time > 0:
+                experiment.workload['info'] += f"\nBenchmarking is capped at {max_execution_time}s execution time."
+        if experiment.loading_is_active() or experiment.benchmarking_is_active():
+            experiment.workload['info'] += f"\nStatus is logged every {scaling_logging}s."
+        if "TiDB" in args.dbms or len(args.dbms) == 0:
+            experiment.workload['info'] += f"\nTiDB uses {num_sut_replicas} SUT replica(s) and {num_pd_nodes} PD node(s)."
 
     def _show_loading_sections(self, experiment, is_multitenant: bool) -> 'pd.DataFrame':
         """

@@ -49,6 +49,8 @@ class TPCDS(DBMSBenchmarkerBenchmark):
         init_constraints = args.init_constraints
         init_statistics = args.init_statistics
         init_columns = args.init_columns
+        datatransfer = args.datatransfer
+        num_loading_split = args.num_loading_split
         timeout = int(args.timeout)
         if mode == 'run':
             experiment.set_queryfile('queries-tpcds.config')
@@ -108,6 +110,8 @@ class TPCDS(DBMSBenchmarkerBenchmark):
             if init_columns:
                 experiment.workload['info'] += "\nStorage is set to columnar."
             experiment.workload['info'] += f"\nTimeout per query is {timeout}."
+            if datatransfer:
+                experiment.workload['info'] += "\nData transfer volume per query is also measured."
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
             if init_indexes or init_constraints or init_statistics:
@@ -122,3 +126,5 @@ class TPCDS(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += init_scripts
             if len(limit_import_table):
                 experiment.workload['info'] += f"\nImport is limited to table {limit_import_table}."
+            if str(num_loading_split) != "1":
+                experiment.workload['info'] += f"\nLoader data is split into {num_loading_split} parallel batches per pod."
