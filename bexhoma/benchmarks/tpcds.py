@@ -98,6 +98,9 @@ class TPCDS(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += "\nQuery ordering is as required by the TPC."
             else:
                 experiment.workload['info'] += "\nQuery ordering is Q1 - Q99."
+            if experiment.active_queries is not None:
+                query_list = ", ".join(f"Q{n}" for n in sorted(experiment.active_queries))
+                experiment.workload['info'] += f"\nQuery selection is limited to {query_list}."
             if recreate_parameter:
                 experiment.workload['info'] += "\nAll instances use different query parameters."
             else:
