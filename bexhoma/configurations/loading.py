@@ -800,7 +800,14 @@ class LoadingCoordinator:
                 cfg.loading_finished = (pod_labels[pod]['index'] == 'True')
             elif 'data' in pod_labels[pod]:
                 cfg.loading_started = True
-                cfg.loading_finished = (pod_labels[pod]['data'] == 'True')
+                if len(cfg.indexscript):
+                    # An index/constraint/statistics phase is expected but its
+                    # background thread has not written its 'index' label yet
+                    # (fire-and-forget thread.start() racing this poll) - don't
+                    # treat 'data' alone as the terminal signal.
+                    cfg.loading_finished = False
+                else:
+                    cfg.loading_finished = (pod_labels[pod]['data'] == 'True')
             elif 'schema' in pod_labels[pod] and not loading_pods_active:
                 cfg.loading_started = True
                 cfg.loading_finished = (pod_labels[pod]['schema'] == 'True')
