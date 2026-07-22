@@ -158,6 +158,10 @@ class BenchmarkRunner:
         else:
             queryfile = experiments_configfolder + '/queries.config'
         cfg.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        active_queries = getattr(cfg.experiment, 'active_queries', None)
+        if active_queries is not None:
+            for query_number, query_entry in enumerate(cfg.benchmark.queryconfig['queries'], start=1):
+                query_entry['active'] = query_number in active_queries
         if c['name'] in cfg.benchmark.dbms:
             print("Rerun connection " + connection)
         else:

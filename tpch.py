@@ -49,6 +49,8 @@ if __name__ == '__main__':
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
     parser.add_argument('-xrs',   '--xnum-refresh-streams', help='enable a TPC-H RF1/RF2 refresh stream running in parallel with the query streams; value is the number of RF1+RF2 pairs applied per benchmarking round (set equal to the number of parallel query streams for a spec-compliant throughput test; 0 = disabled)', default=0, type=int, dest='num_refresh_streams')
     parser.add_argument('-xrso',  '--xrefresh-stream-offset', help='start the refresh stream at set OFFSET+1, so that sets 1..OFFSET are skipped (use to continue from a previous run without re-applying already-applied sets)', default=0, type=int, dest='num_refresh_stream_offset')
+    parser.add_argument('-xaq',   '--xactive-queries', help='comma-separated 1-based query numbers to run, e.g. 3,5,6,7 (all other queries are set inactive in the query config uploaded to the cluster; unset = run all queries as defined in the query config file)', default='', dest='active_queries')
+    parser.add_argument('-xdfe',  '--xduckdb-force-execution', help='force every query through pg_duckdb\'s DuckDB execution engine (PgDuckDB only); off by default so pg_duckdb can cost-base its own routing', action='store_true', default=False, dest='duckdb_force_execution')
     # evaluate args
     args = parser.parse_args()
     if args.debug:
@@ -105,6 +107,8 @@ if __name__ == '__main__':
     # refresh stream
     num_refresh_streams = args.num_refresh_streams
     num_refresh_stream_offset = args.num_refresh_stream_offset
+    # restrict to a subset of queries by 1-based query number
+    active_queries = [int(x) for x in args.active_queries.split(",") if len(x) > 0] or None
     ##############
     ### set cluster
     ##############
@@ -135,6 +139,7 @@ if __name__ == '__main__':
         experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
+    experiment.set_active_queries(active_queries)
     #experiment.num_tenants = multi_tenant_num
     #experiment.tenant_per = multi_tenant_by
     # remove running dbms
@@ -301,6 +306,11 @@ if __name__ == '__main__':
                 config.set_storage(
                     storageConfiguration = 'PgDuckDB'
                     )
+                config.sut_parameters = {
+                    # read by deploymenttemplate-PgDuckDB.yml's postStart hook to decide
+                    # whether to ALTER ROLE ... SET duckdb.force_execution
+                    'DUCKDB_FORCE_EXECUTION': str(args.duckdb_force_execution).lower(),
+                }
                 if skip_loading:
                     config.loading_deactivated = True
                 config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"

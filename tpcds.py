@@ -43,6 +43,7 @@ if __name__ == '__main__':
     parser.add_argument('-xcol',  '--xinit-columns', help='use columnar storage (Citus only)', action='store_true', default=False, dest='init_columns')
     parser.add_argument('-xrcp',  '--xrecreate-parameter', help='regenerate random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
+    parser.add_argument('-xaq',   '--xactive-queries', help='comma-separated 1-based query numbers to run, e.g. 3,5,6,7 (all other queries are set inactive in the query config uploaded to the cluster; unset = run all queries as defined in the query config file)', default='', dest='active_queries')
     # evaluate args
     args = parser.parse_args()
     if args.debug:
@@ -90,6 +91,8 @@ if __name__ == '__main__':
     limit_import_table = args.limit_import_table
     # columnar storage
     init_columns = args.init_columns
+    # restrict to a subset of queries by 1-based query number
+    active_queries = [int(x) for x in args.active_queries.split(",") if len(x) > 0] or None
     ##############
     ### set cluster
     ##############
@@ -120,6 +123,7 @@ if __name__ == '__main__':
         experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "30s"
     experiment.prometheus_timeout = "30s"
+    experiment.set_active_queries(active_queries)
     # remove running dbms
     #experiment.clean()
     experiment.prepare_testbed(command_args)

@@ -1389,6 +1389,53 @@ No warnings
 The added `### tpch_refresh` section shows the wall-clock timing of the parallel refresh stream job: when it started, when it ended, and the total duration in seconds.
 
 
+## Run a Subset of Queries
+
+Not every iteration needs the full 22-query stream. `-xaq` restricts a run to the given 1-based query numbers; every other query is set inactive for this experiment's uploaded query config only — the query config files in [experiments/tpch/](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch) are never modified, so a later run without `-xaq` sees the full query set again.
+
+Looking back at the [SF=10 monitoring example](#monitoring) above, Q1, Q18, Q14 and Q9 dominate total runtime (34.5s, 24.0s, 17.0s and 10.3s respectively), while every other query finishes in under 8.5s. When iterating on a tuning change (e.g. `shared_buffers` or `work_mem`), re-running just these four queries gives a fast read on whether the change helped, without waiting on the full stream.
+
+Example:
+```bash
+bexhoma tpch \
+  -dbms PostgreSQL \
+  -sf 10 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xaq 1,9,14,18 \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 150Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
+  run &>$LOG_DIR/docs_tpch_postgresql_subset.log
+```
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_subset_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_subset.log</a></summary>
+
+```markdown
+(not yet captured — run scripts/test-docs-tpch.sh (or .ps1), then scripts/replace-docs.py to fill this in from logs_tests/docs_tpch_postgresql_subset_summary.md)
+```
+
+</details>
+
+In the resulting summary, `### Latency of Timer Execution` lists only Q1, Q9, Q14 and Q18; `num_of_queries` in `### Execution` drops to 4 accordingly, and `Power@Size` / `Geo Times` are computed over that reduced set only — so they are not comparable to a full-stream run.
+
+
 
 
 
