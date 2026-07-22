@@ -71,7 +71,10 @@ spec:
             exec:
               # pg_duckdb ships as a loadable extension, not baked into the image's schema;
               # it must be activated once per fresh data directory before any DDL/DML runs.
-              command: ["/bin/sh", "-c", "until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do sleep 1; done; psql -h localhost -p 5432 -U postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_duckdb;'"]
+              # duckdb.force_execution is set as a role-level default (persisted in
+              # pg_db_role_setting) so every later connection as `postgres` picks it up
+              # without needing a per-session SET.
+              command: ["/bin/sh", "-c", "until pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; do sleep 1; done; psql -h localhost -p 5432 -U postgres -c 'CREATE EXTENSION IF NOT EXISTS pg_duckdb;' -c 'ALTER ROLE postgres SET duckdb.force_execution = true;'"]
           preStop:
             exec:
               command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/18/bin/pg_ctl stop -m smart -t 120"]
