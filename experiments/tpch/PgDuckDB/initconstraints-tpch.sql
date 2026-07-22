@@ -7,3 +7,5 @@
 --          are stored and executed by DuckDB, not Postgres's own storage
 --          manager, so PRIMARY KEY / FOREIGN KEY constraints cannot be added
 --          via ALTER TABLE the way they are for plain Postgres heap tables.
+-- NOT CURRENTLY USABLE: see initschema-tpch.sql in this folder — the schema
+--          it would apply to requires MotherDuck and is not currently used.

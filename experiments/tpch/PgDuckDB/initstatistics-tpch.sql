@@ -5,6 +5,8 @@
 -- See LICENSE for details.
 -- Purpose: Collect table statistics and verify row counts after data loading.
 --          Re-enables synchronous commit that was disabled in initschema-tpch.sql.
+-- NOT CURRENTLY USABLE: see initschema-tpch.sql in this folder — the schema
+--          it would apply to requires MotherDuck and is not currently used.
 
 ANALYZE VERBOSE public.customer;
 ANALYZE VERBOSE public.lineitem;

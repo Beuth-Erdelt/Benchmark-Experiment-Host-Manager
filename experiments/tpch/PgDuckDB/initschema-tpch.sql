@@ -9,6 +9,12 @@
 --          engine instead of falling back to plain Postgres heap scans.
 --          Disables synchronous commit at the end to accelerate subsequent
 --          bulk loading; re-enabled by initstatistics-tpch.sql.
+-- NOT CURRENTLY USABLE: pg_duckdb only allows `USING duckdb` tables to be
+--          persistent (non-TEMP) when MotherDuck support is enabled; without
+--          it, CREATE TABLE ... USING duckdb fails with "Only TEMP tables
+--          are supported in DuckDB if MotherDuck support is not enabled".
+--          tpch.py currently points PgDuckDB back at experiments/tpch/PostgreSQL/
+--          instead of this folder. See github.com/duckdb/pg_duckdb discussion #385.
 
 CREATE TABLE public.nation (
     n_nationkey  INTEGER      NOT NULL,
