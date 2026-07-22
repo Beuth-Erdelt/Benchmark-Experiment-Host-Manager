@@ -1,0 +1,9 @@
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/PgDuckDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: No-op. Tables created with `USING duckdb` (see initschema-tpch.sql)
+--          are stored and executed by DuckDB, not Postgres's own storage
+--          manager, so PRIMARY KEY / FOREIGN KEY constraints cannot be added
+--          via ALTER TABLE the way they are for plain Postgres heap tables.

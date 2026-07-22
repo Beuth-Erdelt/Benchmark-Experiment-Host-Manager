@@ -298,11 +298,10 @@ if __name__ == '__main__':
                 config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("PgDuckDB" in args.dbms):
-                # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's DDL scripts and loading job)
+                # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's loading job but has its own DuckDB-backed DDL in experiments/tpch/PgDuckDB/)
                 name_format = 'PgDuckDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='PgDuckDB', dialect='PostgreSQL', alias='DBMS A2')
-                config.path_experiment_docker = 'PostgreSQL'   # pg_duckdb IS PostgreSQL: reuse its DDL/init scripts
                 config.set_storage(
                     storageConfiguration = 'PgDuckDB'
                     )
