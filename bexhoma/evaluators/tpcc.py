@@ -336,26 +336,27 @@ class TpccEvaluator(LogEvaluator):
         client, child, time, errors, throughput, goodput, efficiency, and
         latency percentiles), then naturally sorts by the connection name.
 
-        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or ``None``
-                 if there are no benchmarking results.
-        :rtype: pandas.DataFrame or None
+        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
         """
         df = self.get_df_benchmarking()
-        if not df.empty:
-            if "P95 [ms]" in df:
-                # we have latencies
-                columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
-            else:
-                columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
-            df.fillna(0, inplace=True)
-            df_plot = self.benchmarking_set_datatypes(df)
-            df_plot_filtered = pd.DataFrame()
-            for col in columns:
-                if col in df_plot.columns:
-                    df_plot_filtered[col] = df_plot.loc[:,col]
-            df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
-            df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
-            return df_plot_filtered
+        if df.empty:
+            return pd.DataFrame()
+        if "P95 [ms]" in df:
+            # we have latencies
+            columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+        else:
+            columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
+        df.fillna(0, inplace=True)
+        df_plot = self.benchmarking_set_datatypes(df)
+        df_plot_filtered = pd.DataFrame()
+        for col in columns:
+            if col in df_plot.columns:
+                df_plot_filtered[col] = df_plot.loc[:,col]
+        df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
+        df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
+        return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
         Returns benchmarking results aggregated over parallel pods, one row per phase.

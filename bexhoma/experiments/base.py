@@ -1455,24 +1455,22 @@ class ExperimentBase():
                 #configuration = self.configurations[0]
                 # write appended query config
                 filename = self.result_filename_local("queries.config")#self.path+"/queries.config"
-                with open(filename,'r') as inp:
-                    queryconfig = ast.literal_eval(inp.read())
-                    for k,v in self.workload.items():
-                        queryconfig[k] = v
-                #filename = self.benchmark.path+'/queries.config'
-                with open(filename, 'w') as outp:
-                    outp.write(str(queryconfig))
-        print("{:30s}: uploading workload file".format("Experiment"))
-        pod_dashboard = self.get_dashboard_pod()
-        cmd = {}
-        # single file
+                # queries.config is only written once run_pod() submits the first
+                # benchmarker job; it may not exist yet if the experiment was aborted
+                # (e.g. --experiment-timeout) during loading or before the first round.
+                if os.path.isfile(filename):
+                    with open(filename,'r') as inp:
+                        queryconfig = ast.literal_eval(inp.read())
+                        for k,v in self.workload.items():
+                            queryconfig[k] = v
+                    #filename = self.benchmark.path+'/queries.config'
+                    with open(filename, 'w') as outp:
+                        outp.write(str(queryconfig))
         filename = 'queries.config'
         filename_local = self.result_filename_local(filename)
-        filename_remote = self.result_filename_remote(filename)
-        self.upload_experiment_file(filename=filename)
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
-        #self.cluster.kubectl(cmd['upload_results'])
+        if os.path.isfile(filename_local):
+            print("{:30s}: uploading workload file".format("Experiment"))
+            self.upload_experiment_file(filename=filename)
     def work_benchmark_list(self, intervals: int = 30, stop_after_starting: bool = False, stop_after_loading: bool = False, stop_after_benchmarking: bool = False) -> None:
         """
         Run typical workflow:
