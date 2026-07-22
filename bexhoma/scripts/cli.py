@@ -30,7 +30,7 @@ from pathlib import Path
 #: Modes handled by :func:`bexhoma.scripts.experimentsmanager.manage`;
 #: defined here (rather than imported from there) so that checking
 #: membership does not force-import that module's heavy dependencies.
-EXPERIMENT_MODES = ['stop', 'status', 'dashboard', 'localdashboard', 'localresults', 'jupyter', 'master', 'data', 'summary']
+EXPERIMENT_MODES = ['stop', 'status', 'dashboard', 'messagequeue', 'localdashboard', 'localresults', 'jupyter', 'master', 'data', 'summary']
 
 
 def _find_script(name: str) -> Path | None:

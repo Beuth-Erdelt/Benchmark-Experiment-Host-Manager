@@ -73,6 +73,9 @@ SELECTOR_RE = re.compile(
 # or NaN regardless of actual load, so the 0/NaN test would be a false positive.
 MIN_MONITORING_SAMPLES = 2
 
+#: Divisor to convert the ``--experiment-timeout`` CLI value (minutes) to seconds.
+SECONDS_PER_MINUTE = 60
+
 def parse_set_arg(s: str) -> Tuple[dict, str]:
     """
     Parse a single ``--set`` argument of the form ``<selector>=<value>``.
@@ -151,6 +154,7 @@ class ExperimentBase():
         self.pod_dashboard = ""                                         # name of the dashboard pod
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
+        self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
         self.num_maintaining_pods = 0                                   # number of maintaining pods in total (pre-initialized; redeclared below)
         self.num_tenants = 0                                            # number of tenants for multi-tenant experiments
@@ -466,6 +470,12 @@ class ExperimentBase():
         gpu_type = str(args.request_gpu_type)
         gpus = str(args.request_gpu)
         request_storage_type = args.request_storage_type
+        valid_storage_types = self.cluster.get_available_storage_types()
+        if request_storage_type not in valid_storage_types:
+            raise ValueError(
+                f"Invalid --request-storage-type {request_storage_type!r} for cluster context "
+                f"{self.cluster.context!r}. Valid values: {valid_storage_types}."
+            )
         request_storage_size = args.request_storage_size
         request_storage_remove = args.request_storage_remove
         request_node_name = args.request_node_name
@@ -474,6 +484,8 @@ class ExperimentBase():
         request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
         self.resetscript_active = args.activate_reset
+        if args.experiment_timeout is not None:
+            self.max_experiment_minutes = int(args.experiment_timeout)
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
         multi_tenant_volume = args.multi_tenant_volume
@@ -1224,6 +1236,20 @@ class ExperimentBase():
             status = self.cluster.get_pod_status(p)
             print(p, status)
             self.cluster.delete_pod(p)
+    def remove_experiment(self) -> None:
+        """
+        Stop every component of this experiment and remove it from the cluster.
+
+        Calls all per-component ``stop_*`` methods and then deletes any
+        remaining Kubernetes objects labeled with this experiment's code,
+        mirroring the teardown of ``bexhoma-experiments stop -e <code>``.
+        """
+        self.stop_benchmarker()
+        self.stop_maintaining()
+        self.stop_loading()
+        self.stop_monitoring()
+        self.stop_sut()
+        self.cluster.kubectl('delete all -l experiment='+self.code)
     def start_monitoring(self):
         """
         Start monitoring for all dbms configurations of this experiment.
@@ -1297,20 +1323,15 @@ class ExperimentBase():
         """
         if 'workflow_planned' in self.workload:
             return self.workload['workflow_planned']
-        bm_name_by_index = (
-            {bm.benchmark_index: bm.name for bm in self.benchmarks}
-            if getattr(self, 'benchmarks', None)
-            else {}
-        )
         workflow = {}
         for configuration in self.configurations:
             rounds = [
                 [
                     {
-                        'type': bm_name_by_index.get(i + 1, entry['benchmarker']),
+                        'type': entry['name'],
                         'pods': entry['parallelism'],
                     }
-                    for i, entry in enumerate(round_entries)
+                    for entry in round_entries
                 ]
                 for round_entries in configuration.experiment_dict['benchmarker']
             ]
@@ -1463,6 +1484,11 @@ class ExperimentBase():
         5) at the same time as 4. run benchmarker jobs corresponding to list given via add_benchmark_list()
         6) remove everything when done
 
+        If ``self.max_experiment_minutes`` is set (via ``--experiment-timeout``),
+        the elapsed wall-clock time is checked at every iteration; once it is
+        reached, the experiment is aborted via :meth:`remove_experiment` and this
+        method returns early, regardless of which phase is currently running.
+
         :param intervals: Seconds to wait before checking change of status
         :param stop_after_starting: stops after phase 2)
         :param stop_after_loading: stops after phase 3)
@@ -1482,10 +1508,17 @@ class ExperimentBase():
                     json.dump(config.experiment_dict, _f, indent=2)
         intervals_wait = 0
         do = True
+        experiment_start_time = datetime.utcnow()
         while do:
             #time.sleep(intervals)
             self.wait(intervals_wait)
             intervals_wait = intervals
+            if self.max_experiment_minutes is not None:
+                elapsed_minutes = (datetime.utcnow() - experiment_start_time).total_seconds() / SECONDS_PER_MINUTE
+                if elapsed_minutes >= self.max_experiment_minutes:
+                    print("{:30s}: exceeded maximum timeout of {} minutes ({:.1f} elapsed) - stopping and removing all components".format("Experiment", self.max_experiment_minutes, elapsed_minutes))
+                    self.remove_experiment()
+                    return
             _benchmark_just_submitted = False
             # count number of running and pending pods
             num_pods_running_experiment = len(self.cluster.get_pods(app=self.appname, component='sut', experiment=self.code, status='Running'))
@@ -1629,9 +1662,15 @@ class ExperimentBase():
                         if ready:
                             print("#### Starting to load")
                             # Initialize experiment-level loader counter to total loading pods
-                            # across all configurations (count-down to zero).
+                            # across all configurations (count-down to zero). A configuration
+                            # with several parallel loader entries (experiment_dict['loader'])
+                            # contributes the sum of all its entries' pod counts, not just the
+                            # primary entry's num_loading_pods.
                             total_loading_pods = sum(
-                                config_tmp.num_loading_pods
+                                (sum(
+                                    entry.get('num_pods', entry.get('parallelism', 1))
+                                    for entry in config_tmp.experiment_dict['loader']
+                                ) if config_tmp.experiment_dict['loader'] else config_tmp.num_loading_pods)
                                 for config_tmp in self.configurations
                                 if config_tmp.loading_active
                             )
@@ -1877,7 +1916,19 @@ class ExperimentBase():
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply
                             config.experiment_done = True
                 else:
-                    print("{:30s}: is loading".format(config.configuration))
+                    progress = ""
+                    if len(config.experiment_dict['loader']) > 1:
+                        sut_labels = self.cluster.get_pods_labels(
+                            app=self.cluster.appname, component='sut',
+                            experiment=self.code, configuration=config.configuration)
+                        if len(sut_labels) > 0:
+                            labels = next(iter(sut_labels.values()))
+                            num_data_jobs = labels.get('num_data_jobs')
+                            num_data_jobs_ready = labels.get('num_data_jobs_ready', '0')
+                            if num_data_jobs:
+                                progress = " ({}/{} parallel loading jobs done)".format(
+                                    num_data_jobs_ready, num_data_jobs)
+                    print("{:30s}: is loading{}".format(config.configuration, progress))
             _we_have_running_benchmarks = False
             _we_have_incomplete_jobs = False
             for config in self.configurations:

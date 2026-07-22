@@ -77,6 +77,7 @@ def manage():
     # argparse
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('mode', help='manage experiments: stop, get status, connect to dbms or connect to dashboard', choices=EXPERIMENT_MODES)
+    parser.add_argument('action', help='for mode dashboard/messagequeue: start or shut down the component; omit to port-forward the dashboard', nargs='?', choices=['start', 'shutdown'], default=None)
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-fe', '--force-evaluate', help='force a re-evaluation of the results', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
@@ -98,7 +99,6 @@ def manage():
     if args.mode == 'stop':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         if args.experiment is None:
-            experiment = experiments.base(cluster=cluster, code=cluster.code)
             if connection is None:
                 connection = ''
             cluster.stop_sut(configuration=connection)
@@ -118,7 +118,9 @@ def manage():
             cluster.kubectl('delete all -l experiment='+args.experiment)
     elif args.mode == 'summary':
         if not args.experiment is None:
-            cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+            # -fe re-evaluates by executing a command inside the running dashboard pod,
+            # which needs a live cluster connection; a plain summary only reads local files.
+            cluster = clusters.Kubernetes(clusterconfig, context=args.context, connect=args.force_evaluate)
             resultfolder = cluster.config['benchmarker']['resultfolder']
             code = args.experiment
             with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
@@ -147,7 +149,18 @@ def manage():
                 experiment.show_summary()
     elif args.mode == 'dashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
-        cluster.forward_dashboard_ports()
+        if args.action == 'start':
+            cluster.start_dashboard()
+        elif args.action == 'shutdown':
+            cluster.stop_dashboard()
+        else:
+            cluster.forward_dashboard_ports()
+    elif args.mode == 'messagequeue':
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        if args.action == 'shutdown':
+            cluster.stop_messagequeue()
+        else:
+            cluster.start_messagequeue()
     elif args.mode == 'localdashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         import sys

@@ -158,6 +158,10 @@ class BenchmarkRunner:
         else:
             queryfile = experiments_configfolder + '/queries.config'
         cfg.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+        active_queries = getattr(cfg.experiment, 'active_queries', None)
+        if active_queries is not None:
+            for query_number, query_entry in enumerate(cfg.benchmark.queryconfig['queries'], start=1):
+                query_entry['active'] = query_number in active_queries
         if c['name'] in cfg.benchmark.dbms:
             print("Rerun connection " + connection)
         else:
@@ -202,6 +206,7 @@ class BenchmarkRunner:
         round_index = int(client) - 1
         benchmark_run_index = (int(benchmark_run) - 1) if benchmark_run else 0
         benchmarker_rounds = cfg.experiment_dict.get('benchmarker', [])
+        bm_entry = {}
         if round_index < len(benchmarker_rounds):
             round_entries = benchmarker_rounds[round_index]
             if benchmark_run_index < len(round_entries):
@@ -221,7 +226,7 @@ class BenchmarkRunner:
                 configuration=configuration, experiment=cfg.code,
                 experimentRun=experimentRun, client=client, parallelism=parallelism,
                 alias=c['alias'], num_pods=parallelism, benchmark_run=benchmark_run,
-                template_override=template_override)
+                env=bm_entry.get('parameters', {}), template_override=template_override)
             cfg.experiment.cluster.create_object_from_file(yamlfile)
             job_pods = []
             while len(job_pods) == 0:

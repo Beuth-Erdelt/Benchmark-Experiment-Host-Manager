@@ -83,6 +83,7 @@ class Kubernetes():
         docker=None,
         script=None,
         queryfile=None,
+        connect=True,
     ):
         """
         Initialise the Kubernetes cluster manager.
@@ -97,6 +98,9 @@ class Kubernetes():
         :param docker: Docker image key in ``config['dockers']``.
         :param script: Init-script key within the chosen volume.
         :param queryfile: Path to the DBMSBenchmarker query config file.
+        :param connect: Whether to establish Kubernetes API access via :meth:`cluster_access`.
+            Set to ``False`` for purely local operations (e.g. reading stored results)
+            that do not need a live cluster connection.
         """
         self.logger = logging.getLogger('bexhoma')
         self.clusterconfig = clusterconfig
@@ -117,6 +121,7 @@ class Kubernetes():
         self.contextdata = {}
         self.host = 'localhost'
         self.port = None
+        self.storage_classes = []
 
         if context is None:
             try:
@@ -127,6 +132,7 @@ class Kubernetes():
                 self.namespace = self.contextdata['namespace']
                 self.appname = self.config['credentials']['k8s']['appname']
                 self.yamlfolder = yamlfolder
+                self.storage_classes = self.contextdata.get('storage_classes', [])
             except Exception:
                 print("WARN: No Kubernetes context found")
 
@@ -168,7 +174,8 @@ class Kubernetes():
         self.set_experiments(self.config['instances'], self.config['volumes'], self.config['dockers'])
         self.set_experiment(instance, volume, docker, script)
         self.set_code(code)
-        self.cluster_access()
+        if connect:
+            self.cluster_access()
         self.experiments = []
 
     def cluster_access(self):
@@ -192,6 +199,21 @@ class Kubernetes():
             )
         except Exception:
             print("WARN: Could not connect to Kubernetes")
+
+    def get_available_storage_types(self) -> list:
+        """
+        Return the SUT persistent-volume storage class names valid for the current cluster context.
+
+        ``None`` and ``''`` (ephemeral / no PVC) and ``'ramdisk'`` (in-memory, handled specially by
+        :meth:`~bexhoma.configurations.base.SutConfiguration.use_ramdisk`) are always valid,
+        independent of the cluster. Any other value must be declared in the cluster configuration
+        file under ``credentials.k8s.context.<name>.storage_classes``, since actual Kubernetes
+        StorageClass names differ from cluster to cluster.
+
+        :return: Valid values for ``--request-storage-type``.
+        :rtype: list
+        """
+        return [None, '', 'ramdisk'] + list(self.storage_classes)
 
     def set_code(self, code):
         """
@@ -2087,16 +2109,43 @@ class Kubernetes():
 
     def stop_dashboard(self, app='', component='dashboard'):
         """
-        Stop the dashboard Deployment and its Service.
+        Stop the dashboard Deployment and its Service if running.
 
         :param app: ``app`` label value.  Defaults to ``self.appname`` via sub-calls.
         :param component: ``component`` label value.  Defaults to ``dashboard``.
         """
         self.logger.debug('Kubernetes.stop_dashboard()')
+        if not len(self.get_dashboard_pod_name()):
+            print(f"{'Dashboard':30s}: is not running")
+            return
+        print(f"{'Dashboard':30s}: is stopping...", end="", flush=True)
         for deployment in self.get_deployments(app=app, component=component):
             self.delete_deployment(deployment)
         for service in self.get_services(app=app, component=component):
             self.delete_service(service)
+        while self.is_dashboard_running():
+            self.wait(10, silent=True)
+        print("done")
+
+    def stop_messagequeue(self, app='', component='messagequeue'):
+        """
+        Stop the message-queue Deployment and its Service if running.
+
+        :param app: ``app`` label value.  Defaults to ``self.appname`` via sub-calls.
+        :param component: ``component`` label value.  Defaults to ``messagequeue``.
+        """
+        self.logger.debug('Kubernetes.stop_messagequeue()')
+        if not self.is_messagequeue_running(component=component):
+            print(f"{'Message Queue':30s}: is not running")
+            return
+        print(f"{'Message Queue':30s}: is stopping...", end="", flush=True)
+        for deployment in self.get_deployments(app=app, component=component):
+            self.delete_deployment(deployment)
+        for service in self.get_services(app=app, component=component):
+            self.delete_service(service)
+        while self.is_messagequeue_running(component=component):
+            self.wait(10, silent=True)
+        print("done")
 
     def stop_maintaining(self, experiment='', configuration=''):
         """
@@ -2342,9 +2391,9 @@ class Kubernetes():
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         if number is not None:
-            filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.describe"
+            filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.describe.log"
         else:
-            filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe"
+            filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe.log"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:
@@ -2363,10 +2412,10 @@ class Kubernetes():
         :param pod_name: Name of the Pod.
         :param container: Accepted for API compatibility but ignored — ``kubectl describe``
             is not container-sensitive.
-        :return: ``True`` if the ``.describe`` file exists on disk.
+        :return: ``True`` if the ``.describe.log`` file exists on disk.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe"
+        filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe.log"
         return os.path.isfile(filename_log)
 
     def store_pod_log(self, pod_name, container='', number=None):
@@ -2441,6 +2490,7 @@ class AWS(Kubernetes):
         docker=None,
         script=None,
         queryfile=None,
+        connect=True,
     ):
         """
         Construct a new :class:`AWS` cluster manager.
@@ -2455,6 +2505,7 @@ class AWS(Kubernetes):
         :param docker: Docker image key in ``config['dockers']``.
         :param script: Init-script key within the chosen volume.
         :param queryfile: Path to the DBMSBenchmarker query config file.
+        :param connect: Whether to establish Kubernetes API access via :meth:`cluster_access`.
         """
         self.code = code
         super().__init__(
@@ -2468,6 +2519,7 @@ class AWS(Kubernetes):
             docker=docker,
             script=script,
             queryfile=queryfile,
+            connect=connect,
         )
         # context doubles as the EKS cluster name for eksctl commands
         self.cluster = self.context

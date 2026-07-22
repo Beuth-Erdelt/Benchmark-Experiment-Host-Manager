@@ -34,7 +34,7 @@ images/tpcds/
 1. Pop child index from Redis queue `bexhoma-loading-<CONNECTION>-<EXPERIMENT>`.
 2. Write child index to `/tmp/tpcds/BEXHOMA_CHILD` (loaders read this file).
 3. If BEXHOMA_SYNCH_GENERATE=1: sync on `bexhoma-generator-podcount-<CONNECTION>-<EXPERIMENT>`.
-4. Determine destination: `/data/tpcds/SF<SF>[/<N>/<child>]` or `/tmp/tpcds/SF<SF>[/<N>/<child>]`. Exit early if folder exists and STORE_RAW_DATA_RECREATE=0.
+4. Determine destination: `/data/tpcds/SF<SF>[/<N>/<child>]` or `/tmp/tpcds/SF<SF>[/<N>/<child>]`. Exit early if the folder exists **and contains at least one `.dat` file** (checked via a `nullglob` array, not just directory existence — an empty folder created as a parent for another child's subfolder must not be mistaken for already-generated data) and STORE_RAW_DATA_RECREATE=0.
 5. Run `dsdgen -dir <dst> -scale <SF>` (single pod) or `dsdgen -dir <dst> -scale <SF> -parallel <N> -child <i>` (multi-pod).
 6. If TRANSFORM_RAW_DATA=1: convert `customer.dat` from ISO-8859-1 to UTF-8 via `iconv`, then strip trailing `|` from all `.dat` files via `sed 's/.$//' -i`.
 7. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
@@ -44,7 +44,10 @@ No multi-tenant logic in the TPC-DS generator (unlike TPC-H generator).
 ## Loader execution flow (common)
 1. Read `BEXHOMA_CHILD` from `/tmp/tpcds/BEXHOMA_CHILD`.
 2. Determine `destination_raw` path.
-3. If BEXHOMA_SYNCH_LOAD=1: sync on `bexhoma-loader-podcount-<CONNECTION>-<EXPERIMENT>`.
+3. If BEXHOMA_SYNCH_LOAD=1: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
+   then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
+   initialized by Python; only meaningful with more than one parallel loader entry — see
+   `bexhoma/CLAUDE.md`).
 4. Loop over `.dat` files; strip pod suffix from filename to get table name in multi-pod mode.
 5. If TPCDS_TABLE is set: only load that table.
 6. Execute DBMS-specific command; retry on transient errors (MonetDB).

@@ -76,6 +76,10 @@ Same as the benchmarker except:
   `bexhoma-loading-<CONNECTION>-<EXPERIMENT>`.
 - There is **no unconditional per-job sync barrier** — only the
   `BEXHOMA_TENANT_BY=container` experiment-level barrier applies.
+- When `BEXHOMA_SYNCH_LOAD` is set: after the job counter, also syncs on the round counter
+  `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always initialized by Python;
+  only meaningful when the configuration has more than one parallel loader entry — see
+  `bexhoma/CLAUDE.md`).
 - `BENCHBASE_KEY_AND_THINK` logic is absent (no think-time activation).
 - Runs with `--create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false`.
 - `chbenchmark` sets the bench string to `tpcc,chbenchmark` for the Benchbase

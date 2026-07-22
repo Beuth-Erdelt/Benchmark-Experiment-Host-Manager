@@ -30,8 +30,14 @@ echo "BEXHOMA_CHILD_INITIAL:$BEXHOMA_CHILD_INITIAL"
 echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
 echo "SF:$SF"
 
+######################## Data-job suffix for parallel-loading-job keys ########################
+# Always set by Python (see LoadingCoordinator.start_pod()), even for a single
+# loader entry, so this key suffix is unconditional here — no "only if there's
+# more than one entry" branch to forget. Default covers manual/standalone runs.
+BEXHOMA_DATA_JOB="${BEXHOMA_DATA_JOB:-1}"
+
 ######################## Read per-pod config from Redis ########################
-BEXHOMA_POD_CONFIG_KEY="bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-config-$BEXHOMA_CHILD"
+BEXHOMA_POD_CONFIG_KEY="bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB-config-$BEXHOMA_CHILD"
 echo "Querying per-pod config at $BEXHOMA_POD_CONFIG_KEY"
 BEXHOMA_POD_CONFIG_JSON="$(redis-cli -h 'bexhoma-messagequeue' get "$BEXHOMA_POD_CONFIG_KEY")"
 if [ -z "$BEXHOMA_POD_CONFIG_JSON" ] || [ "$BEXHOMA_POD_CONFIG_JSON" = "nil" ]; then
@@ -126,14 +132,32 @@ BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
 ######################## Wait until all pods of job are ready ########################
 if test $BEXHOMA_SYNCH_LOAD -gt 0
 then
-    echo "Decrementing job counter bexhoma-loader-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
-    redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-loader-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
+    echo "Decrementing job counter bexhoma-loader-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB"
+    redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-loader-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB"
     while : ; do
-        PODS_MISSING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
+        PODS_MISSING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB)"
         echo "Pods still missing in job: $PODS_MISSING"
         if [[ "$PODS_MISSING" =~ ^-?[0-9]+$ ]] && test "$PODS_MISSING" -le 0
         then
             echo "OK, all pods in job are ready."
+            break
+        else
+            sleep 1
+        fi
+    done
+fi
+
+######################## Wait until all pods of round are ready ########################
+if test $BEXHOMA_SYNCH_LOAD -gt 0
+then
+    echo "Decrementing round counter bexhoma-loader-podcount-round-$BEXHOMA_CONFIGURATION-$BEXHOMA_EXPERIMENT"
+    redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-loader-podcount-round-$BEXHOMA_CONFIGURATION-$BEXHOMA_EXPERIMENT"
+    while : ; do
+        PODS_MISSING="$(redis-cli -h 'bexhoma-messagequeue' get bexhoma-loader-podcount-round-$BEXHOMA_CONFIGURATION-$BEXHOMA_EXPERIMENT)"
+        echo "Pods still missing in round: $PODS_MISSING"
+        if [[ "$PODS_MISSING" =~ ^-?[0-9]+$ ]] && test "$PODS_MISSING" -le 0
+        then
+            echo "OK, all pods in round are ready."
             break
         else
             sleep 1

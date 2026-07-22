@@ -66,7 +66,9 @@ This
 ### Evaluate Results
 
 
-docs_benchbase_postgresql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_appmetrics_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -219,6 +221,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 The summary shows the first 5 application metrics aggregated per execution run.
 An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/dev).
 
@@ -246,7 +250,9 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_hammerdb_postgresql_appmetrics.log
 ```
 
-docs_hammerdb_postgresql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_appmetrics_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -397,6 +403,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### TPC-H
 
@@ -421,7 +429,9 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_postgresql_appmetrics.log
 ```
 
-docs_tpch_postgresql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_appmetrics_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -597,6 +607,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### TPC-DS
 
@@ -621,7 +633,9 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_tpcds_postgresql_appmetrics.log
 ```
 
-docs_tpcds_postgresql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_appmetrics_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -874,6 +888,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 ### YCSB
@@ -903,7 +919,9 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_postgresql_appmetrics.log
 ```
 
-docs_ycsb_postgresql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_appmetrics_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1134,6 +1152,8 @@ YCSB SF=3
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 
@@ -1197,7 +1217,9 @@ This
 
 ### Evaluate Results
 
-docs_benchbase_mysql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_mysql_appmetrics_summary.md" target="_blank" rel="noopener">docs_benchbase_mysql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1348,6 +1370,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 The summary shows the first 5 application metrics aggregated per execution run.
 An extensive example for an evaluation is in the [repository](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/dev).
 
@@ -1376,7 +1400,9 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_hammerdb_mysql_appmetrics.log
 ```
 
-docs_hammerdb_mysql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_mysql_appmetrics_summary.md" target="_blank" rel="noopener">docs_hammerdb_mysql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1527,6 +1553,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### TPC-H
 
@@ -1551,7 +1579,9 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_mysql_appmetrics.log
 ```
 
-docs_tpch_mysql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_mysql_appmetrics_summary.md" target="_blank" rel="noopener">docs_tpch_mysql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1726,6 +1756,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### TPC-DS
 
@@ -1751,7 +1783,9 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_tpcds_mysql_appmetrics.log
 ```
 
-docs_tpcds_mysql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_mysql_appmetrics_summary.md" target="_blank" rel="noopener">docs_tpcds_mysql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2003,6 +2037,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 ### YCSB
@@ -2033,7 +2069,9 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_mysql_appmetrics.log
 ```
 
-docs_ycsb_mysql_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_mysql_appmetrics_summary.md" target="_blank" rel="noopener">docs_ycsb_mysql_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2264,6 +2302,8 @@ YCSB SF=3
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 
@@ -2303,7 +2343,9 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_cockroachdb_appmetrics.log
 ```
 
-docs_ycsb_cockroachdb_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_cockroachdb_appmetrics_summary.md" target="_blank" rel="noopener">docs_ycsb_cockroachdb_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2482,6 +2524,8 @@ YCSB SF=10
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ### Benchbase's TPC-C
 
@@ -2507,7 +2551,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_cockroachdb_appmetrics.log
 ```
 
-docs_benchbase_cockroachdb_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_cockroachdb_appmetrics_summary.md" target="_blank" rel="noopener">docs_benchbase_cockroachdb_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2717,6 +2763,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -2752,7 +2800,9 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_redis_appmetrics.log
 ```
 
-docs_ycsb_redis_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_appmetrics_summary.md" target="_blank" rel="noopener">docs_ycsb_redis_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2956,6 +3006,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 
@@ -2997,7 +3049,9 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_tidb_appmetrics.log
 ```
 
-docs_ycsb_tidb_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_tidb_appmetrics_summary.md" target="_blank" rel="noopener">docs_ycsb_tidb_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3275,6 +3329,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ### Benchbase's TPC-C
 
@@ -3301,7 +3357,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_tidb_appmetrics.log
 ```
 
-docs_benchbase_tidb_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_tidb_appmetrics_summary.md" target="_blank" rel="noopener">docs_benchbase_tidb_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3618,6 +3676,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -3658,7 +3718,9 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_pgbouncer_appmetrics.log
 ```
 
-docs_ycsb_pgbouncer_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_pgbouncer_appmetrics_summary.md" target="_blank" rel="noopener">docs_ycsb_pgbouncer_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3873,6 +3935,8 @@ YCSB SF=16
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ### Benchbase's TPC-C
 
@@ -3900,7 +3964,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_appmetrics.log
 ```
 
-docs_benchbase_pgbouncer_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_pgbouncer_appmetrics_summary.md" target="_blank" rel="noopener">docs_benchbase_pgbouncer_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -4096,6 +4162,8 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -4129,7 +4197,9 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
 ```
 
-docs_ycsb_yugabytedb_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_appmetrics_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -4271,6 +4341,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 
 ### Benchbase's TPC-C
@@ -4293,7 +4365,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_appmetrics.log
 ```
 
-docs_benchbase_yugabytedb_appmetrics.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_appmetrics_summary.md" target="_blank" rel="noopener">docs_benchbase_yugabytedb_appmetrics.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -4460,3 +4534,5 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Workflow as planned
 ```
+
+</details>

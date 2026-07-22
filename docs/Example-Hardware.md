@@ -127,7 +127,9 @@ of 2 anyway (NVMe queues, io_uring, RAID controllers).
 
 ##### Show results
 
-docs_hardware_fio_depth_sweep.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_fio_depth_sweep_summary.md" target="_blank" rel="noopener">docs_hardware_fio_depth_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -505,6 +507,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 The Per Phase table lists one row per queue depth, with IOPS and completion-latency percentiles
 aggregated across all pods in that round.
 
@@ -541,7 +545,9 @@ bexhoma hardware \
 
 ##### Show results
 
-docs_hardware_fio_blocksize_sweep.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_fio_blocksize_sweep_summary.md" target="_blank" rel="noopener">docs_hardware_fio_blocksize_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -881,6 +887,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 The Per Phase table lists one row per block size, at the fixed queue depth set by `-xfid`.
 
 ---
@@ -917,7 +925,9 @@ bexhoma hardware \
 
 ##### Show results
 
-docs_hardware_fio_random_page_cost.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_fio_random_page_cost_summary.md" target="_blank" rel="noopener">docs_hardware_fio_random_page_cost.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1029,6 +1039,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 The Per Phase table has one row for `read` (sequential) and one for `randread`, both at the same
 block size and queue depth.
 
@@ -1066,7 +1078,9 @@ bexhoma hardware \
 
 ##### Show results
 
-docs_hardware_fio_wal_sync_fsync.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_fio_wal_sync_fsync_summary.md" target="_blank" rel="noopener">docs_hardware_fio_wal_sync_fsync.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1159,6 +1173,8 @@ Hardware Benchmark (fio)
 * TEST passed: Execution Phase: every round has non-zero read or write IOPS
 ```
 
+</details>
+
 `hardware_fio_write_iops` and the write latency percentiles in the Per Phase table are the
 relevant columns for this single-row result.
 
@@ -1219,7 +1235,9 @@ a fixed parameter in commands 14-16.
 
 ##### Show results
 
-docs_hardware_sysbench_cpu_quota_calibration.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sysbench_cpu_quota_calibration_summary.md" target="_blank" rel="noopener">docs_hardware_sysbench_cpu_quota_calibration.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1365,6 +1383,8 @@ Hardware Benchmark (sysbench)
 * TEST passed: Execution Phase: every round has non-zero CPU events/sec
 ```
 
+</details>
+
 
 `hardware_sysbench_cpu_events_per_sec` in the Per Phase table together with the Monitoring
 section's CPU columns is what to compare across the thread counts swept.
@@ -1400,7 +1420,9 @@ them (`pod_count`) changes.
 
 ##### Show results
 
-docs_hardware_sysbench_nbp_overhead_sweep.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sysbench_nbp_overhead_sweep_summary.md" target="_blank" rel="noopener">docs_hardware_sysbench_nbp_overhead_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1531,6 +1553,8 @@ Hardware Benchmark (sysbench)
 * TEST passed: Execution Phase: every round has non-zero CPU events/sec
 ```
 
+</details>
+
 
 `hardware_sysbench_cpu_events_per_sec` in the Per Phase table is what to compare across the
 `-nbp` values swept; `pod_count` in the same table confirms how the fixed total thread count was
@@ -1569,7 +1593,9 @@ against.
 
 ##### Show results
 
-docs_hardware_sysbench_ne_saturation_sweep.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sysbench_ne_saturation_sweep_summary.md" target="_blank" rel="noopener">docs_hardware_sysbench_ne_saturation_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1726,6 +1752,8 @@ Hardware Benchmark (sysbench)
 * TEST passed: Execution Phase: every round has non-zero CPU events/sec
 ```
 
+</details>
+
 
 `hardware_sysbench_cpu_events_per_sec` and `hardware_sysbench_cpu_lat_p95_ms` in the Per Phase
 table are the throughput and completion-latency columns to compare across the `-ne` values swept
@@ -1771,7 +1799,9 @@ from command 13 at the same thread count.
 
 ##### Show results
 
-docs_hardware_sysbench_noisy_neighbor.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sysbench_noisy_neighbor_summary.md" target="_blank" rel="noopener">docs_hardware_sysbench_noisy_neighbor.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1921,6 +1951,8 @@ Hardware Benchmark (sysbench)
 * TEST passed: Execution Phase: every round has non-zero CPU events/sec
 ```
 
+</details>
+
 
 The Per Phase table is grouped per tenant (one row per co-located SUT pod); compare each tenant's
 `hardware_sysbench_cpu_events_per_sec` against the single-pod baseline from the CPU-quota
@@ -1977,7 +2009,9 @@ request/reply with no think time, for 60 seconds — the baseline commands 18 an
 
 ##### Show results
 
-docs_hardware_netperf_postgresql_query_latency.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_netperf_postgresql_query_latency_summary.md" target="_blank" rel="noopener">docs_hardware_netperf_postgresql_query_latency.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2064,6 +2098,8 @@ Hardware Benchmark (netperf)
 * TEST passed: Execution Phase: every round has non-zero netperf transaction rate
 ```
 
+</details>
+
 `hardware_netperf_transaction_rate` and the `hardware_netperf_latency_*_ms` columns report the
 observed transaction rate and round-trip latency for this connection.
 
@@ -2092,7 +2128,9 @@ round per value.
 
 ##### Show results
 
-docs_hardware_netperf_postgresql_connection_scaling_sweep.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_netperf_postgresql_connection_scaling_sweep_summary.md" target="_blank" rel="noopener">docs_hardware_netperf_postgresql_connection_scaling_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2251,6 +2289,8 @@ Hardware Benchmark (netperf)
 * TEST passed: Execution Phase: every round has non-zero netperf transaction rate
 ```
 
+</details>
+
 Compare `hardware_netperf_transaction_rate` and `hardware_netperf_latency_*_ms` across the five
 rows of the Per Phase table to see how they change as connection count grows.
 
@@ -2281,7 +2321,9 @@ database engine in the loop.
 
 ##### Show results
 
-docs_hardware_netperf_postgresql_pod_scaling_sweep.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_netperf_postgresql_pod_scaling_sweep_summary.md" target="_blank" rel="noopener">docs_hardware_netperf_postgresql_pod_scaling_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2387,6 +2429,8 @@ Hardware Benchmark (netperf)
 * TEST passed: Execution Phase: every round has non-zero netperf transaction rate
 ```
 
+</details>
+
 Compare `hardware_netperf_transaction_rate` and `hardware_netperf_latency_*_ms` between the two
 rows of the Per Phase table to see how they change when the same total connection count is split
 across more pods.
@@ -2449,7 +2493,9 @@ points to contention on specific servers.
 
 ##### Show results
 
-docs_hardware_sockperf_pod_scaling_sweep.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sockperf_pod_scaling_sweep_summary.md" target="_blank" rel="noopener">docs_hardware_sockperf_pod_scaling_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2636,6 +2682,8 @@ Hardware Benchmark (sockperf)
 * TEST passed: Execution Phase: every round has non-zero sockperf message rate
 ```
 
+</details>
+
 
 The summed `hardware_sockperf_msg_rate_per_sec` across the Per Phase table's rows shows whether
 aggregate throughput scales with pod count or flattens out; the `-mc` CPU columns for the SUT
@@ -2673,7 +2721,9 @@ translates to for a single connection — the baseline command 23 repeats at gro
 
 ##### Show results
 
-docs_hardware_sockperf_postgresql_query_latency.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sockperf_postgresql_query_latency_summary.md" target="_blank" rel="noopener">docs_hardware_sockperf_postgresql_query_latency.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2762,6 +2812,8 @@ Hardware Benchmark (sockperf)
 * TEST passed: Execution Phase: every round has non-zero sockperf message rate
 ```
 
+</details>
+
 
 `hardware_sockperf_latency_avg_ms`/`_p50_ms`/`_p99_ms`/`_p999_ms` in the result table give the
 single-connection round-trip latency floor, and `hardware_sockperf_msg_rate_per_sec` reports how
@@ -2801,7 +2853,9 @@ contention to separate out).
 
 ##### Show results
 
-docs_hardware_sockperf_postgresql_streaming_throughput.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sockperf_postgresql_streaming_throughput_summary.md" target="_blank" rel="noopener">docs_hardware_sockperf_postgresql_streaming_throughput.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2890,6 +2944,8 @@ Hardware Benchmark (sockperf)
 * TEST passed: Execution Phase: every round has non-zero sockperf message rate
 ```
 
+</details>
+
 
 `hardware_sockperf_msg_rate_per_sec` multiplied by the message size gives an effective throughput
 figure comparable to fio's IOPS-at-blocksize numbers.
@@ -2928,7 +2984,9 @@ latency degrade first?
 
 ##### Show results
 
-docs_hardware_sockperf_postgresql_latency_scaling_sweep.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hardware_sockperf_postgresql_latency_scaling_sweep_summary.md" target="_blank" rel="noopener">docs_hardware_sockperf_postgresql_latency_scaling_sweep.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3114,6 +3172,8 @@ Hardware Benchmark (sockperf)
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: every round has non-zero sockperf message rate
 ```
+
+</details>
 
 
 `hardware_sockperf_latency_avg_ms` (and its percentiles) per pod across the Per Phase table's rows

@@ -125,7 +125,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_tpcds_postgresql.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -324,6 +326,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
 Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-DS metrics power and throughput are reported.
 Please note that the results are not suitable for being published as official TPC-DS results.
@@ -495,7 +499,9 @@ bexhoma tpcds \
 
 If monitoring is activated, the summary also contains a section like this:
 
-docs_tpcds_postgresql_monitoring.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_monitoring_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_monitoring.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -732,6 +738,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
 MonetDB is fast, so we cannot see a lot (metrics are fetched every 30 seconds).
 
@@ -763,7 +771,9 @@ bexhoma tpcds \
 
 This runs 3 streams (`-ne`), the first one as a single stream and the following 2 in parallel.
 
-docs_tpcds_postgresql_throughput.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_throughput_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_throughput.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -998,6 +1008,8 @@ No errors
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 All executions use the same database, so loading times are the same.
 
 Per default, all 3 streams use the same random parameters (like YEAR in Q1) and run in ordering Q1-Q99.
@@ -1057,7 +1069,9 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-docs_tpcds_postgresql_storage.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_storage_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_storage.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1281,6 +1295,8 @@ No errors
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
@@ -1333,7 +1349,9 @@ bexhoma tpcds \
 
 ### Evaluate Results
 
-docs_tpcds_postgresql_profiling.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_profiling_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_profiling.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1489,6 +1507,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -1593,7 +1613,9 @@ Cluster Prometheus: Running
 
 At the end of a benchmark you will see a summary like
 
-docs_tpcds_monetdb_1.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_monetdb_1_summary.md" target="_blank" rel="noopener">docs_tpcds_monetdb_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1835,6 +1857,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 ### Perform Benchmark - Power Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
@@ -1864,7 +1888,9 @@ bexhoma tpcds \
 
 ### Evaluate Results
 
-docs_tpcds_monetdb_2.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_monetdb_2_summary.md" target="_blank" rel="noopener">docs_tpcds_monetdb_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2135,6 +2161,8 @@ TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 ```
 
+</details>
+
 ### Perform Benchmark - Throughput Test
 
 We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
@@ -2164,7 +2192,9 @@ bexhoma tpcds \
 
 ### Evaluate Results
 
-docs_tpcds_monetdb_3.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_monetdb_3_summary.md" target="_blank" rel="noopener">docs_tpcds_monetdb_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2451,6 +2481,8 @@ TEST passed: Workflow as planned
 TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
 TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
 ```
+
+</details>
 
 
 

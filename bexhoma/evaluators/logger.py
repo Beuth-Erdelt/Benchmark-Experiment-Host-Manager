@@ -274,12 +274,21 @@ class LogEvaluator(EvaluatorBase):
         """
         Validates results by loading and reconstructing the workflow.
 
+        Reconstructs the workflow from :meth:`get_connections_of_experiment`
+        rather than :meth:`get_df_benchmarking`: the latter is filtered to only
+        this evaluator's own benchmark (via :meth:`is_own_benchmark`), so for a
+        benchmark co-running alongside another one in the same client round, it
+        would never match the full planned workflow even when everything
+        succeeded. ``get_connections_of_experiment()`` is unfiltered, matching
+        what :meth:`~bexhoma.experiments.base.ExperimentBase.get_workflow_list`
+        plans for the whole round.
+
         :return: ``0`` on success, ``1`` if an exception is raised.
         :rtype: int
         """
         try:
             if self.include_benchmarking:
-                df = self.get_df_benchmarking()
+                df = self.get_connections_of_experiment()
                 self.workflow = self.reconstruct_workflow(df)
             if self.include_loading:
                 self.get_df_loading()

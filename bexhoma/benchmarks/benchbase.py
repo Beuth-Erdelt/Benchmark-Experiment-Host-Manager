@@ -43,6 +43,7 @@ class Benchbase(Benchmark):
             include_loading=False,
             include_benchmarking=True,
             benchmark_run=benchmark_run,
+            name=self.name,
         )
 
     def configure_workload(self, experiment, parameter: dict) -> None:
@@ -113,18 +114,4 @@ class Benchbase(Benchmark):
                 experiment.workload['info'] += f" Benchmarking runs for {int(SD / 60)} minutes."
             if args.activate_reset:
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
-
-    def test_results(self, experiment) -> None:
-        """
-        Validate Benchbase results and print workflow completion status.
-
-        :param experiment: The owning experiment object.
-        """
-        experiment.cluster.logger.debug('Benchbase.test_results()')
-        self.evaluator.test_results()
-        workflow = experiment.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")
 

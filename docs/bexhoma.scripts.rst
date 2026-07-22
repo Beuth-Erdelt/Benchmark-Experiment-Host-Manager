@@ -8,8 +8,6 @@ Submodules
    :maxdepth: 4
 
    bexhoma.scripts.experimentsmanager
-   bexhoma.scripts.tpcds
-   bexhoma.scripts.tpch
 
 Module contents
 ---------------

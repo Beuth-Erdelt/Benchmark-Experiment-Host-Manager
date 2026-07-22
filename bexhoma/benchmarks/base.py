@@ -207,24 +207,64 @@ class Benchmark:
 
     def show_summary_section(self, experiment) -> None:
         """
-        Print a benchmark-specific section inside a multi-benchmark summary.
+        Print this benchmark's own execution results as a section inside a
+        multi-benchmark summary.
 
         Called for every registered benchmark after the primary benchmark's
-        :meth:`show_summary` has already printed the experiment header.
-        Override in subclasses that need to display results for a co-running
-        secondary benchmarker.  The default implementation is a no-op so that
-        benchmarks used only as primaries do not need to override this method.
+        :meth:`show_summary` has already printed the shared experiment header,
+        workflow, loading section, monitoring, and test summary — none of that
+        is repeated here. Mirrors the ``### Execution`` part of
+        :meth:`show_summary` (Per Connection, Per Phase, Reset), scoped to this
+        benchmark's own results via ``self.evaluator`` (constructed with this
+        benchmark's own ``benchmark_run`` in :meth:`create_evaluator`, so the
+        underlying log-to-df pipeline already filters to only this benchmark's
+        own connections).
+
+        Override when a benchmark needs different or no section here — e.g.
+        :class:`~bexhoma.benchmarks.refresh.RefreshStreamBenchmark` overrides
+        this because it has no per-query metrics of its own, only timing.
 
         :param experiment: The owning experiment object.
         """
+        if not experiment.benchmarking_is_active():
+            return
+        print(f"\n### {self.name}")
+        print("\n#### Per Connection\n")
+        df_conn = self.evaluator.get_summary_benchmark_per_connection()
+        if not df_conn.empty:
+            print(df_conn.to_markdown(index=True, floatfmt=".2f"))
+        print("\n#### Per Phase\n")
+        if experiment.num_tenants > 0:
+            df_phase = self.evaluator.get_summary_benchmark_per_phase_multitenant()
+        else:
+            df_phase = self.evaluator.get_summary_benchmark_per_phase()
+        print(df_phase.to_markdown(index=True, floatfmt=".2f"))
+        df_connections = self.evaluator.get_connections_of_experiment()
+        self._show_reset_section(df_connections)
 
     def test_results(self, experiment) -> None:
         """
-        Validate benchmark results and print pass/fail assertions.
+        Validate results and print workflow completion status.
+
+        Compares the experiment's full planned workflow
+        (:meth:`~bexhoma.experiments.base.ExperimentBase.get_workflow_list`)
+        against this benchmark's evaluator's reconstructed actual workflow.
+        Both cover the whole client round, not just this benchmark's own
+        entries (see :meth:`~bexhoma.evaluators.logger.LogEvaluator.test_results`),
+        so the comparison is correct whether this benchmark is the primary or a
+        co-running secondary benchmark. Override for a benchmark with no
+        per-query results of its own to validate, e.g.
+        :class:`~bexhoma.benchmarks.refresh.RefreshStreamBenchmark`.
 
         :param experiment: The owning experiment object.
         """
-        raise NotImplementedError
+        experiment.cluster.logger.debug(f'{type(self).__name__}.test_results()')
+        self.evaluator.test_results()
+        workflow = experiment.get_workflow_list()
+        if workflow == self.evaluator.workflow:
+            print("Result workflow complete")
+        else:
+            print("Result workflow not complete")
 
 
 class DBMSBenchmarkerBenchmark(Benchmark):
@@ -257,21 +297,8 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             include_loading=True,
             include_benchmarking=True,
             benchmark_run=benchmark_run,
+            name=self.name,
         )
-
-    def test_results(self, experiment) -> None:
-        """
-        Validate DBMSBenchmarker results and print workflow completion status.
-
-        :param experiment: The owning experiment object.
-        """
-        experiment.cluster.logger.debug('DBMSBenchmarkerBenchmark.test_results()')
-        self.evaluator.test_results()
-        workflow = experiment.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")
 
     def _prepare_evaluator(self, experiment) -> None:
         """

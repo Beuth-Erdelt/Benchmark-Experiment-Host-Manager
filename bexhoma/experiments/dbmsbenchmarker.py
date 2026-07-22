@@ -54,6 +54,25 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
         MixedExperiment.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
         self.evaluator = evaluators.dbmsbenchmarker(
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
+        self.active_queries: list[int] | None = None
+    def set_active_queries(self,
+                           active_queries: list[int] | None) -> None:
+        """
+        Restrict the query workload to a set of query numbers.
+
+        Only affects the per-experiment query config copy written to the
+        result folder and uploaded to the cluster; the query config file in
+        the corresponding ``experiments/`` folder is never modified. Query
+        numbers are 1-based positions within the query config's ``queries``
+        list. Queries not listed are marked inactive (``'active': False``)
+        for this experiment.
+
+        :param active_queries: 1-based query numbers to keep active, or
+            ``None`` to leave every query's ``active`` flag as defined in the
+            query config file.
+        :type active_queries: list[int] | None
+        """
+        self.active_queries = active_queries
     def evaluate_results(self,
                          pod_dashboard: str = '') -> None:
         """

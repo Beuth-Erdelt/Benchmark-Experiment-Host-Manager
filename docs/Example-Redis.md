@@ -122,7 +122,9 @@ If something goes wrong, you can also clean up manually with `bexperiment stop` 
 
 At the end of a benchmark you will see a summary like
 
-docs_ycsb_redis_1.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_1_summary.md" target="_blank" rel="noopener">docs_ycsb_redis_1.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -242,6 +244,8 @@ YCSB SF=3
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 To see the summary again you can simply call `bexhoma summary -e 1742224433` with the experiment code.
 
 ### Detailed Evaluation
@@ -296,7 +300,9 @@ bexhoma ycsb \
 
 yields something like
 
-docs_ycsb_redis_2.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_2_summary.md" target="_blank" rel="noopener">docs_ycsb_redis_2.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -461,6 +467,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 ## Replication
 
 We can set the number of replicas with the parameter `-nwr`.
@@ -495,7 +503,9 @@ bexhoma ycsb \
 
 yields something like
 
-docs_ycsb_redis_3.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_3_summary.md" target="_blank" rel="noopener">docs_ycsb_redis_3.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -691,6 +701,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 
 ## Use Persistent Storage
 
@@ -741,7 +753,9 @@ All other instances just use the database without generating and loading data.
 
 The result looks something like
 
-docs_ycsb_redis_4.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_4_summary.md" target="_blank" rel="noopener">docs_ycsb_redis_4.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -884,6 +898,8 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
+</details>
+
 ### Redis as a Cluster
 
 Similarly we can make a Redis cluster to store the database in persistent storage.
@@ -944,7 +960,9 @@ The other volumes (worker volumes) are attached to the worker pods and store the
 
 The result looks something like
 
-docs_ycsb_redis_5.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_redis_5_summary.md" target="_blank" rel="noopener">docs_ycsb_redis_5.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1168,6 +1186,8 @@ YCSB SF=1
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
 ```
+
+</details>
 
 
 

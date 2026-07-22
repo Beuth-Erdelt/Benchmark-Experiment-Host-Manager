@@ -35,7 +35,7 @@ images/tpch/
 1. Pop child index from Redis queue `bexhoma-loading-<CONNECTION>-<EXPERIMENT>`.
 2. Write child index to `/tmp/tpch/BEXHOMA_CHILD` (loaders read this file).
 3. Multi-tenant handling: `schema` or `database` mode remaps BEXHOMA_CHILD and scales BEXHOMA_NUM_PODS per tenant; `container` mode logs but does not remap.
-4. Determine `destination_raw`: `/data/tpch/SF<SF>[/<N>/<child>]` if STORE_RAW_DATA=1, else `/tmp/tpch/SF<SF>[/<N>/<child>]`. Exit early if folder exists and STORE_RAW_DATA_RECREATE=0.
+4. Determine `destination_raw`: `/data/tpch/SF<SF>[/<N>/<child>]` if STORE_RAW_DATA=1, else `/tmp/tpch/SF<SF>[/<N>/<child>]`. Exit early if the folder exists **and contains at least one `.tbl` file** (checked via a `nullglob` array, not just directory existence — an empty folder created as a parent for another child's subfolder must not be mistaken for already-generated data) and STORE_RAW_DATA_RECREATE=0.
 5. If BEXHOMA_SYNCH_GENERATE=1: sync on `bexhoma-generator-podcount-<CONNECTION>-<EXPERIMENT>`.
 6. Run `dbgen -s <SF>` (single pod) or `dbgen -s <SF> -S <child> -C <num_pods>` (multi-pod).
 7. If TRANSFORM_RAW_DATA=1: strip trailing `|` from every `.tbl` file via `sed 's/.$//' -i`.
@@ -45,7 +45,10 @@ images/tpch/
 1. Read `BEXHOMA_CHILD` from `/tmp/tpch/BEXHOMA_CHILD`.
 2. Determine `destination_raw` path (same logic as generator).
 3. Multi-tenant handling (PostgreSQL loader only; mysql/mariadb/monetdb loaders do not have this).
-4. If BEXHOMA_SYNCH_LOAD=1: sync on `bexhoma-loader-podcount-<CONNECTION>-<EXPERIMENT>`.
+4. If BEXHOMA_SYNCH_LOAD=1: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
+   then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
+   initialized by Python, even for a single loader entry; only meaningful when the SUT
+   configuration has more than one parallel loader entry — see `bexhoma/CLAUDE.md`).
    PostgreSQL loader additionally syncs on `bexhoma-loader-podcount-<EXPERIMENT>` when BEXHOMA_TENANT_BY=container.
 5. Loop over `.tbl` files; skip `nation` and `region` for pods > 1 in non-tenant mode.
 6. If TPCH_TABLE is set: only load that table.

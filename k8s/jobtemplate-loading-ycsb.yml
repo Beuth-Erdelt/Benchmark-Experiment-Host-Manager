@@ -4,7 +4,12 @@ metadata:
   labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
   name: bexhoma-sensor
 spec:
-  backoffLimit: 1
+  # 0, not 1: generator.sh always inserts the full ROW_START..ROW_PART range for
+  # "the only pod" with no idea a prior attempt already ran, so a k8s-triggered
+  # retry (e.g. pod eviction) re-runs the entire non-idempotent load and hits
+  # primary-key conflicts on rows the first attempt already inserted. A lost
+  # pod should fail the Job visibly, not silently double-load.
+  backoffLimit: 0
   completions: 1
   parallelism: 1
   template:

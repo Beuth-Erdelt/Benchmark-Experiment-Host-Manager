@@ -123,7 +123,9 @@ bexhoma ycsb \
   start &>$LOG_DIR/docs_ycsb_postgresql_start.log
 ```
 
-docs_ycsb_postgresql_start.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_start_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -164,7 +166,11 @@ PostgreSQL-1
 ### Tests
 ```
 
-docs_ycsb_postgresql_start.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_start_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -204,6 +210,8 @@ PostgreSQL-1
 
 ### Tests
 ```
+
+</details>
 
 The summary confirms the SUT is running and shows the port-forward command.
 
@@ -228,7 +236,9 @@ bexhoma ycsb \
   load &>$LOG_DIR/docs_ycsb_postgresql_load.log
 ```
 
-docs_ycsb_postgresql_load.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_load_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -314,7 +324,11 @@ PostgreSQL-1
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 ```
 
-docs_ycsb_postgresql_load.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_load_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -399,6 +413,8 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 ```
+
+</details>
 
 Key parameters:
 - `-nlp 8`: 8 parallel loader pods
@@ -431,7 +447,9 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_postgresql_run.log
 ```
 
-docs_ycsb_postgresql_run.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_run_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -567,7 +585,11 @@ YCSB SF=1
 * TEST passed: Execution Phase: contains no FAILED column
 ```
 
-docs_ycsb_postgresql_run.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_run_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -702,6 +724,8 @@ YCSB SF=1
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
 ```
+
+</details>
 
 Key parameters:
 - `-nbp 8`: 8 parallel benchmarker pods
@@ -733,7 +757,9 @@ bexhoma benchbase \
   start &>$LOG_DIR/docs_benchbase_postgresql_start.log
 ```
 
-docs_benchbase_postgresql_start.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_start_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -775,7 +801,11 @@ PostgreSQL-1
 * TEST skipped: Throughput (requests/second) (benchmarking phase not active)
 ```
 
-docs_benchbase_postgresql_start.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_start_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -816,6 +846,8 @@ PostgreSQL-1
 ### Tests
 * TEST skipped: Throughput (requests/second) (benchmarking phase not active)
 ```
+
+</details>
 
 ### Start DBMS and Load Data
 
@@ -837,7 +869,9 @@ bexhoma benchbase \
   load &>$LOG_DIR/docs_benchbase_postgresql_load.log
 ```
 
-docs_benchbase_postgresql_load.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_load_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -907,7 +941,11 @@ PostgreSQL-1
 * TEST skipped: Throughput (requests/second) (benchmarking phase not active)
 ```
 
-docs_benchbase_postgresql_load.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_load_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -976,6 +1014,8 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Throughput (requests/second) (benchmarking phase not active)
 ```
+
+</details>
 
 The **Loading** table reports `Throughput [SF/h]` — scale factors loaded per hour.
 
@@ -1002,7 +1042,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_postgresql_run.log
 ```
 
-docs_benchbase_postgresql_run.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_run_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1118,7 +1160,11 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Workflow as planned
 ```
 
-docs_benchbase_postgresql_run.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_run_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1233,6 +1279,8 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 The **Execution** table reports:
 - `Throughput (requests/second)` and `Goodput (requests/second)` — total and successful transaction rate
@@ -1261,7 +1309,9 @@ bexhoma hammerdb \
   start &>$LOG_DIR/docs_hammerdb_postgresql_start.log
 ```
 
-docs_hammerdb_postgresql_start.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_start_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1301,7 +1351,11 @@ PostgreSQL-1
 ### Tests
 ```
 
-docs_hammerdb_postgresql_start.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_start_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1340,6 +1394,8 @@ PostgreSQL-1
 
 ### Tests
 ```
+
+</details>
 
 ### Start DBMS and Load Data
 
@@ -1362,7 +1418,9 @@ bexhoma hammerdb \
   load &>$LOG_DIR/docs_hammerdb_postgresql_load.log
 ```
 
-docs_hammerdb_postgresql_load.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_load_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1431,7 +1489,11 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-docs_hammerdb_postgresql_load.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_load_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1499,6 +1561,8 @@ PostgreSQL-1
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
+
+</details>
 
 The **Loading** table reports `Imported warehouses [1/h]`.
 
@@ -1525,7 +1589,9 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_hammerdb_postgresql_run.log
 ```
 
-docs_hammerdb_postgresql_run.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_run_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1633,7 +1699,11 @@ HammerDB Workload SF=1 (warehouses for TPC-C)
 * TEST passed: Workflow as planned
 ```
 
-docs_hammerdb_postgresql_run.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_run_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1740,6 +1810,8 @@ HammerDB Workload SF=1 (warehouses for TPC-C)
 * TEST passed: NOPM contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 The **Execution** table reports `NOPM` (New Orders Per Minute) and `TPM` (Transactions Per Minute), which are the standard HammerDB TPC-C metrics.
 
@@ -1766,7 +1838,9 @@ bexhoma tpch \
   start &>$LOG_DIR/docs_tpch_postgresql_start.log
 ```
 
-docs_tpch_postgresql_start.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_start_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1806,7 +1880,11 @@ PostgreSQL-1
 ### Tests
 ```
 
-docs_tpch_postgresql_start.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_start_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1845,6 +1923,8 @@ PostgreSQL-1
 
 ### Tests
 ```
+
+</details>
 
 ### Start DBMS and Load Data
 
@@ -1868,7 +1948,9 @@ bexhoma tpch \
   load &>$LOG_DIR/docs_tpch_postgresql_load.log
 ```
 
-docs_tpch_postgresql_load.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_load_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1944,7 +2026,11 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-docs_tpch_postgresql_load.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_load_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2019,6 +2105,8 @@ PostgreSQL-1
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
+
+</details>
 
 The **Loading** table breaks down time into phases:
 
@@ -2054,7 +2142,9 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_postgresql_run.log
 ```
 
-docs_tpch_postgresql_run.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_run_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2210,7 +2300,11 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
-docs_tpch_postgresql_run.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_run_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2365,6 +2459,8 @@ No warnings
 * TEST passed: No SQL warnings
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 The **Execution** section reports per-query latency in the **Latency of Timer Execution** table and the TPC-H standard metrics:
 
@@ -2396,7 +2492,9 @@ bexhoma tpcds \
   start &>$LOG_DIR/docs_tpcds_postgresql_start.log
 ```
 
-docs_tpcds_postgresql_start.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_start_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2436,7 +2534,11 @@ PostgreSQL-1
 ### Tests
 ```
 
-docs_tpcds_postgresql_start.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_start_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_start.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2475,6 +2577,8 @@ PostgreSQL-1
 
 ### Tests
 ```
+
+</details>
 
 ### Start DBMS and Load Data
 
@@ -2495,7 +2599,9 @@ bexhoma tpcds \
   load &>$LOG_DIR/docs_tpcds_postgresql_load.log
 ```
 
-docs_tpcds_postgresql_load.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_load_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2571,7 +2677,11 @@ PostgreSQL-1
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
 
-docs_tpcds_postgresql_load.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_load_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_load.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2646,6 +2756,8 @@ PostgreSQL-1
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 ```
+
+</details>
 
 ### Start DBMS and Load Data and Run Workload
 
@@ -2672,7 +2784,9 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_tpcds_postgresql_run.log
 ```
 
-docs_tpcds_postgresql_run.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_run_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -2905,7 +3019,11 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
-docs_tpcds_postgresql_run.log
+</details>
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_postgresql_run_summary.md" target="_blank" rel="noopener">docs_tpcds_postgresql_run.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -3137,5 +3255,7 @@ No warnings
 * TEST passed: No SQL warnings
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 The **Execution** section reports per-query latency for all 99 TPC-DS queries and the same Power@Size / Throughput@Size metrics as TPC-H.

@@ -7,7 +7,8 @@ It also dispatches to root-level benchmark scripts, e.g. `bexhoma tpch run`.
 
 ```
 usage: bexhoma [-h] [-db] [-fe] [-e EXPERIMENT] [-c CONNECTION] [-v] [-cx CONTEXT]
-               {stop,status,dashboard,localdashboard,localresults,jupyter,master,data,summary}
+               {stop,status,dashboard,messagequeue,localdashboard,localresults,jupyter,master,data,summary}
+               [{start,shutdown}]
 
 options:
   -h, --help            show this help message and exit
@@ -24,6 +25,10 @@ options:
 | `stop [-e CODE]` | Remove an experiment's components (SUT, loader, monitoring, ...) from the cluster. Without `-e`, stops everything. Does not touch persistent storage. |
 | `status [-v]` | Show cluster health and per-experiment/per-component status. `-v` adds full Kubernetes object detail. |
 | `dashboard` | Port-forward the in-cluster dashboard and Jupyter notebook for inspecting results stored in the cluster. |
+| `dashboard start` | Start the dashboard component if it isn't already running. |
+| `dashboard shutdown` | Stop the dashboard component. |
+| `messagequeue` / `messagequeue start` | Start the message-queue component if it isn't already running. |
+| `messagequeue shutdown` | Stop the message-queue component. |
 | `localdashboard` | Same dashboard UI, backed by results on the orchestrator's local disk. |
 | `jupyter` | Start a local Jupyter notebook over local-disk results. |
 | `localresults` | Print a preview table of local results. |
@@ -66,11 +71,20 @@ The real table also includes `loaded`, `timeLoading`, `storage_class_name`, `sto
 Jupyter notebook to `http://localhost:8888` (password `admin`) — use it to inspect
 results stored in the cluster.
 
+`bexhoma dashboard start` deploys the dashboard component if it isn't already running,
+without forwarding any ports. `bexhoma dashboard shutdown` removes it.
+
 `bexhoma localdashboard` opens the same dashboard at `http://localhost:8050`, but reading
 results from the orchestrator's local disk instead.
 
 `bexhoma jupyter` starts a local Jupyter notebook (`http://localhost:8888`, password
 `admin`) over the same local-disk results.
+
+## messagequeue
+
+`bexhoma messagequeue` (equivalently `bexhoma messagequeue start`) deploys the message
+queue used to coordinate loader/benchmarker pods, if it isn't already running.
+`bexhoma messagequeue shutdown` removes it.
 
 ## localresults
 

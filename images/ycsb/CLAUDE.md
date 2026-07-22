@@ -52,7 +52,9 @@ source (not generated from a template).
 Same as benchmarker except:
 
 - Queue key is `bexhoma-loading-<CONNECTION>-<EXPERIMENT>`.
-- Counter key is `bexhoma-loader-podcount-<CONNECTION>-<EXPERIMENT>`.
+- Counter key is `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`, followed by the round
+  counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always initialized by
+  Python; only meaningful with more than one parallel loader entry — see `bexhoma/CLAUDE.md`).
 - Row partitioning is **per-pod** (`ROW_PART = YCSB_ROWS / BEXHOMA_NUM_PODS`,
   `ROW_START = ROW_PART × (BEXHOMA_CHILD − 1)`) so each pod loads a distinct
   slice of keys without overlap.

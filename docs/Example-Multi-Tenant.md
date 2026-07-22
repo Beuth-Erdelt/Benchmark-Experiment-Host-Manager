@@ -69,7 +69,9 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_postgresql_tenants_schema.log
 ```
 
-docs_tpch_postgresql_tenants_schema.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_tenants_schema_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_tenants_schema.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -244,6 +246,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Database-Per-Tenant
 
@@ -268,7 +272,9 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_postgresql_tenants_database.log
 ```
 
-docs_tpch_postgresql_tenants_database.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_tenants_database_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_tenants_database.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -443,6 +449,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Container-Per-Tenant
 
@@ -466,7 +474,9 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_postgresql_tenants_container.log
 ```
 
-docs_tpch_postgresql_tenants_container.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_tenants_container_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_tenants_container.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -647,6 +657,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -678,7 +690,9 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_postgresql_tenants_database_multiload.log
 ```
 
-docs_tpch_postgresql_tenants_database_multiload.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_tenants_database_multiload_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_tenants_database_multiload.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -989,6 +1003,8 @@ No warnings
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 ### TPC-C
 
@@ -1020,7 +1036,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_postgresql_tenants_schema.log
 ```
 
-docs_benchbase_postgresql_tenants_schema.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_tenants_schema_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_tenants_schema.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1128,6 +1146,8 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Database-Per-Tenant
 
@@ -1154,7 +1174,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_postgresql_tenants_database.log
 ```
 
-docs_benchbase_postgresql_tenants_database.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_tenants_database_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_tenants_database.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1262,6 +1284,8 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 #### Container-Per-Tenant
 
@@ -1288,7 +1312,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_postgresql_tenants_container.log
 ```
 
-docs_benchbase_postgresql_tenants_container.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_tenants_container_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_tenants_container.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1436,6 +1462,8 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 
@@ -1479,7 +1507,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_mysql_tenants_database.log
 ```
 
-docs_benchbase_mysql_tenants_database.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_mysql_tenants_database_summary.md" target="_blank" rel="noopener">docs_benchbase_mysql_tenants_database.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1585,6 +1615,8 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Workflow as planned
 ```
 
+</details>
+
 
 
 #### Container-Per-Tenant
@@ -1612,7 +1644,9 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_mysql_tenants_container.log
 ```
 
-docs_benchbase_mysql_tenants_container.log
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_mysql_tenants_container_summary.md" target="_blank" rel="noopener">docs_benchbase_mysql_tenants_container.log</a></summary>
+
 ```markdown
 ## Show Summary
 
@@ -1755,6 +1789,8 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
+
+</details>
 
 
 

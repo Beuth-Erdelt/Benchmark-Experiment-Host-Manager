@@ -79,7 +79,7 @@ class TpccExperiment(MixedExperiment):
             ],
             "benchmarker": [[
                 {
-                    "name":        "tpcc",
+                    "name":        "hammerdb",
                     "benchmarker": "hammerdb",
                     "template":    "jobtemplate-benchmarking-hammerdb.yml",
                     "parallelism": 1,
