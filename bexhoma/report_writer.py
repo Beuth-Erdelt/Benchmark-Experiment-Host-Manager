@@ -361,6 +361,14 @@ def _build_monitoring_sections(
     first five application metrics ``show_summary()`` caps at. See the module
     docstring's "Scope extension" rationale.
 
+    The Full Metric Catalog's ``component`` values are internal routing keys
+    (e.g. ``stream`` for "Execution phase: SUT deployment", ``loader`` for
+    "Loading phase: component loader") that are not self-explanatory on their
+    own — so every catalog row and every per-metric subsection heading also
+    carries the matching human-readable ``component_title`` from
+    ``monitoring_components``, making a metric (e.g. CPU Throttle for the SUT)
+    findable by title alone, without needing to know the internal key.
+
     :param experiment: The owning experiment object.
     :param evaluator: The primary benchmark's evaluator.
     :param connections_sorted: Connection dicts as read by ``show_summary_header()``.
@@ -393,7 +401,7 @@ def _build_monitoring_sections(
     metric_defs = _get_metric_definitions(connections_sorted)
     catalog_rows = []
     catalog_value_sections = []
-    for component, _component_title in monitoring_components.items():
+    for component, component_title in monitoring_components.items():
         for metric_key, meta in metric_defs.items():
             df = evaluator.get_monitoring_metric(metric=metric_key, component=component)
             if df.empty:
@@ -409,11 +417,11 @@ def _build_monitoring_sections(
             df_cleaned = df_cleaned.reindex(index=evaluators.natural_sort(df_cleaned.index))
             df_cleaned.index.names = ["DBMS"]
             catalog_rows.append({
-                'metric_key': metric_key, 'title': meta['title'],
-                'type': meta['type'], 'metric': meta['metric'], 'component': component,
+                'metric_key': metric_key, 'title': meta['title'], 'type': meta['type'],
+                'metric': meta['metric'], 'component': component, 'component_title': component_title,
             })
             catalog_value_sections.append(Section(
-                heading=f"{meta['title']} (`{metric_key}`, {component})", level=4,
+                heading=f"{meta['title']} (`{metric_key}`, {component} — {component_title})", level=4,
                 dataframe=df_cleaned, link_connections=True,
             ))
             csv_path = result_dir / f"query_{component}_metric_{metric_key}.csv"

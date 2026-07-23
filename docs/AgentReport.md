@@ -116,6 +116,19 @@ tracing back to the raw `query_{component}_metric_{key}.csv`), human-readable
 title, category (`type`), and aggregation kind (`metric`: `counter` → delta,
 `ratio` → max, other → mean).
 
+**Component-key naming convention**: `component` is an internal routing key
+(e.g. `stream` for the SUT during the benchmarking/execution phase, `loader`
+for the loading-phase loader pods, `datagenerator`, `benchmarker`, ...) — not
+self-explanatory on its own, and not the same string as the curated section
+titles used elsewhere in `monitoring.md` (`"Execution phase: SUT deployment"`,
+etc.). So every catalog row also carries a `component_title` column with that
+matching human-readable title, and every per-metric subsection heading is
+`` {metric title} (`{metric_key}`, {component} — {component_title}) `` — e.g.
+"CPU Throttle (`total_cpu_throttled`, stream — Execution phase: SUT
+deployment)". A metric for a specific phase/component is therefore findable
+by searching either the raw key or its title, without needing to trace the
+key back through source code.
+
 ---
 
 ## Provenance and consistency
