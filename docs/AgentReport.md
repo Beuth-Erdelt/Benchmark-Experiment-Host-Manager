@@ -54,8 +54,8 @@ below).
 
 ### `index.md`
 
-Nine pieces, in order — items 3–5 and 8 are static boilerplate (identical on
-every report); the rest vary per experiment:
+Eleven pieces, in order — items 3–5 and 10 are static boilerplate (identical
+on every report); the rest vary per experiment:
 
 1. YAML frontmatter (`schema_version`, `experiment_code`, `workload_type`,
    `generated_at`, active-phase flags, `overall_status` counts, `sections`).
@@ -65,12 +65,22 @@ every report); the rest vary per experiment:
    experiment-code-is-a-Unix-timestamp fact).
 5. Validity-First Rules (which failed test invalidates which metric).
 6. `### Tests` — the full pass/failed/skipped table.
-7. Health Summary — terse restart/error/warning counts; "none" in the clean
+7. Key Metrics — the benchmark type's own headline performance metric(s)
+   (e.g. Geo Times/Power@Size/Throughput@Size for DBMSBenchmarker, NOPM for
+   HammerDB), the same columns its evaluator already tests via
+   `record_tests()`. Report-only — never printed to stdout, since `index.md`
+   has no stdout equivalent. Omitted when the benchmark type defines none.
+8. Monitoring — one peak-CPU/peak-RAM bullet per curated hardware component
+   table in `monitoring.md`, aggregated from the same DataFrames (no
+   re-fetch), plus a link to `monitoring.md` for per-phase detail and the
+   full metric catalog. Omitted when monitoring was not active or collected
+   no data.
+9. Health Summary — terse restart/error/warning counts; "none" in the clean
    case, a link to the tier-2 file with the full detail otherwise. Never the
    full detail itself.
-8. Interpretation Rules (compare only within one experiment code, report
-   variance across repetitions, cite file paths).
-9. Section links, one per tier-2 file actually written.
+10. Interpretation Rules (compare only within one experiment code, report
+    variance across repetitions, cite file paths).
+11. Section links, one per tier-2 file actually written.
 
 ### Tier-2 files
 
@@ -112,7 +122,11 @@ title, category (`type`), and aggregation kind (`metric`: `counter` → delta,
 
 Every `### Provenance` link is built by globbing the real result folder at
 generation time (`pathlib.Path.glob()`), never a hand-written filename
-pattern — a link can never point at a file that doesn't exist. Every relative
+pattern — a link can never point at a file that doesn't exist. Each group of
+links carries a one-line italic description above it — why look, what's in
+there — so an agent doesn't have to open a file just to find out what kind of
+evidence it holds (e.g. "the exact rendered SQL/bash script that ran ... despite
+the `.log` suffix, this is the script source itself, not output"). Every relative
 path is `os.path.relpath()`-computed rather than a hand-typed `../`, so links
 stay correct regardless of future changes to the report's own directory
 depth. `index.md`'s `sections` list is built by recording each tier-2 file as
@@ -149,6 +163,17 @@ rendering is. This lets the report's format evolve without constraining, or
 being constrained by, the terminal output, while every DataFrame is still
 fetched exactly once. See `bexhoma/experiments/CLAUDE.md` §9 for the full
 `show_summary()` call-graph this fits into.
+
+A fourth, report-only method follows the same pattern for benchmark-specific
+knowledge: `Benchmark._build_key_metrics_section(df_aggregated_reduced)`
+(default `None`) is overridden per benchmark type — `DBMSBenchmarkerBenchmark`,
+`YCSB`, `TPCC`, `Benchbase` — to name the exact column(s) *that benchmark's own
+evaluator* already tests via `record_tests()`. Deliberately **not** a lookup
+table inside `report_writer.py`: which column is the headline metric is
+benchmark-specific knowledge, so it lives on the benchmark class, the same
+place every other benchmark-specific override already lives — `report_writer.py`
+stays generic, rendering whatever `Section` it is handed without knowing what
+kind of benchmark produced it.
 
 ---
 

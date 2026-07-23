@@ -1425,6 +1425,11 @@ class ExperimentBase():
         """
         Append a test result to the internal collector and return the passed flag.
 
+        Coerces ``passed`` to a native ``bool`` before storing: callers sometimes
+        pass a ``numpy.bool_`` (e.g. from a pandas ``==`` comparison), and
+        ``report_writer.py``'s frontmatter counters use ``is True``/``is False``
+        identity checks that silently ignore anything that is not a native bool.
+
         :param passed: Whether the test passed.
         :type passed: bool
         :param label: Human-readable description of what was tested.
@@ -1432,6 +1437,7 @@ class ExperimentBase():
         :return: The value of passed, allowing inline chaining.
         :rtype: bool
         """
+        passed = bool(passed)
         self._test_results.append((passed, label))
         return passed
     def _record_skipped_test(self, label: str) -> None:
