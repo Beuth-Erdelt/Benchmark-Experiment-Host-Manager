@@ -115,15 +115,18 @@ class MixedExperiment(ExperimentBase):
             benchmark.configure_workload(self, parameter)
         ExperimentBase.prepare_testbed(self, parameter)
 
-    def show_summary(self) -> None:
+    def show_summary(self, write_report: bool = False) -> None:
         """
         Print a Markdown-formatted summary for every registered benchmark.
 
         Delegates to :meth:`~bexhoma.benchmarks.base.Benchmark.show_summary` on
         each benchmark in registration order.
+
+        :param write_report: When ``True``, also write a tiered Markdown report
+            (``report/index.md`` + detail files) to the result folder.
         """
         for benchmark in self.benchmarks:
-            benchmark.show_summary(self)
+            benchmark.show_summary(self, write_report=write_report)
 
     def test_results(self) -> None:
         """

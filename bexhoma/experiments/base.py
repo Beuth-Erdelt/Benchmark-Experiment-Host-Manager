@@ -249,7 +249,7 @@ class ExperimentBase():
             self.workload['duration'] = math.ceil(duration_experiment)
             self.evaluate_results()
             self.store_workflow_results()
-            self.show_summary()
+            self.show_summary(write_report=getattr(self.args, 'write_report', False))
         elif self.args.mode == 'load':
             start = default_timer()
             start_datetime = str(datetime.now())
@@ -272,9 +272,9 @@ class ExperimentBase():
             self.workload['duration'] = math.ceil(duration_experiment)
             self.evaluate_results()
             self.store_workflow_results()
-            self.show_summary()
+            self.show_summary(write_report=getattr(self.args, 'write_report', False))
         elif self.args.mode == 'summary':
-            self.show_summary()
+            self.show_summary(write_report=getattr(self.args, 'write_report', False))
         else:
             # total time of experiment
             start = default_timer()
@@ -298,7 +298,7 @@ class ExperimentBase():
                 test_result_code = self.test_results()
                 if test_result_code == 0:
                     print("Test successful!")
-            self.show_summary()
+            self.show_summary(write_report=getattr(self.args, 'write_report', False))
     def benchmarking_is_active(self) -> bool:
         """
         Returns True, when this is a benchmarking experiment.
@@ -2641,7 +2641,7 @@ class ExperimentBase():
                     print(f"* {pod}: {counts}")
             self._record_test(total_restarts == 0, "No SUT container restarts")
         return connections_sorted, monitoring_applications
-    def show_summary(self):
+    def show_summary(self, write_report: bool = False):
         """
         Print a basic experiment summary using the DBMSBenchmarker inspector directly.
 
@@ -2654,6 +2654,10 @@ class ExperimentBase():
             ``queries.config`` still contains ``type='dbmsbenchmarker'`` — a value
             written by ``experiments.base`` before the named experiment subclasses
             existed.
+
+        :param write_report: Accepted for signature parity with the
+            ``bexhoma.benchmarks`` pipeline's ``show_summary(write_report=...)``;
+            this legacy path has no tiered-report counterpart, so it is ignored.
         """
         self._test_results = []
         self.cluster.logger.debug('base.show_summary()')

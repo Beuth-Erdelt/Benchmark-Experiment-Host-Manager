@@ -12,7 +12,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import evaluators
-from .base import Benchmark
+from .base import Benchmark, Section, render_stdout
 
 __all__ = ["RefreshStreamBenchmark"]
 
@@ -83,26 +83,36 @@ class RefreshStreamBenchmark(Benchmark):
         :param experiment: The owning experiment object.
         """
 
-    def show_summary(self, experiment) -> None:
+    def show_summary(self, experiment, write_report: bool = False) -> None:
         """
         Print the refresh-stream section when called from :meth:`mixed.show_summary`.
 
         Delegates to :meth:`show_summary_section` so the same output is
         produced whether the call comes from ``mixed`` or from
-        ``dbmsbenchmarker.show_summary``.
+        ``dbmsbenchmarker.show_summary``. Not part of the normal TPC-H/TPC-DS
+        dispatch (the primary benchmark's :meth:`~bexhoma.benchmarks.base.Benchmark.show_summary`
+        already calls :meth:`show_summary_section` via the secondary-benchmark
+        loop in ``_show_extra_sections()``) — kept for the case where this
+        benchmark is registered as the sole/primary one in a plain ``mixed``
+        experiment.
 
         :param experiment: The owning experiment object.
+        :param write_report: Accepted for signature parity with
+            :meth:`~bexhoma.benchmarks.base.Benchmark.show_summary`; this
+            standalone path has no report-writing counterpart, so it is ignored.
         """
-        self.show_summary_section(experiment)
+        section = self.show_summary_section(experiment)
+        if section is not None:
+            render_stdout([section])
 
-    def show_summary_section(self, experiment) -> None:
+    def show_summary_section(self, experiment) -> Section | None:
         """
-        Print a timing table for this refresh stream's client rounds.
+        Build a timing table for this refresh stream's client rounds.
 
         Reads :meth:`~bexhoma.evaluators.base.base.get_connections_of_experiment`
         from the base evaluator, filters to rows that
         :meth:`~bexhoma.evaluators.base.EvaluatorBase.is_own_benchmark` identifies
-        as belonging to this benchmark, and prints ``phase``, ``job``,
+        as belonging to this benchmark, and shows ``phase``, ``job``,
         ``experiment_run``, ``client``, ``benchmark_run``, ``pod_count``
         (from the ``pods`` column), ``benchmark_begin``, ``benchmark_end``,
         and ``benchmark_duration``.
@@ -112,18 +122,21 @@ class RefreshStreamBenchmark(Benchmark):
         :meth:`~bexhoma.experiments.base.base.end_benchmarking` writes the
         ``benchmarking_timespans`` field to the connection's ``.config`` file.
 
-        Also prints the ``#### Reset`` subsection (via
-        :meth:`~bexhoma.benchmarks.base.Benchmark._show_reset_section`) for this
+        Also includes the ``#### Reset`` subsection (via
+        :meth:`~bexhoma.benchmarks.base.Benchmark._build_reset_section`) for this
         stream's own connections, since this class overrides :meth:`show_summary`
         instead of just the shared hooks and would otherwise skip it.
 
-        Silently returns when no timing data is available.
+        Returns ``None`` when no timing data is available.
 
         :param experiment: The owning experiment object.
+        :return: The refresh stream's own section, or ``None`` when no timing
+                 data is available.
+        :rtype: Section | None
         """
         df_conn = self.evaluator.get_connections_of_experiment()
         if 'benchmark_run' not in df_conn.columns or 'benchmark_duration' not in df_conn.columns:
-            return
+            return None
         display_cols = [
             col for col in (
                 'connection', 'phase', 'job',
@@ -139,10 +152,16 @@ class RefreshStreamBenchmark(Benchmark):
         )]
         df_section = df_run[df_run['benchmark_duration'].notna()][display_cols]
         if df_section.empty:
-            return
+            return None
         if 'connection' in df_section.columns:
             df_section = df_section.set_index('connection')
         df_section = df_section.rename(columns={'pods': 'pod_count'})
-        print(f"\n### {self.name}\n")
-        print(df_section.to_markdown(index=True))
-        self._show_reset_section(df_run)
+        children = []
+        reset_section = self._build_reset_section(df_run)
+        if reset_section is not None:
+            children.append(reset_section)
+        return Section(
+            heading=self.name, level=3, blank_after_heading=True,
+            dataframe=df_section, floatfmt=None, link_connections=True,
+            children=children,
+        )

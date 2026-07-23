@@ -80,6 +80,7 @@ def manage():
     parser.add_argument('action', help='for mode dashboard/messagequeue: start or shut down the component; omit to port-forward the dashboard', nargs='?', choices=['start', 'shutdown'], default=None)
     parser.add_argument('-db', '--debug', help='dump debug informations', action='store_true')
     parser.add_argument('-fe', '--force-evaluate', help='force a re-evaluation of the results', action='store_true')
+    parser.add_argument('-rp', '--report', help='write a tiered Markdown summary report (report/index.md + detail files) to the result folder', action='store_true')
     parser.add_argument('-e', '--experiment', help='code of experiment', default=None)
     parser.add_argument('-c', '--connection', help='name of DBMS', default=None)
     parser.add_argument('-v', '--verbose', help='gives more details about Kubernetes objects', action='store_true')
@@ -146,7 +147,7 @@ def manage():
                 #experiment.store_workflow_results()
                 if args.force_evaluate:
                     experiment.evaluate_results()
-                experiment.show_summary()
+                experiment.show_summary(write_report=args.report)
     elif args.mode == 'dashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)
         if args.action == 'start':

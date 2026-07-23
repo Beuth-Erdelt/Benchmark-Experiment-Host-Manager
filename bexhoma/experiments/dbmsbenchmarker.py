@@ -127,15 +127,18 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
         self.download_experiment_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.upload_experiment_file(filename='')
-    def show_summary(self) -> None:
+    def show_summary(self, write_report: bool = False) -> None:
         """
         Print the experiment summary by delegating to the primary benchmark.
 
         Finds the benchmark with ``benchmark_index == 1`` and calls its
         :meth:`~bexhoma.benchmarks.base.Benchmark.show_summary` template method,
         passing this experiment as the context object.
+
+        :param write_report: When ``True``, also write a tiered Markdown report
+            (``report/index.md`` + detail files) to the result folder.
         """
         primary = next(bm for bm in self.benchmarks if bm.benchmark_index == 1)
-        primary.show_summary(self)
+        primary.show_summary(self, write_report=write_report)
 
 

@@ -520,26 +520,42 @@ once per experiment, not once per benchmark).
 
 ### 9b. The template method — `Benchmark.show_summary()` (`benchmarks/base.py`)
 
+Since 2026-07-23, the three hooks below **return** a `Section` tree (see §9c1)
+instead of printing directly, so the exact same tree can be rendered twice —
+once to stdout (`render_stdout()`, byte-identical to the pre-refactor output)
+and, when `write_report=True`, once into the tiered Markdown report (see §9h
+and `docs/AgentReport.md`):
+
 ```python
-def show_summary(self, experiment):
+def show_summary(self, experiment, write_report: bool = False):
     experiment._test_results = []
     self._prepare_evaluator(experiment)                                  # hook
     connections_sorted, monitoring_applications = experiment.show_summary_header()
-    # ### Workflow  (only if benchmarking_is_active())
-    df_connections = self.evaluator.get_connections_of_experiment()
-    workflow_actual = self.evaluator.reconstruct_workflow(df_connections)
-    workflow_planned = experiment.workload['workflow_planned']
-    # ...
-    df_loading = self._show_loading_sections(experiment, is_multitenant)  # hook
-    # ### Execution → Per Connection, Per Phase, Reset  (only if benchmarking_is_active())
-    df_aggregated_reduced = df_phase.copy()
-    extra_context = self._show_extra_sections(experiment, df_aggregated_reduced)  # hook
+    workflow_section = None
+    if experiment.benchmarking_is_active():
+        # ### Workflow
+        df_connections = self.evaluator.get_connections_of_experiment()
+        workflow_actual = self.evaluator.reconstruct_workflow(df_connections)
+        workflow_planned = experiment.workload['workflow_planned']
+        workflow_section = build_workflow_section(workflow_actual, workflow_planned)
+    loading_section, df_loading = self._show_loading_sections(experiment, is_multitenant)  # hook
+    execution_section = None
+    if experiment.benchmarking_is_active():
+        # ### Execution → Per Connection, Per Phase, Reset
+        execution_section, df_aggregated_reduced = self._build_execution_section(df_connections, is_multitenant)
+    extra_sections, extra_context = self._show_extra_sections(experiment, df_aggregated_reduced)  # hook
+    document = [s for s in (workflow_section, loading_section, execution_section) if s is not None] + extra_sections
+    render_stdout(document)
     experiment.show_summary_monitoring()
     # ### Application Metrics
     self.evaluator.record_tests(
         experiment, df_loading, df_aggregated_reduced,
         workflow_actual, workflow_planned, **extra_context
     )
+    if write_report:
+        report_writer.write_markdown_report(experiment, self, workflow_section, loading_section,
+                                             execution_section, extra_sections, connections_sorted,
+                                             monitoring_applications, extra_context, df_connections)
     experiment._print_test_summary()
 ```
 
@@ -547,53 +563,72 @@ def show_summary(self, experiment):
 |---|---|
 | `experiment._test_results = []` | resets test assertions |
 | `self._prepare_evaluator(experiment)` | hook |
-| `experiment.show_summary_header()` | `## Show Summary`, workload metadata, connection list, SUT restart counts |
-| `### Workflow` | actual (via `get_connections_of_experiment()` + `reconstruct_workflow()`) vs. planned |
-| `self._show_loading_sections(...)` | hook — `### Loading` section |
-| `### Execution → Per Connection` | `evaluator.get_summary_benchmark_per_connection()` |
-| `### Execution → Per Phase` | `evaluator.get_summary_benchmark_per_phase[_multitenant]()` |
-| `self._show_reset_section(df_connections)` | `#### Reset` — only when any connection has `time_reset > 0` |
-| `self._show_extra_sections(...)` | hook — benchmark-specific content (secondary-benchmark sections, latency, errors, warnings, ...) |
-| `experiment.show_summary_monitoring()` | SUT CPU/RAM monitoring tables, records skip/pass/fail tests |
-| `### Application Metrics` | from `show_summary_header()`'s `monitoring_applications` |
-| `self.evaluator.record_tests(...)` | records metric-column/workflow pass/fail tests (see §9c) |
+| `experiment.show_summary_header()` | `## Show Summary`, workload metadata, connection list, SUT restart counts — still prints directly, not converted to a `Section` |
+| `build_workflow_section(...)` | not a hook (never overridable) — builds the `Workflow` section (Actual vs. Planned) |
+| `self._show_loading_sections(...)` | hook — returns the `Loading` section (or `None`) |
+| `self._build_execution_section(...)` | not a hook — builds the `Execution` section (Per Connection, Per Phase, Reset) |
+| `self._show_extra_sections(...)` | hook — returns extra sections (secondary-benchmark sections, latency, errors, warnings, ...) |
+| `render_stdout(document)` | prints the whole `Workflow`/`Loading`/`Execution`/extra-sections tree, reproducing the pre-refactor `print()` sequence exactly |
+| `experiment.show_summary_monitoring()` | SUT CPU/RAM monitoring tables, records skip/pass/fail tests — still prints directly |
+| `### Application Metrics` | from `show_summary_header()`'s `monitoring_applications` — still prints directly |
+| `self.evaluator.record_tests(...)` | records metric-column/workflow pass/fail tests (see §9c2) |
+| `report_writer.write_markdown_report(...)` | only when `write_report=True` — writes `report/*.md` (§9h) |
 | `experiment._print_test_summary()` | `### Tests` pass/fail table |
 
 ### 9c. The hooks
 
-`Benchmark.show_summary()` is a template method with three overridable hooks plus one
-evaluator-side method, so each benchmark tool only needs to supply the pieces that
-differ:
+#### 9c1. The `Section` data model
+
+`bexhoma.benchmarks.base.Section` is a small dataclass (`heading`, `level`,
+`blank_after_heading`, `dataframe`, `index`, `floatfmt`, `skip_if_empty`,
+`lines`, `children`, `link_connections`) representing one titled block of
+summary content — tabular (`dataframe`), freeform (`lines`), or both, with
+nested `children`. `render_stdout()` and
+`bexhoma.report_writer._render_sections()` both walk the same tree, formatting
+it independently; `link_connections=True` tells only the report renderer that
+this DataFrame's index holds connection names, to be rewritten into
+`connections.md` links (see §9h).
+
+#### 9c2. Hooks and evaluator method
+
+`Benchmark.show_summary()` is a template method with three overridable hooks
+plus one evaluator-side method, so each benchmark tool only needs to supply
+the pieces that differ:
 
 | Hook | Default (`Benchmark`) | Override |
 |---|---|---|
 | `_prepare_evaluator(experiment)` | no-op | `DBMSBenchmarkerBenchmark` → `self.evaluator.load_inspector()` |
-| `_show_loading_sections(experiment, is_multitenant)` → `df_loading` | prints `### Loading → Per Run` when `loading_is_active()`; returns the DataFrame | `YCSB` → also prints `#### Per Connection` first; guards on `df_loading.empty`; returns the aggregated-per-run DataFrame |
-| `_show_extra_sections(experiment, df_aggregated_reduced)` → `dict` | no-op, returns `{}` | `DBMSBenchmarkerBenchmark` → runs the secondary-benchmark loop (see §9d), then prints `### Latency`/`### Errors`/`### Warnings`; returns `{"num_errors": N, "num_warnings": N}` |
+| `_show_loading_sections(experiment, is_multitenant)` → `(Section \| None, df_loading)` | builds `### Loading → Per Run` when `loading_is_active()` | `YCSB` → also builds `#### Per Connection` first; guards on `df_loading.empty` |
+| `_show_extra_sections(experiment, df_aggregated_reduced)` → `(list[Section], dict)` | no-op, returns `([], {})` | `DBMSBenchmarkerBenchmark` → runs the secondary-benchmark loop (see §9d), then builds `Latency`/`Errors`/`Warnings` sections; returns `{"num_errors": N, "num_warnings": N}` |
 | `evaluator.record_tests(experiment, df_loading, df_reduced, workflow_actual, workflow_planned, **extra)` | `evaluators/logger.py` default: tests workflow only | `evaluators/dbmsbenchmarker.py` → also tests Geo Times, Power@Size, Throughput@Size, SQL errors/warnings (from `extra`); `evaluators/ycsb.py`, `evaluators/tpcc.py`, `evaluators/benchbase.py` → test their own metric columns plus workflow |
 
 `record_tests()` lives on the **evaluator**, not the `Benchmark`, because the metric
 columns it checks (`df_reduced`) are evaluator-specific; the `extra` kwargs bridge
 context computed in `_show_extra_sections()` (e.g. SQL error/warning counts) into it.
+Unlike the three hooks above, `record_tests()` was never print-based — no change
+was needed for the `Section` refactor.
 
 ### 9d. Secondary-benchmark sections (`_show_extra_sections` → generic loop)
 
 `DBMSBenchmarkerBenchmark._show_extra_sections()` (`benchmarks/base.py`) iterates over
 every registered benchmark and calls `show_summary_section(experiment)` for each one
-that is NOT the currently-running (primary) benchmark:
+that is NOT the currently-running (primary) benchmark, collecting the returned
+sections (skipping `None`):
 
 ```python
 for bm in experiment.benchmarks:
     if bm.benchmark_index == self.benchmark_index:
         continue
-    bm.show_summary_section(experiment)
+    section = bm.show_summary_section(experiment)
+    if section is not None:
+        sections.append(section)
 ```
 
-`show_summary_section(experiment)` is defined on `Benchmark` (default in
-`benchmarks/base.py`: prints this benchmark's own `#### Per Connection`/`#### Per
-Phase`/`#### Reset`, scoped to its own evaluator) and overridden by
-`RefreshStreamBenchmark` (`benchmarks/refresh.py`) since it has no per-query metrics of
-its own, only timing.
+`show_summary_section(experiment) -> Section | None` is defined on `Benchmark` (default
+in `benchmarks/base.py`: builds this benchmark's own `#### Per Connection`/`#### Per
+Phase`/`#### Reset` as a `Section`, scoped to its own evaluator; returns `None` when
+benchmarking is not active) and overridden by `RefreshStreamBenchmark`
+(`benchmarks/refresh.py`) since it has no per-query metrics of its own, only timing.
 
 ### 9e. `RefreshStreamBenchmark.show_summary_section()` — concrete example
 
@@ -605,16 +640,17 @@ In the secondary-benchmark loop (§9d), the primary TPCH benchmark (`benchmark_i
 is skipped and `RefreshStreamBenchmark.show_summary_section(experiment)` runs:
 
 ```python
-def show_summary_section(self, experiment):
+def show_summary_section(self, experiment) -> Section | None:
     df_conn = self.evaluator.get_connections_of_experiment()
     # Filter to this benchmark's connections (benchmark_run == self.benchmark_index == 2)
     df_section = df_conn[
         (df_conn['benchmark_run'].astype(int) == self.benchmark_index)
         & df_conn['benchmark_duration'].notna()
     ][timing_cols]
-    if not df_section.empty:
-        print(f"\n### {self.name}\n")
-        print(df_section.to_markdown(index=True))
+    if df_section.empty:
+        return None
+    return Section(heading=self.name, level=3, blank_after_heading=True,
+                    dataframe=df_section, floatfmt=None, link_connections=True)
 ```
 
 `self.evaluator` is `evaluators.base(benchmark_run=2)`.
@@ -657,13 +693,38 @@ To add any new secondary benchmarker that runs in parallel with the query stream
 4. The generic loop inside `DBMSBenchmarkerBenchmark._show_extra_sections()` (§9d)
    will call `show_summary_section()` automatically — no further changes needed.
 
-### 9g. No output is persisted today
+### 9g. stdout is still the default; nothing changes unless `-rp` is passed
 
-Every step above is a `print()` of Markdown to stdout — there is currently no code
-path that writes a summary to a file. `experiment._test_results` (populated by
+`show_summary(experiment, write_report=False)` — the default — behaves exactly as
+before the 2026-07-23 refactor: `render_stdout(document)` reproduces the historical
+`print()` sequence byte-for-byte, and `experiment._test_results` (populated by
 `_record_test()`/`_record_skipped_test()`/`_test_column()`, printed by
-`_print_test_summary()`) lives only for the duration of the `show_summary()` call and
-is discarded afterwards; it is not written to the result folder.
+`_print_test_summary()`) still lives only for the duration of the call. Pass
+`write_report=True` (wired to the `-rp`/`--report` CLI flag on every entry script and
+on `bexhoma summary`) to additionally persist a tiered Markdown report — see §9h.
+
+### 9h. The agent-consumable Markdown report (`-rp` / `write_report=True`)
+
+`bexhoma/report_writer.py::write_markdown_report()` consumes the exact same
+`Section` trees, `connections_sorted`, `monitoring_applications`, and
+`extra_context` that `show_summary()` just built and rendered to stdout, and
+writes `{resultfolder}/{code}/report/{index,workflow,loading,execution,monitoring,connections}.md`
+— one file per active phase/topic, plus `index.md` as the always-written entry
+point. It needs no live cluster connection (it reads the same local files every
+evaluator method already reads), so `bexhoma summary -e <code> -rp` works from the
+result folder alone, exactly like a plain `bexhoma summary -e <code>`.
+
+Full design (the three-tier structure, the output contract, the Full Metric
+Catalog, cross-referencing/linkification, and the provenance-globbing
+consistency guarantee) is documented in `docs/AgentReport.md` and in
+`report_writer.py`'s own module docstring — not duplicated here. The one thing
+worth calling out at this level: `write_markdown_report()` does *no* duplicate
+data-fetching for anything `show_summary()` already computed (same `Section`
+trees, same DataFrames) — the one deliberate exception is `monitoring.md`'s Full
+Metric Catalog appendix, which enumerates every configured Prometheus metric,
+not just the four hardcoded hardware metrics and first five active application
+metrics `show_summary()` itself is capped at; that is genuinely new
+data-gathering, not a re-fetch.
 
 ---
 

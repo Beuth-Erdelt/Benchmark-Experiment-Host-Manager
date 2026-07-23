@@ -75,5 +75,6 @@ def make_base_parser():
     p.add_argument('-mtb', '--multi-tenant-by', help='tenancy granularity: schema, database, or container', default='')
     p.add_argument('-mtv', '--multi-tenant-volume', help='allocate a separate persistent volume per tenant', action='store_true', default=False)
     p.add_argument('-tr',  '--test-result', help='validate that results meet basic correctness requirements', action='store_true', default=False)
+    p.add_argument('-rp',  '--report', help='also write a tiered Markdown summary report (report/index.md + detail files) to the result folder', action='store_true', default=False, dest='write_report')
     p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[sut].container[dbms].max_worker_processes=128")
     return p

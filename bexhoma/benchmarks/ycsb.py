@@ -10,7 +10,7 @@ import pandas as pd
 from types import SimpleNamespace
 
 from bexhoma import evaluators
-from .base import Benchmark
+from .base import Benchmark, Section
 
 __all__ = ["YCSB"]
 
@@ -122,26 +122,28 @@ class YCSB(Benchmark):
         if "TiDB" in args.dbms or len(args.dbms) == 0:
             experiment.workload['info'] += f"\nTiDB uses {num_sut_replicas} SUT replica(s) and {num_pd_nodes} PD node(s)."
 
-    def _show_loading_sections(self, experiment, is_multitenant: bool) -> 'pd.DataFrame':
+    def _show_loading_sections(self, experiment, is_multitenant: bool) -> tuple[Section | None, pd.DataFrame]:
         """
-        Print Per Connection and Per Run loading tables for YCSB.
+        Build Per Connection and Per Run loading sections for YCSB.
 
         :param experiment: The owning experiment object.
         :param is_multitenant: Whether the experiment runs in multitenant mode.
-        :return: Per-run loading DataFrame, or an empty DataFrame when no loading
-                 data is available.
-        :rtype: pandas.DataFrame
+        :return: Tuple of the ``Loading`` section (``None`` when no loading data
+                 is available) and the per-run loading DataFrame.
+        :rtype: tuple[Section | None, pandas.DataFrame]
         """
         df_loading = self.evaluator.get_summary_loading_per_connection()
         if experiment.loading_is_active() and not df_loading.empty:
-            print("\n### Loading")
-            print("\n#### Per Connection\n")
-            print(df_loading.to_markdown(index=True, floatfmt=".2f"))
-            print("\n#### Per Run\n")
             if is_multitenant:
                 df_aggregated_loaded = self.evaluator.get_summary_loading_per_run_multitenant()
             else:
                 df_aggregated_loaded = self.evaluator.get_summary_loading_per_run()
-            print(df_aggregated_loaded.to_markdown(index=True, floatfmt=".2f"))
-            return df_aggregated_loaded
-        return pd.DataFrame()
+            section = Section(
+                heading="Loading", level=3, blank_after_heading=False,
+                children=[
+                    Section(heading="Per Connection", level=4, dataframe=df_loading, link_connections=True),
+                    Section(heading="Per Run", level=4, dataframe=df_aggregated_loaded),
+                ],
+            )
+            return section, df_aggregated_loaded
+        return None, pd.DataFrame()
