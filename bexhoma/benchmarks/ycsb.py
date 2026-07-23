@@ -10,7 +10,7 @@ import pandas as pd
 from types import SimpleNamespace
 
 from bexhoma import evaluators
-from .base import Benchmark, Section
+from .base import Benchmark, Section, _key_metrics_section_from_columns
 
 __all__ = ["YCSB"]
 
@@ -147,3 +147,16 @@ class YCSB(Benchmark):
             )
             return section, df_aggregated_loaded
         return None, pd.DataFrame()
+
+    def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
+        """
+        Surface ``[OVERALL].Throughput(ops/sec)`` — the same column
+        :meth:`~bexhoma.evaluators.ycsb.ycsb.record_tests` tests via
+        ``experiment._test_column()``.
+
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: A ``Key Metrics`` section, or ``None`` when the tested
+                 column is not present.
+        :rtype: Section | None
+        """
+        return _key_metrics_section_from_columns(df_aggregated_reduced, ["[OVERALL].Throughput(ops/sec)"])

@@ -600,6 +600,7 @@ the pieces that differ:
 | `_prepare_evaluator(experiment)` | no-op | `DBMSBenchmarkerBenchmark` → `self.evaluator.load_inspector()` |
 | `_show_loading_sections(experiment, is_multitenant)` → `(Section \| None, df_loading)` | builds `### Loading → Per Run` when `loading_is_active()` | `YCSB` → also builds `#### Per Connection` first; guards on `df_loading.empty` |
 | `_show_extra_sections(experiment, df_aggregated_reduced)` → `(list[Section], dict)` | no-op, returns `([], {})` | `DBMSBenchmarkerBenchmark` → runs the secondary-benchmark loop (see §9d), then builds `Latency`/`Errors`/`Warnings` sections; returns `{"num_errors": N, "num_warnings": N}` |
+| `_build_key_metrics_section(df_aggregated_reduced)` → `Section \| None` | no-op, returns `None` | `DBMSBenchmarkerBenchmark`/`YCSB`/`TPCC`/`Benchbase` → surface the exact column(s) their own `record_tests()` tests (Geo Times/Power@Size/Throughput@Size, `[OVERALL].Throughput(ops/sec)`, `NOPM`, `Throughput (requests/second)` respectively), via the shared `_key_metrics_section_from_columns()` helper. Report-only (§9h) — never rendered to stdout. |
 | `evaluator.record_tests(experiment, df_loading, df_reduced, workflow_actual, workflow_planned, **extra)` | `evaluators/logger.py` default: tests workflow only | `evaluators/dbmsbenchmarker.py` → also tests Geo Times, Power@Size, Throughput@Size, SQL errors/warnings (from `extra`); `evaluators/ycsb.py`, `evaluators/tpcc.py`, `evaluators/benchbase.py` → test their own metric columns plus workflow |
 
 `record_tests()` lives on the **evaluator**, not the `Benchmark`, because the metric
@@ -725,6 +726,14 @@ Metric Catalog appendix, which enumerates every configured Prometheus metric,
 not just the four hardcoded hardware metrics and first five active application
 metrics `show_summary()` itself is capped at; that is genuinely new
 data-gathering, not a re-fetch.
+
+`index.md`'s Key Metrics block (the benchmark type's headline performance
+number(s) — see §9c2's `_build_key_metrics_section` row) is deliberately built
+on the **benchmark** class, not in `report_writer.py`: which column counts as
+"the" tested metric is benchmark-specific knowledge (Geo Times/Power@Size for
+DBMSBenchmarker, NOPM for HammerDB, ...), so it lives alongside every other
+benchmark-specific override, keeping `report_writer.py` itself generic across
+benchmark types.
 
 ---
 

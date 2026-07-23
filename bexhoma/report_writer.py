@@ -181,22 +181,38 @@ def _relmd(target: Path, start: Path) -> str:
     return Path(os.path.relpath(target, start=start)).as_posix()
 
 
-def _glob_provenance(result_dir: Path, report_dir: Path, patterns: list[str]) -> list[str]:
+def _glob_provenance(result_dir: Path, report_dir: Path, patterns: list[str], description: str) -> list[str]:
     """
-    Build Markdown bullet links for every real file matching any of ``patterns``.
+    Build a described Markdown block for every real file matching any of
+    ``patterns`` — one italic line explaining why/what to look for, then one
+    bullet link per matched file.
+
+    An agent should never have to open a Provenance link just to find out
+    what kind of file it is; the description answers that up front.
 
     :param result_dir: The experiment's result folder (one level above ``report/``).
     :param report_dir: The ``report/`` directory the links are written from.
     :param patterns: ``Path.glob()`` patterns to match against ``result_dir``.
-    :return: Sorted, de-duplicated list of Markdown bullet lines, one per
-             matched file. Empty when nothing matches — a link is never
-             written for a file that does not exist.
+    :param description: One-line explanation of what this file kind contains
+        and why it might be worth opening — rendered as an italic line above
+        the links.
+    :return: ``[description_line, "", *bullet_lines, ""]``, or an empty list
+             when nothing matches — a link (and its description) is never
+             written for a file kind that does not exist. Description lines
+             are distinguished from bullet lines by not starting with ``"- ["``
+             (see :func:`_write_tier2_file`, which extracts only the bullet
+             lines into the frontmatter's ``provenance`` path list).
     :rtype: list[str]
     """
     matches: set[Path] = set()
     for pattern in patterns:
         matches.update(result_dir.glob(pattern))
-    return [f"- [{path.name}]({_relmd(path, report_dir)})" for path in sorted(matches)]
+    if not matches:
+        return []
+    lines = [f"*{description}*", ""]
+    lines.extend(f"- [{path.name}]({_relmd(path, report_dir)})" for path in sorted(matches))
+    lines.append("")
+    return lines
 
 
 def _linkify_index(df: pd.DataFrame, connections_index: dict[str, str]) -> pd.DataFrame:
@@ -409,7 +425,53 @@ def _build_monitoring_sections(
             dataframe=pd.DataFrame(catalog_rows),
             children=catalog_value_sections,
         ))
+    if provenance:
+        provenance = [
+            "*One CSV per metric per component (wide format: one column per "
+            "connection, one row per Prometheus scrape) backing each catalog "
+            "table above.*", "",
+        ] + provenance + [""]
     return sections, provenance
+
+
+def _build_monitoring_summary_lines(monitoring_sections: list[Section]) -> list[str]:
+    """
+    Build a brief ``### Monitoring`` block for ``index.md``: one bullet per
+    curated CPU/RAM component table in ``monitoring.md``, showing its peak
+    CPU/RAM across all phases.
+
+    Not a re-fetch: aggregates the same top-level ``Section`` dataframes
+    :func:`_build_monitoring_sections` already built for ``monitoring.md``.
+    A section counts as a curated hardware table (as opposed to an
+    Application Metrics table or the Full Metric Catalog appendix) when its
+    dataframe carries both a ``Max CPU`` and a ``Max RAM [Gb]`` column.
+
+    :param monitoring_sections: The sections built by
+        :func:`_build_monitoring_sections`.
+    :return: Markdown lines for the ``### Monitoring`` block, or an empty
+             list when no curated hardware section is present (monitoring
+             not active, or no data collected).
+    :rtype: list[str]
+    """
+    peaks = [
+        (section.heading, section.dataframe['Max CPU'].max(), section.dataframe['Max RAM [Gb]'].max())
+        for section in monitoring_sections
+        if section.dataframe is not None and not section.dataframe.empty
+        and 'Max CPU' in section.dataframe.columns and 'Max RAM [Gb]' in section.dataframe.columns
+    ]
+    if not peaks:
+        return []
+    lines = [
+        "### Monitoring", "",
+        "Peak CPU/RAM per monitored component, across all phases — see "
+        "[monitoring.md](monitoring.md) for per-phase detail and the full metric catalog.",
+        "",
+    ]
+    lines.extend(
+        f"- {heading}: {max_cpu:.2f} CPUs, {max_ram:.2f} Gb RAM (peak)"
+        for heading, max_cpu, max_ram in peaks
+    )
+    return lines
 
 
 def _build_workload_identity_lines(workload: dict, code: str) -> list[str]:
@@ -542,9 +604,23 @@ def _build_connections_md_lines(
             if str(value) == '':
                 continue
             lines.append(f"* {column}: {value}")
-        log_links = _glob_provenance(result_dir, report_dir, [f"*{name}*.log", f"*{configuration}*.dbms.*.log"])
-        describe_links = _glob_provenance(result_dir, report_dir, [f"*{configuration}*.describe.log"])
-        metric_links = _glob_provenance(result_dir, report_dir, ["query_*_metric_*.csv"])
+        log_links = _glob_provenance(
+            result_dir, report_dir, [f"*{name}*.log", f"*{configuration}*.dbms.*.log"],
+            "This connection's own benchmarker/driver pod log, and its SUT's container "
+            "log (the DBMS process's own stdout) — read for the literal error text or "
+            "log lines behind a failed/slow query.",
+        )
+        describe_links = _glob_provenance(
+            result_dir, report_dir, [f"*{configuration}*.describe.log"],
+            "`kubectl describe pod` output for this connection's SUT — its event "
+            "history (scheduling, image pull, restarts, OOMKills), not just static spec.",
+        )
+        metric_links = _glob_provenance(
+            result_dir, report_dir, ["query_*_metric_*.csv"],
+            "Wide-format monitoring CSV (one column per connection, one row per "
+            "Prometheus scrape) backing the metrics shown for this connection — find "
+            "this connection's own column.",
+        )
         if log_links or describe_links or metric_links:
             lines.append("")
             lines.append("##### Provenance")
@@ -563,6 +639,7 @@ def write_markdown_report(
     loading_section: Section | None,
     execution_section: Section | None,
     extra_sections: list[Section],
+    key_metrics_section: Section | None,
     connections_sorted: list[dict],
     monitoring_applications: dict,
     extra_context: dict,
@@ -591,6 +668,13 @@ def write_markdown_report(
         benchmarking was not active.
     :param extra_sections: Secondary-benchmark and Latency/Errors/Warnings
         sections from ``_show_extra_sections()``.
+    :param key_metrics_section: The benchmark-type-specific ``Key Metrics``
+        section from ``benchmark._build_key_metrics_section()`` (e.g. Geo
+        Times/Power@Size/Throughput@Size for DBMSBenchmarker, NOPM for
+        HammerDB) — the same columns that benchmark's evaluator already
+        tests via ``record_tests()``. Report-only: rendered into ``index.md``,
+        never printed to stdout. ``None`` when this benchmark type defines no
+        headline metric, or benchmarking was not active.
     :param connections_sorted: Connection dicts as read by ``show_summary_header()``.
     :param monitoring_applications: Curated application-metric DataFrames
         from ``show_summary_header()``.
@@ -608,8 +692,18 @@ def write_markdown_report(
     written_sections: list[dict] = []
 
     if workflow_section is not None:
-        manifest_links = _glob_provenance(result_dir, report_dir, ["*.yml", "*.yaml"])
-        log_links = _glob_provenance(result_dir, report_dir, ["*.describe.log"])
+        manifest_links = _glob_provenance(
+            result_dir, report_dir, ["*.yml", "*.yaml"],
+            "Rendered Kubernetes Job/Deployment/Service manifests actually submitted — "
+            "check for the exact resource requests/limits, image tag, env vars, and "
+            "replica/parallelism counts.",
+        )
+        log_links = _glob_provenance(
+            result_dir, report_dir, ["*.describe.log"],
+            "`kubectl describe pod` output for every pod in this experiment — event "
+            "history (scheduling, image pulls, restarts, OOMKills) during deployment, "
+            "not just static spec.",
+        )
         _write_tier2_file(
             report_dir, "workflow.md", "workflow", "Actual vs. planned experiment workflow.",
             [workflow_section], connections_index, manifest_links + log_links,
@@ -617,18 +711,37 @@ def write_markdown_report(
         written_sections.append({"title": "Workflow", "file": "workflow.md", "description": "Actual vs. planned workflow (per configuration/run/client)."})
 
     if loading_section is not None:
-        loading_links = _glob_provenance(result_dir, report_dir, ["*-loading-*.log"])
+        loading_script_links = _glob_provenance(
+            result_dir, report_dir, ["*-loading-*.sql.log", "*-loading-*.sh.log"],
+            "The exact rendered SQL/bash script that ran for each configuration's "
+            "loading phase — despite the `.log` suffix, this is the script source "
+            "itself, not output. Check here to see exactly what schema/DDL was applied.",
+        )
+        loading_stdout_links = _glob_provenance(
+            result_dir, report_dir, ["*-loading-*.stdout.log"],
+            "stdout of running each loading script above.",
+        )
+        loading_stderr_links = _glob_provenance(
+            result_dir, report_dir, ["*-loading-*.stderr.log"],
+            "stderr of running each loading script above — check here first if a "
+            "loading phase failed silently.",
+        )
         _write_tier2_file(
             report_dir, "loading.md", "loading", "Data-loading phase results.",
-            [loading_section], connections_index, loading_links,
+            [loading_section], connections_index,
+            loading_script_links + loading_stdout_links + loading_stderr_links,
         )
         written_sections.append({"title": "Loading", "file": "loading.md", "description": "Per-connection and per-run loading throughput/timing."})
 
     if execution_section is not None or extra_sections:
         execution_all = ([execution_section] if execution_section is not None else []) + extra_sections
-        execution_links = _glob_provenance(result_dir, report_dir, [
-            "bexhoma-benchmarker-*.log", "bexhoma-benchmarker.*.all.df.pickle",
-        ])
+        execution_links = _glob_provenance(
+            result_dir, report_dir,
+            ["bexhoma-benchmarker-*.log", "bexhoma-benchmarker.*.all.df.pickle"],
+            "Raw per-pod benchmarker logs and the cached aggregated DataFrame they "
+            "were parsed into — read the logs for the literal output behind a "
+            "surprising number.",
+        )
         _write_tier2_file(
             report_dir, "execution.md", "execution",
             "Benchmark execution results, including any secondary (co-running) benchmarks.",
@@ -639,6 +752,7 @@ def write_markdown_report(
     monitoring_sections, monitoring_provenance = _build_monitoring_sections(
         experiment, benchmark.evaluator, connections_sorted, monitoring_applications, result_dir, report_dir,
     )
+    monitoring_summary_lines = _build_monitoring_summary_lines(monitoring_sections)
     if monitoring_sections:
         _write_tier2_file(
             report_dir, "monitoring.md", "monitoring",
@@ -655,8 +769,13 @@ def write_markdown_report(
         }) + "\n".join(connections_lines))
         written_sections.append({"title": "Connections", "file": "connections.md", "description": "One subsection per connection/pod: its own parameters, logs, monitoring, and SUT container detail."})
 
+    key_metrics_lines: list[str] = []
+    if key_metrics_section is not None:
+        key_metrics_lines = _render_sections([key_metrics_section], connections_index)
+
     _write_index_md(
         report_dir, experiment, total_restarts, extra_context, written_sections,
+        key_metrics_lines, monitoring_summary_lines,
     )
 
 
@@ -676,18 +795,24 @@ def _write_tier2_file(
         parameter for callers to pass consistently.
     :param sections: Top-level sections to render.
     :param connections_index: Map of connection name to ``connections.md`` anchor slug.
-    :param provenance_lines: Pre-built Markdown bullet lines for the
-        ``### Provenance`` footer (glob-derived by the caller).
+    :param provenance_lines: Pre-built Markdown lines for the ``### Provenance``
+        footer (glob-derived by the caller via :func:`_glob_provenance`) —
+        a mix of italic description lines and ``- [name](path)`` bullet
+        lines; only the bullet lines are extracted into the frontmatter's
+        ``provenance`` path list.
     """
     del description  # documented for callers; not rendered into the file body itself
     body_lines = _render_sections(sections, connections_index)
+    provenance_paths = [
+        line.split("](", 1)[1].rstrip(")") for line in provenance_lines if line.startswith("- [")
+    ]
     text = _frontmatter({
         "schema_version": SCHEMA_VERSION, "section": section_tag, "parent": "index.md",
-        "provenance": [line.split("](", 1)[1].rstrip(")") for line in provenance_lines] if provenance_lines else [],
+        "provenance": provenance_paths,
     })
     text += "\n".join(body_lines).strip("\n") + "\n"
     if provenance_lines:
-        text += "\n### Provenance\n\n" + "\n".join(provenance_lines) + "\n"
+        text += "\n### Provenance\n\n" + "\n".join(provenance_lines).strip("\n") + "\n"
     _write_file(report_dir / filename, text)
 
 
@@ -705,14 +830,16 @@ def _write_file(path: Path, text: str) -> None:
 
 def _write_index_md(
     report_dir: Path, experiment, total_restarts: int, extra_context: dict, written_sections: list[dict],
+    key_metrics_lines: list[str], monitoring_summary_lines: list[str],
 ) -> None:
     """
     Write ``index.md`` — the tier-1 entry point.
 
     Content, in order: frontmatter; Workload identity; entry-point
     instruction; Report Structure (tier table); Naming Conventions;
-    Validity-First Rules; ``### Tests``; Health Summary; Interpretation
-    Rules; links to whichever tier-2 files were actually written.
+    Validity-First Rules; ``### Tests``; Key Metrics; Monitoring (brief);
+    Health Summary; Interpretation Rules; links to whichever tier-2 files
+    were actually written.
 
     :param report_dir: The ``report/`` directory.
     :param experiment: The owning experiment object.
@@ -724,6 +851,14 @@ def _write_index_md(
         :func:`write_markdown_report` — this, not a hand-written constant,
         is what the frontmatter's ``sections`` field and the body's link list
         are both built from.
+    :param key_metrics_lines: Pre-rendered Markdown lines for the benchmark's
+        headline performance metric(s) (see
+        ``benchmark._build_key_metrics_section()``), or empty when this
+        benchmark type defines none.
+    :param monitoring_summary_lines: Pre-rendered Markdown lines for the
+        brief ``### Monitoring`` block (see
+        :func:`_build_monitoring_summary_lines`), or empty when monitoring
+        was not active or collected no data.
     """
     passed = sum(1 for p, _ in experiment._test_results if p is True)
     failed = sum(1 for p, _ in experiment._test_results if p is False)
@@ -747,6 +882,12 @@ def _write_index_md(
     lines.append(_NAMING_CONVENTIONS_MD)
     lines.append(_VALIDITY_RULES_MD)
     lines.extend(_build_tests_lines(experiment._test_results))
+    if key_metrics_lines:
+        lines.append("")
+        lines.extend(key_metrics_lines)
+    if monitoring_summary_lines:
+        lines.append("")
+        lines.extend(monitoring_summary_lines)
     lines.append("")
     lines.extend(_build_health_summary_lines(total_restarts, extra_context))
     lines.append("")

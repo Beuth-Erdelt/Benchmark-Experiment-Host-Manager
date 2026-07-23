@@ -10,7 +10,7 @@ import pandas as pd
 from types import SimpleNamespace
 
 from bexhoma import evaluators
-from .base import Benchmark
+from .base import Benchmark, Section, _key_metrics_section_from_columns
 
 __all__ = ["Benchbase"]
 
@@ -45,6 +45,19 @@ class Benchbase(Benchmark):
             benchmark_run=benchmark_run,
             name=self.name,
         )
+
+    def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
+        """
+        Surface ``Throughput (requests/second)`` — the same column
+        :meth:`~bexhoma.evaluators.benchbase.benchbase.record_tests` tests via
+        ``experiment._test_column()``.
+
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: A ``Key Metrics`` section, or ``None`` when the tested
+                 column is not present.
+        :rtype: Section | None
+        """
+        return _key_metrics_section_from_columns(df_aggregated_reduced, ["Throughput (requests/second)"])
 
     def configure_workload(self, experiment, parameter: dict) -> None:
         """

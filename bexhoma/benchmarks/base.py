@@ -139,6 +139,30 @@ def build_workflow_section(workflow_actual: dict, workflow_planned: dict) -> Sec
     return Section(heading="Workflow", level=3, blank_after_heading=False, children=children)
 
 
+def _key_metrics_section_from_columns(df_aggregated_reduced: pd.DataFrame, columns: list[str]) -> "Section | None":
+    """
+    Build a ``Key Metrics`` section from whichever of ``columns`` are present
+    in ``df_aggregated_reduced``.
+
+    Shared helper for :meth:`Benchmark._build_key_metrics_section` overrides,
+    so each benchmark-type subclass only needs to name its own tested
+    column(s), not duplicate the section-building logic. Report-only: not
+    added to the stdout ``document`` in :meth:`Benchmark.show_summary`, since
+    ``index.md`` has no stdout equivalent.
+
+    :param df_aggregated_reduced: The per-phase execution DataFrame.
+    :param columns: Column names to surface, in the order they were tested by
+        this benchmark's evaluator (``evaluator.record_tests()``).
+    :return: The ``Key Metrics`` section, or ``None`` when none of
+             ``columns`` are present (e.g. benchmarking was not active).
+    :rtype: Section | None
+    """
+    present = [c for c in columns if c in df_aggregated_reduced.columns]
+    if not present:
+        return None
+    return Section(heading="Key Metrics", level=3, dataframe=df_aggregated_reduced[present], link_connections=True)
+
+
 class Benchmark:
     """
     Abstract base for all benchmark types.
@@ -289,6 +313,28 @@ class Benchmark:
             children.append(reset_section)
         return Section(heading="Execution", level=3, blank_after_heading=False, children=children), df_aggregated_reduced
 
+    def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
+        """
+        Build the headline performance metric(s) for this benchmark type, to
+        surface in ``index.md``'s Key Metrics block.
+
+        Report-only — never added to the stdout ``document`` in
+        :meth:`show_summary`, since ``index.md`` has no stdout equivalent.
+        Default: no key metrics. Override with the exact column name(s) this
+        benchmark's evaluator already tests via ``evaluator.record_tests()``'s
+        ``experiment._test_column()`` calls, so ``index.md``'s headline number
+        always matches what backs the Tests table's pass/fail row for it —
+        this is deliberately benchmark-specific knowledge, so it lives here,
+        not in the generic :mod:`bexhoma.report_writer`.
+
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: A ``Key Metrics`` section, or ``None`` when this benchmark
+                 type defines no headline metric (or benchmarking was not
+                 active, so the DataFrame is empty).
+        :rtype: Section | None
+        """
+        return None
+
     def show_summary(self, experiment, write_report: bool = False) -> None:
         """
         Print a Markdown-formatted summary of the experiment, and optionally
@@ -324,8 +370,10 @@ class Benchmark:
         loading_section, df_loading = self._show_loading_sections(experiment, is_multitenant)
         df_aggregated_reduced = pd.DataFrame()
         execution_section: Section | None = None
+        key_metrics_section: Section | None = None
         if experiment.benchmarking_is_active():
             execution_section, df_aggregated_reduced = self._build_execution_section(df_connections, is_multitenant)
+            key_metrics_section = self._build_key_metrics_section(df_aggregated_reduced)
         extra_sections, extra_context = self._show_extra_sections(experiment, df_aggregated_reduced)
         document: list[Section] = [
             section for section in (workflow_section, loading_section, execution_section)
@@ -352,6 +400,7 @@ class Benchmark:
                 loading_section=loading_section,
                 execution_section=execution_section,
                 extra_sections=extra_sections,
+                key_metrics_section=key_metrics_section,
                 connections_sorted=connections_sorted,
                 monitoring_applications=monitoring_applications,
                 extra_context=extra_context,
@@ -465,6 +514,21 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         :param experiment: The owning experiment object.
         """
         self.evaluator.load_inspector()
+
+    def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
+        """
+        Surface Geo Times, Power@Size, and Throughput@Size — the same columns
+        :meth:`~bexhoma.evaluators.dbmsbenchmarker.dbmsbenchmarker.record_tests`
+        tests via ``experiment._test_column()``.
+
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: A ``Key Metrics`` section, or ``None`` when none of the
+                 tested columns are present.
+        :rtype: Section | None
+        """
+        return _key_metrics_section_from_columns(
+            df_aggregated_reduced, ["Geo Times [s]", "Power@Size [~Q/h]", "Throughput@Size"]
+        )
 
     def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> tuple[list[Section], dict]:
         """
