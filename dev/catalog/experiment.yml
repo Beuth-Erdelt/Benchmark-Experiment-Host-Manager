@@ -1,14 +1,29 @@
-# Sample experiment.yml — TPC-H, PostgreSQL vs. PgDuckDB.
+# experiment.yml — Is pg_duckdb better than PostgreSQL on joins, even under concurrency?
 #
 # STATUS: draft, prototype scope. Resolved against catalog.yaml by
 # bexhoma/spec.py into a `tpch.py` argument vector. See
 # docs/Design-Catalog-Contract.md for the full contract design.
+#
+# Designed from the contract alone:
+#   - "joins" -> workload.params.active_queries uses the catalog's own
+#     labeled multi-way-join subset (workloads.tpch.params.active_queries.why:
+#     "[5, 7, 8, 9, 21] = multi-way joins" in catalog.yaml) instead of the
+#     full 22-query set.
+#   - "10GB dataset" -> scaling_factor: 10 (catalog: scaling_factor unit is GB).
+#   - "at most 64GB of RAM" -> resources.memory = 64Gi, which is also what the
+#     analytical-ssd profile's derive: formulas are sized against (e.g.
+#     shared_buffers = 0.3125 * memory_limit -> 20GB at this ceiling).
+#   - "even under concurrency" -> workload.rounds sweeps parallel-client
+#     counts from 1 up to 16 instead of a single round, so the comparison is
+#     checked at low and high concurrency, not just once.
+#   - repetitions: 3 satisfies the "min. 3 repetitions for conclusions"
+#     behavioral rule from issue #764.
 
 mode: run
 
-title: "TPC-H on NVMe: PostgreSQL vs. PgDuckDB under a matched analytical profile"
-hypothesis: "On NVMe, PgDuckDB's DuckDB execution engine changes TPC-H plan quality vs native PostgreSQL under the same tuned profile"
-discriminates: [system]
+title: "TPC-H joins under concurrency: PostgreSQL vs. PgDuckDB at SF10, 64GB RAM ceiling"
+hypothesis: "pg_duckdb outperforms PostgreSQL on join-heavy TPC-H queries (Q5, Q7, Q8, Q9, Q21) at SF=10 under a matched analytical-ssd profile, and the advantage (if any) holds as concurrent client load increases from 1 to 16"
+discriminates: [system, concurrency]
 
 workload:
   name: tpch
@@ -17,33 +32,31 @@ workload:
     timeout: 1200
     query_repeats: 3
     verify_result: true
-  rounds: [1, 1, 2, 3]
-  repetitions: 3
+    active_queries: [5, 7, 8, 9, 21]  # multi-way joins, per catalog.yaml's own labeling
+  rounds: [1, 4, 8, 16]  # concurrency sweep: 1 client baseline, then 4/8/16 concurrent clients
+  repetitions: 3  # issue #764 behavioral rule: minimum 3 repetitions for conclusions
 
 loading:
-  pods: 8
-  threads: 8
-  post_load: {indexes: true, constraints: true, statistics: true}
+  pods: 4
+  threads: 4
+  post_load: {indexes: true, constraints: true, statistics: true}  # indexes/stats matter directly for join plan quality
 
 systems:
   - name: PostgreSQL
     profile: analytical-ssd
   - name: PgDuckDB
     profile: analytical-ssd  # same profile as PostgreSQL — this is what "parity" means for this pair
-    override: {duckdb_force_execution: false}
+    override: {duckdb_force_execution: false}  # let pg_duckdb's own cost-based routing decide per query, as it would in real deployment
 
 observe: {monitoring_sut: true, monitoring_cluster: true, monitoring_app: true}
 
-# node-group names are passed straight through as literal node selectors for
-# now — resolving them against environment.yml node groups is not
-# implemented yet (see "Open questions" in docs/Design-Catalog-Contract.md)
 placement:
-  sut: node-group-sut
-  loading: node-group-load
-  benchmarking: node-group-bm
+  sut: cl-worker36
+  loading: cl-worker19
+  benchmarking: cl-worker19
 
 resources:
   cpu: {request: 16, limit: 16}
-  memory: {request: 64Gi, limit: 64Gi}
+  memory: {request: 64Gi, limit: 64Gi}  # "our servers have at most 64GB of RAM"
   storage: {size: 50Gi}
   storage_class: ssd  # must match the analytical-ssd profile's `requires.storage_class`
