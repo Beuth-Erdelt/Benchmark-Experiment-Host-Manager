@@ -19,6 +19,14 @@
 workloads:
   tpch:
     why: "star-schema OLAP: 22 queries, multi-way joins, official TPC-H"
+    resource_profile:
+      cpu: high
+      memory: high
+      why: "multi-way hash joins and aggregation across 22 queries are CPU- and
+        RAM-bound, and working-set size scales directly with scaling_factor;
+        storage bandwidth matters less by comparison — weigh cpu/memory
+        headroom heavily when choosing placement node-groups and
+        experiment.yml resources: for this workload"
     supports: [PostgreSQL, PgDuckDB]  # full workload also supports MonetDB, MySQL,
                                        # MariaDB, DatabaseService, Citus, CedarDB —
                                        # trimmed to prototype scope here
