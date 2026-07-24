@@ -6,6 +6,7 @@
 
 mode: run
 
+title: "TPC-H on NVMe: PostgreSQL vs. PgDuckDB under a matched analytical profile"
 hypothesis: "On NVMe, PgDuckDB's DuckDB execution engine changes TPC-H plan quality vs native PostgreSQL under the same tuned profile"
 discriminates: [system]
 

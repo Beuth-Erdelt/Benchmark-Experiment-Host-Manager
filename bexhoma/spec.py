@@ -71,6 +71,9 @@ _DERIVE_UNARY_OPS: dict[type, Callable[[float], float]] = {
     ast.USub: operator.neg,
 }
 
+#: Header fields every experiment.yml must carry, independent of workload/system.
+_REQUIRED_HEADER_FIELDS = ("title", "hypothesis", "discriminates")
+
 _DEFAULT_MODE = "run"
 _DEFAULT_ARG_STYLE = "pg-guc"
 _ARG_STYLE_ENV_VAR = "env-var"
@@ -350,16 +353,26 @@ def resolve_system(
 def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> None:
     """Validate an experiment spec against the catalog before translation.
 
-    Checks, in order: the workload exists; every named system is in the
-    workload's ``supports:`` list; every ``loading.post_load`` option is a
-    legal workload parameter (legality); and, for each system, that its
-    ``physical_design`` actually supports the requested value (support).
-    See "Validation ordering" in ``docs/Design-Catalog-Contract.md``.
+    Checks, in order: every field in :data:`_REQUIRED_HEADER_FIELDS` is
+    present and non-empty (``title``, ``hypothesis``, ``discriminates`` — an
+    experiment.yml must state what it's testing and which factor it isolates
+    before anything else is resolved); the workload exists; every named
+    system is in the workload's ``supports:`` list; every
+    ``loading.post_load`` option is a legal workload parameter (legality);
+    and, for each system, that its ``physical_design`` actually supports the
+    requested value (support). See "Validation ordering" in
+    ``docs/Design-Catalog-Contract.md``.
 
     :param catalog: Parsed catalog.
     :param experiment: Parsed experiment spec.
     :raises SpecError: On any validation failure.
     """
+    for field_name in _REQUIRED_HEADER_FIELDS:
+        if not experiment.get(field_name):
+            raise SpecError(f"experiment.yml is missing required header field '{field_name}'")
+    if not isinstance(experiment["discriminates"], list):
+        raise SpecError("'discriminates' must be a list of factor names")
+
     workload_name = experiment["workload"]["name"]
     workloads = catalog.get("workloads", {})
     if workload_name not in workloads:

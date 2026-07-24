@@ -650,6 +650,17 @@ infra-only templates (`bexhoma-dashboard`, `bexhoma-messagequeue`,
 `bexhoma-prometheus`) are intentionally excluded — they're not benchmarkable
 systems.
 
+## Required header fields
+
+Every experiment.yml must carry three top-level fields before anything
+workload/system-specific: `title` (a short human-readable name), `hypothesis`
+(what the experiment is testing, in prose), and `discriminates` (a list of
+the factor(s) the experiment isolates — e.g. `[system]` when everything
+else is held constant across the `systems:` entries). `validate_experiment()`
+checks all three are present and non-empty before resolving anything else —
+an experiment.yml that can't say what it's testing fails immediately,
+rather than producing a technically-valid but purposeless run.
+
 ## Worked example: TPC-H, PostgreSQL vs. PgDuckDB
 
 This is now a real, runnable file — `dev/catalog/experiment.yml`, reproduced
@@ -659,6 +670,7 @@ is authoritative):
 ```yaml
 mode: run
 
+title: "TPC-H on NVMe: PostgreSQL vs. PgDuckDB under a matched analytical profile"
 hypothesis: "On NVMe, PgDuckDB's DuckDB execution engine changes TPC-H plan quality vs native PostgreSQL under the same tuned profile"
 discriminates: [system]
 
