@@ -832,6 +832,16 @@ class YcsbEvaluator(LogEvaluator):
         ``(code, configuration, experiment_run)``, then normalises the index.
         Rows for which no loading log was recorded (missing ``pod_count``) are dropped.
 
+        The scale factor used for ``Throughput [SF/h]`` is each connection's own
+        log-parsed ``SF`` (already present in the merged frame via ``get_df_loading()``,
+        which reads the ``SF:`` header line each YCSB pod logs at startup), falling back
+        to the experiment-wide ``queries.config`` ``defaultParameters.SF`` only where a
+        connection's own value is missing. Using the per-connection value (rather than
+        unconditionally overwriting it with the single experiment-wide default) keeps
+        this correct in a mixed experiment where YCSB runs alongside another benchmark
+        (e.g. TPC-H, registered via ``add_benchmark()``) at a different scale factor --
+        the experiment-wide default can only ever reflect one of them.
+
         :return: DataFrame with one row per loading run, indexed as
                  ``{code}-{configuration}-{experiment_run}``.
         :rtype: pandas.DataFrame
@@ -860,12 +870,14 @@ class YcsbEvaluator(LogEvaluator):
         #result.index.name = indexname
         # rows without pod_count have no recorded loading phase
         result = result.dropna(subset=['pod_count'])
-        workload_properties = self.get_workload()
-        sf_value = float(workload_properties['defaultParameters']['SF'])
         result = result.copy()
-        result['SF'] = sf_value
-        result['sf'] = sf_value
-        result['Throughput [SF/h]'] = sf_value * 3_600_000.0 / result['[OVERALL].RunTime(ms)']
+        if 'SF' in result.columns:
+            default_sf = float(self.get_workload()['defaultParameters']['SF'])
+            result['SF'] = pd.to_numeric(result['SF'], errors='coerce').fillna(default_sf)
+        else:
+            result['SF'] = float(self.get_workload()['defaultParameters']['SF'])
+        result['sf'] = result['SF']
+        result['Throughput [SF/h]'] = result['SF'] * 3_600_000.0 / result['[OVERALL].RunTime(ms)']
         return result
 
     def get_loading_per_run(self):

@@ -12,7 +12,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
-from bexhoma.cli_args import make_base_parser
+from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -115,6 +115,9 @@ if __name__ == '__main__':
     # set experiment
     if code is None:
         code = cluster.code
+    # summary mode resumes an existing experiment: use its own persisted SF
+    # instead of the -sf CLI default (see resolve_scaling_factor docstring)
+    SF = resolve_scaling_factor(cluster, code, mode, args.scaling_factor)
     ##############
     ### prepare and configure experiment
     ##############

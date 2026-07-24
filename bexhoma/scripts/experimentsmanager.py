@@ -126,17 +126,27 @@ def manage():
             code = args.experiment
             with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
                 workload_properties = ast.literal_eval(inp.read())
+                # Reconstructing an experiment object from just its code must not
+                # silently fall back to the experiment class's default SF (e.g.
+                # TpchExperiment's '100'): that default is written into
+                # dbmsbenchmarker's process-global parameter.defaultParameters and
+                # can leak into a re-evaluated queries.config on -fe, corrupting
+                # Power@Size/Throughput/Throughput[SF/h] for an experiment that
+                # never actually used that scale factor.
+                sf_kwargs = {}
+                if 'SF' in workload_properties.get('defaultParameters', {}):
+                    sf_kwargs['SF'] = workload_properties['defaultParameters']['SF']
                 match workload_properties['type']:
                     case 'ycsb':
-                        experiment = experiments.ycsb(cluster=cluster, code=code)
+                        experiment = experiments.ycsb(cluster=cluster, code=code, **sf_kwargs)
                     case 'tpcc':
-                        experiment = experiments.tpcc(cluster=cluster, code=code)
+                        experiment = experiments.tpcc(cluster=cluster, code=code, **sf_kwargs)
                     case 'tpch':
-                        experiment = experiments.tpch(cluster=cluster, code=code)
+                        experiment = experiments.tpch(cluster=cluster, code=code, **sf_kwargs)
                     case 'tpcds':
-                        experiment = experiments.tpcds(cluster=cluster, code=code)
+                        experiment = experiments.tpcds(cluster=cluster, code=code, **sf_kwargs)
                     case 'benchbase':
-                        experiment = experiments.benchbase(cluster=cluster, code=code)
+                        experiment = experiments.benchbase(cluster=cluster, code=code, **sf_kwargs)
                     case _:
                         experiment = experiments.base(cluster=cluster, code=code)
                 experiment.num_tenants = workload_properties.get('num_tenants', 0)

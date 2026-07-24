@@ -11,6 +11,43 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import argparse
+import ast
+import os
+
+__all__ = ["make_base_parser", "resolve_scaling_factor"]
+
+
+def resolve_scaling_factor(cluster, code, mode: str, cli_scaling_factor) -> str:
+    """
+    Returns the scaling factor an entry script should construct its experiment
+    object with.
+
+    For ``mode='summary'`` on an existing experiment ``code``, reads the
+    already-persisted ``defaultParameters.SF`` from that experiment's
+    ``queries.config`` instead of trusting the ``-sf`` CLI default. Constructing
+    the experiment with the wrong SF re-arms dbmsbenchmarker's shared, process-global
+    ``parameter.defaultParameters`` with a value the experiment never actually used;
+    if results are then re-evaluated, that wrong value leaks back into
+    ``queries.config`` and corrupts Power@Size/Throughput-style metrics for an
+    experiment that ran at a different scale factor. For every other mode (a fresh
+    or resumed live run), the CLI value is authoritative and is returned unchanged.
+
+    :param cluster: Already-constructed cluster object (provides ``resultfolder``).
+    :param code: Experiment identifier, or ``None`` for a brand-new experiment.
+    :param mode: The entry script's ``mode`` positional argument.
+    :param cli_scaling_factor: Value of ``args.scaling_factor`` (the ``-sf`` CLI default).
+    :return: Scaling factor to use, as a string.
+    :rtype: str
+    """
+    if mode == 'summary' and code is not None:
+        filename = os.path.join(cluster.resultfolder, str(code), 'queries.config')
+        if os.path.isfile(filename):
+            with open(filename, 'r') as inp:
+                workload_properties = ast.literal_eval(inp.read())
+            sf = workload_properties.get('defaultParameters', {}).get('SF')
+            if sf is not None:
+                return str(sf)
+    return str(cli_scaling_factor)
 
 
 def make_base_parser():
