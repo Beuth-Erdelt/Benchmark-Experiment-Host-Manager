@@ -2,12 +2,12 @@
 Public API of the bexhoma package.
 
 Exports the submodules: evaluators, clusters, experiments,
-configurations, collectors, and spec.
+configurations, collectors, spec, and environment.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-__all__ = ["evaluators", "clusters", "experiments", "configurations", "collectors", "spec"]
+__all__ = ["evaluators", "clusters", "experiments", "configurations", "collectors", "spec", "environment"]
 from .__version__ import __version__

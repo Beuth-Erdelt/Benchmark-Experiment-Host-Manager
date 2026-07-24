@@ -26,3 +26,4 @@ experiments/*/*/*/filled_*
 local/*
 logs_multitenant/*
 .vscode/
+dev/catalog/environment.yml
