@@ -64,7 +64,9 @@ class DictToObject(object):
 
 
 SELECTOR_RE = re.compile(
-    r'^(?P<kind>deployment|statefulset)\[(?P<workload>[^\]]+)\]\.container\[(?P<container>[^\]]+)\]\.(?P<param>[A-Za-z0-9_]+)$',
+    r'^(?P<kind>deployment|statefulset)\[(?P<workload>[^\]]+)\]'
+    r'(@(?P<config>[^.\[\]]+))?'
+    r'\.container\[(?P<container>[^\]]+)\]\.(?P<param>[A-Za-z0-9_]+)$',
     re.IGNORECASE
 )
 
@@ -84,10 +86,22 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
 
     * ``deployment[NAME].container[CONTAINER].PARAM``
     * ``statefulset[NAME].container[CONTAINER].PARAM``
+    * ``deployment[NAME]@CONFIG.container[CONTAINER].PARAM``
+    * ``statefulset[NAME]@CONFIG.container[CONTAINER].PARAM``
+
+    The optional ``@CONFIG`` scope restricts the operation to the one
+    configuration whose :attr:`~bexhoma.configurations.base.SutConfiguration.configuration`
+    equals ``CONFIG`` (see :meth:`~bexhoma.configurations.manifest.ManifestBuilder.patch_dbms_args`).
+    Without it, an operation applies to every configuration matching
+    ``NAME`` — this is what makes a resource sweep (several configurations
+    built from the same docker image, each with its own derived knob
+    values) expressible without changing the meaning of any existing,
+    unscoped ``--set``.
 
     :param s: Raw ``--set`` string from the CLI.
     :return: A tuple of (selector_dict, value_str) where selector_dict
-             contains keys ``kind``, ``workload``, ``container``, and ``param``.
+             contains keys ``kind``, ``workload``, ``config``, ``container``, and ``param``.
+             ``config`` is ``""`` when the selector carries no ``@CONFIG`` scope.
     :rtype: tuple[dict, str]
     :raises ValueError: When the string has no ``=`` or the selector does not match.
     """
@@ -98,10 +112,12 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
     if not m:
         raise ValueError(
             "Invalid selector. Expected e.g. "
-            "deployment[sut].container[dbms].max_worker_processes"
+            "deployment[sut].container[dbms].max_worker_processes "
+            "or deployment[sut]@PostgreSQL-32Gi.container[dbms].shared_buffers"
         )
     d = m.groupdict()
     d["kind"] = d["kind"].lower()
+    d["config"] = d["config"] or ""
     return d, value.strip()
 
 
@@ -407,6 +423,23 @@ class ExperimentBase():
         elif value.isdigit():
             value = list(int(value))
         return value
+    def get_parameter_as_list_str(self,
+                                  parameter: str) -> list:
+        """
+        Transform a comma separated CLI parameter into a list of strings,
+        without casting entries to int. This is for parameters whose values
+        are not numbers, e.g. RAM quantities such as ``32Gi,64Gi``.
+
+        :param parameter: Comma separated list of values
+        :return: Python list of string values
+        :rtype: list[str]
+        """
+        if parameter not in self.args_dict:
+            return []
+        value = self.args_dict[parameter]
+        if len(value) == 0:
+            return []
+        return [entry for entry in value.split(",") if len(entry) > 0]
     def prepare_testbed(self,
                         parameter: dict) -> None:
         """

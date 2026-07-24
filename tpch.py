@@ -28,6 +28,42 @@ import math
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+
+def _resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list):
+    """Zip per-dimension resource CLI lists into one resource cell per swept value.
+
+    Every list with more than one entry must share the same length; a
+    single-entry list is broadcast (repeated) to that length. This lets
+    e.g. ``-rr 32Gi,64Gi -lr 32Gi,64Gi`` sweep RAM across two configurations
+    per DBMS while ``-rc``/``-lc`` stay one shared CPU value for both.
+
+    :param request_cpu_list: Parsed ``-rc`` values.
+    :param limit_cpu_list: Parsed ``-lc`` values.
+    :param request_ram_list: Parsed ``-rr`` values.
+    :param limit_ram_list: Parsed ``-lr`` values.
+    :return: List of ``{'cpu', 'cpu_limit', 'memory', 'memory_limit'}`` dicts, one per cell.
+    :rtype: list[dict]
+    :raises ValueError: When two lists both have more than one entry but different lengths.
+    """
+    lists = {
+        'cpu': request_cpu_list,
+        'cpu_limit': limit_cpu_list,
+        'memory': request_ram_list,
+        'memory_limit': limit_ram_list,
+    }
+    num_cells = max((len(values) for values in lists.values() if len(values) > 1), default=1)
+    for name, values in lists.items():
+        if len(values) > 1 and len(values) != num_cells:
+            raise ValueError(
+                f"resource sweep lists must share one length: '{name}' has {len(values)} "
+                f"entries, expected 1 or {num_cells}"
+            )
+    return [
+        {name: (values[i] if len(values) > 1 else values[0]) for name, values in lists.items()}
+        for i in range(num_cells)
+    ]
+
+
 if __name__ == '__main__':
     description = """Run TPC-H benchmark queries against a DBMS in Kubernetes.
     Data is generated on a shared distributed filesystem and loaded in parallel.
@@ -153,6 +189,15 @@ if __name__ == '__main__':
     num_loading_split = experiment.get_parameter_as_list('num_loading_split')
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
+    # resource sweep: -rr/-lr (and -rc/-lc) may each carry a comma-separated
+    # list; resource_cells has one entry per swept configuration to build,
+    # e.g. -rr 32Gi,64Gi -lr 32Gi,64Gi produces two PostgreSQL configurations
+    resource_cells = _resource_cells(
+        request_cpu_list=experiment.get_parameter_as_list_str('request_cpu'),
+        limit_cpu_list=experiment.get_parameter_as_list_str('limit_cpu'),
+        request_ram_list=experiment.get_parameter_as_list_str('request_ram'),
+        limit_ram_list=experiment.get_parameter_as_list_str('limit_ram'),
+    )
     # set node groups for components
     if aws:
         # set node labes for components
@@ -211,16 +256,67 @@ if __name__ == '__main__':
             split_portion = int(loading_pods_total/loading_pods_split)
             if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
-                if experiment.tenant_per == 'container':
-                    for tenant in range(experiment.num_tenants):
-                        name_format = 'PostgreSQL-{cluster}-{pods}-{tenant}'
-                        #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, tenant=tenant)
-                        config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
+                for cell in resource_cells:
+                    # a swept resource cell needs its own configuration identity and
+                    # its own storage, or every cell would collide on the same PVC
+                    resource_suffix = cell['memory'] if len(resource_cells) > 1 else ''
+                    configuration_name = f'PostgreSQL-{resource_suffix}' if resource_suffix else ''
+                    alias = f'PostgreSQL@{resource_suffix}' if resource_suffix else 'DBMS A2'
+                    if experiment.tenant_per == 'container':
+                        for tenant in range(experiment.num_tenants):
+                            name_format = 'PostgreSQL-{cluster}-{pods}-{tenant}'
+                            #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, tenant=tenant)
+                            config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', configuration=configuration_name, alias=alias)
+                            #config.num_tenants = multi_tenant_num
+                            #config.tenant_per = multi_tenant_by
+                            config.set_resources(
+                                requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
+                                limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
+                                )
+                            config.set_storage(
+                                storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)+(f'-{resource_suffix}' if resource_suffix else '')
+                                )
+                            if skip_loading:
+                                config.loading_deactivated = True
+                            config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
+                            config.set_loading_parameters(
+                                PODS_TOTAL = str(loading_pods_total),
+                                PODS_PARALLEL = str(split_portion),
+                                BEXHOMA_TENANT_BY = config.tenant_per,
+                                BEXHOMA_TENANT_NUM = config.num_tenants,
+                                BEXHOMA_TENANT_ID = tenant,
+                                )
+                            config.set_benchmarking_parameters(
+                                TENANT_BY = config.tenant_per,
+                                TENANT_NUM = config.num_tenants,
+                                BEXHOMA_TENANT_BY = config.tenant_per,
+                                BEXHOMA_TENANT_NUM = config.num_tenants,
+                                BEXHOMA_TENANT_ID = tenant,
+                                )
+                            config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+                            config.set_eval_parameters(
+                                TENANT_BY = config.tenant_per,
+                                TENANT_NUM = config.num_tenants,
+                                TENANT = tenant,
+                                )
+                    else:
+                        name_format = 'PostgreSQL-{cluster}-{pods}'
+                        #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                        config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', configuration=configuration_name, alias=alias)
                         #config.num_tenants = multi_tenant_num
                         #config.tenant_per = multi_tenant_by
-                        config.set_storage(
-                            storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
+                        config.set_resources(
+                            requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
+                            limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
                             )
+                        if config.tenant_per:
+                            config.set_storage(
+                                storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)+(f'-{resource_suffix}' if resource_suffix else '')
+                                )
+                        else:
+                            config.set_storage(
+                                storageConfiguration = 'postgresql'+(f'-{resource_suffix}' if resource_suffix else '')
+                                )
                         if skip_loading:
                             config.loading_deactivated = True
                         config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
@@ -229,60 +325,23 @@ if __name__ == '__main__':
                             PODS_PARALLEL = str(split_portion),
                             BEXHOMA_TENANT_BY = config.tenant_per,
                             BEXHOMA_TENANT_NUM = config.num_tenants,
-                            BEXHOMA_TENANT_ID = tenant,
+                            BEXHOMA_TENANT_ID = 0,
                             )
                         config.set_benchmarking_parameters(
                             TENANT_BY = config.tenant_per,
                             TENANT_NUM = config.num_tenants,
                             BEXHOMA_TENANT_BY = config.tenant_per,
                             BEXHOMA_TENANT_NUM = config.num_tenants,
-                            BEXHOMA_TENANT_ID = tenant,
+                            BEXHOMA_TENANT_ID = 0,
                             )
                         config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+                        if config.tenant_per == 'schema':
+                            config.set_experiment(script='Schema_tenant')
+                            config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
                         config.set_eval_parameters(
                             TENANT_BY = config.tenant_per,
                             TENANT_NUM = config.num_tenants,
-                            TENANT = tenant,
                             )
-                else:
-                    name_format = 'PostgreSQL-{cluster}-{pods}'
-                    #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                    config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
-                    #config.num_tenants = multi_tenant_num
-                    #config.tenant_per = multi_tenant_by
-                    if config.tenant_per:
-                        config.set_storage(
-                            storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
-                            )
-                    else:
-                        config.set_storage(
-                            storageConfiguration = 'postgresql'
-                            )
-                    if skip_loading:
-                        config.loading_deactivated = True
-                    config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                    config.set_loading_parameters(
-                        PODS_TOTAL = str(loading_pods_total),
-                        PODS_PARALLEL = str(split_portion),
-                        BEXHOMA_TENANT_BY = config.tenant_per,
-                        BEXHOMA_TENANT_NUM = config.num_tenants,
-                        BEXHOMA_TENANT_ID = 0,
-                        )
-                    config.set_benchmarking_parameters(
-                        TENANT_BY = config.tenant_per,
-                        TENANT_NUM = config.num_tenants,
-                        BEXHOMA_TENANT_BY = config.tenant_per,
-                        BEXHOMA_TENANT_NUM = config.num_tenants,
-                        BEXHOMA_TENANT_ID = 0,
-                        )
-                    config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-                    if config.tenant_per == 'schema':
-                        config.set_experiment(script='Schema_tenant')
-                        config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
-                    config.set_eval_parameters(
-                        TENANT_BY = config.tenant_per,
-                        TENANT_NUM = config.num_tenants,
-                        )
             if ("CedarDB" in args.dbms):
                 # PostgreSQL
                 name_format = 'CedarDB-{cluster}-{pods}'
@@ -302,27 +361,37 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("PgDuckDB" in args.dbms):
                 # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's DDL scripts and loading job)
-                name_format = 'PgDuckDB-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='PgDuckDB', dialect='PostgreSQL', alias='DBMS A2')
-                config.path_experiment_docker = 'PostgreSQL'   # pg_duckdb IS PostgreSQL: reuse its DDL/init scripts
-                config.set_storage(
-                    storageConfiguration = 'PgDuckDB'
-                    )
-                config.sut_parameters = {
-                    # read by deploymenttemplate-PgDuckDB.yml's postStart hook to decide
-                    # whether to ALTER ROLE ... SET duckdb.force_execution
-                    'DUCKDB_FORCE_EXECUTION': str(args.duckdb_force_execution).lower(),
-                }
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+                for cell in resource_cells:
+                    # a swept resource cell needs its own configuration identity and
+                    # its own storage, or every cell would collide on the same PVC
+                    resource_suffix = cell['memory'] if len(resource_cells) > 1 else ''
+                    configuration_name = f'PgDuckDB-{resource_suffix}' if resource_suffix else ''
+                    alias = f'PgDuckDB@{resource_suffix}' if resource_suffix else 'DBMS A2'
+                    name_format = 'PgDuckDB-{cluster}-{pods}'
+                    #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
+                    config = configurations.default(experiment=experiment, docker='PgDuckDB', dialect='PostgreSQL', configuration=configuration_name, alias=alias)
+                    config.path_experiment_docker = 'PostgreSQL'   # pg_duckdb IS PostgreSQL: reuse its DDL/init scripts
+                    config.set_resources(
+                        requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
+                        limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
+                        )
+                    config.set_storage(
+                        storageConfiguration = 'PgDuckDB'+(f'-{resource_suffix}' if resource_suffix else '')
+                        )
+                    config.sut_parameters = {
+                        # read by deploymenttemplate-PgDuckDB.yml's postStart hook to decide
+                        # whether to ALTER ROLE ... SET duckdb.force_execution
+                        'DUCKDB_FORCE_EXECUTION': str(args.duckdb_force_execution).lower(),
+                    }
+                    if skip_loading:
+                        config.loading_deactivated = True
+                    config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
+                    config.set_loading_parameters(
+                        PODS_TOTAL = str(loading_pods_total),
+                        PODS_PARALLEL = str(split_portion),
+                        )
+                    config.set_benchmarking_parameters()
+                    config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'

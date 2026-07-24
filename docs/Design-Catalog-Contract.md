@@ -670,9 +670,9 @@ is authoritative):
 ```yaml
 mode: run
 
-title: "TPC-H on NVMe: PostgreSQL vs. PgDuckDB under a matched analytical profile"
-hypothesis: "On NVMe, PgDuckDB's DuckDB execution engine changes TPC-H plan quality vs native PostgreSQL under the same tuned profile"
-discriminates: [system]
+title: "TPC-H joins under concurrency and RAM pressure: PostgreSQL vs. PgDuckDB at SF10"
+hypothesis: "pg_duckdb outperforms PostgreSQL on join-heavy TPC-H queries (Q5, Q7, Q8, Q9, Q21) at SF=10 under a matched analytical-ssd profile, and the advantage (if any) holds as concurrent client load increases from 1 to 16 and RAM tightens from 64Gi to 32Gi"
+discriminates: [system, concurrency, memory]
 
 workload:
   name: tpch
@@ -681,12 +681,13 @@ workload:
     timeout: 1200
     query_repeats: 3
     verify_result: true
-  rounds: [1, 1, 2, 3]
+    active_queries: [5, 7, 8, 9, 21]
+  rounds: [1, 2, 3, 4]
   repetitions: 3
 
 loading:
-  pods: 8
-  threads: 8
+  pods: 4
+  threads: 4
   post_load: {indexes: true, constraints: true, statistics: true}
 
 systems:
@@ -705,7 +706,9 @@ placement:
 
 resources:
   cpu: {request: 16, limit: 16}
-  memory: {request: 64Gi, limit: 64Gi}
+  memory:
+    - {request: 32Gi, limit: 32Gi}
+    - {request: 64Gi, limit: 64Gi}
   storage: {size: 50Gi}
   storage_class: ssd  # required — must match the analytical-ssd profile's `requires.storage_class`,
                        # or resolution raises SpecError before any argv is produced
@@ -720,6 +723,51 @@ flag itself (tpch.py:309-313), so the translator only needs to know the
 flag mapping, not reach into `sut_parameters` directly. This is a concrete
 case of §"Schema extensions" point 3: the resolver branches on each knob's
 own `arg_style`, not assuming the whole system is uniform.
+
+### Resource sweeps: `resources.memory`/`resources.cpu` as a list
+
+`resources.memory` (and, independently, `resources.cpu`) may be a single
+`{request, limit}` dict — shared by every system in `systems:`, no sweep,
+exactly as above for `cpu` — or a list of them. A list crosses every
+`systems:` entry against every list entry: two systems × two memory
+entries resolves to four configurations (`PostgreSQL-32Gi`,
+`PostgreSQL-64Gi`, `PgDuckDB-32Gi`, `PgDuckDB-64Gi`), each with its own
+`derive:`d knob values (`shared_buffers` etc. computed from *that* cell's
+`memory_limit`). This is the same "list = swept, scalar = shared" idiom
+`workload.rounds` already uses for concurrency — see
+`bexhoma/spec.py::build_argv()`'s `cpu_cells`/`memory_cells` handling.
+
+Two things had to change below `spec.py` for this to actually run, not
+just parse:
+
+1. **`tpch.py`** parses `-rr`/`-lr`/`-rc`/`-lc` as comma-separated lists
+   (`_resource_cells()`) and, for each DBMS already named in `-dbms`, loops
+   over the resulting cells, calling `config.set_resources(...)` per cell —
+   `SutConfiguration.set_resources()` already applied per-configuration
+   resources correctly before this change; only the CLI/entry-script loop
+   that calls it once per cell was missing. Each cell also gets its own
+   `configuration=` name (`{docker}-{memory_request}`) and storage identity,
+   so concurrent cells don't collide on the same PVC.
+2. **The `--set` mechanism was experiment-global**, applied identically to
+   every configuration matching a `deployment[NAME]` selector — two
+   `PostgreSQL` cells would both receive whichever `shared_buffers` value
+   was listed last. `SELECTOR_RE`
+   (`bexhoma/experiments/base.py`) now accepts an optional
+   `deployment[NAME]@CONFIG.container[...]` scope; `patch_dbms_args()`
+   (`bexhoma/configurations/manifest.py`) silently skips any operation whose
+   `@CONFIG` doesn't match its own `configuration` name. Unscoped `--set`
+   (today's only form before this change) still applies to every matching
+   configuration, so this is fully backward compatible.  `spec.py` predicts
+   each cell's `{docker}-{memory_request}` name statically and emits one
+   scoped `--set` per (system, cell, knob) triple.
+
+This `--set @CONFIG` scoping is deliberately a thin CLI-layer bridge, not
+the long-term mechanism: `resolve_system()`'s resolution (per-cell
+`derive:` evaluation, `ResolvedSystem`/`ResolvedKnob`) is what stays
+valuable if entry scripts ever parse `experiment.yml` directly instead of
+being invoked via argv — at that point the resolved knobs could be handed
+to `config.manifest.patch_dbms_args()` in-process, and the selector-string
+scoping (and `build_argv()` itself) would no longer be needed.
 
 ## `derive:` expression language
 

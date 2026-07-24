@@ -134,12 +134,24 @@ class ManifestBuilder:
     ) -> List[dict]:
         """Apply parameter-patch operations across all documents in a manifest.
 
+        An operation whose selector carries a ``config`` scope (parsed from
+        ``deployment[NAME]@CONFIG...``, see :func:`~bexhoma.experiments.base.parse_set_arg`)
+        is silently skipped when it does not name this configuration's own
+        :attr:`~bexhoma.configurations.base.SutConfiguration.configuration`. This is what
+        lets several configurations built from the same docker image (a resource sweep)
+        each receive their own derived knob values from one shared, experiment-wide
+        ``--set`` list — every configuration is patched with the same operations, but
+        each only applies the ones scoped to it (or unscoped, which apply to all).
+
         :param yaml_docs: List of parsed YAML document dicts.
         :param operations: List of ``(selector_dict, value_str)`` pairs.
         :return: Modified list of YAML document dicts.
         :rtype: list[dict]
         """
         for sel, val in operations:
+            config_scope = sel.get("config")
+            if config_scope and config_scope != self._config.configuration:
+                continue
             kind = sel["kind"]
             workload = sel["workload"]
             container = sel["container"]

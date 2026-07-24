@@ -1,4 +1,5 @@
-# experiment.yml — Is pg_duckdb better than PostgreSQL on joins, even under concurrency?
+# experiment.yml — Is pg_duckdb better than PostgreSQL on joins, even under concurrency
+# and RAM pressure?
 #
 # STATUS: draft, prototype scope. Resolved against catalog.yaml by
 # bexhoma/spec.py into a `tpch.py` argument vector. See
@@ -10,20 +11,26 @@
 #     "[5, 7, 8, 9, 21] = multi-way joins" in catalog.yaml) instead of the
 #     full 22-query set.
 #   - "10GB dataset" -> scaling_factor: 10 (catalog: scaling_factor unit is GB).
-#   - "at most 64GB of RAM" -> resources.memory = 64Gi, which is also what the
-#     analytical-ssd profile's derive: formulas are sized against (e.g.
-#     shared_buffers = 0.3125 * memory_limit -> 20GB at this ceiling).
 #   - "even under concurrency" -> workload.rounds sweeps parallel-client
 #     counts from 1 up to 16 instead of a single round, so the comparison is
 #     checked at low and high concurrency, not just once.
+#   - "and under RAM pressure" -> resources.memory is a *list* instead of a
+#     single value: every system in `systems:` is crossed against every list
+#     entry, one resolved configuration per (system, memory) pair. This is
+#     the same "list = swept, scalar = shared" idiom `rounds:` already
+#     establishes for concurrency -- see resources.memory below and
+#     bexhoma/spec.py::build_argv()'s cpu_cells/memory_cells handling. The
+#     analytical-ssd profile's derive: formulas (e.g. shared_buffers =
+#     0.3125 * memory_limit) are re-evaluated per cell, so PostgreSQL/PgDuckDB
+#     each get 20GB shared_buffers at the 64Gi cell and 10GB at the 32Gi cell.
 #   - repetitions: 3 satisfies the "min. 3 repetitions for conclusions"
 #     behavioral rule from issue #764.
 
 mode: run
 
-title: "TPC-H joins under concurrency: PostgreSQL vs. PgDuckDB at SF10, 64GB RAM ceiling"
-hypothesis: "pg_duckdb outperforms PostgreSQL on join-heavy TPC-H queries (Q5, Q7, Q8, Q9, Q21) at SF=10 under a matched analytical-ssd profile, and the advantage (if any) holds as concurrent client load increases from 1 to 16"
-discriminates: [system, concurrency]
+title: "TPC-H joins under concurrency and RAM pressure: PostgreSQL vs. PgDuckDB at SF10"
+hypothesis: "pg_duckdb outperforms PostgreSQL on join-heavy TPC-H queries (Q5, Q7, Q8, Q9, Q21) at SF=10 under a matched analytical-ssd profile, and the advantage (if any) holds as concurrent client load increases from 1 to 4 and RAM tightens from 64Gi to 32Gi"
+discriminates: [system, concurrency, memory]
 
 workload:
   name: tpch
@@ -33,7 +40,7 @@ workload:
     query_repeats: 3
     verify_result: true
     active_queries: [5, 7, 8, 9, 21]  # multi-way joins, per catalog.yaml's own labeling
-  rounds: [1, 4, 8, 16]  # concurrency sweep: 1 client baseline, then 4/8/16 concurrent clients
+  rounds: [1, 2, 3, 4]  # concurrency sweep: 1 client baseline, then 2/3/4 concurrent clients
   repetitions: 3  # issue #764 behavioral rule: minimum 3 repetitions for conclusions
 
 loading:
@@ -57,6 +64,8 @@ placement:
 
 resources:
   cpu: {request: 16, limit: 16}
-  memory: {request: 64Gi, limit: 64Gi}  # "our servers have at most 64GB of RAM"
+  memory:
+    - {request: 32Gi, limit: 32Gi}
+    - {request: 64Gi, limit: 64Gi}  # "our servers have at most 64GB of RAM"
   storage: {size: 50Gi}
   storage_class: ssd  # must match the analytical-ssd profile's `requires.storage_class`

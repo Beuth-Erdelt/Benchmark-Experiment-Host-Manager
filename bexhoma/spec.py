@@ -423,6 +423,37 @@ def _append_flag(argv: list[str], flag: str, value: Any) -> None:
     argv.extend([flag, str(value)])
 
 
+def _resource_cell(cells: list[dict[str, Any]], index: int) -> dict[str, Any]:
+    """Return the resource dict for one sweep cell, broadcasting a single-entry list.
+
+    :param cells: Either a single ``{request, limit}`` dict wrapped in a list, or one
+        entry per swept cell.
+    :param index: 0-based cell index.
+    :return: The ``{request, limit}`` dict for this cell.
+    :rtype: dict[str, Any]
+    """
+    return cells[index] if len(cells) > 1 else cells[0]
+
+
+def _join_cell_values(cells: list[dict[str, Any]], num_cells: int, key: str) -> Optional[str]:
+    """Join a possibly-broadcast list of resource cells into a comma-separated CLI value.
+
+    Mirrors ``tpch.py``'s own ``-rr``/``-lr``/``-rc``/``-lc`` sweep-list handling: a
+    single value stays a bare value (``num_cells == 1``), several become a
+    comma-separated list, one per resolved configuration.
+
+    :param cells: Either a single-entry or ``num_cells``-entry list of ``{request, limit}`` dicts.
+    :param num_cells: Number of resolved cells in this experiment.
+    :param key: ``"request"`` or ``"limit"``.
+    :return: Comma-separated values, or ``None`` when any cell omits ``key``.
+    :rtype: Optional[str]
+    """
+    values = [_resource_cell(cells, index).get(key) for index in range(num_cells)]
+    if any(value is None or value == "" for value in values):
+        return None
+    return ",".join(str(value) for value in values)
+
+
 def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:
     """Translate a resolved experiment.yml into a ``tpch.py`` argument vector.
 
@@ -447,19 +478,50 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     placement = experiment.get("placement", {})
     system_specs = experiment.get("systems", [])
 
-    resolve_inputs = {
-        "memory_limit": resources.get("memory", {}).get("limit"),
-        "cpu_limit": resources.get("cpu", {}).get("limit"),
-        "storage_class": resources.get("storage_class"),
-        "scaling_factor": params.get("scaling_factor"),
-    }
-    resolved_systems = [resolve_system(catalog, system_spec, resolve_inputs) for system_spec in system_specs]
+    cpu = resources.get("cpu", {})
+    memory = resources.get("memory", {})
+    storage = resources.get("storage", {})
+    # resources.cpu / resources.memory may each be a single {request, limit} dict
+    # (today's shape: shared by every system, no sweep) or a list of them (a
+    # resource sweep: every system in `systems:` is crossed against every list
+    # entry, one resolved configuration per (system, cell) pair) -- mirrors
+    # tpch.py's own -rr/-lr/-rc/-lc comma-list handling one for one.
+    cpu_cells = cpu if isinstance(cpu, list) else [cpu]
+    memory_cells = memory if isinstance(memory, list) else [memory]
+    num_cells = max(len(cpu_cells), len(memory_cells))
+    if len(cpu_cells) not in (1, num_cells) or len(memory_cells) not in (1, num_cells):
+        raise SpecError(
+            "resources.cpu and resources.memory sweep lists must share one length: "
+            f"got {len(cpu_cells)} cpu entries and {len(memory_cells)} memory entries"
+        )
+
+    # one (system_spec, ResolvedSystem, configuration_name) triple per resolved cell;
+    # configuration_name is "" (unscoped) when there is only one cell, otherwise it
+    # must match the configuration name tpch.py's own resource-sweep loop will give
+    # that cell (docker + "-" + memory request), so the --set operations emitted
+    # below land on the right configuration (see parse_set_arg's @CONFIG scope)
+    resolved_cells: list[tuple[dict[str, Any], ResolvedSystem, str]] = []
+    for system_spec in system_specs:
+        for cell_index in range(num_cells):
+            cell_cpu = _resource_cell(cpu_cells, cell_index)
+            cell_memory = _resource_cell(memory_cells, cell_index)
+            resolve_inputs = {
+                "memory_limit": cell_memory.get("limit"),
+                "cpu_limit": cell_cpu.get("limit"),
+                "storage_class": resources.get("storage_class"),
+                "scaling_factor": params.get("scaling_factor"),
+            }
+            resolved = resolve_system(catalog, system_spec, resolve_inputs)
+            configuration_name = (
+                f"{system_spec['name']}-{cell_memory.get('request')}" if num_cells > 1 else ""
+            )
+            resolved_cells.append((system_spec, resolved, configuration_name))
 
     argv: list[str] = [experiment.get("mode", _DEFAULT_MODE)]
 
-    if resolved_systems:
+    if system_specs:
         argv.append("-dbms")
-        argv.extend(system.name for system in resolved_systems)
+        argv.extend(system_spec["name"] for system_spec in system_specs)
 
     _append_flag(argv, "-sf", params.get("scaling_factor"))
     _append_flag(argv, "-t", params.get("timeout"))
@@ -506,27 +568,25 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     _append_flag(argv, "-rnl", placement.get("loading"))
     _append_flag(argv, "-rnb", placement.get("benchmarking"))
 
-    cpu = resources.get("cpu", {})
-    memory = resources.get("memory", {})
-    storage = resources.get("storage", {})
-    _append_flag(argv, "-rc", cpu.get("request"))
-    _append_flag(argv, "-lc", cpu.get("limit"))
-    _append_flag(argv, "-rr", memory.get("request"))
-    _append_flag(argv, "-lr", memory.get("limit"))
+    _append_flag(argv, "-rc", _join_cell_values(cpu_cells, num_cells, "request"))
+    _append_flag(argv, "-lc", _join_cell_values(cpu_cells, num_cells, "limit"))
+    _append_flag(argv, "-rr", _join_cell_values(memory_cells, num_cells, "request"))
+    _append_flag(argv, "-lr", _join_cell_values(memory_cells, num_cells, "limit"))
     _append_flag(argv, "-rss", storage.get("size"))
 
-    storage_classes = {system.storage_class for system in resolved_systems if system.storage_class}
+    storage_classes = {resolved.storage_class for _, resolved, _ in resolved_cells if resolved.storage_class}
     if len(storage_classes) > 1:
         raise SpecError(f"resolved systems require conflicting storage classes: {sorted(storage_classes)}")
     if storage_classes:
         _append_flag(argv, "-rst", next(iter(storage_classes)))
 
-    for system in resolved_systems:
-        for knob in system.knobs.values():
+    for system_spec, resolved, configuration_name in resolved_cells:
+        scope = f"@{configuration_name}" if configuration_name else ""
+        for knob in resolved.knobs.values():
             if knob.arg_style == _DEFAULT_ARG_STYLE:
                 argv.extend([
                     "--set",
-                    f"deployment[{system.deployment}].container[dbms].{knob.name}={knob.value}",
+                    f"deployment[{resolved.deployment}]{scope}.container[dbms].{knob.name}={knob.value}",
                 ])
             elif knob.arg_style == _ARG_STYLE_ENV_VAR:
                 if knob.env_var == _DUCKDB_FORCE_EXECUTION_ENV_VAR:
@@ -534,12 +594,12 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
                         argv.append(_DUCKDB_FORCE_EXECUTION_FLAG)
                 else:
                     raise SpecError(
-                        f"system '{system.name}' knob '{knob.name}' has arg_style "
+                        f"system '{resolved.name}' knob '{knob.name}' has arg_style "
                         f"'env-var' but no known CLI mapping yet"
                     )
             else:
                 raise SpecError(
-                    f"system '{system.name}' knob '{knob.name}' has arg_style "
+                    f"system '{resolved.name}' knob '{knob.name}' has arg_style "
                     f"'{knob.arg_style}', not yet translatable to a CLI flag"
                 )
 
