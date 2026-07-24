@@ -1,0 +1,205 @@
+# bexhoma catalog — prototype scope: TPC-H against PostgreSQL and PgDuckDB.
+#
+# STATUS: draft, not yet consumed by any code. This is the first slice of
+# the catalog contract proposed in issue #764, narrowed to the pair chosen
+# for the first implementation. See docs/Design-Catalog-Contract.md for the
+# full design rationale, the complete (all-workload, all-system) breadth
+# pass this was extracted from, and open questions.
+#
+# Two catalog concepts kept intentionally separate:
+#   - workloads: what to run   (params, loading behavior, physical-design semantics)
+#   - systems:   what to run it on (server knobs, physical-design support, profiles)
+#
+# A profile's `knobs:` are literal values an expert chose; `derive:` is only
+# for the handful of quantities that should scale with an experiment's own
+# resource limits. The derive expression language is deliberately minimal:
+# arithmetic over exactly {memory_limit, cpu_limit, storage_class,
+# scaling_factor} — no functions, no conditionals.
+
+workloads:
+  tpch:
+    why: "star-schema OLAP: 22 queries, multi-way joins, official TPC-H"
+    supports: [PostgreSQL, PgDuckDB]  # full workload also supports MonetDB, MySQL,
+                                       # MariaDB, DatabaseService, Citus, CedarDB —
+                                       # trimmed to prototype scope here
+    modes: [profiling, run, start, load, empty, summary]
+
+    params:
+      scaling_factor:
+        type: int
+        unit: GB
+        why: "TPC-H scale factor, controls database size"
+      timeout:
+        type: int
+        unit: seconds
+        why: "per-query timeout"
+      query_repeats:
+        type: int
+        default: 1
+        min: 1
+        why: "repeat each query N times per round"
+      verify_result:
+        type: bool
+        default: false
+        why: "validate result rows meet basic sanity checks"
+      measure_datatransfer:
+        type: bool
+        default: false
+        why: "additionally record bytes transferred per query"
+      active_queries:
+        type: list[int]
+        default: all
+        why: "restrict to a query subset, e.g. [5, 7, 8, 9, 21] = multi-way joins"
+      recreate_parameter:
+        type: bool
+        default: false
+        why: "regenerate random query parameters for each stream"
+      shuffle_queries:
+        type: bool
+        default: false
+        why: "shuffle query execution order independently per stream"
+      limit_import_table:
+        type: str
+        default: ""
+        why: "import only this table (partial re-loads)"
+      refresh_streams:
+        type: int
+        default: 0
+        why: "number of RF1/RF2 refresh-stream pairs run parallel to query streams"
+      refresh_stream_offset:
+        type: int
+        default: 0
+        why: "starting OFFSET+1 for the refresh stream"
+
+    loading:
+      pods:
+        type: int
+        min: 1
+        why: "number of parallel loader pods"
+      threads:
+        type: int
+        min: 1
+        why: "loader threads, split across pods"
+      split:
+        type: int
+        default: 1
+        why: "number of parallel loader batches"
+      post_load:
+        indexes:
+          type: bool
+          default: false
+          why: "create indexes on all tables after loading; without this, plans fall back to sequential scans"
+        constraints:
+          type: bool
+          default: false
+          why: "add primary-key/foreign-key constraints after loading; deferred because per-row checks slow bulk COPY"
+        statistics:
+          type: bool
+          default: false
+          why: "run ANALYZE after loading; without it the planner has no cardinality estimates for round 1"
+        storage_format:
+          type: enum
+          values: [heap]  # columnar exists in the general schema (Citus) but is out of scope for this pair
+          default: heap
+
+    rounds:
+      type: list[int]
+      why: "comma-separated parallel-client sweep; one benchmarking round per entry"
+    repetitions:
+      type: int
+      default: 1
+      why: "how many times the whole round list repeats"
+
+systems:
+  PostgreSQL:
+    deployment: bexhoma-deployment-postgres
+    image: postgres:18.3
+    arg_style: pg-guc  # patchable via bexhoma's existing --set / patch_dbms_args() mechanism
+
+    knobs:
+      # active in the shipped k8s/deploymenttemplate-PostgreSQL.yml today
+      max_connections:                     {type: int, default: 640}
+      max_worker_processes:                {type: int, default: 16}
+      max_parallel_workers:                {type: int, default: 16}
+      max_parallel_workers_per_gather:     {type: int, default: 8}
+      max_parallel_maintenance_workers:    {type: int, default: 4}
+      shared_buffers:                      {type: memory, default: 16GB}
+      effective_cache_size:                {type: memory, default: 40GB}
+      work_mem:                            {type: memory, default: 512MB}
+      maintenance_work_mem:                {type: memory, default: 2GB}
+      autovacuum:                          {type: enum, values: [on, off], default: off}
+      wal_level:                           {type: enum, values: [minimal, replica, logical], default: minimal}
+      max_wal_senders:                     {type: int, default: 0}
+      max_wal_size:                        {type: memory, default: 32GB}
+      checkpoint_timeout:                  {type: duration, default: 1h}
+      checkpoint_completion_target:        {type: float, default: 1.0}
+      lock_timeout:                        {type: duration, default: 30s}
+      idle_in_transaction_session_timeout: {type: int, unit: ms, default: 30000}
+      # known to the template as commented-out reference knobs, not active by
+      # default — legal to set via a profile or an experiment override
+      effective_io_concurrency:  {type: int, status: reference-only}
+      io_method:                 {type: enum, values: [sync, io_uring], status: reference-only}
+      random_page_cost:          {type: float, status: reference-only}
+      seq_page_cost:             {type: float, status: reference-only}
+      default_statistics_target: {type: int, status: reference-only}
+      fsync:                     {type: enum, values: [on, off], status: reference-only}
+      synchronous_commit:        {type: enum, values: [on, off], status: reference-only}
+      wal_compression:           {type: enum, values: [on, off], status: reference-only}
+
+    physical_design:
+      indexes: true
+      constraints: true
+      statistics: true
+      storage_format: [heap]
+
+    profiles:
+      analytical-ssd:
+        why: "OLAP on node-local NVMe, sized from this experiment's memory limit"
+        requires: {storage_class: ssd}
+        knobs:
+          random_page_cost: 1.1
+          effective_io_concurrency: 200
+          io_method: io_uring
+          max_parallel_workers_per_gather: 2
+          max_parallel_workers: 4
+          max_worker_processes: 6
+        derive:
+          shared_buffers:       "0.3125 * memory_limit"
+          effective_cache_size: "0.75 * memory_limit"
+          work_mem:              "0.015625 * memory_limit"
+          maintenance_work_mem:  "0.03125 * memory_limit"
+
+  PgDuckDB:
+    extends: PostgreSQL  # formalizes tpch.py's own path_experiment_docker='PostgreSQL' DDL reuse
+    deployment: bexhoma-deployment-pg-duck
+    image: pgduckdb/pgduckdb:18-v1.1.1
+    arg_style: pg-guc
+
+    knobs:
+      shared_preload_libraries:
+        type: str
+        default: pg_duckdb
+        fixed: true
+        why: "loads the pg_duckdb extension; not meant to be overridden"
+      duckdb_force_execution:
+        type: bool
+        default: false
+        arg_style: env-var  # NOT a -c GUC — routes through bexhoma's sut_parameters, not patch_dbms_args()
+        env_var: DUCKDB_FORCE_EXECUTION
+        why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"
+      # all other knobs inherit unchanged from PostgreSQL via `extends` —
+      # PgDuckDB's shipped template is a strict subset of PostgreSQL's active knobs
+
+    physical_design:
+      indexes: true
+      constraints: true
+      statistics: true
+      storage_format: [heap]
+      # columnar (native `USING duckdb` tables) is deliberately NOT listed as
+      # supported: blocked upstream (github.com/duckdb/pg_duckdb#385).
+      # experiments/tpch/PgDuckDB/ is orphaned; tpch.py currently points
+      # PgDuckDB at experiments/tpch/PostgreSQL/ instead.
+
+    profiles:
+      analytical-ssd:
+        ref: PostgreSQL.profiles.analytical-ssd  # same profile object, both systems — this is what "parity" means for this pair

@@ -1,0 +1,48 @@
+# Sample experiment.yml — TPC-H, PostgreSQL vs. PgDuckDB.
+#
+# STATUS: draft, prototype scope. Resolved against catalog.yaml by
+# bexhoma/spec.py into a `tpch.py` argument vector. See
+# docs/Design-Catalog-Contract.md for the full contract design.
+
+mode: run
+
+hypothesis: "On NVMe, PgDuckDB's DuckDB execution engine changes TPC-H plan quality vs native PostgreSQL under the same tuned profile"
+discriminates: [system]
+
+workload:
+  name: tpch
+  params:
+    scaling_factor: 10
+    timeout: 1200
+    query_repeats: 3
+    verify_result: true
+  rounds: [1, 1, 2, 3]
+  repetitions: 3
+
+loading:
+  pods: 8
+  threads: 8
+  post_load: {indexes: true, constraints: true, statistics: true}
+
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+  - name: PgDuckDB
+    profile: analytical-ssd  # same profile as PostgreSQL — this is what "parity" means for this pair
+    override: {duckdb_force_execution: false}
+
+observe: {monitoring_sut: true, monitoring_cluster: true, monitoring_app: true}
+
+# node-group names are passed straight through as literal node selectors for
+# now — resolving them against environment.yml node groups is not
+# implemented yet (see "Open questions" in docs/Design-Catalog-Contract.md)
+placement:
+  sut: node-group-sut
+  loading: node-group-load
+  benchmarking: node-group-bm
+
+resources:
+  cpu: {request: 16, limit: 16}
+  memory: {request: 64Gi, limit: 64Gi}
+  storage: {size: 50Gi}
+  storage_class: ssd  # must match the analytical-ssd profile's `requires.storage_class`
