@@ -750,6 +750,15 @@ def write_markdown_report(
             "were parsed into — read the logs for the literal output behind a "
             "surprising number.",
         )
+        if 'num_errors' in extra_context:
+            # queries.config only carries literal SQL text for DBMSBenchmarker-family
+            # benchmarks (TPC-H/TPC-DS); other tools store their workload elsewhere.
+            execution_links += _glob_provenance(
+                result_dir, report_dir, ["queries.config"],
+                "The DBMSBenchmarker query config actually run, including the literal "
+                "SQL text of every query behind the titles in the Latency/Errors/"
+                "Warnings tables above — follow this for the explicit queries.",
+            )
         _write_tier2_file(
             report_dir, "execution.md", "execution",
             "Benchmark execution results, including any secondary (co-running) benchmarks.",
