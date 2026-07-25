@@ -19,8 +19,8 @@ Based on https://www.tpc.org/tpch/ — generates flat `.tbl` files (pipe-delimit
 
 ### Redis message queue
 
-* `BEXHOMA_CONNECTION`: Logical connection name — used to address the Redis queue `bexhoma-loading-<CONNECTION>-<EXPERIMENT>`.
-* `BEXHOMA_EXPERIMENT`: Experiment ID — used together with `BEXHOMA_CONNECTION` to address the Redis queue.
+* `BEXHOMA_CONNECTION`: Logical connection name — used to address the Redis queue `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>`.
+* `BEXHOMA_EXPERIMENT`: Experiment ID — used together with `BEXHOMA_CONNECTION`, `BEXHOMA_EXPERIMENT_RUN` and `BEXHOMA_DATA_JOB` to address the Redis queue.
 
 ### Bexhoma experiment identity
 

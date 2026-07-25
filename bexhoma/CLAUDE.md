@@ -306,3 +306,33 @@ index-phase kickoff; earlier finishers only clean up their own pods/logs. This i
 Redis (a plain `kubectl label --overwrite`) because a single orchestrator process is the only
 writer of that label — unlike the pod-to-pod counters above, which coordinate genuinely
 independent processes and therefore need Redis's atomic `decr`.
+
+### Chunk-assignment queue (separate from the counters above)
+
+Each loader entry's parallel pods also need a *unique* 1..`entry_parallelism` chunk index
+(which physical data partition/pod each one loads), handed out via a Redis list at
+`bexhoma-loading-{CONFIGURATION}-{EXPERIMENT}-{EXPERIMENT_RUN}-{DATA_JOB}`
+(`LoadingCoordinator.start_pod()`, populated with `RPUSH` via `Kubernetes.add_to_messagequeue()`;
+each pod's `generator.sh` claims its index with `LPOP`). A same-keyed
+`...-config-{i}` entry per pod (`SutConfiguration._push_pod_configs()` /
+`Kubernetes.set_pod_config()`) optionally carries per-pod parameter overrides.
+
+Unlike the podcount counters above, this queue is populated with `RPUSH` (append), not `SET`
+(overwrite) — so it is **not** naturally idempotent across repeated calls with the same key.
+The key **must** include `EXPERIMENT_RUN`, unlike the round/job counters, because loading is
+redone from scratch for every `experiment_run` in a repeat-run sweep (a fresh SUT pod is
+deployed per run — the counters' "loading has exactly one round per (CONFIGURATION,
+EXPERIMENT)" assumption above does not hold across runs). Before repopulating,
+`start_pod()` calls `delete_messagequeue_key()` to clear any leftover entries, then verifies
+`add_to_messagequeue()`'s returned list length matches `entry_parallelism` exactly, raising
+`RuntimeError` otherwise — a silently-swallowed `kubectl exec` failure (anything other than
+the literal `"error dialing backend"`, which is retried) would otherwise leave the queue short
+by one entry, and the unlucky pod's `LPOP` would come back empty. `generator.sh` treats that
+as fatal (`exit 1`) rather than defaulting `BEXHOMA_CHILD` to a fixed value, which used to
+silently duplicate another pod's chunk (and leave some other chunk never loaded at all).
+
+This same queue/config-key format is shared by every workload with a parallel loading phase
+(`images/tpch`, `images/tpcds`, `images/benchbase`, `images/ycsb`) — their `generator.sh` (and,
+for TPC-H/TPC-DS, each DBMS-specific `loader.sh`, which independently reconstructs the
+`...-config-{i}` key to read its own per-pod overrides) must stay byte-for-byte in sync with
+this Python-side key format.

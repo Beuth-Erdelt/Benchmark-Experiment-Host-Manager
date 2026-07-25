@@ -117,9 +117,9 @@ The following variables are substituted into the selected XML config template vi
 
 * `BEXHOMA_DBMS`: DBMS label. When set to `PGBouncer`, the schema query parameter is stripped from the XML config URL before substitution.
 * `BEXHOMA_CONFIGURATION`: Configuration name. Echoed to the log.
-* `BEXHOMA_CONNECTION`: Bexhoma connection name. Used to address the Redis message queue (`bexhoma-loading-<CONNECTION>-<EXPERIMENT>`).
+* `BEXHOMA_CONNECTION`: Bexhoma connection name. Used to address the Redis message queue (`bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>`).
 * `BEXHOMA_EXPERIMENT`: Bexhoma experiment identifier. Used to address the Redis message queue.
-* `BEXHOMA_EXPERIMENT_RUN`: Number of the current repetition of the complete experiment.
+* `BEXHOMA_EXPERIMENT_RUN`: Number of the current repetition of the complete experiment. Also used to address the Redis message queue, since loading is redone from scratch every repetition.
 * `BEXHOMA_CLIENT`: Client index. Echoed to the log.
 
 #### Multi-tenancy

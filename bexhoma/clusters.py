@@ -2291,6 +2291,10 @@ class Kubernetes():
 
         :param queue: Redis key (queue name).
         :param data: Value to push onto the queue.
+        :return: Resulting list length reported by ``RPUSH``, or ``None`` if
+            the reply could not be parsed as an integer (e.g. the command
+            failed and returned no numeric reply).
+        :rtype: int or None
         """
         pods_messagequeue = self.get_pods(component='messagequeue')
         if pods_messagequeue:
@@ -2299,6 +2303,30 @@ class Kubernetes():
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
         self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
         redis_command = f'redis-cli rpush {queue} {data} '
+        _, stdout, _ = self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+        try:
+            return int(stdout.strip())
+        except (TypeError, ValueError):
+            return None
+
+    def delete_messagequeue_key(self, queue):
+        """
+        Delete a Redis key.
+
+        Used to clear a message queue before repopulating it, so that any
+        leftover entries from an earlier (e.g. crashed or retried) population
+        attempt cannot desynchronise the 1..N chunk assignment handed out to
+        a fresh batch of pods.
+
+        :param queue: Redis key to delete.
+        """
+        pods_messagequeue = self.get_pods(component='messagequeue')
+        if pods_messagequeue:
+            pod_messagequeue = pods_messagequeue[0]
+        else:
+            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
+        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
+        redis_command = f'redis-cli del {queue} '
         self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
 
     def set_pod_counter(self, queue, value=0):

@@ -51,15 +51,23 @@ fi
 BEXHOMA_DATA_JOB="${BEXHOMA_DATA_JOB:-1}"
 
 ######################## Get number of client in job queue ########################
-echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB"
-BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB)"
+# Queue is scoped by BEXHOMA_EXPERIMENT_RUN because loading (and this chunk
+# assignment) is redone from scratch for every experiment_run, not once per
+# experiment -- reusing an unscoped key would risk picking up a leftover
+# entry from a previous run's queue.
+echo "Querying message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_EXPERIMENT_RUN-$BEXHOMA_DATA_JOB"
+BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_EXPERIMENT_RUN-$BEXHOMA_DATA_JOB)"
 if [ -z "$BEXHOMA_CHILD" ]
 then
-    BEXHOMA_CHILD=1
+    # Do not default to a fixed chunk index here: another pod may already own
+    # it, and silently duplicating its chunk (while some other chunk never
+    # gets loaded at all) is far worse than failing the pod outright.
+    echo "FATAL: no chunk index available from message queue bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_EXPERIMENT_RUN-$BEXHOMA_DATA_JOB (queue empty or Redis unreachable)"
+    exit 1
 fi
 
 ######################## Read per-pod config from Redis ########################
-BEXHOMA_POD_CONFIG_KEY="bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB-config-$BEXHOMA_CHILD"
+BEXHOMA_POD_CONFIG_KEY="bexhoma-loading-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_EXPERIMENT_RUN-$BEXHOMA_DATA_JOB-config-$BEXHOMA_CHILD"
 echo "Querying per-pod config at $BEXHOMA_POD_CONFIG_KEY"
 BEXHOMA_POD_CONFIG_JSON="$(redis-cli -h 'bexhoma-messagequeue' get "$BEXHOMA_POD_CONFIG_KEY")"
 if [ -z "$BEXHOMA_POD_CONFIG_JSON" ] || [ "$BEXHOMA_POD_CONFIG_JSON" = "nil" ]; then
