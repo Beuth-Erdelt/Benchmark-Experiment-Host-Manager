@@ -43,7 +43,15 @@ provenance:                              # pre-existing files, never written or 
   workflow:     {"*.yml / *.yaml":      "rendered K8s Job/Deployment/Service manifests actually submitted;
                                           every image: field is a concrete tag, BEXHOMA_PACKAGE_VERSION
                                           already substituted — the authoritative source for image versions",
-                 "*.describe.log":      "kubectl describe pod: scheduling/image-pull/restart/OOMKill events"}
+                 "{pod-name}.describe.log": "kubectl describe pod: scheduling/image-pull/restart/OOMKill events
+                                              for that specific Pod object",
+                 "{job-name}.describe.job.log": "kubectl describe job (loading/generator jobs only; .job.log,
+                                              not .describe.log, so it globs apart from per-pod describes):
+                                              the Job's own Events list every Pod it ever spawned over
+                                              its full lifetime, including a failed one replaced under
+                                              backoffLimit — evidence that survives even after the failed Pod
+                                              object itself has been garbage-collected and dropped out of the
+                                              per-pod *.describe.log set above"}
   loading:      {"*-loading-*.sql.log / *-loading-*.sh.log": "rendered script SOURCE despite the .log suffix",
                  "*-loading-*.stdout.log": "stdout of that script",
                  "*-loading-*.stderr.log": "stderr — check first on a silent loading failure"}

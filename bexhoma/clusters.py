@@ -1550,6 +1550,20 @@ class Kubernetes():
             fullcommand = 'describe pod ' + pod
         return self.kubectl(fullcommand)
 
+    def job_description(self, jobname):
+        """
+        Return the ``kubectl describe job`` output for a given Job.
+
+        Unlike a Pod's describe, this captures the Job's own Events (e.g.
+        ``SuccessfulCreate``/``BackoffLimitExceeded``) for every Pod the Job
+        ever spawned -- including one that failed and was replaced, even
+        after that Pod object itself has been garbage-collected.
+
+        :param jobname: Name of the Job to describe.
+        :return: kubectl output string.
+        """
+        return self.kubectl('describe job ' + jobname)
+
     def pod_log(self, pod, container=''):
         """
         Return the ``kubectl logs --tail=-1`` output for a given Pod or container.
@@ -2456,6 +2470,47 @@ class Kubernetes():
                     return
                 else:
                     attempt += 1
+
+    def store_job_description(self, jobname):
+        """
+        Fetch and persist ``kubectl describe job`` output to the result folder.
+
+        The file is not overwritten if it already exists. Up to 10 retries are
+        attempted in case of transient kubectl failures. ``jobname`` already
+        encodes ``experiment_run``/``data_job`` (see
+        :meth:`~bexhoma.configurations.manifest.ManifestBuilder.create_manifest_job`),
+        so unlike :meth:`store_pod_description` no separate ``number`` splicing
+        is needed here.
+
+        :param jobname: Name of the Job to describe.
+        """
+        resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+        # ".describe.job.log" (not ".describe.log") so it's unambiguously
+        # globbable apart from per-pod describes with the same jobname prefix
+        # (report_writer.py links the two under separate, clearly labelled
+        # provenance sections instead of one mixed pod+job list).
+        filename_log = f"{resultfolder}/{self.code}/{jobname}.describe.job.log"
+        if not os.path.isfile(filename_log):
+            attempt = 1
+            while attempt < 10:
+                stdout = self.job_description(jobname)
+                if stdout:
+                    with open(filename_log, "w") as f:
+                        f.write(stdout)
+                    return
+                else:
+                    attempt += 1
+
+    def job_description_exists(self, jobname):
+        """
+        Return whether a cached ``describe`` file exists in the result folder.
+
+        :param jobname: Name of the Job.
+        :return: ``True`` if the ``.describe.job.log`` file exists on disk.
+        """
+        resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+        filename_log = f"{resultfolder}/{self.code}/{jobname}.describe.job.log"
+        return os.path.isfile(filename_log)
 
     def pod_description_exists(self, pod_name, container=''):
         """

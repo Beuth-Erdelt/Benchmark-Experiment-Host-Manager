@@ -708,6 +708,15 @@ class LoadingCoordinator:
                                 "Store description of job {} pod {}".format(job, pod))
                             cfg.experiment.cluster.store_pod_description(pod_name=pod)
                         cfg.experiment.cluster.delete_pod(pod)
+                    if not cfg.experiment.cluster.job_description_exists(jobname=job):
+                        cfg.experiment.cluster.logger.debug(
+                            "Store description of job {}".format(job))
+                        # Captured just before deletion (not on an earlier poll) so the
+                        # Job's own Events include every Pod it ever spawned over its
+                        # full lifetime -- e.g. a failed Pod's replacement -- which
+                        # survives even after that failed Pod object itself has already
+                        # been garbage-collected and dropped out of `pods` above.
+                        cfg.experiment.cluster.store_job_description(jobname=job)
                     cfg.experiment.end_loading(job)
                     cfg.experiment.cluster.delete_job(job)
                     if is_last_data_job:

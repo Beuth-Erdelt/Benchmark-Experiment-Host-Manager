@@ -720,15 +720,24 @@ def write_markdown_report(
             "check for the exact resource requests/limits, image tag, env vars, and "
             "replica/parallelism counts.",
         )
-        log_links = _glob_provenance(
+        pod_describe_links = _glob_provenance(
             result_dir, report_dir, ["*.describe.log"],
             "`kubectl describe pod` output for every pod in this experiment — event "
-            "history (scheduling, image pulls, restarts, OOMKills) during deployment, "
-            "not just static spec.",
+            "history (scheduling, image pulls, restarts, OOMKills) for that specific "
+            "pod object, not just static spec.",
+        )
+        job_describe_links = _glob_provenance(
+            result_dir, report_dir, ["*.describe.job.log"],
+            "`kubectl describe job` output for every loading/generator Job in this "
+            "experiment — unlike a single pod's describe above, this covers the Job's "
+            "full pod-creation history over its whole lifetime, so a failed pod that "
+            "was replaced under `backoffLimit` still shows up here even after that "
+            "failed pod's own describe has aged out via garbage collection.",
         )
         _write_tier2_file(
             report_dir, "workflow.md", "workflow", "Actual vs. planned experiment workflow.",
-            [workflow_section], connections_index, manifest_links + log_links,
+            [workflow_section], connections_index,
+            manifest_links + pod_describe_links + job_describe_links,
         )
         written_sections.append({"title": "Workflow", "file": "workflow.md", "description": "Actual vs. planned workflow (per configuration/run/client)."})
 
