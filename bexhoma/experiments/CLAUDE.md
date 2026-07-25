@@ -57,7 +57,8 @@ Each connection dict has the shape:
         'client': '1',
         'parallelism': 1,
         'num_worker': 0,
-        'dockerimage': 'PostgreSQL',
+        'dockerimage': 'postgres:18.3',   # resolved SUT image tag (cfg.dockerimage, set in start_sut()),
+                                           # not the catalog docker key
         'connection_parameter': {
             'loading_parameters':      {...},  # ENV vars used during loading phase
             'benchmarking_parameters': {...},  # ENV vars injected into benchmarker pods
