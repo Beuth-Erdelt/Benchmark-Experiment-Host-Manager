@@ -118,6 +118,24 @@ workloads:
       default: 1
       why: "how many times the whole round list repeats"
 
+    produces:
+      per_query:
+        metric: latency
+        unit: ms
+        why: "mean execution latency per query (DbmsBenchmarkerEvaluator.get_query_latencies()),
+          one row per entry in active_queries — the finest-grained breakdown available"
+      summary:
+        metrics: [Power@Size, Throughput@Size, Geo Times]
+        unit: [Q/h, Q/h, s]
+        why: "geo-mean-derived per-phase metrics (get_summary_benchmark_per_phase());
+          this is what a system/round/repetition comparison is actually made on"
+      quality:
+        metric: sql_errors_warnings
+        why: "per-query error/warning counts (get_total_errors()/get_total_warnings()),
+          recorded as pass/fail tests, not a performance metric"
+      # no time_series entry: DBMSBenchmarker reports per-query and per-phase
+      # aggregates only, no running per-second signal like YCSB/Benchbase produce
+
 systems:
   PostgreSQL:
     deployment: bexhoma-deployment-postgres

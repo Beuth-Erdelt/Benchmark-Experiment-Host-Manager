@@ -301,6 +301,25 @@ proposed:
 9. Experiment-level (not catalog-level) `tenancy:` block, same pattern as
    the already-planned `observe:` block — cross-cutting concerns don't all
    need catalog entries.
+10. `workloads.<name>.produces` (and `tools.<name>.produces`) documents what
+    an experiment against this workload actually yields, so an agent can
+    tell up front whether a hypothesis is even answerable — e.g. "which
+    query is the bottleneck" needs `per_query`, but YCSB/Benchbase only ever
+    produce `per_operation`/whole-workload `summary` plus a `time_series`,
+    never a per-query breakdown, because neither tool has a query concept.
+    Grounded in what each `evaluators/*.py` class actually exposes, not the
+    workload's *parameters* (`params`/`loading`/`rounds` document what you
+    can configure; `produces` documents what you get back). Shapes seen so
+    far: `per_query` (tpch/tpcds, one row per query), `per_operation`
+    (ycsb, one row per op type: READ/UPDATE/INSERT/SCAN/...),
+    `per_procedure` (hammerdb, NEWORD only, and only when
+    `record_latency_profile` is set), `summary` (one row per phase,
+    every workload has this), `time_series` (ycsb/benchbase only — a
+    running per-second signal DBMSBenchmarker/HammerDB don't produce), and
+    `quality` (tpch/tpcds SQL error/warning counts, recorded as pass/fail
+    tests rather than performance data). A workload lacking a shape omits
+    the key rather than setting it to `false` — same "absent, not false"
+    idiom point 6 already established for `physical_design`.
 
 ## Complete `catalog.yaml` (breadth pass)
 
@@ -341,6 +360,11 @@ workloads:
     system_specific:
       PgDuckDB:
         duckdb_force_execution: {type: bool, default: false, why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"}
+    produces:
+      per_query: {metric: latency, unit: ms, why: "DbmsBenchmarkerEvaluator.get_query_latencies(), one row per active query"}
+      summary:   {metrics: [Power@Size, Throughput@Size, "Geo Times"], why: "get_summary_benchmark_per_phase(), geo-mean across queries — the level comparisons are actually made on"}
+      quality:   {metric: sql_errors_warnings, why: "get_total_errors()/get_total_warnings(), pass/fail tests, not a performance metric"}
+      # no time_series — DBMSBenchmarker has no running per-second signal
 
   tpcds:
     why: "star-schema OLAP, larger/more complex query set than TPC-H"
@@ -371,6 +395,11 @@ workloads:
           status: "flag exists, has no effect for this workload today"
     rounds: {type: list[int]}
     repetitions: {type: int, default: 1}
+    produces:
+      per_query: {metric: latency, unit: ms, why: "same DbmsBenchmarkerEvaluator as tpch, one row per active query"}
+      summary:   {metrics: [Power@Size, Throughput@Size, "Geo Times"], why: "get_summary_benchmark_per_phase()"}
+      quality:   {metric: sql_errors_warnings, why: "get_total_errors()/get_total_warnings()"}
+      # no time_series — same evaluator/limitation as tpch
 
   ycsb:
     why: "key-value / simple-schema workload, 6 access-pattern mixes"
@@ -400,6 +429,10 @@ workloads:
         pd_nodes:     {type: int, default: 3, why: "keep odd"}
     rounds: {type: list[int]}
     repetitions: {type: int, default: 1}
+    produces:
+      per_operation: {metrics: [throughput, latency_avg, latency_p95, latency_p99], unit: "ops/sec | us", why: "one row per YCSB op type (READ/UPDATE/INSERT/SCAN/READ-MODIFY-WRITE/...), get_summary_benchmark_per_phase()"}
+      time_series:   {metric: current_ops_per_sec, unit: ops/s, interval: 1s, why: "per-second throughput, both benchmarking and loading phases, get_*_logs_timeseries_df_*()"}
+      # no per_query — YCSB has no query concept, only op-type buckets
 
   benchbase:
     why: "Java driver bundling multiple OLTP/hybrid suites behind one loader"
@@ -427,6 +460,10 @@ workloads:
     rounds: {type: list[int]}
     repetitions: {type: int, default: 1}
     note: "num_worker defaults to 1 for this workload (base-parser default is 0) — a per-script default override to be aware of"
+    produces:
+      summary:     {metrics: [Throughput, Goodput, "Latency Distribution (min/25/50/75/90/95/99/max/avg)"], unit: "req/s | us", why: "get_summary_benchmark_per_phase()"}
+      time_series: {metric: throughput, unit: txn/s, why: "per-second INFO-log throughput parse, get_benchmark_logs_timeseries_df_*()"}
+      # no per_query — Benchbase reports whole-workload throughput/latency only, not per-transaction-type
 
   hammerdb:
     why: "Tcl-driven TPC-C implementation; loading phase does not scale"
@@ -444,6 +481,10 @@ workloads:
       Citus: {user: postgres, password: password1234, why: "hardcoded, not exposed as a flag — do not imply it's configurable"}
     rounds: {type: list[int]}
     repetitions: {type: int, default: 1}
+    produces:
+      summary:       {metrics: [NOPM, TPM, efficiency], why: "get_summary_benchmark_per_phase(); efficiency only meaningful when keying_and_think_time is set and vusers==10*scaling_factor, else 0"}
+      per_procedure: {metric: latency, unit: ms, why: "CALLS/MIN/AVG/MAX/TOTAL/P50/P95/P99 for the NEWORD procedure only, present when record_latency_profile is set — absent otherwise"}
+      # no time_series — HammerDB logs one TEST RESULT line per iteration, not a running signal
 
 tools:
   hardware:
@@ -458,6 +499,13 @@ tools:
       sockperf: {mode: {values: [pp, ul]}, protocol: {values: [tcp, udp]}, mps: {type: str, why: "'max' or a positive integer"}, msgsize: {type: list[int]}}
       netperf:  {protocol: {values: [tcp, udp]}, threads: {type: int}}
     note: "the shared 'threads-per-benchmarker' flag is overloaded: fio numjobs, sysbench --threads, netperf concurrency — same name, three tool-specific meanings"
+    produces:
+      summary_by_tool:
+        fio:      {metrics: [read_iops, write_iops, read_bw_kbps, write_bw_kbps, "latency percentiles P01..P9999"], unit: "IOPS | KiB/s | ms"}
+        sysbench: {metrics: [cpu_events_per_sec, cpu_lat_p95, memory_ops_per_sec, memory_throughput_mibps, memory_lat_p95], unit: "ops/s | MiB/s | ms"}
+        sockperf: {metrics: [latency_avg, latency_p50, latency_p99, latency_p999, msg_rate, dropped_rate], unit: "ms | msg/s"}
+        netperf:  {metrics: [transaction_rate, latency_avg, latency_p50, latency_p90, latency_p99, instances_failed], unit: "txn/s | ms"}
+      why: "one shot-summary per pod/tool (HardwareEvaluator, images/hardware/benchmarker/*.sh); no per-query concept, no time-series"
 
 systems:
   PostgreSQL:
