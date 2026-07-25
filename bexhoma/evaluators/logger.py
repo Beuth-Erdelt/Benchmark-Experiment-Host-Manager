@@ -26,7 +26,7 @@ from datetime import datetime
 import glob
 from pathlib import Path
 
-from .base import EvaluatorBase, natural_sort
+from .base import EvaluatorBase, natural_sort, resolve_within_result_folder
 
 __all__ = ["LogEvaluator"]
 
@@ -311,7 +311,9 @@ class LogEvaluator(EvaluatorBase):
 
         The per-connection files are deleted once merged, since the combined
         file is the only one downstream code (:meth:`get_monitoring_metric`)
-        reads.
+        reads. Each filename is resolved via :func:`resolve_within_result_folder`
+        before deletion, since connection names originate from
+        ``connections.config`` rather than a hardcoded value.
 
         :param component: Component label used in the metric filename prefix
                           (e.g. ``'loading'``, ``'stream'``).
@@ -336,7 +338,9 @@ class LogEvaluator(EvaluatorBase):
             out_filename = "query_{component}_metric_{metric}.csv".format(component=component, metric=metric_key)
             monitor.metrics.saveMetricsDataframe(self.path + "/" + out_filename, df_all)
             for filename in connection_filenames:
-                os.remove(self.path + "/" + filename)
+                resolved = resolve_within_result_folder(self.path, filename)
+                if resolved is not None and os.path.isfile(resolved):
+                    os.remove(resolved)
     def get_monitoring_metric(self, metric, component="loading"):
         """
         Returns a wide-format DataFrame of a single monitoring metric for a component.

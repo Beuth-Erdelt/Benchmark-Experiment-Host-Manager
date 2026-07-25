@@ -13,6 +13,7 @@ See LICENSE for details.
 import pandas as pd
 import os
 import re
+import shutil
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
@@ -28,7 +29,7 @@ from pathlib import Path
 from scipy.stats import gmean
 import numpy as np
 
-from .base import natural_sort
+from .base import natural_sort, resolve_within_result_folder
 from .logger import LogEvaluator
 
 __all__ = ["DbmsBenchmarkerEvaluator", "map_index_to_queryname"]
@@ -102,6 +103,30 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             self.evaluation.code = self.code
         except Exception:
             self.evaluation = None
+    def cleanup_connection_subfolders(self) -> None:
+        """
+        Deletes each connection's private DBMSBenchmarker working-directory subfolder.
+
+        Each benchmarker pod runs the DBMSBenchmarker library against a single
+        connection in its own subfolder (``self.path/{connection}``), where it
+        keeps its own ``queries.config``, execution CSVs, result-set pickles,
+        and a handful of per-connection monitoring CSVs while the benchmark
+        runs. Once the pod finishes, its results are folded into the
+        experiment's top-level ``protocol.json``/``connections.config``/
+        ``queries.config`` — the only files :meth:`load_inspector` reads back —
+        so the subfolders are pure leftovers once the experiment is done.
+
+        Connection names come from ``connections.config`` rather than a
+        hardcoded value, so each subfolder path is resolved via
+        :func:`resolve_within_result_folder` before deletion to guarantee it
+        cannot land outside the experiment result folder.
+        """
+        connections_sorted = self.get_connection_config()
+        for connection in connections_sorted:
+            conn_name = connection['orig_name'] if 'orig_name' in connection else connection['name']
+            subfolder = resolve_within_result_folder(self.path, conn_name)
+            if subfolder is not None and os.path.isdir(subfolder):
+                shutil.rmtree(subfolder)
     def get_df_loading(self):
         """
         Returns the DataFrame containing all loading-phase timing results.

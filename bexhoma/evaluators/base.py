@@ -25,7 +25,7 @@ from dbmsbenchmarker import monitor
 from datetime import datetime
 from pathlib import Path
 
-__all__ = ["EvaluatorBase", "natural_sort"]
+__all__ = ["EvaluatorBase", "natural_sort", "resolve_within_result_folder"]
 
 
 def natural_sort(items):
@@ -43,6 +43,37 @@ def natural_sort(items):
     convert = lambda text: int(text) if text.isdigit() else text.lower()
     alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]
     return sorted(items, key=alphanum_key)
+
+
+def resolve_within_result_folder(root: str, name: str) -> str | None:
+    """
+    Resolve ``name`` as a path inside ``root``, refusing anything that escapes it.
+
+    Call this before deleting a file or folder whose name is sourced from
+    experiment metadata (e.g. a connection name read from ``connections.config``)
+    rather than hardcoded, so a crafted or unexpected value (``..`` segments, an
+    absolute path) can never resolve to a location outside the experiment result
+    folder.
+
+    :param root: Directory the resolved path must stay inside (normally
+        ``self.path``, the experiment result folder).
+    :type root: str
+    :param name: Untrusted relative file or folder name to resolve under ``root``.
+    :type name: str
+    :return: The resolved absolute path, or ``None`` if it would escape ``root``
+        or equal ``root`` itself.
+    :rtype: str | None
+    """
+    root_real = os.path.realpath(root)
+    candidate_real = os.path.realpath(os.path.join(root, name))
+    try:
+        inside = os.path.commonpath([root_real, candidate_real]) == root_real
+    except ValueError:
+        # commonpath raises when the paths don't share a drive/root at all
+        inside = False
+    if not inside or candidate_real == root_real:
+        return None
+    return candidate_real
 
 
 class EvaluatorBase:
