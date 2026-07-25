@@ -309,6 +309,10 @@ class LogEvaluator(EvaluatorBase):
 
             query_datagenerator_metric_total_cpu_util.csv
 
+        The per-connection files are deleted once merged, since the combined
+        file is the only one downstream code (:meth:`get_monitoring_metric`)
+        reads.
+
         :param component: Component label used in the metric filename prefix
                           (e.g. ``'loading'``, ``'stream'``).
         :type component: str
@@ -317,6 +321,7 @@ class LogEvaluator(EvaluatorBase):
         metric_keys = self.get_monitoring_metrics()
         for metric_key in metric_keys:
             df_all = None
+            connection_filenames = []
             for connection in connections_sorted:
                 conn_name = connection['orig_name'] if 'orig_name' in connection else connection['name']
                 filename = "query_{component}_metric_{metric}_{connection}.csv".format(
@@ -327,8 +332,11 @@ class LogEvaluator(EvaluatorBase):
                     continue
                 df.columns = [conn_name]
                 df_all = df if df_all is None else df_all.merge(df, how='outer', left_index=True, right_index=True)
+                connection_filenames.append(filename)
             out_filename = "query_{component}_metric_{metric}.csv".format(component=component, metric=metric_key)
             monitor.metrics.saveMetricsDataframe(self.path + "/" + out_filename, df_all)
+            for filename in connection_filenames:
+                os.remove(self.path + "/" + filename)
     def get_monitoring_metric(self, metric, component="loading"):
         """
         Returns a wide-format DataFrame of a single monitoring metric for a component.
