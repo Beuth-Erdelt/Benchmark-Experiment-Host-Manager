@@ -102,6 +102,20 @@ is a Unix epoch timestamp in seconds, generated at experiment start. It is
 unique and monotonically increasing across experiments, but is **not**
 evidence that two different codes ran under comparable conditions — see
 Interpretation Rules below.
+
+**Result-folder filenames** (manifests, logs, `.describe.log` — linked from
+every tier-2 file's Provenance footer) follow a related but distinct
+convention: `<app>-<component>-<configuration>-<code>[-<experiment_run>[-<client>[-<benchmark_run>]]]`,
+optionally followed by Kubernetes' own pod-hash/random suffix on files tied to
+a specific pod (e.g. `bexhoma-benchmarker-postgresql-1-1784910886-1-1-1-qp9nt.dbmsbenchmarker.log`).
+The long-lived SUT Deployment is the one exception worth knowing: its
+manifest is written once per configuration with **no** `experiment_run`
+segment (`bexhoma-sut-postgresql-1-1784910886.yml`), but its stored
+`.describe.log` and container `.log` files splice the experiment_run in
+directly after `code` — same position as everywhere else — ahead of
+Kubernetes' pod-hash/random suffix
+(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`), because
+each run can restart that same long-lived pod and needs its own capture.
 """
 
 _VALIDITY_RULES_MD = """### Validity-First Rules
@@ -613,7 +627,7 @@ def _build_connections_md_lines(
                 continue
             lines.append(f"* {column}: {value}")
         log_links = _glob_provenance(
-            result_dir, report_dir, [f"*{name}*.log", f"*{configuration}*.dbms.*.log"],
+            result_dir, report_dir, [f"*{name}*.log", f"*{configuration}*.dbms*.log"],
             "This connection's own benchmarker/driver pod log, and its SUT's container "
             "log (the DBMS process's own stdout) — read for the literal error text or "
             "log lines behind a failed/slow query.",

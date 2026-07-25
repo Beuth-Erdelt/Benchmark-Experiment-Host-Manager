@@ -341,9 +341,9 @@ class ManifestBuilder:
         benchmark_run_suffix = '-{}'.format(benchmark_run) if benchmark_run else ''
         job_experiment = (
             cfg.experiment.path
-            + '/{app}-{component}-{configuration}-{experimentRun}-{client}{benchmark_run_suffix}.yml'.format(
+            + '/{app}-{component}-{configuration}-{experiment}-{experimentRun}-{client}{benchmark_run_suffix}.yml'.format(
                 app=app, component=component, configuration=configuration,
-                experimentRun=experimentRun, client=client,
+                experiment=code, experimentRun=experimentRun, client=client,
                 benchmark_run_suffix=benchmark_run_suffix).lower()
         )
         try:

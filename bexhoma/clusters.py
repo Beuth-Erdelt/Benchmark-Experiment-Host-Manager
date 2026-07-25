@@ -2377,6 +2377,31 @@ class Kubernetes():
         """
         self.experiments.append(experiment)
 
+    def _pod_label(self, pod_name, number=None):
+        """
+        Build the filename base for a pod's stored log/description files.
+
+        Inserts ``number`` (the experiment-run index) directly after the
+        experiment code segment of ``pod_name`` — e.g.
+        ``bexhoma-sut-postgresql-32gi-1784910886-3-7bd45c7b95-pwzkz`` — so
+        SUT log/describe filenames follow the same
+        ``<configuration>-<code>-<experimentRun>-...`` scheme already used
+        for job manifest filenames, instead of trailing it after
+        Kubernetes' own pod-hash/random suffix.
+
+        :param pod_name: Name of the Pod, as assigned by Kubernetes.
+        :param number: Optional experiment-run index.
+        :return: ``pod_name`` with ``number`` spliced in after the experiment code.
+        :rtype: str
+        """
+        if number is None:
+            return pod_name
+        code = str(self.code)
+        prefix, separator, suffix = pod_name.partition(code)
+        if not separator:
+            return f"{pod_name}-{number}"
+        return f"{prefix}{code}-{number}{suffix}"
+
     def store_pod_description(self, pod_name, container='', number=None):
         """
         Fetch and persist ``kubectl describe pod`` output to the result folder.
@@ -2387,13 +2412,12 @@ class Kubernetes():
         :param pod_name: Name of the Pod to describe.
         :param container: Accepted for API compatibility but ignored — ``kubectl describe``
             is not container-sensitive.
-        :param number: Optional index suffix appended to the filename.
+        :param number: Optional experiment-run index, spliced into the filename
+            directly after the experiment code — see :meth:`_pod_label`.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        if number is not None:
-            filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.describe.log"
-        else:
-            filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe.log"
+        pod_label = self._pod_label(pod_name, number)
+        filename_log = f"{resultfolder}/{self.code}/{pod_label}.describe.log"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:
@@ -2427,19 +2451,15 @@ class Kubernetes():
 
         :param pod_name: Name of the Pod.
         :param container: Container name within the Pod (optional).
-        :param number: Optional index suffix appended to the filename.
+        :param number: Optional experiment-run index, spliced into the filename
+            directly after the experiment code — see :meth:`_pod_label`.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        if number is not None:
-            if container:
-                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{container}.{number}.log"
-            else:
-                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.log"
+        pod_label = self._pod_label(pod_name, number)
+        if container:
+            filename_log = f"{resultfolder}/{self.code}/{pod_label}.{container}.log"
         else:
-            if container:
-                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{container}.log"
-            else:
-                filename_log = f"{resultfolder}/{self.code}/{pod_name}.log"
+            filename_log = f"{resultfolder}/{self.code}/{pod_label}.log"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:

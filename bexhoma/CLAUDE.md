@@ -52,6 +52,7 @@ All instance attributes are declared in `Kubernetes.__init__`.  Key groups:
 | `to_unc()` for Windows paths | `kubectl cp` on Windows requires UNC paths when the source is a drive-lettered path |
 | `container = ''` override in `store_pod_description` / `pod_description` | `kubectl describe pod` is not container-scoped; the parameter is kept for API symmetry |
 | Double-retry pattern on `ApiException` | Reconnects token and retries once; no infinite loop risk because the retry passes the same explicit arguments |
+| `_pod_label()` splices `number` (experiment_run) right after the experiment `code` in `store_pod_log()`/`store_pod_description()` filenames, not appended as a trailing suffix | Keeps the long-lived SUT pod's per-run log/describe captures on the same `<configuration>-<code>-<experiment_run>-...` positional convention job manifests and benchmarker/loader logs already use, instead of trailing the run number after Kubernetes' own pod-hash/random suffix — see `docs/AgentResultContract.md` |
 
 ### `OLD_*` methods
 

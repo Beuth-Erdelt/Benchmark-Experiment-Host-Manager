@@ -52,7 +52,11 @@ provenance:                              # pre-existing files, never written or 
                  "queries.config":                        "literal SQL text — DBMSBenchmarker-family (TPC-H/TPC-DS) only"}
   monitoring:   {"query_{component}_metric_{key}.csv":   "wide format: one column per connection, one row per Prometheus scrape"}
   restarts:     {"bexhoma-sut-*-restarts.json":          "per-pod SUT container restart counts"}
-  sut_logs:     {"{pod_name}.{container_name}.log":       "SUT/driver container's own stdout"}
+  sut_logs:     {"bexhoma-sut-{configuration}-{code}.yml":                                    "SUT Deployment manifest — written once, no experiment_run segment",
+                 "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.{container}.log":  "SUT container stdout, one capture per experiment_run",
+                 "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.describe.log":     "kubectl describe pod, one capture per experiment_run"}
+                 # see "Result-folder filenames vs. report identifiers" below for why the manifest has
+                 # no experiment_run segment but the log/describe files do
 
 versions:                                # see Known gaps below for what's genuinely still missing
   images: recorded_as_tag_not_digest     # every submitted manifest's image: field is a concrete tag
@@ -109,6 +113,31 @@ in seconds, assigned once at experiment start — unique and monotonically
 increasing, but comparing two different `code`s as "the same conditions"
 requires independently verifying that (see Interpretation Rules in every
 `index.md`).
+
+## Result-folder filenames vs. report identifiers
+
+The table above decodes identifiers *inside* the report (table indexes,
+`connections.md` anchors). Filenames actually on disk — manifests, logs,
+`.describe.log` — follow a related but distinct convention:
+`<app>-<component>-<configuration>-<code>[-<experiment_run>[-<client>[-<benchmark_run>]]]`,
+optionally followed by Kubernetes' own pod-hash/random suffix on files tied
+to one specific pod, e.g.
+`bexhoma-benchmarker-postgresql-1-1784910886-1-1-1-qp9nt.dbmsbenchmarker.log`.
+Decode these the same way — count from `code`, not from the right — since a
+trailing Kubernetes pod suffix (a hash plus 5 random characters) isn't part
+of the schema and can't be told apart from it by position alone.
+
+**The SUT Deployment is the one asymmetric case.** It has exactly one
+manifest per configuration (`bexhoma-sut-{configuration}-{code}.yml`,
+**no** `experiment_run` segment), because the Deployment itself is written
+once, before any `-nc` run starts, and persists across all of them. But its
+stored `.log`/`.describe.log` files *do* carry `experiment_run` — spliced in
+directly after `code`, same position as everywhere else
+(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`) — because
+each run can restart that same long-lived pod, and each restart's evidence
+is captured separately. A manifest with no run segment next to a log with
+one is therefore expected, not a naming bug: only one of the two objects
+(the pod) actually recurs per run.
 
 ## Whether `report/` exists at all
 
