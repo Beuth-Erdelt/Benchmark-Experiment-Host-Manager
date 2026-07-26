@@ -129,7 +129,7 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
         _, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
         self.cluster.logger.debug(stdout)
         filename_log = f"{self.cluster.resultfolder}/{self.code}/evaluate_results.log"
-        with open(filename_log, "w") as f:
+        with open(filename_log, "w", encoding="utf-8") as f:
             f.write(stdout)
             if stderr:
                 f.write(stderr)
