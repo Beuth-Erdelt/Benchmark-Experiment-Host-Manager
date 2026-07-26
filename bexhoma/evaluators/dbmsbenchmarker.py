@@ -96,7 +96,18 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         loads the experiment identified by ``self.code``, and stores the result
         in ``self.evaluation``.  Sets ``self.evaluation`` to ``None`` if loading
         fails so callers can detect the uninitialized state.
+
+        Skips the load attempt entirely while ``queries.config`` does not exist
+        yet (e.g. right after this evaluator is constructed at experiment setup,
+        before any benchmarker job has run). ``inspector.load_experiment()`` reads
+        ``result_path + "/" + code`` internally without being told which part of
+        that joined path is already the code folder; called this early it would
+        re-append ``code`` a second time and create an empty ``<code>/<code>``
+        directory before failing on the missing config and being caught below.
         """
+        if not os.path.isfile(self.path + "/queries.config"):
+            self.evaluation = None
+            return
         try:
             self.evaluation = inspector.inspector(self.path_base)
             self.evaluation.load_experiment(code=self.code, silent=True)

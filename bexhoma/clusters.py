@@ -40,23 +40,32 @@ def to_unc(path: str) -> str:
     ``D:/foo`` and ``D:\\foo`` become ``\\\\localhost\\D$\\foo``.
     On Linux/macOS the normalized path is returned unchanged.
     A path that is already UNC is returned unchanged.
+
+    A trailing ``/.`` segment (the ``kubectl cp`` marker meaning "copy this
+    directory's contents", not the directory itself, needed to avoid `kubectl
+    cp` nesting the source directory inside an already-existing destination)
+    is preserved, since ``Path()`` would otherwise silently drop it.
     """
+    keep_dot_suffix = str(path).replace("\\", "/").endswith("/.")
     p = Path(path)
 
     if platform.system() != "Windows":
-        return str(p)
+        result = str(p)
+    elif str(p).startswith("\\\\"):
+        result = str(p)
+    else:
+        drive = p.drive
+        if drive:
+            drive_letter = drive.rstrip(":").upper()
+            rel = p.relative_to(drive + "\\")
+            unc = f"\\\\localhost\\{drive_letter}$\\{rel.as_posix()}"
+            result = unc.replace("/", "\\")
+        else:
+            result = str(p)
 
-    if str(p).startswith("\\\\"):
-        return str(p)
-
-    drive = p.drive
-    if drive:
-        drive_letter = drive.rstrip(":").upper()
-        rel = p.relative_to(drive + "\\")
-        unc = f"\\\\localhost\\{drive_letter}$\\{rel.as_posix()}"
-        return unc.replace("/", "\\")
-
-    return str(p)
+    if keep_dot_suffix:
+        result = result.rstrip("\\/") + "\\."
+    return result
 
 
 class Kubernetes():

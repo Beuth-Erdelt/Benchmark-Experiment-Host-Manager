@@ -385,7 +385,7 @@ class ExperimentBase():
                 self.pod_dashboard = pods[0]
             else:
                 return ""
-        filename_local = self.path+'/'+filename
+        filename_local = self.path+'/.' if not filename else self.path+'/'+filename
         filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.upload_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def download_experiment_file(self, filename: str) -> str:
@@ -402,7 +402,7 @@ class ExperimentBase():
             else:
                 return ""
         filename_local = self.path+'/'+filename
-        filename_remote = '/results/'+str(self.code)+'/'+filename
+        filename_remote = '/results/'+str(self.code)+'/.' if not filename else '/results/'+str(self.code)+'/'+filename
         return self.cluster.download_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
                               parameter: str) -> list:
