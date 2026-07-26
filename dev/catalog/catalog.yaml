@@ -15,6 +15,17 @@
 # resource limits. The derive expression language is deliberately minimal:
 # arithmetic over exactly {memory_limit, cpu_limit, storage_class,
 # scaling_factor} — no functions, no conditionals.
+#
+# experiment.yml's `resources.storage_class` is optional. Leaving it unset
+# (the default) activates ephemeral storage: no PersistentVolumeClaim is
+# provisioned, and the SUT gets node-local storage instead — typically fast,
+# since it's whatever disk the node itself has attached, but tied to that
+# node's lifetime. `resources.storage.size` is still honored either way. A
+# profile only needs `requires: {storage_class: ...}` when it depends on a
+# *specific* cluster-declared class (e.g. analytical-ssd below, which needs
+# guaranteed NVMe for reproducible OLAP numbers) — see
+# `bexhoma/clusters.py::Kubernetes.get_available_storage_types()` and the
+# `-rst`/`--request-storage-type` CLI flag for the underlying mechanism.
 
 workloads:
   tpch:
@@ -181,7 +192,10 @@ systems:
     profiles:
       analytical-ssd:
         why: "OLAP on node-local NVMe, sized from this experiment's memory limit"
-        requires: {storage_class: ssd}
+        # ssd guarantees NVMe; null (ephemeral, i.e. resources.storage_class left
+        # unset) is also node-local and typically fast, just without that guarantee
+        # -- see catalog.yaml's header comment
+        requires: {storage_class: [ssd, null]}
         knobs:
           random_page_cost: 1.1
           effective_io_concurrency: 200

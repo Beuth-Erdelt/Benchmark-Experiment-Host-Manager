@@ -544,7 +544,7 @@ systems:
     profiles:
       analytical-ssd:
         why: "OLAP on node-local NVMe, sized from this experiment's memory limit"
-        requires: {storage_class: ssd}
+        requires: {storage_class: [ssd, null]}  # null = ephemeral also accepted, see below
         knobs:
           random_page_cost: 1.1
           effective_io_concurrency: 200
@@ -758,9 +758,28 @@ resources:
     - {request: 32Gi, limit: 32Gi}
     - {request: 64Gi, limit: 64Gi}
   storage: {size: 50Gi}
-  storage_class: ssd  # required — must match the analytical-ssd profile's `requires.storage_class`,
-                       # or resolution raises SpecError before any argv is produced
+  storage_class: ssd  # one of the values the analytical-ssd profile's `requires.storage_class`
+                       # allows ([ssd, null]) — anything else raises SpecError before any argv is produced
 ```
+
+`resources.storage_class` is only constrained when a `profile:` declares
+`requires: {storage_class: ...}`, as `analytical-ssd` does above.
+`requires.storage_class` may be a single value or, as here, a list of
+acceptable values — `resolve_system()` accepts the experiment's
+`resources.storage_class` as long as it appears in that set. `null` in the
+list means ephemeral is one of the accepted choices, alongside a specific
+cluster-declared class. Leaving `resources.storage_class` unset is legal
+for any system/profile without a `requires:` precondition (or one whose
+list includes `null`, as here), and resolves to ephemeral storage: no
+PersistentVolumeClaim is provisioned, the SUT instead gets whatever
+node-local disk the scheduled node has attached — typically fast, since
+there's no network-storage hop, but tied to that node's lifetime.
+`resources.storage.size` still applies regardless.
+`bexhoma/clusters.py::Kubernetes.get_available_storage_types()` documents
+this as the CLI-facing contract (`-rst`/`--request-storage-type`): `None`/`''`
+(ephemeral) and `'ramdisk'` (in-memory) are always valid, independent of the
+cluster; any other value must be one of the cluster's actual declared
+storage classes (`environment.yml`'s `storage_classes:`).
 
 `duckdb_force_execution` in `override:` does **not** flow through the
 `--set` path like `random_page_cost` etc. do. Per the catalog entry's
@@ -875,9 +894,10 @@ had to duplicate the ~45 shared-flag defaults `bexhoma/cli_args.py`'s
    `derive:` formulas (`evaluate_derive_expression()`, a whitelisted-AST
    evaluator — verified to reject non-arithmetic constructs, including an
    attempted `__import__(...)` injection), and applies `override:`.
-   `requires: {storage_class: ...}` is checked against the experiment's own
-   `resources.storage_class` right here, raising `SpecError` before any
-   argv is produced if it doesn't match.
+   `requires: {storage_class: ...}` (a single value or a list of acceptable
+   values) is checked against the experiment's own `resources.storage_class`
+   right here, raising `SpecError` before any argv is produced if it isn't
+   one of them.
 3. `validate_experiment()` checks, in order: the workload exists; every
    system is in the workload's `supports:` list; every
    `loading.post_load` option is legal for the workload; and each system's

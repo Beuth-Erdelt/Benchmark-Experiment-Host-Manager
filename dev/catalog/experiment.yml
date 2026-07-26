@@ -68,4 +68,7 @@ resources:
     - {request: 32Gi, limit: 32Gi}
     - {request: 64Gi, limit: 64Gi}  # "our servers have at most 64GB of RAM"
   storage: {size: 50Gi}
-  storage_class: ssd  # must match the analytical-ssd profile's `requires.storage_class`
+  # storage_class deliberately left unset: analytical-ssd's `requires.storage_class`
+  # allows [ssd, null], and this run accepts ephemeral (fast node-local disk, no PVC,
+  # no guaranteed-NVMe SLA) rather than requiring the cluster's declared `ssd` class
+  # — see catalog.yaml's header comment

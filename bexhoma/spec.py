@@ -115,7 +115,9 @@ class ResolvedSystem:
     :ivar deployment: Kubernetes Deployment name, used to build ``--set`` selectors.
     :ivar knobs: Final knob values, keyed by knob name.
     :ivar physical_design: The system's physical-design support, from the catalog.
-    :ivar storage_class: Storage class required by the resolved profile, if any.
+    :ivar storage_class: Storage class the experiment resolved to, when the profile
+        declares a ``requires.storage_class`` precondition (``None`` for ephemeral,
+        even though the precondition was satisfied).
     """
     name: str
     deployment: str
@@ -312,15 +314,19 @@ def resolve_system(
     values: dict[str, Any] = {}
     if profile_name is not None:
         profile = _resolve_profile(catalog, definition, profile_name)
-        required_storage_class = profile.get("requires", {}).get("storage_class")
-        if required_storage_class is not None:
-            if resources.get("storage_class") != required_storage_class:
+        if "requires" in profile and "storage_class" in profile["requires"]:
+            required_storage_class = profile["requires"]["storage_class"]
+            allowed_storage_classes = (
+                required_storage_class if isinstance(required_storage_class, list) else [required_storage_class]
+            )
+            resource_storage_class = resources.get("storage_class")
+            if resource_storage_class not in allowed_storage_classes:
                 raise SpecError(
                     f"system '{system_name}' profile '{profile_name}' requires "
-                    f"storage_class '{required_storage_class}', got "
-                    f"'{resources.get('storage_class')}'"
+                    f"storage_class in {allowed_storage_classes}, got "
+                    f"'{resource_storage_class}'"
                 )
-            resolved.storage_class = required_storage_class
+            resolved.storage_class = resource_storage_class
         values.update(profile.get("knobs", {}))
         derive_inputs = {
             "memory_limit": parse_memory_quantity(resources["memory_limit"]),
