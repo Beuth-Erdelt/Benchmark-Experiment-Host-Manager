@@ -152,11 +152,12 @@ def manage():
                 experiment.num_tenants = workload_properties.get('num_tenants', 0)
                 experiment.tenant_per = workload_properties.get('tenant_per', '')
                 experiment.multi_tenant_volume = workload_properties.get('multi_tenant_volume', False)
-                # regenerate results - only for debugging
-                #experiment.evaluate_results()
-                #experiment.store_workflow_results()
                 if args.force_evaluate:
                     experiment.evaluate_results()
+                    # workflow_planned is only persisted to queries.config here, not by
+                    # evaluate_results() itself; without it show_summary() raises KeyError
+                    # if the original run crashed before reaching this point.
+                    experiment.store_workflow_results()
                 experiment.show_summary(write_report=args.report)
     elif args.mode == 'dashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)

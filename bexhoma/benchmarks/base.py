@@ -364,7 +364,7 @@ class Benchmark:
         if experiment.benchmarking_is_active():
             df_connections = self.evaluator.get_connections_of_experiment()
             workflow_actual = self.evaluator.reconstruct_workflow(df_connections)
-            workflow_planned = experiment.workload['workflow_planned']
+            workflow_planned = experiment.workload.get('workflow_planned', {})
             workflow_section = build_workflow_section(workflow_actual, workflow_planned)
         is_multitenant = experiment.num_tenants > 0
         loading_section, df_loading = self._show_loading_sections(experiment, is_multitenant)
