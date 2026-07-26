@@ -70,6 +70,47 @@ def _job_is_complete(job) -> bool:
     return False
 
 
+def _derive_phase(labels: dict, loading_active: bool, benchmarking_active: bool, current_client: str) -> str:
+    """Derive a human-readable experiment phase from SUT pod labels and live pod activity.
+
+    Mirrors the index > data > schema precedence ``LoadingCoordinator.check()``
+    (``configurations/loading.py``) uses to decide whether loading has finished.
+
+    :param labels: SUT pod labels (empty dict if no SUT pod is running).
+    :type labels: dict
+    :param loading_active: Whether any 'loading' component pods are currently running.
+    :type loading_active: bool
+    :param benchmarking_active: Whether any 'benchmarker' component pods are currently running.
+    :type benchmarking_active: bool
+    :param current_client: ``client`` label of a currently running benchmarker pod, if any.
+    :type current_client: str
+    :return: Human-readable phase, e.g. ``"Loading (data)"`` or ``"Benchmarking (run 2/3)"``.
+    :rtype: str
+    """
+    if not labels:
+        return 'Not started'
+    if labels.get('loaded') != 'True':
+        if 'index' in labels:
+            return 'Loading (index)'
+        if 'data' in labels:
+            return 'Loading (data)'
+        if 'schema' in labels:
+            return 'Loading (schema)'
+        return 'Loading' if loading_active else 'Starting'
+    num_runs_planned = labels.get('num_experiment_runs_planned', '')
+    num_rounds_planned = labels.get('num_rounds_planned', '')
+    experiment_run = labels.get('experimentRun', '')
+    if benchmarking_active:
+        run_progress = '{}/{}'.format(experiment_run, num_runs_planned) if num_runs_planned else experiment_run
+        round_progress = (
+            ', round {}/{}'.format(current_client, num_rounds_planned)
+            if num_rounds_planned and current_client else '')
+        return 'Benchmarking (run {}{})'.format(run_progress, round_progress)
+    if num_runs_planned and experiment_run == num_runs_planned:
+        return 'Done'
+    return 'Loaded'
+
+
 def manage():
     description = """This tool helps managing running Bexhoma experiments in a Kubernetes cluster.
     """
@@ -316,6 +357,7 @@ def manage():
                 component = 'sut'
                 apps[configuration][component] = ''
                 apps[configuration]['loaded [s]'] = ''
+                sut_labels = {}
                 if args.verbose:
                     deployments = [d.metadata.name for d in _filter_by_labels(all_deployments, component=component, experiment=experiment, configuration=configuration)]
                     print("Deployments", deployments)
@@ -327,6 +369,7 @@ def manage():
                 for pod in pods:
                     status = pod.status.phase
                     labels = pod_labels[pod.metadata.name]
+                    sut_labels = labels
                     experimentRun = '{}. '.format(labels['experimentRun']) if 'experimentRun' in labels else ''
                     apps[configuration][component] = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
                     if 'loaded' in labels:
@@ -390,6 +433,7 @@ def manage():
                 pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
                     print("Loading Pods", [pod.metadata.name for pod in pods])
+                loading_active = len(pods) > 0
                 num_pods = _pod_status_counts(pods)
                 for status in num_pods.keys():
                     apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
@@ -417,6 +461,8 @@ def manage():
                 pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
                 if args.verbose:
                     print("Benchmarker Pods", [pod.metadata.name for pod in pods])
+                benchmarking_active = len(pods) > 0
+                current_client = pod_labels[pods[0].metadata.name].get('client', '') if pods else ''
                 num_pods = {}
                 for pod in pods:
                     status = pod.status.phase
@@ -426,6 +472,9 @@ def manage():
                     num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1
                 for status in num_pods.keys():
                         apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)
+                ############
+                apps[configuration]['phase'] = _derive_phase(
+                    sut_labels, loading_active, benchmarking_active, current_client)
             df = pd.DataFrame(apps)
             df = df.T
             df.sort_index(inplace=True)
