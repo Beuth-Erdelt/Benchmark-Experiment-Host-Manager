@@ -1229,15 +1229,20 @@ class Kubernetes():
         """
         Apply a Kubernetes manifest file via ``kubectl create``.
 
-        The manifest is copied to the experiment result folder with the
+        The manifest is copied to the experiment result folder (or, if no
+        experiment ``code`` is set, directly to the result folder root, e.g.
+        for cluster-wide components like the dashboard) with the
         ``BEXHOMA_PACKAGE_VERSION`` placeholder substituted, then applied.
 
         :param filename_source: Path to the source manifest template file.
         """
         filename = Path(filename_source)
-        path = Path(self.config['benchmarker']['resultfolder']) / self.code
+        path = Path(self.config['benchmarker']['resultfolder'])
+        if self.code is not None:
+            path = path / self.code
         filename_replaced = path / filename.name
         if os.path.isfile(filename_source):
+            os.makedirs(path, exist_ok=True)
             with open(filename_source, "r") as template:
                 data = template.read()
                 data = data.replace("BEXHOMA_PACKAGE_VERSION", __version__)
