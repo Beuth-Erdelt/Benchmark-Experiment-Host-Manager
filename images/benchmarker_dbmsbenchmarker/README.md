@@ -57,6 +57,7 @@ query workload against an already-loaded DBMS.
 * `DBMSBENCHMARKER_VERBOSE`: When non-zero, enable verbose output flags (`-d -vq -vr -vp -vs`). Default: `0`.
 * `DBMSBENCHMARKER_DEV`: When non-zero, check out the `dev` branch of the cloned repository and pass `-db` to DBMSBenchmarker. Default: `0`.
 * `DBMSBENCHMARKER_SHUFFLE_QUERIES`: When `True`, randomise query order per stream (`-ssh 1`). Default: `False`.
+* `DBMSBENCHMARKER_VERBOSE_EXPLAIN`: When `True`, pass `-ve` so DBMSBenchmarker runs and prints any `explain` statements configured in the DBMS connection's JDBC config right after each benchmark query. Default: `False`.
 * `DBMSBENCHMARKER_TESTRUN`: When non-zero, run a quick self-test (TPC-DS against MonetDB at localhost) and exit immediately. Default: `0`.
 
 ## Bundled JDBC drivers

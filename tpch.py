@@ -87,6 +87,7 @@ if __name__ == '__main__':
     parser.add_argument('-xrso',  '--xrefresh-stream-offset', help='start the refresh stream at set OFFSET+1, so that sets 1..OFFSET are skipped (use to continue from a previous run without re-applying already-applied sets)', default=0, type=int, dest='num_refresh_stream_offset')
     parser.add_argument('-xaq',   '--xactive-queries', help='comma-separated 1-based query numbers to run, e.g. 3,5,6,7 (all other queries are set inactive in the query config uploaded to the cluster; unset = run all queries as defined in the query config file)', default='', dest='active_queries')
     parser.add_argument('-xdfe',  '--xduckdb-force-execution', help='force every query through pg_duckdb\'s DuckDB execution engine (PgDuckDB only); off by default so pg_duckdb can cost-base its own routing', action='store_true', default=False, dest='duckdb_force_execution')
+    parser.add_argument('-xve',   '--xverbose-explain', help='run and print configured EXPLAIN statements after each benchmark query (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='verbose_explain')
     # evaluate args
     args = parser.parse_args()
     if args.debug:
@@ -136,6 +137,8 @@ if __name__ == '__main__':
     # shuffle ordering and random parameters
     recreate_parameter = args.recreate_parameter
     shuffle_queries = args.shuffle_queries
+    # run and print configured EXPLAIN statements after each query
+    verbose_explain = args.verbose_explain
     # limit to one table
     limit_import_table = args.limit_import_table
     # columnar storage
@@ -226,6 +229,7 @@ if __name__ == '__main__':
         DBMSBENCHMARKER_RECREATE_PARAMETER = recreate_parameter,
         DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
         DBMSBENCHMARKER_DEV = debugging,
+        DBMSBENCHMARKER_VERBOSE_EXPLAIN = verbose_explain,
     )
     if num_refresh_streams > 0:
         experiment.set_default_benchmarking_parameters(
