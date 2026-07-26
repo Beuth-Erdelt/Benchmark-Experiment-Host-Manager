@@ -82,9 +82,13 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
         1) All local logs are copied to the pod.
         2) Benchmarker in the dashboard pod is updated (dev channel)
         3) All results of all DBMS are joined (merge.py of benchmarker) in dashboard pod
-        4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod;
-           its stdout/stderr is persisted to ``evaluate_results.log`` in the result
+        4) Evaluation cube is built (python benchmark.py read -e yes -scm) in dashboard
+           pod; its stdout/stderr is persisted to ``evaluate_results.log`` in the result
            folder so the cube-building step can be inspected/timed after the fact.
+           ``-scm`` skips dbmsbenchmarker's per-component (loading/streaming/loader/
+           benchmarker/datagenerator) hardware metric aggregates, since bexhoma's own
+           evaluators never read them (they are only consumed by dbmsbenchmarker's
+           interactive evaluation notebooks).
         """
         self.cluster.logger.debug('dbmsbenchmarker.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
@@ -121,7 +125,7 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
             print("done!")
         #print("Build evaluation cube ", end="", flush=True)
         print("{:30s}: build evaluation cube...".format("Experiment"), end="", flush=True)
-        cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
+        cmd['evaluate_results'] = 'python benchmark.py read -e yes -scm -r /results/'+str(self.code)
         _, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
         self.cluster.logger.debug(stdout)
         filename_log = f"{self.cluster.resultfolder}/{self.code}/evaluate_results.log"
