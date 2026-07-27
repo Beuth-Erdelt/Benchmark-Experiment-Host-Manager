@@ -31,7 +31,11 @@ images/tpcds/
 ```
 
 ## Generator execution flow (`generator.sh`)
-1. Pop child index from Redis queue `bexhoma-loading-<CONNECTION>-<EXPERIMENT>`.
+1. Pop child index from Redis queue
+   `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>` (scoped by
+   `EXPERIMENT_RUN` because loading is redone from scratch for every experiment_run — see
+   `bexhoma/CLAUDE.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
+   empty rather than defaulting to a fixed child index, since another pod may already own it.
 2. Write child index to `/tmp/tpcds/BEXHOMA_CHILD` (loaders read this file).
 3. If BEXHOMA_SYNCH_GENERATE=1: sync on `bexhoma-generator-podcount-<CONNECTION>-<EXPERIMENT>`.
 4. Determine destination: `/data/tpcds/SF<SF>[/<N>/<child>]` or `/tmp/tpcds/SF<SF>[/<N>/<child>]`. Exit early if the folder exists **and contains at least one `.dat` file** (checked via a `nullglob` array, not just directory existence — an empty folder created as a parent for another child's subfolder must not be mistaken for already-generated data) and STORE_RAW_DATA_RECREATE=0.

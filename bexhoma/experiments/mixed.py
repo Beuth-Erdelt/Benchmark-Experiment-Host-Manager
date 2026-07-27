@@ -102,6 +102,11 @@ class MixedExperiment(ExperimentBase):
         ):
             configuration.experiment_dict = copy.deepcopy(self.experiment_dict_template)
 
+    #: Workload keys that identify the experiment as a whole (which benchmark tool it
+    #: is, and the scale factor dbmsbenchmarker uses for Power@Size/Throughput-style
+    #: metrics). Only the primary benchmark (``benchmark_index == 1``) may set these.
+    _WORKLOAD_IDENTITY_KEYS = ('name', 'type', 'defaultParameters')
+
     def prepare_testbed(self, parameter: dict) -> None:
         """
         Configure all registered benchmarks and then delegate to :meth:`ExperimentBase.prepare_testbed`.
@@ -109,21 +114,46 @@ class MixedExperiment(ExperimentBase):
         Calls :meth:`~bexhoma.benchmarks.base.Benchmark.configure_workload` on every
         registered benchmark in registration order before forwarding to the parent.
 
+        Every benchmark's ``configure_workload()`` calls ``experiment.set_workload(name=...,
+        type=..., defaultParameters=...)`` on this shared experiment, since each was
+        originally written assuming it is the only benchmark. For a genuinely mixed
+        experiment (e.g. a YCSB benchmark added via :meth:`add_benchmark` alongside a
+        primary TPC-H benchmark), calling every benchmark's ``configure_workload()``
+        unconditionally would let whichever one runs last silently overwrite the
+        experiment's identity (its reported ``type``/``name`` and, critically, the scale
+        factor dbmsbenchmarker uses for Power@Size/Throughput) with its own. Only the
+        primary benchmark (``benchmark_index == 1``, i.e. the first one registered) is
+        allowed to set those identity keys; secondary benchmarks still run
+        ``configure_workload()`` in full for their other side effects (e.g. toggling
+        ``loading_active``, appending to ``workload['info']``), but any identity keys
+        they touch are reverted to the primary's values immediately after.
+
         :param parameter: Dict of CLI arguments as produced by argparse.
         """
         for benchmark in self.benchmarks:
-            benchmark.configure_workload(self, parameter)
+            if benchmark.benchmark_index == 1:
+                benchmark.configure_workload(self, parameter)
+            else:
+                preserved = {
+                    key: self.workload[key]
+                    for key in self._WORKLOAD_IDENTITY_KEYS if key in self.workload
+                }
+                benchmark.configure_workload(self, parameter)
+                self.workload.update(preserved)
         ExperimentBase.prepare_testbed(self, parameter)
 
-    def show_summary(self) -> None:
+    def show_summary(self, write_report: bool = False) -> None:
         """
         Print a Markdown-formatted summary for every registered benchmark.
 
         Delegates to :meth:`~bexhoma.benchmarks.base.Benchmark.show_summary` on
         each benchmark in registration order.
+
+        :param write_report: When ``True``, also write a tiered Markdown report
+            (``report/index.md`` + detail files) to the result folder.
         """
         for benchmark in self.benchmarks:
-            benchmark.show_summary(self)
+            benchmark.show_summary(self, write_report=write_report)
 
     def test_results(self) -> None:
         """

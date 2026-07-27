@@ -1,0 +1,161 @@
+######################################################################################
+# Dockerfile template for Bexhoma - Benchmarker DBMSBenchmarker
+######################################################################################
+#
+# This Dockerfile template builds an image for a Bexhoma benchmarker running
+# DBMSBenchmarker query workloads against a target DBMS.
+#
+# Base Image: python:3.14.2
+#
+# NOTE: This is a template processed by create_Dockerfiles.py.
+#       The placeholder v0.14.24 is replaced with the DBMSBenchmarker version tag.
+#       Use: python create_Dockerfiles.py -v <version> -i <image-tag>
+#
+# Author: Patrick K. Erdelt
+# Email: patrick.erdelt@bht-berlin.de
+# Date: 2025-05-18
+# Version: 1.0
+# Description: Runs DBMSBenchmarker query workloads against a target DBMS.
+#   Configuration is supplied via environment variables.
+#   A Redis message queue is consulted for pod-assignment details.
+#   Java, redis-cli, and JDBC drivers are installed.
+######################################################################################
+FROM python:3.14.2
+
+WORKDIR /usr/src/app
+
+######################################################################################
+# Environment variables — runtime configuration
+######################################################################################
+# Scaling and parallelism
+ENV SF=1
+ENV BEXHOMA_NUM_PODS=4
+ENV BEXHOMA_CHILD=1
+ENV BEXHOMA_RNGSEED=123
+
+# Target DBMS connection
+ENV BEXHOMA_URL=jdbc:mysql://localhost:3306/ycsb
+ENV BEXHOMA_HOST=www.example.com
+ENV BEXHOMA_PORT=3306
+ENV BEXHOMA_JAR=mysql-connector-j-8.0.31.jar
+ENV BEXHOMA_DRIVER=com.mysql.cj.jdbc.Driver
+ENV BEXHOMA_USER=root
+ENV BEXHOMA_PASSWORD=root
+ENV BEXHOMA_DATABASE=demo
+ENV BEXHOMA_SCHEMA=
+
+# Bexhoma experiment identity
+ENV BEXHOMA_DBMS=postgresql
+ENV BEXHOMA_CONFIGURATION=postgresql
+ENV BEXHOMA_CONNECTION=mysql
+ENV BEXHOMA_EXPERIMENT=12345
+ENV BEXHOMA_EXPERIMENT_RUN=1
+ENV BEXHOMA_CLIENT=1
+
+# Pod synchronisation
+ENV BEXHOMA_TIME_START=0
+ENV BEXHOMA_TIME_NOW=0
+
+# Multi-tenant parameters
+ENV BEXHOMA_TENANT_BY=
+ENV BEXHOMA_TENANT_NUM=1
+ENV BEXHOMA_NUM_PODS_TOTAL=4
+
+# DBMSBenchmarker parameters
+ENV DBMSBENCHMARKER_CONNECTION=mysql
+ENV DBMSBENCHMARKER_ALIAS=mysql
+ENV DBMSBENCHMARKER_CLIENT=1
+ENV DBMSBENCHMARKER_SLEEP=30
+ENV DBMSBENCHMARKER_RECREATE_PARAMETER=0
+ENV DBMSBENCHMARKER_VERBOSE=0
+ENV DBMSBENCHMARKER_DEV=0
+ENV DBMSBENCHMARKER_SHUFFLE_QUERIES=False
+ENV DBMSBENCHMARKER_VERBOSE_EXPLAIN=False
+ENV DBMSBENCHMARKER_TESTRUN=0
+
+######################################################################################
+# Install system dependencies (Java runtime, nano)
+######################################################################################
+RUN apt-get update && apt-get install -y default-jre nano && rm -rf /var/lib/apt/lists/*
+
+######################################################################################
+# Install DBMSBenchmarker Python package (v0.14.24)
+######################################################################################
+RUN pip uninstall dbmsbenchmarker -y
+RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0/ pip install --no-cache-dir --upgrade --force-reinstall git+https://github.com/Beuth-Erdelt/DBMS-Benchmarker@v0.14.24
+
+######################################################################################
+# Clone DBMSBenchmarker repository (for workload configs and scripts)
+######################################################################################
+RUN git clone https://github.com/Beuth-Erdelt/DBMS-Benchmarker --branch v0.14.24
+
+WORKDIR /usr/src/app/DBMS-Benchmarker
+
+######################################################################################
+# Create result and JDBC driver directories
+######################################################################################
+RUN mkdir -p /results
+RUN mkdir -p /results/$DBMSBENCHMARKER_CODE
+RUN mkdir -p jars/
+
+######################################################################################
+# Install JDBC drivers
+######################################################################################
+
+# PostgreSQL 42.5.0
+RUN wget https://jdbc.postgresql.org/download/postgresql-42.5.0.jar --no-check-certificate
+RUN cp postgresql-42.5.0.jar jars/postgresql-42.5.0.jar
+
+# MySQL 8.0.31
+RUN wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.0.31.tar.gz
+RUN tar -zxvf mysql-connector-j-8.0.31.tar.gz
+RUN cp mysql-connector-j-8.0.31/mysql-connector-j-8.0.31.jar jars/mysql-connector-j-8.0.31.jar
+
+# MariaDB 3.1.0
+RUN wget https://dlm.mariadb.com/2678616/Connectors/java/connector-java-3.1.0/mariadb-java-client-3.1.0.jar
+RUN cp mariadb-java-client-3.1.0.jar jars/mariadb-java-client-3.1.0.jar
+
+# MonetDB 12.1 (jre8)
+RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-12.1.jre8.jar --no-check-certificate
+RUN cp monetdb-jdbc-12.1.jre8.jar jars/monetdb-jdbc-12.1.jre8.jar
+
+# MonetDB 12.2 (jre8)
+RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-12.2.jre8.jar --no-check-certificate
+RUN cp monetdb-jdbc-12.2.jre8.jar jars/monetdb-jdbc-12.2.jre8.jar
+
+# SingleStore 1.1.4
+RUN wget https://github.com/memsql/S2-JDBC-Connector/releases/download/v1.1.4/singlestore-jdbc-client-1.1.4.jar
+RUN cp singlestore-jdbc-client-1.1.4.jar jars/singlestore-jdbc-client-1.1.4.jar
+
+# YugabyteDB 42.3.5-yb-2
+RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
+RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
+
+######################################################################################
+# Build and install redis-cli from source
+######################################################################################
+RUN cd /tmp && \
+    wget http://download.redis.io/redis-stable.tar.gz && \
+    tar xvzf redis-stable.tar.gz && \
+    cd redis-stable && \
+    make && \
+    cp src/redis-cli /usr/local/bin/ && \
+    chmod 755 /usr/local/bin/redis-cli && \
+    rm -rf /tmp/redis-stable /tmp/redis-stable.tar.gz
+
+######################################################################################
+# Copy default workload config files (used by DBMSBENCHMARKER_TESTRUN mode)
+######################################################################################
+RUN mkdir -p tpc-ds
+COPY ./connections.config ./tpc-ds/connections.config
+COPY ./queries.config ./tpc-ds/queries.config
+RUN ["chmod", "+x", "./tpc-ds/connections.config"]
+RUN ["chmod", "+x", "./tpc-ds/queries.config"]
+
+######################################################################################
+# Copy entrypoint script
+######################################################################################
+COPY ./benchmarker.sh ./benchmarker.sh
+RUN ["chmod", "+x", "./benchmarker.sh"]
+
+CMD ["/bin/bash", "-c", "./benchmarker.sh"]

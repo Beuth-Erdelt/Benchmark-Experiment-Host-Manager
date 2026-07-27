@@ -82,7 +82,13 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
         1) All local logs are copied to the pod.
         2) Benchmarker in the dashboard pod is updated (dev channel)
         3) All results of all DBMS are joined (merge.py of benchmarker) in dashboard pod
-        4) Evaluation cube is built (python benchmark.py read -e yes) in dashboard pod
+        4) Evaluation cube is built (python benchmark.py read -e yes -scm) in dashboard
+           pod; its stdout/stderr is persisted to ``evaluate_results.log`` in the result
+           folder so the cube-building step can be inspected/timed after the fact.
+           ``-scm`` skips dbmsbenchmarker's per-component (loading/streaming/loader/
+           benchmarker/datagenerator) hardware metric aggregates, since bexhoma's own
+           evaluators never read them (they are only consumed by dbmsbenchmarker's
+           interactive evaluation notebooks).
         """
         self.cluster.logger.debug('dbmsbenchmarker.evaluate_results()')
         self.evaluator.evaluate_results(pod_dashboard)
@@ -119,23 +125,32 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
             print("done!")
         #print("Build evaluation cube ", end="", flush=True)
         print("{:30s}: build evaluation cube...".format("Experiment"), end="", flush=True)
-        cmd['evaluate_results'] = 'python benchmark.py read -e yes -r /results/'+str(self.code)
-        self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
+        cmd['evaluate_results'] = 'python benchmark.py read -e yes -scm -r /results/'+str(self.code)
+        _, stdout, stderr = self.cluster.execute_command_in_pod(command=cmd['evaluate_results'], pod=pod_dashboard, container="dashboard")
+        self.cluster.logger.debug(stdout)
+        filename_log = f"{self.cluster.resultfolder}/{self.code}/evaluate_results.log"
+        with open(filename_log, "w", encoding="utf-8") as f:
+            f.write(stdout)
+            if stderr:
+                f.write(stderr)
         print("done!")
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
         self.download_experiment_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.upload_experiment_file(filename='')
-    def show_summary(self) -> None:
+    def show_summary(self, write_report: bool = False) -> None:
         """
         Print the experiment summary by delegating to the primary benchmark.
 
         Finds the benchmark with ``benchmark_index == 1`` and calls its
         :meth:`~bexhoma.benchmarks.base.Benchmark.show_summary` template method,
         passing this experiment as the context object.
+
+        :param write_report: When ``True``, also write a tiered Markdown report
+            (``report/index.md`` + detail files) to the result folder.
         """
         primary = next(bm for bm in self.benchmarks if bm.benchmark_index == 1)
-        primary.show_summary(self)
+        primary.show_summary(self, write_report=write_report)
 
 

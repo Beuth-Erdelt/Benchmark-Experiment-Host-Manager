@@ -50,8 +50,12 @@ All instance attributes are declared in `Kubernetes.__init__`.  Key groups:
 | Kubernetes API errors trigger `cluster_access()` retry | Short-lived kubeconfig tokens expire; auto-refresh avoids manual re-auth |
 | `kubectl` subprocess fallback | Some operations (create from file, exec, cp) are simpler as CLI calls than raw API |
 | `to_unc()` for Windows paths | `kubectl cp` on Windows requires UNC paths when the source is a drive-lettered path |
+| `upload_file()`/`download_file()` pass `--retries {KUBECTL_CP_INTERNAL_RETRIES}` to `kubectl cp` itself, on top of their own outer cold-retry loop | kubectl's exec-based tar transport can truncate its own stdout stream mid-copy on larger payloads (`error: unexpected EOF` with kubectl's default of zero retries — see [kubectl#1425](https://github.com/kubernetes/kubectl/issues/1425)); kubectl's own `--retries` resumes the tar stream at the last byte offset instead of restarting the whole transfer, which the outer loop's fresh `kubectl cp` invocation does not do |
 | `container = ''` override in `store_pod_description` / `pod_description` | `kubectl describe pod` is not container-scoped; the parameter is kept for API symmetry |
 | Double-retry pattern on `ApiException` | Reconnects token and retries once; no infinite loop risk because the retry passes the same explicit arguments |
+| `_pod_label()` splices `number` (experiment_run) right after the experiment `code` in `store_pod_log()`/`store_pod_description()` filenames, not appended as a trailing suffix | Keeps the long-lived SUT pod's per-run log/describe captures on the same `<configuration>-<code>-<experiment_run>-...` positional convention job manifests and benchmarker/loader logs already use, instead of trailing the run number after Kubernetes' own pod-hash/random suffix — see `docs/AgentResultContract.md` |
+| `store_job_description()`/`job_description()` alongside `store_pod_description()`/`pod_description()`; called from `LoadingCoordinator.check()` right before `delete_job()` | A Job's own `kubectl describe` Events list every Pod it ever spawned over its full lifetime (e.g. one that failed and was replaced under `backoffLimit`), which per-pod describes alone can miss if the failed Pod object is already garbage-collected by the time `check()` looks for it. `jobname` already encodes `experiment_run`/`data_job` via `generate_component_name()`, so unlike the pod-side methods no separate `number` splicing is needed |
+| Job describes are written as `{jobname}.describe.job.log`, not `{jobname}.describe.log` | Keeps them globbable apart from per-pod describes sharing the same jobname prefix; `report_writer.py`'s `workflow.md` links pod and job describes under two separate, clearly labelled provenance sections instead of one mixed list — see `docs/AgentResultContract.md` |
 
 ### `OLD_*` methods
 
@@ -305,3 +309,33 @@ index-phase kickoff; earlier finishers only clean up their own pods/logs. This i
 Redis (a plain `kubectl label --overwrite`) because a single orchestrator process is the only
 writer of that label — unlike the pod-to-pod counters above, which coordinate genuinely
 independent processes and therefore need Redis's atomic `decr`.
+
+### Chunk-assignment queue (separate from the counters above)
+
+Each loader entry's parallel pods also need a *unique* 1..`entry_parallelism` chunk index
+(which physical data partition/pod each one loads), handed out via a Redis list at
+`bexhoma-loading-{CONFIGURATION}-{EXPERIMENT}-{EXPERIMENT_RUN}-{DATA_JOB}`
+(`LoadingCoordinator.start_pod()`, populated with `RPUSH` via `Kubernetes.add_to_messagequeue()`;
+each pod's `generator.sh` claims its index with `LPOP`). A same-keyed
+`...-config-{i}` entry per pod (`SutConfiguration._push_pod_configs()` /
+`Kubernetes.set_pod_config()`) optionally carries per-pod parameter overrides.
+
+Unlike the podcount counters above, this queue is populated with `RPUSH` (append), not `SET`
+(overwrite) — so it is **not** naturally idempotent across repeated calls with the same key.
+The key **must** include `EXPERIMENT_RUN`, unlike the round/job counters, because loading is
+redone from scratch for every `experiment_run` in a repeat-run sweep (a fresh SUT pod is
+deployed per run — the counters' "loading has exactly one round per (CONFIGURATION,
+EXPERIMENT)" assumption above does not hold across runs). Before repopulating,
+`start_pod()` calls `delete_messagequeue_key()` to clear any leftover entries, then verifies
+`add_to_messagequeue()`'s returned list length matches `entry_parallelism` exactly, raising
+`RuntimeError` otherwise — a silently-swallowed `kubectl exec` failure (anything other than
+the literal `"error dialing backend"`, which is retried) would otherwise leave the queue short
+by one entry, and the unlucky pod's `LPOP` would come back empty. `generator.sh` treats that
+as fatal (`exit 1`) rather than defaulting `BEXHOMA_CHILD` to a fixed value, which used to
+silently duplicate another pod's chunk (and leave some other chunk never loaded at all).
+
+This same queue/config-key format is shared by every workload with a parallel loading phase
+(`images/tpch`, `images/tpcds`, `images/benchbase`, `images/ycsb`) — their `generator.sh` (and,
+for TPC-H/TPC-DS, each DBMS-specific `loader.sh`, which independently reconstructs the
+`...-config-{i}` key to read its own per-pod overrides) must stay byte-for-byte in sync with
+this Python-side key format.

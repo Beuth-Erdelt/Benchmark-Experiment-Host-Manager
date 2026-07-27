@@ -272,6 +272,9 @@ class LoadingCoordinator:
             when ``experiment_dict['loader']`` has no entries.
         :param num_pods: Total pods that must complete; used only as a
             fallback when ``experiment_dict['loader']`` has no entries.
+        :raises RuntimeError: If the chunk-assignment queue does not end up
+            at exactly ``entry_parallelism`` items after being (re)populated,
+            which would otherwise let pods race on a corrupted assignment.
         """
         cfg = self._config
         if len(app) == 0:
@@ -280,6 +283,12 @@ class LoadingCoordinator:
             configuration = cfg.configuration
         if len(experiment) == 0:
             experiment = cfg.code
+        # Loading is redone from scratch for every experiment_run (a fresh SUT
+        # pod is deployed per run), so the chunk-assignment queue must be
+        # scoped by experiment_run too -- otherwise a leftover/likely-empty
+        # queue from a previous run's population can desynchronise which
+        # chunk index a pod gets (see delete + length-check below).
+        experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         cfg.logger.debug("LoadingCoordinator.start_pod({})".format(configuration))
         loader_entries = cfg.experiment_dict['loader'] or [
             {'parallelism': parallelism, 'num_pods': num_pods}]
@@ -305,10 +314,26 @@ class LoadingCoordinator:
             # "only if there's more than one entry" branch to forget to add.
             benchmark_run = str(data_job)
             suffix = '-{}'.format(data_job)
-            redisQueue = '{}-{}-{}-{}{}'.format(
-                app, component, cfg.configuration, cfg.code, suffix)
+            redisQueue = '{}-{}-{}-{}-{}{}'.format(
+                app, component, cfg.configuration, cfg.code, experiment_run, suffix)
+            # Clear any leftover entries before repopulating, then verify the
+            # queue ends up at exactly entry_parallelism items. add_to_messagequeue
+            # only retries on a literal "error dialing backend"; any other
+            # transient kubectl-exec failure would otherwise be swallowed
+            # silently, leaving fewer than entry_parallelism items in the queue
+            # and causing one pod's lpop to come back empty further down the
+            # line (its generator.sh then fails loudly instead of silently
+            # colliding with another pod's chunk index).
+            cfg.experiment.cluster.delete_messagequeue_key(queue=redisQueue)
+            pushed_length = None
             for i in range(1, entry_parallelism + 1):
-                cfg.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
+                pushed_length = cfg.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
+            if pushed_length != entry_parallelism:
+                raise RuntimeError(
+                    "Chunk-assignment queue {} has length {} after pushing {} "
+                    "entries; refusing to start the loading job, as its pods "
+                    "would race on a corrupted chunk assignment.".format(
+                        redisQueue, pushed_length, entry_parallelism))
             if 'parameters' in loader_entry:
                 cfg._push_pod_configs(
                     queue_key=redisQueue,
@@ -683,6 +708,15 @@ class LoadingCoordinator:
                                 "Store description of job {} pod {}".format(job, pod))
                             cfg.experiment.cluster.store_pod_description(pod_name=pod)
                         cfg.experiment.cluster.delete_pod(pod)
+                    if not cfg.experiment.cluster.job_description_exists(jobname=job):
+                        cfg.experiment.cluster.logger.debug(
+                            "Store description of job {}".format(job))
+                        # Captured just before deletion (not on an earlier poll) so the
+                        # Job's own Events include every Pod it ever spawned over its
+                        # full lifetime -- e.g. a failed Pod's replacement -- which
+                        # survives even after that failed Pod object itself has already
+                        # been garbage-collected and dropped out of `pods` above.
+                        cfg.experiment.cluster.store_job_description(jobname=job)
                     cfg.experiment.end_loading(job)
                     cfg.experiment.cluster.delete_job(job)
                     if is_last_data_job:

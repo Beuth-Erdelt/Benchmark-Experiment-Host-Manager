@@ -10,7 +10,7 @@ import pandas as pd
 from types import SimpleNamespace
 
 from bexhoma import evaluators
-from .base import Benchmark
+from .base import Benchmark, Section, _key_metrics_section_from_columns
 
 __all__ = ["YCSB"]
 
@@ -70,6 +70,10 @@ class YCSB(Benchmark):
         target_base = int(args.target_base)
         extra_insert_order = args.extra_insert_order
         batchsize = args.scaling_batchsize
+        scaling_logging = int(args.scaling_logging)
+        max_execution_time = int(args.max_execution_time)
+        num_sut_replicas = int(args.num_sut_replicas)
+        num_pd_nodes = int(args.num_pd_nodes)
         num_loading_target_factors = experiment.get_parameter_as_list('num_loading_target_factors')
         num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
@@ -111,27 +115,48 @@ class YCSB(Benchmark):
             experiment.workload['info'] += f"\nFactors for benchmarking are {num_benchmarking_target_factors}."
             if args.activate_reset:
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
+            if max_execution_time > 0:
+                experiment.workload['info'] += f"\nBenchmarking is capped at {max_execution_time}s execution time."
+        if experiment.loading_is_active() or experiment.benchmarking_is_active():
+            experiment.workload['info'] += f"\nStatus is logged every {scaling_logging}s."
+        if "TiDB" in args.dbms or len(args.dbms) == 0:
+            experiment.workload['info'] += f"\nTiDB uses {num_sut_replicas} SUT replica(s) and {num_pd_nodes} PD node(s)."
 
-    def _show_loading_sections(self, experiment, is_multitenant: bool) -> 'pd.DataFrame':
+    def _show_loading_sections(self, experiment, is_multitenant: bool) -> tuple[Section | None, pd.DataFrame]:
         """
-        Print Per Connection and Per Run loading tables for YCSB.
+        Build Per Connection and Per Run loading sections for YCSB.
 
         :param experiment: The owning experiment object.
         :param is_multitenant: Whether the experiment runs in multitenant mode.
-        :return: Per-run loading DataFrame, or an empty DataFrame when no loading
-                 data is available.
-        :rtype: pandas.DataFrame
+        :return: Tuple of the ``Loading`` section (``None`` when no loading data
+                 is available) and the per-run loading DataFrame.
+        :rtype: tuple[Section | None, pandas.DataFrame]
         """
         df_loading = self.evaluator.get_summary_loading_per_connection()
         if experiment.loading_is_active() and not df_loading.empty:
-            print("\n### Loading")
-            print("\n#### Per Connection\n")
-            print(df_loading.to_markdown(index=True, floatfmt=".2f"))
-            print("\n#### Per Run\n")
             if is_multitenant:
                 df_aggregated_loaded = self.evaluator.get_summary_loading_per_run_multitenant()
             else:
                 df_aggregated_loaded = self.evaluator.get_summary_loading_per_run()
-            print(df_aggregated_loaded.to_markdown(index=True, floatfmt=".2f"))
-            return df_aggregated_loaded
-        return pd.DataFrame()
+            section = Section(
+                heading="Loading", level=3, blank_after_heading=False,
+                children=[
+                    Section(heading="Per Connection", level=4, dataframe=df_loading, link_connections=True),
+                    Section(heading="Per Run", level=4, dataframe=df_aggregated_loaded),
+                ],
+            )
+            return section, df_aggregated_loaded
+        return None, pd.DataFrame()
+
+    def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
+        """
+        Surface ``[OVERALL].Throughput(ops/sec)`` — the same column
+        :meth:`~bexhoma.evaluators.ycsb.ycsb.record_tests` tests via
+        ``experiment._test_column()``.
+
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: A ``Key Metrics`` section, or ``None`` when the tested
+                 column is not present.
+        :rtype: Section | None
+        """
+        return _key_metrics_section_from_columns(df_aggregated_reduced, ["[OVERALL].Throughput(ops/sec)"])

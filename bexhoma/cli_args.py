@@ -11,6 +11,43 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import argparse
+import ast
+import os
+
+__all__ = ["make_base_parser", "resolve_scaling_factor"]
+
+
+def resolve_scaling_factor(cluster, code, mode: str, cli_scaling_factor) -> str:
+    """
+    Returns the scaling factor an entry script should construct its experiment
+    object with.
+
+    For ``mode='summary'`` on an existing experiment ``code``, reads the
+    already-persisted ``defaultParameters.SF`` from that experiment's
+    ``queries.config`` instead of trusting the ``-sf`` CLI default. Constructing
+    the experiment with the wrong SF re-arms dbmsbenchmarker's shared, process-global
+    ``parameter.defaultParameters`` with a value the experiment never actually used;
+    if results are then re-evaluated, that wrong value leaks back into
+    ``queries.config`` and corrupts Power@Size/Throughput-style metrics for an
+    experiment that ran at a different scale factor. For every other mode (a fresh
+    or resumed live run), the CLI value is authoritative and is returned unchanged.
+
+    :param cluster: Already-constructed cluster object (provides ``resultfolder``).
+    :param code: Experiment identifier, or ``None`` for a brand-new experiment.
+    :param mode: The entry script's ``mode`` positional argument.
+    :param cli_scaling_factor: Value of ``args.scaling_factor`` (the ``-sf`` CLI default).
+    :return: Scaling factor to use, as a string.
+    :rtype: str
+    """
+    if mode == 'summary' and code is not None:
+        filename = os.path.join(cluster.resultfolder, str(code), 'queries.config')
+        if os.path.isfile(filename):
+            with open(filename, 'r') as inp:
+                workload_properties = ast.literal_eval(inp.read())
+            sf = workload_properties.get('defaultParameters', {}).get('SF')
+            if sf is not None:
+                return str(sf)
+    return str(cli_scaling_factor)
 
 
 def make_base_parser():
@@ -57,10 +94,10 @@ def make_base_parser():
     p.add_argument('-nbt', '--num-benchmarking-threads', help='total benchmarking threads, split evenly across pods', default="1")
     p.add_argument('-sf',  '--scaling-factor', help='scaling factor controlling dataset size', default=1)
     p.add_argument('-t',   '--timeout', help='per-query timeout in seconds', default=600)
-    p.add_argument('-lr',  '--limit-ram', help='RAM limit for the SUT and worker pods (e.g. 64Gi; 0 = no limit)', default='0')
-    p.add_argument('-lc',  '--limit-cpu', help='CPU limit for the SUT and worker pods (e.g. 4; 0 = no limit)', default='0')
-    p.add_argument('-rr',  '--request-ram', help='RAM request for the SUT and worker pods (e.g. 16Gi)', default='16Gi')
-    p.add_argument('-rc',  '--request-cpu', help='CPU request for the SUT and worker pods (e.g. 4)', default='4')
+    p.add_argument('-lr',  '--limit-ram', help='RAM limit for the SUT and worker pods (e.g. 64Gi; 0 = no limit); comma-separated to sweep several settings (e.g. 32Gi,64Gi), one configuration per entry', default='0')
+    p.add_argument('-lc',  '--limit-cpu', help='CPU limit for the SUT and worker pods (e.g. 4; 0 = no limit); comma-separated to sweep, must then match the length of any other swept resource list', default='0')
+    p.add_argument('-rr',  '--request-ram', help='RAM request for the SUT and worker pods (e.g. 16Gi); comma-separated to sweep several settings (e.g. 32Gi,64Gi), one configuration per entry', default='16Gi')
+    p.add_argument('-rc',  '--request-cpu', help='CPU request for the SUT and worker pods (e.g. 4); comma-separated to sweep, must then match the length of any other swept resource list', default='4')
     p.add_argument('-rct', '--request-cpu-type', help='require SUT node to carry label cpu=<value>', default='')
     p.add_argument('-rg',  '--request-gpu', help='number of GPUs to request for the SUT pod', default=1)
     p.add_argument('-rgt', '--request-gpu-type', help='require SUT node to carry label gpu=<value>', default='')
@@ -75,5 +112,6 @@ def make_base_parser():
     p.add_argument('-mtb', '--multi-tenant-by', help='tenancy granularity: schema, database, or container', default='')
     p.add_argument('-mtv', '--multi-tenant-volume', help='allocate a separate persistent volume per tenant', action='store_true', default=False)
     p.add_argument('-tr',  '--test-result', help='validate that results meet basic correctness requirements', action='store_true', default=False)
+    p.add_argument('-rp',  '--report', help='also write a tiered Markdown summary report (report/index.md + detail files) to the result folder', action='store_true', default=False, dest='write_report')
     p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[sut].container[dbms].max_worker_processes=128")
     return p

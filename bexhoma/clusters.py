@@ -32,6 +32,13 @@ from .__version__ import __version__
 
 import platform
 
+#: Retries passed to ``kubectl cp``'s own ``--retries`` flag. kubectl's exec-based
+#: tar transport can truncate its stdout stream mid-copy on larger payloads,
+#: surfacing as ``error: unexpected EOF`` with zero retries (the default);
+#: ``--retries`` makes kubectl resume the tar stream at the last byte offset
+#: instead of failing outright. See https://github.com/kubernetes/kubectl/issues/1425.
+KUBECTL_CP_INTERNAL_RETRIES = 20
+
 
 def to_unc(path: str) -> str:
     """
@@ -40,23 +47,32 @@ def to_unc(path: str) -> str:
     ``D:/foo`` and ``D:\\foo`` become ``\\\\localhost\\D$\\foo``.
     On Linux/macOS the normalized path is returned unchanged.
     A path that is already UNC is returned unchanged.
+
+    A trailing ``/.`` segment (the ``kubectl cp`` marker meaning "copy this
+    directory's contents", not the directory itself, needed to avoid `kubectl
+    cp` nesting the source directory inside an already-existing destination)
+    is preserved, since ``Path()`` would otherwise silently drop it.
     """
+    keep_dot_suffix = str(path).replace("\\", "/").endswith("/.")
     p = Path(path)
 
     if platform.system() != "Windows":
-        return str(p)
+        result = str(p)
+    elif str(p).startswith("\\\\"):
+        result = str(p)
+    else:
+        drive = p.drive
+        if drive:
+            drive_letter = drive.rstrip(":").upper()
+            rel = p.relative_to(drive + "\\")
+            unc = f"\\\\localhost\\{drive_letter}$\\{rel.as_posix()}"
+            result = unc.replace("/", "\\")
+        else:
+            result = str(p)
 
-    if str(p).startswith("\\\\"):
-        return str(p)
-
-    drive = p.drive
-    if drive:
-        drive_letter = drive.rstrip(":").upper()
-        rel = p.relative_to(drive + "\\")
-        unc = f"\\\\localhost\\{drive_letter}$\\{rel.as_posix()}"
-        return unc.replace("/", "\\")
-
-    return str(p)
+    if keep_dot_suffix:
+        result = result.rstrip("\\/") + "\\."
+    return result
 
 
 class Kubernetes():
@@ -1229,15 +1245,20 @@ class Kubernetes():
         """
         Apply a Kubernetes manifest file via ``kubectl create``.
 
-        The manifest is copied to the experiment result folder with the
+        The manifest is copied to the experiment result folder (or, if no
+        experiment ``code`` is set, directly to the result folder root, e.g.
+        for cluster-wide components like the dashboard) with the
         ``BEXHOMA_PACKAGE_VERSION`` placeholder substituted, then applied.
 
         :param filename_source: Path to the source manifest template file.
         """
         filename = Path(filename_source)
-        path = Path(self.config['benchmarker']['resultfolder']) / self.code
+        path = Path(self.config['benchmarker']['resultfolder'])
+        if self.code is not None:
+            path = path / self.code
         filename_replaced = path / filename.name
         if os.path.isfile(filename_source):
+            os.makedirs(path, exist_ok=True)
             with open(filename_source, "r") as template:
                 data = template.read()
                 data = data.replace("BEXHOMA_PACKAGE_VERSION", __version__)
@@ -1372,9 +1393,12 @@ class Kubernetes():
         """
         Upload a local file into a Pod container using ``kubectl cp``.
 
-        On Windows the local path is converted to a UNC path first.
-        Retries up to ``max_retries`` times on transient failures (e.g. context
-        deadline exceeded).  Raises ``RuntimeError`` if all attempts fail.
+        On Windows the local path is converted to a UNC path first. The command
+        itself is given ``--retries`` so kubectl resumes a truncated tar stream
+        (see :data:`KUBECTL_CP_INTERNAL_RETRIES`) instead of failing outright.
+        On top of that, this method retries the whole command up to
+        ``max_retries`` times on transient failures (e.g. context deadline
+        exceeded).  Raises ``RuntimeError`` if all attempts fail.
 
         :param filename_remote: Destination path inside the container.
         :param filename_local: Source path on the local machine.
@@ -1385,7 +1409,7 @@ class Kubernetes():
         :raises RuntimeError: If every attempt returns a failure.
         """
         filename_local = to_unc(filename_local)
-        cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
+        cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
             result = self.kubectl(cmd)
             if result is not None:
@@ -1404,7 +1428,10 @@ class Kubernetes():
         Download a file from a Pod container to the local machine using ``kubectl cp``.
 
         On Windows the local destination path is converted to a UNC path first.
-        Retries up to ``max_retries`` times on transient failures.  Raises
+        The command itself is given ``--retries`` so kubectl resumes a
+        truncated tar stream (see :data:`KUBECTL_CP_INTERNAL_RETRIES`) instead
+        of failing outright. On top of that, this method retries the whole
+        command up to ``max_retries`` times on transient failures.  Raises
         ``RuntimeError`` if all attempts fail.
 
         :param filename_remote: Source path inside the container.
@@ -1416,7 +1443,7 @@ class Kubernetes():
         :raises RuntimeError: If every attempt returns a failure.
         """
         filename_local = to_unc(filename_local)
-        cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
+        cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
             result = self.kubectl(cmd)
             if result is not None:
@@ -1549,6 +1576,20 @@ class Kubernetes():
         else:
             fullcommand = 'describe pod ' + pod
         return self.kubectl(fullcommand)
+
+    def job_description(self, jobname):
+        """
+        Return the ``kubectl describe job`` output for a given Job.
+
+        Unlike a Pod's describe, this captures the Job's own Events (e.g.
+        ``SuccessfulCreate``/``BackoffLimitExceeded``) for every Pod the Job
+        ever spawned -- including one that failed and was replaced, even
+        after that Pod object itself has been garbage-collected.
+
+        :param jobname: Name of the Job to describe.
+        :return: kubectl output string.
+        """
+        return self.kubectl('describe job ' + jobname)
 
     def pod_log(self, pod, container=''):
         """
@@ -2291,6 +2332,10 @@ class Kubernetes():
 
         :param queue: Redis key (queue name).
         :param data: Value to push onto the queue.
+        :return: Resulting list length reported by ``RPUSH``, or ``None`` if
+            the reply could not be parsed as an integer (e.g. the command
+            failed and returned no numeric reply).
+        :rtype: int or None
         """
         pods_messagequeue = self.get_pods(component='messagequeue')
         if pods_messagequeue:
@@ -2299,6 +2344,30 @@ class Kubernetes():
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
         self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
         redis_command = f'redis-cli rpush {queue} {data} '
+        _, stdout, _ = self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+        try:
+            return int(stdout.strip())
+        except (TypeError, ValueError):
+            return None
+
+    def delete_messagequeue_key(self, queue):
+        """
+        Delete a Redis key.
+
+        Used to clear a message queue before repopulating it, so that any
+        leftover entries from an earlier (e.g. crashed or retried) population
+        attempt cannot desynchronise the 1..N chunk assignment handed out to
+        a fresh batch of pods.
+
+        :param queue: Redis key to delete.
+        """
+        pods_messagequeue = self.get_pods(component='messagequeue')
+        if pods_messagequeue:
+            pod_messagequeue = pods_messagequeue[0]
+        else:
+            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
+        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
+        redis_command = f'redis-cli del {queue} '
         self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
 
     def set_pod_counter(self, queue, value=0):
@@ -2377,6 +2446,31 @@ class Kubernetes():
         """
         self.experiments.append(experiment)
 
+    def _pod_label(self, pod_name, number=None):
+        """
+        Build the filename base for a pod's stored log/description files.
+
+        Inserts ``number`` (the experiment-run index) directly after the
+        experiment code segment of ``pod_name`` — e.g.
+        ``bexhoma-sut-postgresql-32gi-1784910886-3-7bd45c7b95-pwzkz`` — so
+        SUT log/describe filenames follow the same
+        ``<configuration>-<code>-<experimentRun>-...`` scheme already used
+        for job manifest filenames, instead of trailing it after
+        Kubernetes' own pod-hash/random suffix.
+
+        :param pod_name: Name of the Pod, as assigned by Kubernetes.
+        :param number: Optional experiment-run index.
+        :return: ``pod_name`` with ``number`` spliced in after the experiment code.
+        :rtype: str
+        """
+        if number is None:
+            return pod_name
+        code = str(self.code)
+        prefix, separator, suffix = pod_name.partition(code)
+        if not separator:
+            return f"{pod_name}-{number}"
+        return f"{prefix}{code}-{number}{suffix}"
+
     def store_pod_description(self, pod_name, container='', number=None):
         """
         Fetch and persist ``kubectl describe pod`` output to the result folder.
@@ -2387,13 +2481,12 @@ class Kubernetes():
         :param pod_name: Name of the Pod to describe.
         :param container: Accepted for API compatibility but ignored — ``kubectl describe``
             is not container-sensitive.
-        :param number: Optional index suffix appended to the filename.
+        :param number: Optional experiment-run index, spliced into the filename
+            directly after the experiment code — see :meth:`_pod_label`.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        if number is not None:
-            filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.describe.log"
-        else:
-            filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe.log"
+        pod_label = self._pod_label(pod_name, number)
+        filename_log = f"{resultfolder}/{self.code}/{pod_label}.describe.log"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:
@@ -2404,6 +2497,47 @@ class Kubernetes():
                     return
                 else:
                     attempt += 1
+
+    def store_job_description(self, jobname):
+        """
+        Fetch and persist ``kubectl describe job`` output to the result folder.
+
+        The file is not overwritten if it already exists. Up to 10 retries are
+        attempted in case of transient kubectl failures. ``jobname`` already
+        encodes ``experiment_run``/``data_job`` (see
+        :meth:`~bexhoma.configurations.manifest.ManifestBuilder.create_manifest_job`),
+        so unlike :meth:`store_pod_description` no separate ``number`` splicing
+        is needed here.
+
+        :param jobname: Name of the Job to describe.
+        """
+        resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+        # ".describe.job.log" (not ".describe.log") so it's unambiguously
+        # globbable apart from per-pod describes with the same jobname prefix
+        # (report_writer.py links the two under separate, clearly labelled
+        # provenance sections instead of one mixed pod+job list).
+        filename_log = f"{resultfolder}/{self.code}/{jobname}.describe.job.log"
+        if not os.path.isfile(filename_log):
+            attempt = 1
+            while attempt < 10:
+                stdout = self.job_description(jobname)
+                if stdout:
+                    with open(filename_log, "w") as f:
+                        f.write(stdout)
+                    return
+                else:
+                    attempt += 1
+
+    def job_description_exists(self, jobname):
+        """
+        Return whether a cached ``describe`` file exists in the result folder.
+
+        :param jobname: Name of the Job.
+        :return: ``True`` if the ``.describe.job.log`` file exists on disk.
+        """
+        resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
+        filename_log = f"{resultfolder}/{self.code}/{jobname}.describe.job.log"
+        return os.path.isfile(filename_log)
 
     def pod_description_exists(self, pod_name, container=''):
         """
@@ -2427,19 +2561,15 @@ class Kubernetes():
 
         :param pod_name: Name of the Pod.
         :param container: Container name within the Pod (optional).
-        :param number: Optional index suffix appended to the filename.
+        :param number: Optional experiment-run index, spliced into the filename
+            directly after the experiment code — see :meth:`_pod_label`.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-        if number is not None:
-            if container:
-                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{container}.{number}.log"
-            else:
-                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{number}.log"
+        pod_label = self._pod_label(pod_name, number)
+        if container:
+            filename_log = f"{resultfolder}/{self.code}/{pod_label}.{container}.log"
         else:
-            if container:
-                filename_log = f"{resultfolder}/{self.code}/{pod_name}.{container}.log"
-            else:
-                filename_log = f"{resultfolder}/{self.code}/{pod_name}.log"
+            filename_log = f"{resultfolder}/{self.code}/{pod_label}.log"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:

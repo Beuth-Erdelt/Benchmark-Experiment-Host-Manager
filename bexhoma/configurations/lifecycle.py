@@ -1076,6 +1076,10 @@ scrape_configs:
                     dep['metadata']['labels'][label_key] = str(label_value)
                 dep['metadata']['labels']['experimentRun'] = str(
                     cfg.num_experiment_to_apply_done + 1)
+                dep['metadata']['labels']['num_experiment_runs_planned'] = str(
+                    cfg.num_experiment_to_apply)
+                dep['metadata']['labels']['num_rounds_planned'] = str(
+                    len(cfg.experiment_dict['benchmarker']))
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 set_labels_from_loaded_pvc()

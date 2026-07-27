@@ -64,7 +64,9 @@ class DictToObject(object):
 
 
 SELECTOR_RE = re.compile(
-    r'^(?P<kind>deployment|statefulset)\[(?P<workload>[^\]]+)\]\.container\[(?P<container>[^\]]+)\]\.(?P<param>[A-Za-z0-9_]+)$',
+    r'^(?P<kind>deployment|statefulset)\[(?P<workload>[^\]]+)\]'
+    r'(@(?P<config>[^.\[\]]+))?'
+    r'\.container\[(?P<container>[^\]]+)\]\.(?P<param>[A-Za-z0-9_]+)$',
     re.IGNORECASE
 )
 
@@ -84,10 +86,22 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
 
     * ``deployment[NAME].container[CONTAINER].PARAM``
     * ``statefulset[NAME].container[CONTAINER].PARAM``
+    * ``deployment[NAME]@CONFIG.container[CONTAINER].PARAM``
+    * ``statefulset[NAME]@CONFIG.container[CONTAINER].PARAM``
+
+    The optional ``@CONFIG`` scope restricts the operation to the one
+    configuration whose :attr:`~bexhoma.configurations.base.SutConfiguration.configuration`
+    equals ``CONFIG`` (see :meth:`~bexhoma.configurations.manifest.ManifestBuilder.patch_dbms_args`).
+    Without it, an operation applies to every configuration matching
+    ``NAME`` — this is what makes a resource sweep (several configurations
+    built from the same docker image, each with its own derived knob
+    values) expressible without changing the meaning of any existing,
+    unscoped ``--set``.
 
     :param s: Raw ``--set`` string from the CLI.
     :return: A tuple of (selector_dict, value_str) where selector_dict
-             contains keys ``kind``, ``workload``, ``container``, and ``param``.
+             contains keys ``kind``, ``workload``, ``config``, ``container``, and ``param``.
+             ``config`` is ``""`` when the selector carries no ``@CONFIG`` scope.
     :rtype: tuple[dict, str]
     :raises ValueError: When the string has no ``=`` or the selector does not match.
     """
@@ -98,10 +112,12 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
     if not m:
         raise ValueError(
             "Invalid selector. Expected e.g. "
-            "deployment[sut].container[dbms].max_worker_processes"
+            "deployment[sut].container[dbms].max_worker_processes "
+            "or deployment[sut]@PostgreSQL-32Gi.container[dbms].shared_buffers"
         )
     d = m.groupdict()
     d["kind"] = d["kind"].lower()
+    d["config"] = d["config"] or ""
     return d, value.strip()
 
 
@@ -237,6 +253,9 @@ class ExperimentBase():
             list_clients = []
             self.add_benchmark_list(list_clients)
             self.benchmarking_active = False
+            # persist workflow_planned before work_benchmark_list() so a crash mid-run
+            # (e.g. during cube building on resume) still leaves it in queries.config
+            self.store_workflow_results()
             start = default_timer()
             start_datetime = str(datetime.now())
             # run workflow
@@ -249,7 +268,7 @@ class ExperimentBase():
             self.workload['duration'] = math.ceil(duration_experiment)
             self.evaluate_results()
             self.store_workflow_results()
-            self.show_summary()
+            self.show_summary(write_report=getattr(self.args, 'write_report', False))
         elif self.args.mode == 'load':
             start = default_timer()
             start_datetime = str(datetime.now())
@@ -260,6 +279,9 @@ class ExperimentBase():
             list_clients = []
             self.add_benchmark_list(list_clients)
             self.benchmarking_active = False
+            # persist workflow_planned before work_benchmark_list() so a crash mid-run
+            # (e.g. during cube building on resume) still leaves it in queries.config
+            self.store_workflow_results()
             start = default_timer()
             start_datetime = str(datetime.now())
             # run workflow
@@ -272,9 +294,9 @@ class ExperimentBase():
             self.workload['duration'] = math.ceil(duration_experiment)
             self.evaluate_results()
             self.store_workflow_results()
-            self.show_summary()
+            self.show_summary(write_report=getattr(self.args, 'write_report', False))
         elif self.args.mode == 'summary':
-            self.show_summary()
+            self.show_summary(write_report=getattr(self.args, 'write_report', False))
         else:
             # total time of experiment
             start = default_timer()
@@ -282,6 +304,9 @@ class ExperimentBase():
             print("{:30s}: has code {}".format("Experiment", self.code))
             print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
             print("{:30s}: {}".format("Experiment", self.workload['info']))
+            # persist workflow_planned before work_benchmark_list() so a crash mid-run
+            # (e.g. during cube building on resume) still leaves it in queries.config
+            self.store_workflow_results()
             # run workflow
             self.work_benchmark_list(stop_after_benchmarking=self.args.skip_shutdown)
             # total time of experiment
@@ -298,7 +323,7 @@ class ExperimentBase():
                 test_result_code = self.test_results()
                 if test_result_code == 0:
                     print("Test successful!")
-            self.show_summary()
+            self.show_summary(write_report=getattr(self.args, 'write_report', False))
     def benchmarking_is_active(self) -> bool:
         """
         Returns True, when this is a benchmarking experiment.
@@ -369,7 +394,7 @@ class ExperimentBase():
                 self.pod_dashboard = pods[0]
             else:
                 return ""
-        filename_local = self.path+'/'+filename
+        filename_local = self.path+'/.' if not filename else self.path+'/'+filename
         filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.upload_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def download_experiment_file(self, filename: str) -> str:
@@ -386,7 +411,7 @@ class ExperimentBase():
             else:
                 return ""
         filename_local = self.path+'/'+filename
-        filename_remote = '/results/'+str(self.code)+'/'+filename
+        filename_remote = '/results/'+str(self.code)+'/.' if not filename else '/results/'+str(self.code)+'/'+filename
         return self.cluster.download_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
                               parameter: str) -> list:
@@ -407,6 +432,23 @@ class ExperimentBase():
         elif value.isdigit():
             value = list(int(value))
         return value
+    def get_parameter_as_list_str(self,
+                                  parameter: str) -> list:
+        """
+        Transform a comma separated CLI parameter into a list of strings,
+        without casting entries to int. This is for parameters whose values
+        are not numbers, e.g. RAM quantities such as ``32Gi,64Gi``.
+
+        :param parameter: Comma separated list of values
+        :return: Python list of string values
+        :rtype: list[str]
+        """
+        if parameter not in self.args_dict:
+            return []
+        value = self.args_dict[parameter]
+        if len(value) == 0:
+            return []
+        return [entry for entry in value.split(",") if len(entry) > 0]
     def prepare_testbed(self,
                         parameter: dict) -> None:
         """
@@ -483,6 +525,11 @@ class ExperimentBase():
         request_node_benchmarking = args.request_node_benchmarking
         request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
+        skip_shutdown = args.skip_shutdown
+        test_result = args.test_result
+        num_worker = int(args.num_worker)
+        num_worker_replicas = int(args.num_worker_replicas)
+        num_worker_shards = int(args.num_worker_shards)
         self.resetscript_active = args.activate_reset
         if args.experiment_timeout is not None:
             self.max_experiment_minutes = int(args.experiment_timeout)
@@ -622,6 +669,27 @@ class ExperimentBase():
             self.workload['info'] = self.workload['info']+"\nExperiment is run once."
         if self.max_sut is not None:
             self.workload['info'] = self.workload['info']+"\nMaximum DBMS per experiment is {}.".format(self.max_sut)
+        if self.cluster.max_sut is not None:
+            self.workload['info'] = self.workload['info']+"\nMaximum DBMS across the whole cluster is {}.".format(self.cluster.max_sut)
+        if self.max_experiment_minutes is not None:
+            self.workload['info'] = self.workload['info']+"\nExperiment is aborted and removed from the cluster after {} minutes.".format(self.max_experiment_minutes)
+        if skip_shutdown:
+            self.workload['info'] = self.workload['info']+"\nSUT pods are kept running after the experiment finishes."
+        if test_result:
+            self.workload['info'] = self.workload['info']+"\nResults are validated against basic correctness requirements."
+        if len(self.dbms_args) > 0:
+            self.workload['info'] = self.workload['info']+"\nDeployment parameter overrides: {}.".format(self.dbms_args)
+        if num_worker > 0:
+            self.workload['info'] = self.workload['info']+"\nDistributed DBMS uses {} worker nodes, {} replicas and {} shards per node.".format(num_worker, num_worker_replicas, num_worker_shards)
+        self.workload['info'] = self.workload['info']+"\nSUT requests {} CPU and {} RAM.".format(cpu, memory)
+        if cpu_limit != '0':
+            self.workload['info'] = self.workload['info']+" CPU limit is {}.".format(cpu_limit)
+        if memory_limit != '0':
+            self.workload['info'] = self.workload['info']+" RAM limit is {}.".format(memory_limit)
+        if cpu_type:
+            self.workload['info'] = self.workload['info']+"\nSUT node must carry label cpu={}.".format(cpu_type)
+        if gpu_type:
+            self.workload['info'] = self.workload['info']+"\nSUT requests {} GPU(s) on a node labeled gpu={}.".format(gpus, gpu_type)
         self.workload['benchmarking_active'] = self.benchmarking_is_active()
         self.workload['loading_active'] = self.loading_is_active()
     def generate_port_forward(self, service: str) -> str:
@@ -1399,6 +1467,11 @@ class ExperimentBase():
         """
         Append a test result to the internal collector and return the passed flag.
 
+        Coerces ``passed`` to a native ``bool`` before storing: callers sometimes
+        pass a ``numpy.bool_`` (e.g. from a pandas ``==`` comparison), and
+        ``report_writer.py``'s frontmatter counters use ``is True``/``is False``
+        identity checks that silently ignore anything that is not a native bool.
+
         :param passed: Whether the test passed.
         :type passed: bool
         :param label: Human-readable description of what was tested.
@@ -1406,6 +1479,7 @@ class ExperimentBase():
         :return: The value of passed, allowing inline chaining.
         :rtype: bool
         """
+        passed = bool(passed)
         self._test_results.append((passed, label))
         return passed
     def _record_skipped_test(self, label: str) -> None:
@@ -1455,24 +1529,22 @@ class ExperimentBase():
                 #configuration = self.configurations[0]
                 # write appended query config
                 filename = self.result_filename_local("queries.config")#self.path+"/queries.config"
-                with open(filename,'r') as inp:
-                    queryconfig = ast.literal_eval(inp.read())
-                    for k,v in self.workload.items():
-                        queryconfig[k] = v
-                #filename = self.benchmark.path+'/queries.config'
-                with open(filename, 'w') as outp:
-                    outp.write(str(queryconfig))
-        print("{:30s}: uploading workload file".format("Experiment"))
-        pod_dashboard = self.get_dashboard_pod()
-        cmd = {}
-        # single file
+                # queries.config is only written once run_pod() submits the first
+                # benchmarker job; it may not exist yet if the experiment was aborted
+                # (e.g. --experiment-timeout) during loading or before the first round.
+                if os.path.isfile(filename):
+                    with open(filename,'r') as inp:
+                        queryconfig = ast.literal_eval(inp.read())
+                        for k,v in self.workload.items():
+                            queryconfig[k] = v
+                    #filename = self.benchmark.path+'/queries.config'
+                    with open(filename, 'w') as outp:
+                        outp.write(str(queryconfig))
         filename = 'queries.config'
         filename_local = self.result_filename_local(filename)
-        filename_remote = self.result_filename_remote(filename)
-        self.upload_experiment_file(filename=filename)
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
-        #cmd['upload_results'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':'+filename_remote, from_file=filename_local)
-        #self.cluster.kubectl(cmd['upload_results'])
+        if os.path.isfile(filename_local):
+            print("{:30s}: uploading workload file".format("Experiment"))
+            self.upload_experiment_file(filename=filename)
     def work_benchmark_list(self, intervals: int = 30, stop_after_starting: bool = False, stop_after_loading: bool = False, stop_after_benchmarking: bool = False) -> None:
         """
         Run typical workflow:
@@ -2617,7 +2689,7 @@ class ExperimentBase():
                     print(f"* {pod}: {counts}")
             self._record_test(total_restarts == 0, "No SUT container restarts")
         return connections_sorted, monitoring_applications
-    def show_summary(self):
+    def show_summary(self, write_report: bool = False):
         """
         Print a basic experiment summary using the DBMSBenchmarker inspector directly.
 
@@ -2630,6 +2702,10 @@ class ExperimentBase():
             ``queries.config`` still contains ``type='dbmsbenchmarker'`` — a value
             written by ``experiments.base`` before the named experiment subclasses
             existed.
+
+        :param write_report: Accepted for signature parity with the
+            ``bexhoma.benchmarks`` pipeline's ``show_summary(write_report=...)``;
+            this legacy path has no tiered-report counterpart, so it is ignored.
         """
         self._test_results = []
         self.cluster.logger.debug('base.show_summary()')

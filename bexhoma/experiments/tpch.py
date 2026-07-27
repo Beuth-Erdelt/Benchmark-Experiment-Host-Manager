@@ -131,7 +131,7 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
         })
         self.add_benchmark(benchmarks.RefreshStreamBenchmark(name='tpch_refresh', SF=self.SF))
 
-    def show_summary(self) -> None:
+    def show_summary(self, write_report: bool = False) -> None:
         """
         Print the TPC-H experiment summary, including the refresh stream section.
 
@@ -146,6 +146,9 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
         :class:`~bexhoma.benchmarks.RefreshStreamBenchmark` is appended to
         ``self.benchmarks`` before delegating to ``super()``, so the same loop
         positions it identically.  The temporary entry is removed afterwards.
+
+        :param write_report: When ``True``, also write a tiered Markdown report
+            (``report/index.md`` + detail files) to the result folder.
         """
         refresh_added = False
         if not any(isinstance(bm, benchmarks.RefreshStreamBenchmark) for bm in self.benchmarks):
@@ -156,7 +159,7 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
             )
             self.benchmarks.append(refresh_bm)
             refresh_added = True
-        super().show_summary()
+        super().show_summary(write_report=write_report)
         if refresh_added:
             self.benchmarks.pop()
 

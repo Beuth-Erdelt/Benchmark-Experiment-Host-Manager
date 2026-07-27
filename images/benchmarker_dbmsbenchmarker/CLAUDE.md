@@ -39,10 +39,12 @@ images/benchmarker_dbmsbenchmarker/
    `bexhoma-benchmarker-podcount-<EXPERIMENT>` until `BEXHOMA_NUM_PODS_TOTAL` pods
    are ready.
 8. Restore per-tenant `BEXHOMA_CHILD` and `BEXHOMA_NUM_PODS`.
-9. Convert `DBMSBENCHMARKER_SHUFFLE_QUERIES` and `DBMSBENCHMARKER_RECREATE_PARAMETER`
-   from Python boolean strings (`True`/`False`) to integers (`1`/`0`).
+9. Convert `DBMSBENCHMARKER_SHUFFLE_QUERIES`, `DBMSBENCHMARKER_RECREATE_PARAMETER`,
+   and `DBMSBENCHMARKER_VERBOSE_EXPLAIN` from Python boolean strings (`True`/`False`)
+   to integers (`1`/`0`).
 10. Run `python benchmark.py run` with the full flag set.  Verbose mode adds
-    `-d -vq -vr -vp -vs`.
+    `-d -vq -vr -vp -vs`.  `-ve` is added independently of verbose mode, in both
+    branches, whenever `DBMSBENCHMARKER_VERBOSE_EXPLAIN=1`.
 11. Extract the precise benchmark duration from DBMSBenchmarker's log line
     `DBMSBenchmarker duration...: N [s]` and compute `bexhoma_end_epoch_computed`.
 12. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END` to stdout.
@@ -93,6 +95,7 @@ the wait loop).
 | `-fixs` | `BEXHOMA_SCHEMA` | Override the schema name |
 | `-d -vq -vr -vp -vs` | *(flags)* | Verbose output (verbose mode only) |
 | `-db` | *(flag)* | Debug mode (dev mode only) |
+| `-ve` | *(flag)* | Run and print configured EXPLAIN statements after each query (independent of verbose/dev mode, see `DBMSBENCHMARKER_VERBOSE_EXPLAIN`) |
 
 ---
 

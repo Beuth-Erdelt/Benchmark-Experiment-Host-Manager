@@ -48,6 +48,13 @@ class TPCH(DBMSBenchmarkerBenchmark):
         init_indexes = args.init_indexes
         init_constraints = args.init_constraints
         init_statistics = args.init_statistics
+        init_columns = args.init_columns
+        datatransfer = args.datatransfer
+        num_loading_split = args.num_loading_split
+        num_refresh_streams = int(args.num_refresh_streams)
+        num_refresh_stream_offset = int(args.num_refresh_stream_offset)
+        duckdb_force_execution = args.duckdb_force_execution
+        verbose_explain = args.verbose_explain
         timeout = int(args.timeout)
         if mode == 'run':
             experiment.set_queryfile('queries-tpch.config')
@@ -104,7 +111,19 @@ class TPCH(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += "\nAll instances use different query parameters."
             else:
                 experiment.workload['info'] += "\nAll instances use the same query parameters."
+            if init_columns:
+                experiment.workload['info'] += "\nStorage is set to columnar."
             experiment.workload['info'] += f"\nTimeout per query is {timeout}."
+            if datatransfer:
+                experiment.workload['info'] += "\nData transfer volume per query is also measured."
+            if num_refresh_streams > 0:
+                experiment.workload['info'] += f"\nA TPC-H refresh stream (RF1+RF2) runs in parallel, with {num_refresh_streams} pair(s) applied per round."
+                if num_refresh_stream_offset > 0:
+                    experiment.workload['info'] += f" Refresh sets up to {num_refresh_stream_offset} are skipped."
+            if duckdb_force_execution:
+                experiment.workload['info'] += "\nPgDuckDB queries are forced through the DuckDB execution engine."
+            if verbose_explain:
+                experiment.workload['info'] += "\nEXPLAIN statements are run and printed after each query."
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
             if init_indexes or init_constraints or init_statistics:
@@ -119,3 +138,5 @@ class TPCH(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += init_scripts
             if len(limit_import_table):
                 experiment.workload['info'] += f"\nImport is limited to table {limit_import_table}."
+            if str(num_loading_split) != "1":
+                experiment.workload['info'] += f"\nLoader data is split into {num_loading_split} parallel batches per pod."

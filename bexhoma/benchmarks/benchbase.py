@@ -10,7 +10,7 @@ import pandas as pd
 from types import SimpleNamespace
 
 from bexhoma import evaluators
-from .base import Benchmark
+from .base import Benchmark, Section, _key_metrics_section_from_columns
 
 __all__ = ["Benchbase"]
 
@@ -46,6 +46,19 @@ class Benchbase(Benchmark):
             name=self.name,
         )
 
+    def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
+        """
+        Surface ``Throughput (requests/second)`` — the same column
+        :meth:`~bexhoma.evaluators.benchbase.benchbase.record_tests` tests via
+        ``experiment._test_column()``.
+
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: A ``Key Metrics`` section, or ``None`` when the tested
+                 column is not present.
+        :rtype: Section | None
+        """
+        return _key_metrics_section_from_columns(df_aggregated_reduced, ["Throughput (requests/second)"])
+
     def configure_workload(self, experiment, parameter: dict) -> None:
         """
         Parse CLI args and set Benchbase workload metadata on the experiment.
@@ -68,6 +81,10 @@ class Benchbase(Benchmark):
         workload = args.workload
         extra_keying = int(args.extra_keying)
         extra_new_connection = int(args.extra_new_connection)
+        scaling_logging = int(args.scaling_logging)
+        extra_batchsize = int(args.extra_batchsize)
+        num_sut_replicas = int(args.num_sut_replicas)
+        num_pd_nodes = int(args.num_pd_nodes)
         num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             experiment.set_workload(
@@ -95,6 +112,7 @@ class Benchbase(Benchmark):
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
             experiment.workload['info'] += "\nBenchbase data is generated and loaded using several threads."
+            experiment.workload['info'] += f" Loading uses a batch size of {extra_batchsize} rows per INSERT."
         if experiment.benchmarking_is_active():
             if len(type_of_benchmark):
                 experiment.workload['info'] += f"\nBenchmark is '{type_of_benchmark}'."
@@ -114,4 +132,8 @@ class Benchbase(Benchmark):
                 experiment.workload['info'] += f" Benchmarking runs for {int(SD / 60)} minutes."
             if args.activate_reset:
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
+        if scaling_logging > 0:
+            experiment.workload['info'] += f"\nStatus is logged every {scaling_logging}ms."
+        if "TiDB" in args.dbms or len(args.dbms) == 0:
+            experiment.workload['info'] += f"\nTiDB uses {num_sut_replicas} SUT replica(s) and {num_pd_nodes} PD node(s)."
 

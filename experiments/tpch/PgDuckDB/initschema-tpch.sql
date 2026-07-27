@@ -1,0 +1,106 @@
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/PgDuckDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Create TPC-H tables in the public schema, backed by DuckDB's
+--          columnar storage via pg_duckdb's `USING duckdb` table access
+--          method, so queries actually run through DuckDB's execution
+--          engine instead of falling back to plain Postgres heap scans.
+--          Disables synchronous commit at the end to accelerate subsequent
+--          bulk loading; re-enabled by initstatistics-tpch.sql.
+-- NOT CURRENTLY USABLE: pg_duckdb only allows `USING duckdb` tables to be
+--          persistent (non-TEMP) when MotherDuck support is enabled; without
+--          it, CREATE TABLE ... USING duckdb fails with "Only TEMP tables
+--          are supported in DuckDB if MotherDuck support is not enabled".
+--          tpch.py currently points PgDuckDB back at experiments/tpch/PostgreSQL/
+--          instead of this folder. See github.com/duckdb/pg_duckdb discussion #385.
+
+CREATE TABLE public.nation (
+    n_nationkey  INTEGER      NOT NULL,
+    n_name       CHAR(25)     NOT NULL,
+    n_regionkey  INTEGER      NOT NULL,
+    n_comment    VARCHAR(152)
+) USING duckdb;
+
+CREATE TABLE public.region (
+    r_regionkey  INTEGER      NOT NULL,
+    r_name       CHAR(25)     NOT NULL,
+    r_comment    VARCHAR(152)
+) USING duckdb;
+
+CREATE TABLE public.part (
+    p_partkey     INTEGER       NOT NULL,
+    p_name        VARCHAR(55)   NOT NULL,
+    p_mfgr        CHAR(25)      NOT NULL,
+    p_brand       CHAR(10)      NOT NULL,
+    p_type        VARCHAR(25)   NOT NULL,
+    p_size        INTEGER       NOT NULL,
+    p_container   CHAR(10)      NOT NULL,
+    p_retailprice DECIMAL(15,2) NOT NULL,
+    p_comment     VARCHAR(23)   NOT NULL
+) USING duckdb;
+
+CREATE TABLE public.supplier (
+    s_suppkey    INTEGER       NOT NULL,
+    s_name       CHAR(25)      NOT NULL,
+    s_address    VARCHAR(40)   NOT NULL,
+    s_nationkey  INTEGER       NOT NULL,
+    s_phone      CHAR(15)      NOT NULL,
+    s_acctbal    DECIMAL(15,2) NOT NULL,
+    s_comment    VARCHAR(101)  NOT NULL
+) USING duckdb;
+
+CREATE TABLE public.partsupp (
+    ps_partkey    INTEGER       NOT NULL,
+    ps_suppkey    INTEGER       NOT NULL,
+    ps_availqty   INTEGER       NOT NULL,
+    ps_supplycost DECIMAL(15,2) NOT NULL,
+    ps_comment    VARCHAR(199)  NOT NULL
+) USING duckdb;
+
+CREATE TABLE public.customer (
+    c_custkey    INTEGER       NOT NULL,
+    c_name       VARCHAR(25)   NOT NULL,
+    c_address    VARCHAR(40)   NOT NULL,
+    c_nationkey  INTEGER       NOT NULL,
+    c_phone      CHAR(15)      NOT NULL,
+    c_acctbal    DECIMAL(15,2) NOT NULL,
+    c_mktsegment CHAR(10)      NOT NULL,
+    c_comment    VARCHAR(117)  NOT NULL
+) USING duckdb;
+
+CREATE TABLE public.orders (
+    o_orderkey      INTEGER       NOT NULL,
+    o_custkey       INTEGER       NOT NULL,
+    o_orderstatus   CHAR(1)       NOT NULL,
+    o_totalprice    DECIMAL(15,2) NOT NULL,
+    o_orderdate     DATE          NOT NULL,
+    o_orderpriority CHAR(15)      NOT NULL,
+    o_clerk         CHAR(15)      NOT NULL,
+    o_shippriority  INTEGER       NOT NULL,
+    o_comment       VARCHAR(79)   NOT NULL
+) USING duckdb;
+
+CREATE TABLE public.lineitem (
+    l_orderkey      INTEGER       NOT NULL,
+    l_partkey       INTEGER       NOT NULL,
+    l_suppkey       INTEGER       NOT NULL,
+    l_linenumber    INTEGER       NOT NULL,
+    l_quantity      DECIMAL(15,2) NOT NULL,
+    l_extendedprice DECIMAL(15,2) NOT NULL,
+    l_discount      DECIMAL(15,2) NOT NULL,
+    l_tax           DECIMAL(15,2) NOT NULL,
+    l_returnflag    CHAR(1)       NOT NULL,
+    l_linestatus    CHAR(1)       NOT NULL,
+    l_shipdate      DATE          NOT NULL,
+    l_commitdate    DATE          NOT NULL,
+    l_receiptdate   DATE          NOT NULL,
+    l_shipinstruct  CHAR(25)      NOT NULL,
+    l_shipmode      CHAR(10)      NOT NULL,
+    l_comment       VARCHAR(44)   NOT NULL
+) USING duckdb;
+
+-- Relax WAL durability to speed up bulk loading; restored in initstatistics-tpch.sql
+ALTER SYSTEM SET synchronous_commit = off;
+SELECT pg_reload_conf();
