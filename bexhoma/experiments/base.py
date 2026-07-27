@@ -253,6 +253,9 @@ class ExperimentBase():
             list_clients = []
             self.add_benchmark_list(list_clients)
             self.benchmarking_active = False
+            # persist workflow_planned before work_benchmark_list() so a crash mid-run
+            # (e.g. during cube building on resume) still leaves it in queries.config
+            self.store_workflow_results()
             start = default_timer()
             start_datetime = str(datetime.now())
             # run workflow
@@ -276,6 +279,9 @@ class ExperimentBase():
             list_clients = []
             self.add_benchmark_list(list_clients)
             self.benchmarking_active = False
+            # persist workflow_planned before work_benchmark_list() so a crash mid-run
+            # (e.g. during cube building on resume) still leaves it in queries.config
+            self.store_workflow_results()
             start = default_timer()
             start_datetime = str(datetime.now())
             # run workflow
@@ -298,6 +304,9 @@ class ExperimentBase():
             print("{:30s}: has code {}".format("Experiment", self.code))
             print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
             print("{:30s}: {}".format("Experiment", self.workload['info']))
+            # persist workflow_planned before work_benchmark_list() so a crash mid-run
+            # (e.g. during cube building on resume) still leaves it in queries.config
+            self.store_workflow_results()
             # run workflow
             self.work_benchmark_list(stop_after_benchmarking=self.args.skip_shutdown)
             # total time of experiment

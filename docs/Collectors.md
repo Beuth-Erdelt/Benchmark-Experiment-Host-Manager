@@ -327,7 +327,7 @@ For experiments that ran **more than one benchmark tool** in a single experiment
 
 #### How it works
 
-When an experiment finishes, `store_workflow_results()` writes a `benchmark_sequence` key into `queries.config`:
+Before an experiment's benchmarking phase starts (and again after it finishes), `store_workflow_results()` writes a `benchmark_sequence` key into `queries.config`:
 
 ```python
 # Example queries.config entry
