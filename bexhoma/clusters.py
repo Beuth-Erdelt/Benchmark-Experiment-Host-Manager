@@ -32,6 +32,13 @@ from .__version__ import __version__
 
 import platform
 
+#: Retries passed to ``kubectl cp``'s own ``--retries`` flag. kubectl's exec-based
+#: tar transport can truncate its stdout stream mid-copy on larger payloads,
+#: surfacing as ``error: unexpected EOF`` with zero retries (the default);
+#: ``--retries`` makes kubectl resume the tar stream at the last byte offset
+#: instead of failing outright. See https://github.com/kubernetes/kubectl/issues/1425.
+KUBECTL_CP_INTERNAL_RETRIES = 20
+
 
 def to_unc(path: str) -> str:
     """
@@ -1386,9 +1393,12 @@ class Kubernetes():
         """
         Upload a local file into a Pod container using ``kubectl cp``.
 
-        On Windows the local path is converted to a UNC path first.
-        Retries up to ``max_retries`` times on transient failures (e.g. context
-        deadline exceeded).  Raises ``RuntimeError`` if all attempts fail.
+        On Windows the local path is converted to a UNC path first. The command
+        itself is given ``--retries`` so kubectl resumes a truncated tar stream
+        (see :data:`KUBECTL_CP_INTERNAL_RETRIES`) instead of failing outright.
+        On top of that, this method retries the whole command up to
+        ``max_retries`` times on transient failures (e.g. context deadline
+        exceeded).  Raises ``RuntimeError`` if all attempts fail.
 
         :param filename_remote: Destination path inside the container.
         :param filename_local: Source path on the local machine.
@@ -1399,7 +1409,7 @@ class Kubernetes():
         :raises RuntimeError: If every attempt returns a failure.
         """
         filename_local = to_unc(filename_local)
-        cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container}'
+        cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
             result = self.kubectl(cmd)
             if result is not None:
@@ -1418,7 +1428,10 @@ class Kubernetes():
         Download a file from a Pod container to the local machine using ``kubectl cp``.
 
         On Windows the local destination path is converted to a UNC path first.
-        Retries up to ``max_retries`` times on transient failures.  Raises
+        The command itself is given ``--retries`` so kubectl resumes a
+        truncated tar stream (see :data:`KUBECTL_CP_INTERNAL_RETRIES`) instead
+        of failing outright. On top of that, this method retries the whole
+        command up to ``max_retries`` times on transient failures.  Raises
         ``RuntimeError`` if all attempts fail.
 
         :param filename_remote: Source path inside the container.
@@ -1430,7 +1443,7 @@ class Kubernetes():
         :raises RuntimeError: If every attempt returns a failure.
         """
         filename_local = to_unc(filename_local)
-        cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container}'
+        cmd = f'cp {pod}:{filename_remote} "{filename_local}" -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
             result = self.kubectl(cmd)
             if result is not None:
