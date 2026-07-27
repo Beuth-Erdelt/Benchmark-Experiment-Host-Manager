@@ -242,7 +242,7 @@ ls jars -lh
 # -st      start time for operating (disabled: handled by shell sleep above)
 if test $DBMSBENCHMARKER_VERBOSE -gt 0
 then
-    python ./benchmark.py run -b -w connection \
+    python -u ./benchmark.py run -b -w connection \
         -f /results/$DBMSBENCHMARKER_CODE \
         -r /results/$DBMSBENCHMARKER_CODE \
         -cs -sf $DBMSBENCHMARKER_CONNECTION \
@@ -265,7 +265,7 @@ then
         -fixs "${BEXHOMA_SCHEMA:-""}" \
         | tee /tmp/dbmsbenchmarker.log
 else
-    python ./benchmark.py run -b -w connection \
+    python -u ./benchmark.py run -b -w connection \
         -f /results/$DBMSBENCHMARKER_CODE \
         -r /results/$DBMSBENCHMARKER_CODE \
         -cs -sf $DBMSBENCHMARKER_CONNECTION \
