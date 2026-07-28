@@ -21,7 +21,46 @@ from .dbmsbenchmarker import DbmsBenchmarkerExperiment
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
-__all__ = ["TpchExperiment"]
+__all__ = ["TpchExperiment", "DBMS_DEFAULTS"]
+
+#: Per-DBMS build defaults for the YAML-driven entry script
+#: (:mod:`bexhoma.experiment_builder`), mirroring the per-DBMS branches in
+#: ``tpch.py``'s own ``if "PostgreSQL" in args.dbms:``-style loop as data
+#: instead of code. Only the DBMS variants with no per-DBMS *logic* (no
+#: worker-sharding, no container-tenancy) are covered here; ``Citus`` and
+#: multi-tenant container builds stay code-only, driven from ``tpch.py``.
+DBMS_DEFAULTS: dict[str, dict[str, str]] = {
+    'PostgreSQL': {
+        'docker': 'PostgreSQL', 'dialect': 'PostgreSQL',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-PostgreSQL.yml',
+        'storage_prefix': 'postgresql',
+    },
+    'PgDuckDB': {
+        'docker': 'PgDuckDB', 'dialect': 'PostgreSQL',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-PostgreSQL.yml',
+        'storage_prefix': 'PgDuckDB', 'path_experiment_docker': 'PostgreSQL',
+    },
+    'MonetDB': {
+        'docker': 'MonetDB', 'dialect': 'MonetDB',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-MonetDB.yml',
+        'storage_prefix': 'monetdb',
+    },
+    'MariaDB': {
+        'docker': 'MariaDB', 'dialect': 'MySQL',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-MariaDB.yml',
+        'storage_prefix': 'mariadb',
+    },
+    'MySQL': {
+        'docker': 'MySQL', 'dialect': 'MySQL',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-MySQL.yml',
+        'storage_prefix': 'mysql',
+    },
+    'CedarDB': {
+        'docker': 'CedarDB', 'dialect': 'PostgreSQL',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-PostgreSQL.yml',
+        'storage_prefix': 'cedardb',
+    },
+}
 
 
 class TpchExperiment(DbmsBenchmarkerExperiment):

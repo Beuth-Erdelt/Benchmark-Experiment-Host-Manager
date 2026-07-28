@@ -1,0 +1,64 @@
+# Worked example for the YAML-driven experiment entry script.
+# Run with: bexhoma experiment dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml
+# or:       python experiment.py dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml
+#
+# See docs/Design-Yaml-Experiment-Entry-Script.md for the full schema.
+
+workload: tpch
+mode: run
+
+experiment:
+  code: null              # null = new experiment; set to resume an existing one
+  num_config: 1           # -nc
+  timeout: 600            # -t
+  scaling_factor: "1"     # -sf
+
+cluster:
+  aws: false
+  context: null            # null = current kubectl context
+
+monitoring:
+  sut: true                # -m
+  cluster: false            # -mc
+  app: false                # -ma
+
+rounds: [1, 2, 4]           # -ne sweep (list of client counts)
+
+loading:
+  pods: [1]                 # -nlp sweep
+  threads: [1]               # -nlt
+  split: 1                   # -xnls
+
+tpch:                        # TPC-H's own -x flags
+  recreate_parameter: false
+  shuffle_queries: false
+  init_indexes: false
+  init_constraints: false
+  init_statistics: false
+  init_columns: false
+  datatransfer: false
+  active_queries: []
+  refresh_streams: 0
+  refresh_stream_offset: 0
+  duckdb_force_execution: false
+
+systems:
+  - dbms: PostgreSQL
+    configuration: ""          # optional override of configuration name
+    alias: "DBMS A2"
+    resources:
+      cpu: {request: "4", limit: "4"}
+      memory: {request: "16Gi", limit: "16Gi"}
+    storage:
+      class: null
+      size: ""
+    skip_loading: false
+    sut_parameters: {}
+    loading_parameters: {}     # extra/overriding env for the loader
+    benchmarking_parameters: {}
+  - dbms: PgDuckDB
+    resources:
+      cpu: {request: "4", limit: "4"}
+      memory: {request: "16Gi", limit: "16Gi"}
+    sut_parameters:
+      DUCKDB_FORCE_EXECUTION: "true"
