@@ -18,6 +18,10 @@ Usage: ``bexhoma experiment experiment.yaml`` or ``python experiment.py experime
 For a catalog-driven file whose ``catalog.yaml`` doesn't sit alongside it, pass
 ``--catalog``.
 
+Both paths always write the tiered Markdown report (``-rp``/``write_report``)
+to the result folder — a YAML-driven run has no interactive human typing the
+flag by hand, so it defaults on rather than silently omitting the report.
+
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -76,6 +80,7 @@ def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
         import tpch
         catalog = catalog_spec.load_catalog(catalog_path or default_catalog_path(path))
         argv = catalog_spec.build_argv(catalog, raw_spec)
+        argv.append('-rp')  # YAML-driven runs always get the tiered Markdown report
         tpch.run(tpch.build_parser().parse_args(argv))
     else:
         experiment_loader.validate_experiment_yaml(raw_spec)

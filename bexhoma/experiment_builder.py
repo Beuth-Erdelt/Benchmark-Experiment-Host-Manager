@@ -83,6 +83,9 @@ def _build_prepare_testbed_parameter(spec: dict, tpch_module) -> dict:
     Starts from ``tpch.py``'s own real argparse defaults (obtained by feeding
     its parser a synthetic single-element argv, never a human-typed command
     line), then overlays every YAML-set field onto its argparse **dest** name.
+    One default is overridden unconditionally rather than left at ``tpch.py``'s
+    own: ``write_report`` (``-rp``) is always ``True``, since a YAML-driven run
+    has no interactive human available to type the flag by hand.
 
     :param spec: Parsed, already-validated experiment spec.
     :param tpch_module: The imported repo-root ``tpch`` module.
@@ -96,6 +99,7 @@ def _build_prepare_testbed_parameter(spec: dict, tpch_module) -> dict:
     rounds = spec.get('rounds', [1])
 
     parameter = vars(tpch_module.build_parser().parse_args([mode]))
+    parameter['write_report'] = True  # YAML-driven runs always get the tiered Markdown report
     parameter['experiment'] = experiment_cfg.get('code')
     parameter['num_config'] = experiment_cfg.get('num_config', parameter['num_config'])
     parameter['timeout'] = experiment_cfg.get('timeout', parameter['timeout'])
