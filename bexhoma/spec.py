@@ -37,12 +37,15 @@ __all__ = [
     "ResolvedSystem",
     "load_catalog",
     "load_experiment",
+    "load_environment",
     "evaluate_derive_expression",
     "parse_memory_quantity",
+    "parse_cpu_quantity",
     "format_postgres_memory",
     "resolve_system_definition",
     "resolve_system",
     "validate_experiment",
+    "validate_environment",
     "build_argv",
     "build_command",
     "translate",
@@ -60,6 +63,13 @@ _MEMORY_UNITS: tuple[tuple[str, int], ...] = (
 
 #: Divisor to format a byte count as whole megabytes for a PostgreSQL memory GUC.
 _BYTES_PER_MEGABYTE = 1024 ** 2
+
+#: Kubernetes-style CPU quantity suffix for millicores (e.g. "500m" == 0.5 cores).
+_CPU_MILLICORE_SUFFIX = "m"
+_MILLICORES_PER_CORE = 1000
+
+#: environment.yml roles a placement: entry can pin to a Kubernetes node.
+_PLACEMENT_ROLES = ("sut", "loading", "benchmarking")
 
 _DERIVE_BINARY_OPS: dict[type, Callable[[float, float], float]] = {
     ast.Add: operator.add,
@@ -148,6 +158,19 @@ def load_experiment(path: str) -> dict[str, Any]:
         return yaml.safe_load(experiment_file)
 
 
+def load_environment(path: str) -> dict[str, Any]:
+    """Load an ``environment.yml``.
+
+    :param path: Path to the environment descriptor file, as produced by
+        :func:`bexhoma.environment.write_environment_yml`.
+    :return: Parsed environment descriptor, with ``nodes``/``excluded_nodes``/
+        ``storage_classes``/``resource_limits`` top-level keys.
+    :rtype: dict[str, Any]
+    """
+    with open(path, "r", encoding="utf-8") as environment_file:
+        return yaml.safe_load(environment_file)
+
+
 def _eval_derive_node(node: ast.AST, inputs: dict[str, float]) -> float:
     """Recursively evaluate one node of a whitelisted derive-expression AST.
 
@@ -211,6 +234,26 @@ def parse_memory_quantity(value: str) -> int:
         return int(text)
     except ValueError as error:
         raise SpecError(f"invalid memory quantity {value!r}") from error
+
+
+def parse_cpu_quantity(value: Any) -> float:
+    """Parse a Kubernetes-style CPU quantity into whole cores.
+
+    :param value: A quantity such as ``8``, ``"8"``, or millicore ``"500m"``.
+    :return: Number of cores.
+    :rtype: float
+    :raises SpecError: When the value cannot be parsed.
+    """
+    text = str(value).strip()
+    if text.endswith(_CPU_MILLICORE_SUFFIX):
+        try:
+            return float(text[: -len(_CPU_MILLICORE_SUFFIX)]) / _MILLICORES_PER_CORE
+        except ValueError as error:
+            raise SpecError(f"invalid cpu quantity {value!r}") from error
+    try:
+        return float(text)
+    except ValueError as error:
+        raise SpecError(f"invalid cpu quantity {value!r}") from error
 
 
 def format_postgres_memory(num_bytes: int) -> str:
@@ -415,6 +458,111 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
                     )
             elif value and not supported_value:
                 raise SpecError(f"system '{system_name}' does not support post_load.{option_name}")
+
+
+def _node_allocatable_ceiling(
+    environment: dict[str, Any],
+    node_name: Optional[str],
+    nodes_by_name: dict[str, dict[str, Any]],
+) -> tuple[Optional[float], Optional[int], str]:
+    """Resolve the CPU/memory ceiling a ``resources:`` block must fit under.
+
+    :param environment: Parsed environment descriptor.
+    :param node_name: The ``placement.sut`` node name, or ``None`` when unpinned.
+    :param nodes_by_name: ``environment["nodes"]`` indexed by node name.
+    :return: ``(max_cpu_cores, max_memory_bytes, ceiling_scope)``; either
+        ceiling is ``None`` when the environment descriptor doesn't record it.
+    :rtype: tuple[Optional[float], Optional[int], str]
+    """
+    if node_name is not None and node_name in nodes_by_name:
+        allocatable = nodes_by_name[node_name]["allocatable"]
+        return (
+            parse_cpu_quantity(allocatable["cpu"]),
+            parse_memory_quantity(allocatable["memory"]),
+            f"node '{node_name}'",
+        )
+    resource_limits = environment.get("resource_limits", {})
+    max_cpu = resource_limits.get("max_allocatable_cpu")
+    max_memory = resource_limits.get("max_allocatable_memory")
+    return (
+        parse_cpu_quantity(max_cpu) if max_cpu is not None else None,
+        parse_memory_quantity(max_memory) if max_memory is not None else None,
+        "the cluster's max_allocatable_* ceiling",
+    )
+
+
+def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]) -> None:
+    """Validate an experiment spec against the cluster's ``environment.yml``.
+
+    Checks, in order: every node named under ``placement:`` exists in
+    ``environment.yml`` and is not excluded (tainted); every
+    ``resources.cpu``/``resources.memory`` sweep cell's ``request``/``limit``
+    fits under the allocatable capacity of the ``placement.sut`` node (or the
+    cluster-wide ``resource_limits`` ceiling, when no SUT node is pinned);
+    and, when set, ``resources.storage_class`` names a storage class the
+    cluster actually has.
+
+    This is independent of :func:`validate_experiment`: that function checks
+    an experiment against what the catalog *permits*; this one checks it
+    against what the cluster actually *has*. Neither function depends on the
+    other, so callers that only have one of the two files can still validate
+    what they have.
+
+    :param environment: Parsed environment descriptor, as returned by
+        :func:`load_environment`.
+    :param experiment: Parsed experiment spec.
+    :raises SpecError: On any validation failure.
+    """
+    nodes_by_name = {node["name"]: node for node in environment.get("nodes", [])}
+    excluded_node_names = {node["name"] for node in environment.get("excluded_nodes", [])}
+
+    placement = experiment.get("placement", {})
+    for role in _PLACEMENT_ROLES:
+        node_name = placement.get(role)
+        if node_name is None:
+            continue
+        if node_name in excluded_node_names:
+            raise SpecError(f"placement.{role} node '{node_name}' is excluded from scheduling (tainted)")
+        if node_name not in nodes_by_name:
+            raise SpecError(f"placement.{role} node '{node_name}' is not in environment.yml's nodes")
+
+    resources = experiment.get("resources", {})
+    cpu_cells = resources.get("cpu", {})
+    cpu_cells = cpu_cells if isinstance(cpu_cells, list) else [cpu_cells]
+    memory_cells = resources.get("memory", {})
+    memory_cells = memory_cells if isinstance(memory_cells, list) else [memory_cells]
+
+    max_cpu, max_memory, ceiling_scope = _node_allocatable_ceiling(
+        environment, placement.get("sut"), nodes_by_name
+    )
+
+    for cell in cpu_cells:
+        for key in ("request", "limit"):
+            value = cell.get(key)
+            if value is None or max_cpu is None:
+                continue
+            if parse_cpu_quantity(value) > max_cpu:
+                raise SpecError(
+                    f"resources.cpu.{key}={value!r} exceeds {ceiling_scope}'s allocatable cpu ({max_cpu} cores)"
+                )
+    for cell in memory_cells:
+        for key in ("request", "limit"):
+            value = cell.get(key)
+            if value is None or max_memory is None:
+                continue
+            if parse_memory_quantity(value) > max_memory:
+                raise SpecError(
+                    f"resources.memory.{key}={value!r} exceeds {ceiling_scope}'s "
+                    f"allocatable memory ({max_memory} bytes)"
+                )
+
+    storage_class = resources.get("storage_class")
+    if storage_class is not None:
+        known_storage_classes = {entry["name"] for entry in environment.get("storage_classes", [])}
+        if storage_class not in known_storage_classes:
+            raise SpecError(
+                f"resources.storage_class '{storage_class}' is not in environment.yml's storage_classes"
+            )
 
 
 def _append_flag(argv: list[str], flag: str, value: Any) -> None:
