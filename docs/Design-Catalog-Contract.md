@@ -709,6 +709,18 @@ checks all three are present and non-empty before resolving anything else —
 an experiment.yml that can't say what it's testing fails immediately,
 rather than producing a technically-valid but purposeless run.
 
+## Top-level shape
+
+`mode`, `title`, `hypothesis`, `discriminates`, `workload`, `loading`,
+`systems`, `observe`, `placement`, and `resources` are all siblings at the
+top of the file. The one pitfall worth calling out explicitly: `loading:` is
+**not** nested under `workload:`, even though it's workload-specific data.
+`build_argv()` reads it as `experiment.get("loading", {})` off the top-level
+dict, not off `workload_spec`, so a `workload.loading` block is not a schema
+error — it resolves silently to `{}`, and the `-nlp`/`-nlt`/`-xii`/`-xic`/
+`-xis`/`-xcol` flags it would have produced are just absent from the
+translated command. See the worked example below for the correct shape.
+
 ## Worked example: TPC-H, PostgreSQL vs. PgDuckDB
 
 This is now a real, runnable file — `dev/catalog/experiment.yml`, reproduced

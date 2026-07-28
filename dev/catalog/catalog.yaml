@@ -26,6 +26,27 @@
 # guaranteed NVMe for reproducible OLAP numbers) — see
 # `bexhoma/clusters.py::Kubernetes.get_available_storage_types()` and the
 # `-rst`/`--request-storage-type` CLI flag for the underlying mechanism.
+#
+# experiment.yml top-level shape — every key below is a SIBLING of every
+# other key at the top of the file. In particular `loading:` is its own
+# top-level key, not nested under `workload:`: bexhoma/spec.py::build_argv()
+# reads it as `experiment.get("loading", {})`, so a `workload.loading` block
+# resolves silently to nothing (no error — pods/threads/post_load flags are
+# just dropped from the translated command).
+#
+#   mode:           run | profiling | start | load | empty | summary
+#   title:          required — short human-readable name
+#   hypothesis:     required — prose statement of what's being tested
+#   discriminates:  required — list of factor(s) the experiment isolates, e.g. [system]
+#   workload:       {name, params: {...}, rounds: [...], repetitions}
+#   loading:        {pods, threads, split, post_load: {...}}  # top-level, sibling of workload:
+#   systems:        [{name, profile, override: {...}}, ...]
+#   observe:        {monitoring_sut, monitoring_cluster, monitoring_app}
+#   placement:      {sut, loading, benchmarking}
+#   resources:      {cpu: {...}, memory: {...}, storage: {...}, storage_class}
+#
+# See docs/Design-Catalog-Contract.md's "Worked example" section (and
+# dev/catalog/experiment.yml alongside this file) for a complete, valid file.
 
 workloads:
   tpch:
