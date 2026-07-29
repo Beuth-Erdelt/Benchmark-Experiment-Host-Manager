@@ -146,6 +146,11 @@ experiment_schema:
             one experiment.yml is not supported yet"
     observe:
       type: object
+      why: "monitoring metrics only become reliable after a few scrape
+        intervals have accumulated -- a phase shorter than roughly 2-5
+        minutes can show 0/NaN readings rather than a real signal; keep
+        rounds/query_repeats long enough for the phase to clear this warm-up
+        window if monitoring results matter"
       fields:
         monitoring_sut: {type: bool, semantics: "scrape the system-under-test's own metrics"}
         monitoring_cluster: {type: bool, semantics: "scrape cluster-wide metrics"}
@@ -232,7 +237,9 @@ workloads:
         type: int
         default: 1
         min: 1
-        why: "repeat each query N times per round"
+        why: "repeat each query N times per round; also useful for
+          statistical verification (more samples per query) and to prolong
+          a short-running round so monitoring metrics have time to warm up"
       verify_result:
         type: bool
         default: false
@@ -309,6 +316,10 @@ workloads:
     rounds:
       type: list[int]
       why: "comma-separated parallel-client sweep; one benchmarking round per entry"
+      rule_of_thumb: "official TPC-H sizes the number of concurrent query
+        streams as floor(log(scaling_factor, 3)) + 2 -- e.g. SF=100 -> 6,
+        SF=1000 -> 8; use as a starting point for the max entry in rounds,
+        not a hard requirement"
     repetitions:
       type: int
       default: 1
