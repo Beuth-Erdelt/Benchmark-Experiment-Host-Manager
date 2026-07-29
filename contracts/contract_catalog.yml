@@ -118,7 +118,10 @@ experiment_schema:
       type: object
       fields:
         pods: {type: int, semantics: "number of parallel loader pods"}
-        threads: {type: int, semantics: "loader threads, split across pods"}
+        threads: {type: int, semantics: "loader threads, split across pods;
+          support varies by DBMS loader (e.g. MySQL honors it, others ignore
+          it) -- see workloads.tpch.loading.threads.support below; prefer
+          pods to scale load at the current state"}
         split: {type: int, default: 1, semantics: "number of parallel loader batches"}
         post_load:
           type: object
@@ -283,10 +286,14 @@ workloads:
         type: int
         min: 1
         why: "number of parallel loader pods"
+        support: "works for every DBMS"
       threads:
         type: int
         min: 1
         why: "loader threads, split across pods"
+        support: "only honored by some DBMS loaders (e.g. MySQL); ignored by
+          others. Prefer pods over threads at the current state -- use
+          threads=1 and scale via pods instead"
       split:
         type: int
         default: 1
