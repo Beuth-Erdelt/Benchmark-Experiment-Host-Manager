@@ -131,11 +131,15 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         hardcoded value, so each subfolder path is resolved via
         :func:`resolve_within_result_folder` before deletion to guarantee it
         cannot land outside the experiment result folder.
+
+        Each pod names its own working directory after its own connection
+        identity, i.e. ``name`` (the per-pod name once ``benchmark.py read``
+        has expanded ``connections.config``) — not the pre-expansion job-level
+        ``orig_name`` that same entry also carries.
         """
         connections_sorted = self.get_connection_config()
         for connection in connections_sorted:
-            conn_name = connection['orig_name'] if 'orig_name' in connection else connection['name']
-            subfolder = resolve_within_result_folder(self.path, conn_name)
+            subfolder = resolve_within_result_folder(self.path, connection['name'])
             if subfolder is not None and os.path.isdir(subfolder):
                 shutil.rmtree(subfolder)
     def get_df_loading(self):

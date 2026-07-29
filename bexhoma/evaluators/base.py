@@ -414,6 +414,13 @@ class EvaluatorBase:
         :type num_missing: int
         """
         pass
+    def cleanup_connection_subfolders(self) -> None:
+        """
+        No-op base implementation; overridden by :class:`DbmsBenchmarkerEvaluator`
+        to delete each connection's private DBMSBenchmarker working-directory
+        subfolder (only that evaluator's benchmarker tool creates one).
+        """
+        pass
     def evaluate_results(self, pod_dashboard=''):
         """
         Scans all log files and grabs some information.

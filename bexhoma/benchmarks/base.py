@@ -392,6 +392,12 @@ class Benchmark:
             workflow_actual, workflow_planned, **extra_context
         )
         if write_report:
+            print("{:30s}: cleaning up per-connection artefacts".format("Experiment"))
+            component_types = ['loading', 'stream', 'loader', 'benchmarker'] + list(experiment.workload['monitoring_components'])
+            for component_type in component_types:
+                self.evaluator.transform_monitoring_results(component=component_type)
+            self.evaluator.cleanup_connection_subfolders()
+            print("{:30s}: cleaning up per-connection artefacts completed".format("Experiment"))
             from bexhoma.report_writer import write_markdown_report
             write_markdown_report(
                 experiment=experiment,
