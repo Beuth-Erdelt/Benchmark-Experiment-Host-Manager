@@ -1,8 +1,8 @@
 """
-Demo/verification script for bexhoma/spec.py — the catalog.yaml + experiment.yml
-translator (see docs/Design-Catalog-Contract.md).
+Demo/verification script for bexhoma/spec.py — the contract_catalog.yml +
+experiment.yml translator (see docs/Design-Catalog-Contract.md).
 
-Translates dev/catalog/experiment.yml against dev/catalog/catalog.yaml,
+Translates dev/catalog/experiment.yml against contracts/contract_catalog.yml,
 prints the resulting tpch.py argument vector and command line, and parses that argv
 through a parser mirroring tpch.py's own (shared flags via the real,
 importable `make_base_parser()`; the handful of tpch-specific flags are
@@ -11,7 +11,7 @@ argv shape without a live cluster — tpch.py itself is not imported or run).
 
 Run from the repo root: ``python dev/spec_prototype_demo.py``
 
-Reads dev/catalog/catalog.yaml and dev/catalog/experiment.yml.
+Reads contracts/contract_catalog.yml and dev/catalog/experiment.yml.
 """
 import argparse
 import os
@@ -46,15 +46,15 @@ def _build_reference_tpch_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xrso', '--xrefresh-stream-offset', default=0, type=int, dest='num_refresh_stream_offset')
     parser.add_argument('-xaq', '--xactive-queries', default='', dest='active_queries')
     parser.add_argument('-xdfe', '--xduckdb-force-execution', action='store_true', default=False, dest='duckdb_force_execution')
+    parser.add_argument('-xve', '--xverbose-explain', action='store_true', default=False, dest='verbose_explain')
     return parser
 
 
 def main() -> None:
     """Translate experiment.yml, print the result, and validate it parses."""
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    catalog_dir = os.path.join(repo_root, "dev", "catalog")
-    catalog_path = os.path.join(catalog_dir, "catalog.yaml")
-    experiment_path = os.path.join(catalog_dir, "experiment.yml")
+    catalog_path = os.path.join(repo_root, "contracts", "contract_catalog.yml")
+    experiment_path = os.path.join(repo_root, "dev", "catalog", "experiment.yml")
 
     catalog = spec.load_catalog(catalog_path)
     experiment = spec.load_experiment(experiment_path)

@@ -1196,23 +1196,14 @@ class ExperimentBase():
         if len(pod_dashboard) == 0:
             pod_dashboard = self.get_dashboard_pod()
         if self.monitoring_active:
-            cmd = {}
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
-            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
-            self.cluster.logger.debug(stdout)
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
-            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
-            self.cluster.logger.debug(stdout)
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
-            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
-            self.cluster.logger.debug(stdout)
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
-            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
-            self.cluster.logger.debug(stdout)
-            for component_type in self.workload['monitoring_components']:
-                cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
-                _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
+            # fixed phases plus every SUT/cluster/app component registered during the run
+            component_types = ['loading', 'stream', 'loader', 'benchmarker'] + list(self.workload['monitoring_components'])
+            for component_type in component_types:
+                print("{:30s}: transforming metrics for {}".format("Experiment", component_type))
+                cmd = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
+                _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd, pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
+                print("{:30s}: transforming metrics for {} completed".format("Experiment", component_type))
         # download evaluation cubes
         print("{:30s}: downloading partial results".format("Experiment"))
         self.download_experiment_file(filename='')

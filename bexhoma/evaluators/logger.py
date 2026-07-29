@@ -315,6 +315,19 @@ class LogEvaluator(EvaluatorBase):
         before deletion, since connection names originate from
         ``connections.config`` rather than a hardcoded value.
 
+        Idempotent across repeated calls: an existing combined file is loaded
+        first and used as the starting point, so connections merged (and thus
+        deleted) by an earlier call are not lost from the combined file just
+        because their per-connection source is already gone.
+
+        Some components fetch metrics per pod (filename suffixed with the
+        per-pod ``name``, e.g. the ``stream`` phase); others fetch once per
+        job, before ``benchmark.py read`` has expanded ``connections.config``
+        into per-pod entries, so the file is only ever suffixed with the
+        job-level ``orig_name`` (e.g. the ``loading`` phase). Both candidates
+        are tried, per-pod first, so either convention is found regardless of
+        which one a given component happens to use.
+
         :param component: Component label used in the metric filename prefix
                           (e.g. ``'loading'``, ``'stream'``).
         :type component: str
@@ -322,20 +335,33 @@ class LogEvaluator(EvaluatorBase):
         connections_sorted = self.get_connection_config()
         metric_keys = self.get_monitoring_metrics()
         for metric_key in metric_keys:
-            df_all = None
-            connection_filenames = []
-            for connection in connections_sorted:
-                conn_name = connection['orig_name'] if 'orig_name' in connection else connection['name']
-                filename = "query_{component}_metric_{metric}_{connection}.csv".format(
-                    component=component, metric=metric_key, connection=conn_name
-                )
-                df = monitor.metrics.loadMetricsDataframe(self.path + "/" + filename)
-                if df is None:
-                    continue
-                df.columns = [conn_name]
-                df_all = df if df_all is None else df_all.merge(df, how='outer', left_index=True, right_index=True)
-                connection_filenames.append(filename)
             out_filename = "query_{component}_metric_{metric}.csv".format(component=component, metric=metric_key)
+            df_all = monitor.metrics.loadMetricsDataframe(self.path + "/" + out_filename)
+            connection_filenames = []
+            processed_names = set()
+            for connection in connections_sorted:
+                candidate_names = [connection['name']]
+                if 'orig_name' in connection and connection['orig_name'] not in candidate_names:
+                    candidate_names.append(connection['orig_name'])
+                for conn_name in candidate_names:
+                    if conn_name in processed_names:
+                        continue
+                    filename = "query_{component}_metric_{metric}_{connection}.csv".format(
+                        component=component, metric=metric_key, connection=conn_name
+                    )
+                    df = monitor.metrics.loadMetricsDataframe(self.path + "/" + filename)
+                    if df is None:
+                        continue
+                    processed_names.add(conn_name)
+                    df.columns = [conn_name]
+                    if df_all is None:
+                        df_all = df
+                    else:
+                        if conn_name in df_all.columns:
+                            df_all = df_all.drop(columns=[conn_name])
+                        df_all = df_all.merge(df, how='outer', left_index=True, right_index=True)
+                    connection_filenames.append(filename)
+                    break
             monitor.metrics.saveMetricsDataframe(self.path + "/" + out_filename, df_all)
             for filename in connection_filenames:
                 resolved = resolve_within_result_folder(self.path, filename)

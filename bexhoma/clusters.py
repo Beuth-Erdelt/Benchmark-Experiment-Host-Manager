@@ -71,7 +71,8 @@ def to_unc(path: str) -> str:
             result = str(p)
 
     if keep_dot_suffix:
-        result = result.rstrip("\\/") + "\\."
+        dot_separator = "\\." if platform.system() == "Windows" else "/."
+        result = result.rstrip("\\/") + dot_separator
     return result
 
 

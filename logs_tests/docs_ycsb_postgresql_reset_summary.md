@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 2877s 
-* Code: 1784583777
+* Duration: 2908s 
+* Code: 1785158445
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -15,7 +15,8 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1]. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
-  * Experiment uses bexhoma version 0.10.6.
+  * Status is logged every 10s.
+  * Experiment uses bexhoma version 0.10.8.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker19.
@@ -26,6 +27,9 @@ YCSB SF=1
   * Benchmarking is tested with [8] threads, split into [1] pods.
   * Benchmarking is run as [1, 2] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
 * PostgreSQL-1-1-1-1 uses docker image postgres:18.3
@@ -34,29 +38,29 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:497427
+  * disk:810313
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1784583777
+    * code:1785158445
 * PostgreSQL-1-1-2-1 uses docker image postgres:18.3
   * RAM:2164173213696
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-111-generic
   * node:cl-worker36
-  * disk:497603
+  * disk:811325
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1784583777
+    * code:1785158445
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1784583777-54d9fbdb4-d7lvl: 0 0
+* bexhoma-sut-postgresql-1-1785158445-68f446f9b5-zwp8r: 0 0
 
 ### Workflow
 
@@ -76,13 +80,13 @@ YCSB SF=1
 
 | connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| PostgreSQL-1-1-0-1-1 |             1.00 |      8.00 |  1024.00 |        1.00 |         0.00 |                         1023.78 |               976773.00 |           1000000.00 |                              1432.00 | 1.00 |                3.69 |
+| PostgreSQL-1-1-0-1-1 |             1.00 |      8.00 |  1024.00 |        1.00 |         0.00 |                         1023.76 |               976793.00 |           1000000.00 |                              1572.00 | 1.00 |                3.69 |
 
 #### Per Run
 
 | DBMS           |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:---------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| PostgreSQL-1-1 |             1.00 |      8.00 |  1024.00 |        1.00 |         0.00 | 1.00 |                3.69 |                         1023.78 |               976773.00 |           1000000.00 |                              1432.00 |
+| PostgreSQL-1-1 |             1.00 |      8.00 |  1024.00 |        1.00 |         0.00 | 1.00 |                3.69 |                         1023.76 |               976793.00 |           1000000.00 |                              1572.00 |
 
 ### Execution
 
@@ -90,16 +94,16 @@ YCSB SF=1
 
 | DBMS                 | phase            | job                | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:---------------------|:-----------------|:-------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       1 |         8 |     1024 |           1 |            0 |                         1023.78 |               976774.00 |             500318 |                             710.00 |               499682 |                              1350.00 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       1 |         8 |     1024 |           2 |            0 |                         1023.55 |               488497.00 |             250067 |                             694.00 |               249933 |                              1425.00 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       2 |         8 |     1024 |           2 |            0 |                         1023.52 |               488509.00 |             249979 |                             703.00 |               250021 |                              1447.00 |
+| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       1 |         8 |     1024 |           1 |            0 |                         1023.76 |               976793.00 |             500665 |                             708.00 |               499335 |                              2435.00 |
+| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       1 |         8 |     1024 |           2 |            0 |                         1023.51 |               488517.00 |             249977 |                             710.00 |               250023 |                              1468.00 |
+| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       2 |         8 |     1024 |           2 |            0 |                         1023.51 |               488517.00 |             249390 |                             704.00 |               250610 |                              1410.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-----------------|:-----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |         8 |     1024 |               1 |           1 |            0 |                         1023.78 |               976774.00 |             500318 |                             710.00 |               499682 |                              1350.00 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |        16 |     2048 |               1 |           2 |            0 |                         2047.07 |               488509.00 |             500046 |                             703.00 |               499954 |                              1447.00 |
+| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |         8 |     1024 |               1 |           1 |            0 |                         1023.76 |               976793.00 |             500665 |                             708.00 |               499335 |                              2435.00 |
+| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |        16 |     2048 |               1 |           2 |            0 |                         2047.01 |               488517.00 |             499367 |                             710.00 |               500633 |                              1468.00 |
 
 #### Reset
 

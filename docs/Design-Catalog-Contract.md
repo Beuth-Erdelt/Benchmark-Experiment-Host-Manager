@@ -18,11 +18,23 @@
 >
 > **The "Complete `catalog.yaml`" section below is the illustrative,
 > all-systems design sketch — it is not the file that exists on disk.**
-> The actual prototype at `dev/catalog/catalog.yaml` is a trimmed subset
-> (`tpch` + `PostgreSQL` + `PgDuckDB` only, and — per explicit instruction —
-> without the `oltp-large-node`/`legacy-baseline` profiles the sketch below
-> still shows). Treat the sketch as "does the schema generalize", and
-> `dev/catalog/catalog.yaml` as "what actually runs".
+> The real, active contract lives at `contracts/contract_catalog.yml`
+> (promoted out of `dev/catalog/` once it graduated from prototype to the
+> input contract `bexhoma/spec.py` actually consumes) and is a trimmed
+> subset (`tpch` + `PostgreSQL` + `PgDuckDB` only, and — per explicit
+> instruction — without the `oltp-large-node`/`legacy-baseline` profiles the
+> sketch below still shows). Treat the sketch as "does the schema
+> generalize", and `contracts/contract_catalog.yml` as "what actually runs".
+>
+> `contracts/contract_catalog.yml` is consumed by `bexhoma/spec.py`
+> (`validate_experiment()`, `build_argv()`), `validate_experiment.py`, and
+> `experiment.py`'s catalog-driven dispatch. Its own header comment is
+> deliberately self-contained (full experiment.yml shape, including the
+> `resources:` quantity format) so an agent never needs to open this design
+> doc, `spec.py`, or any other source just to build a valid experiment.yml
+> — this doc instead carries the *why* behind those choices, the full
+> all-systems breadth pass the trimmed contract was extracted from, and
+> open questions.
 
 ## Problem
 
@@ -217,7 +229,7 @@ implied by `arg_style` at the system level, with per-knob overrides for the
 
 4. **Multi-Tenant** — not a system-shape problem at all: one engine, N
    tenants sharing the same Deployment, via global `-mtn`/`-mtb` flags
-   (`bexhoma/cli_args.py:74-75`, tenancy granularity `schema`/`database`/
+   (`bexhoma/cli_args.py:111-112`, tenancy granularity `schema`/`database`/
    `container`). **Verdict: fits the existing schema; needs a cross-cutting
    experiment-level `tenancy: {num_tenants, tenant_by}` block, orthogonal to
    any one system's knobs** — same pattern as `observe:`.
@@ -251,8 +263,8 @@ An earlier revision of this doc turned both into named profiles
 already sitting unused in the repo. Per explicit instruction, the catalog
 now only references the shipped baseline (`deploymenttemplate-PostgreSQL.yml`)
 — neither variant template is used anywhere, in the catalog sketch below or
-in `dev/catalog/catalog.yaml`. Noted here only as a finding from the audit,
-not as something implemented.
+in `contracts/contract_catalog.yml`. Noted here only as a finding from the
+audit, not as something implemented.
 
 ### `docs/DBMS.md` is stale in places — verify against templates, not prose
 
@@ -346,6 +358,7 @@ workloads:
       limit_import_table:     {type: str, default: "", why: "import only this table (partial re-loads)"}
       refresh_streams:        {type: int, default: 0, why: "number of RF1/RF2 refresh-stream pairs run parallel to query streams"}
       refresh_stream_offset:  {type: int, default: 0, why: "starting OFFSET+1 for the refresh stream"}
+      verbose_explain:        {type: bool, default: false, why: "run and print configured EXPLAIN statements after each benchmark query (requires an 'explain' key in the DBMS connection's JDBC config)"}
     loading:
       pods:    {type: int, min: 1, why: "number of parallel loader pods"}
       threads: {type: int, min: 1, why: "loader threads, split across pods"}
@@ -709,6 +722,18 @@ checks all three are present and non-empty before resolving anything else —
 an experiment.yml that can't say what it's testing fails immediately,
 rather than producing a technically-valid but purposeless run.
 
+## Top-level shape
+
+`mode`, `title`, `hypothesis`, `discriminates`, `workload`, `loading`,
+`systems`, `observe`, `placement`, and `resources` are all siblings at the
+top of the file. The one pitfall worth calling out explicitly: `loading:` is
+**not** nested under `workload:`, even though it's workload-specific data.
+`build_argv()` reads it as `experiment.get("loading", {})` off the top-level
+dict, not off `workload_spec`, so a `workload.loading` block is not a schema
+error — it resolves silently to `{}`, and the `-nlp`/`-nlt`/`-xii`/`-xic`/
+`-xis`/`-xcol` flags it would have produced are just absent from the
+translated command. See the worked example below for the correct shape.
+
 ## Worked example: TPC-H, PostgreSQL vs. PgDuckDB
 
 This is now a real, runnable file — `dev/catalog/experiment.yml`, reproduced
@@ -736,6 +761,12 @@ workload:
 loading:
   pods: 4
   threads: 4
+  # shared default for every system below — indexes/stats matter directly for
+  # join plan quality. Deliberately identical for both systems: this pair is
+  # compared under a matched profile, so post_load is a "parity" input, same
+  # as `profile: analytical-ssd` below. A systems[].post_load override (not
+  # used here, on purpose) would let one experiment apply post_load to some
+  # named systems and not others — see contract_catalog.yml's post_load comment.
   post_load: {indexes: true, constraints: true, statistics: true}
 
 systems:
@@ -786,10 +817,48 @@ storage classes (`environment.yml`'s `storage_classes:`).
 `arg_style: env-var`, `bexhoma/spec.py`'s `build_argv()` instead emits the
 existing `-xdfe` CLI flag when the resolved value is true — `tpch.py`
 already sets `config.sut_parameters['DUCKDB_FORCE_EXECUTION']` from that
-flag itself (tpch.py:309-313), so the translator only needs to know the
-flag mapping, not reach into `sut_parameters` directly. This is a concrete
-case of §"Schema extensions" point 3: the resolver branches on each knob's
-own `arg_style`, not assuming the whole system is uniform.
+flag itself (`tpch.py::run()`, in the `PgDuckDB` config block), so the
+translator only needs to know the flag mapping, not reach into
+`sut_parameters` directly. This is a concrete case of §"Schema extensions"
+point 3: the resolver branches on each knob's own `arg_style`, not assuming
+the whole system is uniform.
+
+### Per-system `post_load` selection
+
+The worked example above gives both systems the *same* `post_load` on
+purpose (parity). To apply `indexes`/`constraints`/`statistics` to
+`PostgreSQL` only, a `systems[].post_load` override replaces the shared
+default for that one entry:
+
+```yaml
+loading:
+  pods: 4
+  threads: 4
+  # no post_load here — nothing to default when every system sets its own
+
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+    post_load: {indexes: true, constraints: true, statistics: true}
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override: {duckdb_force_execution: false}
+    # post_load omitted entirely -> resolves to {} (no top-level default to
+    # fall back to), NOT to PostgreSQL's post_load -- each systems[] entry
+    # resolves independently
+```
+
+This parses and validates (legality/support are both checked per system,
+per "Validation ordering" above) but **fails at `build_argv()`** with
+`SpecError`: `PostgreSQL` and `PgDuckDB` resolve to different effective
+post_load, and `tpch.py`'s `-xii`/`-xic`/`-xis` have no per-system scope to
+express that difference. The schema can state the intent; the CLI
+translation layer cannot execute it yet — closing that gap for real means
+giving `tpch.py` itself a scoped mechanism (e.g. extending the existing
+`--set @CONFIG` scoping used for resource-swept knobs to these flags too),
+which is out of scope for the phase-1 translator described here. Until then,
+an experiment that genuinely needs asymmetric post_load treatment has to be
+split into separate per-system runs.
 
 ### Resource sweeps: `resources.memory`/`resources.cpu` as a list
 
@@ -854,24 +923,46 @@ resource limit is itself a swept factor.
 
 ## Validation ordering
 
-Two distinct failure modes, checked in this order, against
-`loading.post_load` as the running example:
+Three distinct axes are in play for `loading.post_load`, the running
+example — the third (selection) was added after the original two-axis
+design shipped, once a concrete case (wanting `indexes`/`constraints`/
+`statistics` applied to `PostgreSQL` but not a co-running `PgDuckDB` in the
+same experiment) showed the two-axis model couldn't express it at all:
 
+0. **Applicability** — is the system in the workload's `supports:` list at
+   all? Checked before anything below — `tpch` against `Redis` fails
+   immediately, since `Redis` isn't in `tpch.supports`.
 1. **Legality** — does `workloads.tpch.loading.post_load.<key>` exist, and
    is the value legal for its declared `type`/`values`? (`storage_format:
    columnar` is a real workload concept — checked here regardless of which
-   system is targeted.)
-2. **Support** — for each system in `systems:`, is that value present in
+   system is targeted.) Legality is checked against each system's
+   *effective* post_load — its own `systems[].post_load` override if it has
+   one, else the shared `loading.post_load` default (`_effective_post_load()`
+   in `bexhoma/spec.py`) — not against one experiment-wide dict.
+2. **Support** — for each system, is that value present in
    `systems.<name>.physical_design.<key>`? (`storage_format: columnar`
    against plain `PostgreSQL` fails *here*, specifically — the value is
    legal, just unsupported by *this* system. Against `Redis`, the whole
    `physical_design` check is skipped, not failed — the concept is absent,
-   and the workload's `supports:` list is what should have already
-   rejected `Redis` for `tpch` at step 0.)
+   and step 0 should have already rejected `Redis` for `tpch`.)
+3. **Selection** — *capable of* (step 2) is necessary but not sufficient for
+   *will receive it*: a system can pass the support check and still not get
+   a post_load option applied, because this experiment chose not to apply it
+   there. This is what `systems[].post_load` (as opposed to the shared
+   `loading.post_load`) actually expresses — see the worked example below.
+   PgDuckDB's `physical_design` in `contract_catalog.yml` deliberately
+   declares full support for `indexes`/`constraints`/`statistics` (identical to
+   PostgreSQL's, not merely inherited via `extends`) precisely so that
+   omitting them for PgDuckDB in a given `experiment.yml` reads as a
+   selection choice, never a support failure.
 
-A third check, implicit above: is the system in the workload's `supports:`
-list at all? That's checked before either of the above — `tpch` against
-`Redis` fails immediately, since `Redis` isn't in `tpch.supports`.
+Selection is a schema-level concept `bexhoma/spec.py` resolves, but not one
+`tpch.py`'s own CLI can currently *execute*: `-xii`/`-xic`/`-xis`/`-xcol` are
+global switches with no per-system scope. `build_argv()` therefore computes
+each named system's effective post_load and, when they all agree, emits the
+shared flags exactly as before; when they diverge, it raises `SpecError`
+rather than silently applying one system's choice to every system — see
+step 4 in "Integration with current code" below.
 
 ## Integration with current code (phase 1 — CLI stays ground truth)
 
@@ -886,9 +977,9 @@ No changes to `tpch.py` or any other entry script were needed, and no code
 had to duplicate the ~45 shared-flag defaults `bexhoma/cli_args.py`'s
 `make_base_parser()` already owns.
 
-1. `bexhoma/spec.py::load_catalog()`/`load_experiment()` load `catalog.yaml`
-   and `experiment.yml` (plain `yaml.safe_load`, no relation to the
-   `ast.literal_eval`-based `cluster.config` format).
+1. `bexhoma/spec.py::load_catalog()`/`load_experiment()` load
+   `contract_catalog.yml` and `experiment.yml` (plain `yaml.safe_load`, no
+   relation to the `ast.literal_eval`-based `cluster.config` format).
 2. `resolve_system()` resolves `extends:` chains, the named `profile:`
    (following a `ref:` to another system's profile when present), evaluates
    `derive:` formulas (`evaluate_derive_expression()`, a whitelisted-AST
@@ -899,18 +990,26 @@ had to duplicate the ~45 shared-flag defaults `bexhoma/cli_args.py`'s
    right here, raising `SpecError` before any argv is produced if it isn't
    one of them.
 3. `validate_experiment()` checks, in order: the workload exists; every
-   system is in the workload's `supports:` list; every
-   `loading.post_load` option is legal for the workload; and each system's
-   `physical_design` actually supports the requested value.
+   system is in the workload's `supports:` list; and, for each system's
+   *effective* post_load (its own `systems[].post_load` override — a
+   selection choice — or else the shared `loading.post_load` default), every
+   option is legal for the workload and the system's `physical_design`
+   actually supports the requested value.
 4. `build_argv()` walks the resolved experiment and emits **only the CLI
    flags the spec actually sets** — e.g. `-sf`, `-t`, `-ne`, `-nc`, `-m`,
    `-rc`/`-lc`/`-rr`/`-lr`/`-rss`, `-rst` (derived from the resolved
    profile's `storage_class`) — falling back to `tpch.py`'s own argparse
-   defaults for everything else. Per-knob `arg_style` decides how a knob
-   becomes CLI input:
+   defaults for everything else. Before any of that, it computes every named
+   system's effective post_load and requires them all to agree: `-xii`/`-xic`/
+   `-xis`/`-xcol` are global CLI switches with no per-system scope in
+   `tpch.py` today, so a `systems[].post_load` selection that actually
+   *diverges* across systems raises `SpecError` rather than being silently
+   collapsed onto one system's choice — a schema-valid experiment can still
+   be untranslatable for this reason alone, same spirit as the `arg_style`
+   guards below. Per-knob `arg_style` decides how a knob becomes CLI input:
    - `pg-guc` → a `--set deployment[<systems.<name>.deployment>].container[dbms].<knob>=<value>`
      token pair. `tpch.py`'s own `prepare_testbed()` parses these via the
-     *existing* `parse_set_arg()` (`bexhoma/experiments/base.py:79`) exactly
+     *existing* `parse_set_arg()` (`bexhoma/experiments/base.py:81`) exactly
      as if a human had typed `--set` — `build_argv()` never touches
      `dbms_args`/`patch_dbms_args()` directly.
    - `env-var` → mapped to whatever existing flag already sets that
@@ -943,8 +1042,8 @@ Once the catalog is trusted as ground truth:
 - Generate/validate each entry script's `-x`-prefixed argparse flags *from*
   the catalog instead of hand-maintaining both in parallel.
 - `k8s/deploymenttemplate-*.yml`'s currently-commented-out knob blocks
-  become the generated content of `catalog.yaml`'s `systems` section —
-  template renders from catalog, not the reverse.
+  become the generated content of `contract_catalog.yml`'s `systems`
+  section — template renders from catalog, not the reverse.
 - Extend the `flag-equals`/`command-string` systems' templates so their
   knobs become genuinely patchable (this is real implementation work per
   system, not just a catalog-authoring exercise — today's `--set` mechanism
@@ -966,24 +1065,34 @@ this means phase-1 work only needs:
 Everything else in the complete catalog above exists to confirm the schema
 generalizes, not because it's in scope to implement now.
 
-**Implemented so far** (prototype, not wired into any entry script's own
-invocation path):
-- `dev/catalog/catalog.yaml` — the TPC-H/PostgreSQL/PgDuckDB-only slice of
-  the catalog above.
-- `dev/catalog/experiment.yml` — a sample experiment spec against it.
+**Implemented so far:**
+- `contracts/contract_catalog.yml` — the TPC-H/PostgreSQL/PgDuckDB-only
+  slice of the catalog above; promoted out of `dev/catalog/` to
+  `contracts/` once it graduated from prototype to the real input contract
+  `bexhoma/spec.py` consumes.
+- `dev/catalog/experiment.yml` — a sample experiment spec against it (still
+  under `dev/`, since it's an example, not schema).
 - `bexhoma/spec.py` — the Phase 1 translator: loads both files, resolves
   `extends`/profile/`derive:`/`override`, validates workload↔system support
-  and post-load legality/capability, and emits a `tpch.py` argument vector
-  (`build_argv()`) or a copy-pasteable command line (`build_command()`).
-  No existing entry script or execution path is modified — it only
-  produces the CLI arguments a human would otherwise type by hand.
+  and post-load legality/capability/selection, and emits a `tpch.py`
+  argument vector (`build_argv()`) or a copy-pasteable command line
+  (`build_command()`). No existing entry script's *logic* is modified — it
+  only produces the CLI arguments a human would otherwise type by hand — but
+  it is genuinely wired into a real invocation path: `experiment.py`'s
+  catalog-driven dispatch calls `build_argv()` and hands the result straight
+  to `tpch.run()` in-process (see `RunExperimentYamlDispatchTest` in
+  `tests/test_experiment_cli.py`).
+- `validate_experiment.py` — a dry-run CLI wrapping the same `build_argv()`
+  plus `validate_environment()`, without touching a live cluster.
 - `dev/spec_prototype_demo.py` — runs the translation end-to-end and parses
   the result through a parser mirroring `tpch.py`'s own, without needing a
   live cluster.
 
-Both catalog files live under `dev/` rather than the repo root since this is
-still prototype/exploratory material, not a supported user-facing input
-format yet.
+`contracts/contract_catalog.yml` and `contracts/contract_result.yml` live at
+the repo root under `contracts/` — they're the active, consumed contracts,
+not exploratory material. The sample `experiment.yml` and the generated
+`environment.yml` stay under `dev/catalog/`: one is a worked example, the
+other a per-cluster snapshot, neither is schema.
 
 ## Open questions
 
@@ -1010,3 +1119,12 @@ format yet.
 - `tools.hardware`'s shape is a first pass — it wasn't cross-checked against
   a second non-DBMS tool (there isn't one yet), so it's the least-verified
   section here.
+- Per-system `post_load` selection (§"Per-system post_load selection" above)
+  is resolved and validated by `bexhoma/spec.py`, but `build_argv()` can only
+  ever emit it when every named system agrees — genuinely divergent
+  selection raises `SpecError` rather than translating, because `tpch.py`'s
+  `-xii`/`-xic`/`-xis` are global switches. Closing this for real needs a
+  scoped CLI mechanism (most likely extending the existing `--set @CONFIG`
+  scoping, already used for per-cell resource knobs, to these three flags)
+  — not attempted here since it touches `tpch.py`/`bexhoma/benchmarks/tpch.py`
+  itself, not just the catalog/translator layer.

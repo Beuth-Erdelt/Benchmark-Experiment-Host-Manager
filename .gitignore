@@ -13,6 +13,7 @@ dist/*
 docs/html/*
 api/*
 __pycache__/*
+*/__pycache__/*
 bexhoma/__pycache__/*
 bexhoma/*/__pycache__/*
 notebooks/__pycache__/*
@@ -27,3 +28,5 @@ local/*
 logs_multitenant/*
 .vscode/
 dev/catalog/environment.yml
+environment.yml
+experiment.yml

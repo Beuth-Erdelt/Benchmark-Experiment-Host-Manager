@@ -37,12 +37,15 @@ __all__ = [
     "ResolvedSystem",
     "load_catalog",
     "load_experiment",
+    "load_environment",
     "evaluate_derive_expression",
     "parse_memory_quantity",
+    "parse_cpu_quantity",
     "format_postgres_memory",
     "resolve_system_definition",
     "resolve_system",
     "validate_experiment",
+    "validate_environment",
     "build_argv",
     "build_command",
     "translate",
@@ -60,6 +63,13 @@ _MEMORY_UNITS: tuple[tuple[str, int], ...] = (
 
 #: Divisor to format a byte count as whole megabytes for a PostgreSQL memory GUC.
 _BYTES_PER_MEGABYTE = 1024 ** 2
+
+#: Kubernetes-style CPU quantity suffix for millicores (e.g. "500m" == 0.5 cores).
+_CPU_MILLICORE_SUFFIX = "m"
+_MILLICORES_PER_CORE = 1000
+
+#: environment.yml roles a placement: entry can pin to a Kubernetes node.
+_PLACEMENT_ROLES = ("sut", "loading", "benchmarking")
 
 _DERIVE_BINARY_OPS: dict[type, Callable[[float, float], float]] = {
     ast.Add: operator.add,
@@ -148,6 +158,19 @@ def load_experiment(path: str) -> dict[str, Any]:
         return yaml.safe_load(experiment_file)
 
 
+def load_environment(path: str) -> dict[str, Any]:
+    """Load an ``environment.yml``.
+
+    :param path: Path to the environment descriptor file, as produced by
+        :func:`bexhoma.environment.write_environment_yml`.
+    :return: Parsed environment descriptor, with ``nodes``/``excluded_nodes``/
+        ``storage_classes``/``resource_limits`` top-level keys.
+    :rtype: dict[str, Any]
+    """
+    with open(path, "r", encoding="utf-8") as environment_file:
+        return yaml.safe_load(environment_file)
+
+
 def _eval_derive_node(node: ast.AST, inputs: dict[str, float]) -> float:
     """Recursively evaluate one node of a whitelisted derive-expression AST.
 
@@ -211,6 +234,26 @@ def parse_memory_quantity(value: str) -> int:
         return int(text)
     except ValueError as error:
         raise SpecError(f"invalid memory quantity {value!r}") from error
+
+
+def parse_cpu_quantity(value: Any) -> float:
+    """Parse a Kubernetes-style CPU quantity into whole cores.
+
+    :param value: A quantity such as ``8``, ``"8"``, or millicore ``"500m"``.
+    :return: Number of cores.
+    :rtype: float
+    :raises SpecError: When the value cannot be parsed.
+    """
+    text = str(value).strip()
+    if text.endswith(_CPU_MILLICORE_SUFFIX):
+        try:
+            return float(text[: -len(_CPU_MILLICORE_SUFFIX)]) / _MILLICORES_PER_CORE
+        except ValueError as error:
+            raise SpecError(f"invalid cpu quantity {value!r}") from error
+    try:
+        return float(text)
+    except ValueError as error:
+        raise SpecError(f"invalid cpu quantity {value!r}") from error
 
 
 def format_postgres_memory(num_bytes: int) -> str:
@@ -356,6 +399,24 @@ def resolve_system(
     return resolved
 
 
+def _effective_post_load(system_spec: dict[str, Any], shared_post_load: dict[str, Any]) -> dict[str, Any]:
+    """Resolve the post_load dict that actually applies to one ``systems:`` entry.
+
+    A system's own ``post_load:`` is a *selection* override — legal even when
+    the system fully supports the shared default — that lets one experiment
+    apply post-load steps to some named systems and not others. Omitting it
+    falls back to the shared ``loading.post_load`` default, so today's
+    single-block experiment.yml files keep resolving exactly as before. See
+    "Validation ordering" in ``docs/Design-Catalog-Contract.md``.
+
+    :param system_spec: One entry of experiment.yml's ``systems:`` list.
+    :param shared_post_load: The top-level ``loading.post_load`` default.
+    :return: The post_load dict this system actually resolves to.
+    :rtype: dict[str, Any]
+    """
+    return system_spec.get("post_load", shared_post_load)
+
+
 def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> None:
     """Validate an experiment spec against the catalog before translation.
 
@@ -363,11 +424,12 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     present and non-empty (``title``, ``hypothesis``, ``discriminates`` — an
     experiment.yml must state what it's testing and which factor it isolates
     before anything else is resolved); the workload exists; every named
-    system is in the workload's ``supports:`` list; every
-    ``loading.post_load`` option is a legal workload parameter (legality);
-    and, for each system, that its ``physical_design`` actually supports the
-    requested value (support). See "Validation ordering" in
-    ``docs/Design-Catalog-Contract.md``.
+    system is in the workload's ``supports:`` list; and, for each system's
+    *effective* post_load (its own ``systems[].post_load`` override — a
+    selection choice — or else the shared ``loading.post_load`` default),
+    that every option is a legal workload parameter (legality) and that the
+    system's ``physical_design`` actually supports the requested value
+    (support). See "Validation ordering" in ``docs/Design-Catalog-Contract.md``.
 
     :param catalog: Parsed catalog.
     :param experiment: Parsed experiment spec.
@@ -385,21 +447,23 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
         raise SpecError(f"unknown workload '{workload_name}'")
     workload = workloads[workload_name]
 
-    system_names = [system_spec["name"] for system_spec in experiment.get("systems", [])]
+    system_specs = experiment.get("systems", [])
     supported = workload.get("supports", [])
-    for system_name in system_names:
-        if system_name not in supported:
-            raise SpecError(f"workload '{workload_name}' does not support system '{system_name}'")
+    for system_spec in system_specs:
+        if system_spec["name"] not in supported:
+            raise SpecError(f"workload '{workload_name}' does not support system '{system_spec['name']}'")
 
-    post_load = experiment.get("loading", {}).get("post_load", {})
+    shared_post_load = experiment.get("loading", {}).get("post_load", {})
     catalog_post_load = workload.get("loading", {}).get("post_load", {})
-    for option_name, value in post_load.items():
-        if option_name not in catalog_post_load:
-            raise SpecError(f"unknown post_load option '{option_name}' for workload '{workload_name}'")
-        option = catalog_post_load[option_name]
-        if option.get("type") == "enum" and value not in option.get("values", []):
-            raise SpecError(f"post_load.{option_name}={value!r} is not one of {option.get('values')}")
-        for system_name in system_names:
+    for system_spec in system_specs:
+        system_name = system_spec["name"]
+        post_load = _effective_post_load(system_spec, shared_post_load)
+        for option_name, value in post_load.items():
+            if option_name not in catalog_post_load:
+                raise SpecError(f"unknown post_load option '{option_name}' for workload '{workload_name}'")
+            option = catalog_post_load[option_name]
+            if option.get("type") == "enum" and value not in option.get("values", []):
+                raise SpecError(f"post_load.{option_name}={value!r} is not one of {option.get('values')}")
             definition = resolve_system_definition(catalog, system_name)
             physical_design = definition.get("physical_design")
             if physical_design is None:
@@ -415,6 +479,111 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
                     )
             elif value and not supported_value:
                 raise SpecError(f"system '{system_name}' does not support post_load.{option_name}")
+
+
+def _node_allocatable_ceiling(
+    environment: dict[str, Any],
+    node_name: Optional[str],
+    nodes_by_name: dict[str, dict[str, Any]],
+) -> tuple[Optional[float], Optional[int], str]:
+    """Resolve the CPU/memory ceiling a ``resources:`` block must fit under.
+
+    :param environment: Parsed environment descriptor.
+    :param node_name: The ``placement.sut`` node name, or ``None`` when unpinned.
+    :param nodes_by_name: ``environment["nodes"]`` indexed by node name.
+    :return: ``(max_cpu_cores, max_memory_bytes, ceiling_scope)``; either
+        ceiling is ``None`` when the environment descriptor doesn't record it.
+    :rtype: tuple[Optional[float], Optional[int], str]
+    """
+    if node_name is not None and node_name in nodes_by_name:
+        allocatable = nodes_by_name[node_name]["allocatable"]
+        return (
+            parse_cpu_quantity(allocatable["cpu"]),
+            parse_memory_quantity(allocatable["memory"]),
+            f"node '{node_name}'",
+        )
+    resource_limits = environment.get("resource_limits", {})
+    max_cpu = resource_limits.get("max_allocatable_cpu")
+    max_memory = resource_limits.get("max_allocatable_memory")
+    return (
+        parse_cpu_quantity(max_cpu) if max_cpu is not None else None,
+        parse_memory_quantity(max_memory) if max_memory is not None else None,
+        "the cluster's max_allocatable_* ceiling",
+    )
+
+
+def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]) -> None:
+    """Validate an experiment spec against the cluster's ``environment.yml``.
+
+    Checks, in order: every node named under ``placement:`` exists in
+    ``environment.yml`` and is not excluded (tainted); every
+    ``resources.cpu``/``resources.memory`` sweep cell's ``request``/``limit``
+    fits under the allocatable capacity of the ``placement.sut`` node (or the
+    cluster-wide ``resource_limits`` ceiling, when no SUT node is pinned);
+    and, when set, ``resources.storage_class`` names a storage class the
+    cluster actually has.
+
+    This is independent of :func:`validate_experiment`: that function checks
+    an experiment against what the catalog *permits*; this one checks it
+    against what the cluster actually *has*. Neither function depends on the
+    other, so callers that only have one of the two files can still validate
+    what they have.
+
+    :param environment: Parsed environment descriptor, as returned by
+        :func:`load_environment`.
+    :param experiment: Parsed experiment spec.
+    :raises SpecError: On any validation failure.
+    """
+    nodes_by_name = {node["name"]: node for node in environment.get("nodes", [])}
+    excluded_node_names = {node["name"] for node in environment.get("excluded_nodes", [])}
+
+    placement = experiment.get("placement", {})
+    for role in _PLACEMENT_ROLES:
+        node_name = placement.get(role)
+        if node_name is None:
+            continue
+        if node_name in excluded_node_names:
+            raise SpecError(f"placement.{role} node '{node_name}' is excluded from scheduling (tainted)")
+        if node_name not in nodes_by_name:
+            raise SpecError(f"placement.{role} node '{node_name}' is not in environment.yml's nodes")
+
+    resources = experiment.get("resources", {})
+    cpu_cells = resources.get("cpu", {})
+    cpu_cells = cpu_cells if isinstance(cpu_cells, list) else [cpu_cells]
+    memory_cells = resources.get("memory", {})
+    memory_cells = memory_cells if isinstance(memory_cells, list) else [memory_cells]
+
+    max_cpu, max_memory, ceiling_scope = _node_allocatable_ceiling(
+        environment, placement.get("sut"), nodes_by_name
+    )
+
+    for cell in cpu_cells:
+        for key in ("request", "limit"):
+            value = cell.get(key)
+            if value is None or max_cpu is None:
+                continue
+            if parse_cpu_quantity(value) > max_cpu:
+                raise SpecError(
+                    f"resources.cpu.{key}={value!r} exceeds {ceiling_scope}'s allocatable cpu ({max_cpu} cores)"
+                )
+    for cell in memory_cells:
+        for key in ("request", "limit"):
+            value = cell.get(key)
+            if value is None or max_memory is None:
+                continue
+            if parse_memory_quantity(value) > max_memory:
+                raise SpecError(
+                    f"resources.memory.{key}={value!r} exceeds {ceiling_scope}'s "
+                    f"allocatable memory ({max_memory} bytes)"
+                )
+
+    storage_class = resources.get("storage_class")
+    if storage_class is not None:
+        known_storage_classes = {entry["name"] for entry in environment.get("storage_classes", [])}
+        if storage_class not in known_storage_classes:
+            raise SpecError(
+                f"resources.storage_class '{storage_class}' is not in environment.yml's storage_classes"
+            )
 
 
 def _append_flag(argv: list[str], flag: str, value: Any) -> None:
@@ -467,22 +636,43 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     back to ``tpch.py``'s own argparse default, so this never needs to
     duplicate defaults the CLI already owns.
 
+    A ``systems[].post_load`` override (see :func:`_effective_post_load`) is a
+    *selection* the catalog schema supports, but ``-xii``/``-xic``/``-xis``/
+    ``-xcol`` are global CLI switches — ``tpch.py`` has no per-system scoping
+    for them yet. When every named system resolves to the same effective
+    post_load, that shared value is emitted exactly as before; when systems
+    diverge, this raises rather than silently applying one system's choice to
+    all of them.
+
     :param catalog: Parsed catalog.
     :param experiment: Parsed experiment spec.
     :return: Argument vector, usable as ``python tpch.py`` followed by these tokens.
     :rtype: list[str]
-    :raises SpecError: When ``experiment`` fails validation or resolution.
+    :raises SpecError: When ``experiment`` fails validation or resolution, or
+        when named systems resolve to different effective post_load values.
     """
     validate_experiment(catalog, experiment)
 
     workload_spec = experiment["workload"]
     params = workload_spec.get("params", {})
     loading = experiment.get("loading", {})
-    post_load = loading.get("post_load", {})
+    shared_post_load = loading.get("post_load", {})
     resources = experiment.get("resources", {})
     observe = experiment.get("observe", {})
     placement = experiment.get("placement", {})
     system_specs = experiment.get("systems", [])
+
+    effective_post_loads = [_effective_post_load(system_spec, shared_post_load) for system_spec in system_specs]
+    if any(post_load != effective_post_loads[0] for post_load in effective_post_loads[1:]):
+        raise SpecError(
+            "systems in this experiment resolve to different effective post_load "
+            f"values ({dict(zip((s['name'] for s in system_specs), effective_post_loads))!r}), "
+            "but tpch.py's -xii/-xic/-xis/-xcol flags are global CLI switches with no "
+            "per-system scoping yet — give every named system the same post_load "
+            "(shared loading.post_load, or matching systems[].post_load overrides), "
+            "or run the diverging systems as separate experiments"
+        )
+    post_load = effective_post_loads[0] if effective_post_loads else shared_post_load
 
     cpu = resources.get("cpu", {})
     memory = resources.get("memory", {})
@@ -545,6 +735,8 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     _append_flag(argv, "-xlit", params.get("limit_import_table"))
     _append_flag(argv, "-xrs", params.get("refresh_streams"))
     _append_flag(argv, "-xrso", params.get("refresh_stream_offset"))
+    if params.get("verbose_explain"):
+        argv.append("-xve")
 
     _append_flag(argv, "-nlp", loading.get("pods"))
     _append_flag(argv, "-nlt", loading.get("threads"))

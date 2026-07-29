@@ -1,15 +1,16 @@
 # experiment.yml — Is pg_duckdb better than PostgreSQL on joins, even under concurrency
 # and RAM pressure?
 #
-# STATUS: draft, prototype scope. Resolved against catalog.yaml by
-# bexhoma/spec.py into a `tpch.py` argument vector. See
-# docs/Design-Catalog-Contract.md for the full contract design.
+# STATUS: sample experiment, prototype scope. Resolved against
+# contracts/contract_catalog.yml by bexhoma/spec.py into a `tpch.py`
+# argument vector. See docs/Design-Catalog-Contract.md for the full
+# contract design.
 #
 # Designed from the contract alone:
 #   - "joins" -> workload.params.active_queries uses the catalog's own
 #     labeled multi-way-join subset (workloads.tpch.params.active_queries.why:
-#     "[5, 7, 8, 9, 21] = multi-way joins" in catalog.yaml) instead of the
-#     full 22-query set.
+#     "[5, 7, 8, 9, 21] = multi-way joins" in contract_catalog.yml) instead
+#     of the full 22-query set.
 #   - "10GB dataset" -> scaling_factor: 10 (catalog: scaling_factor unit is GB).
 #   - "even under concurrency" -> workload.rounds sweeps parallel-client
 #     counts from 1 up to 16 instead of a single round, so the comparison is
@@ -39,14 +40,20 @@ workload:
     timeout: 1200
     query_repeats: 3
     verify_result: true
-    active_queries: [5, 7, 8, 9, 21]  # multi-way joins, per catalog.yaml's own labeling
+    active_queries: [5, 7, 8, 9, 21]  # multi-way joins, per contract_catalog.yml's own labeling
   rounds: [1, 2, 3, 4]  # concurrency sweep: 1 client baseline, then 2/3/4 concurrent clients
   repetitions: 3  # issue #764 behavioral rule: minimum 3 repetitions for conclusions
 
 loading:
   pods: 4
   threads: 4
-  post_load: {indexes: true, constraints: true, statistics: true}  # indexes/stats matter directly for join plan quality
+  # shared default for every system below — indexes/stats matter directly for
+  # join plan quality. Deliberately identical for both systems: this pair is
+  # compared under a matched profile, so post_load is a "parity" input, same
+  # as `profile: analytical-ssd` below. A systems[].post_load override (not
+  # used here, on purpose) would let one experiment apply post_load to some
+  # named systems and not others — see contract_catalog.yml's post_load comment.
+  post_load: {indexes: true, constraints: true, statistics: true}
 
 systems:
   - name: PostgreSQL
@@ -71,4 +78,4 @@ resources:
   # storage_class deliberately left unset: analytical-ssd's `requires.storage_class`
   # allows [ssd, null], and this run accepts ephemeral (fast node-local disk, no PVC,
   # no guaranteed-NVMe SLA) rather than requiring the cluster's declared `ssd` class
-  # — see catalog.yaml's header comment
+  # — see contract_catalog.yml's header comment
