@@ -25,6 +25,16 @@
 > instruction — without the `oltp-large-node`/`legacy-baseline` profiles the
 > sketch below still shows). Treat the sketch as "does the schema
 > generalize", and `contracts/contract_catalog.yml` as "what actually runs".
+>
+> `contracts/contract_catalog.yml` is consumed by `bexhoma/spec.py`
+> (`validate_experiment()`, `build_argv()`), `validate_experiment.py`, and
+> `experiment.py`'s catalog-driven dispatch. Its own header comment is
+> deliberately self-contained (full experiment.yml shape, including the
+> `resources:` quantity format) so an agent never needs to open this design
+> doc, `spec.py`, or any other source just to build a valid experiment.yml
+> — this doc instead carries the *why* behind those choices, the full
+> all-systems breadth pass the trimmed contract was extracted from, and
+> open questions.
 
 ## Problem
 

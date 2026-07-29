@@ -1,57 +1,206 @@
-# bexhoma catalog — active contract, scoped to TPC-H against PostgreSQL and PgDuckDB.
+# Self-contained input contract for building a valid experiment.yml — every
+# field an agent needs is data below (catalog_concepts/experiment_schema/
+# workloads/systems), not comments. Design rationale and provenance (not
+# needed to build a valid file): contracts/contract_catalog_comments.md
 #
-# STATUS: active, consumed by bexhoma/spec.py (validate_experiment(),
-# build_argv()), validate_experiment.py, and experiment.py's catalog-driven
-# dispatch. Promoted out of dev/ to contracts/ once it graduated from
-# exploratory prototype to the real input contract those consume. Scope is
-# still narrowed to the TPC-H/PostgreSQL/PgDuckDB slice chosen for the first
-# implementation — see docs/Design-Catalog-Contract.md for the full design
-# rationale, the complete (all-workload, all-system) breadth pass this was
-# extracted from, and open questions.
-#
-# Two catalog concepts kept intentionally separate:
-#   - workloads: what to run   (params, loading behavior, physical-design semantics)
-#   - systems:   what to run it on (server knobs, physical-design support, profiles)
-#
-# A profile's `knobs:` are literal values an expert chose; `derive:` is only
-# for the handful of quantities that should scale with an experiment's own
-# resource limits. The derive expression language is deliberately minimal:
-# arithmetic over exactly {memory_limit, cpu_limit, storage_class,
-# scaling_factor} — no functions, no conditionals.
-#
-# experiment.yml's `resources.storage_class` is optional. Leaving it unset
-# (the default) activates ephemeral storage: no PersistentVolumeClaim is
-# provisioned, and the SUT gets node-local storage instead — typically fast,
-# since it's whatever disk the node itself has attached, but tied to that
-# node's lifetime. `resources.storage.size` is still honored either way. A
-# profile only needs `requires: {storage_class: ...}` when it depends on a
-# *specific* cluster-declared class (e.g. analytical-ssd below, which needs
-# guaranteed NVMe for reproducible OLAP numbers) — see
-# `bexhoma/clusters.py::Kubernetes.get_available_storage_types()` and the
-# `-rst`/`--request-storage-type` CLI flag for the underlying mechanism.
-#
-# experiment.yml top-level shape — every key below is a SIBLING of every
-# other key at the top of the file. In particular `loading:` is its own
-# top-level key, not nested under `workload:`: bexhoma/spec.py::build_argv()
-# reads it as `experiment.get("loading", {})`, so a `workload.loading` block
-# resolves silently to nothing (no error — pods/threads/post_load flags are
-# just dropped from the translated command).
-#
-#   mode:           run | profiling | start | load | empty | summary
-#   title:          required — short human-readable name
-#   hypothesis:     required — prose statement of what's being tested
-#   discriminates:  required — list of factor(s) the experiment isolates, e.g. [system]
-#   workload:       {name, params: {...}, rounds: [...], repetitions}
-#   loading:        {pods, threads, split, post_load: {...}}  # top-level, sibling of workload:
-#   systems:        [{name, profile, override: {...}}, ...]
-#   observe:        {monitoring_sut, monitoring_cluster, monitoring_app}
-#   placement:      {sut, loading, benchmarking}
-#   resources:      {cpu: {...}, memory: {...}, storage: {...}, storage_class}
-#
-# See docs/Design-Catalog-Contract.md's "Worked example" section (and
-# dev/catalog/experiment.yml — a sample experiment against this catalog,
-# no longer alongside it since this file's move to contracts/) for a
-# complete, valid file.
+# Vocabulary used throughout this file's own descriptive fields:
+#   semantics:    what a field/value means, or what happens when it's set
+#   why:          the rationale behind a design choice
+#   when:         the condition under which a rule/field actually applies
+#   out_of_scope: what's explicitly excluded, unsupported, or not covered
+
+catalog_concepts:
+  workloads:
+    semantics: "what to run: params, loading behavior, physical-design semantics"
+  systems:
+    semantics: "what to run it on: server knobs, physical-design support, profiles"
+  physical_design:
+    semantics: "a system's physical_design block (under systems.<name>) states
+      CAPABILITY only -- which post_load-style options (indexes/constraints/
+      statistics/storage_format) that system can support at all"
+    why: "capability and selection are different axes on purpose: a system
+      can be fully capable of an option, and a given experiment.yml can
+      still choose not to apply it"
+    out_of_scope: "whether an option is actually applied to a run -- that's
+      a separate, per-experiment SELECTION made via loading.post_load /
+      systems[].post_load in experiment_schema below, not physical_design's job"
+  derive:
+    why: "lets a handful of profile knobs scale with an experiment's own
+      resource limits, instead of being fixed literals an expert hand-tunes once"
+    semantics: "arithmetic expression evaluated once per resolved resource
+      cell; the four inputs below are the only names in scope"
+    inputs: [memory_limit, cpu_limit, storage_class, scaling_factor]
+    out_of_scope: "no functions, no conditionals, no string ops -- only
+      +, -, *, / over the inputs above"
+  extends:
+    semantics: "systems.<name>.extends: BaseName merges BaseName's knobs:
+      and profiles: into this system (base entries first, this system's own
+      entries of the same name win). Every OTHER top-level key
+      (physical_design, deployment, image, arg_style, ...) is NOT merged:
+      this system's own value replaces the base's outright if declared, or
+      falls back to the base's only if this system doesn't declare that key
+      at all."
+    when: "used to formalize DDL/config reuse between systems that share
+      most of their configuration, e.g. PgDuckDB extends: PostgreSQL"
+    out_of_scope: "extends does NOT imply capability parity automatically --
+      a system that extends another still needs its own explicit
+      physical_design: block, since that key is never merged"
+  profile_ref:
+    semantics: "a systems.<name>.profiles.<profile>.ref: 'System.profiles.name'
+      pointer resolves to that OTHER system's profile object directly (same
+      knobs:/derive:/requires:), instead of declaring its own knobs/derive"
+    when: "used for profile parity between systems -- e.g.
+      PgDuckDB.profiles.analytical-ssd refs PostgreSQL.profiles.analytical-ssd,
+      so both resolve identical knob values from the same memory/cpu limits"
+  requires:
+    semantics: "a profile's requires: {storage_class: [...]} lists which
+      resources.storage_class values an experiment.yml using that profile
+      may set; null in the list means leaving resources.storage_class unset
+      is also acceptable"
+    when: "only checked when a systems[] entry actually names a profile:
+      that declares requires: -- a profile without requires: imposes no
+      storage_class constraint at all"
+    out_of_scope: "an experiment.yml whose resources.storage_class isn't in
+      the allowed set fails resolution before any command is produced"
+  arg_style:
+    semantics: "how a resolved knob value is applied. pg-guc: via a --set
+      deployment[...].container[dbms].<name>=<value> Postgres GUC patch
+      (the default for every system in this file). env-var: via the knob's
+      own env_var name instead of a GUC patch."
+    when: "a system declares its own default arg_style; an individual knob
+      may override it -- e.g. duckdb_force_execution declares arg_style:
+      env-var even though PgDuckDB's system-level default is pg-guc"
+  knob_status:
+    semantics: "systems.<name>.knobs entries may carry a status: field.
+      status: reference-only means the knob exists in the DBMS but is
+      commented out (inactive) in the shipped k8s template -- still legal
+      to set via a profile's knobs:/derive: or systems[].override:, just
+      not active by any system default. A knob with no status: field is
+      already active in the shipped template."
+    out_of_scope: "fixed: true (separate from status) marks a knob that
+      isn't mechanically blocked from being overridden, but has no other
+      legal value in practice for this pairing -- e.g.
+      PostgreSQL.knobs.shared_preload_libraries must stay pg_duckdb for
+      PgDuckDB to function at all"
+
+experiment_schema:
+  why: "full top-level shape every experiment.yml must follow"
+  semantics: "every field below is a SIBLING of every other field at the top of the file"
+  out_of_scope: "loading: nested under workload: (i.e. a workload.loading
+    block) -- not a schema error, it just silently resolves to nothing (no
+    pods/threads/post_load flags are produced from it); loading: must be a
+    top-level sibling of workload:, not nested inside it"
+  fields:
+    mode:
+      type: enum
+      values: [run, profiling, start, load, empty, summary]
+      default: run
+    title:
+      type: str
+      required: true
+      semantics: "short human-readable name"
+    hypothesis:
+      type: str
+      required: true
+      semantics: "prose statement of what's being tested"
+    discriminates:
+      type: "list[str]"
+      required: true
+      semantics: "factor(s) the experiment isolates, e.g. [system] or [system, concurrency]"
+    workload:
+      type: object
+      fields:
+        name: {type: str, required: true, semantics: "must be a key under this file's workloads:"}
+        params: {type: object, semantics: "legal keys/types/defaults are workloads.<name>.params below"}
+        rounds: {type: "list[int]", semantics: "parallel-client sweep; one benchmarking round per entry"}
+        repetitions: {type: int, default: 1, semantics: "how many times the whole round list repeats"}
+    loading:
+      type: object
+      fields:
+        pods: {type: int, semantics: "number of parallel loader pods"}
+        threads: {type: int, semantics: "loader threads, split across pods"}
+        split: {type: int, default: 1, semantics: "number of parallel loader batches"}
+        post_load:
+          type: object
+          semantics: "SHARED default applied to every system in systems:
+            below, unless a system sets its own post_load"
+          when: "legal option names/values are workload-specific -- see
+            workloads.<name>.loading.post_load below"
+    systems:
+      type: list
+      item_fields:
+        name: {type: str, required: true, semantics: "must be a key under this file's systems:"}
+        profile: {type: str, required: false, semantics: "one of that system's profiles: keys"}
+        override: {type: object, required: false, semantics: "{knob_name: value}; applied after the profile's knobs/derive, wins over both"}
+        post_load:
+          type: object
+          required: false
+          semantics: "same shape as loading.post_load above; replaces the
+            shared default for THIS system only"
+          when: "every system in one experiment currently has to resolve to
+            the same effective post_load (the shared default, or matching
+            per-system overrides)"
+          out_of_scope: "an experiment where systems genuinely need to
+            diverge on post_load must be split into separate per-system
+            experiments instead -- per-system post_load divergence within
+            one experiment.yml is not supported yet"
+    observe:
+      type: object
+      fields:
+        monitoring_sut: {type: bool, semantics: "scrape the system-under-test's own metrics"}
+        monitoring_cluster: {type: bool, semantics: "scrape cluster-wide metrics"}
+        monitoring_app: {type: bool, semantics: "scrape benchmarker/loader app metrics"}
+    placement:
+      type: object
+      semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"
+      fields:
+        sut: {type: str, required: false, semantics: "Kubernetes node name to pin the system-under-test to"}
+        loading: {type: str, required: false, semantics: "node name for loader pods"}
+        benchmarking: {type: str, required: false, semantics: "node name for benchmarker pods"}
+    resources:
+      type: object
+      fields:
+        cpu:
+          type: "object or list[object]"
+          item_fields: {request: quantity, limit: quantity}
+          semantics: "a single {request, limit} dict is shared by every system"
+          when: "a LIST crosses every systems: entry against every list
+            entry, one resolved configuration per (system, cell) pair --
+            a resource sweep"
+        memory:
+          type: "object or list[object]"
+          item_fields: {request: quantity, limit: quantity}
+          semantics: "a single {request, limit} dict is shared by every system"
+          when: "same sweep rule as cpu"
+          out_of_scope: "resources.cpu and resources.memory sweep lists of
+            different lengths (when both have more than one entry) -- must
+            share one length, or either may be a single shared dict
+            broadcast across every cell"
+        storage:
+          type: object
+          fields:
+            size: {type: quantity, required: false, semantics: "PersistentVolumeClaim size, or node-local disk request if storage_class is unset"}
+        storage_class:
+          type: str
+          required: false
+          semantics: "must name one of environment.yml's storage_classes,
+            or be left unset entirely for ephemeral/node-local storage: no
+            PersistentVolumeClaim is provisioned, and the SUT gets whatever
+            disk its scheduled node has attached -- typically fast, since
+            there's no network-storage hop, but tied to that node's lifetime"
+          when: "a profile only constrains this choice when it declares
+            requires: {storage_class: [...]} -- see catalog_concepts.requires"
+  quantity_format:
+    semantics: "Kubernetes-style quantities, used by resources.cpu/memory/storage.size"
+    memory_and_storage_size:
+      semantics: "an integer byte count, or a number followed by a suffix"
+      binary_suffixes: [Ki, Mi, Gi, Ti]
+      decimal_suffixes: [K, M, G, T]
+      out_of_scope: [KB, MB, GB, TB]
+      examples: ["32G", "32Gi", "512Mi"]
+    cpu:
+      semantics: "a plain number of cores, or millicores with a trailing m suffix"
+      examples: ["8", "0.5", "500m"]
 
 workloads:
   tpch:
@@ -64,9 +213,10 @@ workloads:
         storage bandwidth matters less by comparison — weigh cpu/memory
         headroom heavily when choosing placement node-groups and
         experiment.yml resources: for this workload"
-    supports: [PostgreSQL, PgDuckDB]  # full workload also supports MonetDB, MySQL,
-                                       # MariaDB, DatabaseService, Citus, CedarDB —
-                                       # trimmed to prototype scope here
+    supports: [PostgreSQL, PgDuckDB]
+    out_of_scope:
+      systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB]
+      why: "the full tpch workload also supports these; trimmed to prototype scope for this contract"
     modes: [profiling, run, start, load, empty, summary]
 
     params:
@@ -118,7 +268,8 @@ workloads:
       verbose_explain:
         type: bool
         default: false
-        why: "run and print configured EXPLAIN statements after each benchmark query (requires an 'explain' key in the DBMS connection's JDBC config)"
+        why: "run and print configured EXPLAIN statements after each benchmark query"
+        when: "requires an 'explain' key in the DBMS connection's JDBC config"
 
     loading:
       pods:
@@ -134,17 +285,9 @@ workloads:
         default: 1
         why: "number of parallel loader batches"
       post_load:
-        # This block is the *legality* menu only: which post_load option names
-        # exist for tpch, and what values are legal for each. It says nothing
-        # about which systems in a given experiment actually receive them —
-        # that's a separate, experiment-level *selection* choice (see
-        # experiment.yml's systems[].post_load, and "Validation ordering" in
-        # docs/Design-Catalog-Contract.md). A third axis, *support*
-        # (systems.<name>.physical_design below), says which systems are even
-        # capable of a given option — capable-of is necessary but not
-        # sufficient for will-receive-it: PgDuckDB's physical_design (below)
-        # is fully capable of all three, and an experiment can still choose
-        # not to apply them there.
+        # legality menu (option names + legal values) for tpch; support vs.
+        # selection are documented in catalog_concepts.physical_design and
+        # experiment_schema.fields.systems.item_fields.post_load above.
         indexes:
           type: bool
           default: false
@@ -159,8 +302,9 @@ workloads:
           why: "run ANALYZE after loading; without it the planner has no cardinality estimates for round 1"
         storage_format:
           type: enum
-          values: [heap]  # columnar exists in the general schema (Citus) but is out of scope for this pair
+          values: [heap]
           default: heap
+          out_of_scope: "columnar exists in the general schema (Citus) but is out of scope for this pair"
 
     rounds:
       type: list[int]
@@ -185,17 +329,19 @@ workloads:
         metric: sql_errors_warnings
         why: "per-query error/warning counts (get_total_errors()/get_total_warnings()),
           recorded as pass/fail tests, not a performance metric"
-      # no time_series entry: DBMSBenchmarker reports per-query and per-phase
-      # aggregates only, no running per-second signal like YCSB/Benchbase produce
+      out_of_scope:
+        time_series: "DBMSBenchmarker reports per-query and per-phase
+          aggregates only -- no running per-second signal like YCSB/Benchbase produce"
 
 systems:
   PostgreSQL:
+    why: "the baseline OLTP/OLAP RDBMS this pairing compares against"
     deployment: bexhoma-deployment-postgres
     image: postgres:18.3
-    arg_style: pg-guc  # patchable via bexhoma's existing --set / patch_dbms_args() mechanism
+    arg_style: pg-guc
 
     knobs:
-      # active in the shipped k8s/deploymenttemplate-PostgreSQL.yml today
+      # see catalog_concepts.knob_status for what status: reference-only means
       max_connections:                     {type: int, default: 640}
       max_worker_processes:                {type: int, default: 16}
       max_parallel_workers:                {type: int, default: 16}
@@ -213,8 +359,6 @@ systems:
       checkpoint_completion_target:        {type: float, default: 1.0}
       lock_timeout:                        {type: duration, default: 30s}
       idle_in_transaction_session_timeout: {type: int, unit: ms, default: 30000}
-      # known to the template as commented-out reference knobs, not active by
-      # default — legal to set via a profile or an experiment override
       effective_io_concurrency:  {type: int, status: reference-only}
       io_method:                 {type: enum, values: [sync, io_uring], status: reference-only}
       random_page_cost:          {type: float, status: reference-only}
@@ -233,9 +377,6 @@ systems:
     profiles:
       analytical-ssd:
         why: "OLAP on node-local NVMe, sized from this experiment's memory limit"
-        # ssd guarantees NVMe; null (ephemeral, i.e. resources.storage_class left
-        # unset) is also node-local and typically fast, just without that guarantee
-        # -- see this file's header comment
         requires: {storage_class: [ssd, null]}
         knobs:
           random_page_cost: 1.1
@@ -251,7 +392,11 @@ systems:
           maintenance_work_mem:  "0.03125 * memory_limit"
 
   PgDuckDB:
-    extends: PostgreSQL  # formalizes tpch.py's own path_experiment_docker='PostgreSQL' DDL reuse
+    why: "PostgreSQL plus the pg_duckdb extension, adding a vectorized DuckDB execution engine alongside Postgres' own planner"
+    semantics: "knobs: below only lists PgDuckDB-specific additions -- every
+      other knob inherits unchanged from PostgreSQL via extends (see
+      catalog_concepts.extends)"
+    extends: PostgreSQL
     deployment: bexhoma-deployment-pg-duck
     image: pgduckdb/pgduckdb:18-v1.1.1
     arg_style: pg-guc
@@ -265,29 +410,20 @@ systems:
       duckdb_force_execution:
         type: bool
         default: false
-        arg_style: env-var  # NOT a -c GUC — routes through bexhoma's sut_parameters, not patch_dbms_args()
+        arg_style: env-var
         env_var: DUCKDB_FORCE_EXECUTION
         why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"
-      # all other knobs inherit unchanged from PostgreSQL via `extends` —
-      # PgDuckDB's shipped template is a strict subset of PostgreSQL's active knobs
 
     physical_design:
-      # Explicitly re-declared (not merely inherited via `extends`) because
-      # this is a genuine capability statement, deliberately identical to
-      # PostgreSQL's: PgDuckDB *can* have indexes/constraints/statistics
-      # applied post-load. Whether a given experiment.yml actually applies
-      # them here is a separate, per-experiment selection choice
-      # (systems.PgDuckDB.post_load, if set) — this block only says "can",
-      # never "will".
+      # explicitly re-declared, not inherited via extends -- see
+      # catalog_concepts.extends.out_of_scope
       indexes: true
       constraints: true
       statistics: true
       storage_format: [heap]
-      # columnar (native `USING duckdb` tables) is deliberately NOT listed as
-      # supported: blocked upstream (github.com/duckdb/pg_duckdb#385).
-      # experiments/tpch/PgDuckDB/ is orphaned; tpch.py currently points
-      # PgDuckDB at experiments/tpch/PostgreSQL/ instead.
+      out_of_scope: "columnar (native `USING duckdb` tables) deliberately
+        NOT listed as supported: blocked upstream (github.com/duckdb/pg_duckdb#385)"
 
     profiles:
       analytical-ssd:
-        ref: PostgreSQL.profiles.analytical-ssd  # same profile object, both systems — this is what "parity" means for this pair
+        ref: PostgreSQL.profiles.analytical-ssd
