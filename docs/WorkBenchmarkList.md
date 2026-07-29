@@ -6,7 +6,7 @@ benchmarking to teardown. The method is a single `while` loop that polls Kuberne
 state every `intervals` seconds and advances each configuration through a pipeline
 of phases.
 
-**Source:** [`bexhoma/experiments/base.py:1368`](../bexhoma/experiments/base.py#L1368)
+**Source:** [`bexhoma/experiments/base.py:1539`](../bexhoma/experiments/base.py#L1539)
 
 ---
 

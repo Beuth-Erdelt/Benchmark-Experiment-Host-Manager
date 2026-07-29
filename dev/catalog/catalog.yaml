@@ -110,6 +110,10 @@ workloads:
         type: int
         default: 0
         why: "starting OFFSET+1 for the refresh stream"
+      verbose_explain:
+        type: bool
+        default: false
+        why: "run and print configured EXPLAIN statements after each benchmark query (requires an 'explain' key in the DBMS connection's JDBC config)"
 
     loading:
       pods:
@@ -125,6 +129,17 @@ workloads:
         default: 1
         why: "number of parallel loader batches"
       post_load:
+        # This block is the *legality* menu only: which post_load option names
+        # exist for tpch, and what values are legal for each. It says nothing
+        # about which systems in a given experiment actually receive them —
+        # that's a separate, experiment-level *selection* choice (see
+        # experiment.yml's systems[].post_load, and "Validation ordering" in
+        # docs/Design-Catalog-Contract.md). A third axis, *support*
+        # (systems.<name>.physical_design below), says which systems are even
+        # capable of a given option — capable-of is necessary but not
+        # sufficient for will-receive-it: PgDuckDB's physical_design (below)
+        # is fully capable of all three, and an experiment can still choose
+        # not to apply them there.
         indexes:
           type: bool
           default: false
@@ -252,6 +267,13 @@ systems:
       # PgDuckDB's shipped template is a strict subset of PostgreSQL's active knobs
 
     physical_design:
+      # Explicitly re-declared (not merely inherited via `extends`) because
+      # this is a genuine capability statement, deliberately identical to
+      # PostgreSQL's: PgDuckDB *can* have indexes/constraints/statistics
+      # applied post-load. Whether a given experiment.yml actually applies
+      # them here is a separate, per-experiment selection choice
+      # (systems.PgDuckDB.post_load, if set) — this block only says "can",
+      # never "will".
       indexes: true
       constraints: true
       statistics: true

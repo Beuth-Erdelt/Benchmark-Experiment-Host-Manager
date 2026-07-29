@@ -46,6 +46,7 @@ def _build_reference_tpch_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xrso', '--xrefresh-stream-offset', default=0, type=int, dest='num_refresh_stream_offset')
     parser.add_argument('-xaq', '--xactive-queries', default='', dest='active_queries')
     parser.add_argument('-xdfe', '--xduckdb-force-execution', action='store_true', default=False, dest='duckdb_force_execution')
+    parser.add_argument('-xve', '--xverbose-explain', action='store_true', default=False, dest='verbose_explain')
     return parser
 
 

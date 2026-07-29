@@ -46,7 +46,13 @@ workload:
 loading:
   pods: 4
   threads: 4
-  post_load: {indexes: true, constraints: true, statistics: true}  # indexes/stats matter directly for join plan quality
+  # shared default for every system below — indexes/stats matter directly for
+  # join plan quality. Deliberately identical for both systems: this pair is
+  # compared under a matched profile, so post_load is a "parity" input, same
+  # as `profile: analytical-ssd` below. A systems[].post_load override (not
+  # used here, on purpose) would let one experiment apply post_load to some
+  # named systems and not others — see catalog.yaml's post_load comment.
+  post_load: {indexes: true, constraints: true, statistics: true}
 
 systems:
   - name: PostgreSQL

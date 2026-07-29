@@ -152,6 +152,7 @@ known_gaps:
   - "no sha256 image digest is recorded (a re-pushed tag is invisible to this contract)"
   - "dbmsbenchmarker's own package version is not recorded separately from bexhoma's"
   - "no comparative/historical (cross-experiment) validity check exists; 'compare only within one experiment code' is a rule an agent must apply itself, nothing in the result folder enforces it"
+  - "per-system post_load selection (indexes/constraints/statistics, chosen via catalog.yaml's systems[].post_load) is not surfaced as a tier-1/2 field anywhere — connections.config/queries.config record which SUT ran, not which post-load steps it received; reconstruct it from tier-3 provenance.loading's *-loading-*.sql.log (rendered DDL source) per configuration"
 
 see_also:
   - docs/AgentResultContract.md    # prose version of this file, with worked examples
