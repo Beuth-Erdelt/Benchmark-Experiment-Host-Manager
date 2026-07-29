@@ -197,7 +197,7 @@ column an agent should treat as "the" headline number:
   agent must apply itself — nothing in the result folder does it automatically.
 - **Per-system post_load selection isn't a queryable field.** A catalog-driven
   experiment can choose, per named system, whether indexes/constraints/
-  statistics were applied after loading (`catalog.yaml`'s `systems[].post_load`
+  statistics were applied after loading (`contract_catalog.yml`'s `systems[].post_load`
   — see [Design-Catalog-Contract.md](Design-Catalog-Contract.md)'s "Validation
   ordering"). `connections.config`/`queries.config` record *which* SUT ran,
   not *which post-load steps* it received — an agent has to fall back to

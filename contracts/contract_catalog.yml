@@ -1,10 +1,13 @@
-# bexhoma catalog — prototype scope: TPC-H against PostgreSQL and PgDuckDB.
+# bexhoma catalog — active contract, scoped to TPC-H against PostgreSQL and PgDuckDB.
 #
-# STATUS: draft, not yet consumed by any code. This is the first slice of
-# the catalog contract proposed in issue #764, narrowed to the pair chosen
-# for the first implementation. See docs/Design-Catalog-Contract.md for the
-# full design rationale, the complete (all-workload, all-system) breadth
-# pass this was extracted from, and open questions.
+# STATUS: active, consumed by bexhoma/spec.py (validate_experiment(),
+# build_argv()), validate_experiment.py, and experiment.py's catalog-driven
+# dispatch. Promoted out of dev/ to contracts/ once it graduated from
+# exploratory prototype to the real input contract those consume. Scope is
+# still narrowed to the TPC-H/PostgreSQL/PgDuckDB slice chosen for the first
+# implementation — see docs/Design-Catalog-Contract.md for the full design
+# rationale, the complete (all-workload, all-system) breadth pass this was
+# extracted from, and open questions.
 #
 # Two catalog concepts kept intentionally separate:
 #   - workloads: what to run   (params, loading behavior, physical-design semantics)
@@ -46,7 +49,9 @@
 #   resources:      {cpu: {...}, memory: {...}, storage: {...}, storage_class}
 #
 # See docs/Design-Catalog-Contract.md's "Worked example" section (and
-# dev/catalog/experiment.yml alongside this file) for a complete, valid file.
+# dev/catalog/experiment.yml — a sample experiment against this catalog,
+# no longer alongside it since this file's move to contracts/) for a
+# complete, valid file.
 
 workloads:
   tpch:
@@ -230,7 +235,7 @@ systems:
         why: "OLAP on node-local NVMe, sized from this experiment's memory limit"
         # ssd guarantees NVMe; null (ephemeral, i.e. resources.storage_class left
         # unset) is also node-local and typically fast, just without that guarantee
-        # -- see catalog.yaml's header comment
+        # -- see this file's header comment
         requires: {storage_class: [ssd, null]}
         knobs:
           random_page_cost: 1.1

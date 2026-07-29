@@ -18,11 +18,13 @@
 >
 > **The "Complete `catalog.yaml`" section below is the illustrative,
 > all-systems design sketch — it is not the file that exists on disk.**
-> The actual prototype at `dev/catalog/catalog.yaml` is a trimmed subset
-> (`tpch` + `PostgreSQL` + `PgDuckDB` only, and — per explicit instruction —
-> without the `oltp-large-node`/`legacy-baseline` profiles the sketch below
-> still shows). Treat the sketch as "does the schema generalize", and
-> `dev/catalog/catalog.yaml` as "what actually runs".
+> The real, active contract lives at `contracts/contract_catalog.yml`
+> (promoted out of `dev/catalog/` once it graduated from prototype to the
+> input contract `bexhoma/spec.py` actually consumes) and is a trimmed
+> subset (`tpch` + `PostgreSQL` + `PgDuckDB` only, and — per explicit
+> instruction — without the `oltp-large-node`/`legacy-baseline` profiles the
+> sketch below still shows). Treat the sketch as "does the schema
+> generalize", and `contracts/contract_catalog.yml` as "what actually runs".
 
 ## Problem
 
@@ -251,8 +253,8 @@ An earlier revision of this doc turned both into named profiles
 already sitting unused in the repo. Per explicit instruction, the catalog
 now only references the shipped baseline (`deploymenttemplate-PostgreSQL.yml`)
 — neither variant template is used anywhere, in the catalog sketch below or
-in `dev/catalog/catalog.yaml`. Noted here only as a finding from the audit,
-not as something implemented.
+in `contracts/contract_catalog.yml`. Noted here only as a finding from the
+audit, not as something implemented.
 
 ### `docs/DBMS.md` is stale in places — verify against templates, not prose
 
@@ -754,7 +756,7 @@ loading:
   # compared under a matched profile, so post_load is a "parity" input, same
   # as `profile: analytical-ssd` below. A systems[].post_load override (not
   # used here, on purpose) would let one experiment apply post_load to some
-  # named systems and not others — see catalog.yaml's post_load comment.
+  # named systems and not others — see contract_catalog.yml's post_load comment.
   post_load: {indexes: true, constraints: true, statistics: true}
 
 systems:
@@ -938,8 +940,8 @@ same experiment) showed the two-axis model couldn't express it at all:
    a post_load option applied, because this experiment chose not to apply it
    there. This is what `systems[].post_load` (as opposed to the shared
    `loading.post_load`) actually expresses — see the worked example below.
-   PgDuckDB's `physical_design` in `catalog.yaml` deliberately declares full
-   support for `indexes`/`constraints`/`statistics` (identical to
+   PgDuckDB's `physical_design` in `contract_catalog.yml` deliberately
+   declares full support for `indexes`/`constraints`/`statistics` (identical to
    PostgreSQL's, not merely inherited via `extends`) precisely so that
    omitting them for PgDuckDB in a given `experiment.yml` reads as a
    selection choice, never a support failure.
@@ -965,9 +967,9 @@ No changes to `tpch.py` or any other entry script were needed, and no code
 had to duplicate the ~45 shared-flag defaults `bexhoma/cli_args.py`'s
 `make_base_parser()` already owns.
 
-1. `bexhoma/spec.py::load_catalog()`/`load_experiment()` load `catalog.yaml`
-   and `experiment.yml` (plain `yaml.safe_load`, no relation to the
-   `ast.literal_eval`-based `cluster.config` format).
+1. `bexhoma/spec.py::load_catalog()`/`load_experiment()` load
+   `contract_catalog.yml` and `experiment.yml` (plain `yaml.safe_load`, no
+   relation to the `ast.literal_eval`-based `cluster.config` format).
 2. `resolve_system()` resolves `extends:` chains, the named `profile:`
    (following a `ref:` to another system's profile when present), evaluates
    `derive:` formulas (`evaluate_derive_expression()`, a whitelisted-AST
@@ -1030,8 +1032,8 @@ Once the catalog is trusted as ground truth:
 - Generate/validate each entry script's `-x`-prefixed argparse flags *from*
   the catalog instead of hand-maintaining both in parallel.
 - `k8s/deploymenttemplate-*.yml`'s currently-commented-out knob blocks
-  become the generated content of `catalog.yaml`'s `systems` section —
-  template renders from catalog, not the reverse.
+  become the generated content of `contract_catalog.yml`'s `systems`
+  section — template renders from catalog, not the reverse.
 - Extend the `flag-equals`/`command-string` systems' templates so their
   knobs become genuinely patchable (this is real implementation work per
   system, not just a catalog-authoring exercise — today's `--set` mechanism
@@ -1053,24 +1055,34 @@ this means phase-1 work only needs:
 Everything else in the complete catalog above exists to confirm the schema
 generalizes, not because it's in scope to implement now.
 
-**Implemented so far** (prototype, not wired into any entry script's own
-invocation path):
-- `dev/catalog/catalog.yaml` — the TPC-H/PostgreSQL/PgDuckDB-only slice of
-  the catalog above.
-- `dev/catalog/experiment.yml` — a sample experiment spec against it.
+**Implemented so far:**
+- `contracts/contract_catalog.yml` — the TPC-H/PostgreSQL/PgDuckDB-only
+  slice of the catalog above; promoted out of `dev/catalog/` to
+  `contracts/` once it graduated from prototype to the real input contract
+  `bexhoma/spec.py` consumes.
+- `dev/catalog/experiment.yml` — a sample experiment spec against it (still
+  under `dev/`, since it's an example, not schema).
 - `bexhoma/spec.py` — the Phase 1 translator: loads both files, resolves
   `extends`/profile/`derive:`/`override`, validates workload↔system support
-  and post-load legality/capability, and emits a `tpch.py` argument vector
-  (`build_argv()`) or a copy-pasteable command line (`build_command()`).
-  No existing entry script or execution path is modified — it only
-  produces the CLI arguments a human would otherwise type by hand.
+  and post-load legality/capability/selection, and emits a `tpch.py`
+  argument vector (`build_argv()`) or a copy-pasteable command line
+  (`build_command()`). No existing entry script's *logic* is modified — it
+  only produces the CLI arguments a human would otherwise type by hand — but
+  it is genuinely wired into a real invocation path: `experiment.py`'s
+  catalog-driven dispatch calls `build_argv()` and hands the result straight
+  to `tpch.run()` in-process (see `RunExperimentYamlDispatchTest` in
+  `tests/test_experiment_cli.py`).
+- `validate_experiment.py` — a dry-run CLI wrapping the same `build_argv()`
+  plus `validate_environment()`, without touching a live cluster.
 - `dev/spec_prototype_demo.py` — runs the translation end-to-end and parses
   the result through a parser mirroring `tpch.py`'s own, without needing a
   live cluster.
 
-Both catalog files live under `dev/` rather than the repo root since this is
-still prototype/exploratory material, not a supported user-facing input
-format yet.
+`contracts/contract_catalog.yml` and `contracts/contract_result.yml` live at
+the repo root under `contracts/` — they're the active, consumed contracts,
+not exploratory material. The sample `experiment.yml` and the generated
+`environment.yml` stay under `dev/catalog/`: one is a worked example, the
+other a per-cluster snapshot, neither is schema.
 
 ## Open questions
 

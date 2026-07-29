@@ -197,7 +197,7 @@ mode: run
 # Optional provenance pointers — see "Provenance" section below.
 # Purely informational: the builder never loads or resolves these, it only
 # copies them into the result folder for reproducibility.
-catalog: dev/catalog/catalog.yaml
+catalog: contracts/contract_catalog.yml
 environment: dev/catalog/environment.yml
 
 experiment:

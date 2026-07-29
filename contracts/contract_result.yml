@@ -1,12 +1,15 @@
-# result_contract.yaml — machine-readable counterpart to docs/AgentResultContract.md.
+# contract_result.yml — machine-readable counterpart to docs/AgentResultContract.md.
 #
-# STATUS: draft, first cut. Companion to catalog.yaml (what you can ask for)
-# and environment.yml (what cluster capacity exists) — this is the third
-# leg: what you'll get back once an experiment runs. Read this before
-# submitting an experiment (via tpch.py/ycsb.py/... directly, or a
-# catalog.yaml + experiment.yml pair resolved by bexhoma/spec.py) to know
-# what the result folder will contain and how to decode its filenames,
-# without needing a live cluster connection or the bexhoma source tree.
+# STATUS: active reference, promoted alongside contract_catalog.yml out of
+# dev/ to contracts/ for visibility — not parsed by any code (it documents
+# report_writer.py's own output shape, it doesn't drive it). Companion to
+# contract_catalog.yml (what you can ask for) and dev/catalog/environment.yml
+# (what cluster capacity exists) — this is the third leg: what you'll get
+# back once an experiment runs. Read this before submitting an experiment
+# (via tpch.py/ycsb.py/... directly, or a contract_catalog.yml + experiment.yml
+# pair resolved by bexhoma/spec.py) to know what the result folder will
+# contain and how to decode its filenames, without needing a live cluster
+# connection or the bexhoma source tree.
 #
 # See docs/AgentResultContract.md for the prose version with worked
 # examples and rationale, docs/Design-Catalog-Contract.md for the input-side
@@ -152,7 +155,7 @@ known_gaps:
   - "no sha256 image digest is recorded (a re-pushed tag is invisible to this contract)"
   - "dbmsbenchmarker's own package version is not recorded separately from bexhoma's"
   - "no comparative/historical (cross-experiment) validity check exists; 'compare only within one experiment code' is a rule an agent must apply itself, nothing in the result folder enforces it"
-  - "per-system post_load selection (indexes/constraints/statistics, chosen via catalog.yaml's systems[].post_load) is not surfaced as a tier-1/2 field anywhere — connections.config/queries.config record which SUT ran, not which post-load steps it received; reconstruct it from tier-3 provenance.loading's *-loading-*.sql.log (rendered DDL source) per configuration"
+  - "per-system post_load selection (indexes/constraints/statistics, chosen via contract_catalog.yml's systems[].post_load) is not surfaced as a tier-1/2 field anywhere — connections.config/queries.config record which SUT ran, not which post-load steps it received; reconstruct it from tier-3 provenance.loading's *-loading-*.sql.log (rendered DDL source) per configuration"
 
 see_also:
   - docs/AgentResultContract.md    # prose version of this file, with worked examples

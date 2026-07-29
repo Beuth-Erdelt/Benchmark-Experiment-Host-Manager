@@ -1,8 +1,8 @@
 """
-Dry-run validator for an experiment.yaml: checks it against ``catalog.yaml``
-(what can be asked for) and, optionally, ``environment.yml`` (what the
-cluster actually has), without touching a live cluster or spawning any
-subprocess.
+Dry-run validator for an experiment.yaml: checks it against ``contracts/
+contract_catalog.yml`` (what can be asked for) and, optionally,
+``environment.yml`` (what the cluster actually has), without touching a
+live cluster or spawning any subprocess.
 
 Wraps :mod:`bexhoma.spec`'s ``build_argv()`` (catalog resolution — the same
 path ``experiment.py``/``bexhoma/spec.py::translate()`` use to build a
@@ -10,8 +10,9 @@ path ``experiment.py``/``bexhoma/spec.py::translate()`` use to build a
 node existence/taints, CPU/memory ceilings, storage-class existence). See
 ``docs/Design-Catalog-Contract.md`` for the contract both validate against.
 
-Usage: ``python validate_experiment.py [experiment.yaml] [-c catalog.yaml]
-[-e environment.yml]``. Pass ``-e ""`` to skip the environment check.
+Usage: ``python validate_experiment.py [experiment.yaml]
+[-c contracts/contract_catalog.yml] [-e environment.yml]``. Pass ``-e ""``
+to skip the environment check.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -30,15 +31,15 @@ from bexhoma import spec
 __all__ = ["validate"]
 
 _DEFAULT_EXPERIMENT = "experiment.yaml"
-_DEFAULT_CATALOG = os.path.join("dev", "catalog", "catalog.yaml")
+_DEFAULT_CATALOG = os.path.join("contracts", "contract_catalog.yml")
 _DEFAULT_ENVIRONMENT = os.path.join("dev", "catalog", "environment.yml")
 
 
 def validate(experiment_path: str, catalog_path: str, environment_path: Optional[str]) -> bool:
-    """Validate an experiment.yaml against catalog.yaml and, optionally, environment.yml.
+    """Validate an experiment.yaml against the catalog contract and, optionally, environment.yml.
 
     :param experiment_path: Path to the experiment YAML file.
-    :param catalog_path: Path to ``catalog.yaml``.
+    :param catalog_path: Path to ``contract_catalog.yml``.
     :param environment_path: Path to ``environment.yml``, or ``None`` to skip
         the placement/resource-ceiling check.
     :return: ``True`` if every check passed.
@@ -81,13 +82,13 @@ def _build_parser() -> argparse.ArgumentParser:
     :rtype: argparse.ArgumentParser
     """
     parser = argparse.ArgumentParser(
-        description="Dry-run validate an experiment.yaml against catalog.yaml and environment.yml, "
-                     "without touching a live cluster."
+        description="Dry-run validate an experiment.yaml against contract_catalog.yml and "
+                     "environment.yml, without touching a live cluster."
     )
     parser.add_argument("file", nargs="?", default=_DEFAULT_EXPERIMENT,
                          help=f"path to the experiment YAML file (default: {_DEFAULT_EXPERIMENT})")
     parser.add_argument("-c", "--catalog", default=_DEFAULT_CATALOG,
-                         help=f"path to catalog.yaml (default: {_DEFAULT_CATALOG})")
+                         help=f"path to contract_catalog.yml (default: {_DEFAULT_CATALOG})")
     parser.add_argument("-e", "--environment", default=_DEFAULT_ENVIRONMENT,
                          help="path to environment.yml; pass an empty string to skip the "
                               f"placement/resource-ceiling check (default: {_DEFAULT_ENVIRONMENT})")
