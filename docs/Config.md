@@ -190,9 +190,26 @@ Experiment scripts (`tpch.py`, `ycsb.py`, etc.) reference these by the volume ke
             'Schema': [
                 'initschema-tpch.sql',
             ],
+            'Index': [
+                'initindexes-tpch.sql',
+            ],
+            'Constraints': [
+                'initconstraints-tpch.sql',
+            ],
+            'Statistics': [
+                'initstatistics-tpch.sql',
+            ],
             'Index_and_Constraints': [
                 'initindexes-tpch.sql',
                 'initconstraints-tpch.sql',
+            ],
+            'Index_and_Statistics': [
+                'initindexes-tpch.sql',
+                'initstatistics-tpch.sql',
+            ],
+            'Constraints_and_Statistics': [
+                'initconstraints-tpch.sql',
+                'initstatistics-tpch.sql',
             ],
             'Index_and_Constraints_and_Statistics': [
                 'initindexes-tpch.sql',
@@ -219,14 +236,24 @@ Experiment scripts (`tpch.py`, `ycsb.py`, etc.) reference these by the volume ke
 ### `initscripts` — named script sequences
 
 Each entry under `initscripts` is a named list of files.
-Experiment CLI flags (`-xii`, `-xic`, `-xis`) control which sets are executed and when:
+Experiment CLI flags (`-xii`, `-xic`, `-xis`) are independent switches — any of the
+8 combinations may be set — and together select which post-load script set is
+executed (`bexhoma/spec.py::resolve_indexing_key()` is the single source of
+truth for the flags-to-key mapping):
 
-| Flag | Typical script set | When it runs |
-|---|---|---|
-| (none) | `Schema` | Before data ingestion: creates the empty schema |
-| `-xii` | `Index` | After data ingestion: creates indexes |
-| `-xic` | `Index_and_Constraints` | After data ingestion: creates indexes and foreign key constraints |
-| `-xis` | `Index_and_Constraints_and_Statistics` | After indexes/constraints: refreshes query planner statistics |
+| `-xii` (indexes) | `-xic` (constraints) | `-xis` (statistics) | Script set |
+|---|---|---|---|
+| | | | (none — no post-load step) |
+| ✓ | | | `Index` |
+| | ✓ | | `Constraints` |
+| | | ✓ | `Statistics` |
+| ✓ | ✓ | | `Index_and_Constraints` |
+| ✓ | | ✓ | `Index_and_Statistics` |
+| | ✓ | ✓ | `Constraints_and_Statistics` |
+| ✓ | ✓ | ✓ | `Index_and_Constraints_and_Statistics` |
+
+All post-load steps run after data ingestion; `Schema` (no flag needed) runs
+before it, to create the empty schema.
 
 Scripts are executed in list order.
 The file suffix determines how they are executed:
@@ -252,7 +279,7 @@ Init scripts may use these placeholders, which bexhoma substitutes at runtime:
 
 | Key | Benchmark | Typical script sets |
 |---|---|---|
-| `tpch` | TPC-H | `Schema`, `Schema-Columnar`, `Schema_dummy`, `Index`, `Index_and_Constraints`, `Index_and_Constraints_and_Statistics`, `Schema_tenant`, `Index_and_Constraints_and_Statistics_tenant`, `SF1`, `SF10`, `SF30`, `SF100`, `SF300` (each with optional `-index` and `-index-constraints` variants) |
+| `tpch` | TPC-H | `Schema`, `Schema-Columnar`, `Schema_dummy`, `Index`, `Constraints`, `Statistics`, `Index_and_Constraints`, `Index_and_Statistics`, `Constraints_and_Statistics`, `Index_and_Constraints_and_Statistics`, `Schema_tenant`, `Index_and_Constraints_and_Statistics_tenant`, `SF1`, `SF10`, `SF30`, `SF100`, `SF300` (each with optional `-index` and `-index-constraints` variants) |
 | `tpcds` | TPC-DS | `Schema`, `Schema_dummy`, `Index`, `Index_and_Constraints`, `Index_and_Constraints_and_Statistics`, `SF1`, `SF10`, `SF30`, `SF100` (each with optional `-index` and `-index-constraints` variants) |
 | `tpcc` | HammerDB / Benchbase TPC-C | `Schema`, `Checks` |
 | `ycsb` | YCSB | `Schema`, `Checks` |

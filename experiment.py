@@ -81,7 +81,13 @@ def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
         catalog = catalog_spec.load_catalog(catalog_path or default_catalog_path(path))
         argv = catalog_spec.build_argv(catalog, raw_spec)
         argv.append('-rp')  # YAML-driven runs always get the tiered Markdown report
-        tpch.run(tpch.build_parser().parse_args(argv))
+        parsed_args = tpch.build_parser().parse_args(argv)
+        # Per-system post_load selection (e.g. indexes on PostgreSQL, not on a
+        # co-running PgDuckDB) has no CLI representation -- -xii/-xic/-xis are
+        # global switches -- so it is applied in-process instead, via the same
+        # per-configuration override tpch.py already uses for Citus/tenant cases.
+        parsed_args.physical_design_overrides = catalog_spec.resolve_physical_design_overrides(catalog, raw_spec)
+        tpch.run(parsed_args)
     else:
         experiment_loader.validate_experiment_yaml(raw_spec)
         experiment_builder.build_experiment(raw_spec, path)

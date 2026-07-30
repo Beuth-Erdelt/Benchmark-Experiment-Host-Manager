@@ -535,6 +535,16 @@ def run(args: argparse.Namespace) -> None:
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
     ##############
+    ### per-system physical-design overrides (yaml-governed runs only; see
+    ### bexhoma.spec.resolve_physical_design_overrides -- never set by tpch.py's
+    ### own CLI, so hand-typed invocations are unaffected)
+    ##############
+    physical_design_overrides = getattr(args, 'physical_design_overrides', {})
+    for config in experiment.configurations:
+        indexing_key = physical_design_overrides.get(config.docker)
+        if indexing_key:
+            config.set_experiment(indexing=indexing_key)
+    ##############
     ### wait for necessary nodegroups to have planned size
     ##############
     if aws:

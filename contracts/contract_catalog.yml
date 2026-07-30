@@ -139,14 +139,19 @@ experiment_schema:
           type: object
           required: false
           semantics: "same shape as loading.post_load above; replaces the
-            shared default for THIS system only"
-          when: "every system in one experiment currently has to resolve to
-            the same effective post_load (the shared default, or matching
-            per-system overrides)"
-          out_of_scope: "an experiment where systems genuinely need to
-            diverge on post_load must be split into separate per-system
-            experiments instead -- per-system post_load divergence within
-            one experiment.yml is not supported yet"
+            shared default for THIS system only. Systems may diverge freely --
+            e.g. PostgreSQL: {indexes: true} with PgDuckDB's post_load omitted
+            entirely -- indexes/constraints/statistics are independent
+            switches (see workloads.tpch.loading.post_load below), so every
+            one of the 8 combinations is legal per system"
+          when: "when every named system resolves to the same effective
+            post_load (the shared default, or matching per-system overrides),
+            bexhoma/spec.py::build_argv() emits it as tpch.py's shared
+            -xii/-xic/-xis CLI flags; when systems diverge, those flags are
+            global switches that can't represent the difference, so
+            resolve_physical_design_overrides() resolves the per-system
+            selection separately and experiment.py applies it in-process via
+            SutConfiguration.set_experiment(indexing=...) -- not through argv"
     observe:
       type: object
       why: "monitoring metrics only become reliable after a few scrape
@@ -302,6 +307,9 @@ workloads:
         # legality menu (option names + legal values) for tpch; support vs.
         # selection are documented in catalog_concepts.physical_design and
         # experiment_schema.fields.systems.item_fields.post_load above.
+        # indexes/constraints/statistics are mutually independent -- every one
+        # of the 8 boolean combinations maps to its own k8s-cluster.config
+        # volumes.tpch.initscripts key (bexhoma/spec.py::resolve_indexing_key()).
         indexes:
           type: bool
           default: false

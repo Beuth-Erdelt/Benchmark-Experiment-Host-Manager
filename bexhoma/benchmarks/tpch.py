@@ -8,6 +8,8 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
+from bexhoma.spec import resolve_indexing_key
+
 from .base import DBMSBenchmarkerBenchmark
 
 __all__ = ["TPCH"]
@@ -127,15 +129,13 @@ class TPCH(DBMSBenchmarkerBenchmark):
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
             if init_indexes or init_constraints or init_statistics:
-                experiment.set_experiment(indexing='Index')
-                init_scripts = " Import sets indexes after loading."
-                if init_constraints:
-                    experiment.set_experiment(indexing='Index_and_Constraints')
-                    init_scripts = "\nImport sets indexes and constraints after loading."
-                if init_statistics:
-                    experiment.set_experiment(indexing='Index_and_Constraints_and_Statistics')
-                    init_scripts = "\nImport sets indexes and constraints after loading and recomputes statistics."
-                experiment.workload['info'] += init_scripts
+                experiment.set_experiment(indexing=resolve_indexing_key(init_indexes, init_constraints, init_statistics))
+                requested_steps = [name for flag, name in (
+                    (init_indexes, "indexes"),
+                    (init_constraints, "constraints"),
+                    (init_statistics, "statistics recomputation"),
+                ) if flag]
+                experiment.workload['info'] += "\nImport sets " + ", ".join(requested_steps) + " after loading."
             if len(limit_import_table):
                 experiment.workload['info'] += f"\nImport is limited to table {limit_import_table}."
             if str(num_loading_split) != "1":

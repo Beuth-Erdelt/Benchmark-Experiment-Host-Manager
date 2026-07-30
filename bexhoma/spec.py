@@ -44,6 +44,8 @@ __all__ = [
     "format_postgres_memory",
     "resolve_system_definition",
     "resolve_system",
+    "resolve_indexing_key",
+    "resolve_physical_design_overrides",
     "validate_experiment",
     "validate_environment",
     "build_argv",
@@ -94,6 +96,22 @@ _KNOB_TYPE_MEMORY = "memory"
 #: be a first-class tpch.py flag, so it needs no generic env-var CLI mapping yet.
 _DUCKDB_FORCE_EXECUTION_ENV_VAR = "DUCKDB_FORCE_EXECUTION"
 _DUCKDB_FORCE_EXECUTION_FLAG = "-xdfe"
+
+#: Maps every (indexes, constraints, statistics) combination to the tpch
+#: volume's ``initscripts`` key that applies exactly that combination (see
+#: ``k8s-cluster.config``'s ``volumes.tpch.initscripts``). The three post-load
+#: steps are independent DDL/DML statements with no ordering dependency on
+#: each other, so all eight combinations are legal.
+_INDEXING_KEYS: dict[tuple[bool, bool, bool], str] = {
+    (False, False, False): "",
+    (True, False, False): "Index",
+    (False, True, False): "Constraints",
+    (False, False, True): "Statistics",
+    (True, True, False): "Index_and_Constraints",
+    (True, False, True): "Index_and_Statistics",
+    (False, True, True): "Constraints_and_Statistics",
+    (True, True, True): "Index_and_Constraints_and_Statistics",
+}
 
 
 class SpecError(Exception):
@@ -417,6 +435,55 @@ def _effective_post_load(system_spec: dict[str, Any], shared_post_load: dict[str
     return system_spec.get("post_load", shared_post_load)
 
 
+def resolve_indexing_key(indexes: bool, constraints: bool, statistics: bool) -> str:
+    """Map a tpch post_load selection to its ``initscripts`` key.
+
+    Single source of truth shared with
+    :func:`bexhoma.benchmarks.tpch.TPCH.configure_workload`, which applies the
+    same mapping to the ``-xii``/``-xic``/``-xis`` CLI flags — the key strings
+    must match ``k8s-cluster.config``'s ``volumes.tpch.initscripts`` literally,
+    or the resulting :meth:`~bexhoma.configurations.base.SutConfiguration.set_experiment`
+    call raises ``KeyError``.
+
+    :param indexes: Create indexes on all tables after loading.
+    :param constraints: Add primary-key/foreign-key constraints after loading.
+    :param statistics: Run ``ANALYZE`` after loading.
+    :return: The matching ``initscripts`` key, or ``""`` when none of the
+        three steps were requested.
+    :rtype: str
+    """
+    return _INDEXING_KEYS[(bool(indexes), bool(constraints), bool(statistics))]
+
+
+def resolve_physical_design_overrides(catalog: dict[str, Any], experiment: dict[str, Any]) -> dict[str, str]:
+    """Resolve each named system's effective post_load into an indexing-script override.
+
+    Bridges the ``systems[].post_load`` *selection* (see :func:`validate_experiment`)
+    to bexhoma's existing per-configuration indexing-script override
+    (:meth:`~bexhoma.configurations.base.SutConfiguration.set_experiment`), the
+    mechanism ``tpch.py``'s ``-xii``/``-xic``/``-xis`` CLI flags cannot express
+    per system — those stay global switches, untouched by this function.
+    Intended for :mod:`experiment` (the catalog-driven dispatcher) to attach to
+    the parsed ``argparse.Namespace`` as ``physical_design_overrides`` before
+    calling ``tpch.run()``; never surfaced as a CLI flag itself.
+
+    :param catalog: Parsed catalog.
+    :param experiment: Parsed experiment spec.
+    :return: ``{system_name: indexing_key}``, one entry per ``systems:`` entry.
+    :rtype: dict[str, str]
+    """
+    shared_post_load = experiment.get("loading", {}).get("post_load", {})
+    overrides = {}
+    for system_spec in experiment.get("systems", []):
+        post_load = _effective_post_load(system_spec, shared_post_load)
+        overrides[system_spec["name"]] = resolve_indexing_key(
+            indexes=bool(post_load.get("indexes")),
+            constraints=bool(post_load.get("constraints")),
+            statistics=bool(post_load.get("statistics")),
+        )
+    return overrides
+
+
 def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> None:
     """Validate an experiment spec against the catalog before translation.
 
@@ -640,16 +707,20 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     *selection* the catalog schema supports, but ``-xii``/``-xic``/``-xis``/
     ``-xcol`` are global CLI switches — ``tpch.py`` has no per-system scoping
     for them yet. When every named system resolves to the same effective
-    post_load, that shared value is emitted exactly as before; when systems
-    diverge, this raises rather than silently applying one system's choice to
-    all of them.
+    post_load, that shared value is emitted exactly as before, since a global
+    flag can represent it faithfully. When systems diverge, these flags are
+    left unset here rather than applying one system's choice to all of
+    them — :func:`resolve_physical_design_overrides` resolves the actual
+    per-system selection through a different mechanism entirely
+    (:meth:`~bexhoma.configurations.base.SutConfiguration.set_experiment`,
+    applied by ``tpch.py``'s in-process caller, not by argv), so silently
+    emitting nothing here is safe rather than lossy.
 
     :param catalog: Parsed catalog.
     :param experiment: Parsed experiment spec.
     :return: Argument vector, usable as ``python tpch.py`` followed by these tokens.
     :rtype: list[str]
-    :raises SpecError: When ``experiment`` fails validation or resolution, or
-        when named systems resolve to different effective post_load values.
+    :raises SpecError: When ``experiment`` fails validation or resolution.
     """
     validate_experiment(catalog, experiment)
 
@@ -663,16 +734,11 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     system_specs = experiment.get("systems", [])
 
     effective_post_loads = [_effective_post_load(system_spec, shared_post_load) for system_spec in system_specs]
-    if any(post_load != effective_post_loads[0] for post_load in effective_post_loads[1:]):
-        raise SpecError(
-            "systems in this experiment resolve to different effective post_load "
-            f"values ({dict(zip((s['name'] for s in system_specs), effective_post_loads))!r}), "
-            "but tpch.py's -xii/-xic/-xis/-xcol flags are global CLI switches with no "
-            "per-system scoping yet — give every named system the same post_load "
-            "(shared loading.post_load, or matching systems[].post_load overrides), "
-            "or run the diverging systems as separate experiments"
-        )
-    post_load = effective_post_loads[0] if effective_post_loads else shared_post_load
+    post_load_diverges = any(post_load != effective_post_loads[0] for post_load in effective_post_loads[1:])
+    if post_load_diverges:
+        post_load = {}
+    else:
+        post_load = effective_post_loads[0] if effective_post_loads else shared_post_load
 
     cpu = resources.get("cpu", {})
     memory = resources.get("memory", {})
