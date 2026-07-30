@@ -1,21 +1,9 @@
-# contract_result.yml — machine-readable counterpart to docs/AgentResultContract.md.
-#
-# STATUS: active reference, promoted alongside contract_catalog.yml out of
-# dev/ to contracts/ for visibility — not parsed by any code (it documents
-# report_writer.py's own output shape, it doesn't drive it). Companion to
-# contract_catalog.yml (what you can ask for) and dev/catalog/environment.yml
-# (what cluster capacity exists) — this is the third leg: what you'll get
-# back once an experiment runs. Read this before submitting an experiment
-# (via tpch.py/ycsb.py/... directly, or a contract_catalog.yml + experiment.yml
-# pair resolved by bexhoma/spec.py) to know what the result folder will
-# contain and how to decode its filenames, without needing a live cluster
-# connection or the bexhoma source tree.
-#
-# See docs/AgentResultContract.md for the prose version with worked
-# examples and rationale, docs/Design-Catalog-Contract.md for the input-side
-# catalog contract (issue #764) this complements, and
-# bexhoma/report_writer.py (SCHEMA_VERSION) as the implementation this file
-# tracks.
+# contract_result.yml — machine-readable description of what a completed
+# experiment run's result folder contains and how to decode its filenames.
+# Self-contained: every field an agent needs is data below (entry_point/
+# structure/tiers/provenance/versions/key_metrics_by_benchmark_type/
+# validity/verdict_shape/known_gaps), not comments. Design rationale and
+# provenance (not needed to read this file): contracts/contract_result_comments.md
 
 result_contract_version: "1.0.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
@@ -156,9 +144,3 @@ known_gaps:
   - "dbmsbenchmarker's own package version is not recorded separately from bexhoma's"
   - "no comparative/historical (cross-experiment) validity check exists; 'compare only within one experiment code' is a rule an agent must apply itself, nothing in the result folder enforces it"
   - "per-system post_load selection (indexes/constraints/statistics, chosen via contract_catalog.yml's systems[].post_load) is not surfaced as a tier-1/2 field anywhere — connections.config/queries.config record which SUT ran, not which post-load steps it received; reconstruct it from tier-3 provenance.loading's *-loading-*.sql.log (rendered DDL source) per configuration"
-
-see_also:
-  - docs/AgentResultContract.md    # prose version of this file, with worked examples
-  - docs/AgentReport.md            # design rationale for the tiered report
-  - bexhoma/report_writer.py       # implementation; SCHEMA_VERSION source of truth
-  - bexhoma/experiments/CLAUDE.md  # full show_summary() call graph, per-benchmark-type detail
