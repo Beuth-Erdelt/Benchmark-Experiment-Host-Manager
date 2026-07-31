@@ -323,6 +323,31 @@ def run_hardware_baseline(
     return result
 
 
+#: A parsed benchmarking row carries every tool's columns at once (fio,
+#: sysbench, sockperf, netperf), zero/blank-filled for whichever tool did not
+#: actually run that round (see HardwareEvaluator.log_to_df()'s docstring) --
+#: left as-is, a sysbench round's ``hardware_fio_read_iops: 0.0`` reads as a
+#: real (if confusing) measurement rather than "not applicable". Dropping the
+#: other tools' columns per stored entry avoids that ambiguity.
+_OTHER_TOOL_COLUMN_PREFIXES = {
+    "sysbench": ("hardware_fio_", "hardware_sockperf_", "hardware_netperf_"),
+    "fio": ("hardware_sysbench_", "hardware_sockperf_", "hardware_netperf_"),
+    "sockperf": ("hardware_fio_", "hardware_sysbench_", "hardware_netperf_"),
+}
+
+
+def _drop_other_tool_columns(row_dict: dict[str, Any], hardware_type: str) -> dict[str, Any]:
+    """Drop zero/blank-filled columns belonging to a different ``HARDWARE_TYPE``.
+
+    :param row_dict: A parsed, aggregated result row, as ``dict``.
+    :param hardware_type: Which tool this row actually measured.
+    :return: ``row_dict`` with other tools' columns removed.
+    :rtype: dict[str, Any]
+    """
+    prefixes = _OTHER_TOOL_COLUMN_PREFIXES.get(hardware_type, ())
+    return {key: value for key, value in row_dict.items() if not key.startswith(prefixes)}
+
+
 def _collect_results(
     cluster: Any,
     experiment: Any,
@@ -378,13 +403,13 @@ def _collect_results(
         row_dict = row.to_dict()
         if client == _CPU_BASELINE_ROUND:
             row_dict["hardware_type"] = "sysbench"
-            result.per_node.setdefault(node, {})["cpu_mem"] = row_dict
+            result.per_node.setdefault(node, {})["cpu_mem"] = _drop_other_tool_columns(row_dict, "sysbench")
         elif client == _FIO_BASELINE_ROUND:
             row_dict["hardware_type"] = "fio"
-            result.per_node.setdefault(node, {})["fio"] = row_dict
+            result.per_node.setdefault(node, {})["fio"] = _drop_other_tool_columns(row_dict, "fio")
         elif client >= _FIRST_NETWORK_ROUND:
             targets = network_targets.get(node, [])
             target_index = client - _FIRST_NETWORK_ROUND
             if 0 <= target_index < len(targets) and targets[target_index] is not None:
                 row_dict["hardware_type"] = "sockperf"
-                result.network_matrix[f"{node}->{targets[target_index]}"] = row_dict
+                result.network_matrix[f"{node}->{targets[target_index]}"] = _drop_other_tool_columns(row_dict, "sockperf")

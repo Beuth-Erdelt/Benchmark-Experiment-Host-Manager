@@ -310,6 +310,39 @@ class CollectResultsTest(unittest.TestCase):
         result = self._collect(df, configs_by_node, {'n1': []})
         self.assertEqual(result.per_node['n1']['fio']['value'], 222)
 
+    def test_cpu_mem_entry_drops_zero_filled_fio_columns(self) -> None:
+        """A sysbench round's HardwareEvaluator row also carries fio's columns,
+        zero-filled since fio never ran that round (see HardwareEvaluator.
+        log_to_df()) -- these must be dropped, not stored as a misleading 0."""
+        df = pd.DataFrame([
+            {
+                'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench',
+                'hardware_sysbench_cpu_events_per_sec': 317.0,
+                'hardware_fio_read_iops': 0.0, 'hardware_fio_write_iops': 0.0,
+            },
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        result = self._collect(df, configs_by_node, {'n1': []})
+        cpu_mem = result.per_node['n1']['cpu_mem']
+        self.assertEqual(cpu_mem['hardware_sysbench_cpu_events_per_sec'], 317.0)
+        self.assertNotIn('hardware_fio_read_iops', cpu_mem)
+        self.assertNotIn('hardware_fio_write_iops', cpu_mem)
+
+    def test_fio_entry_drops_zero_filled_sysbench_columns_and_keeps_real_fio_values(self) -> None:
+        df = pd.DataFrame([
+            {
+                'configuration': 'hw-n1', 'client': 2, 'hardware_type': 'fio',
+                'hardware_fio_read_iops': 3073.785243, 'hardware_fio_write_iops': 3075.984803,
+                'hardware_sysbench_cpu_events_per_sec': 0.0,
+            },
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        result = self._collect(df, configs_by_node, {'n1': []})
+        fio = result.per_node['n1']['fio']
+        self.assertEqual(fio['hardware_fio_read_iops'], 3073.785243)
+        self.assertEqual(fio['hardware_fio_write_iops'], 3075.984803)
+        self.assertNotIn('hardware_sysbench_cpu_events_per_sec', fio)
+
     def test_both_baseline_rounds_together(self) -> None:
         df = pd.DataFrame([
             {'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench', 'value': 111},
