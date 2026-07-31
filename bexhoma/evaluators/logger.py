@@ -321,7 +321,7 @@ class LogEvaluator(EvaluatorBase):
         because their per-connection source is already gone.
 
         Some components fetch metrics per pod (filename suffixed with the
-        per-pod ``name``, e.g. the ``stream`` phase); others fetch once per
+        per-pod ``name``, e.g. the ``benchmarking`` phase); others fetch once per
         job, before ``benchmark.py read`` has expanded ``connections.config``
         into per-pod entries, so the file is only ever suffixed with the
         job-level ``orig_name`` (e.g. the ``loading`` phase). Both candidates
@@ -329,7 +329,7 @@ class LogEvaluator(EvaluatorBase):
         which one a given component happens to use.
 
         :param component: Component label used in the metric filename prefix
-                          (e.g. ``'loading'``, ``'stream'``).
+                          (e.g. ``'loading'``, ``'benchmarking'``).
         :type component: str
         """
         connections_sorted = self.get_connection_config()
@@ -382,6 +382,12 @@ class LogEvaluator(EvaluatorBase):
         :rtype: pandas.DataFrame
         """
         filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
+        if not os.path.isfile(self.path+"/"+filename) and component == "benchmarking":
+            # Read-only fallback for result folders written before "stream" was
+            # renamed to "benchmarking" (no writer ever produces the old name again).
+            legacy_filename = '/query_stream_metric_{metric}.csv'.format(metric=metric)
+            if os.path.isfile(self.path+"/"+legacy_filename):
+                filename = legacy_filename
         if os.path.isfile(self.path+"/"+filename):
             df = pd.read_csv(self.path+"/"+filename).T
             df = df.reindex(index=natural_sort(df.index))

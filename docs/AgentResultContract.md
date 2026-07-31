@@ -12,7 +12,7 @@ blocks embedded verbatim in every `report/index.md`
 `report/index.md` to interpret an actual run.
 
 ```yaml
-result_contract_version: "1.0.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
+result_contract_version: "1.1.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
                                     # bump tracks report_writer.py's own frontmatter/tier/layout changes
 
 entry_point:
@@ -24,7 +24,10 @@ structure:
   experiment_code: unix-timestamp        # `code`: seconds, generated at experiment start;
                                           # unique + monotonically increasing, but NOT evidence
                                           # two codes ran under comparable conditions
-  configuration:  "<system>-<n>"                                       # e.g. PostgreSQL-1
+  configuration:  "<system>-<n>"                                       # e.g. postgresql-1 (lowercased when
+                                                                        # embedded in phase/job/connection below;
+                                                                        # original case, e.g. "PostgreSQL-1", when
+                                                                        # shown standalone, e.g. connections.config)
   phase:          "<configuration>-<experiment_run>-<client>"          # drops benchmark_run, pod
   job:            "<configuration>-<experiment_run>-<client>-<benchmark_run>"  # drops pod
   connection:     "<configuration>-<experiment_run>-<client>-<benchmark_run>-<pod>"
@@ -32,7 +35,7 @@ structure:
 
 tiers:                                  # only "with_report" tiers 1-2 are new files; tier 3 is always the raw folder
   1_answers:   {glob: "report/index.md"}
-  2_evidence:  {glob: "report/{workflow,loading,execution,monitoring,connections}.md"}
+  2_evidence:  {glob: "report/{workflow,loading,benchmarking,monitoring,connections}.md"}
                                           # each written only if that phase was active
   3_diagnosis: {result_dir: "*"}         # see provenance: below; linked from every tier-2 "### Provenance" footer
 
@@ -55,10 +58,14 @@ provenance:                              # pre-existing files, never written or 
   loading:      {"*-loading-*.sql.log / *-loading-*.sh.log": "rendered script SOURCE despite the .log suffix",
                  "*-loading-*.stdout.log": "stdout of that script",
                  "*-loading-*.stderr.log": "stderr — check first on a silent loading failure"}
-  execution:    {"bexhoma-benchmarker-*.log":            "raw per-pod benchmarker/driver stdout",
+  benchmarking: {"bexhoma-benchmarker-*.log":            "raw per-pod benchmarker/driver stdout",
                  "bexhoma-benchmarker.*.all.df.pickle":  "cached parsed+aggregated DataFrame",
                  "queries.config":                        "literal SQL text — DBMSBenchmarker-family (TPC-H/TPC-DS) only"}
-  monitoring:   {"query_{component}_metric_{key}.csv":   "wide format: one column per connection, one row per Prometheus scrape"}
+  monitoring:   {"query_{component}_metric_{key}.csv":   "wide format: one column per connection, one row per Prometheus scrape;
+                                                            {component} (e.g. loading/benchmarking/loader/benchmarker/datagenerator)
+                                                            is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency,
+                                                            not bexhoma's to rename freely — see monitoring.md's component_title
+                                                            column for the human-readable pairing"}
   restarts:     {"bexhoma-sut-*-restarts.json":          "per-pod SUT container restart counts"}
   sut_logs:     {"bexhoma-sut-{configuration}-{code}.yml":                                    "SUT Deployment manifest — written once, no experiment_run segment",
                  "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.{container}.log":  "SUT container stdout, one capture per experiment_run",
@@ -166,7 +173,7 @@ column an agent should treat as "the" headline number:
 | Benchmark type | Entry script | Key metric column(s) |
 |---|---|---|
 | DBMSBenchmarker (TPC-H/TPC-DS) | `tpch.py`, `tpcds.py` | `Geo Times [s]`, `Power@Size [~Q/h]`, `Throughput@Size` |
-| YCSB | `ycsb.py` | `[OVERALL].Throughput(ops/sec)` (loading and execution phase, tested separately) |
+| YCSB | `ycsb.py` | `[OVERALL].Throughput(ops/sec)` (loading and benchmarking phase, tested separately) |
 | HammerDB TPC-C | `hammerdb.py` | `NOPM` |
 | Benchbase | `benchbase.py` | `Throughput (requests/second)` |
 | Hardware (fio/sysbench/sockperf/netperf) | `hardware.py` | IOPS / CPU events-per-sec / message rate / transaction rate, per active probe |

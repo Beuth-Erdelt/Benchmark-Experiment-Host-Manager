@@ -49,7 +49,7 @@ Each connection dict has the shape:
 
 ```python
 {
-    'name': 'PostgreSQL-1-1-1',      # <configuration>-<experimentRun>-<client>-<benchmarkRun>
+    'name': 'postgresql-1-1-1',       # <configuration>-<experiment_run>-<client>-<benchmark_run>, lowercased
     'parameter': {
         'code': 1234567890,
         'numExperiment': '1',
@@ -89,7 +89,7 @@ Source: `configurations/benchmarking.py::BenchmarkRunner.run_pod()`, invoked as
 
 For each entry in the current client round, `run_pod()`:
 
-1. Builds the **connection name**: `"{configuration}-{experimentRun}-{client}-{benchmark_run}"`.
+1. Builds the **connection name**: `"{configuration}-{experiment_run}-{client}-{benchmark_run}".lower()`.
 2. Constructs the connection dict `c` (described above) and appends it to
    `connections.config`; also writes `{connection}.config` immediately.
 3. Writes benchmarking parameters to a Redis queue:

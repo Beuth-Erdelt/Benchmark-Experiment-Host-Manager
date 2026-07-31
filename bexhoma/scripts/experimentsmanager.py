@@ -99,7 +99,7 @@ def _derive_phase(labels: dict, loading_active: bool, benchmarking_active: bool,
         return 'Loading' if loading_active else 'Starting'
     num_runs_planned = labels.get('num_experiment_runs_planned', '')
     num_rounds_planned = labels.get('num_rounds_planned', '')
-    experiment_run = labels.get('experimentRun', '')
+    experiment_run = labels.get('experiment_run', labels.get('experimentRun', ''))
     if benchmarking_active:
         run_progress = '{}/{}'.format(experiment_run, num_runs_planned) if num_runs_planned else experiment_run
         round_progress = (
@@ -370,8 +370,9 @@ def manage():
                     status = pod.status.phase
                     labels = pod_labels[pod.metadata.name]
                     sut_labels = labels
-                    experimentRun = '{}. '.format(labels['experimentRun']) if 'experimentRun' in labels else ''
-                    apps[configuration][component] = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
+                    run_label = labels.get('experiment_run', labels.get('experimentRun'))
+                    experiment_run_display = '{}. '.format(run_label) if run_label else ''
+                    apps[configuration][component] = "{pod} ({experiment_run}{status})".format(pod='', experiment_run=experiment_run_display, status=status)
                     if 'loaded' in labels:
                         if labels['loaded'] == 'True':
                             apps[configuration]['loaded [s]'] = labels['time_loading']
@@ -467,8 +468,8 @@ def manage():
                 for pod in pods:
                     status = pod.status.phase
                     labels = pod_labels[pod.metadata.name]
-                    experimentRun = '{}. '.format(labels['client']) if 'client' in labels else ''
-                    status_extended = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
+                    client_display = '{}. '.format(labels['client']) if 'client' in labels else ''
+                    status_extended = "{pod} ({client}{status})".format(pod='', client=client_display, status=status)
                     num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1
                 for status in num_pods.keys():
                         apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)

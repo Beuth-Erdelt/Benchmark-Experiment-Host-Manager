@@ -5,7 +5,7 @@
 # validity/verdict_shape/known_gaps), not comments. Design rationale and
 # provenance (not needed to read this file): contracts/contract_result_comments.md
 
-result_contract_version: "1.0.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.1.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -22,12 +22,17 @@ structure:
     why: "generated once at experiment start; unique and monotonically increasing, but NOT evidence two codes ran under comparable conditions"
   identifiers:
     # decode any of these by counting dash-separated segments from the right
+    # phase/job/connection are always lowercased, including the embedded
+    # configuration segment (e.g. "postgresql-1", not "PostgreSQL-1") — matching
+    # every k8s object/log filename. The standalone `configuration` column shown
+    # elsewhere (e.g. connections.config, report tables) keeps its original display
+    # case; only these compound dash-joined identifiers are lowercased.
     configuration: "<system>-<n>"
     phase: "<configuration>-<experiment_run>-<client>"
     job: "<configuration>-<experiment_run>-<client>-<benchmark_run>"
     connection: "<configuration>-<experiment_run>-<client>-<benchmark_run>-<pod>"
   identifier_terms:
-    configuration: {meaning: "SUT instance name", example: "PostgreSQL-1"}
+    configuration: {meaning: "SUT instance name (lowercased when embedded in phase/job/connection; original case when shown standalone)", example: "postgresql-1"}
     experiment_run: {meaning: "repeat counter for the whole experiment (-nc)", example: "2"}
     client: {meaning: "1-based index of the benchmark phase/round within a run (-ne)", example: "3"}
     benchmark_run: {meaning: "1-based index of a parallel benchmark job within a round (query stream vs. refresh stream, etc.)", example: "1"}
@@ -47,7 +52,7 @@ tiers:
     files: ["report/index.md"]
     read_when: always
   2_evidence:
-    files: ["report/workflow.md", "report/loading.md", "report/execution.md", "report/monitoring.md", "report/connections.md"]
+    files: ["report/workflow.md", "report/loading.md", "report/benchmarking.md", "report/monitoring.md", "report/connections.md"]
     read_when: "an actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase"
     note: "each written only if that phase was active"
   3_diagnosis:
@@ -69,12 +74,12 @@ provenance:
     "*-loading-*.sh.log": "rendered bash script SOURCE, despite the .log suffix"
     "*-loading-*.stdout.log": "stdout of that script"
     "*-loading-*.stderr.log": "stderr — check first on a silent loading failure"
-  execution:
+  benchmarking:
     "bexhoma-benchmarker-*.log": "raw per-pod benchmarker/driver stdout"
     "bexhoma-benchmarker.*.all.df.pickle": "cached parsed+aggregated DataFrame"
     "queries.config": "literal SQL text — DBMSBenchmarker-family (TPC-H/TPC-DS) only"
   monitoring:
-    "query_{component}_metric_{key}.csv": "wide format: one column per connection, one row per Prometheus scrape"
+    "query_{component}_metric_{key}.csv": "wide format: one column per connection, one row per Prometheus scrape; {component} is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency (e.g. loading, benchmarking, loader, benchmarker, datagenerator) plus any registered application component — see identifier_terms.component_note"
   restarts:
     "bexhoma-sut-*-restarts.json": "per-pod SUT container restart counts"
   sut:
@@ -97,7 +102,7 @@ key_metrics_by_benchmark_type:
   ycsb:
     entry_scripts: [ycsb.py]
     columns: ["[OVERALL].Throughput(ops/sec)"]
-    note: "tested separately for the loading phase and the execution phase"
+    note: "tested separately for the loading phase and the benchmarking phase"
   hammerdb:
     entry_scripts: [hammerdb.py]
     columns: [NOPM]

@@ -1197,7 +1197,7 @@ class ExperimentBase():
             pod_dashboard = self.get_dashboard_pod()
         if self.monitoring_active:
             # fixed phases plus every SUT/cluster/app component registered during the run
-            component_types = ['loading', 'stream', 'loader', 'benchmarker'] + list(self.workload['monitoring_components'])
+            component_types = ['loading', 'benchmarking', 'loader', 'benchmarker'] + list(self.workload['monitoring_components'])
             for component_type in component_types:
                 print("{:30s}: transforming metrics for {}".format("Experiment", component_type))
                 cmd = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
@@ -1821,7 +1821,7 @@ class ExperimentBase():
                     if _use_experiment_dict and config.client <= len(config.experiment_dict["benchmarker"]):
                         # experiment dict path: submit all parallel entries in this client round
                         client = str(config.client)
-                        experimentRun = str(config.num_experiment_to_apply_done + 1)
+                        experiment_run = str(config.num_experiment_to_apply_done + 1)
                         client_round = config.experiment_dict["benchmarker"][config.client - 1]
                         config.client += 1
                         is_first_in_round = config.client > self.client
@@ -1836,7 +1836,7 @@ class ExperimentBase():
                             total_round_pods = sum(entry["parallelism"] for entry in benchmarker_rounds[round_idx])
                         else:
                             total_round_pods = 0
-                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experimentRun, client, config.configuration, self.code)
+                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experiment_run, client, config.configuration, self.code)
                         self.cluster.set_pod_counter(queue=round_counter_key, value=total_round_pods)
                         print("{:30s}: Round pod counter {} initialized to {}.".format("Experiment", round_counter_key, total_round_pods))
                         if is_first_in_round and self.tenant_per == 'container':
@@ -1854,12 +1854,12 @@ class ExperimentBase():
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
                         for bm_idx, bench_entry in enumerate(client_round):
                             benchmark_index = bm_idx + 1
-                            connection = f"{config.configuration}-{experimentRun}-{client}-{benchmark_index}"
+                            connection = f"{config.configuration}-{experiment_run}-{client}-{benchmark_index}".lower()
                             print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
                             reset_seconds = 0
                             if self.resetscript_active and bench_entry.get("resetscript"):
                                 reset_seconds = config.loader.exec_reset_script(
-                                    'reset_{}_{}_{}'.format(experimentRun, client, benchmark_index),
+                                    'reset_{}_{}_{}'.format(experiment_run, client, benchmark_index),
                                     bench_entry["resetscript"])
                             if bench_entry.get("parameters"):
                                 # Assign directly to avoid the side effect in
@@ -1881,7 +1881,7 @@ class ExperimentBase():
                         # legacy benchmark_list path
                         parallelism = config.benchmark_list.pop(0)
                         client = str(config.client)
-                        experimentRun = str(config.num_experiment_to_apply_done + 1)
+                        experiment_run = str(config.num_experiment_to_apply_done + 1)
                         config.client = config.client+1
                         is_first_in_round = config.client > self.client
                         if is_first_in_round:
@@ -1889,7 +1889,7 @@ class ExperimentBase():
                             print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client-1))
                             self.client = config.client
                         # Initialize round counter for this config (always, per-config key).
-                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experimentRun, client, config.configuration, self.code)
+                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experiment_run, client, config.configuration, self.code)
                         self.cluster.set_pod_counter(queue=round_counter_key, value=parallelism)
                         if is_first_in_round and self.tenant_per == 'container':
                             # Container tenancy uses experiment_dict; this legacy path
@@ -1901,12 +1901,12 @@ class ExperimentBase():
                         reset_seconds = 0
                         if self.resetscript_active and config.resetscript:
                             reset_seconds = config.loader.exec_reset_script(
-                                'reset_{}_{}'.format(experimentRun, client), config.resetscript)
+                                'reset_{}_{}'.format(experiment_run, client), config.resetscript)
                         if len(config.benchmarking_parameters_list) > 0:
                             benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
                             print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
                             config.set_benchmarking_parameters(**benchmarking_parameters)
-                        connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
+                        connection = (config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client).lower()
                         print("{:30s}: start benchmarking".format(connection))
                         config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds)
                         _benchmark_just_submitted = True
@@ -1972,9 +1972,9 @@ class ExperimentBase():
                                 client = str(config.client)
                                 config.client = config.client+1
                                 if config.num_experiment_to_apply > 1:
-                                    connection = config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client
+                                    connection = (config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client).lower()
                                 else:
-                                    connection = config.configuration+'-'+client
+                                    connection = (config.configuration+'-'+client).lower()
                                 config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=1, only_prepare=True)
                                 config.num_experiment_to_apply_done = config.num_experiment_to_apply
                             config.experiment_done = True
@@ -2379,14 +2379,14 @@ class ExperimentBase():
                             if name=='sut' and config.monitoring_sut:
                                 print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, connection))
                                 config.metrics.fetch(
-                                    title=f"Execution phase: SUT deployment",
+                                    title=f"Benchmarking phase: SUT deployment",
                                     connection=connection,
                                     connection_file=connection+'.config',
                                     container="dbms",
                                     #container="dbms",
                                     component=name,
-                                    component_type="stream",
-                                    #component_type="stream",
+                                    component_type="benchmarking",
+                                    #component_type="benchmarking",
                                     experiment=self.code,
                                     time_start=start_time,
                                     time_end=end_time,
@@ -2396,14 +2396,14 @@ class ExperimentBase():
                             elif name!='sut':
                                 print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
                                 config.metrics.fetch(
-                                    title=f"Execution phase: component {name}",
+                                    title=f"Benchmarking phase: component {name}",
                                     connection=connection,
                                     connection_file=connection+'.config',
                                     container=deployment['containers'][0], #"dbms",
                                     #container="dbms",
                                     component=name,
-                                    component_type=f"{name}streaming",
-                                    #component_type="stream",
+                                    component_type=f"{name}benchmarking",
+                                    #component_type="benchmarking",
                                     experiment=self.code,
                                     time_start=start_time,
                                     time_end=end_time,
@@ -2415,13 +2415,13 @@ class ExperimentBase():
                             print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
                             print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
                             config.metrics.fetch(
-                                title=f"Execution phase: component {name}",
+                                title=f"Benchmarking phase: component {name}",
                                 connection=connection,
                                 connection_file=connection+'.config',
                                 container="dbms",
                                 component=name,
-                                component_type=f"{name}streaming",
-                                #component_type="stream",
+                                component_type=f"{name}benchmarking",
+                                #component_type="benchmarking",
                                 experiment=self.code,
                                 time_start=start_time,
                                 time_end=end_time,
@@ -2500,7 +2500,7 @@ class ExperimentBase():
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, connection))
                         config.metrics.fetch(
-                            title=f"Execution phase: component benchmarker",
+                            title=f"Benchmarking phase: component benchmarker",
                             connection=connection,
                             connection_file=connection+'.config',
                             container="dbmsbenchmarker",
@@ -2621,7 +2621,7 @@ class ExperimentBase():
                         if num_metrics_included >= 5:
                             continue
                         if metric['type'] == 'application' and metric['active'] == True:
-                            df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'stream')#
+                            df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'benchmarking')#
                             if not df.empty:
                                 list_monitoring_app
                                 if metric['metric'] == 'counter':
@@ -2640,7 +2640,7 @@ class ExperimentBase():
                         monitoring_applications[title] = df_monitoring_app
                     #print(df_monitoring_app)
                     #print(monitoring_applications)
-                    # currently: only first component, only stream
+                    # currently: only first component, only benchmarking
                     # TODO: make dynamical
                     #break
             infos = ["  * {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
@@ -2894,7 +2894,7 @@ class ExperimentBase():
         Build a list of DataFrames containing CPU and RAM monitoring metrics for one component.
 
         :param evaluate: Evaluator object exposing get_monitoring_metric().
-        :param component: Component name used as the metric scope (e.g. 'loading', 'stream').
+        :param component: Component name used as the metric scope (e.g. 'loading', 'benchmarking').
         :return: List of single-column DataFrames (one per collected metric), and a flag that is
                  ``True`` when at least one connection had fewer than :data:`MIN_MONITORING_SAMPLES`
                  scrapes of ``total_cpu_util_s`` inside the phase window (the phase ran shorter than
@@ -3004,28 +3004,28 @@ class ExperimentBase():
                     test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
             #####################
-            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "stream")
+            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "benchmarking")
             ##########
             if len(df_monitoring) > 0:
-                print("\n### Execution - SUT")
+                print("\n### Benchmarking - SUT")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
-                    test_results = test_results + "TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]\n"
+                    test_results = test_results + "TEST failed: Benchmarking SUT contains 0 or NaN in CPU [CPUs]\n"
                 else:
-                    test_results = test_results + "TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]\n"
+                    test_results = test_results + "TEST passed: Benchmarking SUT contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
             #####################
             df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "benchmarker")
             ##########
             if len(df_monitoring) > 0:
-                print("\n### Execution - Benchmarker")
+                print("\n### Benchmarking - Benchmarker")
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
-                    test_results = test_results + "TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]\n"
+                    test_results = test_results + "TEST failed: Benchmarking Benchmarker contains 0 or NaN in CPU [CPUs]\n"
                 else:
-                    test_results = test_results + "TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
+                    test_results = test_results + "TEST passed: Benchmarking Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
                 print(df)
         return test_results.rstrip('\n')
 

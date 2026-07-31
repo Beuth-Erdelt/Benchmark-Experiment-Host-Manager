@@ -102,9 +102,9 @@ class YcsbEvaluator(LogEvaluator):
                 cells = line.split(", ")
                 if cells[0] and cells[0][0] == "[":
                     parsed_rows.append(line.split(", "))
-            phase = configuration_name + '-' + experiment_run + '-' + client
+            phase = (configuration_name + '-' + experiment_run + '-' + client).lower()
             job = connection_name
-            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child
+            connection = (configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child).lower()
             col_names = [value[0] + "." + value[1] for value in parsed_rows if len(value) > 1]
             measure_values = [value[2] for value in parsed_rows if len(value) > 1]
             row_values = [code, phase, job, connection, configuration_name, experiment_run, client,

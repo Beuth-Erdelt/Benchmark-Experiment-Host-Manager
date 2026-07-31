@@ -121,9 +121,9 @@ except Exception:
     failures.append("get_connections() exception")
 
 # ── MONITORING AGGREGATED PER PHASE ───────────────────────────────────────────
-sep("get_monitoring_aggregated_per_phase('stream') + add_metadata")
+sep("get_monitoring_aggregated_per_phase('benchmarking') + add_metadata")
 try:
-    df = collect.get_monitoring_aggregated_per_phase("stream")
+    df = collect.get_monitoring_aggregated_per_phase("benchmarking")
     df = collect.add_metadata(df)
     check_df(df, "monitoring_aggregated_per_phase", HEADER_COLS)
 except Exception:
@@ -131,9 +131,9 @@ except Exception:
     failures.append("get_monitoring_aggregated_per_phase() exception")
 
 # ── MONITORING AGGREGATED PER JOB ─────────────────────────────────────────────
-sep("get_monitoring_aggregated_per_job('stream') + add_metadata")
+sep("get_monitoring_aggregated_per_job('benchmarking') + add_metadata")
 try:
-    df = collect.get_monitoring_aggregated_per_job("stream")
+    df = collect.get_monitoring_aggregated_per_job("benchmarking")
     df = collect.add_metadata(df)
     check_df(df, "monitoring_aggregated_per_job", HEADER_COLS)
 except Exception:
@@ -144,7 +144,7 @@ except Exception:
 sep("get_monitoring_timeseries_per_phase() + add_metadata")
 try:
     df = collect.get_monitoring_timeseries_per_phase(
-        codes[0], metric="total_cpu_memory", component="stream")
+        codes[0], metric="total_cpu_memory", component="benchmarking")
     df = collect.add_metadata(df)
     check_df(df, "monitoring_timeseries_per_phase", HEADER_COLS)
 except Exception:
@@ -210,7 +210,7 @@ except Exception:
 # ── MERGED PERFORMANCE + MONITORING (efficiency metrics) ──────────────────────
 sep("Merged performance + monitoring with E_Tpx / E_Lat / E_RAM")
 try:
-    df_mon  = collect.get_monitoring_aggregated_per_phase(type="stream")
+    df_mon  = collect.get_monitoring_aggregated_per_phase(type="benchmarking")
     df_perf = collect.get_performance_aggregated_per_phase()
     merged_df = pd.merge(df_perf, df_mon, left_index=True, right_index=True, how="left")
     merged_df = merged_df[merged_df["client"] == 1]

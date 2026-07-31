@@ -1074,7 +1074,7 @@ scrape_configs:
                 dep['metadata']['labels']['pool'] = name_pool
                 for label_key, label_value in cfg.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
-                dep['metadata']['labels']['experimentRun'] = str(
+                dep['metadata']['labels']['experiment_run'] = str(
                     cfg.num_experiment_to_apply_done + 1)
                 dep['metadata']['labels']['num_experiment_runs_planned'] = str(
                     cfg.num_experiment_to_apply)

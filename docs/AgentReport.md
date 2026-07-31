@@ -15,7 +15,7 @@ separate analysis pipeline.
     index.md          ← Tier 1: Answers
     workflow.md        ← Tier 2: Evidence
     loading.md          ← Tier 2: Evidence  (only when loading was active)
-    execution.md         ← Tier 2: Evidence
+    benchmarking.md      ← Tier 2: Evidence
     monitoring.md         ← Tier 2: Evidence  (only when monitoring was active)
     connections.md         ← Tier 2: Evidence
 # Tier 3: Diagnosis is not new files — it's the pre-existing result-folder
@@ -49,7 +49,7 @@ below).
 | Tier | Files | Read when |
 |---|---|---|
 | **1 — Answers** | `index.md` | Always, first. Often the only file needed. |
-| **2 — Evidence** | `workflow.md`, `loading.md`, `execution.md`, `monitoring.md`, `connections.md` | An actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase. |
+| **2 — Evidence** | `workflow.md`, `loading.md`, `benchmarking.md`, `monitoring.md`, `connections.md` | An actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase. |
 | **3 — Diagnosis** | linked raw result-folder files | Tier 2's aggregated tables don't resolve the question. |
 
 ### `index.md`
@@ -84,9 +84,9 @@ on every report); the rest vary per experiment:
 
 ### Tier-2 files
 
-`workflow.md`, `loading.md`, `execution.md`, and `monitoring.md` carry the
+`workflow.md`, `loading.md`, `benchmarking.md`, and `monitoring.md` carry the
 same content `show_summary()` prints for those sections — only written when
-the corresponding phase was active. `execution.md` additionally holds any
+the corresponding phase was active. `benchmarking.md` additionally holds any
 secondary (co-running) benchmark's section (e.g. a TPC-H refresh stream, or a
 YCSB benchmark co-running with TPC-H — see `bexhoma/experiments/README.md` §9 for how
 that dispatch works) and, for DBMSBenchmarker-family benchmarks, per-query
@@ -117,14 +117,20 @@ title, category (`type`), and aggregation kind (`metric`: `counter` → delta,
 `ratio` → max, other → mean).
 
 **Component-key naming convention**: `component` is an internal routing key
-(e.g. `stream` for the SUT during the benchmarking/execution phase, `loader`
+(e.g. `benchmarking` for the SUT during the benchmarking phase, `loader`
 for the loading-phase loader pods, `datagenerator`, `benchmarker`, ...) — not
 self-explanatory on its own, and not the same string as the curated section
-titles used elsewhere in `monitoring.md` (`"Execution phase: SUT deployment"`,
-etc.). So every catalog row also carries a `component_title` column with that
-matching human-readable title, and every per-metric subsection heading is
+titles used elsewhere in `monitoring.md` (`"Benchmarking phase: SUT deployment"`,
+etc.). `loading`/`benchmarking`/`loader`/`benchmarker`/`datagenerator` are a
+fixed vocabulary owned by the vendored `dbmsbenchmarker` dependency's own
+`monitor.py`/`evaluator.py` (which read/write these exact filenames
+independently of bexhoma) — not bexhoma's naming choice to change freely,
+which is exactly why `component_title` exists as a separate, renamable
+human-readable layer instead of the raw key itself. So every catalog row also
+carries a `component_title` column with that matching human-readable title,
+and every per-metric subsection heading is
 `` {metric title} (`{metric_key}`, {component} — {component_title}) `` — e.g.
-"CPU Throttle (`total_cpu_throttled`, stream — Execution phase: SUT
+"CPU Throttle (`total_cpu_throttled`, benchmarking — Benchmarking phase: SUT
 deployment)". A metric for a specific phase/component is therefore findable
 by searching either the raw key or its title, without needing to trace the
 key back through source code.
@@ -195,7 +201,7 @@ kind of benchmark produced it.
 ```bash
 python tpch.py run -dbms PostgreSQL -sf 1 -ne 1 -rp
 # ...
-# writes /path/to/results/<code>/report/{index,workflow,execution,monitoring,connections}.md
+# writes /path/to/results/<code>/report/{index,workflow,benchmarking,monitoring,connections}.md
 
 bexhoma summary -e <code> -rp
 # regenerates the report from local files only, no cluster connection needed

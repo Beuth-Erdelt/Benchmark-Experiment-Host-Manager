@@ -268,7 +268,7 @@ class Benchmark:
 
     def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> tuple[list[Section], dict]:
         """
-        Build benchmark-specific sections shown after ``### Execution → Per Phase``.
+        Build benchmark-specific sections shown after ``### Benchmarking → Per Phase``.
 
         Default is a no-op returning no sections and an empty context dict.
         Override to insert additional output (e.g. query latency, SQL
@@ -284,9 +284,9 @@ class Benchmark:
         """
         return [], {}
 
-    def _build_execution_section(self, df_connections: pd.DataFrame, is_multitenant: bool) -> tuple[Section, pd.DataFrame]:
+    def _build_benchmarking_section(self, df_connections: pd.DataFrame, is_multitenant: bool) -> tuple[Section, pd.DataFrame]:
         """
-        Build the ``### Execution`` section (Per Connection, Per Phase, Reset).
+        Build the ``### Benchmarking`` section (Per Connection, Per Phase, Reset).
 
         Not a hook — this block was never overridable, so it is built directly
         by :meth:`show_summary` rather than dispatched through a subclassable
@@ -294,7 +294,7 @@ class Benchmark:
 
         :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
         :param is_multitenant: Whether the experiment runs in multitenant mode.
-        :return: Tuple of the ``Execution`` section and the per-phase DataFrame
+        :return: Tuple of the ``Benchmarking`` section and the per-phase DataFrame
                  (needed downstream by ``evaluator.record_tests()``).
         :rtype: tuple[Section, pandas.DataFrame]
         """
@@ -311,7 +311,7 @@ class Benchmark:
         reset_section = self._build_reset_section(df_connections)
         if reset_section is not None:
             children.append(reset_section)
-        return Section(heading="Execution", level=3, blank_after_heading=False, children=children), df_aggregated_reduced
+        return Section(heading="Benchmarking", level=3, blank_after_heading=False, children=children), df_aggregated_reduced
 
     def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
         """
@@ -342,7 +342,7 @@ class Benchmark:
 
         Template method: the shared header and monitoring sections are printed
         directly by ``experiment.show_summary_header()``/
-        ``experiment.show_summary_monitoring()``; workflow, loading, execution,
+        ``experiment.show_summary_monitoring()``; workflow, loading, benchmarking,
         and extra sections are built as a :class:`Section` tree (loading via
         :meth:`_show_loading_sections`, extra sections via
         :meth:`_show_extra_sections`) and printed via :func:`render_stdout` so
@@ -369,14 +369,14 @@ class Benchmark:
         is_multitenant = experiment.num_tenants > 0
         loading_section, df_loading = self._show_loading_sections(experiment, is_multitenant)
         df_aggregated_reduced = pd.DataFrame()
-        execution_section: Section | None = None
+        benchmarking_section: Section | None = None
         key_metrics_section: Section | None = None
         if experiment.benchmarking_is_active():
-            execution_section, df_aggregated_reduced = self._build_execution_section(df_connections, is_multitenant)
+            benchmarking_section, df_aggregated_reduced = self._build_benchmarking_section(df_connections, is_multitenant)
             key_metrics_section = self._build_key_metrics_section(df_aggregated_reduced)
         extra_sections, extra_context = self._show_extra_sections(experiment, df_aggregated_reduced)
         document: list[Section] = [
-            section for section in (workflow_section, loading_section, execution_section)
+            section for section in (workflow_section, loading_section, benchmarking_section)
             if section is not None
         ] + extra_sections
         render_stdout(document)
@@ -393,7 +393,7 @@ class Benchmark:
         )
         if write_report:
             print("{:30s}: cleaning up per-connection artefacts".format("Experiment"))
-            component_types = ['loading', 'stream', 'loader', 'benchmarker'] + list(experiment.workload['monitoring_components'])
+            component_types = ['loading', 'benchmarking', 'loader', 'benchmarker'] + list(experiment.workload['monitoring_components'])
             for component_type in component_types:
                 self.evaluator.transform_monitoring_results(component=component_type)
             self.evaluator.cleanup_connection_subfolders()
@@ -404,7 +404,7 @@ class Benchmark:
                 benchmark=self,
                 workflow_section=workflow_section,
                 loading_section=loading_section,
-                execution_section=execution_section,
+                benchmarking_section=benchmarking_section,
                 extra_sections=extra_sections,
                 key_metrics_section=key_metrics_section,
                 connections_sorted=connections_sorted,
@@ -416,13 +416,13 @@ class Benchmark:
 
     def show_summary_section(self, experiment) -> Section | None:
         """
-        Build this benchmark's own execution results as a section inside a
+        Build this benchmark's own benchmarking results as a section inside a
         multi-benchmark summary.
 
         Called for every registered benchmark after the primary benchmark's
         :meth:`show_summary` has already printed the shared experiment header,
         workflow, loading section, monitoring, and test summary — none of that
-        is repeated here. Mirrors the ``### Execution`` part of
+        is repeated here. Mirrors the ``### Benchmarking`` part of
         :meth:`show_summary` (Per Connection, Per Phase, Reset), scoped to this
         benchmark's own results via ``self.evaluator`` (constructed with this
         benchmark's own ``benchmark_run`` in :meth:`create_evaluator`, so the

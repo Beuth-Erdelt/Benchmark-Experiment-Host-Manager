@@ -92,8 +92,8 @@ collect.get_metrics_metadata()
 collect.get_monitored_components()
 
 # Monitoring aggregates and time series
-collect.get_monitoring_aggregated_per_phase("stream")
-collect.get_monitoring_timeseries_per_phase(codes[0], metric="cpu_throttled_seconds_total", component="stream")
+collect.get_monitoring_aggregated_per_phase("benchmarking")
+collect.get_monitoring_timeseries_per_phase(codes[0], metric="cpu_throttled_seconds_total", component="benchmarking")
 collect.get_monitoring_timeseries_all(metric="cpu_throttled_seconds_total")
 
 # Benchmarking performance

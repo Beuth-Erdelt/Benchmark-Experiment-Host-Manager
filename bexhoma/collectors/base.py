@@ -135,7 +135,7 @@ class CollectorBase:
             print(evaluation.code, "is empty")
         return df
 
-    def get_performance_aggregated_per_phase(self, type="stream"):
+    def get_performance_aggregated_per_phase(self, type="benchmarking"):
         """
         Combines aggregated performance results per phase from all experiment codes.
 
@@ -170,7 +170,7 @@ class CollectorBase:
             df_performance = pd.concat([df_performance, df_aggregated])
         return df_performance
 
-    def get_performance_aggregated_per_job(self, type="stream"):
+    def get_performance_aggregated_per_job(self, type="benchmarking"):
         """
         Combines aggregated performance results per job from all experiment codes.
 
@@ -208,7 +208,7 @@ class CollectorBase:
             df_performance = pd.concat([df_performance, df_aggregated])
         return df_performance
 
-    def get_performance_aggregated_per_phase_multitenant(self, type="stream"):
+    def get_performance_aggregated_per_phase_multitenant(self, type="benchmarking"):
         """
         Combines aggregated multi-tenant performance results from all experiment codes into one DataFrame.
 
@@ -251,7 +251,7 @@ class CollectorBase:
             df_performance = pd.concat([df_performance, df_aggregated])
         return df_performance
 
-    def get_monitoring_aggregated_per_phase_multitenant(self, type="stream"):
+    def get_monitoring_aggregated_per_phase_multitenant(self, type="benchmarking"):
         """
         Combines aggregated multi-tenant monitoring metrics from all experiment codes into one DataFrame.
 
@@ -385,7 +385,7 @@ class CollectorBase:
                 df['job'] = code_str + '-' + df['job'].astype(str)
             return df
 
-    def show_summary_monitoring_table(self, evaluation, type='stream'):
+    def show_summary_monitoring_table(self, evaluation, type='benchmarking'):
         """
         Collects all active monitoring metrics for a given component without aggregation.
 
@@ -396,7 +396,7 @@ class CollectorBase:
 
         :param evaluation: Evaluator instance providing the monitoring data.
         :type evaluation: object
-        :param type: Component name to retrieve metrics for (e.g. ``'stream'``, ``'database'``).
+        :param type: Component name to retrieve metrics for (e.g. ``'benchmarking'``, ``'database'``).
         :type type: str
         :return: Summary DataFrame of monitoring metrics rounded to two decimal places,
                  or an empty DataFrame when monitoring is disabled.
@@ -423,7 +423,7 @@ class CollectorBase:
             results.append(df_col)
         return pd.concat(results, axis=1).round(2)
 
-    def get_monitoring_timeseries_single(self, code, metric='pg_locks_count', component="stream"):
+    def get_monitoring_timeseries_single(self, code, metric='pg_locks_count', component="benchmarking"):
         """
         Returns a single monitoring metric as a wide-format time-series DataFrame.
 
@@ -433,7 +433,7 @@ class CollectorBase:
         :type code: str
         :param metric: Monitoring metric name (default ``'pg_locks_count'``).
         :type metric: str
-        :param component: Component name to filter metrics (default ``'stream'``).
+        :param component: Component name to filter metrics (default ``'benchmarking'``).
         :type component: str
         :return: Wide-format time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame
@@ -445,7 +445,7 @@ class CollectorBase:
         df.index = code + '-' + df.index.astype(str)
         return df.T
 
-    def get_monitoring_aggregated_per_job(self, type="stream"):
+    def get_monitoring_aggregated_per_job(self, type="benchmarking"):
         """
         Combines aggregated monitoring metrics from all experiment codes into one DataFrame.
 
@@ -457,7 +457,7 @@ class CollectorBase:
         (``<code>-<configuration>-<experiment_run>-<client>-<benchmark_run>``), producing
         one row per benchmark job.
 
-        :param type: Component type to filter monitoring metrics (default ``'stream'``).
+        :param type: Component type to filter monitoring metrics (default ``'benchmarking'``).
         :type type: str
         :return: Combined DataFrame of aggregated monitoring metrics, one row per job,
                  or an empty DataFrame when monitoring is disabled.
@@ -475,7 +475,7 @@ class CollectorBase:
         df_monitoring_all.drop('connection', axis=1, inplace=True, errors='ignore')
         return df_monitoring_all
 
-    def get_monitoring_aggregated_per_phase(self, type="stream"):
+    def get_monitoring_aggregated_per_phase(self, type="benchmarking"):
         """
         Combines aggregated monitoring metrics per phase from all experiment codes.
 
@@ -489,7 +489,7 @@ class CollectorBase:
         The result index is the code-prefixed phase identifier
         (``<code>-<configuration>-<experiment_run>-<client>``).
 
-        :param type: Component type to filter monitoring metrics (default ``'stream'``).
+        :param type: Component type to filter monitoring metrics (default ``'benchmarking'``).
         :type type: str
         :return: Combined DataFrame of aggregated monitoring metrics, one row per phase,
                  or an empty DataFrame when monitoring is disabled.
@@ -523,7 +523,7 @@ class CollectorBase:
         df_phase['phase'] = df_phase.index
         return df_phase
 
-    def get_monitoring_timeseries_per_phase(self, code, metric='pg_locks_count', component="stream"):
+    def get_monitoring_timeseries_per_phase(self, code, metric='pg_locks_count', component="benchmarking"):
         """
         Returns a single monitoring metric as a transposed time-series DataFrame.
 
@@ -534,7 +534,7 @@ class CollectorBase:
         :type code: str
         :param metric: Monitoring metric name (default ``'pg_locks_count'``).
         :type metric: str
-        :param component: Component name to filter metrics (default ``'stream'``).
+        :param component: Component name to filter metrics (default ``'benchmarking'``).
         :type component: str
         :return: Transposed time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame
@@ -681,7 +681,7 @@ class CollectorBase:
             print("add_metadata: combine failed!")
             return pd.DataFrame()
 
-    def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="stream"):
+    def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="benchmarking"):
         """
         Collects long-format time-series data for a given metric across all experiment codes.
 
@@ -692,7 +692,7 @@ class CollectorBase:
 
         :param metric: Monitoring metric name (default ``'pg_locks_count'``).
         :type metric: str
-        :param component: Component name used as a label column (default ``'stream'``).
+        :param component: Component name used as a label column (default ``'benchmarking'``).
         :type component: str
         :return: Grouped long-format time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame
@@ -725,7 +725,7 @@ class CollectorBase:
         )
         return df_sum
 
-    def get_monitoring_timeseries_all_multitenant(self, metric='pg_locks_count', component="stream"):
+    def get_monitoring_timeseries_all_multitenant(self, metric='pg_locks_count', component="benchmarking"):
         """
         Collects long-format multi-tenant time-series data for a given metric across all experiment codes.
 
@@ -739,7 +739,7 @@ class CollectorBase:
 
         :param metric: Monitoring metric name (default ``'pg_locks_count'``).
         :type metric: str
-        :param component: Component name used as a label column (default ``'stream'``).
+        :param component: Component name used as a label column (default ``'benchmarking'``).
         :type component: str
         :return: Grouped long-format time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame

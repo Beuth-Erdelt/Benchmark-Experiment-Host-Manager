@@ -18,7 +18,7 @@ Output contract
 2. **Tiered file groups, with read-when conditions.**
 
    - Tier 1 — Answers: ``index.md``. Read always, first.
-   - Tier 2 — Evidence: ``workflow.md``, ``loading.md``, ``execution.md``,
+   - Tier 2 — Evidence: ``workflow.md``, ``loading.md``, ``benchmarking.md``,
      ``monitoring.md``, ``connections.md`` (each only written when the
      underlying phase/data is actually active). Read when a metric value is
      needed, or a Tests-table failure needs tracing to its connection/phase.
@@ -74,7 +74,7 @@ from bexhoma.benchmarks.base import Section
 __all__ = ["write_markdown_report"]
 
 #: Bump whenever the frontmatter fields, tiers, or file layout change.
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.1.0"
 
 _NAMING_CONVENTIONS_MD = """### Naming Conventions
 
@@ -126,10 +126,10 @@ quoting any number, not after:
 
 | Failed test | Scopes / invalidates | Check |
 |---|---|---|
-| `SQL errors` | Per-query metrics for the specific queries that errored | `execution.md`'s Errors subsection |
-| `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `execution.md`'s Warnings subsection |
+| `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
+| `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
 | `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
-| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `execution.md`'s Per Phase table |
+| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `benchmarking.md`'s Per Phase table |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
 
 A **skipped** test (e.g. monitoring skipped because data was pre-existing, or
@@ -376,7 +376,7 @@ def _build_monitoring_sections(
     docstring's "Scope extension" rationale.
 
     The Full Metric Catalog's ``component`` values are internal routing keys
-    (e.g. ``stream`` for "Execution phase: SUT deployment", ``loader`` for
+    (e.g. ``benchmarking`` for "Benchmarking phase: SUT deployment", ``loader`` for
     "Loading phase: component loader") that are not self-explanatory on their
     own — so every catalog row and every per-metric subsection heading also
     carries the matching human-readable ``component_title`` from
@@ -563,11 +563,11 @@ def _build_health_summary_lines(total_restarts: int, extra_context: dict) -> lis
         if num_errors == 0:
             lines.append("- SQL errors: none")
         else:
-            lines.append(f"- SQL errors: {num_errors} — see [execution.md](execution.md)'s Errors subsection for the affected queries")
+            lines.append(f"- SQL errors: {num_errors} — see [benchmarking.md](benchmarking.md)'s Errors subsection for the affected queries")
         if num_warnings == 0:
             lines.append("- SQL warnings: none")
         else:
-            lines.append(f"- SQL warnings: {num_warnings} — see [execution.md](execution.md)'s Warnings subsection for the affected queries")
+            lines.append(f"- SQL warnings: {num_warnings} — see [benchmarking.md](benchmarking.md)'s Warnings subsection for the affected queries")
     return lines
 
 
@@ -659,7 +659,7 @@ def write_markdown_report(
     benchmark,
     workflow_section: Section | None,
     loading_section: Section | None,
-    execution_section: Section | None,
+    benchmarking_section: Section | None,
     extra_sections: list[Section],
     key_metrics_section: Section | None,
     connections_sorted: list[dict],
@@ -686,7 +686,7 @@ def write_markdown_report(
         benchmarking was not active.
     :param loading_section: The ``Loading`` section, or ``None`` when loading
         was not active or produced no data.
-    :param execution_section: The ``Execution`` section, or ``None`` when
+    :param benchmarking_section: The ``Benchmarking`` section, or ``None`` when
         benchmarking was not active.
     :param extra_sections: Secondary-benchmark and Latency/Errors/Warnings
         sections from ``_show_extra_sections()``.
@@ -764,9 +764,9 @@ def write_markdown_report(
         )
         written_sections.append({"title": "Loading", "file": "loading.md", "description": "Per-connection and per-run loading throughput/timing."})
 
-    if execution_section is not None or extra_sections:
-        execution_all = ([execution_section] if execution_section is not None else []) + extra_sections
-        execution_links = _glob_provenance(
+    if benchmarking_section is not None or extra_sections:
+        benchmarking_all = ([benchmarking_section] if benchmarking_section is not None else []) + extra_sections
+        benchmarking_links = _glob_provenance(
             result_dir, report_dir,
             ["bexhoma-benchmarker-*.log", "bexhoma-benchmarker.*.all.df.pickle"],
             "Raw per-pod benchmarker logs and the cached aggregated DataFrame they "
@@ -776,18 +776,18 @@ def write_markdown_report(
         if 'num_errors' in extra_context:
             # queries.config only carries literal SQL text for DBMSBenchmarker-family
             # benchmarks (TPC-H/TPC-DS); other tools store their workload elsewhere.
-            execution_links += _glob_provenance(
+            benchmarking_links += _glob_provenance(
                 result_dir, report_dir, ["queries.config"],
                 "The DBMSBenchmarker query config actually run, including the literal "
                 "SQL text of every query behind the titles in the Latency/Errors/"
                 "Warnings tables above — follow this for the explicit queries.",
             )
         _write_tier2_file(
-            report_dir, "execution.md", "execution",
-            "Benchmark execution results, including any secondary (co-running) benchmarks.",
-            execution_all, connections_index, execution_links,
+            report_dir, "benchmarking.md", "benchmarking",
+            "Benchmarking phase results, including any secondary (co-running) benchmarks.",
+            benchmarking_all, connections_index, benchmarking_links,
         )
-        written_sections.append({"title": "Execution", "file": "execution.md", "description": "Per-connection/per-phase execution results, secondary-benchmark sections, latency, errors, warnings."})
+        written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, secondary-benchmark sections, latency, errors, warnings."})
 
     monitoring_sections, monitoring_provenance = _build_monitoring_sections(
         experiment, benchmark.evaluator, connections_sorted, monitoring_applications, result_dir, report_dir,
