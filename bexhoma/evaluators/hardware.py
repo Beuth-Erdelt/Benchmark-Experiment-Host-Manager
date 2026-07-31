@@ -177,7 +177,7 @@ class HardwareEvaluator(LogEvaluator):
             # evaluators (e.g. evaluators/benchbase.py) already parse as 'duration'
             duration_match = re.findall(r'BEXHOMA_DURATION:(\d+)', stdout)
             duration = int(duration_match[0]) if duration_match else 0
-            phase = configuration_name + '-' + experiment_run + '-' + client
+            phase = (configuration_name + '-' + experiment_run + '-' + client).lower()
             job = connection_name
             connection = connection_name + '-' + child
             row = {
@@ -316,7 +316,13 @@ class HardwareEvaluator(LogEvaluator):
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
             dict_grp['phase'] = grp['phase'].iloc[0]
             dict_grp['job'] = grp['job'].iloc[0]
-            # constant within one round (one phase group), so take the first pod's value
+            # constant within one round (one phase group), so take the first pod's value.
+            # hardware_type in particular lets record_tests() tell rounds of different
+            # tools apart when one experiment mixes them (e.g. a per-node hardware-baseline
+            # sweep running sysbench then fio under the same configuration) instead of
+            # every round being the single tool -xht fixes for a whole experiment.
+            if 'hardware_type' in grp.columns:
+                dict_grp['hardware_type'] = grp['hardware_type'].iloc[0]
             for fio_param in ['hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
                                'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
                                'hardware_fio_rwmixread']:
@@ -376,7 +382,7 @@ class HardwareEvaluator(LogEvaluator):
                 df_plot_filtered[col] = df_plot.loc[:, col]
         df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
         # index (connection, e.g. "Hardware-1-1-2-1-1") already encodes
-        # configuration-experimentRun-client-benchmarkRun-child in that
+        # configuration-experiment_run-client-benchmark_run-child in that
         # positional order, so natural-sorting it (like get_summary_benchmark_per_phase
         # does for 'phase') orders by experiment_run/client/child together,
         # instead of leaving same-(experiment_run, client) rows in whatever
@@ -420,7 +426,7 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_netperf_protocol', 'hardware_netperf_transaction_rate',
                 'hardware_netperf_latency_avg_ms', 'hardware_netperf_latency_p50_ms',
                 'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
-                'hardware_netperf_instances_failed', 'errors',
+                'hardware_netperf_instances_failed', 'errors', 'hardware_type',
             ]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -470,7 +476,7 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_netperf_protocol', 'hardware_netperf_transaction_rate',
                 'hardware_netperf_latency_avg_ms', 'hardware_netperf_latency_p50_ms',
                 'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
-                'hardware_netperf_instances_failed', 'errors',
+                'hardware_netperf_instances_failed', 'errors', 'hardware_type',
             ]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -511,38 +517,64 @@ class HardwareEvaluator(LogEvaluator):
                 "Workflow as planned"
             )
             hardware_type = getattr(experiment.args, 'hardware_type', 'fio')
-            has_iops_columns = ('hardware_fio_read_iops' in df_reduced.columns
-                                 and 'hardware_fio_write_iops' in df_reduced.columns)
-            if hardware_type == 'fio' and not df_reduced.empty and has_iops_columns:
-                both_zero = ((df_reduced['hardware_fio_read_iops'] == 0)
-                             & (df_reduced['hardware_fio_write_iops'] == 0))
+            df_fio = self._rows_of_hardware_type(df_reduced, 'fio', hardware_type)
+            has_iops_columns = ('hardware_fio_read_iops' in df_fio.columns
+                                 and 'hardware_fio_write_iops' in df_fio.columns)
+            if not df_fio.empty and has_iops_columns:
+                both_zero = ((df_fio['hardware_fio_read_iops'] == 0)
+                             & (df_fio['hardware_fio_write_iops'] == 0))
                 passed = not both_zero.any()
                 experiment._record_test(
                     passed,
                     "Execution Phase: every round has non-zero read or write IOPS" if passed
                     else "Execution Phase: at least one round has 0 IOPS for both read and write"
                 )
-            has_sysbench_columns = 'hardware_sysbench_cpu_events_per_sec' in df_reduced.columns
-            if hardware_type == 'sysbench' and not df_reduced.empty and has_sysbench_columns:
-                passed = not (df_reduced['hardware_sysbench_cpu_events_per_sec'] == 0).any()
+            df_sysbench = self._rows_of_hardware_type(df_reduced, 'sysbench', hardware_type)
+            has_sysbench_columns = 'hardware_sysbench_cpu_events_per_sec' in df_sysbench.columns
+            if not df_sysbench.empty and has_sysbench_columns:
+                passed = not (df_sysbench['hardware_sysbench_cpu_events_per_sec'] == 0).any()
                 experiment._record_test(
                     passed,
                     "Execution Phase: every round has non-zero CPU events/sec" if passed
                     else "Execution Phase: at least one round has 0 CPU events/sec"
                 )
-            has_sockperf_columns = 'hardware_sockperf_msg_rate_per_sec' in df_reduced.columns
-            if hardware_type == 'sockperf' and not df_reduced.empty and has_sockperf_columns:
-                passed = not (df_reduced['hardware_sockperf_msg_rate_per_sec'] == 0).any()
+            df_sockperf = self._rows_of_hardware_type(df_reduced, 'sockperf', hardware_type)
+            has_sockperf_columns = 'hardware_sockperf_msg_rate_per_sec' in df_sockperf.columns
+            if not df_sockperf.empty and has_sockperf_columns:
+                passed = not (df_sockperf['hardware_sockperf_msg_rate_per_sec'] == 0).any()
                 experiment._record_test(
                     passed,
                     "Execution Phase: every round has non-zero sockperf message rate" if passed
                     else "Execution Phase: at least one round has 0 sockperf message rate"
                 )
-            has_netperf_columns = 'hardware_netperf_transaction_rate' in df_reduced.columns
-            if hardware_type == 'netperf' and not df_reduced.empty and has_netperf_columns:
-                passed = not (df_reduced['hardware_netperf_transaction_rate'] == 0).any()
+            df_netperf = self._rows_of_hardware_type(df_reduced, 'netperf', hardware_type)
+            has_netperf_columns = 'hardware_netperf_transaction_rate' in df_netperf.columns
+            if not df_netperf.empty and has_netperf_columns:
+                passed = not (df_netperf['hardware_netperf_transaction_rate'] == 0).any()
                 experiment._record_test(
                     passed,
                     "Execution Phase: every round has non-zero netperf transaction rate" if passed
                     else "Execution Phase: at least one round has 0 netperf transaction rate"
                 )
+
+    @staticmethod
+    def _rows_of_hardware_type(df_reduced: pd.DataFrame, hardware_type: str, experiment_wide_type: str) -> pd.DataFrame:
+        """Select the rows of ``df_reduced`` that actually measured ``hardware_type``.
+
+        Prefers the per-row ``hardware_type`` column (present once an
+        experiment mixes tools within a single run, e.g. a per-node
+        hardware-baseline sweep running sysbench then fio under the same
+        configuration -- see ``bexhoma.hardware_baseline``). Falls back to
+        the experiment-wide ``-xht`` value for older cached results that
+        predate that column, preserving the original single-type-per-experiment
+        behaviour exactly (either every row matches, or none do).
+
+        :param df_reduced: Per-phase execution DataFrame, as passed to :meth:`record_tests`.
+        :param hardware_type: Tool to select rows for, e.g. ``'fio'``.
+        :param experiment_wide_type: ``experiment.args.hardware_type`` fallback.
+        :return: The matching subset of ``df_reduced`` (possibly empty).
+        :rtype: pandas.DataFrame
+        """
+        if 'hardware_type' in df_reduced.columns:
+            return df_reduced[df_reduced['hardware_type'] == hardware_type]
+        return df_reduced if experiment_wide_type == hardware_type else df_reduced.iloc[0:0]
