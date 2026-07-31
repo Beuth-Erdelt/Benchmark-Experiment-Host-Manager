@@ -63,6 +63,7 @@ __all__ = [
     "build_environment",
     "apply_hardware_baseline",
     "write_environment_yml",
+    "main",
 ]
 
 #: Node labels curated as benchmarking-relevant; every other label Kubernetes
@@ -594,7 +595,17 @@ def write_environment_yml(environment: dict[str, Any], path: str) -> None:
         yaml.safe_dump(environment, environment_file, sort_keys=False)
 
 
-if __name__ == "__main__":
+def main(argv: Optional[list[str]] = None) -> None:
+    """CLI entry point — parses args, builds ``environment.yml``, writes it.
+
+    Invoked both as ``python -m bexhoma.environment [args]`` and, in-process,
+    as the ``bexhoma environment create`` subcommand (see
+    ``bexhoma/scripts/cli.py``).
+
+    :param argv: Argument list to parse in place of ``sys.argv[1:]`` — used
+        by the ``bexhoma environment create`` dispatch; ``None`` parses the
+        real process arguments.
+    """
     import argparse
 
     import urllib3
@@ -609,7 +620,7 @@ if __name__ == "__main__":
     # library, where silently muting warnings would be a surprising side effect.
     urllib3.disable_warnings()
 
-    cli_parser = argparse.ArgumentParser(description=__doc__)
+    cli_parser = argparse.ArgumentParser(prog="bexhoma environment create", description=__doc__)
     cli_parser.add_argument("-cx", "--context", help="kubectl context to use (default: current context)", default=None)
     cli_parser.add_argument("-o", "--output", help="output path for environment.yml", default="dev/catalog/environment.yml")
     cli_parser.add_argument(
@@ -631,7 +642,7 @@ if __name__ == "__main__":
         "-xhwt", "--xhardware-baseline-timeout",
         help="wall-clock cap in minutes for the whole baseline sweep",
         type=int, default=10, dest="hardware_baseline_timeout")
-    cli_args = cli_parser.parse_args()
+    cli_args = cli_parser.parse_args(argv)
 
     cli_cluster = clusters.Kubernetes(context=cli_args.context)
     cli_environment = build_environment(cli_cluster)
@@ -644,3 +655,7 @@ if __name__ == "__main__":
         )
     write_environment_yml(cli_environment, cli_args.output)
     print(f"wrote {cli_args.output}")
+
+
+if __name__ == "__main__":
+    main()
