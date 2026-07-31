@@ -45,11 +45,23 @@ __all__ = [
 #: pad an odd node count to even; never leaks into a returned schedule.
 _BYE = "__bye__"
 
-#: Round-index convention within a per-node ``add_benchmark_list()`` sequence:
-#: round 1 is always the sysbench CPU/RAM self-test, round 2 the fio
-#: container-space self-test, and network rounds (if any) start at round 3 --
-#: used by :func:`_collect_results` to tell a real network round apart from a
+#: Round-index convention within a per-node ``add_benchmark_list()`` sequence,
+#: as it appears in parsed results' ``client`` column. ``BEXHOMA_CLIENT`` is
+#: written by ``ManifestBuilder.create_manifest_job()`` as ``cfg.client - 1``
+#: (``bexhoma/configurations/manifest.py``) -- but ``work_benchmark_list()``
+#: (``experiments/base.py``, the experiment-dict submission branch) already
+#: increments ``config.client`` *before* calling ``run_pod()``/
+#: ``create_manifest_job()`` for that same round, so by the time the env var
+#: is computed, ``cfg.client`` already reflects "next round", not "this one".
+#: Net effect, confirmed against a real run's logs: the first round a config
+#: runs (the sysbench CPU/RAM self-test) is logged as ``client == 1``, the
+#: second (fio) as ``client == 2``, and network rounds (if any) start at
+#: ``client == 3`` -- i.e. this *is* 1-indexed, matching
+#: ``add_benchmark_list()``'s own round numbering. Used by
+#: :func:`_collect_results` to tell a real network round apart from a
 #: same-``hardware_type`` self-test/bye filler round at a later index.
+_CPU_BASELINE_ROUND = 1
+_FIO_BASELINE_ROUND = 2
 _FIRST_NETWORK_ROUND = 3
 
 _DEFAULT_HARDWARE_SIZE = "256M"
@@ -356,14 +368,23 @@ def _collect_results(
         if node is None:
             continue
         client = int(row["client"])
-        hardware_type = row.get("hardware_type", "")
+        # benchmarking_aggregate_by_parallel_pods() does not carry the
+        # hardware_type column through (it's not in its hardcoded per-column
+        # aggregation/copy rules) -- round order is fixed by
+        # run_hardware_baseline() itself, so client alone already identifies
+        # the round; hardware_type is reconstructed here purely for the
+        # human-readable value stored in the result, not used to decide
+        # anything.
         row_dict = row.to_dict()
-        if hardware_type == "sysbench" and client == 1:
+        if client == _CPU_BASELINE_ROUND:
+            row_dict["hardware_type"] = "sysbench"
             result.per_node.setdefault(node, {})["cpu_mem"] = row_dict
-        elif hardware_type == "fio" and client == 2:
+        elif client == _FIO_BASELINE_ROUND:
+            row_dict["hardware_type"] = "fio"
             result.per_node.setdefault(node, {})["fio"] = row_dict
-        elif hardware_type == "sockperf" and client >= _FIRST_NETWORK_ROUND:
+        elif client >= _FIRST_NETWORK_ROUND:
             targets = network_targets.get(node, [])
             target_index = client - _FIRST_NETWORK_ROUND
             if 0 <= target_index < len(targets) and targets[target_index] is not None:
+                row_dict["hardware_type"] = "sockperf"
                 result.network_matrix[f"{node}->{targets[target_index]}"] = row_dict

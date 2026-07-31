@@ -12,6 +12,18 @@ Everything up to ``process()`` (cluster/config bootstrap, per-node pinning,
 per-round parameter/``BEXHOMA_HOST`` overrides, round counts) runs for real,
 without a live cluster or submitting any Kubernetes object.
 
+The ``_collect_results`` tests exercise result-parsing against a fake
+evaluator returning realistic ``client``-column values -- this is the class
+of test the setup-phase tests above do *not* cover, since they patch
+``process()`` to a no-op before any result ever gets parsed. That gap let a
+real bug through once already: ``client`` values here are 1-indexed (the
+first round a config runs -- the sysbench CPU/RAM self-test -- is logged as
+``client == 1``), confirmed against a real multi-node run's pickled results;
+see the comment on ``hardware_baseline._CPU_BASELINE_ROUND`` for why (a
+``cfg.client - 1`` write in ``ManifestBuilder.create_manifest_job()`` looks
+0-indexed in isolation, but ``work_benchmark_list()`` already increments
+``config.client`` before that write happens, cancelling it back out).
+
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -20,7 +32,10 @@ See LICENSE for details.
 import itertools
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest import mock
+
+import pandas as pd
 
 from bexhoma import hardware_baseline
 from bexhoma.experiments.hardware import HardwareExperiment
@@ -231,6 +246,120 @@ class RunHardwareBaselineSetupTest(unittest.TestCase):
     def test_invalid_topology_raises(self) -> None:
         with self.assertRaises(hardware_baseline.HardwareBaselineError):
             self._run(['n1'], network_topology='bogus')
+
+
+class _FakeHardwareEvaluator:
+    """Stands in for :class:`bexhoma.evaluators.hardware.HardwareEvaluator`,
+    returning a pre-built already-aggregated DataFrame directly instead of
+    reading log files off disk -- ``_collect_results`` only cares about the
+    evaluator's public shape (``get_df_benchmarking``/
+    ``benchmarking_set_datatypes``/``benchmarking_aggregate_by_parallel_pods``),
+    not how it got there."""
+
+    def __init__(self, df_aggregated: pd.DataFrame) -> None:
+        self._df_aggregated = df_aggregated
+
+    def get_df_benchmarking(self) -> pd.DataFrame:
+        return pd.DataFrame({'placeholder': [1]})  # only emptiness is checked; content is unused
+
+    def benchmarking_set_datatypes(self, df: pd.DataFrame) -> pd.DataFrame:
+        return df
+
+    def benchmarking_aggregate_by_parallel_pods(self, df: pd.DataFrame, columns=None) -> pd.DataFrame:
+        del df, columns
+        return self._df_aggregated
+
+
+def _fake_experiment(df_aggregated: pd.DataFrame) -> SimpleNamespace:
+    """Minimal experiment stand-in exposing only ``benchmarks[0].evaluator``,
+    the one attribute :func:`_collect_results` reads off ``experiment``."""
+    evaluator = _FakeHardwareEvaluator(df_aggregated)
+    return SimpleNamespace(benchmarks=[SimpleNamespace(evaluator=evaluator)])
+
+
+class CollectResultsTest(unittest.TestCase):
+    """Tests for :func:`bexhoma.hardware_baseline._collect_results`.
+
+    Exercises the ``client``-column round-index convention directly against
+    realistic (1-indexed -- see ``hardware_baseline._CPU_BASELINE_ROUND``'s
+    comment) values, matching what a real run's pickled results actually
+    contain (verified 2026-07-31 against a 16-node cluster run: every
+    completed round logged ``client == 1``, ``hardware_type == 'sysbench'``).
+    """
+
+    def _collect(self, df_aggregated: pd.DataFrame, configs_by_node: dict, network_targets: dict) -> hardware_baseline.HardwareBaselineResult:
+        result = hardware_baseline.HardwareBaselineResult(code='test-code')
+        hardware_baseline._collect_results(
+            cluster=None, experiment=_fake_experiment(df_aggregated),
+            configs_by_node=configs_by_node, network_targets=network_targets, result=result)
+        return result
+
+    def test_cpu_baseline_round_is_client_one(self) -> None:
+        df = pd.DataFrame([
+            {'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench', 'value': 111},
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        result = self._collect(df, configs_by_node, {'n1': []})
+        self.assertEqual(result.per_node['n1']['cpu_mem']['value'], 111)
+
+    def test_fio_baseline_round_is_client_two(self) -> None:
+        df = pd.DataFrame([
+            {'configuration': 'hw-n1', 'client': 2, 'hardware_type': 'fio', 'value': 222},
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        result = self._collect(df, configs_by_node, {'n1': []})
+        self.assertEqual(result.per_node['n1']['fio']['value'], 222)
+
+    def test_both_baseline_rounds_together(self) -> None:
+        df = pd.DataFrame([
+            {'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench', 'value': 111},
+            {'configuration': 'hw-n1', 'client': 2, 'hardware_type': 'fio', 'value': 222},
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        result = self._collect(df, configs_by_node, {'n1': []})
+        self.assertEqual(result.per_node['n1']['cpu_mem']['value'], 111)
+        self.assertEqual(result.per_node['n1']['fio']['value'], 222)
+
+    def test_network_round_starts_at_client_three_and_resolves_target_by_schedule(self) -> None:
+        df = pd.DataFrame([
+            {'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench', 'value': 1},
+            {'configuration': 'hw-n1', 'client': 2, 'hardware_type': 'fio', 'value': 2},
+            {'configuration': 'hw-n1', 'client': 3, 'hardware_type': 'sockperf', 'value': 3},
+        ])
+        configs_by_node = {
+            'n1': SimpleNamespace(configuration='hw-n1'),
+            'n2': SimpleNamespace(configuration='hw-n2'),
+        }
+        result = self._collect(df, configs_by_node, {'n1': ['n2'], 'n2': ['n1']})
+        self.assertEqual(result.network_matrix['n1->n2']['value'], 3)
+
+    def test_bye_round_within_network_schedule_is_not_recorded_as_a_pair(self) -> None:
+        """A self-test filler round (hardware_type sysbench, at a network-round
+        client index) must not be mistaken for the primary cpu_mem round nor
+        turned into a network_matrix entry."""
+        df = pd.DataFrame([
+            {'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench', 'value': 1},
+            {'configuration': 'hw-n1', 'client': 2, 'hardware_type': 'fio', 'value': 2},
+            {'configuration': 'hw-n1', 'client': 3, 'hardware_type': 'sysbench', 'value': 999},
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        # network_targets[node][0] is None: this node's only network round was a bye
+        result = self._collect(df, configs_by_node, {'n1': [None]})
+        self.assertEqual(result.per_node['n1']['cpu_mem']['value'], 1)
+        self.assertEqual(result.network_matrix, {})
+
+    def test_unrecognized_configuration_is_skipped_not_erroring(self) -> None:
+        df = pd.DataFrame([
+            {'configuration': 'not-one-of-ours', 'client': 1, 'hardware_type': 'sysbench', 'value': 1},
+        ])
+        result = self._collect(df, configs_by_node={}, network_targets={})
+        self.assertEqual(result.per_node, {})
+        self.assertEqual(result.network_matrix, {})
+
+    def test_empty_dataframe_leaves_result_empty(self) -> None:
+        result = self._collect(pd.DataFrame(), configs_by_node={}, network_targets={})
+        self.assertEqual(result.per_node, {})
+        self.assertEqual(result.network_matrix, {})
 
 
 if __name__ == '__main__':
