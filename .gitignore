@@ -30,3 +30,4 @@ logs_multitenant/*
 dev/catalog/environment.yml
 environment*.yml
 experiment*.yml
+.claude/*
