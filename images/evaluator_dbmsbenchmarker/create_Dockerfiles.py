@@ -1,5 +1,6 @@
 import subprocess
 import argparse
+import sys
 
 #versions = ['v0.12.1','v0.12.2','v0.12.3','v0.12.4','v0.12.5']
 #versions = ['v0.14.2','v0.14.1','v0.14.0','dev']
@@ -26,4 +27,6 @@ for version in versions:
 	with open(filename_versioned, 'w') as file:
 		file.write(dockerfile.format(version=version, DBMSBENCHMARKER_CONNECTION="{DBMSBENCHMARKER_CONNECTION}"))
 	#subprocess.call(['docker', 'build', '-f', filename_versioned, '--no-cache', '-t', 'bexhoma/evaluator_dbmsbenchmarker:'+args.image_tag, '.'])
-	subprocess.call(['docker', 'build', '-f', filename_versioned, '-t', 'bexhoma/evaluator_dbmsbenchmarker:'+args.image_tag, '.'])
+	returncode = subprocess.call(['docker', 'build', '-f', filename_versioned, '-t', 'bexhoma/evaluator_dbmsbenchmarker:'+args.image_tag, '.'])
+	if returncode != 0:
+		sys.exit(returncode)
