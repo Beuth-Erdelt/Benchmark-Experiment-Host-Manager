@@ -27,7 +27,7 @@ class Section:
     Hooks that used to ``print()`` their content directly now build and
     return a tree of :class:`Section` objects instead, so the two renderers
     can format the same underlying data independently (see
-    ``experiments/CLAUDE.md`` §9 for the full rationale).
+    ``bexhoma/experiments/README.md`` §9 for the full rationale).
 
     :param heading: Section title, without the leading ``#`` characters.
     :param level: Markdown heading depth (``3`` = ``###``, ``4`` = ``####``).

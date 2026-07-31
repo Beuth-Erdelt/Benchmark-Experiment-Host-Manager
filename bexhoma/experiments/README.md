@@ -1,4 +1,4 @@
-# bexhoma/experiments — development notes
+# bexhoma/experiments
 
 ---
 

@@ -9,7 +9,7 @@ See [../README.md](../README.md) for the shared TPC-H pipeline design and per-DB
 1. Pop child index from Redis queue
    `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>` (scoped by
    `EXPERIMENT_RUN` because loading is redone from scratch for every experiment_run — see
-   `bexhoma/CLAUDE.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
+   `bexhoma/README.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
    empty rather than defaulting to a fixed child index, since another pod may already own it.
 2. Write child index to `/tmp/tpch/BEXHOMA_CHILD` (loaders read this file).
 3. Multi-tenant handling: `schema` or `database` mode remaps `BEXHOMA_CHILD` and scales `BEXHOMA_NUM_PODS` per tenant; `container` mode logs but does not remap.

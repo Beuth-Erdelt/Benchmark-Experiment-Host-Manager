@@ -211,6 +211,6 @@ column an agent should treat as "the" headline number:
   `index.md`'s eleven sections, the Full Metric Catalog.
 - `bexhoma/report_writer.py` module docstring — the same output contract,
   embedded next to the code that implements it.
-- `bexhoma/experiments/CLAUDE.md` §9 — full `show_summary()` call graph,
+- `bexhoma/experiments/README.md` §9 — full `show_summary()` call graph,
   per-benchmark-type evaluator/column details, result-folder file naming for
   every benchmarker type (§7).

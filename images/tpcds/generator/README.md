@@ -9,7 +9,7 @@ See [../README.md](../README.md) for the shared TPC-DS pipeline design and diffe
 1. Pop child index from Redis queue
    `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>` (scoped by
    `EXPERIMENT_RUN` because loading is redone from scratch for every experiment_run — see
-   `bexhoma/CLAUDE.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
+   `bexhoma/README.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
    empty rather than defaulting to a fixed child index, since another pod may already own it.
 2. Write child index to `/tmp/tpcds/BEXHOMA_CHILD` (loaders read this file).
 3. If `BEXHOMA_SYNCH_GENERATE=1`: sync on `bexhoma-generator-podcount-<CONNECTION>-<EXPERIMENT>`.

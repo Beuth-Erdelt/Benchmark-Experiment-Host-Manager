@@ -37,7 +37,7 @@ bexhoma source tree.
   (issue #764) this complements.
 - `bexhoma/report_writer.py` — implementation; `SCHEMA_VERSION` source of
   truth.
-- `bexhoma/experiments/CLAUDE.md` — full `show_summary()` call graph,
+- `bexhoma/experiments/README.md` — full `show_summary()` call graph,
   per-benchmark-type detail.
 - `docs/AgentReport.md` — design rationale for the tiered report.
 - `contracts/contract_catalog.yml` — the input-side contract.

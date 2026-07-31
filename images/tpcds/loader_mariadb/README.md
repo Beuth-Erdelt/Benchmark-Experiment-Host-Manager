@@ -11,7 +11,7 @@ See [../README.md](../README.md) for the shared TPC-DS pipeline design.
 3. If `BEXHOMA_SYNCH_LOAD=1`: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
    then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
    initialized by Python; only meaningful when the SUT configuration has more than one parallel
-   loader entry — see `bexhoma/CLAUDE.md`).
+   loader entry — see `bexhoma/README.md`).
 4. Loop over `.dat` files; strip pod suffix from filename to get table name in multi-pod mode.
 5. If `TPCDS_TABLE` is set: only load that table.
 6. Execute `mysql LOAD DATA LOCAL INFILE` per table with the same column mapping as the MySQL loader.

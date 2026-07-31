@@ -1,4 +1,4 @@
-# bexhoma/collectors — development notes
+# bexhoma/collectors
 
 ## Purpose
 

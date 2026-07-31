@@ -13,11 +13,11 @@ Same as the benchmarker (`../benchmarker/README.md`) except:
 
 - Queue key is `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>` (scoped by
   `EXPERIMENT_RUN` because loading is redone from scratch for every experiment_run — see
-  `bexhoma/CLAUDE.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
+  `bexhoma/README.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
   empty rather than defaulting to a fixed child index, since another pod may already own it.
 - Counter key is `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`, followed by the round
   counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always initialized by
-  Python; only meaningful with more than one parallel loader entry — see `bexhoma/CLAUDE.md`).
+  Python; only meaningful with more than one parallel loader entry — see `bexhoma/README.md`).
 - Row partitioning is **per-pod** (`ROW_PART = YCSB_ROWS / BEXHOMA_NUM_PODS`,
   `ROW_START = ROW_PART × (BEXHOMA_CHILD − 1)`) so each pod loads a distinct
   slice of keys without overlap.

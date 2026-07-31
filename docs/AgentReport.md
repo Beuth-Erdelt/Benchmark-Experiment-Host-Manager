@@ -88,7 +88,7 @@ on every report); the rest vary per experiment:
 same content `show_summary()` prints for those sections — only written when
 the corresponding phase was active. `execution.md` additionally holds any
 secondary (co-running) benchmark's section (e.g. a TPC-H refresh stream, or a
-YCSB benchmark co-running with TPC-H — see `experiments/CLAUDE.md` §9 for how
+YCSB benchmark co-running with TPC-H — see `bexhoma/experiments/README.md` §9 for how
 that dispatch works) and, for DBMSBenchmarker-family benchmarks, per-query
 Latency/Errors/Warnings.
 
@@ -174,7 +174,7 @@ the same tree:
 No evaluator call or hook override is duplicated between the two — only
 rendering is. This lets the report's format evolve without constraining, or
 being constrained by, the terminal output, while every DataFrame is still
-fetched exactly once. See `bexhoma/experiments/CLAUDE.md` §9 for the full
+fetched exactly once. See `bexhoma/experiments/README.md` §9 for the full
 `show_summary()` call-graph this fits into.
 
 A fourth, report-only method follows the same pattern for benchmark-specific

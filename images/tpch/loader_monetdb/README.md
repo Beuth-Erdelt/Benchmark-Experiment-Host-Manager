@@ -12,7 +12,7 @@ See [../README.md](../README.md) for the shared TPC-H pipeline design.
 4. If `BEXHOMA_SYNCH_LOAD=1`: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
    then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
    initialized by Python, even for a single loader entry; only meaningful when the SUT
-   configuration has more than one parallel loader entry — see `bexhoma/CLAUDE.md`).
+   configuration has more than one parallel loader entry — see `bexhoma/README.md`).
 5. Loop over `.tbl` files; skip `nation` and `region` for pods > 1 in non-tenant mode.
 6. If `TPCH_TABLE` is set: only load that table.
 7. Execute `mclient COPY N RECORDS INTO ... FROM STDIN` per table; retry on worker thread errors.

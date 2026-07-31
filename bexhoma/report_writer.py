@@ -49,7 +49,7 @@ rather than a hand-typed ``../``; connection-name links in metric tables and
 ``connections.md``'s anchors both come from the same
 ``get_connections_of_experiment()`` call, so a link can never dangle.
 
-See ``bexhoma/experiments/CLAUDE.md`` §9 and ``docs/AgentReport.md`` for the
+See ``bexhoma/experiments/README.md`` §9 and ``docs/AgentReport.md`` for the
 full design rationale.
 
 Authors: Patrick K. Erdelt
