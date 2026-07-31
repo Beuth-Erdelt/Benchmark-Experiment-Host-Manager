@@ -2,6 +2,21 @@
 
 Loads pre-generated TPC-DS `.dat` files into MySQL. The active script (`loader.sh`) uses `mysql LOAD DATA LOCAL INFILE` with per-table `NULLIF` column mappings. The folder also contains `loader-parallel.sh`, which uses `mysqlsh util.import_table` for parallel loading — it is not the active `CMD`. Unlike the TPC-H MySQL loader, this loader does not override `BEXHOMA_DATABASE` with a volume variable.
 
+See [../README.md](../README.md) for the shared TPC-DS pipeline design.
+
+## Execution flow (`loader.sh`)
+
+1. Read `BEXHOMA_CHILD` from `/tmp/tpcds/BEXHOMA_CHILD`.
+2. Determine `destination_raw` path.
+3. If `BEXHOMA_SYNCH_LOAD=1`: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
+   then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
+   initialized by Python; only meaningful when the SUT configuration has more than one parallel
+   loader entry — see `bexhoma/CLAUDE.md`).
+4. Loop over `.dat` files; strip pod suffix from filename to get table name in multi-pod mode.
+5. If `TPCDS_TABLE` is set: only load that table.
+6. Execute `mysql LOAD DATA LOCAL INFILE` per table with column mapping via `NULLIF`.
+7. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+
 ## Environment variables
 
 ### Scaling and parallelism

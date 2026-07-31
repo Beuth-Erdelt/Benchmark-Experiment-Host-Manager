@@ -20,26 +20,44 @@ Contributions are welcome. Areas where help is most useful:
 
 ## Code style
 
-Bexhoma follows [PEP 8](https://peps.python.org/pep-0008/) and [PEP 257](https://peps.python.org/pep-0257/). The most important rules in practice:
+Bexhoma follows [PEP 8](https://peps.python.org/pep-0008/) and [PEP 257](https://peps.python.org/pep-0257/). These rules apply to all Python code in the repository. When cleaning up existing code: do not change logic or public names (classes, public methods, public attributes), verify that all references (imports, call sites, attribute accesses) still resolve correctly after the change, and check how similar things are already done elsewhere in the codebase before introducing a new pattern.
 
 **Naming**
 - `snake_case` for functions, methods, and variables; `PascalCase` for classes; `UPPER_CASE` for constants.
-- No single-letter local variables except trivial loop counters. Never use `l`, `O`, or `I`.
+- No single-letter names except `i`/`j` in simple index loops and `_` for discards. Never use `l`, `O`, or `I`.
+- No opaque abbreviations; `df_aggregated` is fine, `x` is not.
 - Do not shadow built-ins (`type`, `id`, `list`, `input`).
+- Propose clearer and consistent method names when existing names are unclear, inconsistent, or do not follow a unified convention across the codebase.
 
 **Formatting**
 - 4-space indentation, maximum 79-character lines.
 - Two blank lines between top-level definitions; one blank line between methods.
 
 **Idioms**
-- `if x is None` / `if x is not None` — not `== None`.
+- `if x is None` / `if x is not None` — not `== None`, never `if not x is None`.
 - `with open(...) as f:` — not bare `open()/close()`.
 - `dict.get(key, default)` instead of `if key in dict` guard patterns.
 - Prefer early returns over deeply nested `if` blocks.
+- Remove unused imports.
+- No always-true guards (`if True:`); flatten the body.
+- Use f-strings consistently; do not mix with `%` or `.format()`.
+- Delete commented-out code that is not documentation; when removing a
+  commented-out code block, also remove any comment whose sole purpose was
+  to describe what that dead code did.
+- Triple-quoted strings used as block comments or section separators are
+  dead strings, not docstrings; replace with a `# Section name` line or
+  delete.
+- No always-constant variables used to gate output (`silent = False` that
+  is never changed); flatten the conditional directly.
+- Deprecated methods that are kept for reference must be prefixed `OLD_`
+  (e.g. `OLD_evaluate_results`), not suffixed or left with an ambiguous
+  name.
+- Never use bare `except:`; always catch specific exception types.
+- Extract unexplained numeric and string literals into named constants.
 
 **Docstrings (PEP 257 + Sphinx)**
 
-Every public module, class, and method must have a docstring using Sphinx-style annotations:
+Documentation is generated with Sphinx. Every public module, class, and method must have a docstring using Sphinx-style annotations; private helpers (`_name`) need at minimum a one-line docstring.
 
 ```python
 def my_method(self, param='default'):
@@ -52,6 +70,43 @@ def my_method(self, param='default'):
     :rtype: pandas.DataFrame
     """
 ```
+
+**Type annotations**
+- Annotate method parameters and return types whenever the type can be
+  confidently inferred from context, usage, or existing docstrings.
+- Use built-in generics (`list[str]`, `dict[str, int]`) over `typing`
+  aliases where Python version allows.
+
+**Attributes**
+- Declare all instance attributes in `__init__` before first use.
+- Do not create attributes dynamically outside `__init__`.
+- Define `__all__` in every module to make the public API explicit.
+
+**Comments**
+- Comment when the WHY is non-obvious: a hidden constraint, a workaround,
+  a subtle invariant.
+- Add a short WHAT comment to introduce important sections whose purpose
+  is not immediately obvious from the surrounding code structure.
+- Do not comment self-explanatory code — names should be sufficient.
+
+---
+
+## Brand assets
+
+- Logo/icon files live in `docs/logo/` (`bexhoma-banner.png` for light mode,
+  `bexhoma-logo-1-lockup-dark.svg` for dark mode, plus icon/favicon variants).
+- Brand colors: `#326CE5` (blue, icon/accent), `#F5A623` (orange, accent),
+  `#1B2A4A` (dark navy, light-mode wordmark text).
+- Referenced from `README.md` via a `<picture>` element with
+  `prefers-color-scheme` sources so the logo adapts to GitHub's dark mode.
+  PyPI's README renderer strips `<picture>` and doesn't resolve relative
+  paths, so the fallback `<img>` inside it must use an absolute
+  `raw.githubusercontent.com` URL — that fallback is what PyPI ends up
+  showing.
+- Referenced from `docs/conf.py` (`html_logo`, `html_favicon`) for the
+  Sphinx/Read the Docs build.
+- Licensed separately from the AGPL v3 code, under CC BY 4.0 — see
+  `docs/logo/README.md`.
 
 ---
 

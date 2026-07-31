@@ -4,6 +4,28 @@ The image is based on https://github.com/brianfrankcooper/YCSB
 
 This folder contains the Dockerfile for a benchmarker that runs a YCSB workload against an already-loaded DBMS.
 
+See [../README.md](../README.md) for shared design decisions, bundled JDBC
+drivers, and the workload template placeholder reference.
+
+## Execution flow (`benchmarker.sh`)
+
+1. Capture script start time.
+2. Optionally sleep until `BEXHOMA_TIME_START` (synchronized start across pods).
+3. Pop the pod's child index from the Redis queue
+   `bexhoma-benchmarker-<CONNECTION>-<EXPERIMENT>`.
+4. Compute row-range parameters; override to full key range
+   (`ROW_START=0`, `ROW_PART=YCSB_ROWS`) so every benchmarking pod covers the
+   complete dataset.
+5. Increment and poll the Redis counter
+   `bexhoma-benchmarker-podcount-<CONNECTION>-<EXPERIMENT>` until all
+   `BEXHOMA_NUM_PODS` pods are ready.
+6. Write `db.properties` (JDBC or Redis branch, optionally with batch settings).
+7. Copy workload template → `/tmp/workload`; substitute placeholder tokens via
+   `sed`.
+8. Run `ycsb run` (redis / redis-cluster / jdbc branch, with or without `-s`).
+9. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END` to stdout for the
+   evaluator.
+
 ## Environment variables
 
 ### Scaling and parallelism

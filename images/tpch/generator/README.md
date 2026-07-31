@@ -2,6 +2,23 @@
 
 Based on https://www.tpc.org/tpch/ — generates flat `.tbl` files (pipe-delimited, one row per line ending with `|`) using the `dbgen` binary. Expects the pre-compiled `dbgen` binary and `dists.dss` in the build context. In multi-pod mode each pod generates one partition of the data set.
 
+See [../README.md](../README.md) for the shared TPC-H pipeline design and per-DBMS loader differences.
+
+## Execution flow (`generator.sh`)
+
+1. Pop child index from Redis queue
+   `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>` (scoped by
+   `EXPERIMENT_RUN` because loading is redone from scratch for every experiment_run — see
+   `bexhoma/CLAUDE.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
+   empty rather than defaulting to a fixed child index, since another pod may already own it.
+2. Write child index to `/tmp/tpch/BEXHOMA_CHILD` (loaders read this file).
+3. Multi-tenant handling: `schema` or `database` mode remaps `BEXHOMA_CHILD` and scales `BEXHOMA_NUM_PODS` per tenant; `container` mode logs but does not remap.
+4. Determine `destination_raw`: `/data/tpch/SF<SF>[/<N>/<child>]` if `STORE_RAW_DATA=1`, else `/tmp/tpch/SF<SF>[/<N>/<child>]`. Exit early if the folder exists **and contains at least one `.tbl` file** (checked via a `nullglob` array, not just directory existence — an empty folder created as a parent for another child's subfolder must not be mistaken for already-generated data) and `STORE_RAW_DATA_RECREATE=0`.
+5. If `BEXHOMA_SYNCH_GENERATE=1`: sync on `bexhoma-generator-podcount-<CONNECTION>-<EXPERIMENT>`.
+6. Run `dbgen -s <SF>` (single pod) or `dbgen -s <SF> -S <child> -C <num_pods>` (multi-pod).
+7. If `TRANSFORM_RAW_DATA=1`: strip trailing `|` from every `.tbl` file via `sed 's/.$//' -i`.
+8. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+
 ## Environment variables
 
 ### Scaling and parallelism

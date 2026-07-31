@@ -6,6 +6,19 @@ This folder contains the Dockerfile for a data generator that loads TPC-C data
 into a DBMS using HammerDB's `buildschema` command.
 Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`.
 
+See [../README.md](../README.md) for shared design decisions and the full
+supported-backend table.
+
+## Execution flow (`generator.sh`)
+
+1. Capture script start time.
+2. Generate a `load.tcl` script tailored to `HAMMERDB_TYPE`.
+3. Run `hammerdbcli auto load.tcl` (calls HammerDB `buildschema`).
+4. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+
+The generator does **not** use Redis — it starts immediately and loads the full
+warehouse set without pod coordination.
+
 ## Environment variables
 
 ### Scaling and parallelism

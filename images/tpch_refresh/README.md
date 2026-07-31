@@ -1,11 +1,11 @@
-# images/tpch_refresh — development notes
-
-## Overview
+# TPC-H refresh stream images
 
 Two-container pipeline for the TPC-H refresh stream benchmarker: a generator
-initContainer creates update files on the PVC, then the loader main container reads
-them and applies RF1/RF2 to the target DBMS.  This mirrors the `images/tpch/`
-structure exactly.
+initContainer creates update files on the PVC, then the loader main container
+reads them and applies RF1/RF2 to the target DBMS. This mirrors the
+`images/tpch/` structure, but the loader runs as `benchmark_run=2` alongside
+the query-stream benchmarker (`benchmark_run=1`) instead of as a standalone
+loader pod.
 
 ## Directory layout
 
@@ -14,52 +14,31 @@ images/tpch_refresh/
 ├── generator/
 │   ├── Dockerfile         — generator image (debian:stable-slim + redis-cli + dbgen)
 │   ├── generator.sh       — generates update files via dbgen -U N
-│   └── README.md
+│   └── README.md          — environment variable reference + execution flow
 ├── loader_postgresql/
 │   ├── Dockerfile         — PostgreSQL loader image (alpine + psql + redis-cli)
 │   ├── loader.sh          — applies RF1 via \COPY, RF2 via temp table + bulk DELETE
-│   └── README.md
+│   └── README.md          — environment variable reference + execution flow
 ├── loader_mysql/
 │   ├── Dockerfile         — MySQL loader image (debian:stable-slim + mysql-client + redis-cli)
 │   ├── loader.sh          — applies RF1 via LOAD DATA LOCAL INFILE, RF2 via temp table + DELETE
-│   └── README.md
+│   └── README.md          — environment variable reference + execution flow
 ├── loader_mariadb/
 │   ├── Dockerfile         — MariaDB loader image (debian:stable-slim + mariadb-client + redis-cli)
 │   ├── loader.sh          — applies RF1 via LOAD DATA LOCAL INFILE, RF2 via temp table + DELETE
-│   └── README.md
-└── loader_monetdb/
-    ├── Dockerfile         — MonetDB loader image (monetdb/monetdb:Dec2025 + redis + yum)
-    ├── loader.sh          — applies RF1 via mclient COPY FROM STDIN, RF2 via piped session
-    └── README.md
+│   └── README.md          — environment variable reference + execution flow
+├── loader_monetdb/
+│   ├── Dockerfile         — MonetDB loader image (monetdb/monetdb:Dec2025 + redis + yum)
+│   ├── loader.sh          — applies RF1 via mclient COPY FROM STDIN, RF2 via piped session
+│   └── README.md          — environment variable reference + execution flow
+└── README.md              — this file
 ```
 
-## Generator execution flow (`generator.sh`)
+Environment variables for each image are documented in that image's own README.
+This file covers the shared pipeline design and decisions that apply across all
+of them.
 
-1. Compute `LAST_SET = TPCH_REFRESH_STREAM_OFFSET + TPCH_REFRESH_STREAMS`.
-2. Determine `destination_raw`: `/data/tpch-refresh/SF<SF>/` if `STORE_RAW_DATA=1`,
-   else `/tmp/tpch-refresh/SF<SF>/`.
-3. **Fast exit** if `delete.$LAST_SET` already exists — emits timing and exits 0.
-4. Copy `dbgen` and `dists.dss` into `destination_raw`, run
-   `./dbgen -s SF -U LAST_SET`, then remove the executables.
-   Existing sets (lower K) are overwritten with identical deterministic content —
-   harmless because `dbgen` output is fully determined by SF and set number.
-5. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
-
-## Loader execution flow (common to all DBMS variants)
-
-1. Compute `FIRST_SET = OFFSET+1`, `LAST_SET = OFFSET+STREAMS`.
-2. Determine `destination_raw` (same logic as generator).
-3. Sync: decrement **job counter** `bexhoma-benchmarker-podcount-job-<CONNECTION>-<EXPERIMENT>`,
-   poll until ≤ 0.
-4. Sync: decrement **round counter**
-   `bexhoma-benchmarker-podcount-round-<EXPERIMENT_RUN>-<CLIENT>-<CONFIGURATION>-<EXPERIMENT>`,
-   poll until ≤ 0.  This ensures the refresh stream starts at the same moment as
-   the parallel query stream (benchmark_run=1).
-5. For K in FIRST_SET..LAST_SET:
-   - **RF1** — insert `orders.tbl.uK` then `lineitem.tbl.uK` into the DBMS.
-   - **RF2** — load `delete.K` (one orderkey per line) into a temporary table,
-     bulk-DELETE matching rows from `lineitem` and `orders`, drop the temp table.
-6. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+---
 
 ## Key design decisions
 
