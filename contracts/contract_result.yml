@@ -5,7 +5,7 @@
 # validity/verdict_shape/known_gaps), not comments. Design rationale and
 # provenance (not needed to read this file): contracts/contract_result_comments.md
 
-result_contract_version: "1.1.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.2.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -42,10 +42,10 @@ structure:
     example: "bexhoma-benchmarker-postgresql-1-1784910886-1-1-1-qp9nt.dbmsbenchmarker.log"
     why: "decode by counting from `code`, not from the right — a trailing Kubernetes pod suffix (hash + 5 random chars) isn't part of the schema and can't be told apart from it by position alone"
     sut_exception:
-      manifest: "bexhoma-sut-{configuration}-{code}.yml"
+      manifest: "bexhoma-sut-{configuration}-{code}-{experiment_run}.yml"
       log: "bexhoma-sut-{configuration}-{code}-{experiment_run}-{k8s_pod_hash}-{k8s_pod_suffix}.{container}.log"
       describe: "bexhoma-sut-{configuration}-{code}-{experiment_run}-{k8s_pod_hash}-{k8s_pod_suffix}.describe.log"
-      why: "the SUT Deployment persists across all -nc runs and is manifested once (no experiment_run segment); but each run can restart that same pod, so its log/describe captures are numbered per experiment_run, spliced in directly after code — a manifest with no run segment next to a log with one is expected, not a naming bug"
+      why: "the live Deployment object itself persists across all -nc runs, restarted in place rather than recreated (same k8s metadata.name every run, with no experiment_run segment); but one archived manifest file is written per experiment_run regardless — even when identical to the previous run's — so every filename in the result folder carries experiment_run uniformly. Only the underlying k8s object's own name is the actual exception, not any filename on disk."
 
 tiers:
   1_answers:
@@ -81,9 +81,9 @@ provenance:
   monitoring:
     "query_{component}_metric_{key}.csv": "wide format: one column per connection, one row per Prometheus scrape; {component} is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency (e.g. loading, benchmarking, loader, benchmarker, datagenerator) plus any registered application component — see identifier_terms.component_note"
   restarts:
-    "bexhoma-sut-*-restarts.json": "per-pod SUT container restart counts"
+    "bexhoma-sut-{configuration}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one archived snapshot per experiment_run; restartCount is cumulative across runs (same pod, not recreated), so aggregate by max per pod, not by summing every file"
   sut:
-    "bexhoma-sut-{configuration}-{code}.yml": "SUT Deployment manifest, written once, no experiment_run segment"
+    "bexhoma-sut-{configuration}-{code}-{experiment_run}.yml": "SUT Deployment manifest, one archived copy per experiment_run — the live object itself is restarted in place, not recreated, so copies can be identical"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.{container}.log": "SUT container stdout, one capture per experiment_run"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.describe.log": "kubectl describe pod, one capture per experiment_run"
 

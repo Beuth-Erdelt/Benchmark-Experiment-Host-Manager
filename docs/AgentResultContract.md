@@ -12,7 +12,7 @@ blocks embedded verbatim in every `report/index.md`
 `report/index.md` to interpret an actual run.
 
 ```yaml
-result_contract_version: "1.1.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
+result_contract_version: "1.2.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
                                     # bump tracks report_writer.py's own frontmatter/tier/layout changes
 
 entry_point:
@@ -66,12 +66,13 @@ provenance:                              # pre-existing files, never written or 
                                                             is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency,
                                                             not bexhoma's to rename freely — see monitoring.md's component_title
                                                             column for the human-readable pairing"}
-  restarts:     {"bexhoma-sut-*-restarts.json":          "per-pod SUT container restart counts"}
-  sut_logs:     {"bexhoma-sut-{configuration}-{code}.yml":                                    "SUT Deployment manifest — written once, no experiment_run segment",
+  restarts:     {"bexhoma-sut-{configuration}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one snapshot per experiment_run; aggregate by max per pod (restartCount is cumulative across runs, same pod, not recreated), not by summing every file"}
+  sut_logs:     {"bexhoma-sut-{configuration}-{code}-{experiment_run}.yml":                    "SUT Deployment manifest — one archived copy per experiment_run, even when identical to the previous run's, since the live Deployment itself is restarted in place rather than recreated",
                  "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.{container}.log":  "SUT container stdout, one capture per experiment_run",
                  "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.describe.log":     "kubectl describe pod, one capture per experiment_run"}
-                 # see "Result-folder filenames vs. report identifiers" below for why the manifest has
-                 # no experiment_run segment but the log/describe files do
+                 # see "Result-folder filenames vs. report identifiers" below for the one remaining
+                 # asymmetry: the live k8s object's own name has no experiment_run segment, even
+                 # though every filename on disk (including its own archived manifest) does
 
 versions:                                # see Known gaps below for what's genuinely still missing
   images: recorded_as_tag_not_digest     # every submitted manifest's image: field is a concrete tag
@@ -142,17 +143,20 @@ Decode these the same way — count from `code`, not from the right — since a
 trailing Kubernetes pod suffix (a hash plus 5 random characters) isn't part
 of the schema and can't be told apart from it by position alone.
 
-**The SUT Deployment is the one asymmetric case.** It has exactly one
-manifest per configuration (`bexhoma-sut-{configuration}-{code}.yml`,
-**no** `experiment_run` segment), because the Deployment itself is written
-once, before any `-nc` run starts, and persists across all of them. But its
-stored `.log`/`.describe.log` files *do* carry `experiment_run` — spliced in
-directly after `code`, same position as everywhere else
-(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`) — because
-each run can restart that same long-lived pod, and each restart's evidence
-is captured separately. A manifest with no run segment next to a log with
-one is therefore expected, not a naming bug: only one of the two objects
-(the pod) actually recurs per run.
+**The SUT Deployment's own k8s identity is the one asymmetric case — but its
+filenames are not.** The live Deployment object is restarted in place across
+every `-nc` repeat rather than recreated, so its `metadata.name` (and the
+service/pod names derived from it) stay identical run after run, with no
+`experiment_run` segment. Every *filename* related to it, however, is
+experiment_run-scoped like everything else: its manifest is archived as
+`bexhoma-sut-{configuration}-{code}-{experiment_run}.yml` — a fresh copy
+written every run (even when byte-identical to the previous run's, since the
+Deployment spec didn't change), not just its `.log`/`.describe.log` captures
+(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`). So an
+agent decoding filenames never needs a special case for the SUT — only code
+that resolves a filename back to *which live k8s object* it came from needs
+to know that several manifest files can point at the same, still-running
+Deployment.
 
 ## Whether `report/` exists at all
 

@@ -1565,7 +1565,7 @@ class ExperimentBase():
             self.cluster.monitor_cluster_exists = False
         for config in self.configurations:
             if config.experiment_dict["loader"] or config.experiment_dict["benchmarker"]:
-                filename = f"bexhoma-experiment-dict-{config.configuration}.json"
+                filename = f"bexhoma-experiment-dict-{config.configuration}.json".lower()
                 filepath = self.result_filename_local(filename)
                 with open(filepath, 'w') as _f:
                     json.dump(config.experiment_dict, _f, indent=2)
@@ -1940,8 +1940,9 @@ class ExperimentBase():
                                     restarts = config.host.get_host_restarts(pod)
                                     sut_restarts[pod] = restarts
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                            experiment_run = str(config.num_experiment_to_apply_done + 1)
                             restarts_filename = self.result_filename_local(
-                                f"bexhoma-sut-{config.configuration}-restarts.json")
+                                f"bexhoma-sut-{config.configuration}-{experiment_run}-restarts.json".lower())
                             with open(restarts_filename, 'w') as _f:
                                 json.dump(sut_restarts, _f, indent=2)
                             config.lifecycle.stop_sut()
@@ -2670,14 +2671,24 @@ class ExperimentBase():
         restarts_files = sorted(result_dir.glob("bexhoma-sut-*-restarts.json"))
         if restarts_files:
             print("\n### SUT Container Restarts")
-            total_restarts = 0
+            # One file per (configuration, experiment_run), but the SUT pod is
+            # restarted in place rather than recreated across repeat runs, so
+            # its restartCount is cumulative across every run's snapshot, not
+            # a per-run delta -- take the max per pod name, not the sum across
+            # files, or the same restarts would be counted once per run.
+            per_pod_total: dict[str, int] = {}
+            per_pod_counts: dict[str, str] = {}
             for restarts_file in restarts_files:
                 with open(restarts_file) as _f:
                     pod_restarts: dict[str, str] = json.load(_f)
                 for pod, counts in pod_restarts.items():
                     pod_total = sum(int(x) for x in counts.split()) if counts.strip() else 0
-                    total_restarts += pod_total
-                    print(f"* {pod}: {counts}")
+                    if pod not in per_pod_total or pod_total > per_pod_total[pod]:
+                        per_pod_total[pod] = pod_total
+                        per_pod_counts[pod] = counts
+            for pod, counts in per_pod_counts.items():
+                print(f"* {pod}: {counts}")
+            total_restarts = sum(per_pod_total.values())
             self._record_test(total_restarts == 0, "No SUT container restarts")
         return connections_sorted, monitoring_applications
     def show_summary(self, write_report: bool = False):

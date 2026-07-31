@@ -16,10 +16,12 @@ See LICENSE for details.
 from __future__ import annotations
 
 import copy
+import json
 import os
 import re
 import tempfile
 import unittest
+from pathlib import Path
 from unittest import mock
 
 import yaml
@@ -99,7 +101,12 @@ class GenerateComponentNameConformanceTest(unittest.TestCase):
         self.cfg = self.experiment.configurations[0]
 
     def test_sut_name_has_no_run_segment_and_is_lowercase(self) -> None:
-        """The SUT is the persistent, one-per-configuration exception: no experiment_run/client/benchmark_run."""
+        """The SUT's live k8s object name is the one persistent, one-per-configuration
+        exception: no experiment_run/client/benchmark_run baked into generate_component_name()'s
+        output, since the same Deployment is restarted in place across every -nc repeat rather
+        than recreated. (Its *archived manifest filename* does carry experiment_run -- see
+        SutManifestPerRunTest -- but that's a separate, per-run file copy, not the object's
+        own identity.)"""
         name = self.cfg.generate_component_name(
             component='sut', experiment='1784910886', configuration=self.cfg.configuration,
         )
@@ -117,6 +124,119 @@ class GenerateComponentNameConformanceTest(unittest.TestCase):
         )
         self.assertEqual(name, name.lower())
         self.assertTrue(name.endswith('-1784910886-2-3-1'), f"{name!r} does not end with the expected run/client/benchmark_run segments")
+
+
+class SutManifestPerRunTest(unittest.TestCase):
+    """start_sut() must archive one manifest file per experiment_run (even when
+    the SUT is already running and nothing new is actually submitted to the
+    cluster), while the live Deployment object itself keeps one stable,
+    run-independent name across every repeat run."""
+
+    def setUp(self) -> None:
+        self.tmp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp_dir.cleanup)
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.stub_cluster = StubCluster(resultfolder=self.tmp_dir.name)
+        self.stub_cluster.yamlfolder = os.path.join(repo_root, 'k8s') + os.sep
+        self.stub_cluster.namespace = 'bexhoma'
+        self.stub_cluster.contextdata = {
+            'namespace': 'bexhoma', 'service_sut': '{service}.{namespace}.svc.cluster.local',
+        }
+        self.stub_cluster.monitor_cluster_active = False
+        self.stub_cluster.monitor_cluster_exists = False
+        self.already_running_deployments: list = []
+        self.created_objects: list = []
+        self.stub_cluster.get_deployments = lambda *a, **kw: self.already_running_deployments
+        self.stub_cluster.create_object_from_file = lambda path: self.created_objects.append(path)
+        self.stub_cluster.get_pvc = lambda *a, **kw: []
+        self.stub_cluster.get_pvc_labels = lambda *a, **kw: []
+        self.stub_cluster.pvc_exists = lambda *a, **kw: False
+        self.stub_cluster.delete_pvc = lambda *a, **kw: None
+
+        spec_path = os.path.join(self.tmp_dir.name, 'experiment.yaml')
+        with open(spec_path, 'w', encoding='utf-8') as f:
+            yaml.safe_dump(_BASE_SPEC, f)
+        kubernetes_patch = mock.patch.object(
+            experiment_builder.clusters, 'Kubernetes', return_value=self.stub_cluster
+        )
+        process_patch = mock.patch.object(TpchExperiment, 'process', lambda self: None)
+        kubernetes_patch.start()
+        process_patch.start()
+        self.addCleanup(kubernetes_patch.stop)
+        self.addCleanup(process_patch.stop)
+        self.experiment = experiment_builder.build_experiment(copy.deepcopy(_BASE_SPEC), spec_path)
+        self.cfg = self.experiment.configurations[0]
+        self.cfg.experiment.path = self.tmp_dir.name
+
+    def _deployment_name(self, manifest_path: str) -> str:
+        with open(manifest_path, 'r', encoding='utf-8') as f:
+            docs = list(yaml.safe_load_all(f))
+        return next(d['metadata']['name'] for d in docs if isinstance(d, dict) and d.get('kind') == 'Deployment')
+
+    def test_manifest_written_and_deployed_on_first_run(self) -> None:
+        self.cfg.num_experiment_to_apply_done = 0
+        result = self.cfg.lifecycle.start_sut()
+        manifests = sorted(
+            p for p in os.listdir(self.tmp_dir.name) if re.match(r'bexhoma-sut-.*\.yml$', p)
+        )
+        self.assertTrue(result)
+        self.assertEqual(len(self.created_objects), 1)
+        self.assertEqual(len(manifests), 1)
+        self.assertTrue(manifests[0].endswith('-1.yml'))
+
+    def test_second_run_archives_a_new_manifest_without_redeploying(self) -> None:
+        self.cfg.num_experiment_to_apply_done = 0
+        self.cfg.lifecycle.start_sut()
+        self.already_running_deployments = ['some-existing-deployment']
+        self.cfg.num_experiment_to_apply_done = 1
+        result = self.cfg.lifecycle.start_sut()
+        manifests = sorted(
+            p for p in os.listdir(self.tmp_dir.name) if re.match(r'bexhoma-sut-.*\.yml$', p)
+        )
+        self.assertFalse(result)
+        self.assertEqual(len(self.created_objects), 1, "create_object_from_file must not be called again")
+        self.assertEqual(len(manifests), 2)
+        self.assertTrue(any(m.endswith('-2.yml') for m in manifests))
+
+    def test_deployment_name_is_stable_across_runs(self) -> None:
+        self.cfg.num_experiment_to_apply_done = 0
+        self.cfg.lifecycle.start_sut()
+        run1_manifest = os.path.join(
+            self.tmp_dir.name,
+            next(p for p in os.listdir(self.tmp_dir.name) if p.endswith('-1.yml')),
+        )
+        name_run1 = self._deployment_name(run1_manifest)
+
+        self.already_running_deployments = ['some-existing-deployment']
+        self.cfg.num_experiment_to_apply_done = 1
+        self.cfg.lifecycle.start_sut()
+        run2_manifest = os.path.join(
+            self.tmp_dir.name,
+            next(p for p in os.listdir(self.tmp_dir.name) if p.endswith('-2.yml')),
+        )
+        name_run2 = self._deployment_name(run2_manifest)
+
+        self.assertEqual(name_run1, name_run2)
+
+
+class SutRestartsPerRunTest(unittest.TestCase):
+    """bexhoma-sut-*-restarts.json is archived one-per-experiment_run like the
+    manifest, but restartCount is cumulative across runs (same pod, not
+    recreated) -- readers must aggregate by max per pod, not by summing every
+    file, or the same restarts get counted once per run."""
+
+    def test_report_writer_takes_max_per_pod_not_sum_across_runs(self) -> None:
+        from bexhoma import report_writer
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            with open(os.path.join(tmp_dir, 'bexhoma-sut-postgresql-1-1-restarts.json'), 'w') as f:
+                json.dump({'pod-a': '2'}, f)
+            with open(os.path.join(tmp_dir, 'bexhoma-sut-postgresql-1-2-restarts.json'), 'w') as f:
+                json.dump({'pod-a': '5'}, f)
+            total, per_pod = report_writer._count_sut_restarts(Path(tmp_dir))
+        self.assertEqual(total, 5, "cumulative restartCount across 2 runs must be maxed, not summed to 7")
+        self.assertEqual(per_pod['pod-a'], '5')
+
 
 class YcsbLogToDfCasingTest(unittest.TestCase):
     """YcsbEvaluator.log_to_df() must lowercase phase/connection even when
@@ -154,6 +274,25 @@ class YcsbLogToDfCasingTest(unittest.TestCase):
         # The standalone 'configuration' column is a display field and keeps its
         # original case — only the compound phase/connection tokens are lowercased.
         self.assertEqual(row['configuration'], 'PgDuckDB-1')
+
+
+class NoLegacyStreamFallbackTest(unittest.TestCase):
+    """Only the "benchmarking" naming convention is supported — no fallback to
+    the retired "stream" filenames. Guards against reintroducing legacy-read
+    compatibility code the user explicitly did not want."""
+
+    def test_old_style_stream_file_is_not_picked_up(self) -> None:
+        from bexhoma.evaluators.logger import LogEvaluator
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            code = '1784910886'
+            os.makedirs(os.path.join(tmp_dir, code))
+            legacy = os.path.join(tmp_dir, code, 'query_stream_metric_cpu_util.csv')
+            with open(legacy, 'w', encoding='utf-8') as f:
+                f.write('postgresql-1-1-1-1\n1.5\n2.5\n')
+            evaluator = LogEvaluator(code=code, path=tmp_dir)
+            df = evaluator.get_monitoring_metric('cpu_util', component='benchmarking')
+        self.assertTrue(df.empty)
 
 
 if __name__ == '__main__':

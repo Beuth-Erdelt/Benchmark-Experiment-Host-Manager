@@ -74,7 +74,7 @@ from bexhoma.benchmarks.base import Section
 __all__ = ["write_markdown_report"]
 
 #: Bump whenever the frontmatter fields, tiers, or file layout change.
-SCHEMA_VERSION = "1.1.0"
+SCHEMA_VERSION = "1.2.0"
 
 _NAMING_CONVENTIONS_MD = """### Naming Conventions
 
@@ -108,14 +108,14 @@ every tier-2 file's Provenance footer) follow a related but distinct
 convention: `<app>-<component>-<configuration>-<code>[-<experiment_run>[-<client>[-<benchmark_run>]]]`,
 optionally followed by Kubernetes' own pod-hash/random suffix on files tied to
 a specific pod (e.g. `bexhoma-benchmarker-postgresql-1-1784910886-1-1-1-qp9nt.dbmsbenchmarker.log`).
-The long-lived SUT Deployment is the one exception worth knowing: its
-manifest is written once per configuration with **no** `experiment_run`
-segment (`bexhoma-sut-postgresql-1-1784910886.yml`), but its stored
-`.describe.log` and container `.log` files splice the experiment_run in
-directly after `code` — same position as everywhere else — ahead of
-Kubernetes' pod-hash/random suffix
-(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`), because
-each run can restart that same long-lived pod and needs its own capture.
+The long-lived SUT Deployment's own k8s object identity is the one
+exception worth knowing, not its filenames: the live object is restarted in
+place across every `-nc` repeat rather than recreated, so its
+`metadata.name` never carries `experiment_run`. Its archived manifest still
+does, though (`bexhoma-sut-postgresql-1-1784910886-1.yml`,
+`bexhoma-sut-postgresql-1-1784910886-2.yml`, ... — one file per run, even
+when identical), same as its `.describe.log` and container `.log` files
+(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`).
 """
 
 _VALIDITY_RULES_MD = """### Validity-First Rules
@@ -312,6 +312,14 @@ def _count_sut_restarts(result_dir: Path) -> tuple[int, dict[str, str]]:
     Parse ``bexhoma-sut-*-restarts.json`` files into a total count and a
     per-pod breakdown.
 
+    One file exists per (configuration, experiment_run), but the SUT pod
+    itself is restarted in place rather than recreated across repeat runs, so
+    its k8s ``restartCount`` is cumulative across every run's snapshot, not a
+    per-run delta. Taking the max per pod name (rather than summing every
+    file) avoids multiplying the same underlying restarts by the number of
+    runs; pods from different configurations never share a name, so this
+    still aggregates correctly across configurations.
+
     Same source files ``show_summary_header()`` already reads (and tests via
     ``_record_test(total_restarts == 0, "No SUT container restarts")``); this
     is an independent, read-only re-parse for report purposes, not a second
@@ -322,16 +330,17 @@ def _count_sut_restarts(result_dir: Path) -> tuple[int, dict[str, str]]:
              mapping pod name to its raw per-container restart-count string.
     :rtype: tuple[int, dict[str, str]]
     """
-    total = 0
+    per_pod_total: dict[str, int] = {}
     per_pod: dict[str, str] = {}
     for restarts_file in sorted(result_dir.glob("bexhoma-sut-*-restarts.json")):
         with open(restarts_file) as handle:
             pod_restarts: dict[str, str] = json.load(handle)
         for pod, counts in pod_restarts.items():
             pod_total = sum(int(x) for x in counts.split()) if counts.strip() else 0
-            total += pod_total
-            per_pod[pod] = counts
-    return total, per_pod
+            if pod not in per_pod_total or pod_total > per_pod_total[pod]:
+                per_pod_total[pod] = pod_total
+                per_pod[pod] = counts
+    return sum(per_pod_total.values()), per_pod
 
 
 def _get_metric_definitions(connections_sorted: list[dict]) -> dict[str, dict]:

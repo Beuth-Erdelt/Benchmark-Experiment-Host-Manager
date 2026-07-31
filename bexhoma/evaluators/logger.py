@@ -382,12 +382,6 @@ class LogEvaluator(EvaluatorBase):
         :rtype: pandas.DataFrame
         """
         filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
-        if not os.path.isfile(self.path+"/"+filename) and component == "benchmarking":
-            # Read-only fallback for result folders written before "stream" was
-            # renamed to "benchmarking" (no writer ever produces the old name again).
-            legacy_filename = '/query_stream_metric_{metric}.csv'.format(metric=metric)
-            if os.path.isfile(self.path+"/"+legacy_filename):
-                filename = legacy_filename
         if os.path.isfile(self.path+"/"+filename):
             df = pd.read_csv(self.path+"/"+filename).T
             df = df.reindex(index=natural_sort(df.index))
