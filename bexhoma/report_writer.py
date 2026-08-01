@@ -76,6 +76,20 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change.
 SCHEMA_VERSION = "1.2.0"
 
+#: Top-level .yml/.yaml files that are *inputs* the run was built from (the
+#: experiment.yml/.yaml actually run, plus provenance copies of the catalog
+#: contract and any pointer files), not rendered Kubernetes manifests -- see
+#: experiment.py::_copy_catalog_provenance and
+#: bexhoma/experiment_builder.py::_copy_provenance_files. Excluded from the
+#: workflow section's manifest glob (which would otherwise mislabel them as
+#: "rendered Kubernetes Job/Deployment/Service manifests") and instead given
+#: their own, accurately-described Provenance entry.
+_INPUT_PROVENANCE_FILENAMES = frozenset({
+    "experiment.yml", "experiment.yaml",
+    "contract_catalog.yml", "contract_result.yml",
+    "catalog.yaml", "environment.yml",
+})
+
 _NAMING_CONVENTIONS_MD = """### Naming Conventions
 
 Every identifier in this report is a positional concatenation. Decode any of
@@ -195,7 +209,10 @@ def _relmd(target: Path, start: Path) -> str:
     return Path(os.path.relpath(target, start=start)).as_posix()
 
 
-def _glob_provenance(result_dir: Path, report_dir: Path, patterns: list[str], description: str) -> list[str]:
+def _glob_provenance(
+    result_dir: Path, report_dir: Path, patterns: list[str], description: str,
+    exclude: frozenset[str] = frozenset(),
+) -> list[str]:
     """
     Build a described Markdown block for every real file matching any of
     ``patterns`` — one italic line explaining why/what to look for, then one
@@ -210,6 +227,10 @@ def _glob_provenance(result_dir: Path, report_dir: Path, patterns: list[str], de
     :param description: One-line explanation of what this file kind contains
         and why it might be worth opening — rendered as an italic line above
         the links.
+    :param exclude: Basenames to drop from the match set even though they hit
+        one of ``patterns`` — e.g. a broad ``*.yml``/``*.yaml`` manifest glob
+        also matching a non-manifest input file (:data:`_INPUT_PROVENANCE_FILENAMES`)
+        that gets its own, differently-described entry instead.
     :return: ``[description_line, "", *bullet_lines, ""]``, or an empty list
              when nothing matches — a link (and its description) is never
              written for a file kind that does not exist. Description lines
@@ -221,6 +242,7 @@ def _glob_provenance(result_dir: Path, report_dir: Path, patterns: list[str], de
     matches: set[Path] = set()
     for pattern in patterns:
         matches.update(result_dir.glob(pattern))
+    matches = {path for path in matches if path.name not in exclude}
     if not matches:
         return []
     lines = [f"*{description}*", ""]
@@ -737,11 +759,19 @@ def write_markdown_report(
     written_sections: list[dict] = []
 
     if workflow_section is not None:
+        input_provenance_links = _glob_provenance(
+            result_dir, report_dir, sorted(_INPUT_PROVENANCE_FILENAMES),
+            "The experiment.yml/.yaml this run was actually built from, plus provenance "
+            "copies of the contract(s)/catalog/environment file(s) that governed it — "
+            "not a Kubernetes manifest; see docs/AgentResultContract.md and "
+            "docs/Design-Catalog-Contract.md for what each one means.",
+        )
         manifest_links = _glob_provenance(
             result_dir, report_dir, ["*.yml", "*.yaml"],
             "Rendered Kubernetes Job/Deployment/Service manifests actually submitted — "
             "check for the exact resource requests/limits, image tag, env vars, and "
             "replica/parallelism counts.",
+            exclude=_INPUT_PROVENANCE_FILENAMES,
         )
         pod_describe_links = _glob_provenance(
             result_dir, report_dir, ["*.describe.log"],
@@ -760,7 +790,7 @@ def write_markdown_report(
         _write_tier2_file(
             report_dir, "workflow.md", "workflow", "Actual vs. planned experiment workflow.",
             [workflow_section], connections_index,
-            manifest_links + pod_describe_links + job_describe_links,
+            input_provenance_links + manifest_links + pod_describe_links + job_describe_links,
         )
         written_sections.append({"title": "Workflow", "file": "workflow.md", "description": "Actual vs. planned workflow (per configuration/run/client)."})
 

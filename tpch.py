@@ -101,7 +101,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def run(args: argparse.Namespace) -> None:
+def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     """
     Build and run a TPC-H experiment from an already-parsed argparse Namespace.
 
@@ -113,6 +113,13 @@ def run(args: argparse.Namespace) -> None:
     re-parsing anything through this module's own CLI a second time.
 
     :param args: Parsed CLI arguments, as returned by ``build_parser().parse_args(...)``.
+    :param on_experiment_built: Optional callback, invoked with the built
+        experiment right after its result folder is created (``experiment.path``
+        already exists on disk) but before ``prepare_testbed()``/``process()``
+        run. Lets a caller drop provenance files (the ``experiment.yml`` that
+        was run, the contracts that governed it) into the result folder even
+        if the run itself later fails. Never called for a plain
+        ``python tpch.py ...`` invocation.
     """
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -203,6 +210,8 @@ def run(args: argparse.Namespace) -> None:
     ### prepare and configure experiment
     ##############
     experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    if on_experiment_built is not None:
+        on_experiment_built(experiment)
     if args.max_sut_experiment is not None:
         experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "30s"

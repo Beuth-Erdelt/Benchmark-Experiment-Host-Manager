@@ -43,9 +43,18 @@ provenance:                              # pre-existing files, never written or 
   connections:  {"connections.config": "repr() list of every connection dict (identity, params, timings)",
                  "{connection}.config": "durable single-connection backup, survives dashboard rewrites",
                  "queries.config":      "SF/type/duration/defaultParameters/benchmark_sequence/workflow_planned"}
-  workflow:     {"*.yml / *.yaml":      "rendered K8s Job/Deployment/Service manifests actually submitted;
+  workflow:     {"*.yml / *.yaml (minus the input-provenance filenames below)":
+                                         "rendered K8s Job/Deployment/Service manifests actually submitted;
                                           every image: field is a concrete tag, BEXHOMA_PACKAGE_VERSION
                                           already substituted — the authoritative source for image versions",
+                 "experiment.yml / experiment.yaml, contract_catalog.yml, contract_result.yml,
+                  catalog.yaml, environment.yml (whichever exist)":
+                                         "the input(s) this run was actually built from, not a K8s manifest —
+                                          a YAML-driven run (experiment.py) copies the experiment.yml/.yaml it
+                                          was given, plus (catalog-driven only) the contract_catalog.yml/
+                                          contract_result.yml pair that governed it, or (self-specified only)
+                                          any catalog:/environment: pointer files the spec named; a hand-typed
+                                          python tpch.py ... invocation writes none of these",
                  "{pod-name}.describe.log": "kubectl describe pod: scheduling/image-pull/restart/OOMKill events
                                               for that specific Pod object",
                  "{job-name}.describe.job.log": "kubectl describe job (loading/generator jobs only; .job.log,
