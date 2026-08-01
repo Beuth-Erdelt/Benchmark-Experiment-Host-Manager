@@ -71,8 +71,10 @@ _FIO_DEFAULTS = {
     "HARDWARE_FIO_NUMJOBS": "1", "HARDWARE_FIO_ENGINE": "sync", "HARDWARE_FIO_FSYNC": "0",
     "HARDWARE_FIO_FDATASYNC": "0", "HARDWARE_FIO_RWMIXREAD": "50",
 }
+#: TCP, not sockperf's own UDP default: this network round exists to assess
+#: data systems (DBMS traffic is TCP), not raw UDP datagram latency.
 _SOCKPERF_DEFAULTS = {
-    "HARDWARE_SOCKPERF_MODE": "ul", "HARDWARE_SOCKPERF_PROTOCOL": "udp",
+    "HARDWARE_SOCKPERF_MODE": "ul", "HARDWARE_SOCKPERF_PROTOCOL": "tcp",
     "HARDWARE_SOCKPERF_MSGSIZE": "64", "HARDWARE_SOCKPERF_MPS": "max",
 }
 
