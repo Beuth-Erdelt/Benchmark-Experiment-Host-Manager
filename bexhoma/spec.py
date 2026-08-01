@@ -31,6 +31,7 @@ from typing import Any, Callable, Optional
 import yaml
 
 __all__ = [
+    "CATALOG_CONTRACT_VERSION",
     "DERIVE_INPUTS",
     "SpecError",
     "ResolvedKnob",
@@ -52,6 +53,11 @@ __all__ = [
     "build_command",
     "translate",
 ]
+
+#: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
+#: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
+#: (see tests/test_naming_conformance.py).
+CATALOG_CONTRACT_VERSION = "1.0.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -490,7 +496,8 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     Checks, in order: every field in :data:`_REQUIRED_HEADER_FIELDS` is
     present and non-empty (``title``, ``hypothesis``, ``discriminates`` — an
     experiment.yml must state what it's testing and which factor it isolates
-    before anything else is resolved); the workload exists; every named
+    before anything else is resolved); the optional ``follow_up_of``, if
+    present, is a string; the workload exists; every named
     system is in the workload's ``supports:`` list; and, for each system's
     *effective* post_load (its own ``systems[].post_load`` override — a
     selection choice — or else the shared ``loading.post_load`` default),
@@ -507,6 +514,9 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
             raise SpecError(f"experiment.yml is missing required header field '{field_name}'")
     if not isinstance(experiment["discriminates"], list):
         raise SpecError("'discriminates' must be a list of factor names")
+    follow_up_of = experiment.get("follow_up_of")
+    if follow_up_of is not None and not isinstance(follow_up_of, str):
+        raise SpecError("'follow_up_of' must be a string (a prior run's experiment_code)")
 
     workload_name = experiment["workload"]["name"]
     workloads = catalog.get("workloads", {})

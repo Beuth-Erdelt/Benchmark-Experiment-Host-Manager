@@ -12,7 +12,7 @@ blocks embedded verbatim in every `report/index.md`
 `report/index.md` to interpret an actual run.
 
 ```yaml
-result_contract_version: "1.2.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
+result_contract_version: "1.3.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
                                     # bump tracks report_writer.py's own frontmatter/tier/layout changes
 
 entry_point:
@@ -88,10 +88,16 @@ versions:                                # see Known gaps below for what's genui
                                           # (provenance.workflow *.yml); connections.config's own
                                           # `dockerimage` field mirrors the SUT's resolved tag too;
                                           # no sha256 digest either way, so a re-pushed tag is invisible
-  bexhoma: recorded_via_image_tag        # BEXHOMA_PACKAGE_VERSION in every bexhoma/* image tag is
+  bexhoma: recorded_directly_and_via_image_tag
+                                          # report/index.md frontmatter's bexhoma_version field records
+                                          # the installed bexhoma.__version__ at report-generation time
+                                          # (can differ from the version that actually ran the experiment
+                                          # if -rp/--report is applied later, e.g. `bexhoma summary -e
+                                          # <code> -rp`, after an upgrade); for the submission-time version,
+                                          # BEXHOMA_PACKAGE_VERSION in every bexhoma/* image tag is
                                           # substituted with the real installed version before the
                                           # manifest is written to the result folder
-                                          # (clusters.py::create_object_from_file())
+                                          # (clusters.py::create_object_from_file()) and can't drift later
   dbmsbenchmarker: not_recorded          # baked into the bexhoma/benchmarker_dbmsbenchmarker image,
                                           # whose tag tracks bexhoma's own version, not
                                           # dbmsbenchmarker's — genuinely not recoverable
@@ -215,6 +221,9 @@ column an agent should treat as "the" headline number:
   archived-corridor or cross-run regression check. "Compare only within this
   experiment code" (see every `index.md`'s Interpretation Rules) is a rule an
   agent must apply itself — nothing in the result folder does it automatically.
+  `contract_catalog.yml`'s `experiment_schema.fields.follow_up_of` lets an
+  experiment.yml record which prior experiment_code it follows up on, but
+  that's bookkeeping only — nothing reads or validates it yet.
 - **Per-system post_load selection isn't a queryable field.** A catalog-driven
   experiment can choose, per named system, whether indexes/constraints/
   statistics were applied after loading (`contract_catalog.yml`'s `systems[].post_load`

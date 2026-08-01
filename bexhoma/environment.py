@@ -45,6 +45,13 @@ from kubernetes.client.rest import ApiException
 
 from bexhoma.spec import parse_memory_quantity
 
+#: Bump whenever environment.yml's top-level shape (nodes/excluded_nodes/
+#: storage_classes/resource_limits) changes -- this is the file's own
+#: source of truth, embedded directly at generation time, so unlike
+#: contract_catalog.yml/contract_result.yml there is no separate contract
+#: doc to drift out of sync with.
+ENVIRONMENT_CONTRACT_VERSION = "1.0.0"
+
 #: RBAC users on a shared cluster are commonly granted node/storage-class
 #: read but not cluster-scoped pod listing (that would reveal every other
 #: user's workloads) — a 403 here is an expected permissions gap, not a
@@ -53,6 +60,7 @@ from bexhoma.spec import parse_memory_quantity
 _HTTP_FORBIDDEN = 403
 
 __all__ = [
+    "ENVIRONMENT_CONTRACT_VERSION",
     "EnvironmentError",
     "NodeInfo",
     "StorageClassInfo",
@@ -524,6 +532,7 @@ def build_environment(cluster: Any) -> dict[str, Any]:
     nodes, excluded_nodes = collect_nodes(cluster)
     collect_node_usage(cluster, nodes)
     return {
+        "environment_contract_version": ENVIRONMENT_CONTRACT_VERSION,
         "cluster": {
             "context": cluster.context,
             "namespace": cluster.namespace,

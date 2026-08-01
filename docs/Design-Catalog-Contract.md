@@ -723,6 +723,15 @@ checks all three are present and non-empty before resolving anything else —
 an experiment.yml that can't say what it's testing fails immediately,
 rather than producing a technically-valid but purposeless run.
 
+A fourth, optional header field, `follow_up_of`, names the `experiment_code`
+of a prior run this one follows up on (e.g. `follow_up_of: "1785578016"`).
+Unlike `title`/`hypothesis`/`discriminates` it's never required — omit it for
+a standalone experiment — and `validate_experiment()` only checks its type
+(a string) when present. It exists so lineage between runs is a structured
+field an agent can read directly, instead of prose embedded in `hypothesis`
+(see contract_result.yml's `known_gaps` for why this doesn't fully close the
+cross-experiment-comparison gap: nothing reads or enforces it yet).
+
 ## Top-level shape
 
 `mode`, `title`, `hypothesis`, `discriminates`, `workload`, `loading`,
