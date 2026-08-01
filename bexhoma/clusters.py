@@ -2455,7 +2455,7 @@ class Kubernetes():
         experiment code segment of ``pod_name`` — e.g.
         ``bexhoma-sut-postgresql-32gi-1784910886-3-7bd45c7b95-pwzkz`` — so
         SUT log/describe filenames follow the same
-        ``<configuration>-<code>-<experimentRun>-...`` scheme already used
+        ``<configuration>-<code>-<experiment_run>-...`` scheme already used
         for job manifest filenames, instead of trailing it after
         Kubernetes' own pod-hash/random suffix.
 

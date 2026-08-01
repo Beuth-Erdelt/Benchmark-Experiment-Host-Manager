@@ -18,7 +18,7 @@ Output contract
 2. **Tiered file groups, with read-when conditions.**
 
    - Tier 1 — Answers: ``index.md``. Read always, first.
-   - Tier 2 — Evidence: ``workflow.md``, ``loading.md``, ``execution.md``,
+   - Tier 2 — Evidence: ``workflow.md``, ``loading.md``, ``benchmarking.md``,
      ``monitoring.md``, ``connections.md`` (each only written when the
      underlying phase/data is actually active). Read when a metric value is
      needed, or a Tests-table failure needs tracing to its connection/phase.
@@ -49,7 +49,7 @@ rather than a hand-typed ``../``; connection-name links in metric tables and
 ``connections.md``'s anchors both come from the same
 ``get_connections_of_experiment()`` call, so a link can never dangle.
 
-See ``bexhoma/experiments/CLAUDE.md`` §9 and ``docs/AgentReport.md`` for the
+See ``bexhoma/experiments/README.md`` §9 and ``docs/AgentReport.md`` for the
 full design rationale.
 
 Authors: Patrick K. Erdelt
@@ -74,7 +74,21 @@ from bexhoma.benchmarks.base import Section
 __all__ = ["write_markdown_report"]
 
 #: Bump whenever the frontmatter fields, tiers, or file layout change.
-SCHEMA_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.2.0"
+
+#: Top-level .yml/.yaml files that are *inputs* the run was built from (the
+#: experiment.yml/.yaml actually run, plus provenance copies of the catalog
+#: contract and any pointer files), not rendered Kubernetes manifests -- see
+#: experiment.py::_copy_catalog_provenance and
+#: bexhoma/experiment_builder.py::_copy_provenance_files. Excluded from the
+#: workflow section's manifest glob (which would otherwise mislabel them as
+#: "rendered Kubernetes Job/Deployment/Service manifests") and instead given
+#: their own, accurately-described Provenance entry.
+_INPUT_PROVENANCE_FILENAMES = frozenset({
+    "experiment.yml", "experiment.yaml",
+    "contract_catalog.yml", "contract_result.yml",
+    "catalog.yaml", "environment.yml",
+})
 
 _NAMING_CONVENTIONS_MD = """### Naming Conventions
 
@@ -88,14 +102,14 @@ needed, just the position rule:
 
 | Term | Description | Example |
 |---|---|---|
-| configuration | Name of the SUT instance | `PostgreSQL-1` |
+| configuration | Name of the SUT instance (original case when shown standalone, e.g. `PostgreSQL-1`) | `PostgreSQL-1` |
 | experiment_run | Repeat counter for the whole experiment | `2` |
 | client | 1-based index of the benchmark phase within a run | `3` |
-| phase | Benchmark phase identifier | `PostgreSQL-1-2-3` |
+| phase | Benchmark phase identifier, lowercased | `postgresql-1-2-3` |
 | benchmark_run | 1-based index of a parallel benchmark job within a phase | `4` |
-| job | Benchmark job identifier | `PostgreSQL-1-2-3-4` |
+| job | Benchmark job identifier, lowercased | `postgresql-1-2-3-4` |
 | pod | 1-based index of a driver pod within a job | `5` |
-| connection | Driver-pod identifier | `PostgreSQL-1-2-3-4-5` |
+| connection | Driver-pod identifier, lowercased | `postgresql-1-2-3-4-5` |
 
 **Experiment code convention**: `code` (this experiment's result-folder name)
 is a Unix epoch timestamp in seconds, generated at experiment start. It is
@@ -108,14 +122,14 @@ every tier-2 file's Provenance footer) follow a related but distinct
 convention: `<app>-<component>-<configuration>-<code>[-<experiment_run>[-<client>[-<benchmark_run>]]]`,
 optionally followed by Kubernetes' own pod-hash/random suffix on files tied to
 a specific pod (e.g. `bexhoma-benchmarker-postgresql-1-1784910886-1-1-1-qp9nt.dbmsbenchmarker.log`).
-The long-lived SUT Deployment is the one exception worth knowing: its
-manifest is written once per configuration with **no** `experiment_run`
-segment (`bexhoma-sut-postgresql-1-1784910886.yml`), but its stored
-`.describe.log` and container `.log` files splice the experiment_run in
-directly after `code` — same position as everywhere else — ahead of
-Kubernetes' pod-hash/random suffix
-(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`), because
-each run can restart that same long-lived pod and needs its own capture.
+The long-lived SUT Deployment's own k8s object identity is the one
+exception worth knowing, not its filenames: the live object is restarted in
+place across every `-nc` repeat rather than recreated, so its
+`metadata.name` never carries `experiment_run`. Its archived manifest still
+does, though (`bexhoma-sut-postgresql-1-1784910886-1.yml`,
+`bexhoma-sut-postgresql-1-1784910886-2.yml`, ... — one file per run, even
+when identical), same as its `.describe.log` and container `.log` files
+(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`).
 """
 
 _VALIDITY_RULES_MD = """### Validity-First Rules
@@ -126,10 +140,10 @@ quoting any number, not after:
 
 | Failed test | Scopes / invalidates | Check |
 |---|---|---|
-| `SQL errors` | Per-query metrics for the specific queries that errored | `execution.md`'s Errors subsection |
-| `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `execution.md`'s Warnings subsection |
+| `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
+| `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
 | `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
-| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `execution.md`'s Per Phase table |
+| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `benchmarking.md`'s Per Phase table |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
 
 A **skipped** test (e.g. monitoring skipped because data was pre-existing, or
@@ -195,7 +209,10 @@ def _relmd(target: Path, start: Path) -> str:
     return Path(os.path.relpath(target, start=start)).as_posix()
 
 
-def _glob_provenance(result_dir: Path, report_dir: Path, patterns: list[str], description: str) -> list[str]:
+def _glob_provenance(
+    result_dir: Path, report_dir: Path, patterns: list[str], description: str,
+    exclude: frozenset[str] = frozenset(),
+) -> list[str]:
     """
     Build a described Markdown block for every real file matching any of
     ``patterns`` — one italic line explaining why/what to look for, then one
@@ -210,6 +227,10 @@ def _glob_provenance(result_dir: Path, report_dir: Path, patterns: list[str], de
     :param description: One-line explanation of what this file kind contains
         and why it might be worth opening — rendered as an italic line above
         the links.
+    :param exclude: Basenames to drop from the match set even though they hit
+        one of ``patterns`` — e.g. a broad ``*.yml``/``*.yaml`` manifest glob
+        also matching a non-manifest input file (:data:`_INPUT_PROVENANCE_FILENAMES`)
+        that gets its own, differently-described entry instead.
     :return: ``[description_line, "", *bullet_lines, ""]``, or an empty list
              when nothing matches — a link (and its description) is never
              written for a file kind that does not exist. Description lines
@@ -221,6 +242,7 @@ def _glob_provenance(result_dir: Path, report_dir: Path, patterns: list[str], de
     matches: set[Path] = set()
     for pattern in patterns:
         matches.update(result_dir.glob(pattern))
+    matches = {path for path in matches if path.name not in exclude}
     if not matches:
         return []
     lines = [f"*{description}*", ""]
@@ -312,6 +334,14 @@ def _count_sut_restarts(result_dir: Path) -> tuple[int, dict[str, str]]:
     Parse ``bexhoma-sut-*-restarts.json`` files into a total count and a
     per-pod breakdown.
 
+    One file exists per (configuration, experiment_run), but the SUT pod
+    itself is restarted in place rather than recreated across repeat runs, so
+    its k8s ``restartCount`` is cumulative across every run's snapshot, not a
+    per-run delta. Taking the max per pod name (rather than summing every
+    file) avoids multiplying the same underlying restarts by the number of
+    runs; pods from different configurations never share a name, so this
+    still aggregates correctly across configurations.
+
     Same source files ``show_summary_header()`` already reads (and tests via
     ``_record_test(total_restarts == 0, "No SUT container restarts")``); this
     is an independent, read-only re-parse for report purposes, not a second
@@ -322,16 +352,17 @@ def _count_sut_restarts(result_dir: Path) -> tuple[int, dict[str, str]]:
              mapping pod name to its raw per-container restart-count string.
     :rtype: tuple[int, dict[str, str]]
     """
-    total = 0
+    per_pod_total: dict[str, int] = {}
     per_pod: dict[str, str] = {}
     for restarts_file in sorted(result_dir.glob("bexhoma-sut-*-restarts.json")):
         with open(restarts_file) as handle:
             pod_restarts: dict[str, str] = json.load(handle)
         for pod, counts in pod_restarts.items():
             pod_total = sum(int(x) for x in counts.split()) if counts.strip() else 0
-            total += pod_total
-            per_pod[pod] = counts
-    return total, per_pod
+            if pod not in per_pod_total or pod_total > per_pod_total[pod]:
+                per_pod_total[pod] = pod_total
+                per_pod[pod] = counts
+    return sum(per_pod_total.values()), per_pod
 
 
 def _get_metric_definitions(connections_sorted: list[dict]) -> dict[str, dict]:
@@ -376,7 +407,7 @@ def _build_monitoring_sections(
     docstring's "Scope extension" rationale.
 
     The Full Metric Catalog's ``component`` values are internal routing keys
-    (e.g. ``stream`` for "Execution phase: SUT deployment", ``loader`` for
+    (e.g. ``benchmarking`` for "Benchmarking phase: SUT deployment", ``loader`` for
     "Loading phase: component loader") that are not self-explanatory on their
     own — so every catalog row and every per-metric subsection heading also
     carries the matching human-readable ``component_title`` from
@@ -563,11 +594,11 @@ def _build_health_summary_lines(total_restarts: int, extra_context: dict) -> lis
         if num_errors == 0:
             lines.append("- SQL errors: none")
         else:
-            lines.append(f"- SQL errors: {num_errors} — see [execution.md](execution.md)'s Errors subsection for the affected queries")
+            lines.append(f"- SQL errors: {num_errors} — see [benchmarking.md](benchmarking.md)'s Errors subsection for the affected queries")
         if num_warnings == 0:
             lines.append("- SQL warnings: none")
         else:
-            lines.append(f"- SQL warnings: {num_warnings} — see [execution.md](execution.md)'s Warnings subsection for the affected queries")
+            lines.append(f"- SQL warnings: {num_warnings} — see [benchmarking.md](benchmarking.md)'s Warnings subsection for the affected queries")
     return lines
 
 
@@ -593,8 +624,12 @@ def _build_connections_md_lines(
     """
     Build ``connections.md``'s body: one subsection per row of
     ``df_connections``, each with its own parameter columns plus glob-derived
-    links to its benchmarker log, its SUT's container log, its
-    ``kubectl describe pod`` output, and the monitoring CSV covering it.
+    links to its benchmarker log, its SUT's container log, and its
+    ``kubectl describe pod`` output. The monitoring CSVs are not
+    connection-specific (each holds every connection's own column merged
+    together), so they're listed once in a single document-level Provenance
+    section at the end instead of being repeated identically inside every
+    per-connection subsection.
 
     :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
     :param result_dir: The experiment's result folder.
@@ -637,20 +672,23 @@ def _build_connections_md_lines(
             "`kubectl describe pod` output for this connection's SUT — its event "
             "history (scheduling, image pull, restarts, OOMKills), not just static spec.",
         )
-        metric_links = _glob_provenance(
-            result_dir, report_dir, ["query_*_metric_*.csv"],
-            "Wide-format monitoring CSV (one column per connection, one row per "
-            "Prometheus scrape) backing the metrics shown for this connection — find "
-            "this connection's own column.",
-        )
-        if log_links or describe_links or metric_links:
+        if log_links or describe_links:
             lines.append("")
             lines.append("##### Provenance")
             lines.append("")
             lines.extend(log_links)
             lines.extend(describe_links)
-            lines.extend(metric_links)
         lines.append("")
+    metric_links = _glob_provenance(
+        result_dir, report_dir, ["query_*_metric_*.csv"],
+        "Wide-format monitoring CSVs (one column per connection, one row per "
+        "Prometheus scrape) backing the metrics shown above — find each "
+        "connection's own column by name.",
+    )
+    if metric_links:
+        lines.append("### Provenance")
+        lines.append("")
+        lines.extend(metric_links)
     return lines
 
 
@@ -659,8 +697,9 @@ def write_markdown_report(
     benchmark,
     workflow_section: Section | None,
     loading_section: Section | None,
-    execution_section: Section | None,
+    benchmarking_section: Section | None,
     extra_sections: list[Section],
+    explain_section: Section | None,
     key_metrics_section: Section | None,
     connections_sorted: list[dict],
     monitoring_applications: dict,
@@ -686,10 +725,16 @@ def write_markdown_report(
         benchmarking was not active.
     :param loading_section: The ``Loading`` section, or ``None`` when loading
         was not active or produced no data.
-    :param execution_section: The ``Execution`` section, or ``None`` when
+    :param benchmarking_section: The ``Benchmarking`` section, or ``None`` when
         benchmarking was not active.
     :param extra_sections: Secondary-benchmark and Latency/Errors/Warnings
         sections from ``_show_extra_sections()``.
+    :param explain_section: The full per-query/per-connection ``EXPLAIN`` dump
+        from ``_show_extra_sections()``, or ``None`` when nothing was captured
+        (``-se``/``--store-explain`` not used). Report-only, like
+        ``key_metrics_section`` below: rendered into ``benchmarking.md``,
+        never printed to stdout — ``show_summary()`` only shows a pass/fail/
+        skipped Tests-table row for it.
     :param key_metrics_section: The benchmark-type-specific ``Key Metrics``
         section from ``benchmark._build_key_metrics_section()`` (e.g. Geo
         Times/Power@Size/Throughput@Size for DBMSBenchmarker, NOPM for
@@ -714,11 +759,19 @@ def write_markdown_report(
     written_sections: list[dict] = []
 
     if workflow_section is not None:
+        input_provenance_links = _glob_provenance(
+            result_dir, report_dir, sorted(_INPUT_PROVENANCE_FILENAMES),
+            "The experiment.yml/.yaml this run was actually built from, plus provenance "
+            "copies of the contract(s)/catalog/environment file(s) that governed it — "
+            "not a Kubernetes manifest; see docs/AgentResultContract.md and "
+            "docs/Design-Catalog-Contract.md for what each one means.",
+        )
         manifest_links = _glob_provenance(
             result_dir, report_dir, ["*.yml", "*.yaml"],
             "Rendered Kubernetes Job/Deployment/Service manifests actually submitted — "
             "check for the exact resource requests/limits, image tag, env vars, and "
             "replica/parallelism counts.",
+            exclude=_INPUT_PROVENANCE_FILENAMES,
         )
         pod_describe_links = _glob_provenance(
             result_dir, report_dir, ["*.describe.log"],
@@ -737,7 +790,7 @@ def write_markdown_report(
         _write_tier2_file(
             report_dir, "workflow.md", "workflow", "Actual vs. planned experiment workflow.",
             [workflow_section], connections_index,
-            manifest_links + pod_describe_links + job_describe_links,
+            input_provenance_links + manifest_links + pod_describe_links + job_describe_links,
         )
         written_sections.append({"title": "Workflow", "file": "workflow.md", "description": "Actual vs. planned workflow (per configuration/run/client)."})
 
@@ -764,9 +817,11 @@ def write_markdown_report(
         )
         written_sections.append({"title": "Loading", "file": "loading.md", "description": "Per-connection and per-run loading throughput/timing."})
 
-    if execution_section is not None or extra_sections:
-        execution_all = ([execution_section] if execution_section is not None else []) + extra_sections
-        execution_links = _glob_provenance(
+    if benchmarking_section is not None or extra_sections or explain_section is not None:
+        benchmarking_all = ([benchmarking_section] if benchmarking_section is not None else []) + extra_sections
+        if explain_section is not None:
+            benchmarking_all = benchmarking_all + [explain_section]
+        benchmarking_links = _glob_provenance(
             result_dir, report_dir,
             ["bexhoma-benchmarker-*.log", "bexhoma-benchmarker.*.all.df.pickle"],
             "Raw per-pod benchmarker logs and the cached aggregated DataFrame they "
@@ -776,18 +831,18 @@ def write_markdown_report(
         if 'num_errors' in extra_context:
             # queries.config only carries literal SQL text for DBMSBenchmarker-family
             # benchmarks (TPC-H/TPC-DS); other tools store their workload elsewhere.
-            execution_links += _glob_provenance(
+            benchmarking_links += _glob_provenance(
                 result_dir, report_dir, ["queries.config"],
                 "The DBMSBenchmarker query config actually run, including the literal "
                 "SQL text of every query behind the titles in the Latency/Errors/"
                 "Warnings tables above — follow this for the explicit queries.",
             )
         _write_tier2_file(
-            report_dir, "execution.md", "execution",
-            "Benchmark execution results, including any secondary (co-running) benchmarks.",
-            execution_all, connections_index, execution_links,
+            report_dir, "benchmarking.md", "benchmarking",
+            "Benchmarking phase results, including any secondary (co-running) benchmarks.",
+            benchmarking_all, connections_index, benchmarking_links,
         )
-        written_sections.append({"title": "Execution", "file": "execution.md", "description": "Per-connection/per-phase execution results, secondary-benchmark sections, latency, errors, warnings."})
+        written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
 
     monitoring_sections, monitoring_provenance = _build_monitoring_sections(
         experiment, benchmark.evaluator, connections_sorted, monitoring_applications, result_dir, report_dir,

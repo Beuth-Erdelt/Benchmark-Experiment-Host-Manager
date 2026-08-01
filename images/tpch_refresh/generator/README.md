@@ -3,6 +3,20 @@
 Generates TPC-H RF1/RF2 update files using `dbgen -U N` and stores them on the
 persistent data volume at `/data/tpch-refresh/SF<SF>/`.
 
+See [../README.md](../README.md) for the shared refresh-stream pipeline design.
+
+## Execution flow (`generator.sh`)
+
+1. Compute `LAST_SET = TPCH_REFRESH_STREAM_OFFSET + TPCH_REFRESH_STREAMS`.
+2. Determine `destination_raw`: `/data/tpch-refresh/SF<SF>/` if `STORE_RAW_DATA=1`,
+   else `/tmp/tpch-refresh/SF<SF>/`.
+3. **Fast exit** if `delete.$LAST_SET` already exists — emits timing and exits 0.
+4. Copy `dbgen` and `dists.dss` into `destination_raw`, run
+   `./dbgen -s SF -U LAST_SET`, then remove the executables.
+   Existing sets (lower K) are overwritten with identical deterministic content —
+   harmless because `dbgen` output is fully determined by SF and set number.
+5. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+
 ## Environment variables
 
 | Variable | Default | Description |

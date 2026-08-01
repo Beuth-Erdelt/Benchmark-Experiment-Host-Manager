@@ -123,7 +123,7 @@ class TpccEvaluator(LogEvaluator):
                 efficiency = round(100. * float(result_tuples[0][0][0]) / sf_int / 12.86, 2)
             else:
                 efficiency = 0
-            phase = configuration_name + '-' + experiment_run + '-' + client
+            phase = (configuration_name + '-' + experiment_run + '-' + client).lower()
             job = connection_name
             connection = connection_name + '-' + child
             latency_values = list(extracted_data.values())

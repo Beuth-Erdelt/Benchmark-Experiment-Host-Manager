@@ -96,9 +96,9 @@ class BenchbaseEvaluator(LogEvaluator):
             tenant_id = int(tenant_id_match[0]) if tenant_id_match else -1
             errors = re.findall('error code', stdout)
             num_errors = len(errors)
-            phase = configuration_name + '-' + experiment_run + '-' + client
+            phase = (configuration_name + '-' + experiment_run + '-' + client).lower()
             job = connection_name
-            connection = configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child
+            connection = (configuration_name + '-' + experiment_run + '-' + client + '-' + benchmark_run + '-' + child).lower()
             header = {
                 'connection': connection,
                 'phase': phase,

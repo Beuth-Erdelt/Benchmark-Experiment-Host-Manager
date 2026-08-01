@@ -582,7 +582,15 @@ scrape_configs:
             app=app, component=component,
             experiment=cfg.get_experiment_name(), configuration=configuration)
         template = cfg.sut_template
-        deployment_experiment = cfg.experiment.path + '/{name}.yml'.format(name=name)
+        # The live Deployment object itself keeps this stable, run-independent
+        # name across every -nc repeat (restarted in place, not recreated) --
+        # see get_deployments() below. Only the archived manifest file gets
+        # experiment_run in its filename, so a fresh copy is written every run
+        # (even when identical) instead of the SUT being the one component
+        # whose manifest never reflects which run it belongs to.
+        experiment_run = str(cfg.num_experiment_to_apply_done + 1)
+        deployment_experiment = cfg.experiment.path + '/{name}-{experiment_run}.yml'.format(
+            name=name, experiment_run=experiment_run)
         sut_manifest_file = cfg.experiment.cluster.yamlfolder + template
         deploys, ssets, pvcs = extract_component_labels(sut_manifest_file)
         print("{:30s}: deployments {}".format(configuration, deploys))
@@ -649,8 +657,11 @@ scrape_configs:
         deployments = cfg.experiment.cluster.get_deployments(
             app=app, component=component,
             experiment=cfg.get_experiment_name(), configuration=configuration)
-        if len(deployments) > 0:
-            return False
+        # Deliberately not an early return: the SUT keeps running (same live
+        # object, same name) across repeat runs, but we still rebuild and
+        # archive this run's own manifest copy below -- only the final
+        # create_object_from_file() submission is skipped when already running.
+        already_deployed = len(deployments) > 0
         print("{:30s}: name of SUT pods = {}".format(configuration, name))
         print("{:30s}: name of SUT service = {}".format(configuration, name))
         if use_storage:
@@ -1074,7 +1085,7 @@ scrape_configs:
                 dep['metadata']['labels']['pool'] = name_pool
                 for label_key, label_value in cfg.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
-                dep['metadata']['labels']['experimentRun'] = str(
+                dep['metadata']['labels']['experiment_run'] = str(
                     cfg.num_experiment_to_apply_done + 1)
                 dep['metadata']['labels']['num_experiment_runs_planned'] = str(
                     cfg.num_experiment_to_apply)
@@ -1302,6 +1313,10 @@ scrape_configs:
                 stream.write(yaml.dump_all(result))
             except yaml.YAMLError as exc:
                 print(exc)
+        if already_deployed:
+            cfg.logger.debug(
+                "SUT already running; archived this run's manifest only: " + deployment_experiment)
+            return False
         cfg.logger.debug("Deploy " + deployment_experiment)
         cfg.experiment.cluster.create_object_from_file(deployment_experiment)
         return True

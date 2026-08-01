@@ -19,6 +19,10 @@ If the first argument is one of ``EXPERIMENT_MODES`` (``stop``, ``status``,
 (and its heavier ``dbmsbenchmarker`` dependency) is deferred to that branch
 so that plain script dispatch (``bexhoma tpch run``) does not require it.
 
+``bexhoma environment <subcommand>`` is dispatched in-process to
+:mod:`bexhoma.environment` instead of being treated as a script name, e.g.
+``bexhoma environment create -cx my-context``. See ``docs/Environment.md``.
+
 Authors: Patrick K. Erdelt
 Copyright (C) 2024 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -69,6 +73,7 @@ def main():
         print("Usage: bexhoma <script> [args...]")
         print("Example: bexhoma tpch run -m -cx my-context")
         print("Example: bexhoma summary -e 12345678")
+        print("Example: bexhoma environment create -cx my-context")
         sys.exit(0)
 
     script_name = sys.argv[1]
@@ -79,6 +84,21 @@ def main():
         return
 
     remaining_args = sys.argv[2:]
+
+    if script_name == "environment":
+        if not remaining_args or remaining_args[0] in ("-h", "--help"):
+            print("Usage: bexhoma environment <subcommand> [args...]")
+            print("Subcommands:")
+            print("  create   Inspect the live cluster and write environment.yml")
+            print("Example: bexhoma environment create -cx my-context -o dev/catalog/environment.yml")
+            sys.exit(0)
+        subcommand, subcommand_args = remaining_args[0], remaining_args[1:]
+        if subcommand == "create":
+            from bexhoma.environment import main as environment_main
+            environment_main(subcommand_args)
+            return
+        print(f"bexhoma environment: unknown subcommand '{subcommand}'")
+        sys.exit(1)
     script_path = _find_script(script_name)
 
     if script_path is None:

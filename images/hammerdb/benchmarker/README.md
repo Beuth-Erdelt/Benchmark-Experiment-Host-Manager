@@ -6,6 +6,28 @@ This folder contains the Dockerfile for a benchmarker that runs a timed TPC-C
 workload against an already-loaded DBMS using HammerDB.
 Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`.
 
+See [../README.md](../README.md) for shared design decisions and the full
+supported-backend table.
+
+## Execution flow (`benchmarker.sh`)
+
+1. Capture script start time.
+2. Optionally sleep until `BEXHOMA_TIME_START` (synchronised start across pods).
+3. Pop the pod's child index from the Redis queue
+   `bexhoma-benchmarker-<CONNECTION>-<EXPERIMENT>`.
+4. Increment and poll the Redis counter
+   `bexhoma-benchmarker-podcount-<CONNECTION>-<EXPERIMENT>` until all
+   `BEXHOMA_NUM_PODS` pods are ready (synchronisation is unconditional).
+5. Generate a `benchmark.tcl` script tailored to `HAMMERDB_TYPE`
+   (postgresql / mysql / mariadb / citus).
+6. Run `hammerdbcli auto benchmark.tcl`.
+7. Copy `/tmp/hammerdb.log` into the result folder as
+   `hammerdb.<CONNECTION>.<CLIENT>.<UUID>.log`.
+8. Print `/tmp/hdbxtprofile.log` (per-transaction latency profile, when
+   `HAMMERDB_TIMEPROFILE=true`).
+9. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END` to stdout for the
+   evaluator.
+
 ## Environment variables
 
 ### Scaling and parallelism

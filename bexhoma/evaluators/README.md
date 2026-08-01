@@ -1,4 +1,4 @@
-# bexhoma/evaluators — development notes
+# bexhoma/evaluators
 
 ## Purpose
 

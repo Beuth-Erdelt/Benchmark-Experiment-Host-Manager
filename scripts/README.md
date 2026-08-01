@@ -56,18 +56,78 @@ After the experiments finish, `clean_logs`/`Invoke-CleanLogs` extracts the `## S
 
 The summary files are the content embedded inside ` ```markdown ``` ` blocks in the `docs/` pages.
 
-**Node variables** (set at the top of each script, or inherited from `testfunctions.sh/.ps1`):
+**Node variables** (set at the top of each script, or inherited from `testfunctions.sh/.ps1`);
+these are also the defaults used by `test-docs-collector.ps1` / `test-docs-collector.sh`:
 
-| Variable | Role |
-|---|---|
-| `BEXHOMA_NODE_SUT` | Kubernetes node for the DBMS pod |
-| `BEXHOMA_NODE_LOAD` | Kubernetes node for loader pods |
-| `BEXHOMA_NODE_BENCHMARK` | Kubernetes node for benchmarker pods |
-| `BEXHOMA_MS` | Max simultaneous DBMS configurations (`-ms`) |
+| Variable | Default | Role |
+|---|---|---|
+| `BEXHOMA_NODE_SUT` | `cl-worker38` | Kubernetes node for the DBMS pod |
+| `BEXHOMA_NODE_LOAD` | `cl-worker19` | Kubernetes node for loader pods |
+| `BEXHOMA_NODE_BENCHMARK` | `cl-worker19` | Kubernetes node for benchmarker pods |
+| `BEXHOMA_MS` | `1` | Max simultaneous DBMS configurations (`-ms`) |
 
-**Log file naming:** `logs_tests/doc_<benchmark>_<topic>[_N].log`
+**Log file naming:** `logs_tests/doc_<benchmark>_<topic>[_N].log` — e.g. for
+`test-docs-collector.ps1` / `.sh`, which additionally produce multi-tenant
+variants: `doc_<benchmark>_testcase_collector[_tenants_<isolation>][_N].log`.
 
-**Flag ordering** inside every `bexhoma` call follows the canonical group order defined in `CLAUDE.md` (target → identity → timing → sweep → parallelism → topology → resources → node pinning).
+**Comment style in `.sh`:** a heading comment block immediately before each `bexhoma` call
+lists every parameter of that call, one `# -flag value   description` line per flag, in the
+same order as the flags in the call (including flags that share a command line — each gets
+its own comment line). The description starts at column 32 (0-indexed); use 1 space minimum
+when the flag+value is longer.
+
+**Comment style in `.ps1`:** inline `<# ... #>` block comments on the same line as each
+parameter (the only syntax compatible with PowerShell backtick line continuation — `#` line
+comments cannot follow a `` ` ``).
+
+**Comment alignment (both variants):** descriptions aligned to column 32. The one exception is
+`-ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS"` (49 chars) which lands at column 50.
+
+**Flag ordering** inside every `bexhoma` call follows the canonical group order below
+(target → identity → timing → sweep → parallelism → topology → resources → node pinning).
+Flags not used by a particular benchmark are simply omitted. Within each group the flags
+are listed alphabetically except where noted:
+
+| Group | Flags | Notes |
+|---|---|---|
+| A — Target | `-dbms`, `-sf` | what to test and at what scale |
+| B — Benchmark identity | `-xbt`, `-xwl` | suite type, workload letter |
+| C — Benchmark timing | `-xqr`, `-xrt`, `-xsd` | query repeats, ramp-up, duration |
+| D — Throughput targets | `-xtb`, `-xnbf`, `-xnlf` | base target, then multiplier factors |
+| E — Sweep dimensions | `-nc`, `-ne` | repetitions, parallel client counts |
+| F — Loading parallelism | `-nlp`, `-nlt` | pods then threads |
+| G — Benchmarking parallelism | `-nbp`, `-nbt` | pods then threads |
+| H — SUT topology | `-xnsr`, `-nw`, `-xnpd`, `-nwr`, `-nws` | SUT replicas, worker nodes, PD nodes (TiDB only), worker replicas/shards |
+| I — Connection pooling | `-xnpp`, `-xnpi`, `-xnpo` | pod count, inbound, outbound |
+| J — Post-load init | `-xii`, `-xic`, `-xis`, `-xcol` | **logical order** (indexes → constraints → statistics → columnar) |
+| K — Query/load modifiers | `-xlit`, `-xnls`, `-xrcp`, `-xshq` | alphabetical |
+| L — Extra features | `-xbatch`, `-xconn`, `-xdt`, `-xio`, `-xkey`, `-xlat`, `-xli`, `-xmet`, `-xop`, `-xsbs` | alphabetical |
+| M — Monitoring | `-m`, `-ma`, `-mc` | alphabetical |
+| N — Experiment control | `-ms`, `-sl`, `-ss`, `-t`, `-tr` | alphabetical |
+| O — SUT resources | `-lc`, `-lr`, `-rc`, `-rr` / `-rct`, `-rg`, `-rgt` / `-rsr`, `-rss`, `-rst` | three sub-groups: RAM+CPU, node labels, storage — alphabetical within each |
+| P — Multi-tenancy | `-mtb`, `-mtn`, `-mtv` | alphabetical |
+| Q — Node pinning | `-rnn`, `-rnl`, `-rnp`, `-rnb` | **flow order** (SUT → loaders → pooling → benchmarkers); always on one line in `.sh` |
+
+### Conventions for new test scripts
+
+**Shared setup (both `.sh` and `.ps1`)**
+- Source `testfunctions.sh` / dot-source `testfunctions.ps1` at the very top; this sets default node/path variables and waits for any pre-existing jobs.
+- Override `BEXHOMA_MS` after sourcing when the script intentionally uses a value other than 1 (e.g., `BEXHOMA_MS=2` for DatabaseService which compares two DBMS simultaneously).
+- Pass `-ms $BEXHOMA_MS` to every `bexhoma` call.
+- Call `wait_process "<name>"` / `Wait-BexhomaProcess "<name>"` after every `bexhoma` invocation.
+
+**Bash-specific**
+- The `bexhoma <name>` command line carries no inline flags — all flags appear on their own continuation lines (each ending with `\`).
+- Two exceptions to one-flag-per-line: post-load init flags (`-xii`, `-xic`, `-xis`, and/or `-xcol`) may share one line; node-pinning flags (`-rnn`, `-rnl`, `-rnb`) always share one line.
+- Precede every `bexhoma` call with a heading comment block: one `# -flag [value]   description` line per flag, **in the same order** as the flags in the call (including flags that share a command line — each gets its own comment line).
+- Redirect both stdout and stderr with `&>$LOG_DIR/<logfile>`.
+
+**PowerShell-specific**
+- The `bexhoma <name>` command line carries no inline flags — all flags appear on their own lines (each followed by `` ` ``).
+- One CLI parameter per line, each followed by a `<# description #>` comment.
+- All `<#` comments aligned to column 32 (pad with spaces; use `1` space minimum for overlong prefixes).
+- Use backtick `` ` `` for line continuation; it must be the absolute last character on the line.
+- Redirect both stdout and stderr with `2>&1 | Out-File <log> -Encoding utf8`.
 
 ---
 
@@ -132,7 +192,7 @@ Run them from the repository root whenever commands are added or changed.
 
 ### `_reorder_flags.py`
 
-Reorders the flags in every `bexhoma` call in `test-docs-*.sh` and `test-docs-*.ps1` to match the canonical group order defined in `CLAUDE.md`.
+Reorders the flags in every `bexhoma` call in `test-docs-*.sh` and `test-docs-*.ps1` to match the canonical group order defined above under "Flag ordering".
 Also reconstructs the preceding comment block in `.sh` files and the inline `<# … #>` comments in `.ps1` files to match the new order.
 
 ```

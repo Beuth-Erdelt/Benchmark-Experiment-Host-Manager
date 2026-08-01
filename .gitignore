@@ -28,5 +28,6 @@ local/*
 logs_multitenant/*
 .vscode/
 dev/catalog/environment.yml
-environment.yml
-experiment.yml
+environment*.yml
+experiment*.yml
+.claude/*

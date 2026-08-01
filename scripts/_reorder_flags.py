@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Reorder flags in bexhoma test-script calls to match the canonical ordering
-defined in scripts/CLAUDE.md.  Handles both .sh and .ps1 formats.
+defined in scripts/README.md.  Handles both .sh and .ps1 formats.
 
 Run from the repo root:
     python scripts/_reorder_flags.py

@@ -111,7 +111,7 @@ RUN cd /tmp && \
     wget http://download.redis.io/redis-stable.tar.gz && \
     tar xvzf redis-stable.tar.gz && \
     cd redis-stable && \
-    make && \
+    make redis-cli && \
     cp src/redis-cli /usr/local/bin/ && \
     chmod 755 /usr/local/bin/redis-cli && \
     rm -rf /tmp/redis-stable /tmp/redis-stable.tar.gz

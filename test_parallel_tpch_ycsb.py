@@ -4,7 +4,7 @@ multiple parallel benchmarking jobs of DIFFERENT tools against one SUT.
 
 Loads TPC-H and YCSB data into the SAME PostgreSQL database at the same time
 (two concurrent Kubernetes loading Jobs, coordinated via the loader round
-counter — see bexhoma/CLAUDE.md "Pod synchronization counters"), then runs
+counter — see bexhoma/README.md "Pod synchronization counters"), then runs
 the TPC-H query stream and a YCSB workload at the same time (two concurrent
 benchmarking Jobs in one client round, using the same mechanism that already
 powers the TPC-H refresh stream).

@@ -321,7 +321,7 @@ class LogEvaluator(EvaluatorBase):
         because their per-connection source is already gone.
 
         Some components fetch metrics per pod (filename suffixed with the
-        per-pod ``name``, e.g. the ``stream`` phase); others fetch once per
+        per-pod ``name``, e.g. the ``benchmarking`` phase); others fetch once per
         job, before ``benchmark.py read`` has expanded ``connections.config``
         into per-pod entries, so the file is only ever suffixed with the
         job-level ``orig_name`` (e.g. the ``loading`` phase). Both candidates
@@ -329,7 +329,7 @@ class LogEvaluator(EvaluatorBase):
         which one a given component happens to use.
 
         :param component: Component label used in the metric filename prefix
-                          (e.g. ``'loading'``, ``'stream'``).
+                          (e.g. ``'loading'``, ``'benchmarking'``).
         :type component: str
         """
         connections_sorted = self.get_connection_config()

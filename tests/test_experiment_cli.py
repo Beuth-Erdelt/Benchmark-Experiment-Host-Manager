@@ -8,6 +8,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import os
+import tempfile
+import types
 import unittest
 from unittest import mock
 
@@ -69,6 +71,45 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
             experiment_cli.run_experiment_yaml(_SELF_SPECIFIED_FILE)
         mock_build.assert_called_once()
         mock_run.assert_not_called()
+
+    def test_catalog_driven_run_passes_a_provenance_callback_to_tpch_run(self) -> None:
+        """The catalog-driven branch must give tpch.run() an on_experiment_built
+        callback, so the experiment.yml + contracts still land in the result
+        folder even though tpch.run() itself never returns the built experiment."""
+        import tpch
+        with mock.patch.object(tpch, 'run') as mock_run:
+            experiment_cli.run_experiment_yaml(_CATALOG_DRIVEN_FILE, _CATALOG_FILE)
+        callback = mock_run.call_args.kwargs['on_experiment_built']
+        self.assertTrue(callable(callback))
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            stub_experiment = types.SimpleNamespace(path=tmp_dir)
+            with mock.patch.object(experiment_cli, '_copy_catalog_provenance') as mock_copy:
+                callback(stub_experiment)
+            mock_copy.assert_called_once_with(tmp_dir, _CATALOG_DRIVEN_FILE, _CATALOG_FILE)
+
+
+class CopyCatalogProvenanceTest(unittest.TestCase):
+    """Tests for :func:`experiment._copy_catalog_provenance`."""
+
+    def test_copies_experiment_yaml_catalog_and_result_contract(self) -> None:
+        with tempfile.TemporaryDirectory() as result_dir:
+            experiment_cli._copy_catalog_provenance(result_dir, _CATALOG_DRIVEN_FILE, _CATALOG_FILE)
+            self.assertTrue(os.path.isfile(os.path.join(result_dir, 'experiment.yml')))
+            self.assertTrue(os.path.isfile(os.path.join(result_dir, 'contract_catalog.yml')))
+            self.assertTrue(os.path.isfile(os.path.join(result_dir, 'contract_result.yml')))
+            with open(os.path.join(result_dir, 'contract_catalog.yml'), 'r', encoding='utf-8') as copied, \
+                 open(_CATALOG_FILE, 'r', encoding='utf-8') as original:
+                self.assertEqual(copied.read(), original.read())
+
+    def test_missing_catalog_override_is_silently_skipped(self) -> None:
+        """A --catalog path that doesn't exist must not abort provenance copying
+        of the other two files -- this is best-effort, not a hard requirement."""
+        with tempfile.TemporaryDirectory() as result_dir:
+            experiment_cli._copy_catalog_provenance(result_dir, _CATALOG_DRIVEN_FILE, 'does-not-exist.yml')
+            self.assertTrue(os.path.isfile(os.path.join(result_dir, 'experiment.yml')))
+            self.assertFalse(os.path.isfile(os.path.join(result_dir, 'contract_catalog.yml')))
+            self.assertTrue(os.path.isfile(os.path.join(result_dir, 'contract_result.yml')))
 
 
 if __name__ == '__main__':

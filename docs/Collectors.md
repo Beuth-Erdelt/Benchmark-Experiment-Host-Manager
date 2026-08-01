@@ -152,7 +152,7 @@ Columns include: `phase` (code-prefixed phase identifier: `<code>-<configuration
 Returns a DataFrame listing all hardware metrics defined in the experiment, with columns `title`, `active`, `type`, `metric`.
 
 **`get_monitored_components(code='')`**  
-Returns a DataFrame of monitored component roles (e.g. `loading`, `stream`, `database`) with a `description` column.
+Returns a DataFrame of monitored component roles (e.g. `loading`, `benchmarking`, `database`) with a `description` column.
 
 **`get_evaluator(code='')`**  
 Returns the benchmark-specific evaluator for the given experiment code. Used internally but also useful for ad-hoc access to single-experiment data.
@@ -161,29 +161,29 @@ Returns the benchmark-specific evaluator for the given experiment code. Used int
 
 ### Monitoring — Aggregated
 
-**`get_monitoring_aggregated_per_job(component='stream')`**  
+**`get_monitoring_aggregated_per_job(component='benchmarking')`**  
 Returns one row per benchmark job across all codes. Each metric column is reduced to a scalar using the metric-type aggregation rule (counter → sum of deltas, ratio → max, other → mean). Index is the code-prefixed job identifier.
 
-**`get_monitoring_aggregated_per_phase(component='stream')`**  
+**`get_monitoring_aggregated_per_phase(component='benchmarking')`**  
 Returns one row per phase across all codes. Calls `get_monitoring_aggregated_per_job()` and further reduces by grouping on `(code, configuration, experiment_run, client)`, collapsing all parallel jobs within a phase. Aggregation rules: ratio → max, counter → sum, other → mean. Index is the code-prefixed phase identifier.
 
-**`get_monitoring_aggregated_per_phase_multitenant(component='stream')`**  
+**`get_monitoring_aggregated_per_phase_multitenant(component='benchmarking')`**  
 Extends `get_monitoring_aggregated_per_job()` by grouping across tenants. Ratio metrics are reduced with `max`; counter metrics with `sum` (except *Total I/O Wait Time*, which uses `max`). Index is the underscore-joined group key.
 
 ---
 
 ### Monitoring — Time Series
 
-**`get_monitoring_timeseries_single(code, metric='pg_locks_count', component='stream')`**  
+**`get_monitoring_timeseries_single(code, metric='pg_locks_count', component='benchmarking')`**  
 Returns a wide-format DataFrame for one metric in one experiment. Rows are timestamps; columns are monitored pod instances.
 
-**`get_monitoring_timeseries_per_phase(code, metric='pg_locks_count', component='stream')`**  
+**`get_monitoring_timeseries_per_phase(code, metric='pg_locks_count', component='benchmarking')`**  
 Same data as above, transposed: rows are pod instances, columns are timestamps.
 
-**`get_monitoring_timeseries_all(metric='pg_locks_count', component='stream')`**  
+**`get_monitoring_timeseries_all(metric='pg_locks_count', component='benchmarking')`**  
 Collects long-format time-series across all codes. Columns include `timestamp`, `value`, `code`, `phase`, `experiment_run`, `client`, `type_tenants`, `num_tenants`, `vol_tenants`, `metric`, `component`. Values are summed across parallel pods.
 
-**`get_monitoring_timeseries_all_multitenant(metric='pg_locks_count', component='stream')`**  
+**`get_monitoring_timeseries_all_multitenant(metric='pg_locks_count', component='benchmarking')`**  
 Like `get_monitoring_timeseries_all` but annotates each row with tenant metadata from the workload config. For non-container tenancy the `tenant` column is set to `"0"`.
 
 ---
@@ -396,16 +396,16 @@ collect.get_performance_aggregated_per_job()
 collect.get_performance_aggregated_per_phase()
 
 # Hardware monitoring summary, one row per job
-collect.get_monitoring_aggregated_per_job("stream")
+collect.get_monitoring_aggregated_per_job("benchmarking")
 
 # Hardware monitoring summary, one row per phase
-collect.get_monitoring_aggregated_per_phase("stream")
+collect.get_monitoring_aggregated_per_phase("benchmarking")
 
 # CPU time-series across all codes (long format)
 collect.get_monitoring_timeseries_all(metric="total_cpu_memory")
 
 # Enrich a custom DataFrame with experiment metadata
-df = collect.get_monitoring_aggregated_per_phase("stream")
+df = collect.get_monitoring_aggregated_per_phase("benchmarking")
 collect.add_metadata(df)
 ```
 

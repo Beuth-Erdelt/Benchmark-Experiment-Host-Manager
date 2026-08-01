@@ -1,4 +1,4 @@
-# bexhoma/ — development notes
+# bexhoma/
 
 ---
 

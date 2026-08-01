@@ -18,6 +18,7 @@
     ./Monitoring.md
     ./Evaluators.md
     ./Collectors.md
+    ./Environment.md
     ./Prepare-Testbeds.md
     ./Example-YCSB.md
     ./Example-HammerDB.md

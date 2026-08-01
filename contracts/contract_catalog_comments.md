@@ -72,6 +72,25 @@ few more: `extends:`/`ref:` merge semantics, `arg_style` GUC-vs-env-var
 dispatch, `status: reference-only` vs. `fixed: true` on a knob) as actual
 data now, not just this prose — keep both in sync if either changes.
 
+## TPC-H params trimmed from the catalog (2026-08-01)
+
+Three `workloads.TPCH.params` entries were removed as exposed options:
+
+- `verbose_explain` — dropped entirely. It only prints EXPLAIN output for
+  interactive debugging; `store_explain` (which persists EXPLAIN into the
+  protocol) covers the real use case, so there's no reason to expose the
+  print-only variant as a catalog option.
+- `verify_result` — dropped as an option because it should always be `true`.
+  Result-row sanity checking is not something an experiment should be able
+  to opt out of.
+- `limit_import_table` — dropped; the partial-reload use case it served
+  isn't needed for this contract's scope.
+
+None of these were removed from the underlying bexhoma code (`tpch.py`,
+`bexhoma/spec.py`, `bexhoma/benchmarks/tpch.py` still reference them) — only
+from the catalog's exposed surface. If the code paths for these are later
+found unused elsewhere, that's a separate cleanup, not implied by this one.
+
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
 `experiments/tpch/PgDuckDB/` exists on disk but is unused: `tpch.py` points

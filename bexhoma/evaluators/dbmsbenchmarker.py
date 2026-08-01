@@ -545,7 +545,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         :param df_reduced: Per-phase execution DataFrame.
         :param workflow_actual: Reconstructed actual workflow dict.
         :param workflow_planned: Planned workflow dict from workload config.
-        :param extra: Must contain ``num_errors`` and ``num_warnings`` from
+        :param extra: Must contain ``num_errors`` and ``num_warnings``, and
+                      ``num_active_queries``/``num_queries_with_explain`` from
                       :meth:`~bexhoma.benchmarks.base.DBMSBenchmarkerBenchmark._show_extra_sections`.
         """
         if experiment.benchmarking_is_active():
@@ -564,6 +565,19 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
                 passed_warnings,
                 "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)"
             )
+            # EXPLAIN is opt-in (-se/--store-explain); skip rather than fail when
+            # nothing was captured at all, since that is the common case of the
+            # flag simply not being used, not a real defect.
+            num_active_queries = extra.get("num_active_queries", 0)
+            num_queries_with_explain = extra.get("num_queries_with_explain", 0)
+            if num_queries_with_explain == 0:
+                experiment._record_skipped_test("EXPLAIN captured for every active query (-se/--store-explain not used)")
+            else:
+                passed_explain = num_queries_with_explain == num_active_queries
+                experiment._record_test(
+                    passed_explain,
+                    "EXPLAIN captured for every active query" if passed_explain else "EXPLAIN missing for some active queries"
+                )
             experiment._record_test(
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"
