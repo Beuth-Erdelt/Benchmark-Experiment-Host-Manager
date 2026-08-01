@@ -248,10 +248,6 @@ workloads:
         why: "repeat each query N times per round; also useful for
           statistical verification (more samples per query) and to prolong
           a short-running round so monitoring metrics have time to warm up"
-      verify_result:
-        type: bool
-        default: false
-        why: "validate result rows meet basic sanity checks"
       measure_datatransfer:
         type: bool
         default: false
@@ -268,10 +264,6 @@ workloads:
         type: bool
         default: false
         why: "shuffle query execution order independently per stream"
-      limit_import_table:
-        type: str
-        default: ""
-        why: "import only this table (partial re-loads)"
       refresh_streams:
         type: int
         default: 0
@@ -280,16 +272,11 @@ workloads:
         type: int
         default: 0
         why: "starting OFFSET+1 for the refresh stream"
-      verbose_explain:
-        type: bool
-        default: false
-        why: "run and print configured EXPLAIN statements after each benchmark query"
-        when: "requires an 'explain' key in the DBMS connection's JDBC config"
       store_explain:
         type: bool
         default: false
         why: "run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol"
-        when: "requires an 'explain' key in the DBMS connection's JDBC config; independent of verbose_explain"
+        when: "requires an 'explain' key in the DBMS connection's JDBC config"
 
     loading:
       pods:
