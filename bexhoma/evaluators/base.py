@@ -137,8 +137,12 @@ class EvaluatorBase:
             # Matched case-insensitively: configuration names reconstructed from a
             # Kubernetes job/pod name (see transform_all_logs_benchmarking() and
             # transform_all_logs_loading()) are lower-cased by
-            # SutConfiguration.generate_component_name(), but the file was written
-            # with the configuration's original casing (e.g. "PostgreSQL-A2").
+            # SutConfiguration.generate_component_name(). The writer
+            # (experiments/base.py::work_benchmark_list()) now lowercases this
+            # filename too, but result folders from before that fix still have it
+            # written with the configuration's original casing (e.g. "PostgreSQL-A2"),
+            # so this stays case-insensitive rather than assuming every existing
+            # file was written post-fix.
             result = {}
             target = f"bexhoma-experiment-dict-{configuration}.json".lower()
             try:
@@ -720,8 +724,8 @@ class EvaluatorBase:
                     self.add_connection_to_result(conn, connection_id, result)
                     # add_connection_to_result copies the mutated conn['name'] which
                     # carries the code prefix.  Use the pod-level name without the
-                    # code prefix so callers see "PostgreSQL-1-1-1-2-1" not
-                    # "1781731967-PostgreSQL-1-1-1-2-1".
+                    # code prefix so callers see "postgresql-1-1-1-2-1" not
+                    # "1781731967-postgresql-1-1-1-2-1".
                     result[connection_id]['connection'] = f"{job_id}-{client_idx}"
         return pd.DataFrame(result).T
     def get_loading_per_connection(self):

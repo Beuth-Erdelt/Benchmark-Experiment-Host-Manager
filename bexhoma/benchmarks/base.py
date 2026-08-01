@@ -595,4 +595,24 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             warnings_section.lines = ["No warnings"]
         sections.append(warnings_section)
 
+        # EXPLAIN is opt-in evidence (dbmsbenchmarker's -se/--store-explain), so unlike
+        # Errors/Warnings above, this section is only added when something was captured
+        # at all — most runs never populate it and shouldn't show an empty placeholder.
+        df_errors_by_num = self.evaluator.get_total_errors(query_titles=False)
+        explain_lines: list[str] = []
+        for query_title, query_num in zip(list(df_errors.columns), list(df_errors_by_num.columns)):
+            query_num_stripped = str(query_num).lstrip('Q')
+            list_explains = self.evaluator.evaluation.get_explain(query_num_stripped)
+            list_explains = {k: v for k, v in list_explains.items() if len(v) > 0}
+            if not list_explains:
+                continue
+            explain_lines.append("* " + query_title)
+            for connection_name, explain_text in list_explains.items():
+                explain_lines.append(f"  * {connection_name}")
+                explain_lines.append("    ```text")
+                explain_lines.extend("    " + line for line in explain_text.splitlines())
+                explain_lines.append("    ```")
+        if explain_lines:
+            sections.append(Section(heading="EXPLAIN", level=3, lines=explain_lines))
+
         return sections, {"num_errors": num_errors, "num_warnings": num_warnings}

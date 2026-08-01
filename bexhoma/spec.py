@@ -803,6 +803,8 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     _append_flag(argv, "-xrso", params.get("refresh_stream_offset"))
     if params.get("verbose_explain"):
         argv.append("-xve")
+    if params.get("store_explain"):
+        argv.append("-xse")
 
     _append_flag(argv, "-nlp", loading.get("pods"))
     _append_flag(argv, "-nlt", loading.get("threads"))

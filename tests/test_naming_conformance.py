@@ -78,6 +78,30 @@ class ContractSelfConsistencyTest(unittest.TestCase):
         self.assertIn('benchmarking', self.contract['provenance'])
         self.assertNotIn('execution', self.contract['provenance'])
 
+    def test_no_dangling_identifier_terms_references(self) -> None:
+        """Any 'identifier_terms.<name>' cross-reference in a string value must
+        point at a key that actually exists under identifier_terms -- guards
+        against the kind of copy-paste drift that left a 'see
+        identifier_terms.component_note' pointing at a field that was never
+        added."""
+        identifier_terms = self.contract['structure']['identifier_terms']
+
+        def walk(value):
+            if isinstance(value, str):
+                for name in re.findall(r'identifier_terms\.(\w+)', value):
+                    self.assertIn(
+                        name, identifier_terms,
+                        f"dangling reference to identifier_terms.{name}, which doesn't exist",
+                    )
+            elif isinstance(value, dict):
+                for v in value.values():
+                    walk(v)
+            elif isinstance(value, list):
+                for v in value:
+                    walk(v)
+
+        walk(self.contract)
+
 
 class GenerateComponentNameConformanceTest(unittest.TestCase):
     """generate_component_name() output must match the contract's raw_filenames rules."""

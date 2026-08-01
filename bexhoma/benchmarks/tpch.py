@@ -57,6 +57,7 @@ class TPCH(DBMSBenchmarkerBenchmark):
         num_refresh_stream_offset = int(args.num_refresh_stream_offset)
         duckdb_force_execution = args.duckdb_force_execution
         verbose_explain = args.verbose_explain
+        store_explain = args.store_explain
         timeout = int(args.timeout)
         if mode == 'run':
             experiment.set_queryfile('queries-tpch.config')
@@ -126,6 +127,8 @@ class TPCH(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += "\nPgDuckDB queries are forced through the DuckDB execution engine."
             if verbose_explain:
                 experiment.workload['info'] += "\nEXPLAIN statements are run and printed after each query."
+            if store_explain:
+                experiment.workload['info'] += "\nEXPLAIN statements are run and stored in the protocol after the first run of each query."
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
             if init_indexes or init_constraints or init_statistics:

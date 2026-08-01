@@ -359,6 +359,7 @@ workloads:
       refresh_streams:        {type: int, default: 0, why: "number of RF1/RF2 refresh-stream pairs run parallel to query streams"}
       refresh_stream_offset:  {type: int, default: 0, why: "starting OFFSET+1 for the refresh stream"}
       verbose_explain:        {type: bool, default: false, why: "run and print configured EXPLAIN statements after each benchmark query (requires an 'explain' key in the DBMS connection's JDBC config)"}
+      store_explain:          {type: bool, default: false, why: "run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an 'explain' key in the DBMS connection's JDBC config; independent of verbose_explain)"}
     loading:
       pods:    {type: int, min: 1, why: "number of parallel loader pods"}
       threads: {type: int, min: 1, why: "loader threads, split across pods"}

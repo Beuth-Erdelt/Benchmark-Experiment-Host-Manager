@@ -119,6 +119,7 @@ def _build_prepare_testbed_parameter(spec: dict, tpch_module) -> dict:
     parameter['init_columns'] = tpch_cfg.get('init_columns', False)
     parameter['datatransfer'] = tpch_cfg.get('datatransfer', False)
     parameter['verbose_explain'] = tpch_cfg.get('verbose_explain', False)
+    parameter['store_explain'] = tpch_cfg.get('store_explain', False)
     active_queries = tpch_cfg.get('active_queries') or []
     parameter['active_queries'] = ",".join(str(query) for query in active_queries)
     parameter['num_refresh_streams'] = tpch_cfg.get('refresh_streams', 0)
@@ -277,6 +278,7 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
         DBMSBENCHMARKER_SHUFFLE_QUERIES=tpch_cfg.get('shuffle_queries', False),
         DBMSBENCHMARKER_DEV=0,
         DBMSBENCHMARKER_VERBOSE_EXPLAIN=tpch_cfg.get('verbose_explain', False),
+        DBMSBENCHMARKER_STORE_EXPLAIN=tpch_cfg.get('store_explain', False),
     )
 
     num_refresh_streams = tpch_cfg.get('refresh_streams', 0)

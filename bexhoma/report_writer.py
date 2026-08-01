@@ -88,14 +88,14 @@ needed, just the position rule:
 
 | Term | Description | Example |
 |---|---|---|
-| configuration | Name of the SUT instance | `PostgreSQL-1` |
+| configuration | Name of the SUT instance (original case when shown standalone, e.g. `PostgreSQL-1`) | `PostgreSQL-1` |
 | experiment_run | Repeat counter for the whole experiment | `2` |
 | client | 1-based index of the benchmark phase within a run | `3` |
-| phase | Benchmark phase identifier | `PostgreSQL-1-2-3` |
+| phase | Benchmark phase identifier, lowercased | `postgresql-1-2-3` |
 | benchmark_run | 1-based index of a parallel benchmark job within a phase | `4` |
-| job | Benchmark job identifier | `PostgreSQL-1-2-3-4` |
+| job | Benchmark job identifier, lowercased | `postgresql-1-2-3-4` |
 | pod | 1-based index of a driver pod within a job | `5` |
-| connection | Driver-pod identifier | `PostgreSQL-1-2-3-4-5` |
+| connection | Driver-pod identifier, lowercased | `postgresql-1-2-3-4-5` |
 
 **Experiment code convention**: `code` (this experiment's result-folder name)
 is a Unix epoch timestamp in seconds, generated at experiment start. It is
@@ -602,8 +602,12 @@ def _build_connections_md_lines(
     """
     Build ``connections.md``'s body: one subsection per row of
     ``df_connections``, each with its own parameter columns plus glob-derived
-    links to its benchmarker log, its SUT's container log, its
-    ``kubectl describe pod`` output, and the monitoring CSV covering it.
+    links to its benchmarker log, its SUT's container log, and its
+    ``kubectl describe pod`` output. The monitoring CSVs are not
+    connection-specific (each holds every connection's own column merged
+    together), so they're listed once in a single document-level Provenance
+    section at the end instead of being repeated identically inside every
+    per-connection subsection.
 
     :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
     :param result_dir: The experiment's result folder.
@@ -646,20 +650,23 @@ def _build_connections_md_lines(
             "`kubectl describe pod` output for this connection's SUT — its event "
             "history (scheduling, image pull, restarts, OOMKills), not just static spec.",
         )
-        metric_links = _glob_provenance(
-            result_dir, report_dir, ["query_*_metric_*.csv"],
-            "Wide-format monitoring CSV (one column per connection, one row per "
-            "Prometheus scrape) backing the metrics shown for this connection — find "
-            "this connection's own column.",
-        )
-        if log_links or describe_links or metric_links:
+        if log_links or describe_links:
             lines.append("")
             lines.append("##### Provenance")
             lines.append("")
             lines.extend(log_links)
             lines.extend(describe_links)
-            lines.extend(metric_links)
         lines.append("")
+    metric_links = _glob_provenance(
+        result_dir, report_dir, ["query_*_metric_*.csv"],
+        "Wide-format monitoring CSVs (one column per connection, one row per "
+        "Prometheus scrape) backing the metrics shown above — find each "
+        "connection's own column by name.",
+    )
+    if metric_links:
+        lines.append("### Provenance")
+        lines.append("")
+        lines.extend(metric_links)
     return lines
 
 
@@ -796,7 +803,7 @@ def write_markdown_report(
             "Benchmarking phase results, including any secondary (co-running) benchmarks.",
             benchmarking_all, connections_index, benchmarking_links,
         )
-        written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, secondary-benchmark sections, latency, errors, warnings."})
+        written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
 
     monitoring_sections, monitoring_provenance = _build_monitoring_sections(
         experiment, benchmark.evaluator, connections_sorted, monitoring_applications, result_dir, report_dir,

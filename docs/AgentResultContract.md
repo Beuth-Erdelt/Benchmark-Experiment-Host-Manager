@@ -115,14 +115,14 @@ segments from the right, no lookup table needed:
 
 | Term | Meaning | Example |
 |---|---|---|
-| `configuration` | SUT instance name | `PostgreSQL-1` |
+| `configuration` | SUT instance name (original case when shown standalone, e.g. `PostgreSQL-1`) | `PostgreSQL-1` |
 | `experiment_run` | Repeat counter for the whole experiment (`-nc`) | `2` |
 | `client` | 1-based index of the benchmark phase/round within a run (`-ne`) | `3` |
-| `phase` | `<configuration>-<experiment_run>-<client>` | `PostgreSQL-1-2-3` |
+| `phase` | `<configuration>-<experiment_run>-<client>`, lowercased | `postgresql-1-2-3` |
 | `benchmark_run` | 1-based index of a parallel benchmark job within a round (query stream vs. refresh stream, etc.) | `1` |
-| `job` | `<phase>-<benchmark_run>` | `PostgreSQL-1-2-3-1` |
+| `job` | `<phase>-<benchmark_run>`, lowercased | `postgresql-1-2-3-1` |
 | `pod` | 1-based index of a driver pod within a job | `1` |
-| `connection` | `<job>-<pod>` | `PostgreSQL-1-2-3-1-1` |
+| `connection` | `<job>-<pod>`, lowercased | `postgresql-1-2-3-1-1` |
 
 `code` (the result folder's own directory name) is a Unix epoch timestamp
 in seconds, assigned once at experiment start — unique and monotonically

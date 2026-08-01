@@ -79,7 +79,7 @@ provenance:
     "bexhoma-benchmarker.*.all.df.pickle": "cached parsed+aggregated DataFrame"
     "queries.config": "literal SQL text — DBMSBenchmarker-family (TPC-H/TPC-DS) only"
   monitoring:
-    "query_{component}_metric_{key}.csv": "wide format: one column per connection, one row per Prometheus scrape; {component} is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency (e.g. loading, benchmarking, loader, benchmarker, datagenerator) plus any registered application component — see identifier_terms.component_note"
+    "query_{component}_metric_{key}.csv": "wide format: one column per connection, one row per Prometheus scrape; {component} is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency (e.g. loading, benchmarking, loader, benchmarker, datagenerator) plus any registered application component"
   restarts:
     "bexhoma-sut-{configuration}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one archived snapshot per experiment_run; restartCount is cumulative across runs (same pod, not recreated), so aggregate by max per pod, not by summing every file"
   sut:

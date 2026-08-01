@@ -285,6 +285,11 @@ workloads:
         default: false
         why: "run and print configured EXPLAIN statements after each benchmark query"
         when: "requires an 'explain' key in the DBMS connection's JDBC config"
+      store_explain:
+        type: bool
+        default: false
+        why: "run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol"
+        when: "requires an 'explain' key in the DBMS connection's JDBC config; independent of verbose_explain"
 
     loading:
       pods:
