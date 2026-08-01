@@ -182,7 +182,7 @@ function Build-AndPush-Hardware {
 
 #### Main ####
 
-$dbmsbenchmarker = "v0.14.26"
+$dbmsbenchmarker = "v0.14.27"
 $version = (pip show bexhoma | Select-String "^Version:" | ForEach-Object { ($_ -split '\s+')[1] })
 Write-Output $version
 
