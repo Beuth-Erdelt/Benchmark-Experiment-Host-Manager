@@ -266,23 +266,26 @@ class Benchmark:
             return None
         return Section(heading="Reset", level=4, dataframe=df_reset, index=False)
 
-    def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> tuple[list[Section], dict]:
+    def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> tuple[list[Section], dict, Section | None]:
         """
         Build benchmark-specific sections shown after ``### Benchmarking → Per Phase``.
 
-        Default is a no-op returning no sections and an empty context dict.
-        Override to insert additional output (e.g. query latency, SQL
-        errors/warnings for DBMSBenchmarker) and to return any extra context
-        needed by :meth:`evaluator.record_tests`.
+        Default is a no-op returning no sections, an empty context dict, and no
+        report-only section. Override to insert additional output (e.g. query
+        latency, SQL errors/warnings for DBMSBenchmarker), to return any extra
+        context needed by :meth:`evaluator.record_tests`, and/or a section that
+        should only appear in the Markdown report, never in the stdout summary
+        (e.g. the full per-query EXPLAIN dump).
 
         :param experiment: The owning experiment object.
         :param df_aggregated_reduced: The per-phase execution DataFrame.
-        :return: Tuple of extra sections to append to the summary, and an
-                 extra context dict forwarded as keyword arguments to
-                 ``evaluator.record_tests()``.
-        :rtype: tuple[list[Section], dict]
+        :return: Tuple of extra sections to append to the summary; an extra
+                 context dict forwarded as keyword arguments to
+                 ``evaluator.record_tests()``; and a report-only section (or
+                 ``None``).
+        :rtype: tuple[list[Section], dict, Section | None]
         """
-        return [], {}
+        return [], {}, None
 
     def _build_benchmarking_section(self, df_connections: pd.DataFrame, is_multitenant: bool) -> tuple[Section, pd.DataFrame]:
         """
@@ -374,7 +377,7 @@ class Benchmark:
         if experiment.benchmarking_is_active():
             benchmarking_section, df_aggregated_reduced = self._build_benchmarking_section(df_connections, is_multitenant)
             key_metrics_section = self._build_key_metrics_section(df_aggregated_reduced)
-        extra_sections, extra_context = self._show_extra_sections(experiment, df_aggregated_reduced)
+        extra_sections, extra_context, explain_section = self._show_extra_sections(experiment, df_aggregated_reduced)
         document: list[Section] = [
             section for section in (workflow_section, loading_section, benchmarking_section)
             if section is not None
@@ -406,6 +409,7 @@ class Benchmark:
                 loading_section=loading_section,
                 benchmarking_section=benchmarking_section,
                 extra_sections=extra_sections,
+                explain_section=explain_section,
                 key_metrics_section=key_metrics_section,
                 connections_sorted=connections_sorted,
                 monitoring_applications=monitoring_applications,
@@ -536,18 +540,21 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             df_aggregated_reduced, ["Geo Times [s]", "Power@Size [~Q/h]", "Throughput@Size"]
         )
 
-    def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> tuple[list[Section], dict]:
+    def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> tuple[list[Section], dict, Section | None]:
         """
         Build secondary-benchmark sections, query latency, SQL errors, and warnings.
 
         :param experiment: The owning experiment object.
         :param df_aggregated_reduced: The per-phase execution DataFrame.
-        :return: Tuple of the extra sections to append to the summary, and a
-                 dict with ``num_errors`` and ``num_warnings`` for test recording.
-        :rtype: tuple[list[Section], dict]
+        :return: Tuple of the extra sections to append to the summary; a dict
+                 with ``num_errors``, ``num_warnings``, ``num_active_queries``,
+                 and ``num_queries_with_explain`` for test recording; and a
+                 report-only ``EXPLAIN`` detail section (or ``None``), shown
+                 in ``benchmarking.md`` but never in the stdout summary.
+        :rtype: tuple[list[Section], dict, Section | None]
         """
         if not experiment.benchmarking_is_active():
-            return [], {"num_errors": 0, "num_warnings": 0}
+            return [], {"num_errors": 0, "num_warnings": 0, "num_active_queries": 0, "num_queries_with_explain": 0}, None
         sections: list[Section] = []
         for bm in experiment.benchmarks:
             if bm.benchmark_index == self.benchmark_index:
@@ -595,24 +602,33 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             warnings_section.lines = ["No warnings"]
         sections.append(warnings_section)
 
-        # EXPLAIN is opt-in evidence (dbmsbenchmarker's -se/--store-explain), so unlike
-        # Errors/Warnings above, this section is only added when something was captured
-        # at all — most runs never populate it and shouldn't show an empty placeholder.
+        # EXPLAIN is opt-in evidence (dbmsbenchmarker's -se/--store-explain). The full
+        # per-connection dump is report-only (see explain_section below, rendered into
+        # benchmarking.md but never printed to stdout) — show_summary() only sees a
+        # pass/fail/skipped Tests-table row (record_tests() in evaluators/dbmsbenchmarker.py).
         df_errors_by_num = self.evaluator.get_total_errors(query_titles=False)
         explain_lines: list[str] = []
+        num_active_queries = len(df_errors.columns)
+        num_queries_with_explain = 0
         for query_title, query_num in zip(list(df_errors.columns), list(df_errors_by_num.columns)):
             query_num_stripped = str(query_num).lstrip('Q')
             list_explains = self.evaluator.evaluation.get_explain(query_num_stripped)
             list_explains = {k: v for k, v in list_explains.items() if len(v) > 0}
             if not list_explains:
                 continue
+            num_queries_with_explain += 1
             explain_lines.append("* " + query_title)
             for connection_name, explain_text in list_explains.items():
                 explain_lines.append(f"  * {connection_name}")
                 explain_lines.append("    ```text")
                 explain_lines.extend("    " + line for line in explain_text.splitlines())
                 explain_lines.append("    ```")
-        if explain_lines:
-            sections.append(Section(heading="EXPLAIN", level=3, lines=explain_lines))
+        explain_section = Section(heading="EXPLAIN", level=3, lines=explain_lines) if explain_lines else None
 
-        return sections, {"num_errors": num_errors, "num_warnings": num_warnings}
+        extra_context = {
+            "num_errors": num_errors,
+            "num_warnings": num_warnings,
+            "num_active_queries": num_active_queries,
+            "num_queries_with_explain": num_queries_with_explain,
+        }
+        return sections, extra_context, explain_section

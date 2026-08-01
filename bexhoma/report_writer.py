@@ -677,6 +677,7 @@ def write_markdown_report(
     loading_section: Section | None,
     benchmarking_section: Section | None,
     extra_sections: list[Section],
+    explain_section: Section | None,
     key_metrics_section: Section | None,
     connections_sorted: list[dict],
     monitoring_applications: dict,
@@ -706,6 +707,12 @@ def write_markdown_report(
         benchmarking was not active.
     :param extra_sections: Secondary-benchmark and Latency/Errors/Warnings
         sections from ``_show_extra_sections()``.
+    :param explain_section: The full per-query/per-connection ``EXPLAIN`` dump
+        from ``_show_extra_sections()``, or ``None`` when nothing was captured
+        (``-se``/``--store-explain`` not used). Report-only, like
+        ``key_metrics_section`` below: rendered into ``benchmarking.md``,
+        never printed to stdout — ``show_summary()`` only shows a pass/fail/
+        skipped Tests-table row for it.
     :param key_metrics_section: The benchmark-type-specific ``Key Metrics``
         section from ``benchmark._build_key_metrics_section()`` (e.g. Geo
         Times/Power@Size/Throughput@Size for DBMSBenchmarker, NOPM for
@@ -780,8 +787,10 @@ def write_markdown_report(
         )
         written_sections.append({"title": "Loading", "file": "loading.md", "description": "Per-connection and per-run loading throughput/timing."})
 
-    if benchmarking_section is not None or extra_sections:
+    if benchmarking_section is not None or extra_sections or explain_section is not None:
         benchmarking_all = ([benchmarking_section] if benchmarking_section is not None else []) + extra_sections
+        if explain_section is not None:
+            benchmarking_all = benchmarking_all + [explain_section]
         benchmarking_links = _glob_provenance(
             result_dir, report_dir,
             ["bexhoma-benchmarker-*.log", "bexhoma-benchmarker.*.all.df.pickle"],

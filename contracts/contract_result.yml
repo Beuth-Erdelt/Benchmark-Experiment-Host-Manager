@@ -134,6 +134,10 @@ validity:
   - id: monitoring_component_cpu_nonzero
     kind: absolute
     checks: "per monitored component; SKIPPED (not failed) when phase < 1 scrape interval"
+  - id: explain_captured_for_all_queries
+    kind: absolute
+    scope: dbmsbenchmarker_family_only
+    checks: "every active query has an EXPLAIN captured for at least one connection; SKIPPED (not failed) when -se/--store-explain was not used, so nothing was captured at all"
   - id: cross_experiment_comparison
     kind: comparative
     implemented: false
