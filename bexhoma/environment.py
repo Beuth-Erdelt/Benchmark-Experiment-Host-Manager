@@ -552,6 +552,7 @@ def apply_hardware_baseline(
     hardware_duration: int = 15,
     network_topology: str = "star",
     hub: Optional[str] = None,
+    storage_classes: Optional[list[Optional[str]]] = None,
     timeout_minutes: int = 10,
 ) -> None:
     """Run the opt-in hardware baseline sweep and merge its results into ``environment``.
@@ -572,6 +573,11 @@ def apply_hardware_baseline(
     :param network_topology: ``'none'``, ``'star'``, or ``'full'`` — see
         :func:`bexhoma.hardware_baseline.run_hardware_baseline`.
     :param hub: Hub node for ``network_topology='star'``; defaults to the first node.
+    :param storage_classes: Extra StorageClasses to additionally run the fio
+        round against, e.g. ``[None, 'cephcsi']`` — see
+        :func:`bexhoma.hardware_baseline.run_hardware_baseline`. Each node's
+        ``hardware_baseline`` dict gets one extra ``"fio:<name>"`` entry per
+        named class, alongside the always-present ``"fio"`` (ephemeral) entry.
     :param timeout_minutes: Wall-clock cap for the whole sweep.
     """
     from bexhoma import hardware_baseline
@@ -581,7 +587,7 @@ def apply_hardware_baseline(
         result = hardware_baseline.run_hardware_baseline(
             cluster, node_names,
             hardware_duration=hardware_duration, network_topology=network_topology,
-            hub=hub, timeout_minutes=timeout_minutes,
+            hub=hub, storage_classes=storage_classes, timeout_minutes=timeout_minutes,
         )
     except hardware_baseline.HardwareBaselineError as error:
         print(f"WARN: hardware baseline sweep skipped: {error}")
@@ -651,7 +657,21 @@ def main(argv: Optional[list[str]] = None) -> None:
         "-xhwt", "--xhardware-baseline-timeout",
         help="wall-clock cap in minutes for the whole baseline sweep",
         type=int, default=10, dest="hardware_baseline_timeout")
+    cli_parser.add_argument(
+        "-xhwsc", "--xhardware-baseline-storage-classes",
+        help="comma-separated StorageClasses to additionally run the fio round against, "
+             "each via its own throwaway PVC (e.g. 'cephcsi,local-hdd'); an entry of 'none' "
+             "(any case) is accepted as a no-op placeholder for the plain fio round against "
+             "each node's own ephemeral storage, which always runs regardless of this flag",
+        default=None, dest="hardware_baseline_storage_classes")
     cli_args = cli_parser.parse_args(argv)
+
+    cli_storage_classes = None
+    if cli_args.hardware_baseline_storage_classes:
+        cli_storage_classes = [
+            (None if name.strip().lower() in ("", "none") else name.strip())
+            for name in cli_args.hardware_baseline_storage_classes.split(",")
+        ]
 
     cli_cluster = clusters.Kubernetes(context=cli_args.context)
     cli_environment = build_environment(cli_cluster)
@@ -660,6 +680,7 @@ def main(argv: Optional[list[str]] = None) -> None:
             cli_cluster, cli_environment,
             hardware_duration=cli_args.hardware_baseline_duration,
             network_topology=cli_args.hardware_baseline_network,
+            storage_classes=cli_storage_classes,
             timeout_minutes=cli_args.hardware_baseline_timeout,
         )
     write_environment_yml(cli_environment, cli_args.output)
