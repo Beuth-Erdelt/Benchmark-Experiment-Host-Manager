@@ -1118,6 +1118,31 @@ not exploratory material. The sample `experiment.yml` and the generated
 `environment.yml` stay under `dev/catalog/`: one is a worked example, the
 other a per-cluster snapshot, neither is schema.
 
+## `environment.yml`: hardware baseline extension (`-xhw`)
+
+The read-only fields above (`nodes`, `excluded_nodes`, `storage_classes`,
+`resource_limits`) are always collected. `environment.py`'s `-xhw` flag adds
+an opt-in, cluster-mutating step on top — a short benchmark sweep across the
+cluster's nodes, merged into the same `environment.yml`:
+
+- Deploys one `Hardware` SUT per node, pinned via the existing
+  `kubernetes.io/hostname` nodeSelector patch, reusing
+  `bexhoma/experiments/hardware.py`/`bexhoma/configurations` unmodified
+  (`bexhoma/hardware_baseline.py` is new orchestration only — no new k8s
+  manifests, no `images/hardware/*` changes).
+- Every node gets two baseline rounds — sysbench (CPU/RAM) and fio (against
+  the node's own container-local scratch space, no PVC) — landing under
+  that node's `hardware_baseline` key as `cpu_mem`/`fio`.
+- `-xhwnet {none,star,full}` optionally adds an inter-node network round
+  (sockperf, TCP — chosen because DBMS traffic is TCP, not sockperf's own
+  UDP default): `star` tests every node against one hub, `full` is a
+  round-robin all-pairs matrix (`N-1` rounds for `N` nodes, not the naive
+  `O(N²)`). Results land in a top-level `network_matrix`, keyed
+  `"{origin}->{target}"`.
+- Always torn down (`try`/`finally` around the sweep); a failure degrades to
+  a partial/empty result rather than aborting the rest of `environment.yml`.
+- CLI reference and worked examples: `docs/Environment.md`.
+
 ## Open questions
 
 - Exact validation/schema ownership is called out in issue #764 as
