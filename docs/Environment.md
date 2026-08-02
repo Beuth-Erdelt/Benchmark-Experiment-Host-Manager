@@ -15,7 +15,9 @@ Free-capacity accounting requires cluster-wide pod listing, which many users on 
 
 ## Hardware baseline (optional)
 
-Static specs don't tell you how fast a node's disk or network actually is. Passing `-xhw` additionally runs a short, cluster-mutating sweep — sysbench CPU/RAM, fio against each node's own container-local scratch space, and an optional sockperf network test between nodes — and merges the results into `environment.yml` under each node's `hardware_baseline` key (network results go into a top-level `network_matrix`). It's off by default because, unlike the collectors above, it deploys and tears down real pods.
+Static specs don't tell you how fast a node's disk or network actually is. Passing `-xhw` additionally runs a short, cluster-mutating sweep — sysbench CPU/RAM, fio against each node's own container-local scratch space, and an optional sockperf (TCP) network test between nodes — and merges the results into `environment.yml` under each node's `hardware_baseline` key (network results go into a top-level `network_matrix`). It's off by default because, unlike the collectors above, it deploys and tears down real pods.
+
+`-xhwsc` additionally sweeps fio against one or more extra StorageClasses (each via its own throwaway PVC), alongside the always-present ephemeral-storage fio round — useful for comparing e.g. `cephcsi` or `local-hdd` against the node's local scratch disk. Results land under each node's `hardware_baseline` as extra `"fio:<name>"` entries.
 
 ## Usage
 
@@ -24,6 +26,7 @@ bexhoma environment create [-h] [-cx CONTEXT] [-o OUTPUT] [-xhw]
                             [-xhwd HARDWARE_BASELINE_DURATION]
                             [-xhwnet {none,star,full}]
                             [-xhwt HARDWARE_BASELINE_TIMEOUT]
+                            [-xhwsc HARDWARE_BASELINE_STORAGE_CLASSES]
 ```
 
 Write `environment.yml` for the current kubectl context, to the default path (`dev/catalog/environment.yml`):
@@ -48,6 +51,12 @@ Skip the inter-node network test (sysbench/fio only, no sockperf):
 
 ```powershell
 bexhoma environment create -xhw -xhwnet none
+```
+
+Also sweep fio against extra StorageClasses (each via its own throwaway PVC), alongside the always-present ephemeral-storage round:
+
+```powershell
+bexhoma environment create -xhw -xhwsc cephcsi,local-hdd
 ```
 
 Recommended hardware baseline settings — skip the network test, 10s per round, capped at 40 minutes wall-clock:
