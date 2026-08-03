@@ -1154,10 +1154,10 @@ class Kubernetes():
 
     def delete_pvc(self, name):
         """
-        Delete a PersistentVolumeClaim by name.
+        Delete a PersistentVolumeClaim by name. A 404 (already gone) counts as success.
 
         :param name: Name of the PVC to delete.
-        :return: ``True`` if deleted successfully, ``False`` on error.
+        :return: ``True`` if deleted (or already gone), ``False`` on error.
         """
         self.logger.debug(f'Kubernetes.delete_pvc({name})')
         body = kubernetes_client.V1DeleteOptions()
@@ -1165,6 +1165,8 @@ class Kubernetes():
             self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
             return True
         except ApiException as e:
+            if e.status == 404:
+                return True
             print(f"Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: {e}\n")
             self.cluster_access()
             self.wait(2)
