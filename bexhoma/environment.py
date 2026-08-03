@@ -575,9 +575,11 @@ def apply_hardware_baseline(
     :param hub: Hub node for ``network_topology='star'``; defaults to the first node.
     :param storage_classes: Extra StorageClasses to additionally run the fio
         round against, e.g. ``[None, 'cephcsi']`` — see
-        :func:`bexhoma.hardware_baseline.run_hardware_baseline`. Each node's
-        ``hardware_baseline`` dict gets one extra ``"fio:<name>"`` entry per
-        named class, alongside the always-present ``"fio"`` (ephemeral) entry.
+        :func:`bexhoma.hardware_baseline.run_hardware_baseline`. Each named
+        class is only swept once, on a single node, so only that one node's
+        ``hardware_baseline`` dict gets an extra ``"fio:<name>"`` entry;
+        every node's ``hardware_baseline`` still gets the always-present
+        ``"fio"`` (ephemeral) entry.
     :param timeout_minutes: Wall-clock cap for the whole sweep.
     """
     from bexhoma import hardware_baseline
@@ -660,7 +662,8 @@ def main(argv: Optional[list[str]] = None) -> None:
     cli_parser.add_argument(
         "-xhwsc", "--xhardware-baseline-storage-classes",
         help="comma-separated StorageClasses to additionally run the fio round against, "
-             "each via its own throwaway PVC (e.g. 'cephcsi,local-hdd'); an entry of 'none' "
+             "each via its own throwaway PVC on a single node, not once per node "
+             "(e.g. 'cephcsi,local-hdd'); an entry of 'none' "
              "(any case) is accepted as a no-op placeholder for the plain fio round against "
              "each node's own ephemeral storage, which always runs regardless of this flag",
         default=None, dest="hardware_baseline_storage_classes")

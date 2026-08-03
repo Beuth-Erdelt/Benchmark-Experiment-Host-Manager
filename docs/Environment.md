@@ -17,7 +17,7 @@ Free-capacity accounting requires cluster-wide pod listing, which many users on 
 
 Static specs don't tell you how fast a node's disk or network actually is. Passing `-xhw` additionally runs a short, cluster-mutating sweep — sysbench CPU/RAM, fio against each node's own container-local scratch space, and an optional sockperf (TCP) network test between nodes — and merges the results into `environment.yml` under each node's `hardware_baseline` key (network results go into a top-level `network_matrix`). It's off by default because, unlike the collectors above, it deploys and tears down real pods.
 
-`-xhwsc` additionally sweeps fio against one or more extra StorageClasses (each via its own throwaway PVC), alongside the always-present ephemeral-storage fio round — useful for comparing e.g. `cephcsi` or `local-hdd` against the node's local scratch disk. Results land under each node's `hardware_baseline` as extra `"fio:<name>"` entries.
+`-xhwsc` additionally sweeps fio against one or more extra StorageClasses, alongside the always-present ephemeral-storage fio round — useful for comparing e.g. `cephcsi` or `local-hdd` against a node's local scratch disk. Each named class gets a single throwaway PVC on one node, not one per node — a network-backed class isn't assumed to be node-local, so one measurement per class is enough. Results land as an extra `"fio:<name>"` entry under that one node's `hardware_baseline`; every other node keeps only its own ephemeral `"fio"` entry.
 
 ## Usage
 

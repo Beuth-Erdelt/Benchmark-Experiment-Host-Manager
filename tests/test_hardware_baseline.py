@@ -305,14 +305,15 @@ class RunHardwareBaselineSetupTest(unittest.TestCase):
         self._run(['n1', 'n2'], network_topology='none', storage_classes=[None])
         self.assertEqual(len(self.captured_experiment.configurations), 2)
 
-    def test_named_storage_class_adds_one_extra_configuration_per_node(self) -> None:
+    def test_named_storage_class_adds_one_extra_configuration_total(self) -> None:
+        """A named class is swept once, on a single node -- not once per node."""
         self._run(['n1', 'n2'], network_topology='none', storage_classes=[None, 'cephcsi'])
-        self.assertEqual(len(self.captured_experiment.configurations), 4)
+        self.assertEqual(len(self.captured_experiment.configurations), 3)
 
-    def test_multiple_named_storage_classes_add_one_extra_configuration_each_per_node(self) -> None:
+    def test_multiple_named_storage_classes_add_one_extra_configuration_each(self) -> None:
         self._run(['n1', 'n2'], network_topology='none', storage_classes=['cephcsi', 'local-hdd'])
-        # 2 primary + 2 nodes * 2 storage classes
-        self.assertEqual(len(self.captured_experiment.configurations), 6)
+        # 2 primary (one per node) + 2 storage classes (one node each, not per node)
+        self.assertEqual(len(self.captured_experiment.configurations), 4)
 
     def test_extra_storage_class_configuration_requests_a_real_pvc(self) -> None:
         self._run(['n1'], network_topology='none', storage_classes=['cephcsi'])
@@ -325,14 +326,19 @@ class RunHardwareBaselineSetupTest(unittest.TestCase):
         self.assertFalse(extra[0].storage['keep'])
         self.assertTrue(len(extra[0].storage['storageSize']) > 0)
 
-    def test_extra_storage_class_configuration_is_pinned_to_its_node(self) -> None:
+    def test_extra_storage_class_configuration_is_pinned_to_the_first_node_only(self) -> None:
+        """Not repeated per node: only one extra configuration exists, pinned to
+        node_names[0] regardless of how many nodes were given."""
         self._run(['n1', 'n2'], network_topology='none', storage_classes=['cephcsi'])
-        extra = [
+        extra_configs = [
             config for config in self.captured_experiment.configurations
-            if config.storage.get('storageClassName') == 'cephcsi' and config.alias == 'n2'
-        ][0]
-        self.assertEqual(extra.resources['nodeSelector']['kubernetes.io/hostname'], 'n2')
-        self.assertIn('kubernetes.io/hostname: n2', extra.benchmarking_patch)
+            if config.storage.get('storageClassName') == 'cephcsi'
+        ]
+        self.assertEqual(len(extra_configs), 1)
+        extra = extra_configs[0]
+        self.assertEqual(extra.alias, 'n1')
+        self.assertEqual(extra.resources['nodeSelector']['kubernetes.io/hostname'], 'n1')
+        self.assertIn('kubernetes.io/hostname: n1', extra.benchmarking_patch)
 
     def test_extra_storage_class_configuration_only_runs_a_single_fio_round(self) -> None:
         self._run(['n1'], network_topology='none', storage_classes=['cephcsi'])

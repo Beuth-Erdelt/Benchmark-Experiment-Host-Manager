@@ -12,10 +12,14 @@ regardless of whether it succeeded.
 The fio round always runs once against each node's own container-local
 (ephemeral) storage, exactly as before. ``run_hardware_baseline()``'s
 ``storage_classes`` parameter can additionally request the same fio round
-against one or more named StorageClasses -- each gets its own short-lived
-``Hardware`` SUT per node, backed by a throwaway PersistentVolumeClaim from
-that class instead of the node's local disk, so e.g. a Ceph-backed class can
-be compared against local/ephemeral storage on the same node.
+against one or more named StorageClasses -- each gets a single short-lived
+``Hardware`` SUT, on one node, backed by a throwaway PersistentVolumeClaim
+from that class instead of the node's local disk. Unlike the ephemeral
+round, this deliberately does not repeat per node: a named StorageClass
+(e.g. a Ceph-backed one) is typically served over the network identically
+regardless of which node mounts it, so one PVC per class already gives the
+comparison against local/ephemeral storage without multiplying
+PVC-provisioning (and stuck-PVC teardown) risk by the node count.
 
 This reuses the existing ``Hardware`` benchmark machinery
 (``bexhoma/experiments/hardware.py``, ``bexhoma/configurations``,
@@ -115,11 +119,13 @@ class HardwareBaselineResult:
     :ivar per_node: Node name to its own CPU/RAM/fio result rows. Always has
         ``"cpu_mem"`` (sysbench) and ``"fio"`` (the always-on fio round
         against the node's own container-local/ephemeral storage) once the
-        sweep succeeds for that node, plus one ``"fio:<storage_class>"``
-        entry per extra entry of ``storage_classes`` passed to
-        :func:`run_hardware_baseline` (e.g. ``"fio:cephcsi"``), each
-        measuring fio against a throwaway PersistentVolumeClaim provisioned
-        from that StorageClass instead.
+        sweep succeeds for that node. The single node the sweep happened to
+        run named-storage-class rounds on (see :func:`run_hardware_baseline`'s
+        ``storage_classes`` parameter) additionally gets one
+        ``"fio:<storage_class>"`` entry per named class (e.g.
+        ``"fio:cephcsi"``), measuring fio against a throwaway
+        PersistentVolumeClaim provisioned from that StorageClass instead;
+        every other node's ``per_node`` entry has no such key.
     :ivar network_matrix: ``"{origin}->{target}"`` to that round's sockperf result dict.
     :ivar failed_nodes: Node names that produced no usable result at all.
     """
@@ -336,15 +342,19 @@ def run_hardware_baseline(
     :param hub: Hub node for ``network_topology='star'``; defaults to the
         first entry of ``node_names``.
     :param storage_classes: Extra StorageClasses to additionally run the fio
-        round against, e.g. ``[None, 'cephcsi']``. Each named entry gets its
-        own short-lived ``Hardware`` SUT per node, backed by a throwaway PVC
-        from that class; results land in the returned
-        :class:`HardwareBaselineResult` under ``per_node[node]["fio:<name>"]``.
+        round against, e.g. ``[None, 'cephcsi']``. Each named entry gets a
+        single short-lived ``Hardware`` SUT, on one node (the first entry of
+        ``node_names``) rather than once per node -- a named class is not
+        assumed to be node-local, so one PVC per class already gives the
+        comparison point without multiplying PVC-provisioning risk by the
+        node count. Results land in the returned
+        :class:`HardwareBaselineResult` under
+        ``per_node[<that node>]["fio:<name>"]``.
         A ``None`` entry is accepted for readability but otherwise ignored --
         the plain, ephemeral-storage fio round (``per_node[node]["fio"]``)
-        always runs regardless of this parameter, exactly as before.
-        Defaults to ``None`` (no extra classes), reproducing the previous,
-        ephemeral-only behaviour exactly.
+        always runs, once per node, regardless of this parameter, exactly as
+        before. Defaults to ``None`` (no extra classes), reproducing the
+        previous, ephemeral-only behaviour exactly.
     :param timeout_minutes: Wall-clock cap for the whole sweep; the experiment
         is aborted and removed if exceeded (see ``-et``/``max_experiment_minutes``).
     :return: Collected per-node and network-matrix results.
@@ -393,32 +403,38 @@ def run_hardware_baseline(
             config.patch_benchmarking(patch=_node_nodeselector_patch(node))
             configs_by_node[node] = config
 
+        # One PVC per named class, on a single node -- not once per node.
+        # Unlike the always-on ephemeral round, a named StorageClass isn't
+        # assumed to be node-local (e.g. a Ceph-backed class is served over
+        # the network identically regardless of which node mounts it), so
+        # repeating it per node would multiply PVC-provisioning (and, if the
+        # class can't bind, stuck-PVC teardown) risk for no extra signal.
+        storage_class_node = node_names[0]
         for storage_class in extra_storage_classes:
-            for node in node_names:
-                extra_configuration = (
-                    f"hw-{_sanitize_node_id(node)}-{_sanitize_storage_class_id(storage_class)}"
-                )
-                extra_config = configurations.default(
-                    experiment=experiment, docker="Hardware",
-                    configuration=extra_configuration, alias=node,
-                )
-                extra_config.set_storage(
-                    storageConfiguration=extra_configuration,
-                    storageClassName=storage_class,
-                    storageSize=_DEFAULT_HARDWARE_STORAGE_SIZE,
-                    # A throwaway PVC for a one-shot fio measurement must not
-                    # survive this sweep's teardown -- unlike a normal DBMS
-                    # run, where 'keep' (inherited as True from the
-                    # experiment-level default set in prepare_testbed())
-                    # deliberately preserves data between repeated runs.
-                    keep=False,
-                )
-                extra_config.set_resources(
-                    nodeSelector={"cpu": "", "gpu": "", "kubernetes.io/hostname": node})
-                extra_config.patch_benchmarking(patch=_node_nodeselector_patch(node))
-                extra_config.add_benchmarking_parameters(HARDWARE_TYPE="fio", **_FIO_DEFAULTS)
-                extra_config.add_benchmark_list([1])
-                storage_class_configs.setdefault(node, {})[storage_class] = extra_config
+            extra_configuration = (
+                f"hw-{_sanitize_node_id(storage_class_node)}-{_sanitize_storage_class_id(storage_class)}"
+            )
+            extra_config = configurations.default(
+                experiment=experiment, docker="Hardware",
+                configuration=extra_configuration, alias=storage_class_node,
+            )
+            extra_config.set_storage(
+                storageConfiguration=extra_configuration,
+                storageClassName=storage_class,
+                storageSize=_DEFAULT_HARDWARE_STORAGE_SIZE,
+                # A throwaway PVC for a one-shot fio measurement must not
+                # survive this sweep's teardown -- unlike a normal DBMS
+                # run, where 'keep' (inherited as True from the
+                # experiment-level default set in prepare_testbed())
+                # deliberately preserves data between repeated runs.
+                keep=False,
+            )
+            extra_config.set_resources(
+                nodeSelector={"cpu": "", "gpu": "", "kubernetes.io/hostname": storage_class_node})
+            extra_config.patch_benchmarking(patch=_node_nodeselector_patch(storage_class_node))
+            extra_config.add_benchmarking_parameters(HARDWARE_TYPE="fio", **_FIO_DEFAULTS)
+            extra_config.add_benchmark_list([1])
+            storage_class_configs.setdefault(storage_class_node, {})[storage_class] = extra_config
 
         for node in node_names:
             config = configs_by_node[node]
