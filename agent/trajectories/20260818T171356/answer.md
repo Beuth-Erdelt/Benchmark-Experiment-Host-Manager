@@ -1,0 +1,7 @@
+
+
+I designed a head-to-head TPC-H experiment (filed under **1787066092**) that answers the question directly.
+
+**What it runs:** PostgreSQL and PgDuckDB, each on the `analytical-ssd` profile (PgDuckDB's profile refs PostgreSQL's, so both resolve identical memory-derived knobs from the same limits), on a 1GB TPC-H dataset (`scaling_factor: 1`), restricted to the multi-way join queries Q5, Q7, Q8, Q9, Q21. The concurrency factor is isolated as a parallel-client sweep over rounds [1, 2, 4], repeated 3 times per round for statistical confidence, with each query run twice per round.
+
+**How it answers the question:** The only things that vary are the system and the concurrency level — memory is capped at 64Gi (matching your servers' max RAM, so the profile's derived shared_buffers/work_mem size to your real hardware), CPU is 16 cores for both, both get the same post-load physical design (ANALYZE on, no indexes/constraints, heap storage), and both run on the same node (cl-worker36, the only usable one) with node-local storage since no `ssd` storage class exists here. pg_duckdb runs with its default cost-based routing (no forced execution), so you see the system as you'd actually deploy it. The per-query latencies and per-phase Geo Times/Throughput@Size at each concurrency level will show whether pg_duckdb's join advantage holds at 1, 2, and 4 concurrent streams, and `verify_result: true` confirms both systems return correct rows. Total: 18 benchmark runs.

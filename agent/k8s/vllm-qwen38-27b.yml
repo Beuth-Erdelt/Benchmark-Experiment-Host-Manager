@@ -1,0 +1,151 @@
+# Self-hosted model server for the agent harness.
+#
+# Serves Qwen/Qwen3.8-27B-FP8 through vLLM's OpenAI-compatible API, which is
+# what agent/harness/llm.py speaks. Follows the same shape as the other vLLM
+# servers in this cluster: one Pod that downloads the weights into a PVC on
+# first start and serves them from there afterwards.
+#
+# Placement note: this pins to the H200 node (cl-worker37) and deliberately not
+# to cl-worker36. cl-worker36 is where bexhoma puts the system under test, and
+# a model server competing for that node's CPU, memory and page cache would
+# contaminate the very measurements the agent is designing.
+#
+# Reach it from a laptop with:
+#   kubectl -n lliu port-forward svc/vllm-qwen38-service 8000:80
+#
+# Authors: Leonhard Liu
+# Copyright (C) 2026 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qwen38-27b-model-pvc
+  namespace: lliu
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: cephcsi
+  resources:
+    requests:
+      # ~27 GB of FP8 weights plus room for a second revision of them.
+      storage: 150Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-qwen38-service
+  namespace: lliu
+spec:
+  selector:
+    app: vllm-qwen38-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: vllm-qwen38-server
+  namespace: lliu
+  labels:
+    app: vllm-qwen38-server
+spec:
+  containers:
+    - name: vllm-container
+      # Pin the exact vLLM 0.27.1 image currently verified with Qwen3.8. Using a
+      # digest prevents an unrelated upstream "latest" update from silently
+      # changing the reasoning API or model-loading behaviour.
+      image: vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: VLLM_LOGGING_LEVEL
+          value: "INFO"
+        - name: NCCL_IGNORE_CPU_AFFINITY
+          value: "1"
+      resources:
+        limits:
+          nvidia.com/gpu: "1"
+          memory: 96Gi
+        requests:
+          nvidia.com/gpu: "1"
+          memory: 48Gi
+          cpu: "8"
+      ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+      # Without these, the pod reports Ready the moment the shell starts, which
+      # is long before the weights are downloaded and the engine is loaded --
+      # "Running" would then mean nothing to anyone waiting to send a request.
+      # The startup probe carries the first-start download, roughly 27 GB.
+      startupProbe:
+        httpGet:
+          path: /health
+          port: 8000
+        periodSeconds: 20
+        failureThreshold: 120
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: 8000
+        periodSeconds: 15
+        failureThreshold: 3
+      volumeMounts:
+        - name: dshm
+          mountPath: /dev/shm
+        - name: model-storage
+          mountPath: /models
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          set -euo pipefail
+          MODEL_REPO="Qwen/Qwen3.8-27B-FP8"
+          LOCAL_DIR="/models/qwen3.8-27b-fp8"
+
+          python3 -c "import vllm, transformers; print('vllm', vllm.__version__, '| transformers', transformers.__version__)"
+
+          if [ -f "$LOCAL_DIR/config.json" ]; then
+              echo "Model already present at $LOCAL_DIR"
+          else
+              echo "Downloading $MODEL_REPO ..."
+              # `hf`, not `huggingface-cli`: the old entry point still exists in
+              # this image but prints a deprecation notice and exits 0 without
+              # downloading anything, which looks like success and then leaves
+              # vLLM crash-looping on an empty directory.
+              hf download "$MODEL_REPO" --local-dir "$LOCAL_DIR"
+          fi
+
+          if [ ! -f "$LOCAL_DIR/config.json" ]; then
+              echo "ERROR: no config.json under $LOCAL_DIR after download"
+              exit 1
+          fi
+
+          # Flags follow the published vLLM recipe for Qwen3.8-27B. The two
+          # parsers matter most here: qwen3_coder turns the model's tool syntax
+          # into structured tool_calls, and qwen3 splits its thinking out of the
+          # visible answer, which is what llm.py expects to receive.
+          exec python3 -m vllm.entrypoints.openai.api_server \
+            --model "$LOCAL_DIR" \
+            --served-model-name qwen3.8-27b \
+            --tensor-parallel-size 1 \
+            --max-model-len 65536 \
+            --kv-cache-dtype fp8 \
+            --gpu-memory-utilization 0.90 \
+            --reasoning-parser qwen3 \
+            --enable-auto-tool-choice \
+            --tool-call-parser qwen3_coder \
+            --trust-remote-code \
+            --host 0.0.0.0 \
+            --port 8000
+  nodeSelector:
+    gpu: h200
+  volumes:
+    - name: dshm
+      emptyDir:
+        medium: Memory
+        sizeLimit: 16Gi
+    - name: model-storage
+      persistentVolumeClaim:
+        claimName: qwen38-27b-model-pvc

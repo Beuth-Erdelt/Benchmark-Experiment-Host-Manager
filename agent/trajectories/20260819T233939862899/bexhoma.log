@@ -1,0 +1,856 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1787175665
+Experiment                    : starts at 2026-08-19 23:41:06.811110 (1062368.546826901)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Timeout per query is 600.
+PgDuckDB queries are forced through the DuckDB execution engine.
+Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.10.8.
+Experiment is limited to DBMS ['PgDuckDB'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker36.
+Benchmarking is fixed to cl-worker36.
+SUT is fixed to cl-worker36.
+Each query is repeated 2 times.
+Database uses ephemeral storage of size 10Gi.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 8] times the number of benchmarking pods.
+Experiment is run 3 times.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB')].
+SUT requests 16 CPU and 64Gi RAM. CPU limit is 16. RAM limit is 64Gi.
+PgDuckDB-1                    : will start now
+PgDuckDB-1                    : deployments ['sut']
+PgDuckDB-1                    : stateful sets []
+PgDuckDB-1                    : pvcs ['sut']
+PgDuckDB-1                    : name of SUT pods = bexhoma-sut-pgduckdb-1-1787175665
+PgDuckDB-1                    : name of SUT service = bexhoma-sut-pgduckdb-1-1787175665
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 20480MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 49152MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem = 1024MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 2048MB
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : is not loaded yet
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1787175665-54cb6f957-lpfcw to load scripts
+PgDuckDB-1                    : start asynch loading scripts of type schema
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PgDuckDB-1                    : showing loader times (tpch-loader)
+PgDuckDB-1                    : generator times (start/end per pod and container) [(1787175828, 1787175828)]
+PgDuckDB-1                    : loader times (start/end per pod and container) [(1787175829, 1787175848)]
+PgDuckDB-1                    : total times (start/end per pod and container) [(1787175828, 1787175828), (1787175829, 1787175848)]
+PgDuckDB-1                    : generator timespan (first to last [s]) = 0
+PgDuckDB-1                    : loader timespan (first to last [s]) = 19
+PgDuckDB-1                    : total timespan (first to last [s]) = 20
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1787175665-54cb6f957-lpfcw to load scripts
+PgDuckDB-1                    : start asynch loading scripts of type index
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PgDuckDB-1-1787175665 initialized to 1.
+PgDuckDB-1                    : benchmarks done 0 of 3. This will be client 1
+PgDuckDB-1-1-1-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787175665
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787175665-1-1-1-8qkts: found
+- waiting 30s -               : done
+PgDuckDB-1-1-1-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787175665/PgDuckDB-1-1-1-1.config
+PgDuckDB-1-1-1-1              : showing benchmarker times
+PgDuckDB-1-1-1-1              : benchmarker timespan job from 1787175896 to 1787175939
+PgDuckDB-1-1-1-1              : benchmarker timespan pods from 1787175897 to 1787175924
+PgDuckDB-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 27
+PgDuckDB-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1787175897, 1787175924)]
+PgDuckDB-1-1-1-1              : found and updated times {'benchmarker': [(1787175897, 1787175924)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PgDuckDB-1-1787175665 initialized to 8.
+PgDuckDB-1                    : benchmarks done 0 of 3. This will be client 2
+PgDuckDB-1-1-2-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787175665
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787175665-1-2-1-4rf5m: ..found
+- waiting 30s -               : done
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-1-1-2-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787175665/PgDuckDB-1-1-2-1.config
+PgDuckDB-1-1-2-1              : showing benchmarker times
+PgDuckDB-1-1-2-1              : benchmarker timespan job from 1787175978 to 1787176080
+PgDuckDB-1-1-2-1              : benchmarker timespan pods from 1787176001 to 1787176051
+PgDuckDB-1-1-2-1              : benchmarker timespan (start to end single container [s]) = 50
+PgDuckDB-1-1-2-1              : benchmarker times (start/end per pod and container) = [(1787176001, 1787176048), (1787176002, 1787176048), (1787176001, 1787176049), (1787176001, 1787176048), (1787176002, 1787176051), (1787176002, 1787176049), (1787176002, 1787176050), (1787176002, 1787176050)]
+PgDuckDB-1-1-2-1              : found and updated times {'benchmarker': [(1787176001, 1787176048), (1787176002, 1787176048), (1787176001, 1787176049), (1787176001, 1787176048), (1787176002, 1787176051), (1787176002, 1787176049), (1787176002, 1787176050), (1787176002, 1787176050)]}
+- waiting 30s -               : done
+PgDuckDB-1                    : can be stopped
+PgDuckDB-1                    : had 0 0 restarts at worker bexhoma-sut-pgduckdb-1-1787175665-54cb6f957-lpfcw
+PgDuckDB-1                    : still being removed
+- waiting 30s -               : done
+PgDuckDB-1                    : starts again
+PgDuckDB-1                    : deployments ['sut']
+PgDuckDB-1                    : stateful sets []
+PgDuckDB-1                    : pvcs ['sut']
+PgDuckDB-1                    : name of SUT pods = bexhoma-sut-pgduckdb-1-1787175665
+PgDuckDB-1                    : name of SUT service = bexhoma-sut-pgduckdb-1-1787175665
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 20480MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 49152MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem = 1024MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 2048MB
+- waiting 10s -               : done
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : is not loaded yet
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1787175665-7cdfd44946-8pwk4 to load scripts
+PgDuckDB-1                    : start asynch loading scripts of type schema
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PgDuckDB-1                    : showing loader times (tpch-loader)
+PgDuckDB-1                    : generator times (start/end per pod and container) [(1787176280, 1787176280)]
+PgDuckDB-1                    : loader times (start/end per pod and container) [(1787176281, 1787176300)]
+PgDuckDB-1                    : total times (start/end per pod and container) [(1787176280, 1787176280), (1787176281, 1787176300)]
+PgDuckDB-1                    : generator timespan (first to last [s]) = 0
+PgDuckDB-1                    : loader timespan (first to last [s]) = 19
+PgDuckDB-1                    : total timespan (first to last [s]) = 20
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1787175665-7cdfd44946-8pwk4 to load scripts
+PgDuckDB-1                    : start asynch loading scripts of type index
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PgDuckDB-1-1787175665 initialized to 1.
+PgDuckDB-1                    : benchmarks done 1 of 3. This will be client 1
+PgDuckDB-1-2-1-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787175665
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787175665-2-1-1-2c6pn: found
+- waiting 30s -               : done
+PgDuckDB-1-2-1-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787175665/PgDuckDB-1-2-1-1.config
+PgDuckDB-1-2-1-1              : showing benchmarker times
+PgDuckDB-1-2-1-1              : benchmarker timespan job from 1787176348 to 1787176390
+PgDuckDB-1-2-1-1              : benchmarker timespan pods from 1787176349 to 1787176382
+PgDuckDB-1-2-1-1              : benchmarker timespan (start to end single container [s]) = 33
+PgDuckDB-1-2-1-1              : benchmarker times (start/end per pod and container) = [(1787176349, 1787176382)]
+PgDuckDB-1-2-1-1              : found and updated times {'benchmarker': [(1787176349, 1787176382)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-PgDuckDB-1-1787175665 initialized to 8.
+PgDuckDB-1                    : benchmarks done 1 of 3. This will be client 2
+PgDuckDB-1-2-2-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787175665
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787175665-2-2-1-6tcmz: .found
+- waiting 30s -               : done
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-1-2-2-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787175665/PgDuckDB-1-2-2-1.config
+PgDuckDB-1-2-2-1              : showing benchmarker times
+PgDuckDB-1-2-2-1              : benchmarker timespan job from 1787176428 to 1787176520
+PgDuckDB-1-2-2-1              : benchmarker timespan pods from 1787176457 to 1787176505
+PgDuckDB-1-2-2-1              : benchmarker timespan (start to end single container [s]) = 48
+PgDuckDB-1-2-2-1              : benchmarker times (start/end per pod and container) = [(1787176457, 1787176504), (1787176457, 1787176505), (1787176457, 1787176504), (1787176457, 1787176504), (1787176458, 1787176504), (1787176458, 1787176504), (1787176457, 1787176503), (1787176457, 1787176501)]
+PgDuckDB-1-2-2-1              : found and updated times {'benchmarker': [(1787176457, 1787176504), (1787176457, 1787176505), (1787176457, 1787176504), (1787176457, 1787176504), (1787176458, 1787176504), (1787176458, 1787176504), (1787176457, 1787176503), (1787176457, 1787176501)]}
+- waiting 30s -               : done
+PgDuckDB-1                    : can be stopped
+PgDuckDB-1                    : had 0 0 restarts at worker bexhoma-sut-pgduckdb-1-1787175665-7cdfd44946-8pwk4
+PgDuckDB-1                    : still being removed
+- waiting 30s -               : done
+PgDuckDB-1                    : starts again
+PgDuckDB-1                    : deployments ['sut']
+PgDuckDB-1                    : stateful sets []
+PgDuckDB-1                    : pvcs ['sut']
+PgDuckDB-1                    : name of SUT pods = bexhoma-sut-pgduckdb-1-1787175665
+PgDuckDB-1                    : name of SUT service = bexhoma-sut-pgduckdb-1-1787175665
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 20480MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 49152MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem = 1024MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 2048MB
+- waiting 10s -               : done
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-1                    : is not loaded yet
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1787175665-7f544665ff-tc2jd to load scripts
+PgDuckDB-1                    : start asynch loading scripts of type schema
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PgDuckDB-1                    : showing loader times (tpch-loader)
+PgDuckDB-1                    : generator times (start/end per pod and container) [(1787176751, 1787176751)]
+PgDuckDB-1                    : loader times (start/end per pod and container) [(1787176753, 1787176772)]
+PgDuckDB-1                    : total times (start/end per pod and container) [(1787176751, 1787176751), (1787176753, 1787176772)]
+PgDuckDB-1                    : generator timespan (first to last [s]) = 0
+PgDuckDB-1                    : loader timespan (first to last [s]) = 19
+PgDuckDB-1                    : total timespan (first to last [s]) = 21
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1787175665-7f544665ff-tc2jd to load scripts
+PgDuckDB-1                    : start asynch loading scripts of type index
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-1-PgDuckDB-1-1787175665 initialized to 1.
+PgDuckDB-1                    : benchmarks done 2 of 3. This will be client 1
+PgDuckDB-1-3-1-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787175665
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787175665-3-1-1-f5lbr: found
+- waiting 30s -               : done
+PgDuckDB-1                    : has running benchmarks
+PgDuckDB-1-3-1-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787175665/PgDuckDB-1-3-1-1.config
+PgDuckDB-1-3-1-1              : showing benchmarker times
+PgDuckDB-1-3-1-1              : benchmarker timespan job from 1787176818 to 1787176860
+PgDuckDB-1-3-1-1              : benchmarker timespan pods from 1787176820 to 1787176854
+PgDuckDB-1-3-1-1              : benchmarker timespan (start to end single container [s]) = 34
+PgDuckDB-1-3-1-1              : benchmarker times (start/end per pod and container) = [(1787176820, 1787176854)]
+PgDuckDB-1-3-1-1              : found and updated times {'benchmarker': [(1787176820, 1787176854)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-2-PgDuckDB-1-1787175665 initialized to 8.
+PgDuckDB-1                    : benchmarks done 2 of 3. This will be client 2
+PgDuckDB-1-3-2-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787175665
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787175665-3-2-1-29qhm: ..found
+- waiting 30s -               : done
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-1-3-2-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787175665/PgDuckDB-1-3-2-1.config
+PgDuckDB-1-3-2-1              : showing benchmarker times
+PgDuckDB-1-3-2-1              : benchmarker timespan job from 1787176899 to 1787177000
+PgDuckDB-1-3-2-1              : benchmarker timespan pods from 1787176925 to 1787176975
+PgDuckDB-1-3-2-1              : benchmarker timespan (start to end single container [s]) = 50
+PgDuckDB-1-3-2-1              : benchmarker times (start/end per pod and container) = [(1787176925, 1787176972), (1787176926, 1787176972), (1787176925, 1787176974), (1787176926, 1787176974), (1787176925, 1787176975), (1787176925, 1787176974), (1787176925, 1787176974), (1787176925, 1787176974)]
+PgDuckDB-1-3-2-1              : found and updated times {'benchmarker': [(1787176925, 1787176972), (1787176926, 1787176972), (1787176925, 1787176974), (1787176926, 1787176974), (1787176925, 1787176975), (1787176925, 1787176974), (1787176925, 1787176974), (1787176925, 1787176974)]}
+- waiting 30s -               : done
+PgDuckDB-1                    : can be stopped
+PgDuckDB-1                    : had 0 0 restarts at worker bexhoma-sut-pgduckdb-1-1787175665-7f544665ff-tc2jd
+Experiment                    : ends at 2026-08-20 00:03:52.690728 (1063734.42644095) - 1365.88s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+* Type: tpch
+* Duration: 1366s 
+* Code: 1787175665
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 600.
+  * PgDuckDB queries are forced through the DuckDB execution engine.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.8.
+  * Experiment is limited to DBMS ['PgDuckDB'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker36.
+  * Benchmarking is fixed to cl-worker36.
+  * SUT is fixed to cl-worker36.
+  * Each query is repeated 2 times.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1, 8] times the number of benchmarking pods.
+  * Experiment is run 3 times.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB')].
+  * SUT requests 16 CPU and 64Gi RAM. CPU limit is 16. RAM limit is 64Gi.
+
+### Connections
+* PgDuckDB-1-1-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-1-2-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-1-2-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-1-2-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-1-2-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-1-2-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-1-2-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-1-2-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-1-2-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197475
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197474
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-2-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197480
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-2-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197480
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-2-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197480
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-2-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197480
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-2-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197480
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-2-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197480
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-2-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197480
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-2-2-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197480
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197479
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-2-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197482
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-2-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197482
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-2-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197482
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-2-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197482
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-2-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197482
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-2-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197482
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-2-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197482
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+* PgDuckDB-1-3-2-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1197482
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787175665
+
+### SUT Container Restarts
+* bexhoma-sut-pgduckdb-1-1787175665-7f544665ff-tc2jd: 0 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PgDuckDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 1 Client 2: tpch (8 pods)
+* DBMS PgDuckDB-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 2 Client 2: tpch (8 pods)
+* DBMS PgDuckDB-1 - Experiment 3 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 3 Client 2: tpch (8 pods)
+
+#### Planned
+
+* DBMS PgDuckDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 1 Client 2: tpch (8 pods)
+* DBMS PgDuckDB-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 2 Client 2: tpch (8 pods)
+* DBMS PgDuckDB-1 - Experiment 3 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 3 Client 2: tpch (8 pods)
+
+### Loading
+
+#### Per Run
+
+|              |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PgDuckDB-1-1 |                1 |    1 |       62.00 |           0.00 |            0.00 |         19.00 |           42.00 |              1 |           0 |             | None           |             0 | False         |               58.06 |
+| PgDuckDB-1-2 |                2 |    1 |       62.00 |           0.00 |            0.00 |         19.00 |           42.00 |              1 |           0 |             | None           |             0 | False         |               58.06 |
+| PgDuckDB-1-3 |                3 |    1 |       64.00 |           0.00 |            0.00 |         19.00 |           43.00 |              1 |           0 |             | None           |             0 | False         |               56.25 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS               | configuration   | phase          | job              |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                |
+|:-------------------|:----------------|:---------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:-------------------|
+| PgDuckDB-1-1-1-1-1 | PgDuckDB-1      | PgDuckDB-1-1-1 | PgDuckDB-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         27 |            0.51 |             7039.10 |           2933.33 |          -1 | PgDuckDB-1-1-1-1-1 |
+| PgDuckDB-1-1-2-1-1 | PgDuckDB-1      | PgDuckDB-1-1-2 | PgDuckDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               22 |         48 |            0.83 |             4339.04 |           1650.00 |          -1 | PgDuckDB-1-1-2-1-1 |
+| PgDuckDB-1-1-2-1-2 | PgDuckDB-1      | PgDuckDB-1-1-2 | PgDuckDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               22 |         47 |            0.78 |             4624.39 |           1685.11 |          -1 | PgDuckDB-1-1-2-1-2 |
+| PgDuckDB-1-1-2-1-3 | PgDuckDB-1      | PgDuckDB-1-1-2 | PgDuckDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               22 |         46 |            0.82 |             4395.67 |           1721.74 |          -1 | PgDuckDB-1-1-2-1-3 |
+| PgDuckDB-1-1-2-1-4 | PgDuckDB-1      | PgDuckDB-1-1-2 | PgDuckDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               22 |         48 |            0.85 |             4230.36 |           1650.00 |          -1 | PgDuckDB-1-1-2-1-4 |
+| PgDuckDB-1-1-2-1-5 | PgDuckDB-1      | PgDuckDB-1-1-2 | PgDuckDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               22 |         48 |            0.83 |             4312.69 |           1650.00 |          -1 | PgDuckDB-1-1-2-1-5 |
+| PgDuckDB-1-1-2-1-6 | PgDuckDB-1      | PgDuckDB-1-1-2 | PgDuckDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               22 |         49 |            0.87 |             4128.02 |           1616.33 |          -1 | PgDuckDB-1-1-2-1-6 |
+| PgDuckDB-1-1-2-1-7 | PgDuckDB-1      | PgDuckDB-1-1-2 | PgDuckDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               22 |         47 |            0.82 |             4367.14 |           1685.11 |          -1 | PgDuckDB-1-1-2-1-7 |
+| PgDuckDB-1-1-2-1-8 | PgDuckDB-1      | PgDuckDB-1-1-2 | PgDuckDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               22 |         47 |            0.86 |             4195.66 |           1685.11 |          -1 | PgDuckDB-1-1-2-1-8 |
+| PgDuckDB-1-2-1-1-1 | PgDuckDB-1      | PgDuckDB-1-2-1 | PgDuckDB-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |         33 |            0.56 |             6384.51 |           2400.00 |          -1 | PgDuckDB-1-2-1-1-1 |
+| PgDuckDB-1-2-2-1-1 | PgDuckDB-1      | PgDuckDB-1-2-2 | PgDuckDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               22 |         48 |            0.83 |             4349.72 |           1650.00 |          -1 | PgDuckDB-1-2-2-1-1 |
+| PgDuckDB-1-2-2-1-2 | PgDuckDB-1      | PgDuckDB-1-2-2 | PgDuckDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               22 |         47 |            0.85 |             4253.57 |           1685.11 |          -1 | PgDuckDB-1-2-2-1-2 |
+| PgDuckDB-1-2-2-1-3 | PgDuckDB-1      | PgDuckDB-1-2-2 | PgDuckDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               22 |         46 |            0.80 |             4483.77 |           1721.74 |          -1 | PgDuckDB-1-2-2-1-3 |
+| PgDuckDB-1-2-2-1-4 | PgDuckDB-1      | PgDuckDB-1-2-2 | PgDuckDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               22 |         47 |            0.84 |             4298.56 |           1685.11 |          -1 | PgDuckDB-1-2-2-1-4 |
+| PgDuckDB-1-2-2-1-5 | PgDuckDB-1      | PgDuckDB-1-2-2 | PgDuckDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               22 |         46 |            0.82 |             4378.23 |           1721.74 |          -1 | PgDuckDB-1-2-2-1-5 |
+| PgDuckDB-1-2-2-1-6 | PgDuckDB-1      | PgDuckDB-1-2-2 | PgDuckDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               22 |         44 |            0.76 |             4734.91 |           1800.00 |          -1 | PgDuckDB-1-2-2-1-6 |
+| PgDuckDB-1-2-2-1-7 | PgDuckDB-1      | PgDuckDB-1-2-2 | PgDuckDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               22 |         46 |            0.80 |             4492.56 |           1721.74 |          -1 | PgDuckDB-1-2-2-1-7 |
+| PgDuckDB-1-2-2-1-8 | PgDuckDB-1      | PgDuckDB-1-2-2 | PgDuckDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               22 |         47 |            0.85 |             4234.27 |           1685.11 |          -1 | PgDuckDB-1-2-2-1-8 |
+| PgDuckDB-1-3-1-1-1 | PgDuckDB-1      | PgDuckDB-1-3-1 | PgDuckDB-1-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |               22 |         34 |            0.58 |             6179.29 |           2329.41 |          -1 | PgDuckDB-1-3-1-1-1 |
+| PgDuckDB-1-3-2-1-1 | PgDuckDB-1      | PgDuckDB-1-3-2 | PgDuckDB-1-3-2-1 |                3 |        2 |               1 |           1 | 1.00 |               22 |         48 |            0.80 |             4477.48 |           1650.00 |          -1 | PgDuckDB-1-3-2-1-1 |
+| PgDuckDB-1-3-2-1-2 | PgDuckDB-1      | PgDuckDB-1-3-2 | PgDuckDB-1-3-2-1 |                3 |        2 |               1 |           1 | 1.00 |               22 |         49 |            0.85 |             4211.61 |           1616.33 |          -1 | PgDuckDB-1-3-2-1-2 |
+| PgDuckDB-1-3-2-1-3 | PgDuckDB-1      | PgDuckDB-1-3-2 | PgDuckDB-1-3-2-1 |                3 |        2 |               1 |           1 | 1.00 |               22 |         50 |            0.87 |             4131.58 |           1584.00 |          -1 | PgDuckDB-1-3-2-1-3 |
+| PgDuckDB-1-3-2-1-4 | PgDuckDB-1      | PgDuckDB-1-3-2 | PgDuckDB-1-3-2-1 |                3 |        2 |               1 |           1 | 1.00 |               22 |         49 |            0.83 |             4342.41 |           1616.33 |          -1 | PgDuckDB-1-3-2-1-4 |
+| PgDuckDB-1-3-2-1-5 | PgDuckDB-1      | PgDuckDB-1-3-2 | PgDuckDB-1-3-2-1 |                3 |        2 |               1 |           1 | 1.00 |               22 |         47 |            0.81 |             4428.78 |           1685.11 |          -1 | PgDuckDB-1-3-2-1-5 |
+| PgDuckDB-1-3-2-1-6 | PgDuckDB-1      | PgDuckDB-1-3-2 | PgDuckDB-1-3-2-1 |                3 |        2 |               1 |           1 | 1.00 |               22 |         49 |            0.83 |             4349.13 |           1616.33 |          -1 | PgDuckDB-1-3-2-1-6 |
+| PgDuckDB-1-3-2-1-7 | PgDuckDB-1      | PgDuckDB-1-3-2 | PgDuckDB-1-3-2-1 |                3 |        2 |               1 |           1 | 1.00 |               22 |         46 |            0.78 |             4641.56 |           1721.74 |          -1 | PgDuckDB-1-3-2-1-7 |
+| PgDuckDB-1-3-2-1-8 | PgDuckDB-1      | PgDuckDB-1-3-2 | PgDuckDB-1-3-2-1 |                3 |        2 |               1 |           1 | 1.00 |               22 |         49 |            0.86 |             4197.03 |           1616.33 |          -1 | PgDuckDB-1-3-2-1-8 |
+
+#### Per Phase
+
+|                | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| PgDuckDB-1-1-1 | PgDuckDB-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |         27 |            0.51 |             7039.10 |           2933.33 |          -1 |
+| PgDuckDB-1-1-2 | PgDuckDB-1-1-2 |                1 |        2 |               1 |           8 | 1.00 |              176 |         49 |            0.83 |             4321.82 |          12930.61 |          -1 |
+| PgDuckDB-1-2-1 | PgDuckDB-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |         33 |            0.56 |             6384.51 |           2400.00 |          -1 |
+| PgDuckDB-1-2-2 | PgDuckDB-1-2-2 |                2 |        2 |               1 |           8 | 1.00 |              176 |         48 |            0.82 |             4400.56 |          13200.00 |          -1 |
+| PgDuckDB-1-3-1 | PgDuckDB-1-3-1 |                3 |        1 |               1 |           1 | 1.00 |               22 |         34 |            0.58 |             6179.29 |           2329.41 |          -1 |
+| PgDuckDB-1-3-2 | PgDuckDB-1-3-2 |                3 |        2 |               1 |           8 | 1.00 |              176 |         50 |            0.83 |             4344.63 |          12672.00 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   PgDuckDB-1-1-1-1-1 |   PgDuckDB-1-1-2-1-1 |   PgDuckDB-1-1-2-1-2 |   PgDuckDB-1-1-2-1-3 |   PgDuckDB-1-1-2-1-4 |   PgDuckDB-1-1-2-1-5 |   PgDuckDB-1-1-2-1-6 |   PgDuckDB-1-1-2-1-7 |   PgDuckDB-1-1-2-1-8 |   PgDuckDB-1-2-1-1-1 |   PgDuckDB-1-2-2-1-1 |   PgDuckDB-1-2-2-1-2 |   PgDuckDB-1-2-2-1-3 |   PgDuckDB-1-2-2-1-4 |   PgDuckDB-1-2-2-1-5 |   PgDuckDB-1-2-2-1-6 |   PgDuckDB-1-2-2-1-7 |   PgDuckDB-1-2-2-1-8 |   PgDuckDB-1-3-1-1-1 |   PgDuckDB-1-3-2-1-1 |   PgDuckDB-1-3-2-1-2 |   PgDuckDB-1-3-2-1-3 |   PgDuckDB-1-3-2-1-4 |   PgDuckDB-1-3-2-1-5 |   PgDuckDB-1-3-2-1-6 |   PgDuckDB-1-3-2-1-7 |   PgDuckDB-1-3-2-1-8 |
+|:----------------------------------------------------|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |              1050.42 |              2274.67 |              2146.50 |              1749.44 |              1133.45 |              1912.23 |              1944.85 |              1969.45 |              1073.55 |              1086.89 |              1125.26 |              2007.82 |              1965.64 |              2035.61 |              2064.10 |              2002.52 |              1190.72 |              1606.61 |              1116.09 |              1983.55 |              1846.02 |              2010.32 |              2579.90 |              1172.47 |              1958.99 |              1509.98 |              1116.45 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |               298.15 |               291.04 |               357.74 |               414.35 |               371.53 |               294.95 |               333.84 |               294.98 |               399.57 |               359.67 |               323.14 |               411.37 |               291.77 |               366.06 |               434.64 |               292.26 |               267.54 |               324.57 |               316.05 |               312.66 |               320.86 |               409.56 |               428.66 |               316.71 |               375.91 |               365.78 |               387.11 |
+| Shipping Priority (TPC-H Q3)                        |               634.42 |              1119.10 |              1007.84 |              1053.54 |               637.13 |              1056.18 |              1133.48 |               940.23 |              1151.34 |               653.45 |              1246.51 |              1089.90 |              1178.59 |              1077.11 |               662.27 |              1052.33 |               658.14 |              1150.00 |               612.45 |              1080.61 |              1039.14 |              1066.98 |               875.73 |               928.37 |               896.94 |              1139.61 |              1237.15 |
+| Order Priority Checking Query (TPC-H Q4)            |               599.19 |              1007.83 |              1034.50 |              1113.26 |              1252.90 |               962.51 |              1232.82 |               775.71 |               971.84 |               650.95 |              1013.31 |              1089.31 |              1098.41 |              1000.66 |              1066.27 |               707.52 |               907.48 |              1352.45 |               603.65 |              1263.65 |              1020.18 |              1212.51 |               975.89 |               654.41 |               865.49 |              1276.51 |               884.28 |
+| Local Supplier Volume (TPC-H Q5)                    |               726.32 |              1292.51 |              1267.34 |              1293.26 |              1361.63 |               992.13 |              1266.02 |              1350.84 |              1445.62 |               932.18 |              1327.00 |              1331.56 |              1287.03 |              1153.69 |              1303.71 |              1473.03 |              1336.44 |              1361.22 |               963.04 |              1212.53 |              1410.20 |              1304.90 |              1171.05 |              1468.35 |              1143.18 |              1265.33 |              1340.82 |
+| Forecasting Revenue Change (TPC-H Q6)               |               447.44 |               877.39 |               452.17 |               853.73 |               889.60 |               535.56 |               915.07 |               905.21 |               688.72 |               552.00 |               963.46 |               920.04 |               920.83 |               528.77 |               892.98 |               882.38 |               897.91 |               922.96 |               548.54 |               546.58 |               891.19 |               733.32 |               739.95 |               953.55 |               969.26 |               888.17 |               913.95 |
+| Volume Shipping Query (TPC-H Q7)                    |               616.17 |              1213.83 |              1126.79 |              1121.66 |               968.99 |               821.79 |              1113.05 |              1006.50 |               979.86 |               623.27 |               977.85 |              1152.88 |              1291.90 |              1130.93 |               998.57 |              1017.06 |               989.18 |              1380.56 |               685.07 |              1006.60 |              1044.95 |              1048.38 |              1043.00 |               965.44 |               936.55 |               764.69 |              1097.49 |
+| National Market Share (TPC-H Q8)                    |               824.88 |              1594.97 |              1395.59 |              1413.35 |              1416.79 |              1569.88 |              1431.85 |              1396.21 |              1430.02 |              1108.91 |              1152.71 |              1280.40 |              1459.74 |              1402.74 |              1420.32 |              1435.77 |              1591.21 |              1520.24 |              1200.13 |              1472.55 |              1430.97 |              1397.91 |              1335.34 |              1462.73 |              1400.90 |               933.77 |              1372.48 |
+| Product Type Profit Measure (TPC-H Q9)              |               844.67 |              1621.75 |              1707.84 |              1524.12 |              1725.81 |              1764.23 |              1674.25 |              1322.03 |              1726.96 |              1178.81 |              1833.52 |              1612.07 |              1265.46 |              1783.90 |              1845.97 |              1637.09 |              1851.85 |              1760.84 |              1174.80 |              1399.98 |              1852.59 |              1728.51 |              1711.77 |              1765.95 |              1794.20 |              1807.28 |              1726.09 |
+| Returned Item Reporting Query (TPC-H Q10)           |               584.61 |               988.96 |               948.60 |               953.47 |               981.52 |               938.41 |              1007.15 |               960.58 |               978.18 |               603.14 |              1074.47 |               931.94 |               794.91 |              1033.96 |               765.18 |              1058.26 |               978.28 |               953.11 |               657.49 |              1116.22 |              1010.00 |              1099.38 |              1071.77 |               933.57 |              1009.07 |              1080.25 |              1000.54 |
+| Important Stock Identification (TPC-H Q11)          |               192.87 |               235.04 |               268.23 |               244.07 |               254.11 |               280.02 |               249.91 |               281.52 |               296.11 |               205.31 |               248.07 |               247.13 |               278.86 |               262.35 |               229.46 |               287.48 |               247.89 |               289.17 |               230.20 |               241.68 |               241.67 |               280.96 |               333.87 |               343.51 |               261.07 |               309.49 |               310.00 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |               547.85 |              1008.60 |               675.77 |               972.04 |              1066.00 |              1073.76 |              1063.53 |               689.88 |              1086.67 |               585.63 |              1012.65 |               953.90 |               786.26 |               906.34 |               971.31 |               924.83 |               938.12 |               917.17 |               612.22 |               752.57 |               991.09 |               765.29 |              1129.95 |               669.63 |               919.94 |               589.15 |               979.53 |
+| Customer Distribution (TPC-H Q13)                   |               261.41 |               279.18 |               274.08 |               461.07 |               426.20 |               447.90 |               467.40 |               529.88 |               426.24 |               300.54 |               266.29 |               441.66 |               354.83 |               445.72 |               441.62 |               269.01 |               438.22 |               271.60 |               274.71 |               366.58 |               443.65 |               443.24 |               439.32 |               443.63 |               274.95 |               430.80 |               495.05 |
+| Promotion Effect Query (TPC-H Q14)                  |               455.71 |               788.81 |               469.41 |               485.11 |               823.37 |               641.90 |               945.52 |               791.33 |               823.47 |               474.42 |               506.52 |               777.72 |               782.12 |               808.27 |               620.04 |               652.24 |               802.51 |               796.25 |               528.74 |               636.28 |               840.43 |               798.03 |               629.22 |               925.67 |               804.44 |               897.44 |               845.74 |
+| Top Supplier Query (TPC-H Q15)                      |               421.80 |               705.34 |               700.18 |               736.93 |               747.28 |               917.52 |               723.72 |               754.84 |               747.58 |               431.52 |               713.07 |               683.23 |               703.03 |               721.76 |               712.27 |               417.93 |               568.34 |               847.08 |               446.19 |               726.53 |               578.65 |               730.74 |               442.09 |               782.40 |               726.12 |               623.28 |               579.34 |
+| Parts/Supplier Relationship (TPC-H Q16)             |               166.02 |               192.82 |               264.57 |               175.27 |               201.87 |               170.09 |               177.51 |               171.45 |               207.31 |               179.98 |               172.11 |               172.37 |               196.76 |               177.24 |               177.76 |               173.98 |               168.51 |               177.69 |               201.70 |               166.27 |               248.74 |               180.81 |               178.75 |               263.36 |               169.53 |               180.48 |               171.96 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               987.47 |              1396.48 |              1827.84 |              1723.65 |              1507.20 |              1740.04 |              1944.77 |              1887.25 |              1782.61 |              1220.83 |              1742.99 |              1775.42 |              1636.18 |              1451.44 |              1690.31 |              1310.47 |              1334.57 |              1166.09 |              1309.37 |              1790.30 |              1470.51 |              1859.06 |              1429.72 |              1379.48 |              1790.25 |              1450.39 |              1775.45 |
+| Large Volume Customer (TPC-H Q18)                   |               460.19 |               987.54 |               893.92 |               864.89 |               950.74 |              1283.54 |              1019.82 |              1191.33 |              1138.72 |               474.33 |              1516.08 |              1130.42 |               728.55 |              1383.89 |              1697.96 |              1480.44 |              1790.12 |              1200.02 |               546.10 |              1376.34 |              1127.75 |              1602.30 |              1164.66 |               771.70 |              1388.43 |               889.77 |              1182.68 |
+| Discounted Revenue (TPC-H Q19)                      |               558.68 |              1131.78 |              1105.04 |              1316.01 |              1974.62 |              1348.99 |              1159.98 |               771.73 |              1235.38 |               554.14 |              1414.41 |              1098.69 |              1230.26 |              1167.13 |              1108.50 |               567.18 |              1184.68 |               779.73 |               579.81 |              1029.30 |              1184.90 |              1381.86 |              1104.02 |               889.28 |              1192.29 |               610.79 |              1706.62 |
+| Potential Part Promotion (TPC-H Q20)                |               587.59 |              1008.73 |               676.93 |              1041.99 |              1042.02 |              1094.34 |              1066.93 |              1140.72 |               856.28 |               590.99 |              1100.10 |               864.68 |               677.22 |               988.65 |               956.98 |               866.00 |               896.34 |              1102.60 |               647.50 |               925.88 |               950.37 |               952.73 |               686.34 |               931.97 |               943.45 |               691.18 |              1005.12 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |              1644.27 |              2603.32 |              2928.07 |              1774.38 |              2384.14 |              2951.93 |              2153.72 |              3197.88 |              2383.06 |              1674.10 |              3292.65 |              2664.23 |              2907.81 |              2664.20 |              1768.10 |              2381.61 |              2518.41 |              2664.01 |              1673.93 |              2555.75 |              2624.02 |              2265.80 |              3263.69 |              3873.14 |              2624.23 |              3130.46 |              2220.77 |
+| Global Sales Opportunity Query (TPC-H Q22)          |               186.70 |               214.90 |               224.13 |               229.95 |               301.02 |               220.06 |               218.54 |               231.29 |               339.92 |               188.84 |               212.21 |               197.38 |               196.90 |               208.32 |               219.53 |               218.38 |               234.89 |               283.50 |               190.14 |               206.07 |               227.81 |               190.62 |               227.62 |               214.28 |               216.42 |               219.27 |               223.93 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+Experiment                    : cleaning up per-connection artefacts
+Experiment                    : cleaning up per-connection artefacts completed
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned

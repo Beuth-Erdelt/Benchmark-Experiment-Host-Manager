@@ -1,0 +1,1 @@
+On a 1 GB TPC-H database with 16 CPU cores and at most 64 GiB of RAM, should I force pg_duckdb's DuckDB executor or leave its cost-based routing at the default? Compare both choices at 1 and 8 concurrent streams. I need both an overall recommendation and to know whether it is consistent across individual query shapes, or whether some queries favor the opposite choice.

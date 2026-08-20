@@ -1,0 +1,1702 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Cluster monitoring            : is running
+Experiment                    : has code 1787166405
+Experiment                    : starts at 2026-08-19 21:08:31.932273 (1053213.66798626)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+Query selection is limited to Q5, Q7, Q8, Q9, Q21.
+All instances use the same query parameters.
+Timeout per query is 300.
+PgDuckDB queries are forced through the DuckDB execution engine.
+Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.10.8.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PgDuckDB'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker36.
+Benchmarking is fixed to cl-worker36.
+SUT is fixed to cl-worker36.
+Each query is repeated 40 times.
+Database uses ephemeral storage of size 10Gi.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [8] times the number of benchmarking pods.
+Experiment is run 3 times.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '10240MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '24576MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'work_mem'}, '512MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB')].
+SUT requests 16,16 CPU and 32Gi,64Gi RAM. CPU limit is 16,16. RAM limit is 32Gi,64Gi.
+PgDuckDB-32Gi                 : will start now
+PgDuckDB-32Gi                 : deployments ['sut']
+PgDuckDB-32Gi                 : stateful sets []
+PgDuckDB-32Gi                 : pvcs ['sut']
+PgDuckDB-32Gi                 : name of SUT pods = bexhoma-sut-pgduckdb-32gi-1787166405
+PgDuckDB-32Gi                 : name of SUT service = bexhoma-sut-pgduckdb-32gi-1787166405
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 10240MB
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 24576MB
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 1024MB
+PgDuckDB-64Gi                 : will start now
+PgDuckDB-64Gi                 : deployments ['sut']
+PgDuckDB-64Gi                 : stateful sets []
+PgDuckDB-64Gi                 : pvcs ['sut']
+PgDuckDB-64Gi                 : name of SUT pods = bexhoma-sut-pgduckdb-64gi-1787166405
+PgDuckDB-64Gi                 : name of SUT service = bexhoma-sut-pgduckdb-64gi-1787166405
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 20480MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 49152MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem = 1024MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 2048MB
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for monitoring
+PgDuckDB-32Gi                 : wants to monitor all components in cluster
+PgDuckDB-32Gi                 : cannot rely on preinstalled monitoring
+PgDuckDB-32Gi                 : starts monitoring with prometheus pod
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : waits for monitoring
+PgDuckDB-64Gi                 : wants to monitor all components in cluster
+PgDuckDB-64Gi                 : cannot rely on preinstalled monitoring
+PgDuckDB-64Gi                 : starts monitoring with prometheus pod
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-64Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-64Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-64Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : is not loaded yet
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787166405-7fb98885c8-s9xsm to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type schema
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-64Gi                 : is not loaded yet
+PgDuckDB-64Gi                 : connect to pod bexhoma-sut-pgduckdb-64gi-1787166405-8f75fb94f-qh4kz to load scripts
+PgDuckDB-64Gi                 : start asynch loading scripts of type schema
+PgDuckDB-64Gi                 : is loading
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : showing loader times (tpch-loader)
+PgDuckDB-32Gi                 : generator times (start/end per pod and container) [(1787166676, 1787166676)]
+PgDuckDB-32Gi                 : loader times (start/end per pod and container) [(1787166677, 1787166696)]
+PgDuckDB-32Gi                 : total times (start/end per pod and container) [(1787166676, 1787166676), (1787166677, 1787166696)]
+PgDuckDB-32Gi                 : generator timespan (first to last [s]) = 0
+PgDuckDB-32Gi                 : loader timespan (first to last [s]) = 19
+PgDuckDB-32Gi                 : total timespan (first to last [s]) = 20
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787166405-7fb98885c8-s9xsm to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type index
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-64Gi                 : showing loader times (tpch-loader)
+PgDuckDB-64Gi                 : generator times (start/end per pod and container) [(1787166680, 1787166680)]
+PgDuckDB-64Gi                 : loader times (start/end per pod and container) [(1787166681, 1787166700)]
+PgDuckDB-64Gi                 : total times (start/end per pod and container) [(1787166680, 1787166680), (1787166681, 1787166700)]
+PgDuckDB-64Gi                 : generator timespan (first to last [s]) = 0
+PgDuckDB-64Gi                 : loader timespan (first to last [s]) = 19
+PgDuckDB-64Gi                 : total timespan (first to last [s]) = 20
+PgDuckDB-64Gi                 : connect to pod bexhoma-sut-pgduckdb-64gi-1787166405-8f75fb94f-qh4kz to load scripts
+PgDuckDB-64Gi                 : start asynch loading scripts of type index
+PgDuckDB-64Gi                 : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PgDuckDB-32Gi-1787166405 initialized to 8.
+PgDuckDB-32Gi                 : benchmarks done 0 of 3. This will be client 1
+PgDuckDB-32Gi-1-1-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-32Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi                 : benchmarking results in folder /home/ll/benchmarks/1787166405
+- waiting 10s -               : done
+PgDuckDB-32Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-32gi-1787166405-1-1-1-26pbs: .found
+PgDuckDB-32Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-1-1           : collecting loading metrics of SUT at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-1-1           : collecting metrics of data generator at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-1-1           : collecting metrics of data injector at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PgDuckDB-64Gi-1787166405 initialized to 8.
+PgDuckDB-64Gi                 : benchmarks done 0 of 3. This will be client 1
+PgDuckDB-64Gi-1-1-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-64Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi                 : benchmarking results in folder /home/ll/benchmarks/1787166405
+- waiting 10s -               : done
+PgDuckDB-64Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-64gi-1787166405-1-1-1-5r8wf: found
+PgDuckDB-64Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi-1-1-1           : collecting loading metrics of SUT at connection PgDuckDB-64Gi-1-1-1
+PgDuckDB-64Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-1-1-1           : collecting metrics of data generator at connection PgDuckDB-64Gi-1-1-1
+PgDuckDB-64Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-1-1-1           : collecting metrics of data injector at connection PgDuckDB-64Gi-1-1-1
+PgDuckDB-64Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi-1-1-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787166405/PgDuckDB-64Gi-1-1-1.config
+PgDuckDB-64Gi-1-1-1           : showing benchmarker times
+PgDuckDB-64Gi-1-1-1           : benchmarker timespan job from 1787166797 to 1787167185
+PgDuckDB-64Gi-1-1-1           : benchmarker timespan pods from 1787166821 to 1787167166
+PgDuckDB-64Gi-1-1-1           : benchmarker timespan (start to end single container [s]) = 345
+PgDuckDB-64Gi-1-1-1           : benchmarker times (start/end per pod and container) = [(1787166822, 1787167157), (1787166822, 1787167165), (1787166821, 1787167161), (1787166821, 1787167161), (1787166821, 1787167166), (1787166821, 1787167158), (1787166822, 1787167163), (1787166822, 1787167161)]
+PgDuckDB-64Gi-1-1-1           : found and updated times {'benchmarker': [(1787166822, 1787167157), (1787166822, 1787167165), (1787166821, 1787167161), (1787166821, 1787167161), (1787166821, 1787167166), (1787166821, 1787167158), (1787166822, 1787167163), (1787166822, 1787167161)]}
+PgDuckDB-64Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi-1-1-1           : collecting execution metrics of SUT at connection PgDuckDB-64Gi-1-1-1
+PgDuckDB-64Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-1-1-1           : collecting metrics of benchmarker at connection PgDuckDB-64Gi-1-1-1
+PgDuckDB-64Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : can be stopped
+PgDuckDB-64Gi                 : had 0 0 restarts at worker bexhoma-sut-pgduckdb-64gi-1787166405-8f75fb94f-qh4kz
+PgDuckDB-64Gi                 : still being removed
+- waiting 30s -               : done
+PgDuckDB-64Gi                 : starts again
+PgDuckDB-64Gi                 : deployments ['sut']
+PgDuckDB-64Gi                 : stateful sets []
+PgDuckDB-64Gi                 : pvcs ['sut']
+PgDuckDB-64Gi                 : name of SUT pods = bexhoma-sut-pgduckdb-64gi-1787166405
+PgDuckDB-64Gi                 : name of SUT service = bexhoma-sut-pgduckdb-64gi-1787166405
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 20480MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 49152MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem = 1024MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 2048MB
+- waiting 10s -               : done
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : waits for monitoring
+PgDuckDB-64Gi                 : wants to monitor all components in cluster
+PgDuckDB-64Gi                 : cannot rely on preinstalled monitoring
+PgDuckDB-64Gi                 : starts monitoring with prometheus pod
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : is not loaded yet
+PgDuckDB-64Gi                 : connect to pod bexhoma-sut-pgduckdb-64gi-1787166405-7fd6d9c886-mnplw to load scripts
+PgDuckDB-64Gi                 : start asynch loading scripts of type schema
+PgDuckDB-64Gi                 : is loading
+- waiting 30s -               : done
+PgDuckDB-64Gi                 : showing loader times (tpch-loader)
+PgDuckDB-64Gi                 : generator times (start/end per pod and container) [(1787167411, 1787167411)]
+PgDuckDB-64Gi                 : loader times (start/end per pod and container) [(1787167413, 1787167432)]
+PgDuckDB-64Gi                 : total times (start/end per pod and container) [(1787167411, 1787167411), (1787167413, 1787167432)]
+PgDuckDB-64Gi                 : generator timespan (first to last [s]) = 0
+PgDuckDB-64Gi                 : loader timespan (first to last [s]) = 19
+PgDuckDB-64Gi                 : total timespan (first to last [s]) = 21
+PgDuckDB-64Gi                 : connect to pod bexhoma-sut-pgduckdb-64gi-1787166405-7fd6d9c886-mnplw to load scripts
+PgDuckDB-64Gi                 : start asynch loading scripts of type index
+PgDuckDB-64Gi                 : is loading
+PgDuckDB-32Gi-1-1-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787166405/PgDuckDB-32Gi-1-1-1.config
+PgDuckDB-32Gi-1-1-1           : showing benchmarker times
+PgDuckDB-32Gi-1-1-1           : benchmarker timespan job from 1787166752 to 1787167452
+PgDuckDB-32Gi-1-1-1           : benchmarker timespan pods from 1787166777 to 1787167407
+PgDuckDB-32Gi-1-1-1           : benchmarker timespan (start to end single container [s]) = 630
+PgDuckDB-32Gi-1-1-1           : benchmarker times (start/end per pod and container) = [(1787166777, 1787167369), (1787166777, 1787167119), (1787166777, 1787167115), (1787166778, 1787167407), (1787166777, 1787167116), (1787166778, 1787167121), (1787166777, 1787167308), (1787166777, 1787167106)]
+PgDuckDB-32Gi-1-1-1           : found and updated times {'benchmarker': [(1787166777, 1787167369), (1787166777, 1787167119), (1787166777, 1787167115), (1787166778, 1787167407), (1787166777, 1787167116), (1787166778, 1787167121), (1787166777, 1787167308), (1787166777, 1787167106)]}
+PgDuckDB-32Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-1-1           : collecting execution metrics of SUT at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-1-1           : collecting metrics of benchmarker at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : can be stopped
+PgDuckDB-32Gi                 : had 0 0 restarts at worker bexhoma-sut-pgduckdb-32gi-1787166405-7fb98885c8-s9xsm
+PgDuckDB-32Gi                 : still being removed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : starts again
+PgDuckDB-32Gi                 : deployments ['sut']
+PgDuckDB-32Gi                 : stateful sets []
+PgDuckDB-32Gi                 : pvcs ['sut']
+PgDuckDB-32Gi                 : name of SUT pods = bexhoma-sut-pgduckdb-32gi-1787166405
+PgDuckDB-32Gi                 : name of SUT service = bexhoma-sut-pgduckdb-32gi-1787166405
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 10240MB
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 24576MB
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 1024MB
+- waiting 10s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PgDuckDB-64Gi-1787166405 initialized to 8.
+PgDuckDB-64Gi                 : benchmarks done 1 of 3. This will be client 1
+PgDuckDB-64Gi-2-1-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-64Gi-2-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi                 : benchmarking results in folder /home/ll/benchmarks/1787166405
+- waiting 10s -               : done
+PgDuckDB-64Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-64gi-1787166405-2-1-1-2nk6n: ..found
+PgDuckDB-64Gi-2-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi-2-1-1           : collecting loading metrics of SUT at connection PgDuckDB-64Gi-2-1-1
+PgDuckDB-64Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-2-1-1           : collecting metrics of data generator at connection PgDuckDB-64Gi-2-1-1
+PgDuckDB-64Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-2-1-1           : collecting metrics of data injector at connection PgDuckDB-64Gi-2-1-1
+PgDuckDB-64Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for monitoring
+PgDuckDB-32Gi                 : wants to monitor all components in cluster
+PgDuckDB-32Gi                 : cannot rely on preinstalled monitoring
+PgDuckDB-32Gi                 : starts monitoring with prometheus pod
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : is not loaded yet
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787166405-547685c6d7-2b8p6 to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type schema
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : showing loader times (tpch-loader)
+PgDuckDB-32Gi                 : generator times (start/end per pod and container) [(1787167695, 1787167695)]
+PgDuckDB-32Gi                 : loader times (start/end per pod and container) [(1787167696, 1787167715)]
+PgDuckDB-32Gi                 : total times (start/end per pod and container) [(1787167695, 1787167695), (1787167696, 1787167715)]
+PgDuckDB-32Gi                 : generator timespan (first to last [s]) = 0
+PgDuckDB-32Gi                 : loader timespan (first to last [s]) = 19
+PgDuckDB-32Gi                 : total timespan (first to last [s]) = 20
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787166405-547685c6d7-2b8p6 to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type index
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PgDuckDB-32Gi-1787166405 initialized to 8.
+PgDuckDB-32Gi                 : benchmarks done 1 of 3. This will be client 1
+PgDuckDB-32Gi-2-1-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-32Gi-2-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi                 : benchmarking results in folder /home/ll/benchmarks/1787166405
+- waiting 10s -               : done
+PgDuckDB-32Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-32gi-1787166405-2-1-1-4sd85: ..found
+PgDuckDB-32Gi-2-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-2-1-1           : collecting loading metrics of SUT at connection PgDuckDB-32Gi-2-1-1
+PgDuckDB-32Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-2-1-1           : collecting metrics of data generator at connection PgDuckDB-32Gi-2-1-1
+PgDuckDB-32Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-2-1-1           : collecting metrics of data injector at connection PgDuckDB-32Gi-2-1-1
+PgDuckDB-32Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi-2-1-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787166405/PgDuckDB-64Gi-2-1-1.config
+PgDuckDB-64Gi-2-1-1           : showing benchmarker times
+PgDuckDB-64Gi-2-1-1           : benchmarker timespan job from 1787167544 to 1787167930
+PgDuckDB-64Gi-2-1-1           : benchmarker timespan pods from 1787167567 to 1787167912
+PgDuckDB-64Gi-2-1-1           : benchmarker timespan (start to end single container [s]) = 345
+PgDuckDB-64Gi-2-1-1           : benchmarker times (start/end per pod and container) = [(1787167568, 1787167909), (1787167568, 1787167906), (1787167567, 1787167908), (1787167568, 1787167906), (1787167568, 1787167912), (1787167567, 1787167903), (1787167568, 1787167903), (1787167568, 1787167907)]
+PgDuckDB-64Gi-2-1-1           : found and updated times {'benchmarker': [(1787167568, 1787167909), (1787167568, 1787167906), (1787167567, 1787167908), (1787167568, 1787167906), (1787167568, 1787167912), (1787167567, 1787167903), (1787167568, 1787167903), (1787167568, 1787167907)]}
+PgDuckDB-64Gi-2-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi-2-1-1           : collecting execution metrics of SUT at connection PgDuckDB-64Gi-2-1-1
+PgDuckDB-64Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-2-1-1           : collecting metrics of benchmarker at connection PgDuckDB-64Gi-2-1-1
+PgDuckDB-64Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : can be stopped
+PgDuckDB-64Gi                 : had 0 0 restarts at worker bexhoma-sut-pgduckdb-64gi-1787166405-7fd6d9c886-mnplw
+PgDuckDB-64Gi                 : still being removed
+- waiting 30s -               : done
+PgDuckDB-64Gi                 : starts again
+PgDuckDB-64Gi                 : deployments ['sut']
+PgDuckDB-64Gi                 : stateful sets []
+PgDuckDB-64Gi                 : pvcs ['sut']
+PgDuckDB-64Gi                 : name of SUT pods = bexhoma-sut-pgduckdb-64gi-1787166405
+PgDuckDB-64Gi                 : name of SUT service = bexhoma-sut-pgduckdb-64gi-1787166405
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 20480MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 49152MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem = 1024MB
+PgDuckDB-64Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 2048MB
+- waiting 10s -               : done
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : waits for monitoring
+PgDuckDB-64Gi                 : wants to monitor all components in cluster
+PgDuckDB-64Gi                 : cannot rely on preinstalled monitoring
+PgDuckDB-64Gi                 : starts monitoring with prometheus pod
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : is not loaded yet
+PgDuckDB-64Gi                 : connect to pod bexhoma-sut-pgduckdb-64gi-1787166405-685c654779-hh87v to load scripts
+PgDuckDB-64Gi                 : start asynch loading scripts of type schema
+PgDuckDB-64Gi                 : is loading
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : showing loader times (tpch-loader)
+PgDuckDB-64Gi                 : generator times (start/end per pod and container) [(1787168188, 1787168188)]
+PgDuckDB-64Gi                 : loader times (start/end per pod and container) [(1787168189, 1787168208)]
+PgDuckDB-64Gi                 : total times (start/end per pod and container) [(1787168188, 1787168188), (1787168189, 1787168208)]
+PgDuckDB-64Gi                 : generator timespan (first to last [s]) = 0
+PgDuckDB-64Gi                 : loader timespan (first to last [s]) = 19
+PgDuckDB-64Gi                 : total timespan (first to last [s]) = 20
+PgDuckDB-64Gi                 : connect to pod bexhoma-sut-pgduckdb-64gi-1787166405-685c654779-hh87v to load scripts
+PgDuckDB-64Gi                 : start asynch loading scripts of type index
+PgDuckDB-64Gi                 : is loading
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-1-PgDuckDB-64Gi-1787166405 initialized to 8.
+PgDuckDB-64Gi                 : benchmarks done 2 of 3. This will be client 1
+PgDuckDB-64Gi-3-1-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-64Gi-3-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi                 : benchmarking results in folder /home/ll/benchmarks/1787166405
+- waiting 10s -               : done
+PgDuckDB-64Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-64gi-1787166405-3-1-1-75hs8: found
+PgDuckDB-64Gi-3-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi-3-1-1           : collecting loading metrics of SUT at connection PgDuckDB-64Gi-3-1-1
+PgDuckDB-64Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-3-1-1           : collecting metrics of data generator at connection PgDuckDB-64Gi-3-1-1
+PgDuckDB-64Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-3-1-1           : collecting metrics of data injector at connection PgDuckDB-64Gi-3-1-1
+PgDuckDB-64Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-64Gi                 : has running benchmarks
+PgDuckDB-32Gi-2-1-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787166405/PgDuckDB-32Gi-2-1-1.config
+PgDuckDB-32Gi-2-1-1           : showing benchmarker times
+PgDuckDB-32Gi-2-1-1           : benchmarker timespan job from 1787167769 to 1787168370
+PgDuckDB-32Gi-2-1-1           : benchmarker timespan pods from 1787167794 to 1787168341
+PgDuckDB-32Gi-2-1-1           : benchmarker timespan (start to end single container [s]) = 547
+PgDuckDB-32Gi-2-1-1           : benchmarker times (start/end per pod and container) = [(1787167795, 1787168131), (1787167794, 1787168108), (1787167794, 1787168120), (1787167795, 1787168129), (1787167795, 1787168118), (1787167795, 1787168128), (1787167794, 1787168341), (1787167795, 1787168127)]
+PgDuckDB-32Gi-2-1-1           : found and updated times {'benchmarker': [(1787167795, 1787168131), (1787167794, 1787168108), (1787167794, 1787168120), (1787167795, 1787168129), (1787167795, 1787168118), (1787167795, 1787168128), (1787167794, 1787168341), (1787167795, 1787168127)]}
+PgDuckDB-32Gi-2-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-2-1-1           : collecting execution metrics of SUT at connection PgDuckDB-32Gi-2-1-1
+PgDuckDB-32Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-2-1-1           : collecting metrics of benchmarker at connection PgDuckDB-32Gi-2-1-1
+PgDuckDB-32Gi-2-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : can be stopped
+PgDuckDB-32Gi                 : had 0 0 restarts at worker bexhoma-sut-pgduckdb-32gi-1787166405-547685c6d7-2b8p6
+PgDuckDB-32Gi                 : still being removed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : starts again
+PgDuckDB-32Gi                 : deployments ['sut']
+PgDuckDB-32Gi                 : stateful sets []
+PgDuckDB-32Gi                 : pvcs ['sut']
+PgDuckDB-32Gi                 : name of SUT pods = bexhoma-sut-pgduckdb-32gi-1787166405
+PgDuckDB-32Gi                 : name of SUT service = bexhoma-sut-pgduckdb-32gi-1787166405
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 10240MB
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 24576MB
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 1024MB
+- waiting 10s -               : done
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for monitoring
+PgDuckDB-32Gi                 : wants to monitor all components in cluster
+PgDuckDB-32Gi                 : cannot rely on preinstalled monitoring
+PgDuckDB-32Gi                 : starts monitoring with prometheus pod
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : is not loaded yet
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787166405-579cb7c984-4t8fr to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type schema
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : showing loader times (tpch-loader)
+PgDuckDB-32Gi                 : generator times (start/end per pod and container) [(1787168596, 1787168596)]
+PgDuckDB-32Gi                 : loader times (start/end per pod and container) [(1787168598, 1787168617)]
+PgDuckDB-32Gi                 : total times (start/end per pod and container) [(1787168596, 1787168596), (1787168598, 1787168617)]
+PgDuckDB-32Gi                 : generator timespan (first to last [s]) = 0
+PgDuckDB-32Gi                 : loader timespan (first to last [s]) = 19
+PgDuckDB-32Gi                 : total timespan (first to last [s]) = 21
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787166405-579cb7c984-4t8fr to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type index
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-64Gi                 : has running benchmarks
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-1-PgDuckDB-32Gi-1787166405 initialized to 8.
+PgDuckDB-32Gi                 : benchmarks done 2 of 3. This will be client 1
+PgDuckDB-32Gi-3-1-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-32Gi-3-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi                 : benchmarking results in folder /home/ll/benchmarks/1787166405
+- waiting 10s -               : done
+PgDuckDB-32Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-32gi-1787166405-3-1-1-4pb8t: .found
+PgDuckDB-32Gi-3-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-3-1-1           : collecting loading metrics of SUT at connection PgDuckDB-32Gi-3-1-1
+PgDuckDB-32Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-3-1-1           : collecting metrics of data generator at connection PgDuckDB-32Gi-3-1-1
+PgDuckDB-32Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-3-1-1           : collecting metrics of data injector at connection PgDuckDB-32Gi-3-1-1
+PgDuckDB-32Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-3-1-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787166405/PgDuckDB-64Gi-3-1-1.config
+PgDuckDB-64Gi-3-1-1           : showing benchmarker times
+PgDuckDB-64Gi-3-1-1           : benchmarker timespan job from 1787168265 to 1787168719
+PgDuckDB-64Gi-3-1-1           : benchmarker timespan pods from 1787168291 to 1787168634
+PgDuckDB-64Gi-3-1-1           : benchmarker timespan (start to end single container [s]) = 343
+PgDuckDB-64Gi-3-1-1           : benchmarker times (start/end per pod and container) = [(1787168291, 1787168630), (1787168291, 1787168628), (1787168292, 1787168631), (1787168291, 1787168627), (1787168291, 1787168627), (1787168291, 1787168630), (1787168291, 1787168624), (1787168292, 1787168634)]
+PgDuckDB-64Gi-3-1-1           : found and updated times {'benchmarker': [(1787168291, 1787168630), (1787168291, 1787168628), (1787168292, 1787168631), (1787168291, 1787168627), (1787168291, 1787168627), (1787168291, 1787168630), (1787168291, 1787168624), (1787168292, 1787168634)]}
+PgDuckDB-64Gi-3-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-64Gi-3-1-1           : collecting execution metrics of SUT at connection PgDuckDB-64Gi-3-1-1
+PgDuckDB-64Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-64Gi-3-1-1           : collecting metrics of benchmarker at connection PgDuckDB-64Gi-3-1-1
+PgDuckDB-64Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-64gi-1787166405(.*)", pod=~"(.*)pgduckdb-64gi-1787166405(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-64Gi                 : can be stopped
+PgDuckDB-64Gi                 : had 0 0 restarts at worker bexhoma-sut-pgduckdb-64gi-1787166405-685c654779-hh87v
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi-3-1-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787166405/PgDuckDB-32Gi-3-1-1.config
+PgDuckDB-32Gi-3-1-1           : showing benchmarker times
+PgDuckDB-32Gi-3-1-1           : benchmarker timespan job from 1787168672 to 1787169304
+PgDuckDB-32Gi-3-1-1           : benchmarker timespan pods from 1787168696 to 1787169292
+PgDuckDB-32Gi-3-1-1           : benchmarker timespan (start to end single container [s]) = 596
+PgDuckDB-32Gi-3-1-1           : benchmarker times (start/end per pod and container) = [(1787168696, 1787169292), (1787168696, 1787169027), (1787168696, 1787169019), (1787168696, 1787169021), (1787168696, 1787169026), (1787168696, 1787169029), (1787168696, 1787169024), (1787168696, 1787169029)]
+PgDuckDB-32Gi-3-1-1           : found and updated times {'benchmarker': [(1787168696, 1787169292), (1787168696, 1787169027), (1787168696, 1787169019), (1787168696, 1787169021), (1787168696, 1787169026), (1787168696, 1787169029), (1787168696, 1787169024), (1787168696, 1787169029)]}
+PgDuckDB-32Gi-3-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-3-1-1           : collecting execution metrics of SUT at connection PgDuckDB-32Gi-3-1-1
+PgDuckDB-32Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-3-1-1           : collecting metrics of benchmarker at connection PgDuckDB-32Gi-3-1-1
+PgDuckDB-32Gi-3-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787166405(.*)", pod=~"(.*)pgduckdb-32gi-1787166405(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : can be stopped
+PgDuckDB-32Gi                 : had 0 0 restarts at worker bexhoma-sut-pgduckdb-32gi-1787166405-579cb7c984-4t8fr
+Experiment                    : ends at 2026-08-19 21:55:49.170168 (1056050.905881028) - 2837.24s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+* Type: tpch
+* Duration: 2838s 
+* Code: 1787166405
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * Query selection is limited to Q5, Q7, Q8, Q9, Q21.
+  * All instances use the same query parameters.
+  * Timeout per query is 300.
+  * PgDuckDB queries are forced through the DuckDB execution engine.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Experiment uses bexhoma version 0.10.8.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PgDuckDB'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker36.
+  * Benchmarking is fixed to cl-worker36.
+  * SUT is fixed to cl-worker36.
+  * Each query is repeated 40 times.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [8] times the number of benchmarking pods.
+  * Experiment is run 3 times.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '10240MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '24576MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'work_mem'}, '512MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-64Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB')].
+  * SUT requests 16,16 CPU and 32Gi,64Gi RAM. CPU limit is 16,16. RAM limit is 32Gi,64Gi.
+
+### Connections
+* PgDuckDB-32Gi-1-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181875
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-1-1-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181875
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-1-1-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181875
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-1-1-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181875
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-1-1-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181875
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-1-1-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181875
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-1-1-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181875
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-1-1-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181875
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-2-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181618
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-2-1-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181618
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-2-1-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181618
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-2-1-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181618
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-2-1-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181618
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-2-1-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181618
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-2-1-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181618
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-2-1-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181618
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-3-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181671
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-3-1-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181671
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-3-1-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181671
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-3-1-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181671
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-3-1-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181671
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-3-1-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181671
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-3-1-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181671
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-32Gi-3-1-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181671
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=10240MB', '-c', 'effective_cache_size=24576MB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=1024MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:32Gi
+  * limits_cpu:16
+  * limits_memory:32Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-1-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181894
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-1-1-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181894
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-1-1-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181894
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-1-1-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181894
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-1-1-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181894
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-1-1-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181894
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-1-1-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181894
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-1-1-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181894
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-2-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1178411
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-2-1-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1178411
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-2-1-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1178411
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-2-1-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1178411
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-2-1-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1178411
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-2-1-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1178411
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-2-1-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1178411
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-2-1-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1178411
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-3-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181620
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-3-1-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181620
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-3-1-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181620
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-3-1-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181620
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-3-1-1-5 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181620
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-3-1-1-6 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181620
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-3-1-1-7 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181620
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+* PgDuckDB-64Gi-3-1-1-8 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1181620
+  * datadisk:2758
+  * cpu_list:0-223
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787166405
+
+### SUT Container Restarts
+* bexhoma-sut-pgduckdb-32gi-1787166405-579cb7c984-4t8fr: 0 0
+* bexhoma-sut-pgduckdb-64gi-1787166405-685c654779-hh87v: 0 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PgDuckDB-32Gi - Experiment 1 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-32Gi - Experiment 2 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-32Gi - Experiment 3 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-64Gi - Experiment 1 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-64Gi - Experiment 2 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-64Gi - Experiment 3 Client 1: tpch (8 pods)
+
+#### Planned
+
+* DBMS PgDuckDB-32Gi - Experiment 1 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-32Gi - Experiment 2 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-32Gi - Experiment 3 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-64Gi - Experiment 1 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-64Gi - Experiment 2 Client 1: tpch (8 pods)
+* DBMS PgDuckDB-64Gi - Experiment 3 Client 1: tpch (8 pods)
+
+### Loading
+
+#### Per Run
+
+|                 |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:----------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PgDuckDB-32Gi-1 |                1 |    1 |       65.00 |           0.00 |            0.00 |         19.00 |           45.00 |              1 |           0 |             | None           |             0 | False         |               55.38 |
+| PgDuckDB-32Gi-2 |                2 |    1 |       64.00 |           0.00 |            0.00 |         19.00 |           44.00 |              1 |           0 |             | None           |             0 | False         |               56.25 |
+| PgDuckDB-32Gi-3 |                3 |    1 |       66.00 |           0.00 |            0.00 |         19.00 |           45.00 |              1 |           0 |             | None           |             0 | False         |               54.55 |
+| PgDuckDB-64Gi-1 |                1 |    1 |       68.00 |           1.00 |            0.00 |         19.00 |           47.00 |              1 |           0 |             | None           |             0 | False         |               52.94 |
+| PgDuckDB-64Gi-2 |                2 |    1 |       68.00 |           1.00 |            0.00 |         19.00 |           46.00 |              1 |           0 |             | None           |             0 | False         |               52.94 |
+| PgDuckDB-64Gi-3 |                3 |    1 |       68.00 |           1.00 |            0.00 |         19.00 |           47.00 |              1 |           0 |             | None           |             0 | False         |               52.94 |
+
+### Execution
+
+#### Per Connection
+
+| DBMS                  | configuration   | phase             | job                 |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                   |
+|:----------------------|:----------------|:------------------|:--------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------------|
+| PgDuckDB-32Gi-1-1-1-1 | PgDuckDB-32Gi   | PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        342 |            1.57 |             2295.86 |             52.63 |          -1 | PgDuckDB-32Gi-1-1-1-1 |
+| PgDuckDB-32Gi-1-1-1-2 | PgDuckDB-32Gi   | PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        338 |            1.56 |             2309.66 |             53.25 |          -1 | PgDuckDB-32Gi-1-1-1-2 |
+| PgDuckDB-32Gi-1-1-1-3 | PgDuckDB-32Gi   | PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        329 |            1.56 |             2310.29 |             54.71 |          -1 | PgDuckDB-32Gi-1-1-1-3 |
+| PgDuckDB-32Gi-1-1-1-4 | PgDuckDB-32Gi   | PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        343 |            1.59 |             2261.70 |             52.48 |          -1 | PgDuckDB-32Gi-1-1-1-4 |
+| PgDuckDB-32Gi-1-1-1-5 | PgDuckDB-32Gi   | PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        531 |            1.06 |             3404.74 |             33.90 |          -1 | PgDuckDB-32Gi-1-1-1-5 |
+| PgDuckDB-32Gi-1-1-1-6 | PgDuckDB-32Gi   | PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        629 |            1.55 |             2328.34 |             28.62 |          -1 | PgDuckDB-32Gi-1-1-1-6 |
+| PgDuckDB-32Gi-1-1-1-7 | PgDuckDB-32Gi   | PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        339 |            1.53 |             2354.09 |             53.10 |          -1 | PgDuckDB-32Gi-1-1-1-7 |
+| PgDuckDB-32Gi-1-1-1-8 | PgDuckDB-32Gi   | PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        592 |            1.42 |             2539.29 |             30.41 |          -1 | PgDuckDB-32Gi-1-1-1-8 |
+| PgDuckDB-32Gi-2-1-1-1 | PgDuckDB-32Gi   | PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        332 |            1.55 |             2315.43 |             54.22 |          -1 | PgDuckDB-32Gi-2-1-1-1 |
+| PgDuckDB-32Gi-2-1-1-2 | PgDuckDB-32Gi   | PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        314 |            1.49 |             2417.63 |             57.32 |          -1 | PgDuckDB-32Gi-2-1-1-2 |
+| PgDuckDB-32Gi-2-1-1-3 | PgDuckDB-32Gi   | PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        336 |            1.55 |             2327.14 |             53.57 |          -1 | PgDuckDB-32Gi-2-1-1-3 |
+| PgDuckDB-32Gi-2-1-1-4 | PgDuckDB-32Gi   | PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        333 |            1.54 |             2343.29 |             54.05 |          -1 | PgDuckDB-32Gi-2-1-1-4 |
+| PgDuckDB-32Gi-2-1-1-5 | PgDuckDB-32Gi   | PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        323 |            1.53 |             2358.91 |             55.73 |          -1 | PgDuckDB-32Gi-2-1-1-5 |
+| PgDuckDB-32Gi-2-1-1-6 | PgDuckDB-32Gi   | PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        326 |            1.56 |             2307.37 |             55.21 |          -1 | PgDuckDB-32Gi-2-1-1-6 |
+| PgDuckDB-32Gi-2-1-1-7 | PgDuckDB-32Gi   | PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        334 |            1.57 |             2290.78 |             53.89 |          -1 | PgDuckDB-32Gi-2-1-1-7 |
+| PgDuckDB-32Gi-2-1-1-8 | PgDuckDB-32Gi   | PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        547 |            1.22 |             2944.81 |             32.91 |          -1 | PgDuckDB-32Gi-2-1-1-8 |
+| PgDuckDB-32Gi-3-1-1-1 | PgDuckDB-32Gi   | PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        330 |            1.55 |             2323.87 |             54.55 |          -1 | PgDuckDB-32Gi-3-1-1-1 |
+| PgDuckDB-32Gi-3-1-1-2 | PgDuckDB-32Gi   | PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        325 |            1.51 |             2381.12 |             55.38 |          -1 | PgDuckDB-32Gi-3-1-1-2 |
+| PgDuckDB-32Gi-3-1-1-3 | PgDuckDB-32Gi   | PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        596 |            1.41 |             2559.70 |             30.20 |          -1 | PgDuckDB-32Gi-3-1-1-3 |
+| PgDuckDB-32Gi-3-1-1-4 | PgDuckDB-32Gi   | PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        333 |            1.54 |             2331.79 |             54.05 |          -1 | PgDuckDB-32Gi-3-1-1-4 |
+| PgDuckDB-32Gi-3-1-1-5 | PgDuckDB-32Gi   | PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        331 |            1.55 |             2323.54 |             54.38 |          -1 | PgDuckDB-32Gi-3-1-1-5 |
+| PgDuckDB-32Gi-3-1-1-6 | PgDuckDB-32Gi   | PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        333 |            1.56 |             2314.64 |             54.05 |          -1 | PgDuckDB-32Gi-3-1-1-6 |
+| PgDuckDB-32Gi-3-1-1-7 | PgDuckDB-32Gi   | PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        328 |            1.52 |             2367.31 |             54.88 |          -1 | PgDuckDB-32Gi-3-1-1-7 |
+| PgDuckDB-32Gi-3-1-1-8 | PgDuckDB-32Gi   | PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        323 |            1.51 |             2384.27 |             55.73 |          -1 | PgDuckDB-32Gi-3-1-1-8 |
+| PgDuckDB-64Gi-1-1-1-1 | PgDuckDB-64Gi   | PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        345 |            1.54 |             2331.11 |             52.17 |          -1 | PgDuckDB-64Gi-1-1-1-1 |
+| PgDuckDB-64Gi-1-1-1-2 | PgDuckDB-64Gi   | PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        337 |            1.57 |             2292.89 |             53.41 |          -1 | PgDuckDB-64Gi-1-1-1-2 |
+| PgDuckDB-64Gi-1-1-1-3 | PgDuckDB-64Gi   | PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        343 |            1.56 |             2301.78 |             52.48 |          -1 | PgDuckDB-64Gi-1-1-1-3 |
+| PgDuckDB-64Gi-1-1-1-4 | PgDuckDB-64Gi   | PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        339 |            1.58 |             2277.98 |             53.10 |          -1 | PgDuckDB-64Gi-1-1-1-4 |
+| PgDuckDB-64Gi-1-1-1-5 | PgDuckDB-64Gi   | PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        335 |            1.56 |             2314.66 |             53.73 |          -1 | PgDuckDB-64Gi-1-1-1-5 |
+| PgDuckDB-64Gi-1-1-1-6 | PgDuckDB-64Gi   | PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        340 |            1.56 |             2300.54 |             52.94 |          -1 | PgDuckDB-64Gi-1-1-1-6 |
+| PgDuckDB-64Gi-1-1-1-7 | PgDuckDB-64Gi   | PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        341 |            1.57 |             2292.68 |             52.79 |          -1 | PgDuckDB-64Gi-1-1-1-7 |
+| PgDuckDB-64Gi-1-1-1-8 | PgDuckDB-64Gi   | PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |                5 |        340 |            1.55 |             2321.98 |             52.94 |          -1 | PgDuckDB-64Gi-1-1-1-8 |
+| PgDuckDB-64Gi-2-1-1-1 | PgDuckDB-64Gi   | PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        341 |            1.58 |             2278.03 |             52.79 |          -1 | PgDuckDB-64Gi-2-1-1-1 |
+| PgDuckDB-64Gi-2-1-1-2 | PgDuckDB-64Gi   | PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        335 |            1.55 |             2322.86 |             53.73 |          -1 | PgDuckDB-64Gi-2-1-1-2 |
+| PgDuckDB-64Gi-2-1-1-3 | PgDuckDB-64Gi   | PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        339 |            1.56 |             2303.57 |             53.10 |          -1 | PgDuckDB-64Gi-2-1-1-3 |
+| PgDuckDB-64Gi-2-1-1-4 | PgDuckDB-64Gi   | PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        338 |            1.54 |             2330.21 |             53.25 |          -1 | PgDuckDB-64Gi-2-1-1-4 |
+| PgDuckDB-64Gi-2-1-1-5 | PgDuckDB-64Gi   | PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        336 |            1.56 |             2314.54 |             53.57 |          -1 | PgDuckDB-64Gi-2-1-1-5 |
+| PgDuckDB-64Gi-2-1-1-6 | PgDuckDB-64Gi   | PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        344 |            1.56 |             2312.06 |             52.33 |          -1 | PgDuckDB-64Gi-2-1-1-6 |
+| PgDuckDB-64Gi-2-1-1-7 | PgDuckDB-64Gi   | PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        338 |            1.58 |             2272.93 |             53.25 |          -1 | PgDuckDB-64Gi-2-1-1-7 |
+| PgDuckDB-64Gi-2-1-1-8 | PgDuckDB-64Gi   | PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |                5 |        341 |            1.53 |             2346.44 |             52.79 |          -1 | PgDuckDB-64Gi-2-1-1-8 |
+| PgDuckDB-64Gi-3-1-1-1 | PgDuckDB-64Gi   | PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        333 |            1.53 |             2350.08 |             54.05 |          -1 | PgDuckDB-64Gi-3-1-1-1 |
+| PgDuckDB-64Gi-3-1-1-2 | PgDuckDB-64Gi   | PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        342 |            1.56 |             2314.87 |             52.63 |          -1 | PgDuckDB-64Gi-3-1-1-2 |
+| PgDuckDB-64Gi-3-1-1-3 | PgDuckDB-64Gi   | PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        337 |            1.56 |             2313.32 |             53.41 |          -1 | PgDuckDB-64Gi-3-1-1-3 |
+| PgDuckDB-64Gi-3-1-1-4 | PgDuckDB-64Gi   | PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        339 |            1.58 |             2284.07 |             53.10 |          -1 | PgDuckDB-64Gi-3-1-1-4 |
+| PgDuckDB-64Gi-3-1-1-5 | PgDuckDB-64Gi   | PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        339 |            1.59 |             2268.26 |             53.10 |          -1 | PgDuckDB-64Gi-3-1-1-5 |
+| PgDuckDB-64Gi-3-1-1-6 | PgDuckDB-64Gi   | PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        339 |            1.58 |             2273.87 |             53.10 |          -1 | PgDuckDB-64Gi-3-1-1-6 |
+| PgDuckDB-64Gi-3-1-1-7 | PgDuckDB-64Gi   | PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        336 |            1.54 |             2332.78 |             53.57 |          -1 | PgDuckDB-64Gi-3-1-1-7 |
+| PgDuckDB-64Gi-3-1-1-8 | PgDuckDB-64Gi   | PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1-1 |                3 |        1 |               1 |           1 | 1.00 |                5 |        336 |            1.55 |             2319.95 |             53.57 |          -1 | PgDuckDB-64Gi-3-1-1-8 |
+
+#### Per Phase
+
+|                   | phase             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------------|:------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| PgDuckDB-32Gi-1-1 | PgDuckDB-32Gi-1-1 |                1 |        1 |               1 |           8 | 1.00 |               40 |        629 |            1.47 |             2453.48 |            228.93 |          -1 |
+| PgDuckDB-64Gi-1-1 | PgDuckDB-64Gi-1-1 |                1 |        1 |               1 |           8 | 1.00 |               40 |        345 |            1.56 |             2304.14 |            417.39 |          -1 |
+| PgDuckDB-32Gi-2-1 | PgDuckDB-32Gi-2-1 |                2 |        1 |               1 |           8 | 1.00 |               40 |        547 |            1.50 |             2405.43 |            263.25 |          -1 |
+| PgDuckDB-64Gi-2-1 | PgDuckDB-64Gi-2-1 |                2 |        1 |               1 |           8 | 1.00 |               40 |        344 |            1.56 |             2309.96 |            418.60 |          -1 |
+| PgDuckDB-32Gi-3-1 | PgDuckDB-32Gi-3-1 |                3 |        1 |               1 |           8 | 1.00 |               40 |        596 |            1.52 |             2372.14 |            241.61 |          -1 |
+| PgDuckDB-64Gi-3-1 | PgDuckDB-64Gi-3-1 |                3 |        1 |               1 |           8 | 1.00 |               40 |        342 |            1.56 |             2306.99 |            421.05 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   PgDuckDB-32Gi-1-1-1-1 |   PgDuckDB-32Gi-1-1-1-2 |   PgDuckDB-32Gi-1-1-1-3 |   PgDuckDB-32Gi-1-1-1-4 |   PgDuckDB-32Gi-1-1-1-5 |   PgDuckDB-32Gi-1-1-1-6 |   PgDuckDB-32Gi-1-1-1-7 |   PgDuckDB-32Gi-1-1-1-8 |   PgDuckDB-32Gi-2-1-1-1 |   PgDuckDB-32Gi-2-1-1-2 |   PgDuckDB-32Gi-2-1-1-3 |   PgDuckDB-32Gi-2-1-1-4 |   PgDuckDB-32Gi-2-1-1-5 |   PgDuckDB-32Gi-2-1-1-6 |   PgDuckDB-32Gi-2-1-1-7 |   PgDuckDB-32Gi-2-1-1-8 |   PgDuckDB-32Gi-3-1-1-1 |   PgDuckDB-32Gi-3-1-1-2 |   PgDuckDB-32Gi-3-1-1-3 |   PgDuckDB-32Gi-3-1-1-4 |   PgDuckDB-32Gi-3-1-1-5 |   PgDuckDB-32Gi-3-1-1-6 |   PgDuckDB-32Gi-3-1-1-7 |   PgDuckDB-32Gi-3-1-1-8 |   PgDuckDB-64Gi-1-1-1-1 |   PgDuckDB-64Gi-1-1-1-2 |   PgDuckDB-64Gi-1-1-1-3 |   PgDuckDB-64Gi-1-1-1-4 |   PgDuckDB-64Gi-1-1-1-5 |   PgDuckDB-64Gi-1-1-1-6 |   PgDuckDB-64Gi-1-1-1-7 |   PgDuckDB-64Gi-1-1-1-8 |   PgDuckDB-64Gi-2-1-1-1 |   PgDuckDB-64Gi-2-1-1-2 |   PgDuckDB-64Gi-2-1-1-3 |   PgDuckDB-64Gi-2-1-1-4 |   PgDuckDB-64Gi-2-1-1-5 |   PgDuckDB-64Gi-2-1-1-6 |   PgDuckDB-64Gi-2-1-1-7 |   PgDuckDB-64Gi-2-1-1-8 |   PgDuckDB-64Gi-3-1-1-1 |   PgDuckDB-64Gi-3-1-1-2 |   PgDuckDB-64Gi-3-1-1-3 |   PgDuckDB-64Gi-3-1-1-4 |   PgDuckDB-64Gi-3-1-1-5 |   PgDuckDB-64Gi-3-1-1-6 |   PgDuckDB-64Gi-3-1-1-7 |   PgDuckDB-64Gi-3-1-1-8 |
+|:----------------------------------------------------|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|------------------------:|
+| Local Supplier Volume (TPC-H Q5)                    |                 1355.69 |                 1319.80 |                 1305.47 |                 1345.88 |                 1136.02 |                 1336.88 |                 1331.75 |                 1301.00 |                 1323.31 |                 1274.04 |                 1332.96 |                 1370.16 |                 1305.97 |                 1363.12 |                 1284.77 |                 1303.52 |                 1324.01 |                 1274.05 |                 1290.94 |                 1327.04 |                 1325.44 |                 1263.24 |                 1350.78 |                 1289.91 |                 1436.47 |                 1370.17 |                 1347.16 |                 1387.89 |                 1351.49 |                 1331.60 |                 1350.79 |                 1357.20 |                 1311.42 |                 1302.29 |                 1310.67 |                 1331.13 |                 1269.76 |                 1364.70 |                 1375.17 |                 1265.66 |                 1388.54 |                 1364.40 |                 1359.09 |                 1397.30 |                 1417.79 |                 1421.18 |                 1327.04 |                 1332.73 |
+| Volume Shipping Query (TPC-H Q7)                    |                 1054.41 |                 1058.31 |                 1022.86 |                 1061.63 |                  685.75 |                  989.93 |                 1003.12 |                 1003.91 |                 1106.37 |                 1042.98 |                 1091.42 |                 1101.87 |                 1074.21 |                 1131.87 |                 1121.74 |                  938.38 |                 1036.20 |                  975.92 |                 1004.58 |                 1064.87 |                 1072.74 |                 1073.47 |                  987.34 |                 1011.78 |                 1030.35 |                 1057.51 |                 1029.06 |                 1056.37 |                 1104.50 |                 1079.62 |                 1075.37 |                 1038.66 |                 1020.73 |                 1099.33 |                 1124.71 |                  982.08 |                  970.66 |                 1057.76 |                 1076.55 |                 1030.54 |                 1103.62 |                 1066.48 |                 1074.08 |                 1110.39 |                 1034.62 |                 1079.01 |                 1021.31 |                 1011.63 |
+| National Market Share (TPC-H Q8)                    |                 1400.25 |                 1444.89 |                 1379.36 |                 1395.67 |                  988.62 |                 1480.52 |                 1436.41 |                 1384.75 |                 1456.93 |                 1392.36 |                 1495.36 |                 1428.66 |                 1452.97 |                 1466.06 |                 1509.01 |                 1086.44 |                 1484.30 |                 1405.33 |                 1368.59 |                 1440.37 |                 1453.26 |                 1499.72 |                 1411.75 |                 1423.25 |                 1366.25 |                 1426.54 |                 1558.64 |                 1412.38 |                 1458.54 |                 1511.12 |                 1510.01 |                 1428.72 |                 1430.36 |                 1415.53 |                 1411.13 |                 1416.47 |                 1465.72 |                 1471.01 |                 1416.15 |                 1442.86 |                 1417.80 |                 1397.39 |                 1471.58 |                 1462.65 |                 1468.57 |                 1364.32 |                 1513.13 |                 1487.08 |
+| Product Type Profit Measure (TPC-H Q9)              |                 1827.04 |                 1644.34 |                 1857.03 |                 1751.58 |                 1193.79 |                 1849.92 |                 1982.56 |                 1725.50 |                 1696.41 |                 1573.38 |                 1736.00 |                 1701.35 |                 1732.95 |                 1594.38 |                 1709.40 |                 1102.20 |                 1729.62 |                 1771.72 |                 1726.82 |                 1814.13 |                 1821.66 |                 1685.97 |                 1672.52 |                 1753.16 |                 1780.25 |                 1786.08 |                 1792.32 |                 1758.89 |                 1768.55 |                 1690.72 |                 1843.89 |                 1990.82 |                 1723.38 |                 1661.41 |                 1862.99 |                 1804.09 |                 1710.68 |                 1902.50 |                 1727.99 |                 1877.22 |                 1805.93 |                 1808.62 |                 1750.35 |                 1814.64 |                 1662.85 |                 1681.81 |                 1791.77 |                 1750.74 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 2878.97 |                 2963.25 |                 2624.54 |                 3008.16 |                 1752.98 |                 2597.65 |                 2697.58 |                 1911.27 |                 2687.24 |                 2543.63 |                 2705.07 |                 2694.26 |                 2503.72 |                 2568.40 |                 2676.80 |                 1743.68 |                 2659.78 |                 2670.56 |                 2046.24 |                 2636.50 |                 2594.68 |                 2762.06 |                 2764.07 |                 2576.09 |                 2992.96 |                 2759.66 |                 2819.52 |                 2834.99 |                 2682.81 |                 2874.68 |                 2703.79 |                 2663.88 |                 3017.59 |                 2873.22 |                 2736.35 |                 2895.49 |                 2986.76 |                 2786.26 |                 2835.63 |                 2885.91 |                 2609.42 |                 2891.72 |                 2746.53 |                 2663.12 |                 2845.37 |                 2878.79 |                 2729.54 |                 2777.75 |
+
+### Errors (failed queries)
+
+|                       |   Local Supplier Volume (TPC-H Q5) |   Volume Shipping Query (TPC-H Q7) |   National Market Share (TPC-H Q8) |   Product Type Profit Measure (TPC-H Q9) |   Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |
+|:----------------------|-----------------------------------:|-----------------------------------:|-----------------------------------:|-----------------------------------------:|------------------------------------------------------:|
+| PgDuckDB-32Gi-1-1-1-5 |                               1.00 |                               0.00 |                               0.00 |                                     0.00 |                                                  0.00 |
+| PgDuckDB-32Gi-1-1-1-6 |                               0.00 |                               0.00 |                               0.00 |                                     0.00 |                                                  1.00 |
+| PgDuckDB-32Gi-1-1-1-8 |                               0.00 |                               0.00 |                               0.00 |                                     0.00 |                                                  1.00 |
+| PgDuckDB-32Gi-2-1-1-8 |                               0.00 |                               1.00 |                               0.00 |                                     0.00 |                                                  0.00 |
+| PgDuckDB-32Gi-3-1-1-3 |                               0.00 |                               0.00 |                               0.00 |                                     0.00 |                                                  1.00 |
+* Local Supplier Volume (TPC-H Q5)
+  * PgDuckDB-32Gi-1-1-1-5: numRun 4: : org.postgresql.util.PSQLException: ERROR: (PGDuckDB/Duckdb_ExecCustomScan_Cpp) Executor Error: Query cancelled
+* Volume Shipping Query (TPC-H Q7)
+  * PgDuckDB-32Gi-2-1-1-8: numRun 31: : org.postgresql.util.PSQLException: ERROR: (PGDuckDB/Duckdb_ExecCustomScan_Cpp) Executor Error: Query cancelled
+* Suppliers Who Kept Orders Waiting Query (TPC-H Q21)
+  * PgDuckDB-32Gi-1-1-1-8: numRun 7: : org.postgresql.util.PSQLException: ERROR: (PGDuckDB/Duckdb_ExecCustomScan_Cpp) Executor Error: Query cancelled
+  * PgDuckDB-32Gi-3-1-1-3: numRun 8: : org.postgresql.util.PSQLException: ERROR: (PGDuckDB/Duckdb_ExecCustomScan_Cpp) Executor Error: Query cancelled
+  * PgDuckDB-32Gi-1-1-1-6: numRun 28: : org.postgresql.util.PSQLException: ERROR: (PGDuckDB/Duckdb_ExecCustomScan_Cpp) Executor Error: Query cancelled
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------|-------------:|----------:|---------------:|----------------------:|
+| PgDuckDB-32Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component data generator
+
+| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------|-------------:|----------:|---------------:|----------------------:|
+| PgDuckDB-32Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------|-------------:|----------:|---------------:|----------------------:|
+| PgDuckDB-32Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Execution phase: SUT deployment
+
+| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------|-------------:|----------:|---------------:|----------------------:|
+| PgDuckDB-32Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Execution phase: component benchmarker
+
+| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------|-------------:|----------:|---------------:|----------------------:|
+| PgDuckDB-32Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-32Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| PgDuckDB-64Gi-3-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+Experiment                    : cleaning up per-connection artefacts
+Experiment                    : cleaning up per-connection artefacts completed
+
+### Tests
+* TEST passed: No SUT container restarts
+* TEST failed: Loading phase: SUT deployment contains 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST failed: Loading phase: component loader contains 0 or NaN in CPU [CPUs]
+* TEST failed: Execution phase: SUT deployment contains 0 or NaN in CPU [CPUs]
+* TEST failed: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs]
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST failed: SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: Workflow as planned

@@ -17,6 +17,8 @@ __pycache__/*
 bexhoma/__pycache__/*
 bexhoma/*/__pycache__/*
 notebooks/__pycache__/*
+agent/__pycache__/*
+agent/*/__pycache__/*
 /cluster-monitoring-default.config
 logs_tests/local/*
 dev/.ipynb_checkpoints/*
@@ -30,3 +32,7 @@ logs_multitenant/*
 dev/catalog/environment.yml
 environment.yml
 experiment.yml
+.venv/
+/inbox/
+dev/catalog/refresh_environment.py
+/status/

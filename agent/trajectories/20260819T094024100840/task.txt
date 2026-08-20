@@ -1,0 +1,1 @@
+Is pg_duckdb better on joins than PostgreSQL, even under concurrency? If throughput degrades as concurrent streams increase, I need to know whether that is memory starvation per stream or thread contention. I have a 1GB dataset, and our servers have at most 64GB of RAM.

@@ -10,6 +10,14 @@
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
 
 catalog_concepts:
+  experimental_design:
+    semantics: "turn constraints into controls or factors according to the hypothesis"
+    bounded_resources: "a user-given maximum is a hard ceiling, not necessarily
+      the only useful treatment. If resource pressure is a plausible rival
+      explanation for a system or concurrency effect, sweep two values at or
+      below the ceiling -- normally half the ceiling and the ceiling -- and name
+      that resource in discriminates. Keep one fixed value when the resource
+      cannot help distinguish the hypotheses or the added run cost is unjustified."
   workloads:
     semantics: "what to run: params, loading behavior, physical-design semantics"
   systems:
@@ -87,9 +95,8 @@ experiment_schema:
   why: "full top-level shape every experiment.yml must follow"
   semantics: "every field below is a SIBLING of every other field at the top of the file"
   out_of_scope: "loading: nested under workload: (i.e. a workload.loading
-    block) -- not a schema error, it just silently resolves to nothing (no
-    pods/threads/post_load flags are produced from it); loading: must be a
-    top-level sibling of workload:, not nested inside it"
+    block); the agent validator rejects it because loading: must be a top-level
+    sibling of workload:, not nested inside it"
   fields:
     mode:
       type: enum
@@ -106,14 +113,17 @@ experiment_schema:
     discriminates:
       type: "list[str]"
       required: true
+      values: [system, concurrency, cpu, memory]
       semantics: "factor(s) the experiment isolates, e.g. [system] or [system, concurrency]"
     workload:
       type: object
       fields:
         name: {type: str, required: true, semantics: "must be a key under this file's workloads:"}
         params: {type: object, semantics: "legal keys/types/defaults are workloads.<name>.params below"}
-        rounds: {type: "list[int]", semantics: "parallel-client sweep; one benchmarking round per entry"}
-        repetitions: {type: int, default: 1, semantics: "how many times the whole round list repeats"}
+        rounds: {type: "list[int]", min: 1, semantics: "parallel-client sweep;
+          one benchmarking round per entry; each entry is a client count, so
+          it must be at least 1"}
+        repetitions: {type: int, default: 1, min: 1, semantics: "how many times the whole round list repeats"}
     loading:
       type: object
       fields:
@@ -218,9 +228,10 @@ workloads:
       memory: high
       why: "multi-way hash joins and aggregation across 22 queries are CPU- and
         RAM-bound, and working-set size scales directly with scaling_factor;
-        storage bandwidth matters less by comparison — weigh cpu/memory
-        headroom heavily when choosing placement node-groups and
-        experiment.yml resources: for this workload"
+        concurrent streams divide the available memory and worker budget, so a
+        lower-memory cell can distinguish memory pressure from thread contention.
+        Storage bandwidth matters less by comparison — weigh cpu/memory headroom
+        heavily when choosing placement and experiment.yml resources"
     supports: [PostgreSQL, PgDuckDB]
     out_of_scope:
       systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB]
@@ -231,10 +242,12 @@ workloads:
       scaling_factor:
         type: int
         unit: GB
+        min: 1
         why: "TPC-H scale factor, controls database size"
       timeout:
         type: int
         unit: seconds
+        min: 1
         why: "per-query timeout"
       query_repeats:
         type: int
@@ -254,7 +267,10 @@ workloads:
       active_queries:
         type: list[int]
         default: all
-        why: "restrict to a query subset, e.g. [5, 7, 8, 9, 21] = multi-way joins"
+        min: 1
+        max: 22
+        why: "restrict to a query subset, e.g. [5, 7, 8, 9, 21] = multi-way joins;
+          TPC-H defines exactly 22 queries, so every entry must be in 1..22"
       recreate_parameter:
         type: bool
         default: false
@@ -331,6 +347,13 @@ workloads:
       type: int
       default: 1
       why: "how many times the whole round list repeats"
+      minimum_for_conclusions: 3
+      when: "the default of 1 is for smoke tests only. A single repetition gives
+        no way to tell a real difference between systems from run-to-run
+        variance, so any experiment whose hypothesis compares systems or claims
+        an effect must set at least 3 (behavioural rule from issue #764).
+        Note this multiplies runtime: total runs are
+        systems x resource_cells x len(rounds) x repetitions"
 
     produces:
       per_query:
@@ -431,6 +454,12 @@ systems:
         arg_style: env-var
         env_var: DUCKDB_FORCE_EXECUTION
         why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"
+        when: "set this to true whenever the hypothesis compares PgDuckDB's
+          execution engine against another system. Left at its default on
+          heap-stored tables, pg_duckdb's cost-based routing normally keeps
+          queries in PostgreSQL's own executor, so the extension is loaded but
+          idle and the experiment measures PostgreSQL against PostgreSQL. Leave
+          it false only when the routing behaviour itself is what's under test."
 
     physical_design:
       # explicitly re-declared, not inherited via extends -- see

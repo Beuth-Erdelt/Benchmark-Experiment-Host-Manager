@@ -1,0 +1,976 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Cluster monitoring            : is running
+Experiment                    : has code 1787145826
+Experiment                    : starts at 2026-08-19 15:25:32.819957 (1032634.555671935)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+Query selection is limited to Q5, Q7, Q8, Q9, Q21.
+All instances use the same query parameters.
+Timeout per query is 300.
+PgDuckDB queries are forced through the DuckDB execution engine.
+Import sets indexes and constraints after loading and recomputes statistics.
+Experiment uses bexhoma version 0.10.8.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PostgreSQL', 'PgDuckDB'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker36.
+Benchmarking is fixed to cl-worker36.
+SUT is fixed to cl-worker36.
+Each query is repeated 10 times.
+Database uses ephemeral storage of size 10Gi.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 2, 4, 8] times the number of benchmarking pods.
+Experiment is run 3 times.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '10240MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '24576MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'work_mem'}, '512MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '10240MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '24576MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'work_mem'}, '512MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '10240MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '24576MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'work_mem'}, '512MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': 'PostgreSQL-32Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '10240MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '24576MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'work_mem'}, '512MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '10240MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '24576MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'work_mem'}, '512MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'shared_buffers'}, '10240MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'effective_cache_size'}, '24576MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'work_mem'}, '512MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': 'PgDuckDB-32Gi', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '1024MB')].
+SUT requests 8,16,32 CPU and 32Gi,32Gi,32Gi RAM. CPU limit is 8,16,32. RAM limit is 32Gi,32Gi,32Gi.
+PostgreSQL-32Gi               : will start now
+PostgreSQL-32Gi               : deployments ['sut']
+PostgreSQL-32Gi               : stateful sets []
+PostgreSQL-32Gi               : pvcs ['sut']
+PostgreSQL-32Gi               : name of SUT pods = bexhoma-sut-postgresql-32gi-1787145826
+PostgreSQL-32Gi               : name of SUT service = bexhoma-sut-postgresql-32gi-1787145826
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather = 2
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers = 4
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes = 6
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 10240MB
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 24576MB
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem = 1024MB
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].io_method already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].io_method already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
+PostgreSQL-32Gi               : is pending
+PostgreSQL-32Gi               : is pending
+PgDuckDB-32Gi                 : will start now
+PgDuckDB-32Gi                 : deployments ['sut']
+PgDuckDB-32Gi                 : stateful sets []
+PgDuckDB-32Gi                 : pvcs ['sut']
+PgDuckDB-32Gi                 : name of SUT pods = bexhoma-sut-pgduckdb-32gi-1787145826
+PgDuckDB-32Gi                 : name of SUT service = bexhoma-sut-pgduckdb-32gi-1787145826
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 10240MB
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 24576MB
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 1024MB
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].io_method already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].io_method already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem already set to desired value
+PgDuckDB-32Gi                 : is pending
+PgDuckDB-32Gi                 : is pending
+- waiting 30s -               : done
+PostgreSQL-32Gi               : waits for monitoring
+PostgreSQL-32Gi               : wants to monitor all components in cluster
+PostgreSQL-32Gi               : cannot rely on preinstalled monitoring
+PostgreSQL-32Gi               : starts monitoring with prometheus pod
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : waits for monitoring
+PostgreSQL-32Gi               : waits for monitoring
+PgDuckDB-32Gi                 : waits for monitoring
+PgDuckDB-32Gi                 : wants to monitor all components in cluster
+PgDuckDB-32Gi                 : cannot rely on preinstalled monitoring
+PgDuckDB-32Gi                 : starts monitoring with prometheus pod
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : waits for monitoring
+PgDuckDB-32Gi                 : waits for monitoring
+- waiting 30s -               : done
+PostgreSQL-32Gi               : waits for health check to succeed
+PostgreSQL-32Gi               : waits for health check to succeed
+PostgreSQL-32Gi               : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-32Gi               : waits for health check to succeed
+PostgreSQL-32Gi               : waits for health check to succeed
+PostgreSQL-32Gi               : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-32Gi               : waits for health check to succeed
+PostgreSQL-32Gi               : waits for health check to succeed
+PostgreSQL-32Gi               : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-32Gi                 : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-32Gi               : is not loaded yet
+PostgreSQL-32Gi               : connect to pod bexhoma-sut-postgresql-32gi-1787145826-56467d49b5-946km to load scripts
+PostgreSQL-32Gi               : start asynch loading scripts of type schema
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+PgDuckDB-32Gi                 : is not loaded yet
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787145826-5b65454659-kqktz to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type schema
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-32Gi                 : is loading
+- waiting 30s -               : done
+PostgreSQL-32Gi               : showing loader times (tpch-loader)
+PostgreSQL-32Gi               : generator times (start/end per pod and container) [(1787146112, 1787146112)]
+PostgreSQL-32Gi               : loader times (start/end per pod and container) [(1787146113, 1787146132)]
+PostgreSQL-32Gi               : total times (start/end per pod and container) [(1787146112, 1787146112), (1787146113, 1787146132)]
+PostgreSQL-32Gi               : generator timespan (first to last [s]) = 0
+PostgreSQL-32Gi               : loader timespan (first to last [s]) = 19
+PostgreSQL-32Gi               : total timespan (first to last [s]) = 20
+PostgreSQL-32Gi               : connect to pod bexhoma-sut-postgresql-32gi-1787145826-56467d49b5-946km to load scripts
+PostgreSQL-32Gi               : start asynch loading scripts of type index
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+PgDuckDB-32Gi                 : showing loader times (tpch-loader)
+PgDuckDB-32Gi                 : generator times (start/end per pod and container) [(1787146121, 1787146121)]
+PgDuckDB-32Gi                 : loader times (start/end per pod and container) [(1787146123, 1787146143)]
+PgDuckDB-32Gi                 : total times (start/end per pod and container) [(1787146121, 1787146121), (1787146123, 1787146143)]
+PgDuckDB-32Gi                 : generator timespan (first to last [s]) = 0
+PgDuckDB-32Gi                 : loader timespan (first to last [s]) = 20
+PgDuckDB-32Gi                 : total timespan (first to last [s]) = 22
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787145826-5b65454659-kqktz to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type index
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-32Gi                 : is loading
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-32Gi-1787145826 initialized to 1.
+PostgreSQL-32Gi               : benchmarks done 0 of 3. This will be client 1
+PostgreSQL-32Gi-1-1-1         : start benchmarking (benchmark_run=1)
+PostgreSQL-32Gi-1-1-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi               : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PostgreSQL-32Gi               : benchmarking is waiting for job bexhoma-benchmarker-postgresql-32gi-1787145826-1-1-1-zdjlc: found
+PostgreSQL-32Gi-1-1-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-1-1-1         : collecting loading metrics of SUT at connection PostgreSQL-32Gi-1-1-1
+PostgreSQL-32Gi-1-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-1-1         : collecting metrics of data generator at connection PostgreSQL-32Gi-1-1-1
+PostgreSQL-32Gi-1-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-1-1         : collecting metrics of data injector at connection PostgreSQL-32Gi-1-1-1
+PostgreSQL-32Gi-1-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PgDuckDB-32Gi-1787145826 initialized to 1.
+PgDuckDB-32Gi                 : benchmarks done 0 of 3. This will be client 1
+PgDuckDB-32Gi-1-1-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-32Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi                 : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PgDuckDB-32Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-1-1-zbnj8: found
+PgDuckDB-32Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-1-1           : collecting loading metrics of SUT at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-1-1           : collecting metrics of data generator at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-1-1           : collecting metrics of data injector at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PostgreSQL-32Gi-1-1-1         : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PostgreSQL-32Gi-1-1-1.config
+PostgreSQL-32Gi-1-1-1         : showing benchmarker times
+PostgreSQL-32Gi-1-1-1         : benchmarker timespan job from 1787146191 to 1787146257
+PostgreSQL-32Gi-1-1-1         : benchmarker timespan pods from 1787146194 to 1787146207
+PostgreSQL-32Gi-1-1-1         : benchmarker timespan (start to end single container [s]) = 13
+PostgreSQL-32Gi-1-1-1         : benchmarker times (start/end per pod and container) = [(1787146194, 1787146207)]
+PostgreSQL-32Gi-1-1-1         : found and updated times {'benchmarker': [(1787146194, 1787146207)]}
+PostgreSQL-32Gi-1-1-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-1-1-1         : collecting execution metrics of SUT at connection PostgreSQL-32Gi-1-1-1
+PostgreSQL-32Gi-1-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-1-1         : collecting metrics of benchmarker at connection PostgreSQL-32Gi-1-1-1
+PostgreSQL-32Gi-1-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '328bb596-282b-44d3-8e1e-6fc600fe16fb', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:31:09 GMT', 'Content-Length': '294'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-postgresql-32gi-1787145826-1-1-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-postgresql-32gi-1787145826-1-1-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-32Gi-1787145826 initialized to 2.
+PostgreSQL-32Gi               : benchmarks done 0 of 3. This will be client 2
+PostgreSQL-32Gi-1-2-1         : start benchmarking (benchmark_run=1)
+PostgreSQL-32Gi-1-2-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi               : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PostgreSQL-32Gi               : benchmarking is waiting for job bexhoma-benchmarker-postgresql-32gi-1787145826-1-2-1-27rx8: found
+PostgreSQL-32Gi-1-2-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-1-2-1         : collecting loading metrics of SUT at connection PostgreSQL-32Gi-1-2-1
+PostgreSQL-32Gi-1-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-2-1         : collecting metrics of data generator at connection PostgreSQL-32Gi-1-2-1
+PostgreSQL-32Gi-1-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-2-1         : collecting metrics of data injector at connection PostgreSQL-32Gi-1-2-1
+PostgreSQL-32Gi-1-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-2-1         : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PostgreSQL-32Gi-1-2-1.config
+PostgreSQL-32Gi-1-2-1         : showing benchmarker times
+PostgreSQL-32Gi-1-2-1         : benchmarker timespan job from 1787146309 to 1787146343
+PostgreSQL-32Gi-1-2-1         : benchmarker timespan pods from 1787146312 to 1787146326
+PostgreSQL-32Gi-1-2-1         : benchmarker timespan (start to end single container [s]) = 14
+PostgreSQL-32Gi-1-2-1         : benchmarker times (start/end per pod and container) = [(1787146312, 1787146326), (1787146312, 1787146326)]
+PostgreSQL-32Gi-1-2-1         : found and updated times {'benchmarker': [(1787146312, 1787146326), (1787146312, 1787146326)]}
+PostgreSQL-32Gi-1-2-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-1-2-1         : collecting execution metrics of SUT at connection PostgreSQL-32Gi-1-2-1
+PostgreSQL-32Gi-1-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-2-1         : collecting metrics of benchmarker at connection PostgreSQL-32Gi-1-2-1
+PostgreSQL-32Gi-1-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': 'bdd92ca1-94be-4062-85ac-5bb0dba4e678', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:32:34 GMT', 'Content-Length': '294'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-postgresql-32gi-1787145826-1-2-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-postgresql-32gi-1787145826-1-2-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+PgDuckDB-32Gi-1-1-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PgDuckDB-32Gi-1-1-1.config
+PgDuckDB-32Gi-1-1-1           : showing benchmarker times
+PgDuckDB-32Gi-1-1-1           : benchmarker timespan job from 1787146226 to 1787146358
+PgDuckDB-32Gi-1-1-1           : benchmarker timespan pods from 1787146228 to 1787146284
+PgDuckDB-32Gi-1-1-1           : benchmarker timespan (start to end single container [s]) = 56
+PgDuckDB-32Gi-1-1-1           : benchmarker times (start/end per pod and container) = [(1787146228, 1787146284)]
+PgDuckDB-32Gi-1-1-1           : found and updated times {'benchmarker': [(1787146228, 1787146284)]}
+PgDuckDB-32Gi-1-1-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-1-1           : collecting execution metrics of SUT at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-1-1           : collecting metrics of benchmarker at connection PgDuckDB-32Gi-1-1-1
+PgDuckDB-32Gi-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': 'b626247f-7831-4e9c-bb73-ea920afd36e7', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:32:50 GMT', 'Content-Length': '290'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-1-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-1-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-PostgreSQL-32Gi-1787145826 initialized to 4.
+PostgreSQL-32Gi               : benchmarks done 0 of 3. This will be client 3
+PostgreSQL-32Gi-1-3-1         : start benchmarking (benchmark_run=1)
+PostgreSQL-32Gi-1-3-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi               : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PostgreSQL-32Gi               : benchmarking is waiting for job bexhoma-benchmarker-postgresql-32gi-1787145826-1-3-1-9pp6x: found
+PostgreSQL-32Gi-1-3-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-1-3-1         : collecting loading metrics of SUT at connection PostgreSQL-32Gi-1-3-1
+PostgreSQL-32Gi-1-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-3-1         : collecting metrics of data generator at connection PostgreSQL-32Gi-1-3-1
+PostgreSQL-32Gi-1-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-3-1         : collecting metrics of data injector at connection PostgreSQL-32Gi-1-3-1
+PostgreSQL-32Gi-1-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi               : has running benchmarks
+PostgreSQL-32Gi               : has running benchmarks
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PgDuckDB-32Gi-1787145826 initialized to 2.
+PgDuckDB-32Gi                 : benchmarks done 0 of 3. This will be client 2
+PgDuckDB-32Gi-1-2-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-32Gi-1-2-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi                 : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PgDuckDB-32Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-2-1-dmtpz: found
+PgDuckDB-32Gi-1-2-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-2-1           : collecting loading metrics of SUT at connection PgDuckDB-32Gi-1-2-1
+PgDuckDB-32Gi-1-2-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-2-1           : collecting metrics of data generator at connection PgDuckDB-32Gi-1-2-1
+PgDuckDB-32Gi-1-2-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-2-1           : collecting metrics of data injector at connection PgDuckDB-32Gi-1-2-1
+PgDuckDB-32Gi-1-2-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PostgreSQL-32Gi-1-3-1         : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PostgreSQL-32Gi-1-3-1.config
+PostgreSQL-32Gi-1-3-1         : showing benchmarker times
+PostgreSQL-32Gi-1-3-1         : benchmarker timespan job from 1787146410 to 1787146478
+PostgreSQL-32Gi-1-3-1         : benchmarker timespan pods from 1787146420 to 1787146441
+PostgreSQL-32Gi-1-3-1         : benchmarker timespan (start to end single container [s]) = 21
+PostgreSQL-32Gi-1-3-1         : benchmarker times (start/end per pod and container) = [(1787146421, 1787146438), (1787146420, 1787146439), (1787146421, 1787146436), (1787146421, 1787146441)]
+PostgreSQL-32Gi-1-3-1         : found and updated times {'benchmarker': [(1787146421, 1787146438), (1787146420, 1787146439), (1787146421, 1787146436), (1787146421, 1787146441)]}
+PostgreSQL-32Gi-1-3-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-1-3-1         : collecting execution metrics of SUT at connection PostgreSQL-32Gi-1-3-1
+PostgreSQL-32Gi-1-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-3-1         : collecting metrics of benchmarker at connection PostgreSQL-32Gi-1-3-1
+PostgreSQL-32Gi-1-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '0c9abc55-0cab-48f6-ab0f-6773a776c789', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:34:50 GMT', 'Content-Length': '294'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-postgresql-32gi-1787145826-1-3-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-postgresql-32gi-1787145826-1-3-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-PostgreSQL-32Gi-1787145826 initialized to 8.
+PostgreSQL-32Gi               : benchmarks done 0 of 3. This will be client 4
+PostgreSQL-32Gi-1-4-1         : start benchmarking (benchmark_run=1)
+PostgreSQL-32Gi-1-4-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi               : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PostgreSQL-32Gi               : benchmarking is waiting for job bexhoma-benchmarker-postgresql-32gi-1787145826-1-4-1-76pwg: .found
+PostgreSQL-32Gi-1-4-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-1-4-1         : collecting loading metrics of SUT at connection PostgreSQL-32Gi-1-4-1
+PostgreSQL-32Gi-1-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-4-1         : collecting metrics of data generator at connection PostgreSQL-32Gi-1-4-1
+PostgreSQL-32Gi-1-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-4-1         : collecting metrics of data injector at connection PostgreSQL-32Gi-1-4-1
+PostgreSQL-32Gi-1-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi               : has running benchmarks
+PostgreSQL-32Gi               : has running benchmarks
+PgDuckDB-32Gi-1-2-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PgDuckDB-32Gi-1-2-1.config
+PgDuckDB-32Gi-1-2-1           : showing benchmarker times
+PgDuckDB-32Gi-1-2-1           : benchmarker timespan job from 1787146445 to 1787146580
+PgDuckDB-32Gi-1-2-1           : benchmarker timespan pods from 1787146451 to 1787146513
+PgDuckDB-32Gi-1-2-1           : benchmarker timespan (start to end single container [s]) = 62
+PgDuckDB-32Gi-1-2-1           : benchmarker times (start/end per pod and container) = [(1787146451, 1787146511), (1787146451, 1787146513)]
+PgDuckDB-32Gi-1-2-1           : found and updated times {'benchmarker': [(1787146451, 1787146511), (1787146451, 1787146513)]}
+PgDuckDB-32Gi-1-2-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-2-1           : collecting execution metrics of SUT at connection PgDuckDB-32Gi-1-2-1
+PgDuckDB-32Gi-1-2-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-2-1           : collecting metrics of benchmarker at connection PgDuckDB-32Gi-1-2-1
+PgDuckDB-32Gi-1-2-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '9c376881-404d-45bd-b9c2-ac24c4c49ac2', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:36:32 GMT', 'Content-Length': '290'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-2-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-2-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-PgDuckDB-32Gi-1787145826 initialized to 4.
+PgDuckDB-32Gi                 : benchmarks done 0 of 3. This will be client 3
+PgDuckDB-32Gi-1-3-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-32Gi-1-3-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi                 : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PgDuckDB-32Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-3-1-fb2sz: .found
+PgDuckDB-32Gi-1-3-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-3-1           : collecting loading metrics of SUT at connection PgDuckDB-32Gi-1-3-1
+PgDuckDB-32Gi-1-3-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-3-1           : collecting metrics of data generator at connection PgDuckDB-32Gi-1-3-1
+PgDuckDB-32Gi-1-3-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-3-1           : collecting metrics of data injector at connection PgDuckDB-32Gi-1-3-1
+PgDuckDB-32Gi-1-3-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PostgreSQL-32Gi-1-4-1         : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PostgreSQL-32Gi-1-4-1.config
+PostgreSQL-32Gi-1-4-1         : showing benchmarker times
+PostgreSQL-32Gi-1-4-1         : benchmarker timespan job from 1787146532 to 1787146681
+PostgreSQL-32Gi-1-4-1         : benchmarker timespan pods from 1787146554 to 1787146589
+PostgreSQL-32Gi-1-4-1         : benchmarker timespan (start to end single container [s]) = 35
+PostgreSQL-32Gi-1-4-1         : benchmarker times (start/end per pod and container) = [(1787146555, 1787146587), (1787146554, 1787146583), (1787146555, 1787146584), (1787146555, 1787146587), (1787146555, 1787146582), (1787146555, 1787146580), (1787146555, 1787146584), (1787146555, 1787146589)]
+PostgreSQL-32Gi-1-4-1         : found and updated times {'benchmarker': [(1787146555, 1787146587), (1787146554, 1787146583), (1787146555, 1787146584), (1787146555, 1787146587), (1787146555, 1787146582), (1787146555, 1787146580), (1787146555, 1787146584), (1787146555, 1787146589)]}
+PostgreSQL-32Gi-1-4-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-1-4-1         : collecting execution metrics of SUT at connection PostgreSQL-32Gi-1-4-1
+PostgreSQL-32Gi-1-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-1-4-1         : collecting metrics of benchmarker at connection PostgreSQL-32Gi-1-4-1
+PostgreSQL-32Gi-1-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '2e681002-be7f-434e-a197-474d9da6eb58', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:38:13 GMT', 'Content-Length': '294'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-postgresql-32gi-1787145826-1-4-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-postgresql-32gi-1787145826-1-4-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+PostgreSQL-32Gi               : can be stopped
+PostgreSQL-32Gi               : had 0 0 restarts at worker bexhoma-sut-postgresql-32gi-1787145826-56467d49b5-946km
+PostgreSQL-32Gi               : still being removed
+- waiting 30s -               : done
+PostgreSQL-32Gi               : starts again
+PostgreSQL-32Gi               : deployments ['sut']
+PostgreSQL-32Gi               : stateful sets []
+PostgreSQL-32Gi               : pvcs ['sut']
+PostgreSQL-32Gi               : name of SUT pods = bexhoma-sut-postgresql-32gi-1787145826
+PostgreSQL-32Gi               : name of SUT service = bexhoma-sut-postgresql-32gi-1787145826
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather = 2
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers = 4
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes = 6
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 10240MB
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 24576MB
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem = 1024MB
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].io_method already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].io_method already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
+- waiting 10s -               : done
+PostgreSQL-32Gi               : waits for monitoring
+PostgreSQL-32Gi               : wants to monitor all components in cluster
+PostgreSQL-32Gi               : cannot rely on preinstalled monitoring
+PostgreSQL-32Gi               : starts monitoring with prometheus pod
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : waits for monitoring
+PgDuckDB-32Gi-1-3-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PgDuckDB-32Gi-1-3-1.config
+PgDuckDB-32Gi-1-3-1           : showing benchmarker times
+PgDuckDB-32Gi-1-3-1           : benchmarker timespan job from 1787146635 to 1787146778
+PgDuckDB-32Gi-1-3-1           : benchmarker timespan pods from 1787146646 to 1787146729
+PgDuckDB-32Gi-1-3-1           : benchmarker timespan (start to end single container [s]) = 83
+PgDuckDB-32Gi-1-3-1           : benchmarker times (start/end per pod and container) = [(1787146647, 1787146712), (1787146646, 1787146720), (1787146647, 1787146720), (1787146646, 1787146729)]
+PgDuckDB-32Gi-1-3-1           : found and updated times {'benchmarker': [(1787146647, 1787146712), (1787146646, 1787146720), (1787146647, 1787146720), (1787146646, 1787146729)]}
+PgDuckDB-32Gi-1-3-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-3-1           : collecting execution metrics of SUT at connection PgDuckDB-32Gi-1-3-1
+PgDuckDB-32Gi-1-3-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-3-1           : collecting metrics of benchmarker at connection PgDuckDB-32Gi-1-3-1
+PgDuckDB-32Gi-1-3-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': 'fa043762-cb88-48fd-9af8-da857723055a', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:39:50 GMT', 'Content-Length': '290'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-3-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-3-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+PostgreSQL-32Gi               : waits for health check to succeed
+PostgreSQL-32Gi               : is not loaded yet
+PostgreSQL-32Gi               : connect to pod bexhoma-sut-postgresql-32gi-1787145826-5888fddc4-pw2kh to load scripts
+PostgreSQL-32Gi               : start asynch loading scripts of type schema
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+Experiment                    : Reset experiment counter. This is first run of client number 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-PgDuckDB-32Gi-1787145826 initialized to 8.
+PgDuckDB-32Gi                 : benchmarks done 0 of 3. This will be client 4
+PgDuckDB-32Gi-1-4-1           : start benchmarking (benchmark_run=1)
+PgDuckDB-32Gi-1-4-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi                 : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PgDuckDB-32Gi                 : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-4-1-47c9j: .found
+PgDuckDB-32Gi-1-4-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-4-1           : collecting loading metrics of SUT at connection PgDuckDB-32Gi-1-4-1
+PgDuckDB-32Gi-1-4-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-4-1           : collecting metrics of data generator at connection PgDuckDB-32Gi-1-4-1
+PgDuckDB-32Gi-1-4-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-4-1           : collecting metrics of data injector at connection PgDuckDB-32Gi-1-4-1
+PgDuckDB-32Gi-1-4-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-32Gi               : showing loader times (tpch-loader)
+PostgreSQL-32Gi               : generator times (start/end per pod and container) [(1787146112, 1787146112), (1787146828, 1787146828)]
+PostgreSQL-32Gi               : loader times (start/end per pod and container) [(1787146830, 1787146848), (1787146113, 1787146132)]
+PostgreSQL-32Gi               : total times (start/end per pod and container) [(1787146112, 1787146112), (1787146828, 1787146828), (1787146830, 1787146848), (1787146113, 1787146132)]
+PostgreSQL-32Gi               : generator timespan (first to last [s]) = 716
+PostgreSQL-32Gi               : loader timespan (first to last [s]) = 735
+PostgreSQL-32Gi               : total timespan (first to last [s]) = 736
+PostgreSQL-32Gi               : connect to pod bexhoma-sut-postgresql-32gi-1787145826-5888fddc4-pw2kh to load scripts
+PostgreSQL-32Gi               : start asynch loading scripts of type index
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PostgreSQL-32Gi-1787145826 initialized to 1.
+PostgreSQL-32Gi               : benchmarks done 1 of 3. This will be client 1
+PostgreSQL-32Gi-2-1-1         : start benchmarking (benchmark_run=1)
+PostgreSQL-32Gi-2-1-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi               : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PostgreSQL-32Gi               : benchmarking is waiting for job bexhoma-benchmarker-postgresql-32gi-1787145826-2-1-1-vpb6b: found
+PostgreSQL-32Gi-2-1-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-2-1-1         : collecting loading metrics of SUT at connection PostgreSQL-32Gi-2-1-1
+PostgreSQL-32Gi-2-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-1-1         : collecting metrics of data generator at connection PostgreSQL-32Gi-2-1-1
+PostgreSQL-32Gi-2-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-1-1         : collecting metrics of data injector at connection PostgreSQL-32Gi-2-1-1
+PostgreSQL-32Gi-2-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PostgreSQL-32Gi-2-1-1         : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PostgreSQL-32Gi-2-1-1.config
+PostgreSQL-32Gi-2-1-1         : showing benchmarker times
+PostgreSQL-32Gi-2-1-1         : benchmarker timespan job from 1787146958 to 1787146993
+PostgreSQL-32Gi-2-1-1         : benchmarker timespan pods from 1787146961 to 1787146976
+PostgreSQL-32Gi-2-1-1         : benchmarker timespan (start to end single container [s]) = 15
+PostgreSQL-32Gi-2-1-1         : benchmarker times (start/end per pod and container) = [(1787146961, 1787146976)]
+PostgreSQL-32Gi-2-1-1         : found and updated times {'benchmarker': [(1787146961, 1787146976)]}
+PostgreSQL-32Gi-2-1-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-2-1-1         : collecting execution metrics of SUT at connection PostgreSQL-32Gi-2-1-1
+PostgreSQL-32Gi-2-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-1-1         : collecting metrics of benchmarker at connection PostgreSQL-32Gi-2-1-1
+PostgreSQL-32Gi-2-1-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': 'cbb0581b-e487-4238-8158-d7c4e48a3df0', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:43:24 GMT', 'Content-Length': '294'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-postgresql-32gi-1787145826-2-1-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-postgresql-32gi-1787145826-2-1-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-PostgreSQL-32Gi-1787145826 initialized to 2.
+PostgreSQL-32Gi               : benchmarks done 1 of 3. This will be client 2
+PostgreSQL-32Gi-2-2-1         : start benchmarking (benchmark_run=1)
+PostgreSQL-32Gi-2-2-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi               : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PostgreSQL-32Gi               : benchmarking is waiting for job bexhoma-benchmarker-postgresql-32gi-1787145826-2-2-1-8tp9d: found
+PostgreSQL-32Gi-2-2-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-2-2-1         : collecting loading metrics of SUT at connection PostgreSQL-32Gi-2-2-1
+PostgreSQL-32Gi-2-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-2-1         : collecting metrics of data generator at connection PostgreSQL-32Gi-2-2-1
+PostgreSQL-32Gi-2-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-2-1         : collecting metrics of data injector at connection PostgreSQL-32Gi-2-2-1
+PostgreSQL-32Gi-2-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PostgreSQL-32Gi-2-2-1         : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PostgreSQL-32Gi-2-2-1.config
+PostgreSQL-32Gi-2-2-1         : showing benchmarker times
+PostgreSQL-32Gi-2-2-1         : benchmarker timespan job from 1787147052 to 1787147087
+PostgreSQL-32Gi-2-2-1         : benchmarker timespan pods from 1787147057 to 1787147071
+PostgreSQL-32Gi-2-2-1         : benchmarker timespan (start to end single container [s]) = 14
+PostgreSQL-32Gi-2-2-1         : benchmarker times (start/end per pod and container) = [(1787147057, 1787147070), (1787147057, 1787147071)]
+PostgreSQL-32Gi-2-2-1         : found and updated times {'benchmarker': [(1787147057, 1787147070), (1787147057, 1787147071)]}
+PostgreSQL-32Gi-2-2-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-2-2-1         : collecting execution metrics of SUT at connection PostgreSQL-32Gi-2-2-1
+PostgreSQL-32Gi-2-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-2-1         : collecting metrics of benchmarker at connection PostgreSQL-32Gi-2-2-1
+PostgreSQL-32Gi-2-2-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '2971dc09-8b12-42df-b3cc-2b7393698eb6', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:45:00 GMT', 'Content-Length': '294'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-postgresql-32gi-1787145826-2-2-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-postgresql-32gi-1787145826-2-2-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-3-PostgreSQL-32Gi-1787145826 initialized to 4.
+PostgreSQL-32Gi               : benchmarks done 1 of 3. This will be client 3
+PostgreSQL-32Gi-2-3-1         : start benchmarking (benchmark_run=1)
+PostgreSQL-32Gi-2-3-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi               : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PostgreSQL-32Gi               : benchmarking is waiting for job bexhoma-benchmarker-postgresql-32gi-1787145826-2-3-1-4pcvs: found
+PostgreSQL-32Gi-2-3-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-2-3-1         : collecting loading metrics of SUT at connection PostgreSQL-32Gi-2-3-1
+PostgreSQL-32Gi-2-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-3-1         : collecting metrics of data generator at connection PostgreSQL-32Gi-2-3-1
+PostgreSQL-32Gi-2-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-3-1         : collecting metrics of data injector at connection PostgreSQL-32Gi-2-3-1
+PostgreSQL-32Gi-2-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi               : has running benchmarks
+PostgreSQL-32Gi               : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PgDuckDB-32Gi                 : has running benchmarks
+PostgreSQL-32Gi-2-3-1         : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PostgreSQL-32Gi-2-3-1.config
+PostgreSQL-32Gi-2-3-1         : showing benchmarker times
+PostgreSQL-32Gi-2-3-1         : benchmarker timespan job from 1787147146 to 1787147231
+PostgreSQL-32Gi-2-3-1         : benchmarker timespan pods from 1787147157 to 1787147179
+PostgreSQL-32Gi-2-3-1         : benchmarker timespan (start to end single container [s]) = 22
+PostgreSQL-32Gi-2-3-1         : benchmarker times (start/end per pod and container) = [(1787147157, 1787147171), (1787147157, 1787147179), (1787147157, 1787147171), (1787147157, 1787147179)]
+PostgreSQL-32Gi-2-3-1         : found and updated times {'benchmarker': [(1787147157, 1787147171), (1787147157, 1787147179), (1787147157, 1787147171), (1787147157, 1787147179)]}
+PostgreSQL-32Gi-2-3-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-2-3-1         : collecting execution metrics of SUT at connection PostgreSQL-32Gi-2-3-1
+PostgreSQL-32Gi-2-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-3-1         : collecting metrics of benchmarker at connection PostgreSQL-32Gi-2-3-1
+PostgreSQL-32Gi-2-3-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '815f1390-9062-43a0-9484-8bb7fe4a816a', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:47:23 GMT', 'Content-Length': '294'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-postgresql-32gi-1787145826-2-3-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-postgresql-32gi-1787145826-2-3-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+PgDuckDB-32Gi-1-4-1           : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PgDuckDB-32Gi-1-4-1.config
+PgDuckDB-32Gi-1-4-1           : showing benchmarker times
+PgDuckDB-32Gi-1-4-1           : benchmarker timespan job from 1787146835 to 1787147250
+PgDuckDB-32Gi-1-4-1           : benchmarker timespan pods from 1787146860 to 1787147228
+PgDuckDB-32Gi-1-4-1           : benchmarker timespan (start to end single container [s]) = 368
+PgDuckDB-32Gi-1-4-1           : benchmarker times (start/end per pod and container) = [(1787146861, 1787146980), (1787146861, 1787146985), (1787146861, 1787146987), (1787146861, 1787146989), (1787146860, 1787147228), (1787146861, 1787146990), (1787146861, 1787146985), (1787146860, 1787146985)]
+PgDuckDB-32Gi-1-4-1           : found and updated times {'benchmarker': [(1787146861, 1787146980), (1787146861, 1787146985), (1787146861, 1787146987), (1787146861, 1787146989), (1787146860, 1787147228), (1787146861, 1787146990), (1787146861, 1787146985), (1787146860, 1787146985)]}
+PgDuckDB-32Gi-1-4-1           : needs monitoring (common metrics) for deployment sut
+PgDuckDB-32Gi-1-4-1           : collecting execution metrics of SUT at connection PgDuckDB-32Gi-1-4-1
+PgDuckDB-32Gi-1-4-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PgDuckDB-32Gi-1-4-1           : collecting metrics of benchmarker at connection PgDuckDB-32Gi-1-4-1
+PgDuckDB-32Gi-1-4-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)pgduckdb-32gi-1787145826(.*)", pod=~"(.*)pgduckdb-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '7f7f23a7-98d9-4c07-aae6-a93179c27f13', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:47:42 GMT', 'Content-Length': '290'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-4-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-pgduckdb-32gi-1787145826-1-4-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-4-PostgreSQL-32Gi-1787145826 initialized to 8.
+PostgreSQL-32Gi               : benchmarks done 1 of 3. This will be client 4
+PostgreSQL-32Gi-2-4-1         : start benchmarking (benchmark_run=1)
+PostgreSQL-32Gi-2-4-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi               : benchmarking results in folder /home/ll/benchmarks/1787145826
+- waiting 10s -               : done
+PostgreSQL-32Gi               : benchmarking is waiting for job bexhoma-benchmarker-postgresql-32gi-1787145826-2-4-1-5pbsl: ..found
+PostgreSQL-32Gi-2-4-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-2-4-1         : collecting loading metrics of SUT at connection PostgreSQL-32Gi-2-4-1
+PostgreSQL-32Gi-2-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-4-1         : collecting metrics of data generator at connection PostgreSQL-32Gi-2-4-1
+PostgreSQL-32Gi-2-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-4-1         : collecting metrics of data injector at connection PostgreSQL-32Gi-2-4-1
+PostgreSQL-32Gi-2-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi               : has running benchmarks
+PostgreSQL-32Gi               : has running benchmarks
+PgDuckDB-32Gi                 : can be stopped
+PgDuckDB-32Gi                 : had 0 0 restarts at worker bexhoma-sut-pgduckdb-32gi-1787145826-5b65454659-kqktz
+PgDuckDB-32Gi                 : still being removed
+- waiting 30s -               : done
+PgDuckDB-32Gi                 : starts again
+PgDuckDB-32Gi                 : deployments ['sut']
+PgDuckDB-32Gi                 : stateful sets []
+PgDuckDB-32Gi                 : pvcs ['sut']
+PgDuckDB-32Gi                 : name of SUT pods = bexhoma-sut-pgduckdb-32gi-1787145826
+PgDuckDB-32Gi                 : name of SUT service = bexhoma-sut-pgduckdb-32gi-1787145826
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 10240MB
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 24576MB
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 1024MB
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].io_method already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].io_method already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem already set to desired value
+PgDuckDB-32Gi                 : deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem already set to desired value
+- waiting 10s -               : done
+PgDuckDB-32Gi                 : waits for monitoring
+PgDuckDB-32Gi                 : wants to monitor all components in cluster
+PgDuckDB-32Gi                 : cannot rely on preinstalled monitoring
+PgDuckDB-32Gi                 : starts monitoring with prometheus pod
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+PgDuckDB-32Gi                 : waits for monitoring
+PostgreSQL-32Gi-2-4-1         : wrote benchmarking_timespans to /home/ll/benchmarks/1787145826/PostgreSQL-32Gi-2-4-1.config
+PostgreSQL-32Gi-2-4-1         : showing benchmarker times
+PostgreSQL-32Gi-2-4-1         : benchmarker timespan job from 1787147303 to 1787147404
+PostgreSQL-32Gi-2-4-1         : benchmarker timespan pods from 1787147330 to 1787147366
+PostgreSQL-32Gi-2-4-1         : benchmarker timespan (start to end single container [s]) = 36
+PostgreSQL-32Gi-2-4-1         : benchmarker times (start/end per pod and container) = [(1787147331, 1787147364), (1787147331, 1787147363), (1787147331, 1787147361), (1787147330, 1787147355), (1787147331, 1787147366), (1787147330, 1787147355), (1787147331, 1787147364), (1787147330, 1787147365)]
+PostgreSQL-32Gi-2-4-1         : found and updated times {'benchmarker': [(1787147331, 1787147364), (1787147331, 1787147363), (1787147331, 1787147361), (1787147330, 1787147355), (1787147331, 1787147366), (1787147330, 1787147355), (1787147331, 1787147364), (1787147330, 1787147365)]}
+PostgreSQL-32Gi-2-4-1         : needs monitoring (common metrics) for deployment sut
+PostgreSQL-32Gi-2-4-1         : collecting execution metrics of SUT at connection PostgreSQL-32Gi-2-4-1
+PostgreSQL-32Gi-2-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+PostgreSQL-32Gi-2-4-1         : collecting metrics of benchmarker at connection PostgreSQL-32Gi-2-4-1
+PostgreSQL-32Gi-2-4-1         : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-32gi-1787145826(.*)", pod=~"(.*)postgresql-32gi-1787145826(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage [MiB]'}
+Exception when calling BatchV1Api->read_namespaced_job_status: (404)
+Reason: Not Found
+HTTP response headers: HTTPHeaderDict({'Audit-Id': 'a799ca07-fab4-4980-886d-597ca113b9b6', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'X-Kubernetes-Pf-Flowschema-Uid': '8d1293dd-a0d6-455a-8760-08e308fbadfd', 'X-Kubernetes-Pf-Prioritylevel-Uid': 'a561b770-bfe6-4527-89b3-733e19ab071f', 'Date': 'Wed, 19 Aug 2026 13:50:15 GMT', 'Content-Length': '294'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"jobs.batch \"bexhoma-benchmarker-postgresql-32gi-1787145826-2-4-1\" not found","reason":"NotFound","details":{"name":"bexhoma-benchmarker-postgresql-32gi-1787145826-2-4-1","group":"batch","kind":"jobs"},"code":404}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+PostgreSQL-32Gi               : can be stopped
+PostgreSQL-32Gi               : had 0 0 restarts at worker bexhoma-sut-postgresql-32gi-1787145826-5888fddc4-pw2kh
+PostgreSQL-32Gi               : still being removed
+- waiting 30s -               : done
+PostgreSQL-32Gi               : starts again
+PostgreSQL-32Gi               : deployments ['sut']
+PostgreSQL-32Gi               : stateful sets []
+PostgreSQL-32Gi               : pvcs ['sut']
+PostgreSQL-32Gi               : name of SUT pods = bexhoma-sut-postgresql-32gi-1787145826
+PostgreSQL-32Gi               : name of SUT service = bexhoma-sut-postgresql-32gi-1787145826
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather = 2
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers = 4
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes = 6
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 10240MB
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 24576MB
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : updated deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem = 1024MB
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].io_method already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].io_method already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].work_mem already set to desired value
+PostgreSQL-32Gi               : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
+- waiting 10s -               : done
+PostgreSQL-32Gi               : waits for monitoring
+PostgreSQL-32Gi               : wants to monitor all components in cluster
+PostgreSQL-32Gi               : cannot rely on preinstalled monitoring
+PostgreSQL-32Gi               : starts monitoring with prometheus pod
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.0.119 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.1.56 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.12.138 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.13.94 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.16.121 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.17.82 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.18.15 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.19.199 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.2.228 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.20.54 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.21.7 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.22.176 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.23.82 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.24.172 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.29.90 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.4.40 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.5.194 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.7.103 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.8.234 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : found monitoring endpoint (cAdvisor) for monitoring 10.244.9.73 (added to Prometheus) of daemonset
+PostgreSQL-32Gi               : waits for monitoring
+PgDuckDB-32Gi                 : waits for health check to succeed
+PgDuckDB-32Gi                 : is not loaded yet
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787145826-566cbd6974-89xft to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type schema
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-32Gi                 : is loading
+- waiting 30s -               : done
+PostgreSQL-32Gi               : waits for health check to succeed
+PostgreSQL-32Gi               : is not loaded yet
+PostgreSQL-32Gi               : connect to pod bexhoma-sut-postgresql-32gi-1787145826-699647bdc5-z56q2 to load scripts
+PostgreSQL-32Gi               : start asynch loading scripts of type schema
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+PgDuckDB-32Gi                 : showing loader times (tpch-loader)
+PgDuckDB-32Gi                 : generator times (start/end per pod and container) [(1787146121, 1787146121), (1787147499, 1787147499)]
+PgDuckDB-32Gi                 : loader times (start/end per pod and container) [(1787147500, 1787147519), (1787146123, 1787146143)]
+PgDuckDB-32Gi                 : total times (start/end per pod and container) [(1787146121, 1787146121), (1787147499, 1787147499), (1787147500, 1787147519), (1787146123, 1787146143)]
+PgDuckDB-32Gi                 : generator timespan (first to last [s]) = 1378
+PgDuckDB-32Gi                 : loader timespan (first to last [s]) = 1396
+PgDuckDB-32Gi                 : total timespan (first to last [s]) = 1398
+PgDuckDB-32Gi                 : connect to pod bexhoma-sut-pgduckdb-32gi-1787145826-566cbd6974-89xft to load scripts
+PgDuckDB-32Gi                 : start asynch loading scripts of type index
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-32Gi                 : is loading
+PgDuckDB-32Gi                 : is loading
+- waiting 30s -               : done
+PostgreSQL-32Gi               : showing loader times (tpch-loader)
+PostgreSQL-32Gi               : generator times (start/end per pod and container) [(1787146112, 1787146112), (1787147534, 1787147534), (1787146828, 1787146828)]
+PostgreSQL-32Gi               : loader times (start/end per pod and container) [(1787146830, 1787146848), (1787147536, 1787147540), (1787146113, 1787146132)]
+PostgreSQL-32Gi               : total times (start/end per pod and container) [(1787146112, 1787146112), (1787147534, 1787147534), (1787146828, 1787146828), (1787146830, 1787146848), (1787147536, 1787147540), (1787146113, 1787146132)]
+PostgreSQL-32Gi               : generator timespan (first to last [s]) = 1422
+PostgreSQL-32Gi               : loader timespan (first to last [s]) = 1427
+PostgreSQL-32Gi               : total timespan (first to last [s]) = 1428
+PostgreSQL-32Gi               : connect to pod bexhoma-sut-postgresql-32gi-1787145826-699647bdc5-z56q2 to load scripts
+PostgreSQL-32Gi               : start asynch loading scripts of type index
+PostgreSQL-32Gi               : is loading
+PostgreSQL-32Gi               : is loading
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-32Gi-1787145826 initialized to 1.
+PostgreSQL-32Gi               : benchmarks done 0 of 3. This will be client 1
+PostgreSQL-32Gi-1-1-1         : start benchmarking (benchmark_run=1)
+Traceback (most recent call last):
+  File "/home/ll/git/Benchmark-Experiment-Host-Manager/experiment.py", line 107, in <module>
+    run_experiment_yaml(args.file, args.catalog, args.experiment_code)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ll/git/Benchmark-Experiment-Host-Manager/experiment.py", line 91, in run_experiment_yaml
+    tpch.run(tpch.build_parser().parse_args(argv))
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ll/git/Benchmark-Experiment-Host-Manager/tpch.py", line 547, in run
+    experiment.process()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/ll/git/Benchmark-Experiment-Host-Manager/bexhoma/experiments/base.py", line 311, in process
+    self.work_benchmark_list(stop_after_benchmarking=self.args.skip_shutdown)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ll/git/Benchmark-Experiment-Host-Manager/bexhoma/experiments/base.py", line 1870, in work_benchmark_list
+    config.runner.run_pod(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        connection=connection,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+        reset_seconds=reset_seconds,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/ll/git/Benchmark-Experiment-Host-Manager/bexhoma/configurations/benchmarking.py", line 107, in run_pod
+    c = cfg.metrics.get_connection_config(
+        connection, alias, dialect,
+        serverip=service_host, monitoring_host=monitoring_host)
+  File "/home/ll/git/Benchmark-Experiment-Host-Manager/bexhoma/configurations/metrics.py", line 83, in get_connection_config
+    components = list(cfg.deployment_infos['statefulset'].keys())
+                      ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+KeyError: 'statefulset'

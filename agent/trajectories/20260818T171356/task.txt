@@ -1,0 +1,1 @@
+Is pg_duckdb better on joins than PostgreSQL, even under concurrency? I have a 1GB dataset, and our servers have at most 64GB of RAM.

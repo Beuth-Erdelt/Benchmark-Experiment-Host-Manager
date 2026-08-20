@@ -1,0 +1,42 @@
+mode: run
+title: "PgDuckDB forced DuckDB execution on TPC-H SF1 at 1 and 8 concurrent streams"
+hypothesis: >-
+  Forcing every TPC-H query through pg_duckdb's DuckDB executor
+  (duckdb_force_execution=true) changes latency and throughput relative to
+  pg_duckdb's default cost-based routing. This experiment measures the
+  forced-execution side on a 1 GB TPC-H database with 16 CPU cores and
+  64 GiB RAM at 1 and 8 concurrent streams across all 22 queries; an
+  identical follow-up experiment with duckdb_force_execution=false provides
+  the routing baseline, and the two are compared overall and per query shape.
+discriminates:
+  - concurrency
+workload:
+  name: tpch
+  params:
+    scaling_factor: 1
+    query_repeats: 2
+  rounds: [1, 8]
+  repetitions: 3
+loading:
+  pods: 1
+  threads: 1
+  post_load:
+    statistics: true
+systems:
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override:
+      duckdb_force_execution: true
+placement:
+  sut: cl-worker36
+  loading: cl-worker36
+  benchmarking: cl-worker36
+resources:
+  cpu:
+    request: 16
+    limit: 16
+  memory:
+    request: 64Gi
+    limit: 64Gi
+  storage:
+    size: 10Gi

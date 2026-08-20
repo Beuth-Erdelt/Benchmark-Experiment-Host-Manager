@@ -1,0 +1,56 @@
+mode: run
+title: "pg_duckdb vs PostgreSQL: CPU-limit sweep to isolate thread contention from memory starvation"
+hypothesis: >
+  Holding memory fixed at 32Gi (32x the 1GB SF=1 dataset, so per-stream memory
+  is not the binding resource), the 1->8 concurrent-stream throughput
+  degradation is thread/CPU contention if and only if the degradation ratio
+  (round-8 Geo Time / round-1 Geo Time) steepens as the CPU limit drops from
+  32 to 16 to 8. A degradation ratio that is similar across the 8/16/32 CPU
+  limits would rule out CPU/thread contention as the cause and point to a
+  memory-limit-independent factor (e.g. lock or I/O contention). This directly
+  tests the thread-contention hypothesis that the original 32Gi-vs-64Gi memory
+  comparison (similar degradation at both limits) only supported indirectly,
+  because that run's CPU/RAM monitoring was entirely void.
+discriminates: [system, concurrency, cpu]
+workload:
+  name: tpch
+  params:
+    scaling_factor: 1
+    active_queries: [5, 7, 8, 9, 21]
+    query_repeats: 10
+    timeout: 300
+  rounds: [1, 2, 4, 8]
+  repetitions: 3
+loading:
+  pods: 1
+  threads: 1
+  split: 1
+  post_load:
+    statistics: true
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override:
+      duckdb_force_execution: true
+observe:
+  monitoring_sut: true
+  monitoring_cluster: true
+placement:
+  sut: cl-worker36
+  loading: cl-worker36
+  benchmarking: cl-worker36
+resources:
+  cpu:
+    - request: "8"
+      limit: "8"
+    - request: "16"
+      limit: "16"
+    - request: "32"
+      limit: "32"
+  memory:
+    request: "32Gi"
+    limit: "32Gi"
+  storage:
+    size: "10Gi"

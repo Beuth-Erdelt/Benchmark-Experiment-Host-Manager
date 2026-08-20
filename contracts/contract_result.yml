@@ -68,6 +68,11 @@ tiers:
     note: "not new files — the pre-existing result folder, linked from every tier-2 file's Provenance footer; see provenance below"
 
 provenance:
+  agent_inputs:
+    "experiment.yml": "immutable copy of the exact validated specification submitted"
+    "contract_catalog.yml": "input contract used to validate and resolve the specification"
+    "contract_result.yml": "output contract in force when the experiment was submitted"
+    "environment.yml": "cluster descriptor used for validation; absent only when none was available"
   connections:
     "connections.config": "repr() list of every connection dict (identity, params, timings)"
     "{connection}.config": "durable single-connection backup, survives dashboard rewrites"
