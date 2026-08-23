@@ -114,7 +114,6 @@ class SutConfiguration:
         self.eval_parameters = {}                                                #: Parameters forwarded to dbmsbenchmarker for evaluation.
         self.storage = {}                                                        #: Parameters for persistent storage.
         self.nodes = {}                                                          #: Dict of node infos to guide component placement.
-        self.maintaining_parameters = {}                                         #: Parameters for the maintaining component.
         self.loading_parameters = {}                                             #: Parameters for the loading component.
         self.sut_parameters = {}                                                 #: Parameters for the SUT and worker components.
         self.pod_sut = ''                                                        #: Name of the SUT's master pod.
@@ -125,7 +124,6 @@ class SutConfiguration:
         self.set_connection_management(**self.experiment.connection_management)
         self.set_storage(**self.experiment.storage)
         self.set_nodes(**self.experiment.nodes)
-        self.set_maintaining_parameters(**self.experiment.maintaining_parameters)
         self.experiment_dict: dict = {"loader": [], "benchmarker": []}          #: Central experiment dict describing all loader and benchmarker jobs.
         self.set_loading_parameters(**self.experiment.loading_parameters)
         self.set_sut_parameters(**self.experiment.sut_parameters)
@@ -145,9 +143,7 @@ class SutConfiguration:
         # scaling
         self.num_worker = worker                                                 #: Number of worker pods to deploy alongside the SUT.
         self.num_loading = 0                                                     #: Number of parallel loading threads.
-        self.num_maintaining = 0                                                 #: Number of parallel maintaining threads.
         self.num_loading_pods = 0                                                #: Number of loading pods currently active.
-        self.num_maintaining_pods = 0                                            #: Number of maintaining pods currently active.
         self.num_tenants = self.experiment.num_tenants                          #: Number of tenants for multi-tenant experiments.
         self.tenant_per = self.experiment.tenant_per                             #: Tenancy mode: '', 'schema', 'database', or 'container'.
         self.tenant_ready_to_load = False                                        #: True once this tenant's SUT is ready to accept loading.
@@ -159,12 +155,10 @@ class SutConfiguration:
         self.monitoring_active = experiment.monitoring_active                    #: True iff Prometheus-based cluster monitoring is active.
         self.prometheus_interval = experiment.prometheus_interval                #: Prometheus scrape interval in seconds.
         self.prometheus_timeout = experiment.prometheus_timeout                  #: Prometheus scrape timeout in seconds.
-        self.maintaining_active = experiment.maintaining_active                  #: True iff a maintaining component should be deployed after loading.
         self.loading_active = experiment.loading_active                          #: True iff a loading component should be deployed.
         self.loading_deactivated = experiment.loading_deactivated                #: Do not load at all and do not test for loading.
         self.monitor_loading = True                                              #: Fetch metrics for the loading phase when monitoring is active.
         self.monitoring_sut = True                                               #: Fetch SUT metrics when monitoring is active.
-        self.jobtemplate_maintaining = ""                                        #: Name of YAML template file for the maintaining job.
         self._jobtemplate_loading = ""                                           #: Name of YAML template file for the loading job (backing field).
         self.storage_label = experiment.storage_label                            #: Kubernetes node label used to select the storage node for PVs.
         self.experiment_done = False                                             #: True once the SUT has performed the experiment completely.
@@ -514,24 +508,6 @@ class SutConfiguration:
         :param kwargs: Parameter dict, e.g. ``type='noindex'``.
         """
         self.eval_parameters = {**self.eval_parameters, **kwargs}
-
-    def set_maintaining_parameters(self, **kwargs) -> None:
-        """Set ENV vars for the maintaining component.
-
-        :param kwargs: Parameter dict, e.g. ``PARALLEL='64'``.
-        """
-        self.maintaining_parameters = kwargs
-
-    def set_maintaining(self, parallel: int, num_pods: int = None) -> None:
-        """Set job parameters for the maintaining component.
-
-        :param parallel: Number of parallel pods.
-        :param num_pods: Total number of pods; defaults to ``parallel``.
-        """
-        self.num_maintaining = int(parallel)
-        self.num_maintaining_pods = int(num_pods) if num_pods is not None else int(parallel)
-        if self.num_maintaining_pods < self.num_maintaining:
-            self.num_maintaining_pods = self.num_maintaining
 
     def set_sut_parameters(self, **kwargs) -> None:
         """Set ENV vars for the SUT and worker components.

@@ -93,8 +93,7 @@ class ManifestBuilder:
     """Builds and writes Kubernetes job/deployment YAML manifests.
 
     Wraps ``create_manifest_job``, ``create_manifest_benchmarking``,
-    ``create_manifest_maintaining``, ``create_manifest_loading``,
-    ``get_patched_yaml``, and ``patch_dbms_args``.
+    ``create_manifest_loading``, ``get_patched_yaml``, and ``patch_dbms_args``.
 
     :param config: The parent configuration this builder belongs to.
     :type config: SutConfiguration
@@ -495,63 +494,6 @@ class ManifestBuilder:
             num_pods=num_pods, nodegroup='benchmarking', connection=connection,
             patch_yaml=cfg.benchmarking_patch, benchmark_run=benchmark_run,
             template_override=template_override)
-
-    def create_manifest_maintaining(
-        self,
-        app: str = '',
-        component: str = 'maintaining',
-        experiment: str = '',
-        configuration: str = '',
-        parallelism: int = 1,
-        alias: str = '',
-        num_pods: int = 1,
-        connection: str = '',
-    ) -> str:
-        """Create a maintaining job manifest.
-
-        :param app: App label.
-        :param component: Component label (default ``'maintaining'``).
-        :param experiment: Experiment code.
-        :param configuration: DBMS configuration name.
-        :param parallelism: Number of parallel pods.
-        :param alias: Alias forwarded to dbmsbenchmarker.
-        :param num_pods: Total pod count.
-        :param connection: Connection name label.
-        :return: Path to the written YAML manifest file.
-        :rtype: str
-        """
-        cfg = self._config
-        if len(app) == 0:
-            app = cfg.appname
-        code = str(int(experiment))
-        experiment_run = str(cfg.num_experiment_to_apply_done + 1)
-        connection = cfg.configuration
-        servicename = cfg.get_service_sut(configuration=configuration)
-        cfg.logger.debug('ManifestBuilder.create_manifest_maintaining()')
-        now = datetime.utcnow()
-        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start = now + timedelta(seconds=180)
-        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {
-            'BEXHOMA_TIME_NOW': now_string,
-            'BEXHOMA_TIME_START': start_string,
-            'DBMSBENCHMARKER_CLIENT': str(parallelism),
-            'DBMSBENCHMARKER_CODE': code,
-            'DBMSBENCHMARKER_CONNECTION': connection,
-            'BEXHOMA_CONNECTION': connection,
-            'DBMSBENCHMARKER_SLEEP': str(60),
-            'DBMSBENCHMARKER_ALIAS': alias,
-            'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename),
-        }
-        env = {**env, **cfg.maintaining_parameters}
-        template = "jobtemplate-maintaining.yml"
-        if len(cfg.experiment.jobtemplate_maintaining) > 0:
-            template = cfg.experiment.jobtemplate_maintaining
-        return self.create_manifest_job(
-            app=app, component=component, experiment=experiment,
-            configuration=configuration, experiment_run=experiment_run,
-            client=1, parallelism=parallelism, env=env, template=template,
-            num_pods=num_pods, nodegroup='maintaining', connection=connection)
 
     def create_manifest_loading(
         self,

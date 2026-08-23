@@ -145,7 +145,6 @@ def manage():
                 connection = ''
             cluster.stop_sut(configuration=connection)
             cluster.stop_monitoring(configuration=connection)
-            cluster.stop_maintaining()
             cluster.stop_loading()
             cluster.stop_benchmarker(configuration=connection)
             #cluster.kubectl('delete all -l experiment='+cluster.code)
@@ -154,7 +153,6 @@ def manage():
             experiment = experiments.base(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
             experiment.stop_monitoring()
-            experiment.stop_maintaining()
             experiment.stop_loading()
             experiment.stop_benchmarker()
             cluster.kubectl('delete all -l experiment='+args.experiment)
@@ -409,20 +407,6 @@ def manage():
                 pods_per_status = _pod_status_counts(pods)
                 for status, number in pods_per_status.items():
                     apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
-                ############
-                component = 'maintaining'
-                apps[configuration][component] = ''
-                if args.verbose:
-                    stateful_sets = [s.metadata.name for s in _filter_by_labels(all_stateful_sets, component=component, experiment=experiment, configuration=configuration)]
-                    print("Stateful Sets", stateful_sets)
-                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
-                    print("Maintaining Services", services)
-                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
-                if args.verbose:
-                    print("Maintaining Pods", [pod.metadata.name for pod in pods])
-                num_pods = _pod_status_counts(pods)
-                for status in num_pods.keys():
-                    apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
                 ############
                 component = 'loading'
                 apps[configuration][component] = ''

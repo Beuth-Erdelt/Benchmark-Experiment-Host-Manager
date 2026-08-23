@@ -1188,62 +1188,6 @@ class Kubernetes():
             self.wait(2)
             return self.delete_service(name=name)
 
-    def _old_start_port_forwarding(self, service='', app='', component='sut'):
-        """
-        .. deprecated::
-            Legacy port-forwarding helper.  Not used in the current Kubernetes flow.
-        """
-        self.logger.debug('Kubernetes.startPortforwarding()')
-        ports = self.get_ports_of_service(app=app, component=component)
-        if not service:
-            service = self.service
-        if not service:
-            service = 'bexhoma-service'
-        self.getInfo(component='sut')
-        if self.deployments:
-            forward = [
-                'kubectl',
-                f'--context {self.context}',
-                'port-forward',
-                'service/' + service,
-            ]
-            forward.extend(ports)
-            your_command = " ".join(forward)
-            subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
-
-    def _old_get_child_processes(self):
-        """
-        .. deprecated::
-            Legacy helper for enumerating child processes.  Not used.
-        """
-        self.logger.debug('Kubernetes.getChildProcesses()')
-        current_process = psutil.Process()
-        children = current_process.children(recursive=False)
-
-    def _old_stop_port_forwarding(self):
-        """
-        .. deprecated::
-            Legacy helper for stopping kubectl port-forward processes.  Not used.
-        """
-        self.logger.debug('Kubernetes.stopPortforwarding()')
-        children = [
-            p for p in psutil.process_iter(attrs=['pid', 'name'])
-            if 'kubectl' in p.info['name']
-        ]
-        for child in children:
-            try:
-                self.logger.debug(
-                    f'Kubernetes.stopPortforwarding() - Child {child.pid} {child.name}'
-                )
-                command = child.cmdline()
-                if command and command[3] == 'port-forward':
-                    self.logger.debug(
-                        f'Kubernetes.stopPortforwarding() - Found child {child.name}'
-                    )
-                    child.terminate()
-            except Exception as e:
-                print(e)
-
     def create_object_from_file(self, filename_source):
         """
         Apply a Kubernetes manifest file via ``kubectl create``.
@@ -1482,86 +1426,6 @@ class Kubernetes():
             s.close()
         return found
 
-    def _old_get_timediff(self):
-        """
-        .. deprecated::
-            Legacy helper for measuring clock skew between local host and a remote pod.
-            Not used in the current flow.
-        """
-        print("getTimediff")
-        command = 'date +"%s"'
-        fullcommand = 'kubectl exec ' + cluster.activepod + ' --container=dbms -- bash -c "' + command + '"'
-        timestamp_remote = os.popen(fullcommand).read()
-        timestamp_local = os.popen(command).read()
-        return int(timestamp_remote) - int(timestamp_local)
-
-    def _old_continue_benchmarks(self, connection=None, query=None):
-        """
-        .. deprecated::
-            Legacy method for resuming a DBMSBenchmarker run from a saved result folder.
-            Not used in the current experiment flow.
-        """
-        self.connection = connection
-        self.resultfolder = self.config['benchmarker']['resultfolder']
-        resultfolder = self.resultfolder + '/' + str(self.code)
-        connectionfile = resultfolder + '/connections.config'
-        queryfile = resultfolder + '/queries.config'
-        self.benchmark = benchmarker.benchmarker(
-            fixedConnection=connection,
-            fixedQuery=query,
-            result_path=resultfolder,
-            batch=True,
-            working='connection'
-        )
-        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
-        self.benchmark.continueBenchmarks(overwrite=False)
-        self.code = self.benchmark.code
-        self.copyInits()
-        self.copyLog()
-        self.downloadLog()
-        self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
-        evaluator.evaluator(self.benchmark, load=False, force=True)
-        return self.code
-
-    def _old_run_reporting(self):
-        """
-        .. deprecated::
-            Legacy reporting trigger.  Not used in the current experiment flow.
-        """
-        evaluator.evaluator(self.benchmark, load=False, force=True)
-        self.benchmark.generateReportsAll()
-
-    def _old_copy_log(self):
-        """
-        .. deprecated::
-            Legacy helper for copying the DBMS log file inside a pod.  Not used.
-        """
-        print("copyLog")
-        if len(self.docker['logfile']):
-            cmd_prepare = 'mkdir /data/' + str(self.code)
-            self.execute_command_in_pod(cmd_prepare, container='dbms')
-            cmd_save = (
-                'cp ' + self.docker['logfile']
-                + ' /data/' + str(self.code) + '/' + self.connection + '.log'
-            )
-            self.execute_command_in_pod(cmd_save, container='dbms')
-
-    def _old_copy_inits(self):
-        """
-        .. deprecated::
-            Legacy helper for copying init-script logs inside a pod.  Not used.
-        """
-        print("copyInits")
-        cmd_prepare = 'mkdir /data/' + str(self.code)
-        self.execute_command_in_pod(cmd_prepare, container='dbms')
-        scriptfolder = f'/data/{self.experiments_configfolder}/{self.docker_key}/'
-        for idx, script in enumerate(self.initscript):
-            cmd_copy = (
-                f'cp {scriptfolder + script}'
-                + f' /data/{self.code}/{self.connection}_init_{idx}.log'
-            )
-            self.execute_command_in_pod(cmd_copy, container='dbms')
-
     def pod_description(self, pod, container=''):
         """
         Return the ``kubectl describe pod`` output for a given Pod.
@@ -1624,19 +1488,6 @@ class Kubernetes():
         init_containers = output.split(" ")
         self.logger.debug(f"Pod {pod} has container {containers + init_containers}")
         return containers + init_containers
-
-    def _old_download_log(self):
-        """
-        .. deprecated::
-            Legacy helper for downloading pod logs via ``kubectl cp``.  Not used.
-        """
-        print("downloadLog")
-        self.kubectl(
-            'cp --container dbms ' + self.activepod
-            + ':/data/' + str(self.code) + '/ '
-            + self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-            + "/" + str(self.code)
-        )
 
     def get_jobs(self, app='', component='', experiment='', configuration='', client=''):
         """
@@ -2190,26 +2041,6 @@ class Kubernetes():
         while self.is_messagequeue_running(component=component):
             self.wait(10, silent=True)
         print("done")
-
-    def stop_maintaining(self, experiment='', configuration=''):
-        """
-        Stop all maintaining Jobs and their Pods in the cluster.
-
-        :param experiment: Filter by experiment code (optional).
-        :param configuration: Filter by DBMS configuration name (optional).
-        """
-        app = self.appname
-        component = 'maintaining'
-        jobs = self.get_jobs(app, component, experiment, configuration)
-        for job in jobs:
-            success = self.get_job_status(job)
-            self.logger.debug(f"Job and status {job} {success}")
-            self.delete_job(job)
-        pods = self.get_job_pods(app, component, experiment, configuration)
-        for pod in pods:
-            status = self.get_pod_status(pod)
-            print(pod, status)
-            self.delete_pod(pod)
 
     def stop_loading(self, experiment='', configuration=''):
         """

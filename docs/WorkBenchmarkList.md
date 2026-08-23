@@ -6,7 +6,7 @@ benchmarking to teardown. The method is a single `while` loop that polls Kuberne
 state every `intervals` seconds and advances each configuration through a pipeline
 of phases.
 
-**Source:** [`bexhoma/experiments/base.py:1539`](../bexhoma/experiments/base.py#L1539)
+**Source:** [`bexhoma/experiments/base.py:1441`](../bexhoma/experiments/base.py#L1441)
 
 ---
 
@@ -27,7 +27,7 @@ def work_benchmark_list(
 | `intervals` | `30` | Seconds to sleep between loop ticks |
 | `stop_after_starting` | `False` | Exit after SUT is up and monitoring is ready (phase 2) |
 | `stop_after_loading` | `False` | Exit after data is loaded (phase 3) |
-| `stop_after_benchmarking` | `False` | Leave SUT running after all benchmarks finish; do not tear down |
+| `stop_after_benchmarking` | `False` | Leave SUT running after all benchmarks finish; do not tear down (phase 4) |
 
 ---
 
@@ -48,9 +48,8 @@ def work_benchmark_list(
 │    Phase 1  Start SUT                                            │
 │    Phase 2  Start monitoring (if needed)                         │
 │    Phase 3  Wait for SUT health; start loading                   │
-│    Phase 4  Start maintaining pods (if needed)                   │
-│    Phase 5  Submit benchmarker job(s)                            │
-│    Phase 6  Collect SUT logs; stop / restart / mark done         │
+│    Phase 4  Submit benchmarker job(s)                            │
+│    Phase 5  Collect SUT logs; stop / restart / mark done         │
 │                                                                  │
 │  Part B — for each configuration:                                │
 │    Harvest completed benchmarker job pods (store logs, describe) │
@@ -172,17 +171,10 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                     ELSE:
                         config.start_loading()   # schema / DDL only
 
-            # ── Phase 4: Start maintaining pods ──────────────────────────
-
             IF config.loading_finished AND config has benchmarks:
                 IF monitoring needed but not running:
                     start monitoring or wait
                     CONTINUE
-                IF config.maintaining_active AND maintaining NOT running:
-                    IF maintaining NOT pending:
-                        config.start_maintaining(parallelism, num_pods)
-                    ELSE:
-                        print "has pending maintaining"
 
             # Store logs of any completed 'init' job pods.
             FOR each succeeded init pod:
@@ -201,7 +193,7 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                         FOR each container config:
                             run indexing script
 
-            # ── Phase 5: Submit benchmarker job(s) ───────────────────────
+            # ── Phase 4: Submit benchmarker job(s) ───────────────────────
 
             IF config.loading_finished:
 
@@ -258,7 +250,7 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                     config.run_benchmarker_pod(connection, parallelism)
                     _benchmark_just_submitted = True
 
-                # ── Phase 6: All benchmarks done — stop or repeat ─────────
+                # ── Phase 5: All benchmarks done — stop or repeat ─────────
 
                 ELSE:  # no more benchmark entries remain
                     IF NOT stop_after_benchmarking:

@@ -171,39 +171,6 @@ class ComponentStatus:
                 return True
         return False
 
-    def maintaining_running(self) -> bool:
-        """Return True iff maintaining pods equal the target count (running or succeeded).
-
-        :return: True if maintaining job has reached completion.
-        :rtype: bool
-        """
-        app = self._config.appname
-        component = 'maintaining'
-        configuration = self._config.configuration
-        pods_running = self._config.experiment.cluster.get_pods(
-            app, component, self._config.experiment.code, configuration, status="Running")
-        pods_succeeded = self._config.experiment.cluster.get_pods(
-            app, component, self._config.experiment.code, configuration, status="Succeeded")
-        self._config.logger.debug(
-            "maintaining_running found {} running and {} succeeded pods".format(
-                len(pods_running), len(pods_succeeded)))
-        return len(pods_running) + len(pods_succeeded) == self._config.num_maintaining
-
-    def maintaining_pending(self) -> bool:
-        """Return True iff any maintaining pod is in Pending state.
-
-        :return: True if a maintaining pod is pending.
-        :rtype: bool
-        """
-        app = self._config.appname
-        component = 'maintaining'
-        configuration = self._config.configuration
-        pods = self._config.experiment.cluster.get_pods(
-            app, component, self._config.experiment.code, configuration, status="Pending")
-        if len(pods) > 0:
-            return True
-        return False
-
     def monitoring_running(self) -> bool:
         """Return True iff the monitoring deployment pod is Running.
 

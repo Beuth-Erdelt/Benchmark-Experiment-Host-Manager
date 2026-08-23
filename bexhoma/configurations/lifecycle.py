@@ -19,7 +19,7 @@ SERVICE_PORT_NAMES_ALWAYS_KEPT = ('port-dbms', 'port-bus', 'port-web')
 
 
 class LifecycleManager:
-    """Manages SUT, monitoring, maintaining, loading start/stop and port forwarding.
+    """Manages SUT, monitoring, loading start/stop and port forwarding.
 
     :param config: The parent configuration this manager belongs to.
     :type config: SutConfiguration
@@ -32,37 +32,6 @@ class LifecycleManager:
         :type config: SutConfiguration
         """
         self._config = config
-
-    def start_maintaining(
-        self,
-        app: str = '',
-        component: str = 'maintaining',
-        experiment: str = '',
-        configuration: str = '',
-        parallelism: int = 1,
-        num_pods: int = 1,
-    ) -> None:
-        """Start a maintaining job.
-
-        :param app: App label.
-        :param component: Component label (default ``'maintaining'``).
-        :param experiment: Experiment code.
-        :param configuration: DBMS configuration name.
-        :param parallelism: Number of parallel pods in the job.
-        :param num_pods: Total pods that must complete.
-        """
-        cfg = self._config
-        if len(app) == 0:
-            app = cfg.appname
-        if len(configuration) == 0:
-            configuration = cfg.configuration
-        if len(experiment) == 0:
-            experiment = cfg.code
-        job = cfg.manifest.create_manifest_maintaining(
-            app=app, component='maintaining', experiment=experiment,
-            configuration=configuration, parallelism=parallelism, num_pods=num_pods)
-        cfg.logger.debug("Deploy " + job)
-        cfg.experiment.cluster.create_object_from_file(job)
 
     def create_monitoring(
         self,
@@ -365,44 +334,6 @@ scrape_configs:
             app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             cfg.experiment.cluster.delete_service(service)
-
-    def stop_maintaining(
-        self,
-        app: str = '',
-        component: str = 'maintaining',
-        experiment: str = '',
-        configuration: str = '',
-    ) -> None:
-        """Stop a maintaining job and remove all its pods.
-
-        :param app: App label.
-        :param component: Component label (default ``'maintaining'``).
-        :param experiment: Experiment code.
-        :param configuration: DBMS configuration name.
-        """
-        cfg = self._config
-        if len(app) == 0:
-            app = cfg.appname
-        if len(configuration) == 0:
-            configuration = cfg.configuration
-        if len(experiment) == 0:
-            experiment = cfg.code
-        jobs = cfg.experiment.cluster.get_jobs(app, component, experiment, configuration)
-        for job in jobs:
-            success = cfg.experiment.cluster.get_job_status(job)
-            print(job, success)
-            cfg.experiment.cluster.delete_job(job)
-        pods = cfg.experiment.cluster.get_job_pods(app, component, experiment, configuration)
-        for pod in pods:
-            status = cfg.experiment.cluster.get_pod_status(pod)
-            print(pod, status)
-            containers = cfg.experiment.cluster.get_pod_containers(pod)
-            for container in containers:
-                stdout = cfg.experiment.cluster.pod_log(pod=pod, container=container)
-                filename_log = cfg.path + '/' + pod + '.' + container + '.log'
-                with open(filename_log, "w") as log_file:
-                    log_file.write(stdout)
-            cfg.experiment.cluster.delete_pod(pod)
 
     def stop_loading(
         self,
@@ -1380,8 +1311,6 @@ scrape_configs:
             cfg.experiment.cluster.delete_service(service)
         if cfg.experiment.monitoring_active:
             self.stop_monitoring()
-        if cfg.experiment.maintaining_active:
-            self.stop_maintaining()
         if cfg.experiment.loading_active:
             self.stop_loading()
         if component == 'sut':

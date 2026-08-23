@@ -131,8 +131,7 @@ class ExperimentBase():
                  cluster,
                  code=None,
                  num_experiment_to_apply = 1,
-                 timeout = 7200,
-                 detached=True):
+                 timeout = 7200):
         """
         Construct a new 'experiment' object.
 
@@ -140,7 +139,6 @@ class ExperimentBase():
         :param code: Unique identifier for the experiment. If none is given, it is created out of current time
         :param num_experiment_to_apply: How many times should the experiment be repeated at every configuration?
         :param timeout: Maximum timeout per query
-        :param detached: DEPRECATED - use only True
         """
         self.cluster = cluster                                          # cluster object
         self.code = code                                                # code of experiment
@@ -151,7 +149,6 @@ class ExperimentBase():
         self.path = self.cluster.resultfolder+"/"+self.code             # path to result folder (read from cluster.config)
         if not path.isdir(self.path):
             makedirs(self.path)
-        self.detached = detached                                        # if orchestrator is living in the cloud (only True is supported)
         self.cluster.set_code(code=self.code)
         self.set_connection_management(
             numProcesses = 1,
@@ -172,7 +169,6 @@ class ExperimentBase():
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
-        self.num_maintaining_pods = 0                                   # number of maintaining pods in total (pre-initialized; redeclared below)
         self.num_tenants = 0                                            # number of tenants for multi-tenant experiments
         self.tenant_per = ""                                            # granularity of tenancy: 'container', 'schema', etc.
         self.multi_tenant_volume = False                                # True if each tenant gets a dedicated persistent volume
@@ -183,7 +179,6 @@ class ExperimentBase():
         self.eval_parameters = {}                                       # parameters that will be handed over to dbmsbenchmarker
         self.storage = {}                                               # parameters for persistent storage (like type and size)
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
-        self.maintaining_parameters = {}                                # dict of parameters for maintaining component
         self.loading_parameters = {}                                    # dict of parameters for loading component
         self.default_loading_parameters = {}                            # default ENV for all loading components, merged before per-config overrides
         self.sut_parameters = {}                                        # dict of parameters for sut and worker component
@@ -192,7 +187,6 @@ class ExperimentBase():
         self.benchmarking_patch = ""                                    # YAML to patch manifest for benchmarking component
         self.benchmarking_parameters = {}                               # dict of parameters for benchmarking component
         self.default_benchmarking_parameters = {}                       # default ENV for all benchmarking components, merged before per-config overrides
-        self.jobtemplate_maintaining = ""                               # name of YAML manifest for maintaining component
         self.jobtemplate_loading = ""                                   # name of YAML manifest for loading component
         self.jobtemplate_benchmarking = ""                              # name of YAML manifest for benchmarking component
         self.query_management = {}                                      # parameters for query.config
@@ -208,9 +202,6 @@ class ExperimentBase():
         self.loading_deactivated = False                                # Bool, tells if loading phase should be skipped
         self.num_loading = 0                                            # number of loading pods in parallel
         self.num_loading_pods = 0                                       # number of loading pods in total
-        self.maintaining_active = False                                 # Bool, tells if maintaining is active
-        self.num_maintaining = 0                                        # number of maintaining pods in parallel
-        self.num_maintaining_pods = 0                                   # number of maintaining pods in total
         self.resetscript_active = False                                 # Bool, tells if configured reset scripts should run
         self.script = ""                                                # name of the script collection for creating schema
         self.initscript = []                                            # list of scripts for creating schema
@@ -743,43 +734,6 @@ class ExperimentBase():
         #    print("Result workflow complete")
         #else:
         #    print("Result workflow not complete")
-    def test_results_in_dashboard(self) -> int:
-        """
-        DEPRECATED? Not used currently - depends on good test script for dbmsbenchmarker
-        Run test script in dashboard pod.
-        Extract exit code.
-
-        :return: exit code of test script
-        """
-        pod_dashboard = self.cluster.get_dashboard_pod_name(component='dashboard')
-        if len(pod_dashboard) > 0:
-            #pod_dashboard = pods[0]
-            status = self.cluster.get_pod_status(pod_dashboard)
-            print(pod_dashboard, status)
-            while status != "Running":
-                self.wait(10)
-                status = self.cluster.get_pod_status(pod_dashboard)
-                print(pod_dashboard, status)
-            cmd = {}
-            # only zip first level
-            #cmd['zip_results'] = 'cd /results;zip {code}.zip {code}/*'.format(code=self.code)
-            # zip complete folder
-            cmd['test_results'] = 'python test-result.py -e {code} -r /results/;echo $?'.format(code=self.code)
-            # include sub directories
-            #cmd['zip_results'] = 'cd /results;zip -r {code}.zip {code}'.format(code=self.code)
-            #fullcommand = 'kubectl exec '+pod_dashboard+' -- bash -c "'+cmd['zip_results'].replace('"','\\"')+'"'
-            _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['test_results'], pod=pod_dashboard, container="dashboard")#self.yamlfolder+deployment)
-            try:
-                if len(stdout) > 0:
-                    print(stdout)
-                    return int(stdout.splitlines()[-1:][0])
-                else:
-                    return 1
-            except Exception as e:
-                return 1
-            finally:
-                pass
-        return 1
     def wait(self,
              sec: int,
              silent: bool = False) -> None:
@@ -915,34 +869,6 @@ class ExperimentBase():
         :param kwargs: Dict of node infos, example 'sut' => 'sut',
         """
         self.nodes = kwargs
-    def set_maintaining_parameters(self,
-                                   **kwargs) -> None:
-        """
-        Sets ENV for maintaining components.
-        Can be overwritten by configuration.
-
-        :param kwargs: Dict of meta data, example 'PARALLEL' => '64'
-        """
-        self.maintaining_parameters = kwargs
-    def set_maintaining(self,
-                        parallel: int,
-                        num_pods: Optional[int] = None) -> None:
-        """
-        Sets job parameters for maintaining components: Number of parallel pods and optionally (if different) total number of pods.
-        By default total number of pods is set to number of parallel pods.
-        Can be overwritten by configuration.
-
-        :param parallel: Number of parallel pods
-        :param num_pods: Optionally (if different) total number of pods
-        """
-        self.num_maintaining = int(parallel)
-        if num_pods is not None:
-            self.num_maintaining_pods = int(num_pods)
-        else:
-            self.num_maintaining_pods = int(parallel)
-        # total number at least number of parallel
-        if self.num_maintaining_pods < self.num_maintaining:
-            self.num_maintaining_pods = self.num_maintaining
     def set_sut_parameters(self,
                                **kwargs) -> None:
         """
@@ -1209,29 +1135,6 @@ class ExperimentBase():
         self.download_experiment_file(filename='')
         print("{:30s}: uploading full results".format("Experiment"))
         self.upload_experiment_file(filename='')
-    def stop_maintaining(self):
-        """
-        Stop all maintaining jobs of this experiment.
-        If a list of dbms configurations is set, use it.
-        Otherwise tell the cluster to stop all maintaining jobs belonging to this experiment code.
-        """
-        if len(self.configurations) > 0:
-            for config in self.configurations:
-                config.lifecycle.stop_maintaining()
-        else:
-            app = self.cluster.appname
-            component = 'maintaining'
-            configuration = ''
-            jobs = self.cluster.get_jobs(app=app, component=component, experiment=self.code, configuration=configuration)
-            for job in jobs:
-                self.cluster.delete_job(job)
-            # all pods to these jobs
-            #self.cluster.get_job_pods(app, component, self.code, configuration)
-            pods = self.cluster.get_job_pods(app, component, self.code, configuration)
-            for p in pods:
-                status = self.cluster.get_pod_status(p)
-                print(p, status)
-                self.cluster.delete_pod(p)
     def stop_loading(self):
         """
         Stop all loading jobs of this experiment.
@@ -1304,7 +1207,6 @@ class ExperimentBase():
         mirroring the teardown of ``bexhoma-experiments stop -e <code>``.
         """
         self.stop_benchmarker()
-        self.stop_maintaining()
         self.stop_loading()
         self.stop_monitoring()
         self.stop_sut()
@@ -1543,9 +1445,8 @@ class ExperimentBase():
         1) start SUT
         2) start monitoring
         3) start loading (at first scripts (schema or loading via pull), then optionally parallel loading pods)
-        4) optionally start maintaining pods
-        5) at the same time as 4. run benchmarker jobs corresponding to list given via add_benchmark_list()
-        6) remove everything when done
+        4) run benchmarker jobs corresponding to list given via add_benchmark_list()
+        5) remove everything when done
 
         If ``self.max_experiment_minutes`` is set (via ``--experiment-timeout``),
         the elapsed wall-clock time is checked at every iteration; once it is
@@ -1555,7 +1456,7 @@ class ExperimentBase():
         :param intervals: Seconds to wait before checking change of status
         :param stop_after_starting: stops after phase 2)
         :param stop_after_loading: stops after phase 3)
-        :param stop_after_benchmarking: stops after phase 5) This tells if SUT should not be removed when all benchmarking has finished. Set to True if we want to have loaded SUTs for inspection.
+        :param stop_after_benchmarking: stops after phase 4) This tells if SUT should not be removed when all benchmarking has finished. Set to True if we want to have loaded SUTs for inspection.
         """
         # test if there is a Pometheus server running in the cluster
         if self.cluster.is_monitoring_healthy():
@@ -1684,24 +1585,16 @@ class ExperimentBase():
                                     config.loader.start_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
                                 else:
                                     config.loader.start_exec()
-                # check if maintaining
-                _has_benchmarks_maintaining = (
+                _has_benchmarks = (
                     (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
                     or len(config.benchmark_list) > 0
                 )
-                if config.loading_finished and _has_benchmarks_maintaining:
+                if config.loading_finished and _has_benchmarks:
                     if config.monitoring_active and not config.status.monitoring_running():
                         print("{:30s}: waits for monitoring".format(config.configuration))
                         if not config.status.monitoring_pending():
                             config.lifecycle.start_monitoring()
                         continue
-                    if config.maintaining_active:
-                        if not config.status.maintaining_running():
-                            print("{:30s}: is not maintained yet".format(config.configuration))
-                            if not config.status.maintaining_pending():
-                                config.lifecycle.start_maintaining(parallelism=config.num_maintaining, num_pods=config.num_maintaining_pods)
-                            else:
-                                print("{:30s}: has pending maintaining".format(config.configuration))
                 # store logs of successful init job pods
                 #print("{:30s}: looking for completed startup pods".format(config.configuration))
                 app = self.cluster.appname
@@ -1791,7 +1684,7 @@ class ExperimentBase():
                         # system might not be ready yet
                         print("{:30s}: will start benchmarking but not before {}".format(config.configuration, config.loading_after_time.strftime('%Y-%m-%d %H:%M:%S')))
                         continue
-                    # still benchmarks: check loading and maintaining
+                    # still benchmarks: check loading
                     _use_experiment_dict = bool(config.experiment_dict["benchmarker"])
                     _has_more_rounds = (
                         (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
@@ -1802,9 +1695,6 @@ class ExperimentBase():
                             print("{:30s}: waits for monitoring".format(config.configuration))
                             if not config.status.monitoring_pending():
                                 config.lifecycle.start_monitoring()
-                            continue
-                        if config.maintaining_active and not config.status.maintaining_running():
-                            print("{:30s}: waits for maintaining".format(config.configuration))
                             continue
                     app = self.cluster.appname
                     component = 'benchmarker'
@@ -2121,70 +2011,6 @@ class ExperimentBase():
                 # has finished all its experiment repetitions.
                 if all(config.experiment_done for config in self.configurations):
                     do = False
-    def benchmark_list(self, list_clients):
-        """
-        DEPRECATED? Is not used anymore.
-        Runs a given list of benchmarker applied to all running SUTs of experiment.
-
-        :param list_clients: List of (number of) benchmarker instances
-        """
-        print("benchmark_list() DEPRECATED")
-        exit()
-        for i, parallelism in enumerate(list_clients):
-            client = str(i+1)
-            for config in self.configurations:
-                if not config.status.sut_running():
-                    continue
-                if not config.loading_started:
-                    config.loader.start_exec()
-                else:
-                    config.runner.run_pod(connection=config.configuration+'-'+client, configuration=config.configuration, client=client, parallelism=parallelism)
-            while True:
-                for config in self.configurations:
-                    if not config.status.sut_running():
-                        continue
-                    if not config.loading_started:
-                        config.loader.start_exec()
-                time.sleep(10)
-                # all jobs of configuration - benchmarker
-                app = self.cluster.appname
-                component = 'benchmarker'
-                configuration = ''
-                jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-                # all pods to these jobs
-                pods = self.cluster.get_job_pods(app, component, self.code, configuration)
-                # status per pod
-                for p in pods:
-                    status = self.cluster.get_pod_status(p)
-                    print(p,status)
-                    if status == 'Succeeded':
-                        #if status != 'Running':
-                        self.cluster.store_pod_log(p)
-                        if not self.cluster.pod_description_exists(pod_name=p):
-                            self.cluster.logger.debug("Store description of pod {}".format(p))
-                            self.cluster.store_pod_description(pod_name=p)
-                        self.cluster.delete_pod(p)
-                    if status == 'Failed':
-                        #if status != 'Running':
-                        self.cluster.store_pod_log(p)
-                        if not self.cluster.pod_description_exists(pod_name=p):
-                            self.cluster.logger.debug("Store description of pod {}".format(p))
-                            self.cluster.store_pod_description(pod_name=p)
-                        self.cluster.delete_pod(p)
-                # success of job
-                app = self.cluster.appname
-                component = 'benchmarker'
-                configuration = ''
-                success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
-                jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-                # status per job
-                for job in jobs:
-                    success = self.cluster.get_job_status(job)
-                    print(job, success)
-                    if success:
-                        self.cluster.delete_job(job)
-                if len(pods) == 0 and len(jobs) == 0:
-                    break
     def get_job_timing_benchmarking(self,
                                     jobname: str) -> list:
         """
@@ -2983,65 +2809,6 @@ class ExperimentBase():
                 else:
                     suffix = "no 0 or NaN" if passed else "0 or NaN"
                     self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
-    def OLD_show_summary_monitoring(self):
-        test_results = ""
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        evaluate = inspector.inspector(resultfolder)
-        evaluate.load_experiment(code=code, silent=True)
-        if (self.monitoring_active or self.cluster.monitor_cluster_active):
-            #####################
-            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "loading")
-            ##########
-            if len(df_monitoring) > 0:
-                print("\n### Ingestion - SUT")
-                df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
-                    test_results = test_results + "TEST failed: Ingestion SUT contains 0 or NaN in CPU [CPUs]\n"
-                else:
-                    test_results = test_results + "TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]\n"
-                print(df)
-            #####################
-            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "loader")
-            ##########
-            if len(df_monitoring) > 0:
-                print("\n### Ingestion - Loader")
-                df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
-                    test_results = test_results + "TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]\n"
-                else:
-                    test_results = test_results + "TEST passed: Ingestion Loader contains no 0 or NaN in CPU [CPUs]\n"
-                print(df)
-            #####################
-            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "benchmarking")
-            ##########
-            if len(df_monitoring) > 0:
-                print("\n### Benchmarking - SUT")
-                df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
-                    test_results = test_results + "TEST failed: Benchmarking SUT contains 0 or NaN in CPU [CPUs]\n"
-                else:
-                    test_results = test_results + "TEST passed: Benchmarking SUT contains no 0 or NaN in CPU [CPUs]\n"
-                print(df)
-            #####################
-            df_monitoring, _ = self.show_summary_monitoring_table(evaluate, "benchmarker")
-            ##########
-            if len(df_monitoring) > 0:
-                print("\n### Benchmarking - Benchmarker")
-                df = pd.concat(df_monitoring, axis=1).round(2)
-                df = df.reindex(index=evaluators.natural_sort(df.index))
-                if not self.evaluator.test_results_column(df, "CPU [CPUs]"):
-                    test_results = test_results + "TEST failed: Benchmarking Benchmarker contains 0 or NaN in CPU [CPUs]\n"
-                else:
-                    test_results = test_results + "TEST passed: Benchmarking Benchmarker contains no 0 or NaN in CPU [CPUs]\n"
-                print(df)
-        return test_results.rstrip('\n')
-
-
-
 
 
 
@@ -3083,22 +2850,10 @@ class IotExperiment(ExperimentBase):
             type = 'iot',
             )
         self.storage_label = 'tpch-'+str(SF)                           # label used to match persistent storage to this experiment
-        self.maintaining_active = True                                  # IoT experiments always run a maintaining job alongside benchmarking
     def set_queries_full(self):
         self.set_queryfile('queries-iot.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-iot-profiling.config')
-    def set_querymanagement_maintaining(self,
-            numRun=128,
-            delay=5,
-            datatransfer=False):
-        self.set_query_management(
-            numWarmup = 0,
-            numCooldown = 0,
-            numRun = numRun,
-            delay = delay,
-            )
-        self.maintaining_active = True
 
 
 
@@ -3134,23 +2889,10 @@ class TsbsExperiment(ExperimentBase):
             type = 'tsdb',
             )
         self.storage_label = 'tsbs-'+str(SF)                               # label used to match persistent storage to this experiment
-        self.maintaining_active = True                                      # TSBS experiments always run a maintaining job alongside benchmarking
-        self.jobtemplate_maintaining = "jobtemplate-maintaining-tsbs.yml"   # K8s job template for the TSBS maintaining container
     def set_queries_full(self):
         self.set_queryfile('queries-tsbs.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-tsbs-profiling.config')
-    def set_querymanagement_maintaining(self,
-            numRun=128,
-            delay=5,
-            datatransfer=False):
-        self.set_query_management(
-            numWarmup = 0,
-            numCooldown = 0,
-            numRun = numRun,
-            delay = delay,
-            )
-        self.maintaining_active = True
 
 
 
