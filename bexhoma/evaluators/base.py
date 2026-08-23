@@ -564,6 +564,22 @@ class EvaluatorBase:
         """
         with open(self.path + "/queries.config", 'r') as f:
             return ast.literal_eval(f.read())
+    def get_terminals(self, loading_parameters):
+        """
+        Returns the number of client terminals/virtual users a benchmarking
+        tool ran with, read from its own loading-parameter env var.
+
+        The base implementation knows no tool-specific env var and always
+        returns ``0``; subclasses for tools that report a terminal/VU count
+        (e.g. Benchbase, HammerDB) override this.
+
+        :param loading_parameters: The connection's ``loading_parameters`` dict.
+        :type loading_parameters: dict
+        :return: Terminal/VU count, or ``0`` when the tool does not report one.
+        :rtype: int
+        """
+        return 0
+
     def add_connection_to_result(self, c, connection_id, result):
         """
         Appends a flattened connection entry to ``result`` keyed by ``connection_id``.
@@ -603,7 +619,7 @@ class EvaluatorBase:
             'time_ingest': float(c['time_ingested']),
             'time_postload': float(c['time_index']),
             'time_reset': float(c.get('time_reset', 0) or 0),
-            'terminals': loading_parameters.get('BENCHBASE_TERMINALS', loading_parameters.get('HAMMERDB_VUSERS', 0)),
+            'terminals': self.get_terminals(loading_parameters),
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,
             'tenant_id': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',

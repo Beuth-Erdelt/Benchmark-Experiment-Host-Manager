@@ -862,7 +862,7 @@ This parses and validates (legality/support are both checked per system,
 per "Validation ordering" above) and now translates: `PostgreSQL` and
 `PgDuckDB` resolve to different effective post_load, so `build_argv()` emits
 none of `-xii`/`-xic`/`-xis`/`-xcol` (a global flag can't represent a
-divergent selection), and `bexhoma/spec.py::resolve_physical_design_overrides()`
+divergent selection), and `bexhoma/experiments/tpch_catalog.py::resolve_physical_design_overrides()`
 instead resolves `{'PostgreSQL': 'Index_and_Constraints_and_Statistics',
 'PgDuckDB': ''}` — one `initscripts` key per system (see `k8s-cluster.config`'s
 `volumes.tpch.initscripts`). `experiment.py`'s catalog-driven dispatch attaches
@@ -887,7 +887,7 @@ entries resolves to four configurations (`PostgreSQL-32Gi`,
 `derive:`d knob values (`shared_buffers` etc. computed from *that* cell's
 `memory_limit`). This is the same "list = swept, scalar = shared" idiom
 `workload.rounds` already uses for concurrency — see
-`bexhoma/spec.py::build_argv()`'s `cpu_cells`/`memory_cells` handling.
+`bexhoma/experiments/tpch_catalog.py::build_tpch_argv()`'s `cpu_cells`/`memory_cells` handling.
 
 Two things had to change below `spec.py` for this to actually run, not
 just parse:

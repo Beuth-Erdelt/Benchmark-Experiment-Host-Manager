@@ -21,19 +21,24 @@ from .dbmsbenchmarker import DbmsBenchmarkerExperiment
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
-__all__ = ["TpchExperiment", "DBMS_DEFAULTS"]
+__all__ = ["TpchExperiment", "DBMS_DEFAULTS", "DEFAULT_REFRESH_TEMPLATE"]
 
 #: Per-DBMS build defaults for the YAML-driven entry script
-#: (:mod:`bexhoma.experiment_builder`), mirroring the per-DBMS branches in
+#: (:mod:`bexhoma.experiments.tpch_builder`), mirroring the per-DBMS branches in
 #: ``tpch.py``'s own ``if "PostgreSQL" in args.dbms:``-style loop as data
 #: instead of code. Only the DBMS variants with no per-DBMS *logic* (no
 #: worker-sharding, no container-tenancy) are covered here; ``Citus`` and
 #: multi-tenant container builds stay code-only, driven from ``tpch.py``.
+#: Fallback ``refresh_template`` for a DBMS entry that doesn't declare its
+#: own (shares PostgreSQL's dialect closely enough to reuse its refresh job).
+DEFAULT_REFRESH_TEMPLATE = 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml'
+
 DBMS_DEFAULTS: dict[str, dict[str, str]] = {
     'PostgreSQL': {
         'docker': 'PostgreSQL', 'dialect': 'PostgreSQL',
         'jobtemplate_loading': 'jobtemplate-loading-tpch-PostgreSQL.yml',
         'storage_prefix': 'postgresql',
+        'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml',
     },
     'PgDuckDB': {
         'docker': 'PgDuckDB', 'dialect': 'PostgreSQL',
@@ -44,16 +49,19 @@ DBMS_DEFAULTS: dict[str, dict[str, str]] = {
         'docker': 'MonetDB', 'dialect': 'MonetDB',
         'jobtemplate_loading': 'jobtemplate-loading-tpch-MonetDB.yml',
         'storage_prefix': 'monetdb',
+        'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MonetDB.yml',
     },
     'MariaDB': {
         'docker': 'MariaDB', 'dialect': 'MySQL',
         'jobtemplate_loading': 'jobtemplate-loading-tpch-MariaDB.yml',
         'storage_prefix': 'mariadb',
+        'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
     },
     'MySQL': {
         'docker': 'MySQL', 'dialect': 'MySQL',
         'jobtemplate_loading': 'jobtemplate-loading-tpch-MySQL.yml',
         'storage_prefix': 'mysql',
+        'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MySQL.yml',
     },
     'CedarDB': {
         'docker': 'CedarDB', 'dialect': 'PostgreSQL',

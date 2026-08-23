@@ -10,11 +10,15 @@ execution code path is changed by this module — it only produces the CLI
 arguments a human would otherwise have had to type by hand, so the result
 can be run as ``python tpch.py <argv...>`` exactly like any other invocation.
 
-Scope is intentionally narrow: only the ``tpch`` workload against the
-``PostgreSQL``/``PgDuckDB`` system pair is translatable today, matching the
-prototype catalog in ``catalog.yaml``. Extending to other workloads/systems
-means extending :func:`build_argv`'s flag mapping and :func:`resolve_system`'s
-``arg_style`` handling, not changing the resolution logic itself.
+This module itself carries no workload- or DBMS-specific knowledge: catalog
+loading, ``derive:``/knob resolution, and validation are all generic.
+:func:`build_argv` dispatches by ``experiment['workload']['name']`` to that
+workload's own argv builder — today only ``tpch`` has one
+(:func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`), matching the
+prototype catalog in ``catalog.yaml`` (only the ``tpch`` workload against the
+``PostgreSQL``/``PgDuckDB`` system pair is translatable today). Extending to
+another workload means adding its own argv-builder module and a dispatch
+branch in :func:`build_argv`, not changing the resolution logic here.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -42,11 +46,10 @@ __all__ = [
     "evaluate_derive_expression",
     "parse_memory_quantity",
     "parse_cpu_quantity",
-    "format_postgres_memory",
     "resolve_system_definition",
     "resolve_system",
-    "resolve_indexing_key",
-    "resolve_physical_design_overrides",
+    "DEFAULT_ARG_STYLE",
+    "effective_post_load",
     "validate_experiment",
     "validate_environment",
     "build_argv",
@@ -69,9 +72,6 @@ _MEMORY_UNITS: tuple[tuple[str, int], ...] = (
     ("K", 1000), ("M", 1000 ** 2), ("G", 1000 ** 3), ("T", 1000 ** 4),
 )
 
-#: Divisor to format a byte count as whole megabytes for a PostgreSQL memory GUC.
-_BYTES_PER_MEGABYTE = 1024 ** 2
-
 #: Kubernetes-style CPU quantity suffix for millicores (e.g. "500m" == 0.5 cores).
 _CPU_MILLICORE_SUFFIX = "m"
 _MILLICORES_PER_CORE = 1000
@@ -92,32 +92,9 @@ _DERIVE_UNARY_OPS: dict[type, Callable[[float], float]] = {
 #: Header fields every experiment.yml must carry, independent of workload/system.
 _REQUIRED_HEADER_FIELDS = ("title", "hypothesis", "discriminates")
 
-_DEFAULT_MODE = "run"
-_DEFAULT_ARG_STYLE = "pg-guc"
-_ARG_STYLE_ENV_VAR = "env-var"
-_STORAGE_FORMAT_COLUMNAR = "columnar"
+#: Fallback ``arg_style`` for a knob/system that doesn't declare one.
+DEFAULT_ARG_STYLE = "pg-guc"
 _KNOB_TYPE_MEMORY = "memory"
-
-#: The only env-var knob this prototype can translate — it happens to already
-#: be a first-class tpch.py flag, so it needs no generic env-var CLI mapping yet.
-_DUCKDB_FORCE_EXECUTION_ENV_VAR = "DUCKDB_FORCE_EXECUTION"
-_DUCKDB_FORCE_EXECUTION_FLAG = "-xdfe"
-
-#: Maps every (indexes, constraints, statistics) combination to the tpch
-#: volume's ``initscripts`` key that applies exactly that combination (see
-#: ``k8s-cluster.config``'s ``volumes.tpch.initscripts``). The three post-load
-#: steps are independent DDL/DML statements with no ordering dependency on
-#: each other, so all eight combinations are legal.
-_INDEXING_KEYS: dict[tuple[bool, bool, bool], str] = {
-    (False, False, False): "",
-    (True, False, False): "Index",
-    (False, True, False): "Constraints",
-    (False, False, True): "Statistics",
-    (True, True, False): "Index_and_Constraints",
-    (True, False, True): "Index_and_Statistics",
-    (False, True, True): "Constraints_and_Statistics",
-    (True, True, True): "Index_and_Constraints_and_Statistics",
-}
 
 
 class SpecError(Exception):
@@ -280,20 +257,6 @@ def parse_cpu_quantity(value: Any) -> float:
         raise SpecError(f"invalid cpu quantity {value!r}") from error
 
 
-def format_postgres_memory(num_bytes: int) -> str:
-    """Format a byte count as a PostgreSQL memory GUC value.
-
-    Always formats in whole megabytes to avoid fractional-GB rounding
-    ambiguity — PostgreSQL accepts ``MB`` for every memory GUC used in this
-    catalog.
-
-    :param num_bytes: Number of bytes.
-    :return: A value such as ``"20480MB"``.
-    :rtype: str
-    """
-    return f"{num_bytes // _BYTES_PER_MEGABYTE}MB"
-
-
 def resolve_system_definition(catalog: dict[str, Any], system_name: str) -> dict[str, Any]:
     """Resolve a system's catalog entry, merging any ``extends:`` base.
 
@@ -348,6 +311,7 @@ def resolve_system(
     catalog: dict[str, Any],
     system_spec: dict[str, Any],
     resources: dict[str, Any],
+    memory_formatter: Callable[[int], Any] = str,
 ) -> ResolvedSystem:
     """Resolve one ``systems:`` entry of an experiment.yml against the catalog.
 
@@ -363,6 +327,11 @@ def resolve_system(
         (``name``, optional ``profile``, optional ``override``).
     :param resources: Experiment resource limits — ``memory_limit``,
         ``cpu_limit``, ``storage_class``, ``scaling_factor``.
+    :param memory_formatter: Formats a derived byte count for a
+        ``type: memory`` knob into the value the target system actually
+        expects (e.g. a PostgreSQL-style ``"20480MB"`` GUC string). Callers
+        translating for a specific system pass its own formatter; defaults
+        to a plain byte-count string when none is given.
     :return: The resolved system.
     :rtype: ResolvedSystem
     :raises SpecError: When a profile's ``requires:`` precondition is unmet,
@@ -404,7 +373,7 @@ def resolve_system(
         for knob_name, expression in profile.get("derive", {}).items():
             raw_value = evaluate_derive_expression(expression, derive_inputs)
             if known_knobs.get(knob_name, {}).get("type") == _KNOB_TYPE_MEMORY:
-                values[knob_name] = format_postgres_memory(int(raw_value))
+                values[knob_name] = memory_formatter(int(raw_value))
             else:
                 values[knob_name] = raw_value
 
@@ -417,13 +386,13 @@ def resolve_system(
         resolved.knobs[knob_name] = ResolvedKnob(
             name=knob_name,
             value=value,
-            arg_style=knob_meta.get("arg_style", definition.get("arg_style", _DEFAULT_ARG_STYLE)),
+            arg_style=knob_meta.get("arg_style", definition.get("arg_style", DEFAULT_ARG_STYLE)),
             env_var=knob_meta.get("env_var"),
         )
     return resolved
 
 
-def _effective_post_load(system_spec: dict[str, Any], shared_post_load: dict[str, Any]) -> dict[str, Any]:
+def effective_post_load(system_spec: dict[str, Any], shared_post_load: dict[str, Any]) -> dict[str, Any]:
     """Resolve the post_load dict that actually applies to one ``systems:`` entry.
 
     A system's own ``post_load:`` is a *selection* override — legal even when
@@ -439,55 +408,6 @@ def _effective_post_load(system_spec: dict[str, Any], shared_post_load: dict[str
     :rtype: dict[str, Any]
     """
     return system_spec.get("post_load", shared_post_load)
-
-
-def resolve_indexing_key(indexes: bool, constraints: bool, statistics: bool) -> str:
-    """Map a tpch post_load selection to its ``initscripts`` key.
-
-    Single source of truth shared with
-    :func:`bexhoma.benchmarks.tpch.TPCH.configure_workload`, which applies the
-    same mapping to the ``-xii``/``-xic``/``-xis`` CLI flags — the key strings
-    must match ``k8s-cluster.config``'s ``volumes.tpch.initscripts`` literally,
-    or the resulting :meth:`~bexhoma.configurations.base.SutConfiguration.set_experiment`
-    call raises ``KeyError``.
-
-    :param indexes: Create indexes on all tables after loading.
-    :param constraints: Add primary-key/foreign-key constraints after loading.
-    :param statistics: Run ``ANALYZE`` after loading.
-    :return: The matching ``initscripts`` key, or ``""`` when none of the
-        three steps were requested.
-    :rtype: str
-    """
-    return _INDEXING_KEYS[(bool(indexes), bool(constraints), bool(statistics))]
-
-
-def resolve_physical_design_overrides(catalog: dict[str, Any], experiment: dict[str, Any]) -> dict[str, str]:
-    """Resolve each named system's effective post_load into an indexing-script override.
-
-    Bridges the ``systems[].post_load`` *selection* (see :func:`validate_experiment`)
-    to bexhoma's existing per-configuration indexing-script override
-    (:meth:`~bexhoma.configurations.base.SutConfiguration.set_experiment`), the
-    mechanism ``tpch.py``'s ``-xii``/``-xic``/``-xis`` CLI flags cannot express
-    per system — those stay global switches, untouched by this function.
-    Intended for :mod:`experiment` (the catalog-driven dispatcher) to attach to
-    the parsed ``argparse.Namespace`` as ``physical_design_overrides`` before
-    calling ``tpch.run()``; never surfaced as a CLI flag itself.
-
-    :param catalog: Parsed catalog.
-    :param experiment: Parsed experiment spec.
-    :return: ``{system_name: indexing_key}``, one entry per ``systems:`` entry.
-    :rtype: dict[str, str]
-    """
-    shared_post_load = experiment.get("loading", {}).get("post_load", {})
-    overrides = {}
-    for system_spec in experiment.get("systems", []):
-        post_load = _effective_post_load(system_spec, shared_post_load)
-        overrides[system_spec["name"]] = resolve_indexing_key(
-            indexes=bool(post_load.get("indexes")),
-            constraints=bool(post_load.get("constraints")),
-            statistics=bool(post_load.get("statistics")),
-        )
-    return overrides
 
 
 def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> None:
@@ -534,7 +454,7 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     catalog_post_load = workload.get("loading", {}).get("post_load", {})
     for system_spec in system_specs:
         system_name = system_spec["name"]
-        post_load = _effective_post_load(system_spec, shared_post_load)
+        post_load = effective_post_load(system_spec, shared_post_load)
         for option_name, value in post_load.items():
             if option_name not in catalog_post_load:
                 raise SpecError(f"unknown post_load option '{option_name}' for workload '{workload_name}'")
@@ -663,223 +583,30 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
             )
 
 
-def _append_flag(argv: list[str], flag: str, value: Any) -> None:
-    """Append ``flag value`` to ``argv``, unless ``value`` is ``None`` or empty.
-
-    :param argv: Argument vector being built, mutated in place.
-    :param flag: CLI flag, e.g. ``"-sf"``.
-    :param value: Value to stringify and append; skipped when falsy-empty (but not ``0``).
-    """
-    if value is None or value == "":
-        return
-    argv.extend([flag, str(value)])
-
-
-def _resource_cell(cells: list[dict[str, Any]], index: int) -> dict[str, Any]:
-    """Return the resource dict for one sweep cell, broadcasting a single-entry list.
-
-    :param cells: Either a single ``{request, limit}`` dict wrapped in a list, or one
-        entry per swept cell.
-    :param index: 0-based cell index.
-    :return: The ``{request, limit}`` dict for this cell.
-    :rtype: dict[str, Any]
-    """
-    return cells[index] if len(cells) > 1 else cells[0]
-
-
-def _join_cell_values(cells: list[dict[str, Any]], num_cells: int, key: str) -> Optional[str]:
-    """Join a possibly-broadcast list of resource cells into a comma-separated CLI value.
-
-    Mirrors ``tpch.py``'s own ``-rr``/``-lr``/``-rc``/``-lc`` sweep-list handling: a
-    single value stays a bare value (``num_cells == 1``), several become a
-    comma-separated list, one per resolved configuration.
-
-    :param cells: Either a single-entry or ``num_cells``-entry list of ``{request, limit}`` dicts.
-    :param num_cells: Number of resolved cells in this experiment.
-    :param key: ``"request"`` or ``"limit"``.
-    :return: Comma-separated values, or ``None`` when any cell omits ``key``.
-    :rtype: Optional[str]
-    """
-    values = [_resource_cell(cells, index).get(key) for index in range(num_cells)]
-    if any(value is None or value == "" for value in values):
-        return None
-    return ",".join(str(value) for value in values)
-
-
 def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:
-    """Translate a resolved experiment.yml into a ``tpch.py`` argument vector.
+    """Validate an experiment spec, then translate it into its workload's CLI argument vector.
 
-    Only emits flags the spec actually sets — every flag left out falls
-    back to ``tpch.py``'s own argparse default, so this never needs to
-    duplicate defaults the CLI already owns.
-
-    A ``systems[].post_load`` override (see :func:`_effective_post_load`) is a
-    *selection* the catalog schema supports, but ``-xii``/``-xic``/``-xis``/
-    ``-xcol`` are global CLI switches — ``tpch.py`` has no per-system scoping
-    for them yet. When every named system resolves to the same effective
-    post_load, that shared value is emitted exactly as before, since a global
-    flag can represent it faithfully. When systems diverge, these flags are
-    left unset here rather than applying one system's choice to all of
-    them — :func:`resolve_physical_design_overrides` resolves the actual
-    per-system selection through a different mechanism entirely
-    (:meth:`~bexhoma.configurations.base.SutConfiguration.set_experiment`,
-    applied by ``tpch.py``'s in-process caller, not by argv), so silently
-    emitting nothing here is safe rather than lossy.
+    Carries no workload-specific knowledge itself: it validates
+    ``experiment`` against ``catalog`` and dispatches, by
+    ``experiment['workload']['name']``, to that workload's own argv builder.
+    Today only ``tpch`` has one
+    (:func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`) — extending to
+    another workload means adding its own argv-builder module and a branch
+    here, not changing any resolution logic in this module.
 
     :param catalog: Parsed catalog.
     :param experiment: Parsed experiment spec.
-    :return: Argument vector, usable as ``python tpch.py`` followed by these tokens.
+    :return: Argument vector, usable as ``python <entry_script>.py`` followed by these tokens.
     :rtype: list[str]
-    :raises SpecError: When ``experiment`` fails validation or resolution.
+    :raises SpecError: When ``experiment`` fails validation or resolution, or
+        no argv builder exists yet for its workload.
     """
     validate_experiment(catalog, experiment)
-
-    workload_spec = experiment["workload"]
-    params = workload_spec.get("params", {})
-    loading = experiment.get("loading", {})
-    shared_post_load = loading.get("post_load", {})
-    resources = experiment.get("resources", {})
-    observe = experiment.get("observe", {})
-    placement = experiment.get("placement", {})
-    system_specs = experiment.get("systems", [])
-
-    effective_post_loads = [_effective_post_load(system_spec, shared_post_load) for system_spec in system_specs]
-    post_load_diverges = any(post_load != effective_post_loads[0] for post_load in effective_post_loads[1:])
-    if post_load_diverges:
-        post_load = {}
-    else:
-        post_load = effective_post_loads[0] if effective_post_loads else shared_post_load
-
-    cpu = resources.get("cpu", {})
-    memory = resources.get("memory", {})
-    storage = resources.get("storage", {})
-    # resources.cpu / resources.memory may each be a single {request, limit} dict
-    # (today's shape: shared by every system, no sweep) or a list of them (a
-    # resource sweep: every system in `systems:` is crossed against every list
-    # entry, one resolved configuration per (system, cell) pair) -- mirrors
-    # tpch.py's own -rr/-lr/-rc/-lc comma-list handling one for one.
-    cpu_cells = cpu if isinstance(cpu, list) else [cpu]
-    memory_cells = memory if isinstance(memory, list) else [memory]
-    num_cells = max(len(cpu_cells), len(memory_cells))
-    if len(cpu_cells) not in (1, num_cells) or len(memory_cells) not in (1, num_cells):
-        raise SpecError(
-            "resources.cpu and resources.memory sweep lists must share one length: "
-            f"got {len(cpu_cells)} cpu entries and {len(memory_cells)} memory entries"
-        )
-
-    # one (system_spec, ResolvedSystem, configuration_name) triple per resolved cell;
-    # configuration_name is "" (unscoped) when there is only one cell, otherwise it
-    # must match the configuration name tpch.py's own resource-sweep loop will give
-    # that cell (docker + "-" + memory request), so the --set operations emitted
-    # below land on the right configuration (see parse_set_arg's @CONFIG scope)
-    resolved_cells: list[tuple[dict[str, Any], ResolvedSystem, str]] = []
-    for system_spec in system_specs:
-        for cell_index in range(num_cells):
-            cell_cpu = _resource_cell(cpu_cells, cell_index)
-            cell_memory = _resource_cell(memory_cells, cell_index)
-            resolve_inputs = {
-                "memory_limit": cell_memory.get("limit"),
-                "cpu_limit": cell_cpu.get("limit"),
-                "storage_class": resources.get("storage_class"),
-                "scaling_factor": params.get("scaling_factor"),
-            }
-            resolved = resolve_system(catalog, system_spec, resolve_inputs)
-            configuration_name = (
-                f"{system_spec['name']}-{cell_memory.get('request')}" if num_cells > 1 else ""
-            )
-            resolved_cells.append((system_spec, resolved, configuration_name))
-
-    argv: list[str] = [experiment.get("mode", _DEFAULT_MODE)]
-
-    if system_specs:
-        argv.append("-dbms")
-        argv.extend(system_spec["name"] for system_spec in system_specs)
-
-    _append_flag(argv, "-sf", params.get("scaling_factor"))
-    _append_flag(argv, "-t", params.get("timeout"))
-    _append_flag(argv, "-xqr", params.get("query_repeats"))
-    if params.get("verify_result"):
-        argv.append("-tr")
-    if params.get("measure_datatransfer"):
-        argv.append("-xdt")
-    if params.get("active_queries"):
-        argv.extend(["-xaq", ",".join(str(query) for query in params["active_queries"])])
-    if params.get("recreate_parameter"):
-        argv.append("-xrcp")
-    if params.get("shuffle_queries"):
-        argv.append("-xshq")
-    _append_flag(argv, "-xlit", params.get("limit_import_table"))
-    _append_flag(argv, "-xrs", params.get("refresh_streams"))
-    _append_flag(argv, "-xrso", params.get("refresh_stream_offset"))
-    if params.get("verbose_explain"):
-        argv.append("-xve")
-    if params.get("store_explain"):
-        argv.append("-xse")
-
-    _append_flag(argv, "-nlp", loading.get("pods"))
-    _append_flag(argv, "-nlt", loading.get("threads"))
-    _append_flag(argv, "-xnls", loading.get("split"))
-    if post_load.get("indexes"):
-        argv.append("-xii")
-    if post_load.get("constraints"):
-        argv.append("-xic")
-    if post_load.get("statistics"):
-        argv.append("-xis")
-    if post_load.get("storage_format") == _STORAGE_FORMAT_COLUMNAR:
-        argv.append("-xcol")
-
-    rounds = workload_spec.get("rounds")
-    if rounds:
-        argv.extend(["-ne", ",".join(str(round_clients) for round_clients in rounds)])
-    _append_flag(argv, "-nc", workload_spec.get("repetitions"))
-
-    if observe.get("monitoring_sut"):
-        argv.append("-m")
-    if observe.get("monitoring_cluster"):
-        argv.append("-mc")
-    if observe.get("monitoring_app"):
-        argv.append("-ma")
-
-    _append_flag(argv, "-rnn", placement.get("sut"))
-    _append_flag(argv, "-rnl", placement.get("loading"))
-    _append_flag(argv, "-rnb", placement.get("benchmarking"))
-
-    _append_flag(argv, "-rc", _join_cell_values(cpu_cells, num_cells, "request"))
-    _append_flag(argv, "-lc", _join_cell_values(cpu_cells, num_cells, "limit"))
-    _append_flag(argv, "-rr", _join_cell_values(memory_cells, num_cells, "request"))
-    _append_flag(argv, "-lr", _join_cell_values(memory_cells, num_cells, "limit"))
-    _append_flag(argv, "-rss", storage.get("size"))
-
-    storage_classes = {resolved.storage_class for _, resolved, _ in resolved_cells if resolved.storage_class}
-    if len(storage_classes) > 1:
-        raise SpecError(f"resolved systems require conflicting storage classes: {sorted(storage_classes)}")
-    if storage_classes:
-        _append_flag(argv, "-rst", next(iter(storage_classes)))
-
-    for system_spec, resolved, configuration_name in resolved_cells:
-        scope = f"@{configuration_name}" if configuration_name else ""
-        for knob in resolved.knobs.values():
-            if knob.arg_style == _DEFAULT_ARG_STYLE:
-                argv.extend([
-                    "--set",
-                    f"deployment[{resolved.deployment}]{scope}.container[dbms].{knob.name}={knob.value}",
-                ])
-            elif knob.arg_style == _ARG_STYLE_ENV_VAR:
-                if knob.env_var == _DUCKDB_FORCE_EXECUTION_ENV_VAR:
-                    if knob.value:
-                        argv.append(_DUCKDB_FORCE_EXECUTION_FLAG)
-                else:
-                    raise SpecError(
-                        f"system '{resolved.name}' knob '{knob.name}' has arg_style "
-                        f"'env-var' but no known CLI mapping yet"
-                    )
-            else:
-                raise SpecError(
-                    f"system '{resolved.name}' knob '{knob.name}' has arg_style "
-                    f"'{knob.arg_style}', not yet translatable to a CLI flag"
-                )
-
-    return argv
+    workload_name = experiment["workload"]["name"]
+    if workload_name == "tpch":
+        from bexhoma.experiments.tpch_catalog import build_tpch_argv
+        return build_tpch_argv(catalog, experiment)
+    raise SpecError(f"no argv builder implemented yet for workload '{workload_name}'")
 
 
 def build_command(argv: list[str], entry_script: str = "tpch.py") -> str:

@@ -81,7 +81,7 @@ SCHEMA_VERSION = "1.3.0"
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
 #: contract and any pointer files), not rendered Kubernetes manifests -- see
 #: experiment.py::_copy_catalog_provenance and
-#: bexhoma/experiment_builder.py::_copy_provenance_files. Excluded from the
+#: bexhoma/experiments/tpch_builder.py::_copy_provenance_files. Excluded from the
 #: workflow section's manifest glob (which would otherwise mislabel them as
 #: "rendered Kubernetes Job/Deployment/Service manifests") and instead given
 #: their own, accurately-described Provenance entry.

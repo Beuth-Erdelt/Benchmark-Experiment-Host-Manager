@@ -24,18 +24,9 @@ from pathlib import Path
 
 from bexhoma import clusters, configurations, experiments
 from bexhoma.cli_args import resolve_scaling_factor
-from bexhoma.experiments.tpch import DBMS_DEFAULTS, TpchExperiment
+from bexhoma.experiments.tpch import DBMS_DEFAULTS, DEFAULT_REFRESH_TEMPLATE, TpchExperiment
 
 __all__ = ["build_experiment"]
-
-#: k8s job-template per DBMS for the TPC-H RF1/RF2 refresh stream, mirrors tpch.py.
-_REFRESH_TEMPLATES = {
-    'PostgreSQL': 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml',
-    'MySQL':      'jobtemplate-benchmarking-tpch-refresh-MySQL.yml',
-    'MariaDB':    'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
-    'MonetDB':    'jobtemplate-benchmarking-tpch-refresh-MonetDB.yml',
-}
-_DEFAULT_REFRESH_TEMPLATE = 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml'
 
 #: Provenance pointer keys and their copy target filename in the result folder.
 _PROVENANCE_FILES = (('catalog', 'catalog.yaml'), ('environment', 'environment.yml'))
@@ -57,7 +48,7 @@ def _import_tpch_module():
     try:
         import tpch as tpch_module
     except ModuleNotFoundError:
-        repo_root = Path(__file__).resolve().parent.parent
+        repo_root = Path(__file__).resolve().parent.parent.parent
         sys.path.insert(0, str(repo_root))
         import tpch as tpch_module
     return tpch_module
@@ -148,7 +139,7 @@ def _configure_system(experiment: TpchExperiment, system: dict, duckdb_force_exe
         ``sut_parameters.DUCKDB_FORCE_EXECUTION`` override.
     :raises KeyError: When ``system['dbms']`` is not a key of
         :data:`~bexhoma.experiments.tpch.DBMS_DEFAULTS` (caught earlier by
-        :func:`bexhoma.experiment_loader.validate_experiment_yaml`).
+        :func:`bexhoma.experiments.tpch_loader.validate_experiment_yaml`).
     """
     dbms = system['dbms']
     defaults = DBMS_DEFAULTS[dbms]
@@ -233,8 +224,8 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
     from an already-validated ``experiment.yaml``.
 
     :param spec: Parsed experiment spec, as returned by
-        :func:`bexhoma.experiment_loader.load_experiment_yaml` and validated by
-        :func:`bexhoma.experiment_loader.validate_experiment_yaml`.
+        :func:`bexhoma.experiments.tpch_loader.load_experiment_yaml` and validated by
+        :func:`bexhoma.experiments.tpch_loader.validate_experiment_yaml`.
     :param spec_path: Path to the ``experiment.yaml`` file that was loaded —
         used to resolve relative ``catalog``/``environment`` provenance
         pointers and to copy the file itself into the result folder.
@@ -290,7 +281,7 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
         )
         first_dbms = spec['systems'][0]['dbms']
         experiment.enable_refresh_stream(
-            template=_REFRESH_TEMPLATES.get(first_dbms, _DEFAULT_REFRESH_TEMPLATE)
+            template=DBMS_DEFAULTS[first_dbms].get('refresh_template', DEFAULT_REFRESH_TEMPLATE)
         )
 
     parameter = _build_prepare_testbed_parameter(spec, tpch_module)

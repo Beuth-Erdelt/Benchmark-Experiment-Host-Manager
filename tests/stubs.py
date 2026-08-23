@@ -1,5 +1,5 @@
 """
-Fake cluster object for testing :mod:`bexhoma.experiment_builder` without a
+Fake cluster object for testing :mod:`bexhoma.experiments.tpch_builder` without a
 live Kubernetes cluster.
 
 Deliberately does not subclass :class:`bexhoma.clusters.Kubernetes` — that

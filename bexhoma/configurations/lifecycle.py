@@ -178,11 +178,12 @@ scrape_configs:
                                             prometheus_timeout=cfg.prometheus_timeout)
                                     elif ('blackbox' in application_monitoring
                                           and application_monitoring['blackbox']):
+                                        blackbox_target = application_monitoring['blackbox_target']
                                         app_monitor_targets = (
-                                            "\n          - postgres@localhost:5432/postgres?sslmode=disable\n")
+                                            "\n          - " + blackbox_target.format(database='postgres') + "\n")
                                         if cfg.tenant_per == 'database' and cfg.num_tenants > 0:
                                             connections = [
-                                                f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
+                                                "          - " + blackbox_target.format(database=f'tenant_{i}')
                                                 for i in range(cfg.num_tenants)
                                             ]
                                             app_monitor_targets += "\n".join(connections)
@@ -239,8 +240,9 @@ scrape_configs:
       - targets:
           - {master}:9500
         labels:
-          app: mysql-app""".format(
+          app: {app_label}""".format(
                                             master=name_sut,
+                                            app_label=cfg.docker.lower() + '-app',
                                             prometheus_interval=cfg.prometheus_interval,
                                             prometheus_timeout=cfg.prometheus_timeout)
                         endpoints_cluster = cfg.experiment.cluster.get_service_endpoints(
