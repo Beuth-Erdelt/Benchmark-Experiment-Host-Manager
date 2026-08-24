@@ -177,8 +177,16 @@ class BenchmarkRunner:
             for workload_key, workload_val in cfg.experiment.workload.items():
                 cfg.benchmark.queryconfig[workload_key] = workload_val
             filename = cfg.benchmark.path + '/queries.config'
-            with open(filename, 'w') as output_file:
+            # atomic write: benchmarker pods read this shared file concurrently via
+            # shutil.copyfile() while other configs' run_pod() calls may rewrite it;
+            # a plain open(filename, 'w') truncates before writing, so a pod can
+            # observe a 0-byte file mid-write. os.replace() is a single directory-entry
+            # swap, so a concurrent reader always sees either the old or the new
+            # complete file, never a truncated one.
+            tmp_filename = filename + '.tmp'
+            with open(tmp_filename, 'w') as output_file:
                 output_file.write(str(cfg.benchmark.queryconfig))
+            os.replace(tmp_filename, filename)
         cfg.benchmark.reporterStore.readProtocol()
         cfg.benchmark.generateAllParameters()
         cfg.benchmark.reporterStore.writeProtocol()

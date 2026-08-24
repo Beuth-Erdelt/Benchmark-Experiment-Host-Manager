@@ -1431,8 +1431,12 @@ class ExperimentBase():
                         for k,v in self.workload.items():
                             queryconfig[k] = v
                     #filename = self.benchmark.path+'/queries.config'
-                    with open(filename, 'w') as outp:
+                    # atomic write: see matching comment in
+                    # configurations/benchmarking.py::BenchmarkRunner.run_pod()
+                    tmp_filename = filename + '.tmp'
+                    with open(tmp_filename, 'w') as outp:
                         outp.write(str(queryconfig))
+                    os.replace(tmp_filename, filename)
         filename = 'queries.config'
         filename_local = self.result_filename_local(filename)
         if os.path.isfile(filename_local):

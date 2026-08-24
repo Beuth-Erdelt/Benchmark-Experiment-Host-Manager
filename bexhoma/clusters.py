@@ -1347,6 +1347,18 @@ class Kubernetes():
         ``max_retries`` times on transient failures (e.g. context deadline
         exceeded).  Raises ``RuntimeError`` if all attempts fail.
 
+        ``filename_remote`` typically lives on a PVC also mounted by other pods
+        (e.g. parallel benchmarker job pods reading ``/results/{code}/queries.config``
+        from their own mount of the same volume). ``kubectl cp`` extracts its tar
+        stream directly into the destination path, which is a truncate-then-write
+        from the perspective of any other pod reading that path concurrently. To
+        avoid a concurrent reader observing a partially-written (or empty) file,
+        the upload lands at ``filename_remote + '.uploadtmp'`` first, then an
+        ``mv`` executed inside the same pod performs an atomic rename into the
+        final path -- rename is a single filesystem metadata operation, so any
+        other pod's mount of the same PVC always sees either the previous
+        complete file or the new complete file, never a truncated one.
+
         :param filename_remote: Destination path inside the container.
         :param filename_local: Source path on the local machine.
         :param pod: Target Pod name.
@@ -1356,10 +1368,14 @@ class Kubernetes():
         :raises RuntimeError: If every attempt returns a failure.
         """
         filename_local = to_unc(filename_local)
-        cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
+        filename_remote_tmp = filename_remote + '.uploadtmp'
+        cmd = f'cp "{filename_local}" {pod}:{filename_remote_tmp} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
             result = self.kubectl(cmd)
             if result is not None:
+                self.execute_command_in_pod(
+                    command=f"mv '{filename_remote_tmp}' '{filename_remote}'",
+                    pod=pod, container=container)
                 return result
             if attempt < max_retries:
                 print(f"upload_file: attempt {attempt}/{max_retries} failed, retrying in 10s ...")
