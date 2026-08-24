@@ -1359,6 +1359,14 @@ class Kubernetes():
         other pod's mount of the same PVC always sees either the previous
         complete file or the new complete file, never a truncated one.
 
+        The rename is verified with a follow-up ``test -s`` inside the pod rather
+        than trusted blindly: ``execute_command_in_pod()`` swallows exec failures
+        (e.g. a transient RBAC/permission error on ``pods/exec``) by design, so an
+        unchecked ``mv`` can silently fail while ``run_pod()`` goes on to submit
+        the benchmarker Job believing the file is in place -- the pods then find
+        nothing at their final path. A failed verification retries the whole
+        upload (not just the rename), since the tmp file may also be gone.
+
         :param filename_remote: Destination path inside the container.
         :param filename_local: Source path on the local machine.
         :param pod: Target Pod name.
@@ -1376,7 +1384,13 @@ class Kubernetes():
                 self.execute_command_in_pod(
                     command=f"mv '{filename_remote_tmp}' '{filename_remote}'",
                     pod=pod, container=container)
-                return result
+                _, verify_stdout, _ = self.execute_command_in_pod(
+                    command=f"test -s '{filename_remote}' && echo UPLOAD_OK",
+                    pod=pod, container=container)
+                if 'UPLOAD_OK' in str(verify_stdout):
+                    return result
+                print(f"upload_file: rename into place could not be verified for "
+                      f"{pod}:{filename_remote} (attempt {attempt}/{max_retries})")
             if attempt < max_retries:
                 print(f"upload_file: attempt {attempt}/{max_retries} failed, retrying in 10s ...")
                 self.wait(10)

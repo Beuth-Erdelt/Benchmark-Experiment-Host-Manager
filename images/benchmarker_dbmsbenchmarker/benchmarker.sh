@@ -229,6 +229,27 @@ echo "DBMSBENCHMARKER_STORE_EXPLAIN:$DBMSBENCHMARKER_STORE_EXPLAIN"
 ######################## Show all jars ########################
 ls jars -lh
 
+######################## Wait for shared experiment config to be uploaded ########################
+# The host uploads queries.config/connections.config to /results/$BEXHOMA_EXPERIMENT
+# via an atomic rename (see clusters.py::Kubernetes.upload_file()) before this pod's
+# Job is submitted, so on a later round there is always a previous complete version
+# to read even if a fresh upload is still in flight. On the very first benchmarking
+# round of an experiment there is no earlier version to fall back to, so a pod that
+# starts fast enough can find nothing at all yet. Because the upload is atomic, the
+# file is guaranteed complete the instant it exists, so a plain non-empty check
+# (no parsing) is enough; poll for it instead of failing on the first miss.
+CONFIG_WAIT_SECONDS=0
+CONFIG_WAIT_TIMEOUT=60
+while [ ! -s /results/$BEXHOMA_EXPERIMENT/queries.config ] || [ ! -s /results/$BEXHOMA_EXPERIMENT/connections.config ]; do
+    if [ $CONFIG_WAIT_SECONDS -ge $CONFIG_WAIT_TIMEOUT ]; then
+        echo "WARN: queries.config/connections.config still not found in /results/$BEXHOMA_EXPERIMENT after ${CONFIG_WAIT_TIMEOUT}s, proceeding anyway"
+        break
+    fi
+    echo "Waiting for shared experiment config to be uploaded (${CONFIG_WAIT_SECONDS}/${CONFIG_WAIT_TIMEOUT}s)..."
+    sleep 2
+    CONFIG_WAIT_SECONDS=$((CONFIG_WAIT_SECONDS + 2))
+done
+
 ######################## Execute workload ########################
 # Run DBMSBenchmarker.
 # -f / -r  config and result folder (one subfolder per connection)
