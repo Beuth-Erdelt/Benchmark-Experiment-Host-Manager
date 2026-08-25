@@ -298,7 +298,8 @@ class LogEvaluator(EvaluatorBase):
             return 1
     def transform_monitoring_results(self, component="loading"):
         """
-        Combines per-connection monitoring CSV files into a single wide-format CSV.
+        Combines per-connection monitoring CSV files into a single wide-format CSV,
+        one column per SUT.
 
         For example, per-connection files like::
 
@@ -309,24 +310,32 @@ class LogEvaluator(EvaluatorBase):
 
             query_datagenerator_metric_total_cpu_util.csv
 
-        The per-connection files are deleted once merged, since the combined
-        file is the only one downstream code (:meth:`get_monitoring_metric`)
-        reads. Each filename is resolved via :func:`resolve_within_result_folder`
-        before deletion, since connection names originate from
-        ``connections.config`` rather than a hardcoded value.
+        A connection's identity is its ``orig_name`` when it has one, its own
+        ``name`` otherwise. What matters here: once an identity has been
+        merged in, any other connection resolving to the same identity is
+        skipped, instead of being merged in again. Without that guard,
+        several connections sharing one ``orig_name`` (how DBMSBenchmarker
+        represents parallel loaders/clients against a single physical SUT)
+        each load and merge the *same* file under the *same* column name,
+        and pandas' merge silently renames the second one to ``_x``/``_y``
+        instead of erroring, corrupting the combined metric. If the job-level
+        file named after the identity doesn't exist (some components, e.g.
+        ``loading``, only ever write that one, before ``benchmark.py read``
+        has expanded ``connections.config`` into per-pod entries; others only
+        write per-pod files), a connection's own per-pod file is tried as a
+        fallback and stands in for the whole identity.
+
+        Every per-connection file read along the way is deleted afterward,
+        since the combined file is the only one downstream code
+        (:meth:`get_monitoring_metric`) reads. Each filename is resolved via
+        :func:`resolve_within_result_folder` before deletion, since connection
+        names originate from ``connections.config`` rather than a hardcoded
+        value.
 
         Idempotent across repeated calls: an existing combined file is loaded
-        first and used as the starting point, so connections merged (and thus
-        deleted) by an earlier call are not lost from the combined file just
-        because their per-connection source is already gone.
-
-        Some components fetch metrics per pod (filename suffixed with the
-        per-pod ``name``, e.g. the ``benchmarking`` phase); others fetch once per
-        job, before ``benchmark.py read`` has expanded ``connections.config``
-        into per-pod entries, so the file is only ever suffixed with the
-        job-level ``orig_name`` (e.g. the ``loading`` phase). Both candidates
-        are tried, per-pod first, so either convention is found regardless of
-        which one a given component happens to use.
+        first and used as the starting point, so an identity resolved (and
+        thus deleted) by an earlier call is not lost from the combined file
+        just because its per-connection source is already gone.
 
         :param component: Component label used in the metric filename prefix
                           (e.g. ``'loading'``, ``'benchmarking'``).
@@ -340,28 +349,34 @@ class LogEvaluator(EvaluatorBase):
             connection_filenames = []
             processed_names = set()
             for connection in connections_sorted:
-                candidate_names = [connection['name']]
-                if 'orig_name' in connection and connection['orig_name'] not in candidate_names:
-                    candidate_names.append(connection['orig_name'])
-                for conn_name in candidate_names:
-                    if conn_name in processed_names:
-                        continue
-                    filename = "query_{component}_metric_{metric}_{connection}.csv".format(
-                        component=component, metric=metric_key, connection=conn_name
+                connectionname = connection.get('orig_name', connection['name'])
+                filename = "query_{component}_metric_{metric}_{connection}.csv".format(
+                    component=component, metric=metric_key, connection=connectionname
+                )
+                connection_filenames.append(filename)
+                own_filename = filename
+                if connection['name'] != connectionname:
+                    own_filename = "query_{component}_metric_{metric}_{connection}.csv".format(
+                        component=component, metric=metric_key, connection=connection['name']
                     )
+                    connection_filenames.append(own_filename)
+                if connectionname in processed_names:
+                    continue
+                df = monitor.metrics.loadMetricsDataframe(self.path + "/" + filename)
+                if df is None and own_filename != filename:
+                    # job-level file doesn't exist; fall back to this connection's own per-pod file
+                    filename = own_filename
                     df = monitor.metrics.loadMetricsDataframe(self.path + "/" + filename)
-                    if df is None:
-                        continue
-                    processed_names.add(conn_name)
-                    df.columns = [conn_name]
-                    if df_all is None:
-                        df_all = df
-                    else:
-                        if conn_name in df_all.columns:
-                            df_all = df_all.drop(columns=[conn_name])
-                        df_all = df_all.merge(df, how='outer', left_index=True, right_index=True)
-                    connection_filenames.append(filename)
-                    break
+                if df is None:
+                    continue
+                processed_names.add(connectionname)
+                df.columns = [connectionname]
+                if df_all is None:
+                    df_all = df
+                else:
+                    if connectionname in df_all.columns:
+                        df_all = df_all.drop(columns=[connectionname])
+                    df_all = df_all.merge(df, how='outer', left_index=True, right_index=True)
             monitor.metrics.saveMetricsDataframe(self.path + "/" + out_filename, df_all)
             for filename in connection_filenames:
                 resolved = resolve_within_result_folder(self.path, filename)
