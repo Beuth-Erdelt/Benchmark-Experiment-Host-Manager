@@ -12,7 +12,7 @@ blocks embedded verbatim in every `report/index.md`
 `report/index.md` to interpret an actual run.
 
 ```yaml
-result_contract_version: "1.0.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
+result_contract_version: "1.3.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
                                     # bump tracks report_writer.py's own frontmatter/tier/layout changes
 
 entry_point:
@@ -24,7 +24,10 @@ structure:
   experiment_code: unix-timestamp        # `code`: seconds, generated at experiment start;
                                           # unique + monotonically increasing, but NOT evidence
                                           # two codes ran under comparable conditions
-  configuration:  "<system>-<n>"                                       # e.g. PostgreSQL-1
+  configuration:  "<system>-<n>"                                       # e.g. postgresql-1 (lowercased when
+                                                                        # embedded in phase/job/connection below;
+                                                                        # original case, e.g. "PostgreSQL-1", when
+                                                                        # shown standalone, e.g. connections.config)
   phase:          "<configuration>-<experiment_run>-<client>"          # drops benchmark_run, pod
   job:            "<configuration>-<experiment_run>-<client>-<benchmark_run>"  # drops pod
   connection:     "<configuration>-<experiment_run>-<client>-<benchmark_run>-<pod>"
@@ -32,7 +35,7 @@ structure:
 
 tiers:                                  # only "with_report" tiers 1-2 are new files; tier 3 is always the raw folder
   1_answers:   {glob: "report/index.md"}
-  2_evidence:  {glob: "report/{workflow,loading,execution,monitoring,connections}.md"}
+  2_evidence:  {glob: "report/{workflow,loading,benchmarking,monitoring,connections}.md"}
                                           # each written only if that phase was active
   3_diagnosis: {result_dir: "*"}         # see provenance: below; linked from every tier-2 "### Provenance" footer
 
@@ -40,9 +43,18 @@ provenance:                              # pre-existing files, never written or 
   connections:  {"connections.config": "repr() list of every connection dict (identity, params, timings)",
                  "{connection}.config": "durable single-connection backup, survives dashboard rewrites",
                  "queries.config":      "SF/type/duration/defaultParameters/benchmark_sequence/workflow_planned"}
-  workflow:     {"*.yml / *.yaml":      "rendered K8s Job/Deployment/Service manifests actually submitted;
+  workflow:     {"*.yml / *.yaml (minus the input-provenance filenames below)":
+                                         "rendered K8s Job/Deployment/Service manifests actually submitted;
                                           every image: field is a concrete tag, BEXHOMA_PACKAGE_VERSION
                                           already substituted — the authoritative source for image versions",
+                 "experiment.yml / experiment.yaml, contract_catalog.yml, contract_result.yml,
+                  catalog.yaml, environment.yml (whichever exist)":
+                                         "the input(s) this run was actually built from, not a K8s manifest —
+                                          a YAML-driven run (experiment.py) copies the experiment.yml/.yaml it
+                                          was given, plus (catalog-driven only) the contract_catalog.yml/
+                                          contract_result.yml pair that governed it, or (self-specified only)
+                                          any catalog:/environment: pointer files the spec named; a hand-typed
+                                          python tpch.py ... invocation writes none of these",
                  "{pod-name}.describe.log": "kubectl describe pod: scheduling/image-pull/restart/OOMKill events
                                               for that specific Pod object",
                  "{job-name}.describe.job.log": "kubectl describe job (loading/generator jobs only; .job.log,
@@ -55,26 +67,37 @@ provenance:                              # pre-existing files, never written or 
   loading:      {"*-loading-*.sql.log / *-loading-*.sh.log": "rendered script SOURCE despite the .log suffix",
                  "*-loading-*.stdout.log": "stdout of that script",
                  "*-loading-*.stderr.log": "stderr — check first on a silent loading failure"}
-  execution:    {"bexhoma-benchmarker-*.log":            "raw per-pod benchmarker/driver stdout",
+  benchmarking: {"bexhoma-benchmarker-*.log":            "raw per-pod benchmarker/driver stdout",
                  "bexhoma-benchmarker.*.all.df.pickle":  "cached parsed+aggregated DataFrame",
                  "queries.config":                        "literal SQL text — DBMSBenchmarker-family (TPC-H/TPC-DS) only"}
-  monitoring:   {"query_{component}_metric_{key}.csv":   "wide format: one column per connection, one row per Prometheus scrape"}
-  restarts:     {"bexhoma-sut-*-restarts.json":          "per-pod SUT container restart counts"}
-  sut_logs:     {"bexhoma-sut-{configuration}-{code}.yml":                                    "SUT Deployment manifest — written once, no experiment_run segment",
+  monitoring:   {"query_{component}_metric_{key}.csv":   "wide format: one column per connection, one row per Prometheus scrape;
+                                                            {component} (e.g. loading/benchmarking/loader/benchmarker/datagenerator)
+                                                            is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency,
+                                                            not bexhoma's to rename freely — see monitoring.md's component_title
+                                                            column for the human-readable pairing"}
+  restarts:     {"bexhoma-sut-{configuration}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one snapshot per experiment_run; aggregate by max per pod (restartCount is cumulative across runs, same pod, not recreated), not by summing every file"}
+  sut_logs:     {"bexhoma-sut-{configuration}-{code}-{experiment_run}.yml":                    "SUT Deployment manifest — one archived copy per experiment_run, even when identical to the previous run's, since the live Deployment itself is restarted in place rather than recreated",
                  "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.{container}.log":  "SUT container stdout, one capture per experiment_run",
                  "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.describe.log":     "kubectl describe pod, one capture per experiment_run"}
-                 # see "Result-folder filenames vs. report identifiers" below for why the manifest has
-                 # no experiment_run segment but the log/describe files do
+                 # see "Result-folder filenames vs. report identifiers" below for the one remaining
+                 # asymmetry: the live k8s object's own name has no experiment_run segment, even
+                 # though every filename on disk (including its own archived manifest) does
 
 versions:                                # see Known gaps below for what's genuinely still missing
   images: recorded_as_tag_not_digest     # every submitted manifest's image: field is a concrete tag
                                           # (provenance.workflow *.yml); connections.config's own
                                           # `dockerimage` field mirrors the SUT's resolved tag too;
                                           # no sha256 digest either way, so a re-pushed tag is invisible
-  bexhoma: recorded_via_image_tag        # BEXHOMA_PACKAGE_VERSION in every bexhoma/* image tag is
+  bexhoma: recorded_directly_and_via_image_tag
+                                          # report/index.md frontmatter's bexhoma_version field records
+                                          # the installed bexhoma.__version__ at report-generation time
+                                          # (can differ from the version that actually ran the experiment
+                                          # if -rp/--report is applied later, e.g. `bexhoma summary -e
+                                          # <code> -rp`, after an upgrade); for the submission-time version,
+                                          # BEXHOMA_PACKAGE_VERSION in every bexhoma/* image tag is
                                           # substituted with the real installed version before the
                                           # manifest is written to the result folder
-                                          # (clusters.py::create_object_from_file())
+                                          # (clusters.py::create_object_from_file()) and can't drift later
   dbmsbenchmarker: not_recorded          # baked into the bexhoma/benchmarker_dbmsbenchmarker image,
                                           # whose tag tracks bexhoma's own version, not
                                           # dbmsbenchmarker's — genuinely not recoverable
@@ -107,14 +130,14 @@ segments from the right, no lookup table needed:
 
 | Term | Meaning | Example |
 |---|---|---|
-| `configuration` | SUT instance name | `PostgreSQL-1` |
+| `configuration` | SUT instance name (original case when shown standalone, e.g. `PostgreSQL-1`) | `PostgreSQL-1` |
 | `experiment_run` | Repeat counter for the whole experiment (`-nc`) | `2` |
 | `client` | 1-based index of the benchmark phase/round within a run (`-ne`) | `3` |
-| `phase` | `<configuration>-<experiment_run>-<client>` | `PostgreSQL-1-2-3` |
+| `phase` | `<configuration>-<experiment_run>-<client>`, lowercased | `postgresql-1-2-3` |
 | `benchmark_run` | 1-based index of a parallel benchmark job within a round (query stream vs. refresh stream, etc.) | `1` |
-| `job` | `<phase>-<benchmark_run>` | `PostgreSQL-1-2-3-1` |
+| `job` | `<phase>-<benchmark_run>`, lowercased | `postgresql-1-2-3-1` |
 | `pod` | 1-based index of a driver pod within a job | `1` |
-| `connection` | `<job>-<pod>` | `PostgreSQL-1-2-3-1-1` |
+| `connection` | `<job>-<pod>`, lowercased | `postgresql-1-2-3-1-1` |
 
 `code` (the result folder's own directory name) is a Unix epoch timestamp
 in seconds, assigned once at experiment start — unique and monotonically
@@ -135,17 +158,20 @@ Decode these the same way — count from `code`, not from the right — since a
 trailing Kubernetes pod suffix (a hash plus 5 random characters) isn't part
 of the schema and can't be told apart from it by position alone.
 
-**The SUT Deployment is the one asymmetric case.** It has exactly one
-manifest per configuration (`bexhoma-sut-{configuration}-{code}.yml`,
-**no** `experiment_run` segment), because the Deployment itself is written
-once, before any `-nc` run starts, and persists across all of them. But its
-stored `.log`/`.describe.log` files *do* carry `experiment_run` — spliced in
-directly after `code`, same position as everywhere else
-(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`) — because
-each run can restart that same long-lived pod, and each restart's evidence
-is captured separately. A manifest with no run segment next to a log with
-one is therefore expected, not a naming bug: only one of the two objects
-(the pod) actually recurs per run.
+**The SUT Deployment's own k8s identity is the one asymmetric case — but its
+filenames are not.** The live Deployment object is restarted in place across
+every `-nc` repeat rather than recreated, so its `metadata.name` (and the
+service/pod names derived from it) stay identical run after run, with no
+`experiment_run` segment. Every *filename* related to it, however, is
+experiment_run-scoped like everything else: its manifest is archived as
+`bexhoma-sut-{configuration}-{code}-{experiment_run}.yml` — a fresh copy
+written every run (even when byte-identical to the previous run's, since the
+Deployment spec didn't change), not just its `.log`/`.describe.log` captures
+(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`). So an
+agent decoding filenames never needs a special case for the SUT — only code
+that resolves a filename back to *which live k8s object* it came from needs
+to know that several manifest files can point at the same, still-running
+Deployment.
 
 ## Whether `report/` exists at all
 
@@ -166,7 +192,7 @@ column an agent should treat as "the" headline number:
 | Benchmark type | Entry script | Key metric column(s) |
 |---|---|---|
 | DBMSBenchmarker (TPC-H/TPC-DS) | `tpch.py`, `tpcds.py` | `Geo Times [s]`, `Power@Size [~Q/h]`, `Throughput@Size` |
-| YCSB | `ycsb.py` | `[OVERALL].Throughput(ops/sec)` (loading and execution phase, tested separately) |
+| YCSB | `ycsb.py` | `[OVERALL].Throughput(ops/sec)` (loading and benchmarking phase, tested separately) |
 | HammerDB TPC-C | `hammerdb.py` | `NOPM` |
 | Benchbase | `benchbase.py` | `Throughput (requests/second)` |
 | Hardware (fio/sysbench/sockperf/netperf) | `hardware.py` | IOPS / CPU events-per-sec / message rate / transaction rate, per active probe |
@@ -195,6 +221,9 @@ column an agent should treat as "the" headline number:
   archived-corridor or cross-run regression check. "Compare only within this
   experiment code" (see every `index.md`'s Interpretation Rules) is a rule an
   agent must apply itself — nothing in the result folder does it automatically.
+  `contract_catalog.yml`'s `experiment_schema.fields.follow_up_of` lets an
+  experiment.yml record which prior experiment_code it follows up on, but
+  that's bookkeeping only — nothing reads or validates it yet.
 - **Per-system post_load selection isn't a queryable field.** A catalog-driven
   experiment can choose, per named system, whether indexes/constraints/
   statistics were applied after loading (`contract_catalog.yml`'s `systems[].post_load`
@@ -211,6 +240,6 @@ column an agent should treat as "the" headline number:
   `index.md`'s eleven sections, the Full Metric Catalog.
 - `bexhoma/report_writer.py` module docstring — the same output contract,
   embedded next to the code that implements it.
-- `bexhoma/experiments/CLAUDE.md` §9 — full `show_summary()` call graph,
+- `bexhoma/experiments/README.md` §9 — full `show_summary()` call graph,
   per-benchmark-type evaluator/column details, result-folder file naming for
   every benchmarker type (§7).

@@ -52,6 +52,7 @@ class TPCDS(DBMSBenchmarkerBenchmark):
         datatransfer = args.datatransfer
         num_loading_split = args.num_loading_split
         verbose_explain = args.verbose_explain
+        store_explain = args.store_explain
         timeout = int(args.timeout)
         if mode == 'run':
             experiment.set_queryfile('queries-tpcds.config')
@@ -115,6 +116,8 @@ class TPCDS(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += "\nData transfer volume per query is also measured."
             if verbose_explain:
                 experiment.workload['info'] += "\nEXPLAIN statements are run and printed after each query."
+            if store_explain:
+                experiment.workload['info'] += "\nEXPLAIN statements are run and stored in the protocol after the first run of each query."
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
             if init_indexes or init_constraints or init_statistics:

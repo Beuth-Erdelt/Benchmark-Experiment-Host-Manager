@@ -9,6 +9,8 @@
 #   when:         the condition under which a rule/field actually applies
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
 
+catalog_contract_version: "1.0.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+
 catalog_concepts:
   experimental_design:
     semantics: "turn constraints into controls or factors according to the hypothesis"
@@ -115,6 +117,20 @@ experiment_schema:
       required: true
       values: [system, concurrency, cpu, memory]
       semantics: "factor(s) the experiment isolates, e.g. [system] or [system, concurrency]"
+    follow_up_of:
+      type: str
+      required: false
+      semantics: "the experiment_code (contract_result.yml's structure.experiment_code --
+        a unix-timestamp-seconds string) of a prior run this experiment follows up on"
+      why: "lets an agent reconstruct comparison lineage structurally instead of
+        relying on prose buried in hypothesis; feeds the not-yet-implemented
+        cross_experiment_comparison validity check (see contract_result.yml's
+        validity/known_gaps) once that exists"
+      when: "set only when this experiment is a deliberate follow-up to a specific
+        prior run; omit entirely for a first/standalone experiment"
+      out_of_scope: "does not itself enforce or verify anything -- nothing in the
+        result folder or this catalog checks that the named experiment_code
+        actually exists or ran a comparable workload"
     workload:
       type: object
       fields:
@@ -149,14 +165,19 @@ experiment_schema:
           type: object
           required: false
           semantics: "same shape as loading.post_load above; replaces the
-            shared default for THIS system only"
-          when: "every system in one experiment currently has to resolve to
-            the same effective post_load (the shared default, or matching
-            per-system overrides)"
-          out_of_scope: "an experiment where systems genuinely need to
-            diverge on post_load must be split into separate per-system
-            experiments instead -- per-system post_load divergence within
-            one experiment.yml is not supported yet"
+            shared default for THIS system only. Systems may diverge freely --
+            e.g. PostgreSQL: {indexes: true} with PgDuckDB's post_load omitted
+            entirely -- indexes/constraints/statistics are independent
+            switches (see workloads.tpch.loading.post_load below), so every
+            one of the 8 combinations is legal per system"
+          when: "when every named system resolves to the same effective
+            post_load (the shared default, or matching per-system overrides),
+            bexhoma/spec.py::build_argv() emits it as tpch.py's shared
+            -xii/-xic/-xis CLI flags; when systems diverge, those flags are
+            global switches that can't represent the difference, so
+            resolve_physical_design_overrides() resolves the per-system
+            selection separately and experiment.py applies it in-process via
+            SutConfiguration.set_experiment(indexing=...) -- not through argv"
     observe:
       type: object
       why: "monitoring metrics only become reliable after a few scrape
@@ -256,10 +277,6 @@ workloads:
         why: "repeat each query N times per round; also useful for
           statistical verification (more samples per query) and to prolong
           a short-running round so monitoring metrics have time to warm up"
-      verify_result:
-        type: bool
-        default: false
-        why: "validate result rows meet basic sanity checks"
       measure_datatransfer:
         type: bool
         default: false
@@ -279,10 +296,6 @@ workloads:
         type: bool
         default: false
         why: "shuffle query execution order independently per stream"
-      limit_import_table:
-        type: str
-        default: ""
-        why: "import only this table (partial re-loads)"
       refresh_streams:
         type: int
         default: 0
@@ -291,10 +304,10 @@ workloads:
         type: int
         default: 0
         why: "starting OFFSET+1 for the refresh stream"
-      verbose_explain:
+      store_explain:
         type: bool
         default: false
-        why: "run and print configured EXPLAIN statements after each benchmark query"
+        why: "run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol"
         when: "requires an 'explain' key in the DBMS connection's JDBC config"
 
     loading:
@@ -318,6 +331,9 @@ workloads:
         # legality menu (option names + legal values) for tpch; support vs.
         # selection are documented in catalog_concepts.physical_design and
         # experiment_schema.fields.systems.item_fields.post_load above.
+        # indexes/constraints/statistics are mutually independent -- every one
+        # of the 8 boolean combinations maps to its own k8s-cluster.config
+        # volumes.tpch.initscripts key (bexhoma/spec.py::resolve_indexing_key()).
         indexes:
           type: bool
           default: false

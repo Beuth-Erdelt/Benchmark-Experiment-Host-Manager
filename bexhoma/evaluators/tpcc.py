@@ -45,6 +45,17 @@ class TpccEvaluator(LogEvaluator):
     :param include_loading: Whether loading-phase results are expected.
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
+    def get_terminals(self, loading_parameters):
+        """
+        Returns the number of HammerDB virtual users from ``HAMMERDB_VUSERS``.
+
+        :param loading_parameters: The connection's ``loading_parameters`` dict.
+        :type loading_parameters: dict
+        :return: Virtual user count, or ``0`` when not set.
+        :rtype: int
+        """
+        return loading_parameters.get('HAMMERDB_VUSERS', 0)
+
     def log_to_df(self, filename):
         """
         Parses a HammerDB TPC-C pod log file into a DataFrame.
@@ -123,7 +134,7 @@ class TpccEvaluator(LogEvaluator):
                 efficiency = round(100. * float(result_tuples[0][0][0]) / sf_int / 12.86, 2)
             else:
                 efficiency = 0
-            phase = configuration_name + '-' + experiment_run + '-' + client
+            phase = (configuration_name + '-' + experiment_run + '-' + client).lower()
             job = connection_name
             connection = connection_name + '-' + child
             latency_values = list(extracted_data.values())

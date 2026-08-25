@@ -19,7 +19,7 @@ SERVICE_PORT_NAMES_ALWAYS_KEPT = ('port-dbms', 'port-bus', 'port-web')
 
 
 class LifecycleManager:
-    """Manages SUT, monitoring, maintaining, loading start/stop and port forwarding.
+    """Manages SUT, monitoring, loading start/stop and port forwarding.
 
     :param config: The parent configuration this manager belongs to.
     :type config: SutConfiguration
@@ -32,37 +32,6 @@ class LifecycleManager:
         :type config: SutConfiguration
         """
         self._config = config
-
-    def start_maintaining(
-        self,
-        app: str = '',
-        component: str = 'maintaining',
-        experiment: str = '',
-        configuration: str = '',
-        parallelism: int = 1,
-        num_pods: int = 1,
-    ) -> None:
-        """Start a maintaining job.
-
-        :param app: App label.
-        :param component: Component label (default ``'maintaining'``).
-        :param experiment: Experiment code.
-        :param configuration: DBMS configuration name.
-        :param parallelism: Number of parallel pods in the job.
-        :param num_pods: Total pods that must complete.
-        """
-        cfg = self._config
-        if len(app) == 0:
-            app = cfg.appname
-        if len(configuration) == 0:
-            configuration = cfg.configuration
-        if len(experiment) == 0:
-            experiment = cfg.code
-        job = cfg.manifest.create_manifest_maintaining(
-            app=app, component='maintaining', experiment=experiment,
-            configuration=configuration, parallelism=parallelism, num_pods=num_pods)
-        cfg.logger.debug("Deploy " + job)
-        cfg.experiment.cluster.create_object_from_file(job)
 
     def create_monitoring(
         self,
@@ -209,11 +178,12 @@ scrape_configs:
                                             prometheus_timeout=cfg.prometheus_timeout)
                                     elif ('blackbox' in application_monitoring
                                           and application_monitoring['blackbox']):
+                                        blackbox_target = application_monitoring['blackbox_target']
                                         app_monitor_targets = (
-                                            "\n          - postgres@localhost:5432/postgres?sslmode=disable\n")
+                                            "\n          - " + blackbox_target.format(database='postgres') + "\n")
                                         if cfg.tenant_per == 'database' and cfg.num_tenants > 0:
                                             connections = [
-                                                f"          - postgres@localhost:5432/tenant_{i}?sslmode=disable"
+                                                "          - " + blackbox_target.format(database=f'tenant_{i}')
                                                 for i in range(cfg.num_tenants)
                                             ]
                                             app_monitor_targets += "\n".join(connections)
@@ -270,8 +240,9 @@ scrape_configs:
       - targets:
           - {master}:9500
         labels:
-          app: mysql-app""".format(
+          app: {app_label}""".format(
                                             master=name_sut,
+                                            app_label=cfg.docker.lower() + '-app',
                                             prometheus_interval=cfg.prometheus_interval,
                                             prometheus_timeout=cfg.prometheus_timeout)
                         endpoints_cluster = cfg.experiment.cluster.get_service_endpoints(
@@ -365,44 +336,6 @@ scrape_configs:
             app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             cfg.experiment.cluster.delete_service(service)
-
-    def stop_maintaining(
-        self,
-        app: str = '',
-        component: str = 'maintaining',
-        experiment: str = '',
-        configuration: str = '',
-    ) -> None:
-        """Stop a maintaining job and remove all its pods.
-
-        :param app: App label.
-        :param component: Component label (default ``'maintaining'``).
-        :param experiment: Experiment code.
-        :param configuration: DBMS configuration name.
-        """
-        cfg = self._config
-        if len(app) == 0:
-            app = cfg.appname
-        if len(configuration) == 0:
-            configuration = cfg.configuration
-        if len(experiment) == 0:
-            experiment = cfg.code
-        jobs = cfg.experiment.cluster.get_jobs(app, component, experiment, configuration)
-        for job in jobs:
-            success = cfg.experiment.cluster.get_job_status(job)
-            print(job, success)
-            cfg.experiment.cluster.delete_job(job)
-        pods = cfg.experiment.cluster.get_job_pods(app, component, experiment, configuration)
-        for pod in pods:
-            status = cfg.experiment.cluster.get_pod_status(pod)
-            print(pod, status)
-            containers = cfg.experiment.cluster.get_pod_containers(pod)
-            for container in containers:
-                stdout = cfg.experiment.cluster.pod_log(pod=pod, container=container)
-                filename_log = cfg.path + '/' + pod + '.' + container + '.log'
-                with open(filename_log, "w") as log_file:
-                    log_file.write(stdout)
-            cfg.experiment.cluster.delete_pod(pod)
 
     def stop_loading(
         self,
@@ -582,7 +515,15 @@ scrape_configs:
             app=app, component=component,
             experiment=cfg.get_experiment_name(), configuration=configuration)
         template = cfg.sut_template
-        deployment_experiment = cfg.experiment.path + '/{name}.yml'.format(name=name)
+        # The live Deployment object itself keeps this stable, run-independent
+        # name across every -nc repeat (restarted in place, not recreated) --
+        # see get_deployments() below. Only the archived manifest file gets
+        # experiment_run in its filename, so a fresh copy is written every run
+        # (even when identical) instead of the SUT being the one component
+        # whose manifest never reflects which run it belongs to.
+        experiment_run = str(cfg.num_experiment_to_apply_done + 1)
+        deployment_experiment = cfg.experiment.path + '/{name}-{experiment_run}.yml'.format(
+            name=name, experiment_run=experiment_run)
         sut_manifest_file = cfg.experiment.cluster.yamlfolder + template
         deploys, ssets, pvcs = extract_component_labels(sut_manifest_file)
         print("{:30s}: deployments {}".format(configuration, deploys))
@@ -649,8 +590,11 @@ scrape_configs:
         deployments = cfg.experiment.cluster.get_deployments(
             app=app, component=component,
             experiment=cfg.get_experiment_name(), configuration=configuration)
-        if len(deployments) > 0:
-            return False
+        # Deliberately not an early return: the SUT keeps running (same live
+        # object, same name) across repeat runs, but we still rebuild and
+        # archive this run's own manifest copy below -- only the final
+        # create_object_from_file() submission is skipped when already running.
+        already_deployed = len(deployments) > 0
         print("{:30s}: name of SUT pods = {}".format(configuration, name))
         print("{:30s}: name of SUT service = {}".format(configuration, name))
         if use_storage:
@@ -1074,7 +1018,7 @@ scrape_configs:
                 dep['metadata']['labels']['pool'] = name_pool
                 for label_key, label_value in cfg.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
-                dep['metadata']['labels']['experimentRun'] = str(
+                dep['metadata']['labels']['experiment_run'] = str(
                     cfg.num_experiment_to_apply_done + 1)
                 dep['metadata']['labels']['num_experiment_runs_planned'] = str(
                     cfg.num_experiment_to_apply)
@@ -1302,6 +1246,10 @@ scrape_configs:
                 stream.write(yaml.dump_all(result))
             except yaml.YAMLError as exc:
                 print(exc)
+        if already_deployed:
+            cfg.logger.debug(
+                "SUT already running; archived this run's manifest only: " + deployment_experiment)
+            return False
         cfg.logger.debug("Deploy " + deployment_experiment)
         cfg.experiment.cluster.create_object_from_file(deployment_experiment)
         return True
@@ -1365,8 +1313,6 @@ scrape_configs:
             cfg.experiment.cluster.delete_service(service)
         if cfg.experiment.monitoring_active:
             self.stop_monitoring()
-        if cfg.experiment.maintaining_active:
-            self.stop_maintaining()
         if cfg.experiment.loading_active:
             self.stop_loading()
         if component == 'sut':

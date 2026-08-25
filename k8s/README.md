@@ -86,7 +86,7 @@ For every StatefulSet with `component: X`, `start_sut()` automatically injects t
 `generate_component_name()` in `configurations/base.py` produces all runtime resource names:
 
 ```
-{app}-{component}-{configuration}-{experiment}[-{experimentRun}][-{client}[-{benchmarkRun}]]
+{app}-{component}-{configuration}-{experiment}[-{experiment_run}][-{client}[-{benchmark_run}]]
 ```
 
 All lowercase. Examples:

@@ -47,6 +47,7 @@ def _build_reference_tpch_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xaq', '--xactive-queries', default='', dest='active_queries')
     parser.add_argument('-xdfe', '--xduckdb-force-execution', action='store_true', default=False, dest='duckdb_force_execution')
     parser.add_argument('-xve', '--xverbose-explain', action='store_true', default=False, dest='verbose_explain')
+    parser.add_argument('-xse', '--xstore-explain', action='store_true', default=False, dest='store_explain')
     return parser
 
 

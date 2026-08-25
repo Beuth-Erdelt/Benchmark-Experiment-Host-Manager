@@ -1,5 +1,5 @@
 """
-Fake cluster object for testing :mod:`bexhoma.experiment_builder` without a
+Fake cluster object for testing :mod:`bexhoma.experiments.tpch_builder` without a
 live Kubernetes cluster.
 
 Deliberately does not subclass :class:`bexhoma.clusters.Kubernetes` — that
@@ -37,8 +37,9 @@ class StubCluster:
         self.experiments: list = []
         self.experiments_configfolder = ''
         # Minimal 'tpch' volume/init-script catalog: covers every script key
-        # TPCH.configure_workload() can select (Schema, and the Index* variants
-        # reachable when init_indexes/init_constraints/init_statistics are set).
+        # TPCH.configure_workload() can select (Schema, and every
+        # init_indexes/init_constraints/init_statistics combination via
+        # bexhoma.spec.resolve_indexing_key's initscripts key mapping).
         self.volumes = {
             'tpch': {
                 'id': 'tpch',
@@ -46,7 +47,11 @@ class StubCluster:
                     '': [],
                     'Schema': [],
                     'Index': [],
+                    'Constraints': [],
+                    'Statistics': [],
                     'Index_and_Constraints': [],
+                    'Index_and_Statistics': [],
+                    'Constraints_and_Statistics': [],
                     'Index_and_Constraints_and_Statistics': [],
                 },
             },

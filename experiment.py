@@ -6,7 +6,7 @@ exist (see ``docs/Design-Yaml-Experiment-Entry-Script.md``'s "Relation to
 ``bexhoma/spec.py``" section):
 
 * **Self-specified** (``workload: tpch``, a bare string): built directly in
-  Python via :mod:`bexhoma.experiment_builder` — no argv is generated, no
+  Python via :mod:`bexhoma.experiments.tpch_builder` — no argv is generated, no
   subprocess is spawned, nothing is re-parsed through ``tpch.py``'s own CLI.
 * **Catalog-driven** (``workload: {name: ..., params: ...}``, a dict —
   :mod:`bexhoma.spec`'s schema): resolved against ``catalog.yaml`` into a
@@ -29,13 +29,55 @@ See LICENSE for details.
 """
 import argparse
 import os
+import shutil
 
 import yaml
 
-from bexhoma import experiment_builder, experiment_loader
+from bexhoma.experiments import tpch_builder, tpch_catalog, tpch_loader
 from bexhoma import spec as catalog_spec
 
 __all__ = ["is_catalog_driven", "default_catalog_path", "run_experiment_yaml"]
+
+#: Sibling output contract to contract_catalog.yml -- not itself consulted to
+#: build/validate this run, but copied alongside it so an agent reading the
+#: result folder later never needs the original repo checkout to interpret it.
+_CONTRACT_RESULT_FILENAME = "contract_result.yml"
+
+
+def _contracts_dir() -> str:
+    """
+    Directory holding the repo's input/output contracts.
+
+    :return: Absolute path to ``contracts/``, alongside this file.
+    :rtype: str
+    """
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "contracts")
+
+
+def _copy_catalog_provenance(result_path: str, experiment_yaml_path: str, catalog_path: str) -> None:
+    """
+    Copy the ``experiment.yml`` that was actually run, plus the two contracts
+    that governed it, into the result folder: ``contract_catalog.yml`` (used
+    to validate and translate this run) and ``contract_result.yml`` (documents
+    the shape of the result folder this run produces).
+
+    Plain byte copies, best-effort -- a missing file (e.g. a ``--catalog``
+    override that doesn't exist, or an old checkout without
+    ``contract_result.yml``) is silently skipped rather than aborting an
+    otherwise-valid run.
+
+    :param result_path: Experiment's result folder (the built experiment's ``.path``).
+    :param experiment_yaml_path: Path to the ``experiment.yml`` file that was run.
+    :param catalog_path: Path to the ``contract_catalog.yml`` actually used to
+        validate/translate this run (may differ from the repo default via ``--catalog``).
+    """
+    if os.path.isfile(experiment_yaml_path):
+        shutil.copyfile(experiment_yaml_path, os.path.join(result_path, "experiment.yml"))
+    if os.path.isfile(catalog_path):
+        shutil.copyfile(catalog_path, os.path.join(result_path, "contract_catalog.yml"))
+    result_contract_path = os.path.join(_contracts_dir(), _CONTRACT_RESULT_FILENAME)
+    if os.path.isfile(result_contract_path):
+        shutil.copyfile(result_contract_path, os.path.join(result_path, _CONTRACT_RESULT_FILENAME))
 
 
 def is_catalog_driven(spec: dict) -> bool:
@@ -78,13 +120,25 @@ def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
 
     if is_catalog_driven(raw_spec):
         import tpch
-        catalog = catalog_spec.load_catalog(catalog_path or default_catalog_path(path))
+        resolved_catalog_path = catalog_path or default_catalog_path(path)
+        catalog = catalog_spec.load_catalog(resolved_catalog_path)
         argv = catalog_spec.build_argv(catalog, raw_spec)
         argv.append('-rp')  # YAML-driven runs always get the tiered Markdown report
-        tpch.run(tpch.build_parser().parse_args(argv))
+        parsed_args = tpch.build_parser().parse_args(argv)
+        # Per-system post_load selection (e.g. indexes on PostgreSQL, not on a
+        # co-running PgDuckDB) has no CLI representation -- -xii/-xic/-xis are
+        # global switches -- so it is applied in-process instead, via the same
+        # per-configuration override tpch.py already uses for Citus/tenant cases.
+        parsed_args.physical_design_overrides = tpch_catalog.resolve_physical_design_overrides(catalog, raw_spec)
+        tpch.run(
+            parsed_args,
+            on_experiment_built=lambda experiment: _copy_catalog_provenance(
+                experiment.path, path, resolved_catalog_path
+            ),
+        )
     else:
-        experiment_loader.validate_experiment_yaml(raw_spec)
-        experiment_builder.build_experiment(raw_spec, path)
+        tpch_loader.validate_experiment_yaml(raw_spec)
+        tpch_builder.build_experiment(raw_spec, path)
 
 
 if __name__ == '__main__':

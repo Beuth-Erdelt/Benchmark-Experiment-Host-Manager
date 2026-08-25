@@ -1,4 +1,4 @@
-# bexhoma/experiments — development notes
+# bexhoma/experiments
 
 ---
 
@@ -49,7 +49,7 @@ Each connection dict has the shape:
 
 ```python
 {
-    'name': 'PostgreSQL-1-1-1',      # <configuration>-<experimentRun>-<client>-<benchmarkRun>
+    'name': 'postgresql-1-1-1',       # <configuration>-<experiment_run>-<client>-<benchmark_run>, lowercased
     'parameter': {
         'code': 1234567890,
         'numExperiment': '1',
@@ -89,7 +89,7 @@ Source: `configurations/benchmarking.py::BenchmarkRunner.run_pod()`, invoked as
 
 For each entry in the current client round, `run_pod()`:
 
-1. Builds the **connection name**: `"{configuration}-{experimentRun}-{client}-{benchmark_run}"`.
+1. Builds the **connection name**: `"{configuration}-{experiment_run}-{client}-{benchmark_run}".lower()`.
 2. Constructs the connection dict `c` (described above) and appends it to
    `connections.config`; also writes `{connection}.config` immediately.
 3. Writes benchmarking parameters to a Redis queue:
@@ -600,9 +600,9 @@ the pieces that differ:
 |---|---|---|
 | `_prepare_evaluator(experiment)` | no-op | `DBMSBenchmarkerBenchmark` → `self.evaluator.load_inspector()` |
 | `_show_loading_sections(experiment, is_multitenant)` → `(Section \| None, df_loading)` | builds `### Loading → Per Run` when `loading_is_active()` | `YCSB` → also builds `#### Per Connection` first; guards on `df_loading.empty` |
-| `_show_extra_sections(experiment, df_aggregated_reduced)` → `(list[Section], dict)` | no-op, returns `([], {})` | `DBMSBenchmarkerBenchmark` → runs the secondary-benchmark loop (see §9d), then builds `Latency`/`Errors`/`Warnings` sections; returns `{"num_errors": N, "num_warnings": N}` |
+| `_show_extra_sections(experiment, df_aggregated_reduced)` → `(list[Section], dict, Section \| None)` | no-op, returns `([], {}, None)` | `DBMSBenchmarkerBenchmark` → runs the secondary-benchmark loop (see §9d), then builds `Latency`/`Errors`/`Warnings` sections; returns `{"num_errors": N, "num_warnings": N, "num_active_queries": N, "num_queries_with_explain": N}` plus a report-only `EXPLAIN` section (or `None` when `-se`/`--store-explain` captured nothing) — the full per-query/per-connection EXPLAIN dump is never rendered to stdout, only into `benchmarking.md`; `show_summary()` only shows a pass/fail/skipped Tests-table row for it |
 | `_build_key_metrics_section(df_aggregated_reduced)` → `Section \| None` | no-op, returns `None` | `DBMSBenchmarkerBenchmark`/`YCSB`/`TPCC`/`Benchbase` → surface the exact column(s) their own `record_tests()` tests (Geo Times/Power@Size/Throughput@Size, `[OVERALL].Throughput(ops/sec)`, `NOPM`, `Throughput (requests/second)` respectively), via the shared `_key_metrics_section_from_columns()` helper. Report-only (§9h) — never rendered to stdout. |
-| `evaluator.record_tests(experiment, df_loading, df_reduced, workflow_actual, workflow_planned, **extra)` | `evaluators/logger.py` default: tests workflow only | `evaluators/dbmsbenchmarker.py` → also tests Geo Times, Power@Size, Throughput@Size, SQL errors/warnings (from `extra`); `evaluators/ycsb.py`, `evaluators/tpcc.py`, `evaluators/benchbase.py` → test their own metric columns plus workflow |
+| `evaluator.record_tests(experiment, df_loading, df_reduced, workflow_actual, workflow_planned, **extra)` | `evaluators/logger.py` default: tests workflow only | `evaluators/dbmsbenchmarker.py` → also tests Geo Times, Power@Size, Throughput@Size, SQL errors/warnings, and EXPLAIN coverage (from `extra`; skipped rather than failed when `-se`/`--store-explain` was not used); `evaluators/ycsb.py`, `evaluators/tpcc.py`, `evaluators/benchbase.py` → test their own metric columns plus workflow |
 
 `record_tests()` lives on the **evaluator**, not the `Benchmark`, because the metric
 columns it checks (`df_reduced`) are evaluator-specific; the `extra` kwargs bridge

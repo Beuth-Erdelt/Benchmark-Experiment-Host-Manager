@@ -1,9 +1,7 @@
-# images/ycsb — development notes
+# YCSB images
 
-## Overview
-
-The `images/ycsb/` directory contains Docker images for running YCSB (Yahoo Cloud
-Serving Benchmark) experiments within the Bexhoma framework.
+Docker images for running YCSB (Yahoo Cloud Serving Benchmark) experiments
+within the Bexhoma framework.
 
 ## Directory layout
 
@@ -13,55 +11,20 @@ images/ycsb/
 │   ├── Dockerfile         — benchmarker image definition
 │   ├── benchmarker.sh     — entrypoint: runs 'ycsb run'
 │   ├── workloads/         — YCSB workload template files (a–f)
-│   └── README.md          — environment variable reference
-└── generator/
-    ├── Dockerfile         — generator image definition
-    ├── generator.sh       — entrypoint: runs 'ycsb load'
-    ├── workloads/         — YCSB workload template files (a–f)
-    └── README.md          — environment variable reference
+│   └── README.md          — environment variable reference + execution flow
+├── generator/
+│   ├── Dockerfile         — generator image definition
+│   ├── generator.sh       — entrypoint: runs 'ycsb load'
+│   ├── workloads/         — YCSB workload template files (a–f)
+│   └── README.md          — environment variable reference + execution flow
+└── README.md              — this file
 ```
 
 There is no `create_Dockerfile.py` here, so both Dockerfiles are the canonical
 source (not generated from a template).
 
----
-
-## Execution flow
-
-### Benchmarker pod (`benchmarker.sh`)
-
-1. Capture script start time.
-2. Optionally sleep until `BEXHOMA_TIME_START` (synchronized start across pods).
-3. Pop the pod's child index from the Redis queue
-   `bexhoma-benchmarker-<CONNECTION>-<EXPERIMENT>`.
-4. Compute row-range parameters; override to full key range
-   (`ROW_START=0`, `ROW_PART=YCSB_ROWS`) so every benchmarking pod covers the
-   complete dataset.
-5. Increment and poll the Redis counter
-   `bexhoma-benchmarker-podcount-<CONNECTION>-<EXPERIMENT>` until all
-   `BEXHOMA_NUM_PODS` pods are ready.
-6. Write `db.properties` (JDBC or Redis branch, optionally with batch settings).
-7. Copy workload template → `/tmp/workload`; substitute placeholder tokens via
-   `sed`.
-8. Run `ycsb run` (redis / redis-cluster / jdbc branch, with or without `-s`).
-9. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END` to stdout for the
-   evaluator.
-
-### Generator pod (`generator.sh`)
-
-Same as benchmarker except:
-
-- Queue key is `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>` (scoped by
-  `EXPERIMENT_RUN` because loading is redone from scratch for every experiment_run — see
-  `bexhoma/CLAUDE.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
-  empty rather than defaulting to a fixed child index, since another pod may already own it.
-- Counter key is `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`, followed by the round
-  counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always initialized by
-  Python; only meaningful with more than one parallel loader entry — see `bexhoma/CLAUDE.md`).
-- Row partitioning is **per-pod** (`ROW_PART = YCSB_ROWS / BEXHOMA_NUM_PODS`,
-  `ROW_START = ROW_PART × (BEXHOMA_CHILD − 1)`) so each pod loads a distinct
-  slice of keys without overlap.
-- Runs `ycsb load` instead of `ycsb run`.
+Environment variables for each image are documented in that image's own README.
+This file covers the shared design and decisions that apply across both.
 
 ---
 
@@ -75,8 +38,6 @@ Same as benchmarker except:
 | jemalloc built from source | Better memory allocation performance for Java workloads on Alpine |
 | redis-cli built from source | Alpine packages may lag behind; a known-good stable build is embedded |
 
----
-
 ## Included JDBC drivers
 
 | Driver | Version | Jar |
@@ -89,8 +50,6 @@ Same as benchmarker except:
 | Kinetica | 7.1.8.7 | `kinetica-jdbc-7.1.8.7-jar-with-dependencies.jar` |
 | YugabyteDB | 42.3.5-yb-2 | `jdbc-yugabytedb-42.3.5-yb-2.jar` |
 | YugabyteDB | 42.7.3-yb-3 | `jdbc-yugabytedb-42.7.3-yb-3.jar` (generator only) |
-
----
 
 ## Workload template placeholders
 
@@ -122,13 +81,11 @@ used to build optional `-p` arguments passed directly to the `bin/ycsb` command:
 |---|---|---|
 | `YCSB_MAX_EXECUTION` | `maxexecutiontime` | Seconds; 0 (default) means no limit; flag is omitted when 0 |
 
----
-
 ## Style conventions
 
 - **Dockerfiles**: `ENV` declarations use `KEY=value` form; grouped by concern
-  under section headers.  Each JDBC driver download is a single `RUN` layer.
-- **Shell scripts**: Section banners use `#### Title ####`.  No commented-out
+  under section headers. Each JDBC driver download is a single `RUN` layer.
+- **Shell scripts**: Section banners use `#### Title ####`. No commented-out
   dead code; no debug write-only files.
 - **READMEs**: One entry per ENV, grouped by concern, with clear descriptions of
-  units and defaults.
+  units and defaults; each includes that image's own execution flow.

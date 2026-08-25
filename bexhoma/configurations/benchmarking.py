@@ -84,7 +84,7 @@ class BenchmarkRunner:
             cfg.client = client
         if len(dialect) == 0 and len(cfg.dialect) > 0:
             dialect = cfg.dialect
-        experimentRun = str(cfg.num_experiment_to_apply_done + 1)
+        experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         tools.query.template = cfg.experiment.query_management
         cfg.current_benchmark_connection = connection
         cfg.logger.debug(
@@ -121,7 +121,7 @@ class BenchmarkRunner:
         c['parameter'] = cfg.eval_parameters.copy()
         c['parameter']['parallelism'] = parallelism
         c['parameter']['client'] = client
-        c['parameter']['numExperiment'] = experimentRun
+        c['parameter']['numExperiment'] = experiment_run
         c['parameter']['numBenchmark'] = benchmark_run
         c['parameter']['num_worker'] = cfg.num_worker
         c['parameter']['dockerimage'] = cfg.dockerimage
@@ -177,8 +177,16 @@ class BenchmarkRunner:
             for workload_key, workload_val in cfg.experiment.workload.items():
                 cfg.benchmark.queryconfig[workload_key] = workload_val
             filename = cfg.benchmark.path + '/queries.config'
-            with open(filename, 'w') as output_file:
+            # atomic write: benchmarker pods read this shared file concurrently via
+            # shutil.copyfile() while other configs' run_pod() calls may rewrite it;
+            # a plain open(filename, 'w') truncates before writing, so a pod can
+            # observe a 0-byte file mid-write. os.replace() is a single directory-entry
+            # swap, so a concurrent reader always sees either the old or the new
+            # complete file, never a truncated one.
+            tmp_filename = filename + '.tmp'
+            with open(tmp_filename, 'w') as output_file:
                 output_file.write(str(cfg.benchmark.queryconfig))
+            os.replace(tmp_filename, filename)
         cfg.benchmark.reporterStore.readProtocol()
         cfg.benchmark.generateAllParameters()
         cfg.benchmark.reporterStore.writeProtocol()
@@ -224,7 +232,7 @@ class BenchmarkRunner:
             yamlfile = cfg.manifest.create_manifest_benchmarking(
                 connection=connection, component=component,
                 configuration=configuration, experiment=cfg.code,
-                experimentRun=experimentRun, client=client, parallelism=parallelism,
+                experiment_run=experiment_run, client=client, parallelism=parallelism,
                 alias=c['alias'], num_pods=parallelism, benchmark_run=benchmark_run,
                 env=bm_entry.get('parameters', {}), template_override=template_override)
             cfg.experiment.cluster.create_object_from_file(yamlfile)

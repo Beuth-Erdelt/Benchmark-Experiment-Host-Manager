@@ -99,7 +99,7 @@ def _derive_phase(labels: dict, loading_active: bool, benchmarking_active: bool,
         return 'Loading' if loading_active else 'Starting'
     num_runs_planned = labels.get('num_experiment_runs_planned', '')
     num_rounds_planned = labels.get('num_rounds_planned', '')
-    experiment_run = labels.get('experimentRun', '')
+    experiment_run = labels.get('experiment_run', labels.get('experimentRun', ''))
     if benchmarking_active:
         run_progress = '{}/{}'.format(experiment_run, num_runs_planned) if num_runs_planned else experiment_run
         round_progress = (
@@ -145,7 +145,6 @@ def manage():
                 connection = ''
             cluster.stop_sut(configuration=connection)
             cluster.stop_monitoring(configuration=connection)
-            cluster.stop_maintaining()
             cluster.stop_loading()
             cluster.stop_benchmarker(configuration=connection)
             #cluster.kubectl('delete all -l experiment='+cluster.code)
@@ -154,7 +153,6 @@ def manage():
             experiment = experiments.base(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
             experiment.stop_monitoring()
-            experiment.stop_maintaining()
             experiment.stop_loading()
             experiment.stop_benchmarker()
             cluster.kubectl('delete all -l experiment='+args.experiment)
@@ -190,6 +188,16 @@ def manage():
                         experiment = experiments.benchbase(cluster=cluster, code=code, **sf_kwargs)
                     case _:
                         experiment = experiments.base(cluster=cluster, code=code)
+                # Reconstructing from just type/SF leaves experiment.workload at its
+                # __init__ defaults (e.g. monitoring_components={}). evaluate_results()
+                # uses self.workload['monitoring_components'] to decide which extra
+                # component types to re-transform on the dashboard pod (the 4 hardcoded
+                # ones there don't include 'benchmarking', the SUT-during-benchmarking
+                # component) - without restoring the persisted dict first, -fe silently
+                # skips re-transforming it and show_summary_monitoring() then has nothing
+                # to iterate for that phase, even though the raw per-connection metric
+                # files are still on disk.
+                experiment.workload.update(workload_properties)
                 experiment.num_tenants = workload_properties.get('num_tenants', 0)
                 experiment.tenant_per = workload_properties.get('tenant_per', '')
                 experiment.multi_tenant_volume = workload_properties.get('multi_tenant_volume', False)
@@ -370,8 +378,9 @@ def manage():
                     status = pod.status.phase
                     labels = pod_labels[pod.metadata.name]
                     sut_labels = labels
-                    experimentRun = '{}. '.format(labels['experimentRun']) if 'experimentRun' in labels else ''
-                    apps[configuration][component] = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
+                    run_label = labels.get('experiment_run', labels.get('experimentRun'))
+                    experiment_run_display = '{}. '.format(run_label) if run_label else ''
+                    apps[configuration][component] = "{pod} ({experiment_run}{status})".format(pod='', experiment_run=experiment_run_display, status=status)
                     if 'loaded' in labels:
                         if labels['loaded'] == 'True':
                             apps[configuration]['loaded [s]'] = labels['time_loading']
@@ -408,20 +417,6 @@ def manage():
                 pods_per_status = _pod_status_counts(pods)
                 for status, number in pods_per_status.items():
                     apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
-                ############
-                component = 'maintaining'
-                apps[configuration][component] = ''
-                if args.verbose:
-                    stateful_sets = [s.metadata.name for s in _filter_by_labels(all_stateful_sets, component=component, experiment=experiment, configuration=configuration)]
-                    print("Stateful Sets", stateful_sets)
-                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
-                    print("Maintaining Services", services)
-                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
-                if args.verbose:
-                    print("Maintaining Pods", [pod.metadata.name for pod in pods])
-                num_pods = _pod_status_counts(pods)
-                for status in num_pods.keys():
-                    apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
                 ############
                 component = 'loading'
                 apps[configuration][component] = ''
@@ -467,8 +462,8 @@ def manage():
                 for pod in pods:
                     status = pod.status.phase
                     labels = pod_labels[pod.metadata.name]
-                    experimentRun = '{}. '.format(labels['client']) if 'client' in labels else ''
-                    status_extended = "{pod} ({experimentRun}{status})".format(pod='', experimentRun=experimentRun, status=status)
+                    client_display = '{}. '.format(labels['client']) if 'client' in labels else ''
+                    status_extended = "{pod} ({client}{status})".format(pod='', client=client_display, status=status)
                     num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1
                 for status in num_pods.keys():
                         apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)

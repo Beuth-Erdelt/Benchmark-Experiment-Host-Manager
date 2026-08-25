@@ -93,8 +93,7 @@ class ManifestBuilder:
     """Builds and writes Kubernetes job/deployment YAML manifests.
 
     Wraps ``create_manifest_job``, ``create_manifest_benchmarking``,
-    ``create_manifest_maintaining``, ``create_manifest_loading``,
-    ``get_patched_yaml``, and ``patch_dbms_args``.
+    ``create_manifest_loading``, ``get_patched_yaml``, and ``patch_dbms_args``.
 
     :param config: The parent configuration this builder belongs to.
     :type config: SutConfiguration
@@ -193,7 +192,7 @@ class ManifestBuilder:
         component: str = 'benchmarker',
         experiment: str = '',
         configuration: str = '',
-        experimentRun: str = '',
+        experiment_run: str = '',
         client: str = '1',
         parallelism: int = 1,
         env: dict = {},
@@ -211,7 +210,7 @@ class ManifestBuilder:
         :param component: Component label (e.g. ``'benchmarker'``).
         :param experiment: Experiment code.
         :param configuration: DBMS configuration name.
-        :param experimentRun: Repetition index string.
+        :param experiment_run: Repetition index string.
         :param client: Sequential client-round index.
         :param parallelism: Number of parallel pods.
         :param env: Extra environment variable dict merged into the job manifest.
@@ -229,13 +228,13 @@ class ManifestBuilder:
         if len(app) == 0:
             app = cfg.appname
         code = str(int(experiment))
-        if not experimentRun:
-            experimentRun = str(cfg.num_experiment_to_apply_done + 1)
+        if not experiment_run:
+            experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         if template_override:
             template = template_override
         jobname = cfg.generate_component_name(
             app=app, component=component, experiment=experiment,
-            configuration=configuration, experiment_run=experimentRun,
+            configuration=configuration, experiment_run=experiment_run,
             client=str(client), benchmark_run=benchmark_run)
         servicename = cfg.get_service_sut(configuration=configuration)
         now = datetime.utcnow()
@@ -258,7 +257,7 @@ class ManifestBuilder:
         env_default['BEXHOMA_CONFIGURATION'] = configuration
         env_default['BEXHOMA_SLEEP'] = '60'
         env_default['BEXHOMA_VOLUME'] = cfg.volume
-        env_default['BEXHOMA_EXPERIMENT_RUN'] = experimentRun
+        env_default['BEXHOMA_EXPERIMENT_RUN'] = experiment_run
         env_default['BEXHOMA_PARALLEL'] = str(parallelism)
         env_default['BEXHOMA_NUM_PODS'] = str(num_pods)
         env_default['BEXHOMA_DBMS'] = str(cfg.docker)
@@ -333,7 +332,7 @@ class ManifestBuilder:
         cfg.logger.debug('ManifestBuilder.create_manifest_job({})'.format(jobname))
         cfg.logger.debug(env)
         # Suffixed by benchmark_run (when given) so that two entries sharing the same
-        # (app, component, configuration, experimentRun, client) — e.g. two parallel
+        # (app, component, configuration, experiment_run, client) — e.g. two parallel
         # loader entries, always client=1, distinguished only by data_job/benchmark_run,
         # or two parallel benchmarker entries in the same client round — get their own
         # manifest file on disk instead of the later one silently overwriting the earlier
@@ -341,9 +340,9 @@ class ManifestBuilder:
         benchmark_run_suffix = '-{}'.format(benchmark_run) if benchmark_run else ''
         job_experiment = (
             cfg.experiment.path
-            + '/{app}-{component}-{configuration}-{experiment}-{experimentRun}-{client}{benchmark_run_suffix}.yml'.format(
+            + '/{app}-{component}-{configuration}-{experiment}-{experiment_run}-{client}{benchmark_run_suffix}.yml'.format(
                 app=app, component=component, configuration=configuration,
-                experiment=code, experimentRun=experimentRun, client=client,
+                experiment=code, experiment_run=experiment_run, client=client,
                 benchmark_run_suffix=benchmark_run_suffix).lower()
         )
         try:
@@ -363,7 +362,7 @@ class ManifestBuilder:
                 dep['metadata']['labels']['dbms'] = cfg.docker
                 dep['metadata']['labels']['experiment'] = str(experiment)
                 dep['metadata']['labels']['client'] = str(client)
-                dep['metadata']['labels']['experimentRun'] = str(experimentRun)
+                dep['metadata']['labels']['experiment_run'] = str(experiment_run)
                 dep['metadata']['labels']['volume'] = cfg.volume
                 for label_key, label_value in cfg.additional_labels.items():
                     dep['metadata']['labels'][label_key] = str(label_value)
@@ -375,7 +374,7 @@ class ManifestBuilder:
                 dep['spec']['template']['metadata']['labels']['dbms'] = cfg.docker
                 dep['spec']['template']['metadata']['labels']['experiment'] = str(experiment)
                 dep['spec']['template']['metadata']['labels']['client'] = str(client)
-                dep['spec']['template']['metadata']['labels']['experimentRun'] = str(experimentRun)
+                dep['spec']['template']['metadata']['labels']['experiment_run'] = str(experiment_run)
                 dep['spec']['template']['metadata']['labels']['volume'] = cfg.volume
                 for label_key, label_value in cfg.additional_labels.items():
                     dep['spec']['template']['metadata']['labels'][label_key] = str(label_value)
@@ -424,7 +423,7 @@ class ManifestBuilder:
         component: str = 'benchmarker',
         experiment: str = '',
         configuration: str = '',
-        experimentRun: str = '',
+        experiment_run: str = '',
         client: str = '1',
         parallelism: int = 1,
         alias: str = '',
@@ -445,7 +444,7 @@ class ManifestBuilder:
         :param component: Component label (default ``'benchmarker'``).
         :param experiment: Experiment code.
         :param configuration: DBMS configuration name.
-        :param experimentRun: Repetition index string.
+        :param experiment_run: Repetition index string.
         :param client: Sequential client-round index.
         :param parallelism: Number of parallel pods.
         :param alias: Alias name forwarded to dbmsbenchmarker.
@@ -467,7 +466,7 @@ class ManifestBuilder:
         if len(app) == 0:
             app = cfg.appname
         code = str(int(experiment))
-        experimentRun = str(cfg.num_experiment_to_apply_done + 1)
+        experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         cfg.logger.debug('ManifestBuilder.create_manifest_benchmarking()')
         now = datetime.utcnow()
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
@@ -490,68 +489,11 @@ class ManifestBuilder:
                 template = "jobtemplate-benchmarking-dbmsbenchmarker.yml"
         return self.create_manifest_job(
             app=app, component=component, experiment=experiment,
-            configuration=configuration, experimentRun=experimentRun,
+            configuration=configuration, experiment_run=experiment_run,
             client=client, parallelism=parallelism, env=env, template=template,
             num_pods=num_pods, nodegroup='benchmarking', connection=connection,
             patch_yaml=cfg.benchmarking_patch, benchmark_run=benchmark_run,
             template_override=template_override)
-
-    def create_manifest_maintaining(
-        self,
-        app: str = '',
-        component: str = 'maintaining',
-        experiment: str = '',
-        configuration: str = '',
-        parallelism: int = 1,
-        alias: str = '',
-        num_pods: int = 1,
-        connection: str = '',
-    ) -> str:
-        """Create a maintaining job manifest.
-
-        :param app: App label.
-        :param component: Component label (default ``'maintaining'``).
-        :param experiment: Experiment code.
-        :param configuration: DBMS configuration name.
-        :param parallelism: Number of parallel pods.
-        :param alias: Alias forwarded to dbmsbenchmarker.
-        :param num_pods: Total pod count.
-        :param connection: Connection name label.
-        :return: Path to the written YAML manifest file.
-        :rtype: str
-        """
-        cfg = self._config
-        if len(app) == 0:
-            app = cfg.appname
-        code = str(int(experiment))
-        experimentRun = str(cfg.num_experiment_to_apply_done + 1)
-        connection = cfg.configuration
-        servicename = cfg.get_service_sut(configuration=configuration)
-        cfg.logger.debug('ManifestBuilder.create_manifest_maintaining()')
-        now = datetime.utcnow()
-        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
-        start = now + timedelta(seconds=180)
-        start_string = start.strftime('%Y-%m-%d %H:%M:%S')
-        env = {
-            'BEXHOMA_TIME_NOW': now_string,
-            'BEXHOMA_TIME_START': start_string,
-            'DBMSBENCHMARKER_CLIENT': str(parallelism),
-            'DBMSBENCHMARKER_CODE': code,
-            'DBMSBENCHMARKER_CONNECTION': connection,
-            'BEXHOMA_CONNECTION': connection,
-            'DBMSBENCHMARKER_SLEEP': str(60),
-            'DBMSBENCHMARKER_ALIAS': alias,
-            'SENSOR_DATABASE': 'postgresql://postgres:@{}:9091/postgres'.format(servicename),
-        }
-        env = {**env, **cfg.maintaining_parameters}
-        template = "jobtemplate-maintaining.yml"
-        if len(cfg.experiment.jobtemplate_maintaining) > 0:
-            template = cfg.experiment.jobtemplate_maintaining
-        return self.create_manifest_job(
-            app=app, component=component, experiment=experiment,
-            configuration=configuration, experimentRun=experimentRun,
-            client=1, parallelism=parallelism, env=env, template=template,
-            num_pods=num_pods, nodegroup='maintaining', connection=connection)
 
     def create_manifest_loading(
         self,
@@ -598,7 +540,7 @@ class ManifestBuilder:
             configuration = cfg.configuration
         if len(experiment) == 0:
             experiment = cfg.code
-        experimentRun = str(cfg.num_experiment_to_apply_done + 1)
+        experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         connection = cfg.configuration
         cfg.logger.debug('ManifestBuilder.create_manifest_loading()')
         now = datetime.utcnow()
@@ -618,7 +560,7 @@ class ManifestBuilder:
             template = cfg.jobtemplate_loading
         return self.create_manifest_job(
             app=app, component=component, experiment=experiment,
-            configuration=configuration, experimentRun=experimentRun,
+            configuration=configuration, experiment_run=experiment_run,
             client=1, parallelism=parallelism, env=env, template=template,
             nodegroup='loading', num_pods=num_pods, connection=connection,
             patch_yaml=cfg.loading_patch, benchmark_run=benchmark_run,

@@ -45,6 +45,7 @@ if __name__ == '__main__':
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
     parser.add_argument('-xaq',   '--xactive-queries', help='comma-separated 1-based query numbers to run, e.g. 3,5,6,7 (all other queries are set inactive in the query config uploaded to the cluster; unset = run all queries as defined in the query config file)', default='', dest='active_queries')
     parser.add_argument('-xve',   '--xverbose-explain', help='run and print configured EXPLAIN statements after each benchmark query (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='verbose_explain')
+    parser.add_argument('-xse',   '--xstore-explain', help='run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='store_explain')
     # evaluate args
     args = parser.parse_args()
     if args.debug:
@@ -90,6 +91,8 @@ if __name__ == '__main__':
     shuffle_queries = args.shuffle_queries
     # run and print configured EXPLAIN statements after each query
     verbose_explain = args.verbose_explain
+    # run and store configured EXPLAIN statements in the protocol
+    store_explain = args.store_explain
     # limit to one table
     limit_import_table = args.limit_import_table
     # columnar storage
@@ -167,6 +170,7 @@ if __name__ == '__main__':
         DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
         DBMSBENCHMARKER_DEV = debugging,
         DBMSBENCHMARKER_VERBOSE_EXPLAIN = verbose_explain,
+        DBMSBENCHMARKER_STORE_EXPLAIN = store_explain,
     )
     ##############
     ### add configs of dbms to be tested

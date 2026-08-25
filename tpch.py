@@ -70,7 +70,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     Extracted from ``if __name__ == '__main__':`` so it can be imported and
     fed a synthetic argv (e.g. ``build_parser().parse_args([mode])``) by
-    :mod:`bexhoma.experiment_builder`, instead of re-declaring these flags by hand.
+    :mod:`bexhoma.experiments.tpch_builder`, instead of re-declaring these flags by hand.
 
     :return: Configured argument parser.
     :rtype: argparse.ArgumentParser
@@ -97,10 +97,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xaq',   '--xactive-queries', help='comma-separated 1-based query numbers to run, e.g. 3,5,6,7 (all other queries are set inactive in the query config uploaded to the cluster; unset = run all queries as defined in the query config file)', default='', dest='active_queries')
     parser.add_argument('-xdfe',  '--xduckdb-force-execution', help='force every query through pg_duckdb\'s DuckDB execution engine (PgDuckDB only); off by default so pg_duckdb can cost-base its own routing', action='store_true', default=False, dest='duckdb_force_execution')
     parser.add_argument('-xve',   '--xverbose-explain', help='run and print configured EXPLAIN statements after each benchmark query (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='verbose_explain')
+    parser.add_argument('-xse',   '--xstore-explain', help='run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='store_explain')
     return parser
 
 
-def run(args: argparse.Namespace) -> None:
+def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     """
     Build and run a TPC-H experiment from an already-parsed argparse Namespace.
 
@@ -112,6 +113,13 @@ def run(args: argparse.Namespace) -> None:
     re-parsing anything through this module's own CLI a second time.
 
     :param args: Parsed CLI arguments, as returned by ``build_parser().parse_args(...)``.
+    :param on_experiment_built: Optional callback, invoked with the built
+        experiment right after its result folder is created (``experiment.path``
+        already exists on disk) but before ``prepare_testbed()``/``process()``
+        run. Lets a caller drop provenance files (the ``experiment.yml`` that
+        was run, the contracts that governed it) into the result folder even
+        if the run itself later fails. Never called for a plain
+        ``python tpch.py ...`` invocation.
     """
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -162,6 +170,8 @@ def run(args: argparse.Namespace) -> None:
     shuffle_queries = args.shuffle_queries
     # run and print configured EXPLAIN statements after each query
     verbose_explain = args.verbose_explain
+    # run and store configured EXPLAIN statements in the protocol
+    store_explain = args.store_explain
     # limit to one table
     limit_import_table = args.limit_import_table
     # columnar storage
@@ -200,6 +210,8 @@ def run(args: argparse.Namespace) -> None:
     ### prepare and configure experiment
     ##############
     experiment = experiments.tpch(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    if on_experiment_built is not None:
+        on_experiment_built(experiment)
     if args.max_sut_experiment is not None:
         experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "30s"
@@ -253,6 +265,7 @@ def run(args: argparse.Namespace) -> None:
         DBMSBENCHMARKER_SHUFFLE_QUERIES = shuffle_queries,
         DBMSBENCHMARKER_DEV = debugging,
         DBMSBENCHMARKER_VERBOSE_EXPLAIN = verbose_explain,
+        DBMSBENCHMARKER_STORE_EXPLAIN = store_explain,
     )
     if num_refresh_streams > 0:
         experiment.set_default_benchmarking_parameters(
@@ -534,6 +547,16 @@ def run(args: argparse.Namespace) -> None:
                     BEXHOMA_REPLICAS = num_worker_replicas,
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+    ##############
+    ### per-system physical-design overrides (yaml-governed runs only; see
+    ### bexhoma.spec.resolve_physical_design_overrides -- never set by tpch.py's
+    ### own CLI, so hand-typed invocations are unaffected)
+    ##############
+    physical_design_overrides = getattr(args, 'physical_design_overrides', {})
+    for config in experiment.configurations:
+        indexing_key = physical_design_overrides.get(config.docker)
+        if indexing_key:
+            config.set_experiment(indexing=indexing_key)
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

@@ -1154,10 +1154,10 @@ class Kubernetes():
 
     def delete_pvc(self, name):
         """
-        Delete a PersistentVolumeClaim by name.
+        Delete a PersistentVolumeClaim by name. A 404 (already gone) counts as success.
 
         :param name: Name of the PVC to delete.
-        :return: ``True`` if deleted successfully, ``False`` on error.
+        :return: ``True`` if deleted (or already gone), ``False`` on error.
         """
         self.logger.debug(f'Kubernetes.delete_pvc({name})')
         body = kubernetes_client.V1DeleteOptions()
@@ -1165,6 +1165,8 @@ class Kubernetes():
             self.v1core.delete_namespaced_persistent_volume_claim(name, self.namespace, body=body)
             return True
         except ApiException as e:
+            if e.status == 404:
+                return True
             print(f"Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: {e}\n")
             self.cluster_access()
             self.wait(2)
@@ -1185,62 +1187,6 @@ class Kubernetes():
             self.cluster_access()
             self.wait(2)
             return self.delete_service(name=name)
-
-    def _old_start_port_forwarding(self, service='', app='', component='sut'):
-        """
-        .. deprecated::
-            Legacy port-forwarding helper.  Not used in the current Kubernetes flow.
-        """
-        self.logger.debug('Kubernetes.startPortforwarding()')
-        ports = self.get_ports_of_service(app=app, component=component)
-        if not service:
-            service = self.service
-        if not service:
-            service = 'bexhoma-service'
-        self.getInfo(component='sut')
-        if self.deployments:
-            forward = [
-                'kubectl',
-                f'--context {self.context}',
-                'port-forward',
-                'service/' + service,
-            ]
-            forward.extend(ports)
-            your_command = " ".join(forward)
-            subprocess.Popen(your_command, stdout=subprocess.PIPE, shell=True)
-
-    def _old_get_child_processes(self):
-        """
-        .. deprecated::
-            Legacy helper for enumerating child processes.  Not used.
-        """
-        self.logger.debug('Kubernetes.getChildProcesses()')
-        current_process = psutil.Process()
-        children = current_process.children(recursive=False)
-
-    def _old_stop_port_forwarding(self):
-        """
-        .. deprecated::
-            Legacy helper for stopping kubectl port-forward processes.  Not used.
-        """
-        self.logger.debug('Kubernetes.stopPortforwarding()')
-        children = [
-            p for p in psutil.process_iter(attrs=['pid', 'name'])
-            if 'kubectl' in p.info['name']
-        ]
-        for child in children:
-            try:
-                self.logger.debug(
-                    f'Kubernetes.stopPortforwarding() - Child {child.pid} {child.name}'
-                )
-                command = child.cmdline()
-                if command and command[3] == 'port-forward':
-                    self.logger.debug(
-                        f'Kubernetes.stopPortforwarding() - Found child {child.name}'
-                    )
-                    child.terminate()
-            except Exception as e:
-                print(e)
 
     def create_object_from_file(self, filename_source):
         """
@@ -1401,6 +1347,26 @@ class Kubernetes():
         ``max_retries`` times on transient failures (e.g. context deadline
         exceeded).  Raises ``RuntimeError`` if all attempts fail.
 
+        ``filename_remote`` typically lives on a PVC also mounted by other pods
+        (e.g. parallel benchmarker job pods reading ``/results/{code}/queries.config``
+        from their own mount of the same volume). ``kubectl cp`` extracts its tar
+        stream directly into the destination path, which is a truncate-then-write
+        from the perspective of any other pod reading that path concurrently. To
+        avoid a concurrent reader observing a partially-written (or empty) file,
+        the upload lands at ``filename_remote + '.uploadtmp'`` first, then an
+        ``mv`` executed inside the same pod performs an atomic rename into the
+        final path -- rename is a single filesystem metadata operation, so any
+        other pod's mount of the same PVC always sees either the previous
+        complete file or the new complete file, never a truncated one.
+
+        The rename is verified with a follow-up ``test -s`` inside the pod rather
+        than trusted blindly: ``execute_command_in_pod()`` swallows exec failures
+        (e.g. a transient RBAC/permission error on ``pods/exec``) by design, so an
+        unchecked ``mv`` can silently fail while ``run_pod()`` goes on to submit
+        the benchmarker Job believing the file is in place -- the pods then find
+        nothing at their final path. A failed verification retries the whole
+        upload (not just the rename), since the tmp file may also be gone.
+
         :param filename_remote: Destination path inside the container.
         :param filename_local: Source path on the local machine.
         :param pod: Target Pod name.
@@ -1410,11 +1376,21 @@ class Kubernetes():
         :raises RuntimeError: If every attempt returns a failure.
         """
         filename_local = to_unc(filename_local)
-        cmd = f'cp "{filename_local}" {pod}:{filename_remote} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
+        filename_remote_tmp = filename_remote + '.uploadtmp'
+        cmd = f'cp "{filename_local}" {pod}:{filename_remote_tmp} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
             result = self.kubectl(cmd)
             if result is not None:
-                return result
+                self.execute_command_in_pod(
+                    command=f"mv '{filename_remote_tmp}' '{filename_remote}'",
+                    pod=pod, container=container)
+                _, verify_stdout, _ = self.execute_command_in_pod(
+                    command=f"test -s '{filename_remote}' && echo UPLOAD_OK",
+                    pod=pod, container=container)
+                if 'UPLOAD_OK' in str(verify_stdout):
+                    return result
+                print(f"upload_file: rename into place could not be verified for "
+                      f"{pod}:{filename_remote} (attempt {attempt}/{max_retries})")
             if attempt < max_retries:
                 print(f"upload_file: attempt {attempt}/{max_retries} failed, retrying in 10s ...")
                 self.wait(10)
@@ -1480,86 +1456,6 @@ class Kubernetes():
             s.close()
         return found
 
-    def _old_get_timediff(self):
-        """
-        .. deprecated::
-            Legacy helper for measuring clock skew between local host and a remote pod.
-            Not used in the current flow.
-        """
-        print("getTimediff")
-        command = 'date +"%s"'
-        fullcommand = 'kubectl exec ' + cluster.activepod + ' --container=dbms -- bash -c "' + command + '"'
-        timestamp_remote = os.popen(fullcommand).read()
-        timestamp_local = os.popen(command).read()
-        return int(timestamp_remote) - int(timestamp_local)
-
-    def _old_continue_benchmarks(self, connection=None, query=None):
-        """
-        .. deprecated::
-            Legacy method for resuming a DBMSBenchmarker run from a saved result folder.
-            Not used in the current experiment flow.
-        """
-        self.connection = connection
-        self.resultfolder = self.config['benchmarker']['resultfolder']
-        resultfolder = self.resultfolder + '/' + str(self.code)
-        connectionfile = resultfolder + '/connections.config'
-        queryfile = resultfolder + '/queries.config'
-        self.benchmark = benchmarker.benchmarker(
-            fixedConnection=connection,
-            fixedQuery=query,
-            result_path=resultfolder,
-            batch=True,
-            working='connection'
-        )
-        self.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
-        self.benchmark.continueBenchmarks(overwrite=False)
-        self.code = self.benchmark.code
-        self.copyInits()
-        self.copyLog()
-        self.downloadLog()
-        self.benchmark.reporter.append(benchmarker.reporter.metricer(self.benchmark))
-        evaluator.evaluator(self.benchmark, load=False, force=True)
-        return self.code
-
-    def _old_run_reporting(self):
-        """
-        .. deprecated::
-            Legacy reporting trigger.  Not used in the current experiment flow.
-        """
-        evaluator.evaluator(self.benchmark, load=False, force=True)
-        self.benchmark.generateReportsAll()
-
-    def _old_copy_log(self):
-        """
-        .. deprecated::
-            Legacy helper for copying the DBMS log file inside a pod.  Not used.
-        """
-        print("copyLog")
-        if len(self.docker['logfile']):
-            cmd_prepare = 'mkdir /data/' + str(self.code)
-            self.execute_command_in_pod(cmd_prepare, container='dbms')
-            cmd_save = (
-                'cp ' + self.docker['logfile']
-                + ' /data/' + str(self.code) + '/' + self.connection + '.log'
-            )
-            self.execute_command_in_pod(cmd_save, container='dbms')
-
-    def _old_copy_inits(self):
-        """
-        .. deprecated::
-            Legacy helper for copying init-script logs inside a pod.  Not used.
-        """
-        print("copyInits")
-        cmd_prepare = 'mkdir /data/' + str(self.code)
-        self.execute_command_in_pod(cmd_prepare, container='dbms')
-        scriptfolder = f'/data/{self.experiments_configfolder}/{self.docker_key}/'
-        for idx, script in enumerate(self.initscript):
-            cmd_copy = (
-                f'cp {scriptfolder + script}'
-                + f' /data/{self.code}/{self.connection}_init_{idx}.log'
-            )
-            self.execute_command_in_pod(cmd_copy, container='dbms')
-
     def pod_description(self, pod, container=''):
         """
         Return the ``kubectl describe pod`` output for a given Pod.
@@ -1622,19 +1518,6 @@ class Kubernetes():
         init_containers = output.split(" ")
         self.logger.debug(f"Pod {pod} has container {containers + init_containers}")
         return containers + init_containers
-
-    def _old_download_log(self):
-        """
-        .. deprecated::
-            Legacy helper for downloading pod logs via ``kubectl cp``.  Not used.
-        """
-        print("downloadLog")
-        self.kubectl(
-            'cp --container dbms ' + self.activepod
-            + ':/data/' + str(self.code) + '/ '
-            + self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
-            + "/" + str(self.code)
-        )
 
     def get_jobs(self, app='', component='', experiment='', configuration='', client=''):
         """
@@ -2189,26 +2072,6 @@ class Kubernetes():
             self.wait(10, silent=True)
         print("done")
 
-    def stop_maintaining(self, experiment='', configuration=''):
-        """
-        Stop all maintaining Jobs and their Pods in the cluster.
-
-        :param experiment: Filter by experiment code (optional).
-        :param configuration: Filter by DBMS configuration name (optional).
-        """
-        app = self.appname
-        component = 'maintaining'
-        jobs = self.get_jobs(app, component, experiment, configuration)
-        for job in jobs:
-            success = self.get_job_status(job)
-            self.logger.debug(f"Job and status {job} {success}")
-            self.delete_job(job)
-        pods = self.get_job_pods(app, component, experiment, configuration)
-        for pod in pods:
-            status = self.get_pod_status(pod)
-            print(pod, status)
-            self.delete_pod(pod)
-
     def stop_loading(self, experiment='', configuration=''):
         """
         Stop all loading Jobs and their Pods in the cluster.
@@ -2455,7 +2318,7 @@ class Kubernetes():
         experiment code segment of ``pod_name`` — e.g.
         ``bexhoma-sut-postgresql-32gi-1784910886-3-7bd45c7b95-pwzkz`` — so
         SUT log/describe filenames follow the same
-        ``<configuration>-<code>-<experimentRun>-...`` scheme already used
+        ``<configuration>-<code>-<experiment_run>-...`` scheme already used
         for job manifest filenames, instead of trailing it after
         Kubernetes' own pod-hash/random suffix.
 

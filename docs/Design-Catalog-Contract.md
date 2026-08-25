@@ -359,6 +359,7 @@ workloads:
       refresh_streams:        {type: int, default: 0, why: "number of RF1/RF2 refresh-stream pairs run parallel to query streams"}
       refresh_stream_offset:  {type: int, default: 0, why: "starting OFFSET+1 for the refresh stream"}
       verbose_explain:        {type: bool, default: false, why: "run and print configured EXPLAIN statements after each benchmark query (requires an 'explain' key in the DBMS connection's JDBC config)"}
+      store_explain:          {type: bool, default: false, why: "run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an 'explain' key in the DBMS connection's JDBC config; independent of verbose_explain)"}
     loading:
       pods:    {type: int, min: 1, why: "number of parallel loader pods"}
       threads: {type: int, min: 1, why: "loader threads, split across pods"}
@@ -722,6 +723,15 @@ checks all three are present and non-empty before resolving anything else —
 an experiment.yml that can't say what it's testing fails immediately,
 rather than producing a technically-valid but purposeless run.
 
+A fourth, optional header field, `follow_up_of`, names the `experiment_code`
+of a prior run this one follows up on (e.g. `follow_up_of: "1785578016"`).
+Unlike `title`/`hypothesis`/`discriminates` it's never required — omit it for
+a standalone experiment — and `validate_experiment()` only checks its type
+(a string) when present. It exists so lineage between runs is a structured
+field an agent can read directly, instead of prose embedded in `hypothesis`
+(see contract_result.yml's `known_gaps` for why this doesn't fully close the
+cross-experiment-comparison gap: nothing reads or enforces it yet).
+
 ## Top-level shape
 
 `mode`, `title`, `hypothesis`, `discriminates`, `workload`, `loading`,
@@ -849,16 +859,22 @@ systems:
 ```
 
 This parses and validates (legality/support are both checked per system,
-per "Validation ordering" above) but **fails at `build_argv()`** with
-`SpecError`: `PostgreSQL` and `PgDuckDB` resolve to different effective
-post_load, and `tpch.py`'s `-xii`/`-xic`/`-xis` have no per-system scope to
-express that difference. The schema can state the intent; the CLI
-translation layer cannot execute it yet — closing that gap for real means
-giving `tpch.py` itself a scoped mechanism (e.g. extending the existing
-`--set @CONFIG` scoping used for resource-swept knobs to these flags too),
-which is out of scope for the phase-1 translator described here. Until then,
-an experiment that genuinely needs asymmetric post_load treatment has to be
-split into separate per-system runs.
+per "Validation ordering" above) and now translates: `PostgreSQL` and
+`PgDuckDB` resolve to different effective post_load, so `build_argv()` emits
+none of `-xii`/`-xic`/`-xis`/`-xcol` (a global flag can't represent a
+divergent selection), and `bexhoma/experiments/tpch_catalog.py::resolve_physical_design_overrides()`
+instead resolves `{'PostgreSQL': 'Index_and_Constraints_and_Statistics',
+'PgDuckDB': ''}` — one `initscripts` key per system (see `k8s-cluster.config`'s
+`volumes.tpch.initscripts`). `experiment.py`'s catalog-driven dispatch attaches
+this dict to the parsed `argparse.Namespace` as `physical_design_overrides`
+before calling `tpch.run()` in-process; `tpch.py::run()` applies it right
+after building every configuration, via the same per-configuration
+`SutConfiguration.set_experiment(indexing=...)` override already used for
+Citus/tenant special-casing (`tpch.py`'s PostgreSQL tenant-schema block and
+Citus's `init_columns` block). This is a non-CLI channel — no new argparse
+flag exists, and hand-typed
+`python tpch.py ...` invocations never populate `physical_design_overrides`,
+so their behavior is unchanged.
 
 ### Resource sweeps: `resources.memory`/`resources.cpu` as a list
 
@@ -871,7 +887,7 @@ entries resolves to four configurations (`PostgreSQL-32Gi`,
 `derive:`d knob values (`shared_buffers` etc. computed from *that* cell's
 `memory_limit`). This is the same "list = swept, scalar = shared" idiom
 `workload.rounds` already uses for concurrency — see
-`bexhoma/spec.py::build_argv()`'s `cpu_cells`/`memory_cells` handling.
+`bexhoma/experiments/tpch_catalog.py::build_tpch_argv()`'s `cpu_cells`/`memory_cells` handling.
 
 Two things had to change below `spec.py` for this to actually run, not
 just parse:
@@ -956,13 +972,15 @@ same experiment) showed the two-axis model couldn't express it at all:
    omitting them for PgDuckDB in a given `experiment.yml` reads as a
    selection choice, never a support failure.
 
-Selection is a schema-level concept `bexhoma/spec.py` resolves, but not one
-`tpch.py`'s own CLI can currently *execute*: `-xii`/`-xic`/`-xis`/`-xcol` are
-global switches with no per-system scope. `build_argv()` therefore computes
-each named system's effective post_load and, when they all agree, emits the
-shared flags exactly as before; when they diverge, it raises `SpecError`
-rather than silently applying one system's choice to every system — see
-step 4 in "Integration with current code" below.
+Selection is a schema-level concept `bexhoma/spec.py` resolves; `tpch.py`'s
+own CLI still can't *execute* a divergent selection through
+`-xii`/`-xic`/`-xis`/`-xcol` — those stay global switches with no per-system
+scope. `build_argv()` therefore computes each named system's effective
+post_load and, when they all agree, emits the shared flags exactly as before;
+when they diverge, it emits none of them and leaves the actual selection to
+`resolve_physical_design_overrides()` — a separate, non-CLI channel — instead
+of applying one system's choice to every system or refusing to translate at
+all. See step 4 in "Integration with current code" below.
 
 ## Integration with current code (phase 1 — CLI stays ground truth)
 
@@ -1000,13 +1018,14 @@ had to duplicate the ~45 shared-flag defaults `bexhoma/cli_args.py`'s
    `-rc`/`-lc`/`-rr`/`-lr`/`-rss`, `-rst` (derived from the resolved
    profile's `storage_class`) — falling back to `tpch.py`'s own argparse
    defaults for everything else. Before any of that, it computes every named
-   system's effective post_load and requires them all to agree: `-xii`/`-xic`/
-   `-xis`/`-xcol` are global CLI switches with no per-system scope in
-   `tpch.py` today, so a `systems[].post_load` selection that actually
-   *diverges* across systems raises `SpecError` rather than being silently
-   collapsed onto one system's choice — a schema-valid experiment can still
-   be untranslatable for this reason alone, same spirit as the `arg_style`
-   guards below. Per-knob `arg_style` decides how a knob becomes CLI input:
+   system's effective post_load: `-xii`/`-xic`/`-xis`/`-xcol` are global CLI
+   switches with no per-system scope in `tpch.py`, so when every system
+   agrees, the shared flags are emitted exactly as before; when a
+   `systems[].post_load` selection *diverges* across systems, none of those
+   four flags are emitted at all — a global flag can't represent a divergent
+   selection, so `resolve_physical_design_overrides()` (see "Per-system
+   post_load selection" above) resolves it separately, outside argv
+   entirely. Per-knob `arg_style` decides how a knob becomes CLI input:
    - `pg-guc` → a `--set deployment[<systems.<name>.deployment>].container[dbms].<knob>=<value>`
      token pair. `tpch.py`'s own `prepare_testbed()` parses these via the
      *existing* `parse_set_arg()` (`bexhoma/experiments/base.py:81`) exactly
@@ -1076,12 +1095,17 @@ generalizes, not because it's in scope to implement now.
   `extends`/profile/`derive:`/`override`, validates workload↔system support
   and post-load legality/capability/selection, and emits a `tpch.py`
   argument vector (`build_argv()`) or a copy-pasteable command line
-  (`build_command()`). No existing entry script's *logic* is modified — it
-  only produces the CLI arguments a human would otherwise type by hand — but
-  it is genuinely wired into a real invocation path: `experiment.py`'s
-  catalog-driven dispatch calls `build_argv()` and hands the result straight
-  to `tpch.run()` in-process (see `RunExperimentYamlDispatchTest` in
-  `tests/test_experiment_cli.py`).
+  (`build_command()`). `build_argv()` only produces the CLI arguments a human
+  would otherwise type by hand, and is genuinely wired into a real invocation
+  path: `experiment.py`'s catalog-driven dispatch calls it and hands the
+  result straight to `tpch.run()` in-process (see
+  `RunExperimentYamlDispatchTest` in `tests/test_experiment_cli.py`).
+  Per-system `post_load` selection is the one exception to "no entry script
+  logic is modified": `resolve_indexing_key()`/`resolve_physical_design_overrides()`
+  feed `tpch.py::run()`'s small `physical_design_overrides` hook (see
+  "Per-system post_load selection" above) — the only change this catalog work
+  has made to `tpch.py` or `bexhoma/benchmarks/tpch.py` itself, and it adds no
+  CLI flag.
 - `validate_experiment.py` — a dry-run CLI wrapping the same `build_argv()`
   plus `validate_environment()`, without touching a live cluster.
 - `dev/spec_prototype_demo.py` — runs the translation end-to-end and parses
@@ -1093,6 +1117,31 @@ the repo root under `contracts/` — they're the active, consumed contracts,
 not exploratory material. The sample `experiment.yml` and the generated
 `environment.yml` stay under `dev/catalog/`: one is a worked example, the
 other a per-cluster snapshot, neither is schema.
+
+## `environment.yml`: hardware baseline extension (`-xhw`)
+
+The read-only fields above (`nodes`, `excluded_nodes`, `storage_classes`,
+`resource_limits`) are always collected. `environment.py`'s `-xhw` flag adds
+an opt-in, cluster-mutating step on top — a short benchmark sweep across the
+cluster's nodes, merged into the same `environment.yml`:
+
+- Deploys one `Hardware` SUT per node, pinned via the existing
+  `kubernetes.io/hostname` nodeSelector patch, reusing
+  `bexhoma/experiments/hardware.py`/`bexhoma/configurations` unmodified
+  (`bexhoma/hardware_baseline.py` is new orchestration only — no new k8s
+  manifests, no `images/hardware/*` changes).
+- Every node gets two baseline rounds — sysbench (CPU/RAM) and fio (against
+  the node's own container-local scratch space, no PVC) — landing under
+  that node's `hardware_baseline` key as `cpu_mem`/`fio`.
+- `-xhwnet {none,star,full}` optionally adds an inter-node network round
+  (sockperf, TCP — chosen because DBMS traffic is TCP, not sockperf's own
+  UDP default): `star` tests every node against one hub, `full` is a
+  round-robin all-pairs matrix (`N-1` rounds for `N` nodes, not the naive
+  `O(N²)`). Results land in a top-level `network_matrix`, keyed
+  `"{origin}->{target}"`.
+- Always torn down (`try`/`finally` around the sweep); a failure degrades to
+  a partial/empty result rather than aborting the rest of `environment.yml`.
+- CLI reference and worked examples: `docs/Environment.md`.
 
 ## Open questions
 
@@ -1119,12 +1168,3 @@ other a per-cluster snapshot, neither is schema.
 - `tools.hardware`'s shape is a first pass — it wasn't cross-checked against
   a second non-DBMS tool (there isn't one yet), so it's the least-verified
   section here.
-- Per-system `post_load` selection (§"Per-system post_load selection" above)
-  is resolved and validated by `bexhoma/spec.py`, but `build_argv()` can only
-  ever emit it when every named system agrees — genuinely divergent
-  selection raises `SpecError` rather than translating, because `tpch.py`'s
-  `-xii`/`-xic`/`-xis` are global switches. Closing this for real needs a
-  scoped CLI mechanism (most likely extending the existing `--set @CONFIG`
-  scoping, already used for per-cell resource knobs, to these three flags)
-  — not attempted here since it touches `tpch.py`/`bexhoma/benchmarks/tpch.py`
-  itself, not just the catalog/translator layer.

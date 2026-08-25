@@ -5,6 +5,8 @@ Reads pre-generated update files from `/data/tpch-refresh/SF<SF>/` on the PVC.
 Runs as the main container (`benchmark_run=2`) of the refresh benchmarker job,
 in parallel with the query-stream benchmarker (`benchmark_run=1`).
 
+See [../README.md](../README.md) for the shared refresh-stream pipeline design.
+
 ## Environment variables
 
 | Variable | Default | Description |
@@ -27,8 +29,16 @@ in parallel with the query-stream benchmarker (`benchmark_run=1`).
 
 ## Execution flow
 
-1. Sync with benchmarker job counter and round counter via Redis.
-2. For each set K from `OFFSET+1` to `OFFSET+STREAMS`:
+1. Compute `FIRST_SET = OFFSET+1`, `LAST_SET = OFFSET+STREAMS`.
+2. Determine `destination_raw` (same logic as the generator).
+3. Sync: decrement **job counter** `bexhoma-benchmarker-podcount-job-<CONNECTION>-<EXPERIMENT>`,
+   poll until ≤ 0.
+4. Sync: decrement **round counter**
+   `bexhoma-benchmarker-podcount-round-<EXPERIMENT_RUN>-<CLIENT>-<CONFIGURATION>-<EXPERIMENT>`,
+   poll until ≤ 0. This ensures the refresh stream starts at the same moment as
+   the parallel query stream (`benchmark_run=1`).
+5. For each set K from `FIRST_SET` to `LAST_SET`:
    - RF1: `\COPY orders FROM orders.tbl.uK` then `\COPY lineitem FROM lineitem.tbl.uK`
    - RF2: bulk DELETE lineitem and orders rows whose orderkeys are listed in `delete.K`
-3. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+     (temp table + `DELETE ... IN (SELECT ...)` via heredoc)
+6. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.

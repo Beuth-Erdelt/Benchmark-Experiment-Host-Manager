@@ -2,6 +2,21 @@
 
 Loads pre-generated TPC-DS `.dat` files into MonetDB using `mclient COPY ... FROM STDIN`. Writes a `.monetdb` credentials file before loading. Retries on worker/producer thread errors.
 
+See [../README.md](../README.md) for the shared TPC-DS pipeline design.
+
+## Execution flow (`loader.sh`)
+
+1. Read `BEXHOMA_CHILD` from `/tmp/tpcds/BEXHOMA_CHILD`.
+2. Determine `destination_raw` path.
+3. If `BEXHOMA_SYNCH_LOAD=1`: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
+   then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
+   initialized by Python; only meaningful when the SUT configuration has more than one parallel
+   loader entry — see `bexhoma/README.md`).
+4. Loop over `.dat` files; strip pod suffix from filename to get table name in multi-pod mode.
+5. If `TPCDS_TABLE` is set: only load that table.
+6. Execute `mclient COPY N RECORDS INTO ... FROM STDIN` per table; retry on transient thread errors.
+7. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+
 ## Environment variables
 
 ### Scaling and parallelism

@@ -1,5 +1,5 @@
 """
-Unit tests for :mod:`bexhoma.experiment_builder`, against a stub cluster
+Unit tests for :mod:`bexhoma.experiments.tpch_builder`, against a stub cluster
 object (no live Kubernetes cluster needed).
 
 ``TpchExperiment.process()`` is patched to a no-op in the full-build test:
@@ -21,7 +21,7 @@ from unittest import mock
 
 import yaml
 
-from bexhoma import experiment_builder
+from bexhoma.experiments import tpch_builder as experiment_builder
 from bexhoma.experiments.tpch import TpchExperiment
 
 from .stubs import StubCluster
@@ -166,7 +166,7 @@ class BuildExperimentTest(unittest.TestCase):
 
 
 class BuildPrepareTestbedParameterTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.experiment_builder._build_prepare_testbed_parameter`."""
+    """Tests for :func:`bexhoma.experiments.tpch_builder._build_prepare_testbed_parameter`."""
 
     def test_overlays_yaml_fields_onto_parser_dest_names(self) -> None:
         tpch_module = experiment_builder._import_tpch_module()

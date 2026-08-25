@@ -30,9 +30,10 @@ local/*
 logs_multitenant/*
 .vscode/
 dev/catalog/environment.yml
-environment.yml
-experiment.yml
+environment*.yml
+experiment*.yml
 .venv/
 /inbox/
 dev/catalog/refresh_environment.py
 /status/
+.claude/*

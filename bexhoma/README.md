@@ -1,4 +1,4 @@
-# bexhoma/ — development notes
+# bexhoma/
 
 ---
 
@@ -103,7 +103,7 @@ compatibility with all entry scripts.
 |---|---|
 | `__init__.py` | Re-exports all public symbols; defines `default = SutConfiguration` alias |
 | `base.py` | `SutConfiguration` — the primary class; all `__init__` attributes, `set_*`/`patch_*`/`add_*` helpers, worker-naming methods, direct pod helpers |
-| `status.py` | `ComponentStatus` — SUT/monitoring/loading/maintaining readiness predicates |
+| `status.py` | `ComponentStatus` — SUT/monitoring/loading readiness predicates |
 | `host.py` | `HostProbe` — `get_host_*` and `check_volumes()` methods |
 | `manifest.py` | `ManifestBuilder` — YAML template creation for loading/benchmarking jobs; module-level helpers `find_workloads`, `ensure_arg_pairs`, `patch_container` |
 | `metrics.py` | `MetricsCollector` — Prometheus metric fetching |
@@ -156,12 +156,12 @@ Key attribute groups:
 | Group | Attributes |
 |---|---|
 | Identity | `experiment`, `docker`, `configuration`, `code`, `appname`, `path`, `alias` |
-| Templates | `dockertemplate`, `sut_template`, `jobtemplate_loading`, `jobtemplate_maintaining` |
+| Templates | `dockertemplate`, `sut_template`, `jobtemplate_loading` |
 | Scripts | `script`, `initscript`, `indexing`, `indexscript` |
-| Component parameters | `resources`, `ddl_parameters`, `eval_parameters`, `storage`, `nodes`, `connectionmanagement`, `loading_parameters`, `maintaining_parameters`, `sut_parameters`, `benchmarking_parameters` |
+| Component parameters | `resources`, `ddl_parameters`, `eval_parameters`, `storage`, `nodes`, `connectionmanagement`, `loading_parameters`, `sut_parameters`, `benchmarking_parameters` |
 | Patch dicts | `loading_patch`, `benchmarking_patch` |
-| Scaling | `num_worker`, `num_loading`, `num_maintaining`, `num_loading_pods`, `num_maintaining_pods`, `num_tenants`, `tenant_per` |
-| Monitoring flags | `monitoring_active`, `monitor_app_active`, `maintaining_active`, `loading_active`, `loading_deactivated`, `monitor_loading`, `monitoring_sut` |
+| Scaling | `num_worker`, `num_loading`, `num_loading_pods`, `num_tenants`, `tenant_per` |
+| Monitoring flags | `monitoring_active`, `monitor_app_active`, `loading_active`, `loading_deactivated`, `monitor_loading`, `monitoring_sut` |
 | Timing | `timeLoading`, `timeGenerating`, `timeIngesting`, `timeSchema`, `timeIndex`, `timeLoadingStart`, `timeLoadingEnd`, `loading_timespans`, `benchmarking_timespans` |
 | State | `is_sut_ready`, `are_worker_ready`, `loading_started`, `loading_finished`, `experiment_done` |
 | Deployment bookkeeping | `deployment_infos`, `statefulset_name`, `sut_service_name`, `sut_pod_name`, `volumeid`, `service` |

@@ -119,9 +119,9 @@ except Exception:
     failures.append("get_connections() exception")
 
 # ── MONITORING AGGREGATED PER PHASE AND TENANCY ───────────────────────────────
-sep("get_monitoring_aggregated_per_phase_multitenant('stream') + add_metadata")
+sep("get_monitoring_aggregated_per_phase_multitenant('benchmarking') + add_metadata")
 try:
-    df = collect.get_monitoring_aggregated_per_phase_multitenant("stream")
+    df = collect.get_monitoring_aggregated_per_phase_multitenant("benchmarking")
     df = collect.add_metadata(df)
     check_df(df, "monitoring_aggregated_multitenant", HEADER_COLS)
 except Exception:
@@ -129,11 +129,11 @@ except Exception:
     failures.append("get_monitoring_aggregated_per_phase_multitenant() exception")
 
 # ── MONITORING AGGREGATED PER PHASE ───────────────────────────────────────────
-sep("get_monitoring_aggregated_per_phase('stream') + add_metadata")
+sep("get_monitoring_aggregated_per_phase('benchmarking') + add_metadata")
 try:
-    df = collect.get_monitoring_aggregated_per_phase("stream")
+    df = collect.get_monitoring_aggregated_per_phase("benchmarking")
     df = collect.add_metadata(df)
-    check_df(df, "monitoring_aggregated_stream", HEADER_COLS)
+    check_df(df, "monitoring_aggregated_benchmarking", HEADER_COLS)
 except Exception:
     traceback.print_exc()
     failures.append("get_monitoring_aggregated_per_phase() exception")
@@ -142,7 +142,7 @@ except Exception:
 sep("get_monitoring_timeseries_per_phase() + add_metadata")
 try:
     df = collect.get_monitoring_timeseries_per_phase(
-        codes[0], metric="total_cpu_memory", component="stream")
+        codes[0], metric="total_cpu_memory", component="benchmarking")
     df = collect.add_metadata(df)
     check_df(df, "monitoring_timeseries_per_phase", HEADER_COLS)
 except Exception:
@@ -219,7 +219,7 @@ except Exception:
 # ── MERGED PERFORMANCE + MONITORING (efficiency metrics) ──────────────────────
 sep("Merged performance_multitenant + monitoring_multitenant with E_Tpx / E_Lat / E_RAM")
 try:
-    df_mon  = collect.get_monitoring_aggregated_per_phase_multitenant(type="stream")
+    df_mon  = collect.get_monitoring_aggregated_per_phase_multitenant(type="benchmarking")
     df_perf = collect.get_performance_aggregated_per_phase_multitenant()
     join_keys = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
     cols_to_use = [c for c in df_mon.columns if c not in df_perf.columns]

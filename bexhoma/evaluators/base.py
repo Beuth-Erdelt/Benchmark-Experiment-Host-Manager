@@ -137,8 +137,12 @@ class EvaluatorBase:
             # Matched case-insensitively: configuration names reconstructed from a
             # Kubernetes job/pod name (see transform_all_logs_benchmarking() and
             # transform_all_logs_loading()) are lower-cased by
-            # SutConfiguration.generate_component_name(), but the file was written
-            # with the configuration's original casing (e.g. "PostgreSQL-A2").
+            # SutConfiguration.generate_component_name(). The writer
+            # (experiments/base.py::work_benchmark_list()) now lowercases this
+            # filename too, but result folders from before that fix still have it
+            # written with the configuration's original casing (e.g. "PostgreSQL-A2"),
+            # so this stays case-insensitive rather than assuming every existing
+            # file was written post-fix.
             result = {}
             target = f"bexhoma-experiment-dict-{configuration}.json".lower()
             try:
@@ -560,6 +564,22 @@ class EvaluatorBase:
         """
         with open(self.path + "/queries.config", 'r') as f:
             return ast.literal_eval(f.read())
+    def get_terminals(self, loading_parameters):
+        """
+        Returns the number of client terminals/virtual users a benchmarking
+        tool ran with, read from its own loading-parameter env var.
+
+        The base implementation knows no tool-specific env var and always
+        returns ``0``; subclasses for tools that report a terminal/VU count
+        (e.g. Benchbase, HammerDB) override this.
+
+        :param loading_parameters: The connection's ``loading_parameters`` dict.
+        :type loading_parameters: dict
+        :return: Terminal/VU count, or ``0`` when the tool does not report one.
+        :rtype: int
+        """
+        return 0
+
     def add_connection_to_result(self, c, connection_id, result):
         """
         Appends a flattened connection entry to ``result`` keyed by ``connection_id``.
@@ -599,7 +619,7 @@ class EvaluatorBase:
             'time_ingest': float(c['time_ingested']),
             'time_postload': float(c['time_index']),
             'time_reset': float(c.get('time_reset', 0) or 0),
-            'terminals': loading_parameters.get('BENCHBASE_TERMINALS', loading_parameters.get('HAMMERDB_VUSERS', 0)),
+            'terminals': self.get_terminals(loading_parameters),
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,
             'tenant_id': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
@@ -720,8 +740,8 @@ class EvaluatorBase:
                     self.add_connection_to_result(conn, connection_id, result)
                     # add_connection_to_result copies the mutated conn['name'] which
                     # carries the code prefix.  Use the pod-level name without the
-                    # code prefix so callers see "PostgreSQL-1-1-1-2-1" not
-                    # "1781731967-PostgreSQL-1-1-1-2-1".
+                    # code prefix so callers see "postgresql-1-1-1-2-1" not
+                    # "1781731967-postgresql-1-1-1-2-1".
                     result[connection_id]['connection'] = f"{job_id}-{client_idx}"
         return pd.DataFrame(result).T
     def get_loading_per_connection(self):
