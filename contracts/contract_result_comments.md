@@ -31,6 +31,9 @@ bexhoma source tree.
 
 ## See also
 
+- `docs/AgentWorkflow.md` — the end-to-end agent loop this file is the
+  output half of: question → contracts → `experiment.yml` → validate → run →
+  answer.
 - `docs/AgentResultContract.md` — prose version of this file, with worked
   examples and rationale.
 - `docs/Design-Catalog-Contract.md` — the input-side catalog contract

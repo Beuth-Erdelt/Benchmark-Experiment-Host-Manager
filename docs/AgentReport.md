@@ -206,3 +206,11 @@ python tpch.py run -dbms PostgreSQL -sf 1 -ne 1 -rp
 bexhoma summary -e <code> -rp
 # regenerates the report from local files only, no cluster connection needed
 ```
+
+## See also
+
+- [`AgentWorkflow.md`](AgentWorkflow.md) — the end-to-end loop this report is
+  read in step 6 of: question → contracts → `experiment.yml` → validate → run
+  → answer.
+- [`AgentResultContract.md`](AgentResultContract.md) — the machine-readable
+  contract version of this design doc.
