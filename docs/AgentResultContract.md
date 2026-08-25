@@ -12,7 +12,7 @@ blocks embedded verbatim in every `report/index.md`
 `report/index.md` to interpret an actual run.
 
 ```yaml
-result_contract_version: "1.3.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
+result_contract_version: "1.4.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
                                     # bump tracks report_writer.py's own frontmatter/tier/layout changes
 
 entry_point:
@@ -119,6 +119,19 @@ validity:                                # from experiment._test_results -> repo
     kind: comparative
   verdict: {passed: int, failed: int, skipped: int}   # index.md frontmatter overall_status;
                                                         # only a FAILED row scopes/invalidates metrics below it — skipped never does
+
+answer_contract:                         # how to structure the final written answer, once the above has been read
+  hypothesis:
+    source_file: experiment.yml          # <result_dir>/experiment.yml; fields: title, hypothesis, discriminates, follow_up_of
+    present_when: catalog-driven run     # `python experiment.py run <file>.yml` copies it in at run start
+    absent_when: direct entry-script run # e.g. `python tpch.py run -dbms ...` never had a catalog file to copy —
+                                          # state "no hypothesis recorded", don't reconstruct one from workload params
+    also_copied: [contract_catalog.yml, contract_result.yml]  # frozen at run time, may differ from the repo's current copies
+  steps:
+    - {id: hypothesis, instruction: "restate the question, quoting experiment.yml's hypothesis verbatim when present"}
+    - {id: verdict,     instruction: "pass/fail/skip counts; note any FAILED row scoping a metric below it", source: verdict_shape}
+    - {id: evidence,    instruction: "cite the specific tier-1/tier-2 file and value behind every claim", source: tiers}
+    - {id: follow_up,   instruction: "if unresolved, propose a new experiment.yml with follow_up_of set to this run's experiment_code", source: "experiment.yml discriminates/follow_up_of, else known_gaps.cross_experiment_comparison"}
 ```
 
 ---
