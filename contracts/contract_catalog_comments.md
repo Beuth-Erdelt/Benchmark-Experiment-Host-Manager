@@ -104,6 +104,9 @@ orphaned directory by wiring it back in without knowing why it was unused.
 - `docs/AgentWorkflow.md` — the end-to-end agent loop this file is the
   input half of: question → contracts → `experiment.yml` → validate → run →
   answer.
+- `docs/AgentCatalogContract.md` — prose/condensed-YAML version of this
+  file's shape, worked example, and known gaps — the input-side counterpart
+  to `docs/AgentResultContract.md`.
 - `docs/Design-Catalog-Contract.md` — full design rationale, the
   all-workload/all-system breadth pass this contract was trimmed from, and
   open questions.

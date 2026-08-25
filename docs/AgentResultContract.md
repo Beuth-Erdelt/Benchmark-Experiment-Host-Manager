@@ -252,6 +252,8 @@ column an agent should treat as "the" headline number:
 - [`AgentWorkflow.md`](AgentWorkflow.md) — the end-to-end loop this contract
   is one half of: question → contracts → `experiment.yml` → validate → run →
   answer.
+- [`AgentCatalogContract.md`](AgentCatalogContract.md) — the input-side
+  counterpart: what a valid `experiment.yml` may contain.
 - [`AgentReport.md`](AgentReport.md) — design rationale for the tiered report,
   `index.md`'s eleven sections, the Full Metric Catalog.
 - `bexhoma/report_writer.py` module docstring — the same output contract,

@@ -87,12 +87,15 @@ Conforms to `contract_catalog.yml`'s `experiment_schema`. Three fields are
 required — `title`, `hypothesis`, `discriminates` — plus workload/system
 selection; a fourth, `follow_up_of`, is optional and names a prior run's
 `experiment_code` when this run continues it. See
+[`AgentCatalogContract.md`](AgentCatalogContract.md) for the condensed,
+agent-facing shape of everything `contract_catalog.yml` currently offers
+(the one workload and two systems in scope, their params/knobs/profiles),
 [`dev/catalog/experiment.yml`](../dev/catalog/experiment.yml) for the
 maintained worked example, and
 [`Design-Catalog-Contract.md`](Design-Catalog-Contract.md) for the full field
-reference. `experiment*.yml` is gitignored at the repo root — a scratch
-`./experiment.yml` there is a normal, disposable working copy, not a file
-that needs to be committed.
+reference and design rationale. `experiment*.yml` is gitignored at the repo
+root — a scratch `./experiment.yml` there is a normal, disposable working
+copy, not a file that needs to be committed.
 
 ## Step 4 — validate before running
 
@@ -170,6 +173,9 @@ Entry point: `{resultfolder}/{code}/report/index.md` (only if `-rp` was used
 - [`contracts/contract_result.yml`](../contracts/contract_result.yml) /
   [`contracts/contract_result_comments.md`](../contracts/contract_result_comments.md)
   — the output-side contract and its rationale.
+- [`AgentCatalogContract.md`](AgentCatalogContract.md) — condensed,
+  agent-facing walkthrough of `contract_catalog.yml`: what a valid
+  `experiment.yml` may contain.
 - [`AgentResultContract.md`](AgentResultContract.md) — prose walkthrough of
   `contract_result.yml`, with worked examples.
 - [`AgentReport.md`](AgentReport.md) — design rationale for the tiered report
