@@ -188,6 +188,16 @@ def manage():
                         experiment = experiments.benchbase(cluster=cluster, code=code, **sf_kwargs)
                     case _:
                         experiment = experiments.base(cluster=cluster, code=code)
+                # Reconstructing from just type/SF leaves experiment.workload at its
+                # __init__ defaults (e.g. monitoring_components={}). evaluate_results()
+                # uses self.workload['monitoring_components'] to decide which extra
+                # component types to re-transform on the dashboard pod (the 4 hardcoded
+                # ones there don't include 'benchmarking', the SUT-during-benchmarking
+                # component) - without restoring the persisted dict first, -fe silently
+                # skips re-transforming it and show_summary_monitoring() then has nothing
+                # to iterate for that phase, even though the raw per-connection metric
+                # files are still on disk.
+                experiment.workload.update(workload_properties)
                 experiment.num_tenants = workload_properties.get('num_tenants', 0)
                 experiment.tenant_per = workload_properties.get('tenant_per', '')
                 experiment.multi_tenant_volume = workload_properties.get('multi_tenant_volume', False)
