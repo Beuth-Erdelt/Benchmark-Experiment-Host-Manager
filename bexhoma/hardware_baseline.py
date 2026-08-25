@@ -9,6 +9,18 @@ inter-node network latency (sockperf) as a star (every node vs. one hub) or
 full round-robin matrix, then removes every component the sweep created --
 regardless of whether it succeeded.
 
+The fio round always runs once against each node's own container-local
+(ephemeral) storage, exactly as before. ``run_hardware_baseline()``'s
+``storage_classes`` parameter can additionally request the same fio round
+against one or more named StorageClasses -- each gets a single short-lived
+``Hardware`` SUT, on one node, backed by a throwaway PersistentVolumeClaim
+from that class instead of the node's local disk. Unlike the ephemeral
+round, this deliberately does not repeat per node: a named StorageClass
+(e.g. a Ceph-backed one) is typically served over the network identically
+regardless of which node mounts it, so one PVC per class already gives the
+comparison against local/ephemeral storage without multiplying
+PVC-provisioning (and stuck-PVC teardown) risk by the node count.
+
 This reuses the existing ``Hardware`` benchmark machinery
 (``bexhoma/experiments/hardware.py``, ``bexhoma/configurations``,
 ``bexhoma/evaluators/hardware.py``) unmodified: no new Kubernetes manifests
@@ -71,8 +83,10 @@ _FIO_DEFAULTS = {
     "HARDWARE_FIO_NUMJOBS": "1", "HARDWARE_FIO_ENGINE": "sync", "HARDWARE_FIO_FSYNC": "0",
     "HARDWARE_FIO_FDATASYNC": "0", "HARDWARE_FIO_RWMIXREAD": "50",
 }
+#: TCP, not sockperf's own UDP default: this network round exists to assess
+#: data systems (DBMS traffic is TCP), not raw UDP datagram latency.
 _SOCKPERF_DEFAULTS = {
-    "HARDWARE_SOCKPERF_MODE": "ul", "HARDWARE_SOCKPERF_PROTOCOL": "udp",
+    "HARDWARE_SOCKPERF_MODE": "ul", "HARDWARE_SOCKPERF_PROTOCOL": "tcp",
     "HARDWARE_SOCKPERF_MSGSIZE": "64", "HARDWARE_SOCKPERF_MPS": "max",
 }
 
@@ -80,6 +94,17 @@ _SOCKPERF_DEFAULTS = {
 #: prefixes are added by ``generate_component_name()``; node hostnames are
 #: truncated defensively rather than risking a manifest-name collision.
 _MAX_NODE_ID_LENGTH = 20
+
+#: Same rationale as _MAX_NODE_ID_LENGTH, kept shorter since it is appended
+#: to (not instead of) the node id in an extra storage-class sweep's
+#: configuration name -- see run_hardware_baseline()'s storage_classes param.
+_MAX_STORAGE_CLASS_ID_LENGTH = 10
+
+#: PVC size requested for each extra, named-storage-class fio sweep; only
+#: needs to comfortably fit the fio test file (_DEFAULT_HARDWARE_SIZE).
+#: Irrelevant to the always-on ephemeral fio round, which never allocates a
+#: PVC at all -- see the module docstring.
+_DEFAULT_HARDWARE_STORAGE_SIZE = "1Gi"
 
 
 class HardwareBaselineError(Exception):
@@ -91,8 +116,16 @@ class HardwareBaselineResult:
     """Outcome of a :func:`run_hardware_baseline` sweep.
 
     :ivar code: Experiment code the sweep ran under (locates its result folder).
-    :ivar per_node: Node name to its own CPU/RAM/fio result rows
-        (keys ``"cpu_mem"``/``"fio"``, values are result dicts).
+    :ivar per_node: Node name to its own CPU/RAM/fio result rows. Always has
+        ``"cpu_mem"`` (sysbench) and ``"fio"`` (the always-on fio round
+        against the node's own container-local/ephemeral storage) once the
+        sweep succeeds for that node. The single node the sweep happened to
+        run named-storage-class rounds on (see :func:`run_hardware_baseline`'s
+        ``storage_classes`` parameter) additionally gets one
+        ``"fio:<storage_class>"`` entry per named class (e.g.
+        ``"fio:cephcsi"``), measuring fio against a throwaway
+        PersistentVolumeClaim provisioned from that StorageClass instead;
+        every other node's ``per_node`` entry has no such key.
     :ivar network_matrix: ``"{origin}->{target}"`` to that round's sockperf result dict.
     :ivar failed_nodes: Node names that produced no usable result at all.
     """
@@ -102,6 +135,19 @@ class HardwareBaselineResult:
     failed_nodes: list[str] = field(default_factory=list)
 
 
+def _sanitize_dns_label(value: str, max_length: int) -> str:
+    """Turn arbitrary text into a short, DNS-label-safe configuration-name fragment.
+
+    :param value: Raw text (a node hostname, a StorageClass name, ...).
+    :param max_length: Length cap applied after sanitizing.
+    :return: Lowercase, ``-``-delimited, length-capped identifier.
+    :rtype: str
+    """
+    sanitized = "".join(character if character.isalnum() else "-" for character in value.lower())
+    sanitized = sanitized.strip("-") or "id"
+    return sanitized[:max_length]
+
+
 def _sanitize_node_id(node: str) -> str:
     """Turn a Kubernetes node name into a short, DNS-label-safe configuration suffix.
 
@@ -109,9 +155,54 @@ def _sanitize_node_id(node: str) -> str:
     :return: Lowercase, ``-``-delimited, length-capped identifier.
     :rtype: str
     """
-    sanitized = "".join(character if character.isalnum() else "-" for character in node.lower())
-    sanitized = sanitized.strip("-") or "node"
-    return sanitized[:_MAX_NODE_ID_LENGTH]
+    return _sanitize_dns_label(node, _MAX_NODE_ID_LENGTH)
+
+
+def _sanitize_storage_class_id(storage_class: str) -> str:
+    """Turn a StorageClass name into a short, DNS-label-safe configuration suffix.
+
+    :param storage_class: Real Kubernetes ``StorageClass`` name.
+    :return: Lowercase, ``-``-delimited, length-capped identifier.
+    :rtype: str
+    """
+    return _sanitize_dns_label(storage_class, _MAX_STORAGE_CLASS_ID_LENGTH)
+
+
+def _fio_result_key(storage_class: Optional[str]) -> str:
+    """Result-dict key a fio round's row is stored under, in ``per_node[node]``.
+
+    :param storage_class: ``None`` for the always-on ephemeral round (kept as
+        the pre-existing ``"fio"`` key for backward compatibility), or a
+        StorageClass name for an extra sweep.
+    :return: ``"fio"`` or ``"fio:<storage_class>"``.
+    :rtype: str
+    """
+    return "fio" if storage_class is None else f"fio:{storage_class}"
+
+
+def _validate_storage_classes(storage_classes: Optional[list[Optional[str]]]) -> list[str]:
+    """Validate and normalize the ``storage_classes`` sweep parameter.
+
+    ``None`` entries mark the always-on ephemeral fio round every node's
+    primary sweep already runs unconditionally -- accepted (e.g.
+    ``[None, 'cephcsi']``, matching how a caller would naturally write "the
+    usual ephemeral run, plus cephcsi") but otherwise a no-op here, since
+    that round does not depend on this parameter at all.
+
+    :param storage_classes: Extra StorageClasses to additionally run a fio
+        round against (each via its own throwaway PVC), or ``None``/empty
+        for the previous, ephemeral-only behaviour.
+    :return: The distinct, order-preserving non-``None`` entries.
+    :rtype: list[str]
+    :raises HardwareBaselineError: On a duplicate StorageClass name.
+    """
+    named = [entry for entry in (storage_classes or []) if entry is not None]
+    seen: set[str] = set()
+    for name in named:
+        if name in seen:
+            raise HardwareBaselineError(f"storage_classes contains a duplicate: {name!r}")
+        seen.add(name)
+    return named
 
 
 def compute_star_schedule(nodes: list[str], hub: str) -> dict[str, list[Optional[str]]]:
@@ -237,6 +328,7 @@ def run_hardware_baseline(
     hardware_duration: int = 15,
     network_topology: str = "star",
     hub: Optional[str] = None,
+    storage_classes: Optional[list[Optional[str]]] = None,
     timeout_minutes: int = 10,
 ) -> HardwareBaselineResult:
     """Run a short-lived hardware baseline sweep and tear it down afterward.
@@ -249,17 +341,32 @@ def run_hardware_baseline(
         (every node vs. one hub), or ``'full'`` (round-robin all-pairs matrix).
     :param hub: Hub node for ``network_topology='star'``; defaults to the
         first entry of ``node_names``.
+    :param storage_classes: Extra StorageClasses to additionally run the fio
+        round against, e.g. ``[None, 'cephcsi']``. Each named entry gets a
+        single short-lived ``Hardware`` SUT, on one node (the first entry of
+        ``node_names``) rather than once per node -- a named class is not
+        assumed to be node-local, so one PVC per class already gives the
+        comparison point without multiplying PVC-provisioning risk by the
+        node count. Results land in the returned
+        :class:`HardwareBaselineResult` under
+        ``per_node[<that node>]["fio:<name>"]``.
+        A ``None`` entry is accepted for readability but otherwise ignored --
+        the plain, ephemeral-storage fio round (``per_node[node]["fio"]``)
+        always runs, once per node, regardless of this parameter, exactly as
+        before. Defaults to ``None`` (no extra classes), reproducing the
+        previous, ephemeral-only behaviour exactly.
     :param timeout_minutes: Wall-clock cap for the whole sweep; the experiment
         is aborted and removed if exceeded (see ``-et``/``max_experiment_minutes``).
     :return: Collected per-node and network-matrix results.
     :rtype: HardwareBaselineResult
-    :raises HardwareBaselineError: For an invalid ``network_topology`` or an
-        empty ``node_names``.
+    :raises HardwareBaselineError: For an invalid ``network_topology``, an
+        empty ``node_names``, or a duplicate entry in ``storage_classes``.
     """
     if not node_names:
         raise HardwareBaselineError("no schedulable nodes given")
     if network_topology not in ("none", "star", "full"):
         raise HardwareBaselineError(f"invalid network_topology {network_topology!r}")
+    extra_storage_classes = _validate_storage_classes(storage_classes)
 
     if network_topology == "star":
         network_targets = compute_star_schedule(node_names, hub if hub is not None else node_names[0])
@@ -284,6 +391,7 @@ def run_hardware_baseline(
 
     result = HardwareBaselineResult(code=experiment.code)
     configs_by_node: dict[str, Any] = {}
+    storage_class_configs: dict[str, dict[str, Any]] = {}
     try:
         for node in node_names:
             config = configurations.default(
@@ -294,6 +402,39 @@ def run_hardware_baseline(
             config.set_resources(nodeSelector={"cpu": "", "gpu": "", "kubernetes.io/hostname": node})
             config.patch_benchmarking(patch=_node_nodeselector_patch(node))
             configs_by_node[node] = config
+
+        # One PVC per named class, on a single node -- not once per node.
+        # Unlike the always-on ephemeral round, a named StorageClass isn't
+        # assumed to be node-local (e.g. a Ceph-backed class is served over
+        # the network identically regardless of which node mounts it), so
+        # repeating it per node would multiply PVC-provisioning (and, if the
+        # class can't bind, stuck-PVC teardown) risk for no extra signal.
+        storage_class_node = node_names[0]
+        for storage_class in extra_storage_classes:
+            extra_configuration = (
+                f"hw-{_sanitize_node_id(storage_class_node)}-{_sanitize_storage_class_id(storage_class)}"
+            )
+            extra_config = configurations.default(
+                experiment=experiment, docker="Hardware",
+                configuration=extra_configuration, alias=storage_class_node,
+            )
+            extra_config.set_storage(
+                storageConfiguration=extra_configuration,
+                storageClassName=storage_class,
+                storageSize=_DEFAULT_HARDWARE_STORAGE_SIZE,
+                # A throwaway PVC for a one-shot fio measurement must not
+                # survive this sweep's teardown -- unlike a normal DBMS
+                # run, where 'keep' (inherited as True from the
+                # experiment-level default set in prepare_testbed())
+                # deliberately preserves data between repeated runs.
+                keep=False,
+            )
+            extra_config.set_resources(
+                nodeSelector={"cpu": "", "gpu": "", "kubernetes.io/hostname": storage_class_node})
+            extra_config.patch_benchmarking(patch=_node_nodeselector_patch(storage_class_node))
+            extra_config.add_benchmarking_parameters(HARDWARE_TYPE="fio", **_FIO_DEFAULTS)
+            extra_config.add_benchmark_list([1])
+            storage_class_configs.setdefault(storage_class_node, {})[storage_class] = extra_config
 
         for node in node_names:
             config = configs_by_node[node]
@@ -318,7 +459,9 @@ def run_hardware_baseline(
     finally:
         experiment.remove_experiment()
 
-    _collect_results(cluster, experiment, configs_by_node, network_targets, result)
+    _collect_results(
+        cluster, experiment, configs_by_node, network_targets, result,
+        storage_class_configs=storage_class_configs)
     result.failed_nodes = [node for node in node_names if node not in result.per_node]
     return result
 
@@ -354,6 +497,7 @@ def _collect_results(
     configs_by_node: dict[str, Any],
     network_targets: dict[str, list[Optional[str]]],
     result: HardwareBaselineResult,
+    storage_class_configs: Optional[dict[str, dict[str, Any]]] = None,
 ) -> None:
     """Parse the sweep's already-collected pod logs into ``result`` in place.
 
@@ -369,11 +513,20 @@ def _collect_results(
     :param cluster: Cluster the sweep ran against (unused directly; kept for
         symmetry with other collector-style functions and possible future use).
     :param experiment: The completed (and already torn down) experiment.
-    :param configs_by_node: Node name to its ``SutConfiguration``.
+    :param configs_by_node: Node name to its primary ``SutConfiguration``
+        (the one running sysbench, the ephemeral fio round, and any network
+        rounds).
     :param network_targets: The same per-node round-target schedule
         :func:`run_hardware_baseline` built, needed to recover which node a
         network round's ``client`` index targeted.
     :param result: Result object to populate in place.
+    :param storage_class_configs: Node name to ``{storage_class: SutConfiguration}``
+        for the extra, named-storage-class fio-only sweeps (see
+        :func:`run_hardware_baseline`'s ``storage_classes`` parameter); each
+        such configuration only ever runs a single fio round, so its rows are
+        matched by configuration identity alone, not the round-index
+        convention the primary configurations rely on. ``None``/empty when
+        no extra storage classes were requested.
     """
     del cluster
     try:
@@ -388,8 +541,22 @@ def _collect_results(
         print(f"WARN: could not parse hardware baseline results: {error}")
         return
     configuration_to_node = {config.configuration: node for node, config in configs_by_node.items()}
+    configuration_to_storage_class = {
+        config.configuration: (node, storage_class)
+        for node, by_class in (storage_class_configs or {}).items()
+        for storage_class, config in by_class.items()
+    }
     for _, row in df_aggregated.iterrows():
-        node = configuration_to_node.get(row["configuration"])
+        configuration = row["configuration"]
+        storage_class_match = configuration_to_storage_class.get(configuration)
+        if storage_class_match is not None:
+            node, storage_class = storage_class_match
+            row_dict = row.to_dict()
+            row_dict["hardware_type"] = "fio"
+            result.per_node.setdefault(node, {})[_fio_result_key(storage_class)] = (
+                _drop_other_tool_columns(row_dict, "fio"))
+            continue
+        node = configuration_to_node.get(configuration)
         if node is None:
             continue
         client = int(row["client"])
@@ -406,7 +573,7 @@ def _collect_results(
             result.per_node.setdefault(node, {})["cpu_mem"] = _drop_other_tool_columns(row_dict, "sysbench")
         elif client == _FIO_BASELINE_ROUND:
             row_dict["hardware_type"] = "fio"
-            result.per_node.setdefault(node, {})["fio"] = _drop_other_tool_columns(row_dict, "fio")
+            result.per_node.setdefault(node, {})[_fio_result_key(None)] = _drop_other_tool_columns(row_dict, "fio")
         elif client >= _FIRST_NETWORK_ROUND:
             targets = network_targets.get(node, [])
             target_index = client - _FIRST_NETWORK_ROUND

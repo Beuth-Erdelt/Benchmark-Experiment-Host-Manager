@@ -8,11 +8,46 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from bexhoma.spec import resolve_indexing_key
-
 from .base import DBMSBenchmarkerBenchmark
 
-__all__ = ["TPCH"]
+__all__ = ["TPCH", "resolve_indexing_key"]
+
+#: Maps every (indexes, constraints, statistics) combination to the tpch
+#: volume's ``initscripts`` key that applies exactly that combination (see
+#: ``k8s-cluster.config``'s ``volumes.tpch.initscripts``). The three post-load
+#: steps are independent DDL/DML statements with no ordering dependency on
+#: each other, so all eight combinations are legal.
+_INDEXING_KEYS: dict[tuple[bool, bool, bool], str] = {
+    (False, False, False): "",
+    (True, False, False): "Index",
+    (False, True, False): "Constraints",
+    (False, False, True): "Statistics",
+    (True, True, False): "Index_and_Constraints",
+    (True, False, True): "Index_and_Statistics",
+    (False, True, True): "Constraints_and_Statistics",
+    (True, True, True): "Index_and_Constraints_and_Statistics",
+}
+
+
+def resolve_indexing_key(indexes: bool, constraints: bool, statistics: bool) -> str:
+    """Map a post_load selection to its ``initscripts`` key.
+
+    Single source of truth shared with the catalog-contract translator
+    (:func:`bexhoma.experiments.tpch_catalog.resolve_physical_design_overrides`),
+    which applies the same mapping to a ``systems[].post_load`` selection —
+    the key strings must match ``k8s-cluster.config``'s ``volumes.tpch.initscripts``
+    literally, or the resulting
+    :meth:`~bexhoma.configurations.base.SutConfiguration.set_experiment` call
+    raises ``KeyError``.
+
+    :param indexes: Create indexes on all tables after loading.
+    :param constraints: Add primary-key/foreign-key constraints after loading.
+    :param statistics: Run ``ANALYZE`` after loading.
+    :return: The matching ``initscripts`` key, or ``""`` when none of the
+        three steps were requested.
+    :rtype: str
+    """
+    return _INDEXING_KEYS[(bool(indexes), bool(constraints), bool(statistics))]
 
 
 class TPCH(DBMSBenchmarkerBenchmark):

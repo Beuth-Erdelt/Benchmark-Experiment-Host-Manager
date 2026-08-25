@@ -6,7 +6,7 @@ exist (see ``docs/Design-Yaml-Experiment-Entry-Script.md``'s "Relation to
 ``bexhoma/spec.py``" section):
 
 * **Self-specified** (``workload: tpch``, a bare string): built directly in
-  Python via :mod:`bexhoma.experiment_builder` — no argv is generated, no
+  Python via :mod:`bexhoma.experiments.tpch_builder` — no argv is generated, no
   subprocess is spawned, nothing is re-parsed through ``tpch.py``'s own CLI.
 * **Catalog-driven** (``workload: {name: ..., params: ...}``, a dict —
   :mod:`bexhoma.spec`'s schema): resolved against ``catalog.yaml`` into a
@@ -33,7 +33,7 @@ import shutil
 
 import yaml
 
-from bexhoma import experiment_builder, experiment_loader
+from bexhoma.experiments import tpch_builder, tpch_catalog, tpch_loader
 from bexhoma import spec as catalog_spec
 
 __all__ = ["is_catalog_driven", "default_catalog_path", "run_experiment_yaml"]
@@ -129,7 +129,7 @@ def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
         # co-running PgDuckDB) has no CLI representation -- -xii/-xic/-xis are
         # global switches -- so it is applied in-process instead, via the same
         # per-configuration override tpch.py already uses for Citus/tenant cases.
-        parsed_args.physical_design_overrides = catalog_spec.resolve_physical_design_overrides(catalog, raw_spec)
+        parsed_args.physical_design_overrides = tpch_catalog.resolve_physical_design_overrides(catalog, raw_spec)
         tpch.run(
             parsed_args,
             on_experiment_built=lambda experiment: _copy_catalog_provenance(
@@ -137,8 +137,8 @@ def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
             ),
         )
     else:
-        experiment_loader.validate_experiment_yaml(raw_spec)
-        experiment_builder.build_experiment(raw_spec, path)
+        tpch_loader.validate_experiment_yaml(raw_spec)
+        tpch_builder.build_experiment(raw_spec, path)
 
 
 if __name__ == '__main__':

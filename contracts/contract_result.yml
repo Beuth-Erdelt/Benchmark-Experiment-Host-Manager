@@ -5,7 +5,7 @@
 # validity/verdict_shape/known_gaps), not comments. Design rationale and
 # provenance (not needed to read this file): contracts/contract_result_comments.md
 
-result_contract_version: "1.2.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.3.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -90,8 +90,8 @@ provenance:
 versions:
   images: recorded_as_tag_not_digest
   images_why: "every submitted manifest's image: field is a concrete tag (provenance.workflow *.yml); connections.config's dockerimage field mirrors the SUT's resolved tag too; no sha256 digest either way, so a re-pushed tag is invisible"
-  bexhoma: recorded_via_image_tag
-  bexhoma_why: "BEXHOMA_PACKAGE_VERSION in every bexhoma/* image tag is substituted with the real installed version before the manifest is written (clusters.py::create_object_from_file())"
+  bexhoma: recorded_directly_and_via_image_tag
+  bexhoma_why: "report/index.md frontmatter's bexhoma_version field records the installed bexhoma.__version__ at report-generation time (report_writer.py::_write_index_md()); this can differ from the version that actually ran the experiment when -rp/--report is applied later (e.g. `bexhoma summary -e <code> -rp`) after an upgrade. For the version that actually submitted the workflow, BEXHOMA_PACKAGE_VERSION in every bexhoma/* image tag is substituted with the real installed version before the manifest is written (clusters.py::create_object_from_file()) and can't drift on a later report regeneration -- prefer that source when submission-time accuracy matters more than convenience"
   dbmsbenchmarker: not_recorded
   dbmsbenchmarker_why: "baked into the bexhoma/benchmarker_dbmsbenchmarker image, whose own tag tracks bexhoma's version, not dbmsbenchmarker's"
 
@@ -141,7 +141,9 @@ validity:
   - id: cross_experiment_comparison
     kind: comparative
     implemented: false
-    why: "not implemented anywhere in the codebase — see known_gaps"
+    why: "not implemented anywhere in the codebase — see known_gaps. contract_catalog.yml's
+      experiment_schema.fields.follow_up_of records lineage structurally when set, but
+      nothing reads or enforces it yet"
 
 verdict_shape:
   fields: {passed: int, failed: int, skipped: int}
@@ -151,5 +153,5 @@ verdict_shape:
 known_gaps:
   - "no sha256 image digest is recorded (a re-pushed tag is invisible to this contract)"
   - "dbmsbenchmarker's own package version is not recorded separately from bexhoma's"
-  - "no comparative/historical (cross-experiment) validity check exists; 'compare only within one experiment code' is a rule an agent must apply itself, nothing in the result folder enforces it"
+  - "no comparative/historical (cross-experiment) validity check exists; 'compare only within one experiment code' is a rule an agent must apply itself, nothing in the result folder enforces it; contract_catalog.yml's follow_up_of field records the intended prior-run lineage when an experiment.yml sets it, but no code reads or validates it"
   - "per-system post_load selection (indexes/constraints/statistics, chosen via contract_catalog.yml's systems[].post_load) is not surfaced as a tier-1/2 field anywhere — connections.config/queries.config record which SUT ran, not which post-load steps it received; reconstruct it from tier-3 provenance.loading's *-loading-*.sql.log (rendered DDL source) per configuration"

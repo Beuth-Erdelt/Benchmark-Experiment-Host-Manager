@@ -723,6 +723,15 @@ checks all three are present and non-empty before resolving anything else —
 an experiment.yml that can't say what it's testing fails immediately,
 rather than producing a technically-valid but purposeless run.
 
+A fourth, optional header field, `follow_up_of`, names the `experiment_code`
+of a prior run this one follows up on (e.g. `follow_up_of: "1785578016"`).
+Unlike `title`/`hypothesis`/`discriminates` it's never required — omit it for
+a standalone experiment — and `validate_experiment()` only checks its type
+(a string) when present. It exists so lineage between runs is a structured
+field an agent can read directly, instead of prose embedded in `hypothesis`
+(see contract_result.yml's `known_gaps` for why this doesn't fully close the
+cross-experiment-comparison gap: nothing reads or enforces it yet).
+
 ## Top-level shape
 
 `mode`, `title`, `hypothesis`, `discriminates`, `workload`, `loading`,
@@ -853,7 +862,7 @@ This parses and validates (legality/support are both checked per system,
 per "Validation ordering" above) and now translates: `PostgreSQL` and
 `PgDuckDB` resolve to different effective post_load, so `build_argv()` emits
 none of `-xii`/`-xic`/`-xis`/`-xcol` (a global flag can't represent a
-divergent selection), and `bexhoma/spec.py::resolve_physical_design_overrides()`
+divergent selection), and `bexhoma/experiments/tpch_catalog.py::resolve_physical_design_overrides()`
 instead resolves `{'PostgreSQL': 'Index_and_Constraints_and_Statistics',
 'PgDuckDB': ''}` — one `initscripts` key per system (see `k8s-cluster.config`'s
 `volumes.tpch.initscripts`). `experiment.py`'s catalog-driven dispatch attaches
@@ -878,7 +887,7 @@ entries resolves to four configurations (`PostgreSQL-32Gi`,
 `derive:`d knob values (`shared_buffers` etc. computed from *that* cell's
 `memory_limit`). This is the same "list = swept, scalar = shared" idiom
 `workload.rounds` already uses for concurrency — see
-`bexhoma/spec.py::build_argv()`'s `cpu_cells`/`memory_cells` handling.
+`bexhoma/experiments/tpch_catalog.py::build_tpch_argv()`'s `cpu_cells`/`memory_cells` handling.
 
 Two things had to change below `spec.py` for this to actually run, not
 just parse:
@@ -1108,6 +1117,31 @@ the repo root under `contracts/` — they're the active, consumed contracts,
 not exploratory material. The sample `experiment.yml` and the generated
 `environment.yml` stay under `dev/catalog/`: one is a worked example, the
 other a per-cluster snapshot, neither is schema.
+
+## `environment.yml`: hardware baseline extension (`-xhw`)
+
+The read-only fields above (`nodes`, `excluded_nodes`, `storage_classes`,
+`resource_limits`) are always collected. `environment.py`'s `-xhw` flag adds
+an opt-in, cluster-mutating step on top — a short benchmark sweep across the
+cluster's nodes, merged into the same `environment.yml`:
+
+- Deploys one `Hardware` SUT per node, pinned via the existing
+  `kubernetes.io/hostname` nodeSelector patch, reusing
+  `bexhoma/experiments/hardware.py`/`bexhoma/configurations` unmodified
+  (`bexhoma/hardware_baseline.py` is new orchestration only — no new k8s
+  manifests, no `images/hardware/*` changes).
+- Every node gets two baseline rounds — sysbench (CPU/RAM) and fio (against
+  the node's own container-local scratch space, no PVC) — landing under
+  that node's `hardware_baseline` key as `cpu_mem`/`fio`.
+- `-xhwnet {none,star,full}` optionally adds an inter-node network round
+  (sockperf, TCP — chosen because DBMS traffic is TCP, not sockperf's own
+  UDP default): `star` tests every node against one hub, `full` is a
+  round-robin all-pairs matrix (`N-1` rounds for `N` nodes, not the naive
+  `O(N²)`). Results land in a top-level `network_matrix`, keyed
+  `"{origin}->{target}"`.
+- Always torn down (`try`/`finally` around the sweep); a failure degrades to
+  a partial/empty result rather than aborting the rest of `environment.yml`.
+- CLI reference and worked examples: `docs/Environment.md`.
 
 ## Open questions
 

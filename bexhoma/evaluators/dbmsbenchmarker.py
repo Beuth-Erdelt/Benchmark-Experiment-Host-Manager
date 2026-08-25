@@ -449,7 +449,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         :meth:`benchmarking_aggregate_by_parallel_pods`, and selects the columns
         used for the per-phase summary table (experiment run, terminals, target,
         pod count, time, errors, throughput, goodput, efficiency, and latency
-        percentiles), sorted by ``(experiment_run, target, pod_count)``.
+        percentiles), naturally sorted by the phase name (row index).
 
         :return: DataFrame indexed as ``"DBMS"`` with one row per phase, or an
                  empty DataFrame if there are no benchmarking results.
@@ -460,8 +460,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         if not df.empty:
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
-            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
-            df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot).round(2)
+            df_aggregated = df_aggregated.reindex(index=natural_sort(df_aggregated.index))
             df_aggregated_reduced = df_aggregated.copy()
             df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
@@ -474,7 +474,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         Returns benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
 
         Like :meth:`get_summary_benchmark_per_phase` but groups by
-        ``['phase', 'tenant_id']`` so each tenant appears as a separate row.
+        ``['phase', 'tenant_id']`` so each tenant appears as a separate row,
+        naturally sorted by the resulting row index.
 
         :return: DataFrame indexed as ``"DBMS"`` with one row per (phase, tenant), or an
                  empty DataFrame if there are no benchmarking results.
@@ -485,8 +486,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         if not df.empty:
             df.fillna(0, inplace=True)
             df_plot = self.benchmarking_set_datatypes(df)
-            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
-            df_aggregated = df_aggregated.sort_values(['experiment_run', 'client', 'tenant_id']).round(2)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id']).round(2)
+            df_aggregated = df_aggregated.reindex(index=natural_sort(df_aggregated.index))
             df_aggregated_reduced = df_aggregated.copy()
             df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')

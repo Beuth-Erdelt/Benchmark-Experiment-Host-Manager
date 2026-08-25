@@ -113,7 +113,7 @@ ddl/sut parameters — real per-DBMS *logic*, not data) and container-tenancy
 (`tenant_per == 'container'`, the multi-tenant loop in `tpch.py`). Both are
 follow-up work once the simple single-cell path is proven.
 
-### 3. `bexhoma/experiment_loader.py` (new)
+### 3. `bexhoma/experiments/tpch_loader.py` (new)
 
 ```python
 def load_experiment_yaml(path: str) -> dict:
@@ -124,7 +124,7 @@ def validate_experiment_yaml(spec: dict) -> None:
     systems[].dbms key exists in bexhoma.experiments.tpch.DBMS_DEFAULTS."""
 ```
 
-### 4. `bexhoma/experiment_builder.py` (new)
+### 4. `bexhoma/experiments/tpch_builder.py` (new)
 
 `build_experiment(spec: dict) -> TpchExperiment`:
 
@@ -267,7 +267,7 @@ cross-referencing).
 
 1. **Always** copy the `experiment.yaml` that was actually used into
    `{resultfolder}/{code}/experiment.yaml` — do this in `experiment.py` (or
-   `experiment_builder.build_experiment()`) right after `code`/`path` are
+   `tpch_builder.build_experiment()`) right after `code`/`path` are
    known, i.e. right after the `TpchExperiment` is constructed. If an
    experiment is resumed (`experiment.code` already existed), overwrite is
    fine — same experiment, same code, the file should reflect the run that
@@ -288,7 +288,7 @@ cross-referencing).
    stale path, or the fields simply omitted) are silently skipped — this is
    best-effort provenance, not a hard requirement, so it must never abort an
    otherwise-valid run.
-4. Implementation location: a small helper in `bexhoma/experiment_builder.py`,
+4. Implementation location: a small helper in `bexhoma/experiments/tpch_builder.py`,
    e.g. `_copy_provenance_files(spec: dict, spec_path: str, result_path: str)`,
    called once from `build_experiment()` after `experiment.path` exists.
    Plain `shutil.copyfile`, no YAML re-serialization — copy the bytes the
@@ -307,8 +307,12 @@ Deliberately separate, and left untouched by this plan:
 
 - **`bexhoma/spec.py`** translates a *catalog-driven* `experiment.yml`
   (profiles, `derive:` formulas, resolved against `catalog.yaml`) into a
-  `tpch.py` **CLI argv**, for a human or CI to actually run. Scope today:
-  TPC-H against PostgreSQL/PgDuckDB only.
+  **CLI argv**, for a human or CI to actually run. `spec.py` itself is
+  workload-agnostic (catalog loading, knob resolution, validation); it
+  dispatches by `workload.name` to that workload's own argv builder —
+  today only `bexhoma/experiments/tpch_catalog.py` (`build_tpch_argv()`),
+  which owns the actual `tpch.py` flag mapping and PostgreSQL GUC
+  formatting. Scope today: TPC-H against PostgreSQL/PgDuckDB only.
 - **This new path** takes a *fully self-specified* `experiment.yaml`
   straight into Python objects — no argv is ever generated, nothing is
   handed to a shell.
@@ -323,7 +327,7 @@ resolution.
 
 ## Testing
 
-Unit tests for `experiment_loader`/`experiment_builder` against a stub
+Unit tests for `tpch_loader`/`tpch_builder` against a stub
 cluster object (no live Kubernetes cluster needed) — assert the resulting
 `TpchExperiment.configurations` list has the right `SutConfiguration`
 attributes set, and that the provenance files land in the stub result
@@ -335,9 +339,9 @@ memory: "Docs fixes + agent summary plan").
 1. `tpch.py`: extract `build_parser()`. Verify `python tpch.py run ...`
    behaves identically (no behavior change expected).
 2. `bexhoma/experiments/tpch.py`: add `DBMS_DEFAULTS`.
-3. `bexhoma/experiment_loader.py`: `load_experiment_yaml()` +
+3. `bexhoma/experiments/tpch_loader.py`: `load_experiment_yaml()` +
    `validate_experiment_yaml()`.
-4. `bexhoma/experiment_builder.py`: `build_experiment()`, including the
+4. `bexhoma/experiments/tpch_builder.py`: `build_experiment()`, including the
    provenance-copy helper.
 5. `experiment.py`: the entry script.
 6. `dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml`: worked example.

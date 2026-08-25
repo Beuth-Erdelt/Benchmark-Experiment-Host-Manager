@@ -45,6 +45,13 @@ from kubernetes.client.rest import ApiException
 
 from bexhoma.spec import parse_memory_quantity
 
+#: Bump whenever environment.yml's top-level shape (nodes/excluded_nodes/
+#: storage_classes/resource_limits) changes -- this is the file's own
+#: source of truth, embedded directly at generation time, so unlike
+#: contract_catalog.yml/contract_result.yml there is no separate contract
+#: doc to drift out of sync with.
+ENVIRONMENT_CONTRACT_VERSION = "1.0.0"
+
 #: RBAC users on a shared cluster are commonly granted node/storage-class
 #: read but not cluster-scoped pod listing (that would reveal every other
 #: user's workloads) — a 403 here is an expected permissions gap, not a
@@ -53,6 +60,7 @@ from bexhoma.spec import parse_memory_quantity
 _HTTP_FORBIDDEN = 403
 
 __all__ = [
+    "ENVIRONMENT_CONTRACT_VERSION",
     "EnvironmentError",
     "NodeInfo",
     "StorageClassInfo",
@@ -524,6 +532,7 @@ def build_environment(cluster: Any) -> dict[str, Any]:
     nodes, excluded_nodes = collect_nodes(cluster)
     collect_node_usage(cluster, nodes)
     return {
+        "environment_contract_version": ENVIRONMENT_CONTRACT_VERSION,
         "cluster": {
             "context": cluster.context,
             "namespace": cluster.namespace,
@@ -543,6 +552,7 @@ def apply_hardware_baseline(
     hardware_duration: int = 15,
     network_topology: str = "star",
     hub: Optional[str] = None,
+    storage_classes: Optional[list[Optional[str]]] = None,
     timeout_minutes: int = 10,
 ) -> None:
     """Run the opt-in hardware baseline sweep and merge its results into ``environment``.
@@ -563,6 +573,13 @@ def apply_hardware_baseline(
     :param network_topology: ``'none'``, ``'star'``, or ``'full'`` — see
         :func:`bexhoma.hardware_baseline.run_hardware_baseline`.
     :param hub: Hub node for ``network_topology='star'``; defaults to the first node.
+    :param storage_classes: Extra StorageClasses to additionally run the fio
+        round against, e.g. ``[None, 'cephcsi']`` — see
+        :func:`bexhoma.hardware_baseline.run_hardware_baseline`. Each named
+        class is only swept once, on a single node, so only that one node's
+        ``hardware_baseline`` dict gets an extra ``"fio:<name>"`` entry;
+        every node's ``hardware_baseline`` still gets the always-present
+        ``"fio"`` (ephemeral) entry.
     :param timeout_minutes: Wall-clock cap for the whole sweep.
     """
     from bexhoma import hardware_baseline
@@ -572,7 +589,7 @@ def apply_hardware_baseline(
         result = hardware_baseline.run_hardware_baseline(
             cluster, node_names,
             hardware_duration=hardware_duration, network_topology=network_topology,
-            hub=hub, timeout_minutes=timeout_minutes,
+            hub=hub, storage_classes=storage_classes, timeout_minutes=timeout_minutes,
         )
     except hardware_baseline.HardwareBaselineError as error:
         print(f"WARN: hardware baseline sweep skipped: {error}")
@@ -642,7 +659,22 @@ def main(argv: Optional[list[str]] = None) -> None:
         "-xhwt", "--xhardware-baseline-timeout",
         help="wall-clock cap in minutes for the whole baseline sweep",
         type=int, default=10, dest="hardware_baseline_timeout")
+    cli_parser.add_argument(
+        "-xhwsc", "--xhardware-baseline-storage-classes",
+        help="comma-separated StorageClasses to additionally run the fio round against, "
+             "each via its own throwaway PVC on a single node, not once per node "
+             "(e.g. 'cephcsi,local-hdd'); an entry of 'none' "
+             "(any case) is accepted as a no-op placeholder for the plain fio round against "
+             "each node's own ephemeral storage, which always runs regardless of this flag",
+        default=None, dest="hardware_baseline_storage_classes")
     cli_args = cli_parser.parse_args(argv)
+
+    cli_storage_classes = None
+    if cli_args.hardware_baseline_storage_classes:
+        cli_storage_classes = [
+            (None if name.strip().lower() in ("", "none") else name.strip())
+            for name in cli_args.hardware_baseline_storage_classes.split(",")
+        ]
 
     cli_cluster = clusters.Kubernetes(context=cli_args.context)
     cli_environment = build_environment(cli_cluster)
@@ -651,6 +683,7 @@ def main(argv: Optional[list[str]] = None) -> None:
             cli_cluster, cli_environment,
             hardware_duration=cli_args.hardware_baseline_duration,
             network_topology=cli_args.hardware_baseline_network,
+            storage_classes=cli_storage_classes,
             timeout_minutes=cli_args.hardware_baseline_timeout,
         )
     write_environment_yml(cli_environment, cli_args.output)

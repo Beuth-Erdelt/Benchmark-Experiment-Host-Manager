@@ -145,7 +145,6 @@ def manage():
                 connection = ''
             cluster.stop_sut(configuration=connection)
             cluster.stop_monitoring(configuration=connection)
-            cluster.stop_maintaining()
             cluster.stop_loading()
             cluster.stop_benchmarker(configuration=connection)
             #cluster.kubectl('delete all -l experiment='+cluster.code)
@@ -154,7 +153,6 @@ def manage():
             experiment = experiments.base(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
             experiment.stop_monitoring()
-            experiment.stop_maintaining()
             experiment.stop_loading()
             experiment.stop_benchmarker()
             cluster.kubectl('delete all -l experiment='+args.experiment)
@@ -190,6 +188,16 @@ def manage():
                         experiment = experiments.benchbase(cluster=cluster, code=code, **sf_kwargs)
                     case _:
                         experiment = experiments.base(cluster=cluster, code=code)
+                # Reconstructing from just type/SF leaves experiment.workload at its
+                # __init__ defaults (e.g. monitoring_components={}). evaluate_results()
+                # uses self.workload['monitoring_components'] to decide which extra
+                # component types to re-transform on the dashboard pod (the 4 hardcoded
+                # ones there don't include 'benchmarking', the SUT-during-benchmarking
+                # component) - without restoring the persisted dict first, -fe silently
+                # skips re-transforming it and show_summary_monitoring() then has nothing
+                # to iterate for that phase, even though the raw per-connection metric
+                # files are still on disk.
+                experiment.workload.update(workload_properties)
                 experiment.num_tenants = workload_properties.get('num_tenants', 0)
                 experiment.tenant_per = workload_properties.get('tenant_per', '')
                 experiment.multi_tenant_volume = workload_properties.get('multi_tenant_volume', False)
@@ -409,20 +417,6 @@ def manage():
                 pods_per_status = _pod_status_counts(pods)
                 for status, number in pods_per_status.items():
                     apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
-                ############
-                component = 'maintaining'
-                apps[configuration][component] = ''
-                if args.verbose:
-                    stateful_sets = [s.metadata.name for s in _filter_by_labels(all_stateful_sets, component=component, experiment=experiment, configuration=configuration)]
-                    print("Stateful Sets", stateful_sets)
-                    services = [s.metadata.name for s in _filter_by_labels(all_services, component=component, experiment=experiment, configuration=configuration)]
-                    print("Maintaining Services", services)
-                pods = _filter_by_labels(experiment_pods, component=component, configuration=configuration)
-                if args.verbose:
-                    print("Maintaining Pods", [pod.metadata.name for pod in pods])
-                num_pods = _pod_status_counts(pods)
-                for status in num_pods.keys():
-                    apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
                 ############
                 component = 'loading'
                 apps[configuration][component] = ''

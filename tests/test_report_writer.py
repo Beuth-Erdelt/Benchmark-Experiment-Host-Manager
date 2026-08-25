@@ -13,8 +13,10 @@ import unittest
 from pathlib import Path
 
 import pandas as pd
+import yaml
 
 from bexhoma import report_writer
+from bexhoma.__version__ import __version__ as BEXHOMA_VERSION
 
 
 class ConnectionsMdMetricProvenanceTest(unittest.TestCase):
@@ -109,6 +111,37 @@ class WorkflowSectionInputProvenanceTest(unittest.TestCase):
         self.assertNotIn('contract_catalog.yml', manifest_joined)
         self.assertIn('experiment.yml', input_joined)
         self.assertIn('contract_catalog.yml', input_joined)
+
+
+class _FakeExperiment:
+    code = '1784910886'
+    workload = {'type': 'tpch'}
+    _test_results = [(True, 'ok'), (False, 'bad'), (None, 'skipped')]
+
+    def benchmarking_is_active(self) -> bool:
+        return True
+
+    def loading_is_active(self) -> bool:
+        return True
+
+
+class IndexMdFrontmatterTest(unittest.TestCase):
+    """report/index.md's frontmatter must record which bexhoma version wrote it."""
+
+    def test_bexhoma_version_is_recorded_in_frontmatter(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            report_dir = Path(tmp_dir) / 'report'
+            report_dir.mkdir()
+            report_writer._write_index_md(
+                report_dir, _FakeExperiment(), total_restarts=0, extra_context={},
+                written_sections=[], key_metrics_lines=[], monitoring_summary_lines=[],
+            )
+            text = (report_dir / 'index.md').read_text(encoding='utf-8')
+
+        frontmatter_text = text.split('---\n')[1]
+        frontmatter = yaml.safe_load(frontmatter_text)
+        self.assertEqual(frontmatter['bexhoma_version'], BEXHOMA_VERSION)
+        self.assertEqual(frontmatter['schema_version'], report_writer.SCHEMA_VERSION)
 
 
 if __name__ == '__main__':

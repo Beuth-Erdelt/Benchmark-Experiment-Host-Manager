@@ -141,6 +141,50 @@ class SanitizeNodeIdTest(unittest.TestCase):
         self.assertEqual(hardware_baseline._sanitize_node_id('--node--'), 'node')
 
 
+class SanitizeStorageClassIdTest(unittest.TestCase):
+    """Tests for :func:`bexhoma.hardware_baseline._sanitize_storage_class_id`."""
+
+    def test_lowercases_and_replaces_invalid_characters(self) -> None:
+        self.assertEqual(hardware_baseline._sanitize_storage_class_id('Ceph_CSI'), 'ceph-csi')
+
+    def test_truncates_to_max_length(self) -> None:
+        result = hardware_baseline._sanitize_storage_class_id('rook-ceph-bucket')
+        self.assertLessEqual(len(result), hardware_baseline._MAX_STORAGE_CLASS_ID_LENGTH)
+
+
+class FioResultKeyTest(unittest.TestCase):
+    """Tests for :func:`bexhoma.hardware_baseline._fio_result_key`."""
+
+    def test_none_is_the_plain_fio_key(self) -> None:
+        self.assertEqual(hardware_baseline._fio_result_key(None), 'fio')
+
+    def test_named_class_is_namespaced(self) -> None:
+        self.assertEqual(hardware_baseline._fio_result_key('cephcsi'), 'fio:cephcsi')
+
+
+class ValidateStorageClassesTest(unittest.TestCase):
+    """Tests for :func:`bexhoma.hardware_baseline._validate_storage_classes`."""
+
+    def test_none_input_yields_no_extra_classes(self) -> None:
+        self.assertEqual(hardware_baseline._validate_storage_classes(None), [])
+
+    def test_empty_list_yields_no_extra_classes(self) -> None:
+        self.assertEqual(hardware_baseline._validate_storage_classes([]), [])
+
+    def test_none_entries_are_dropped_but_dont_error(self) -> None:
+        self.assertEqual(
+            hardware_baseline._validate_storage_classes([None, 'cephcsi']), ['cephcsi'])
+
+    def test_order_is_preserved(self) -> None:
+        self.assertEqual(
+            hardware_baseline._validate_storage_classes(['local-hdd', 'cephcsi']),
+            ['local-hdd', 'cephcsi'])
+
+    def test_duplicate_raises(self) -> None:
+        with self.assertRaises(hardware_baseline.HardwareBaselineError):
+            hardware_baseline._validate_storage_classes(['cephcsi', 'cephcsi'])
+
+
 class BuildParsedArgsTest(unittest.TestCase):
     """Tests for :func:`bexhoma.hardware_baseline._build_parsed_args`."""
 
@@ -246,6 +290,75 @@ class RunHardwareBaselineSetupTest(unittest.TestCase):
     def test_invalid_topology_raises(self) -> None:
         with self.assertRaises(hardware_baseline.HardwareBaselineError):
             self._run(['n1'], network_topology='bogus')
+
+    def test_duplicate_storage_class_raises(self) -> None:
+        with self.assertRaises(hardware_baseline.HardwareBaselineError):
+            self._run(['n1'], network_topology='none', storage_classes=['cephcsi', 'cephcsi'])
+
+    def test_default_storage_classes_creates_no_extra_configurations(self) -> None:
+        """Backward compatibility: omitting storage_classes must reproduce the
+        previous behaviour exactly -- one configuration per node, no more."""
+        self._run(['n1', 'n2'], network_topology='none')
+        self.assertEqual(len(self.captured_experiment.configurations), 2)
+
+    def test_none_only_storage_classes_creates_no_extra_configurations(self) -> None:
+        self._run(['n1', 'n2'], network_topology='none', storage_classes=[None])
+        self.assertEqual(len(self.captured_experiment.configurations), 2)
+
+    def test_named_storage_class_adds_one_extra_configuration_total(self) -> None:
+        """A named class is swept once, on a single node -- not once per node."""
+        self._run(['n1', 'n2'], network_topology='none', storage_classes=[None, 'cephcsi'])
+        self.assertEqual(len(self.captured_experiment.configurations), 3)
+
+    def test_multiple_named_storage_classes_add_one_extra_configuration_each(self) -> None:
+        self._run(['n1', 'n2'], network_topology='none', storage_classes=['cephcsi', 'local-hdd'])
+        # 2 primary (one per node) + 2 storage classes (one node each, not per node)
+        self.assertEqual(len(self.captured_experiment.configurations), 4)
+
+    def test_extra_storage_class_configuration_requests_a_real_pvc(self) -> None:
+        self._run(['n1'], network_topology='none', storage_classes=['cephcsi'])
+        extra = [
+            config for config in self.captured_experiment.configurations
+            if config.storage.get('storageClassName') == 'cephcsi'
+        ]
+        self.assertEqual(len(extra), 1)
+        self.assertEqual(extra[0].alias, 'n1')
+        self.assertFalse(extra[0].storage['keep'])
+        self.assertTrue(len(extra[0].storage['storageSize']) > 0)
+
+    def test_extra_storage_class_configuration_is_pinned_to_the_first_node_only(self) -> None:
+        """Not repeated per node: only one extra configuration exists, pinned to
+        node_names[0] regardless of how many nodes were given."""
+        self._run(['n1', 'n2'], network_topology='none', storage_classes=['cephcsi'])
+        extra_configs = [
+            config for config in self.captured_experiment.configurations
+            if config.storage.get('storageClassName') == 'cephcsi'
+        ]
+        self.assertEqual(len(extra_configs), 1)
+        extra = extra_configs[0]
+        self.assertEqual(extra.alias, 'n1')
+        self.assertEqual(extra.resources['nodeSelector']['kubernetes.io/hostname'], 'n1')
+        self.assertIn('kubernetes.io/hostname: n1', extra.benchmarking_patch)
+
+    def test_extra_storage_class_configuration_only_runs_a_single_fio_round(self) -> None:
+        self._run(['n1'], network_topology='none', storage_classes=['cephcsi'])
+        extra = [
+            config for config in self.captured_experiment.configurations
+            if config.storage.get('storageClassName') == 'cephcsi'
+        ][0]
+        self.assertEqual(extra.benchmark_list_template, [1])
+        self.assertEqual(extra.benchmarking_parameters_list[0]['HARDWARE_TYPE'], 'fio')
+
+    def test_primary_configuration_unaffected_by_extra_storage_classes(self) -> None:
+        """The primary per-node sweep (sysbench + ephemeral fio) keeps its
+        usual two rounds regardless of what storage_classes additionally asks for."""
+        self._run(['n1'], network_topology='none', storage_classes=['cephcsi'])
+        primary = [
+            config for config in self.captured_experiment.configurations
+            if config.configuration == 'hw-n1'
+        ][0]
+        self.assertEqual(primary.benchmark_list_template, [1, 1])
+        self.assertIsNone(primary.storage.get('storageClassName'))
 
 
 class _FakeHardwareEvaluator:
@@ -393,6 +506,74 @@ class CollectResultsTest(unittest.TestCase):
         result = self._collect(pd.DataFrame(), configs_by_node={}, network_targets={})
         self.assertEqual(result.per_node, {})
         self.assertEqual(result.network_matrix, {})
+
+    def _collect_with_storage_classes(
+            self, df_aggregated: pd.DataFrame, configs_by_node: dict, network_targets: dict,
+            storage_class_configs: dict) -> hardware_baseline.HardwareBaselineResult:
+        result = hardware_baseline.HardwareBaselineResult(code='test-code')
+        hardware_baseline._collect_results(
+            cluster=None, experiment=_fake_experiment(df_aggregated),
+            configs_by_node=configs_by_node, network_targets=network_targets, result=result,
+            storage_class_configs=storage_class_configs)
+        return result
+
+    def test_named_storage_class_round_is_stored_under_its_own_namespaced_key(self) -> None:
+        df = pd.DataFrame([
+            {
+                'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench', 'value': 1,
+            },
+            {
+                'configuration': 'hw-n1', 'client': 2, 'hardware_type': 'fio', 'value': 2,
+            },
+            {
+                'configuration': 'hw-n1-cephcsi', 'client': 1, 'hardware_type': 'fio',
+                'hardware_fio_read_iops': 5000.0,
+            },
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        storage_class_configs = {'n1': {'cephcsi': SimpleNamespace(configuration='hw-n1-cephcsi')}}
+        result = self._collect_with_storage_classes(df, configs_by_node, {'n1': []}, storage_class_configs)
+        self.assertEqual(result.per_node['n1']['cpu_mem']['value'], 1)
+        self.assertEqual(result.per_node['n1']['fio']['value'], 2)
+        self.assertEqual(result.per_node['n1']['fio:cephcsi']['hardware_fio_read_iops'], 5000.0)
+
+    def test_multiple_named_storage_classes_land_under_distinct_keys(self) -> None:
+        df = pd.DataFrame([
+            {'configuration': 'hw-n1-cephcsi', 'client': 1, 'hardware_type': 'fio', 'hardware_fio_read_iops': 1.0},
+            {'configuration': 'hw-n1-local-hdd', 'client': 1, 'hardware_type': 'fio', 'hardware_fio_read_iops': 2.0},
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        storage_class_configs = {
+            'n1': {
+                'cephcsi': SimpleNamespace(configuration='hw-n1-cephcsi'),
+                'local-hdd': SimpleNamespace(configuration='hw-n1-local-hdd'),
+            }
+        }
+        result = self._collect_with_storage_classes(df, configs_by_node, {'n1': []}, storage_class_configs)
+        self.assertEqual(result.per_node['n1']['fio:cephcsi']['hardware_fio_read_iops'], 1.0)
+        self.assertEqual(result.per_node['n1']['fio:local-hdd']['hardware_fio_read_iops'], 2.0)
+
+    def test_storage_class_round_drops_other_tools_zero_filled_columns(self) -> None:
+        df = pd.DataFrame([
+            {
+                'configuration': 'hw-n1-cephcsi', 'client': 1, 'hardware_type': 'fio',
+                'hardware_fio_read_iops': 3000.0, 'hardware_sysbench_cpu_events_per_sec': 0.0,
+            },
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        storage_class_configs = {'n1': {'cephcsi': SimpleNamespace(configuration='hw-n1-cephcsi')}}
+        result = self._collect_with_storage_classes(df, configs_by_node, {'n1': []}, storage_class_configs)
+        fio_cephcsi = result.per_node['n1']['fio:cephcsi']
+        self.assertEqual(fio_cephcsi['hardware_fio_read_iops'], 3000.0)
+        self.assertNotIn('hardware_sysbench_cpu_events_per_sec', fio_cephcsi)
+
+    def test_no_storage_class_configs_behaves_like_before(self) -> None:
+        df = pd.DataFrame([
+            {'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench', 'value': 111},
+        ])
+        configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
+        result = self._collect_with_storage_classes(df, configs_by_node, {'n1': []}, storage_class_configs={})
+        self.assertEqual(result.per_node['n1']['cpu_mem']['value'], 111)
 
 
 if __name__ == '__main__':

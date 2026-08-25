@@ -371,7 +371,7 @@ build_and_push_benchbase() {
 
 _any_failed=0
 
-dbmsbenchmarker="v0.15.0"
+dbmsbenchmarker="v0.15.1"
 version=$(python -m pip show bexhoma | awk '/^Version:/ {print $2}')
 echo "$version"
 

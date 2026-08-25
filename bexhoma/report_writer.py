@@ -69,18 +69,19 @@ import pandas as pd
 import yaml
 
 from bexhoma import evaluators
+from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
 
 __all__ = ["write_markdown_report"]
 
 #: Bump whenever the frontmatter fields, tiers, or file layout change.
-SCHEMA_VERSION = "1.2.0"
+SCHEMA_VERSION = "1.3.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
 #: contract and any pointer files), not rendered Kubernetes manifests -- see
 #: experiment.py::_copy_catalog_provenance and
-#: bexhoma/experiment_builder.py::_copy_provenance_files. Excluded from the
+#: bexhoma/experiments/tpch_builder.py::_copy_provenance_files. Excluded from the
 #: workflow section's manifest glob (which would otherwise mislabel them as
 #: "rendered Kubernetes Job/Deployment/Service manifests") and instead given
 #: their own, accurately-described Provenance entry.
@@ -936,6 +937,16 @@ def _write_index_md(
     Health Summary; Interpretation Rules; links to whichever tier-2 files
     were actually written.
 
+    The frontmatter's ``bexhoma_version`` is the installed
+    ``bexhoma.__version__`` at *report-generation* time, not necessarily the
+    version that executed the run -- ``-rp``/``--report`` can be applied later
+    via ``bexhoma summary -e <code> -rp`` against an older result folder,
+    after an upgrade. For the version that actually submitted the workflow's
+    manifests, see ``provenance.workflow``'s rendered ``*.yml`` image tags
+    (``BEXHOMA_PACKAGE_VERSION`` substituted in, per contract_result.yml's
+    ``versions`` block) -- that one is fixed at submission time and can't
+    drift on a later report regeneration.
+
     :param report_dir: The ``report/`` directory.
     :param experiment: The owning experiment object.
     :param total_restarts: Total SUT container restart count, from
@@ -960,6 +971,7 @@ def _write_index_md(
     skipped = sum(1 for p, _ in experiment._test_results if p is None)
     frontmatter = _frontmatter({
         "schema_version": SCHEMA_VERSION,
+        "bexhoma_version": _BEXHOMA_VERSION,
         "experiment_code": experiment.code,
         "workload_type": experiment.workload.get('type', ''),
         "generated_at": datetime.now(timezone.utc).isoformat(),

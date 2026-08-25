@@ -14,7 +14,7 @@ import unittest
 from unittest import mock
 
 import experiment as experiment_cli
-from bexhoma import experiment_loader
+from bexhoma.experiments import tpch_loader as experiment_loader
 
 _CATALOG_DRIVEN_FILE = 'dev/catalog/experiment.yml'
 _CATALOG_FILE = 'contracts/contract_catalog.yml'
@@ -66,7 +66,7 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
     def test_self_specified_file_routes_to_experiment_builder(self) -> None:
         """A self-specified file is validated and handed to experiment_builder, not tpch.run()."""
         import tpch
-        with mock.patch.object(experiment_cli.experiment_builder, 'build_experiment') as mock_build, \
+        with mock.patch.object(experiment_cli.tpch_builder, 'build_experiment') as mock_build, \
              mock.patch.object(tpch, 'run') as mock_run:
             experiment_cli.run_experiment_yaml(_SELF_SPECIFIED_FILE)
         mock_build.assert_called_once()

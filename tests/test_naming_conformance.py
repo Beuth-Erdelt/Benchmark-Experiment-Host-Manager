@@ -26,15 +26,15 @@ from unittest import mock
 
 import yaml
 
-from bexhoma import experiment_builder, report_writer
+from bexhoma import report_writer, spec
+from bexhoma.experiments import tpch_builder as experiment_builder
 from bexhoma.experiments.tpch import TpchExperiment
 
 from .stubs import StubCluster
 
-_CONTRACT_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    'contracts', 'contract_result.yml',
-)
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_CONTRACT_PATH = os.path.join(_REPO_ROOT, 'contracts', 'contract_result.yml')
+_CATALOG_CONTRACT_PATH = os.path.join(_REPO_ROOT, 'contracts', 'contract_catalog.yml')
 
 _BASE_SPEC = {
     'workload': 'tpch',
@@ -101,6 +101,50 @@ class ContractSelfConsistencyTest(unittest.TestCase):
                     walk(v)
 
         walk(self.contract)
+
+
+class CatalogContractSelfConsistencyTest(unittest.TestCase):
+    """contract_catalog.yml (also loaded in production as the live catalog.yaml,
+    see spec.load_catalog()) must not drift from the code that resolves it."""
+
+    def setUp(self) -> None:
+        with open(_CATALOG_CONTRACT_PATH, 'r', encoding='utf-8') as f:
+            self.catalog_contract = yaml.safe_load(f)
+
+    def test_catalog_contract_version_matches_spec_module_constant(self) -> None:
+        """``catalog_contract_version`` must equal ``spec.CATALOG_CONTRACT_VERSION``."""
+        self.assertEqual(self.catalog_contract['catalog_contract_version'], spec.CATALOG_CONTRACT_VERSION)
+
+    def test_follow_up_of_is_documented_as_optional(self) -> None:
+        """follow_up_of must exist in the schema and not be a required header field,
+        matching validate_experiment()'s treatment of it as optional."""
+        follow_up_of_field = self.catalog_contract['experiment_schema']['fields']['follow_up_of']
+        self.assertEqual(follow_up_of_field['required'], False)
+
+
+class FollowUpOfValidationTest(unittest.TestCase):
+    """spec.validate_experiment()'s handling of the optional follow_up_of field."""
+
+    def _catalog(self) -> dict:
+        return {'workloads': {'tpch': {'supports': []}}}
+
+    def _experiment(self, **overrides) -> dict:
+        experiment = {
+            'title': 't', 'hypothesis': 'h', 'discriminates': ['system'],
+            'workload': {'name': 'tpch'}, 'systems': [],
+        }
+        experiment.update(overrides)
+        return experiment
+
+    def test_missing_follow_up_of_is_valid(self) -> None:
+        spec.validate_experiment(self._catalog(), self._experiment())
+
+    def test_string_follow_up_of_is_valid(self) -> None:
+        spec.validate_experiment(self._catalog(), self._experiment(follow_up_of='1785578016'))
+
+    def test_non_string_follow_up_of_is_rejected(self) -> None:
+        with self.assertRaises(spec.SpecError):
+            spec.validate_experiment(self._catalog(), self._experiment(follow_up_of=1785578016))
 
 
 class GenerateComponentNameConformanceTest(unittest.TestCase):

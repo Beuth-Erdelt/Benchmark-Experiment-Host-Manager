@@ -9,6 +9,8 @@
 #   when:         the condition under which a rule/field actually applies
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
 
+catalog_contract_version: "1.0.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+
 catalog_concepts:
   workloads:
     semantics: "what to run: params, loading behavior, physical-design semantics"
@@ -107,6 +109,20 @@ experiment_schema:
       type: "list[str]"
       required: true
       semantics: "factor(s) the experiment isolates, e.g. [system] or [system, concurrency]"
+    follow_up_of:
+      type: str
+      required: false
+      semantics: "the experiment_code (contract_result.yml's structure.experiment_code --
+        a unix-timestamp-seconds string) of a prior run this experiment follows up on"
+      why: "lets an agent reconstruct comparison lineage structurally instead of
+        relying on prose buried in hypothesis; feeds the not-yet-implemented
+        cross_experiment_comparison validity check (see contract_result.yml's
+        validity/known_gaps) once that exists"
+      when: "set only when this experiment is a deliberate follow-up to a specific
+        prior run; omit entirely for a first/standalone experiment"
+      out_of_scope: "does not itself enforce or verify anything -- nothing in the
+        result folder or this catalog checks that the named experiment_code
+        actually exists or ran a comparable workload"
     workload:
       type: object
       fields:

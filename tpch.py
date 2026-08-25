@@ -70,7 +70,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     Extracted from ``if __name__ == '__main__':`` so it can be imported and
     fed a synthetic argv (e.g. ``build_parser().parse_args([mode])``) by
-    :mod:`bexhoma.experiment_builder`, instead of re-declaring these flags by hand.
+    :mod:`bexhoma.experiments.tpch_builder`, instead of re-declaring these flags by hand.
 
     :return: Configured argument parser.
     :rtype: argparse.ArgumentParser

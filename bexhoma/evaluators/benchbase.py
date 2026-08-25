@@ -46,6 +46,17 @@ class BenchbaseEvaluator(LogEvaluator):
     :param include_loading: Whether loading-phase results are expected.
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
+    def get_terminals(self, loading_parameters):
+        """
+        Returns the number of Benchbase terminals from ``BENCHBASE_TERMINALS``.
+
+        :param loading_parameters: The connection's ``loading_parameters`` dict.
+        :type loading_parameters: dict
+        :return: Terminal count, or ``0`` when not set.
+        :rtype: int
+        """
+        return loading_parameters.get('BENCHBASE_TERMINALS', 0)
+
     def log_to_df(self, filename):
         """
         Parses a Benchbase pod log file into a single-row DataFrame.

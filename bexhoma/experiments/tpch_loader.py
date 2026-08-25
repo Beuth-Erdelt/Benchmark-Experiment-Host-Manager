@@ -6,7 +6,7 @@ This is the loader half of the YAML-driven experiment entry script (see
 separate from :mod:`bexhoma.spec`, which translates a *catalog-driven*
 ``experiment.yml`` into a ``tpch.py`` CLI argument vector: this module's
 ``experiment.yaml`` is fully self-specified and is fed straight into
-:mod:`bexhoma.experiment_builder`, never through argv.
+:mod:`bexhoma.experiments.tpch_builder`, never through argv.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -46,7 +46,7 @@ def load_experiment_yaml(path: str) -> dict:
 
 def validate_experiment_yaml(spec: dict) -> None:
     """
-    Validate a parsed ``experiment.yaml`` before it is handed to :mod:`bexhoma.experiment_builder`.
+    Validate a parsed ``experiment.yaml`` before it is handed to :mod:`bexhoma.experiments.tpch_builder`.
 
     Checks, in order: every field in :data:`_REQUIRED_TOP_LEVEL_FIELDS` is present;
     ``workload`` is one of :data:`_SUPPORTED_WORKLOADS` (only ``tpch`` today, per
