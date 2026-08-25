@@ -50,6 +50,9 @@
 .. include:: ../README.md
    :parser: myst_parser.sphinx_
 
+.. include:: Agent.md
+   :parser: myst_parser.sphinx_
+
 Indices and tables
 ==================
 

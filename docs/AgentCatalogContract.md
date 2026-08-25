@@ -5,14 +5,11 @@ writing an `experiment.yml`**, exactly what it may legally contain — which
 workloads and systems exist, which parameters/knobs each takes, and which
 three header fields are required — without reading any source code.
 
-This is the contract version of
-[`Design-Catalog-Contract.md`](Design-Catalog-Contract.md) (which explains
-the catalog's design rationale, worked examples, and validation ordering in
-full prose) — read this file to know the *shape*; read
-`Design-Catalog-Contract.md` for the *why*. Mirrors
-[`AgentResultContract.md`](AgentResultContract.md)'s role on the output side:
-that file tells an agent what it'll get back, this one tells it what it's
-allowed to ask for.
+Mirrors [`AgentResultContract.md`](AgentResultContract.md)'s role on the
+output side: that file tells an agent what it'll get back, this one tells it
+what it's allowed to ask for. Everything below is read directly from
+`contracts/contract_catalog.yml` itself — no other file is needed to know
+the current shape of a valid `experiment.yml`.
 
 ```yaml
 catalog_contract_version: "1.0.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
@@ -198,8 +195,6 @@ concurrency, memory]`.
   run → answer.
 - [`AgentResultContract.md`](AgentResultContract.md) — the output-side
   counterpart: what a completed run's result folder contains.
-- [`Design-Catalog-Contract.md`](Design-Catalog-Contract.md) — full design
-  rationale, worked examples, and validation ordering.
 - `contracts/contract_catalog.yml` /
   `contracts/contract_catalog_comments.md` — the actual contract and its
   human-only rationale doc.

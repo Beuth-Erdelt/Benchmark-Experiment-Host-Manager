@@ -89,11 +89,9 @@ selection; a fourth, `follow_up_of`, is optional and names a prior run's
 `experiment_code` when this run continues it. See
 [`AgentCatalogContract.md`](AgentCatalogContract.md) for the condensed,
 agent-facing shape of everything `contract_catalog.yml` currently offers
-(the one workload and two systems in scope, their params/knobs/profiles),
+(the one workload and two systems in scope, their params/knobs/profiles) and
 [`dev/catalog/experiment.yml`](../dev/catalog/experiment.yml) for the
-maintained worked example, and
-[`Design-Catalog-Contract.md`](Design-Catalog-Contract.md) for the full field
-reference and design rationale. `experiment*.yml` is gitignored at the repo
+maintained worked example. `experiment*.yml` is gitignored at the repo
 root — a scratch `./experiment.yml` there is a normal, disposable working
 copy, not a file that needs to be committed.
 
@@ -167,11 +165,9 @@ Entry point: `{resultfolder}/{code}/report/index.md` (only if `-rp` was used
 
 ## See also
 
-- [`contracts/contract_catalog.yml`](../contracts/contract_catalog.yml) /
-  [`contracts/contract_catalog_comments.md`](../contracts/contract_catalog_comments.md)
+- `contracts/contract_catalog.yml` / `contracts/contract_catalog_comments.md`
   — the input-side contract and its rationale.
-- [`contracts/contract_result.yml`](../contracts/contract_result.yml) /
-  [`contracts/contract_result_comments.md`](../contracts/contract_result_comments.md)
+- `contracts/contract_result.yml` / `contracts/contract_result_comments.md`
   — the output-side contract and its rationale.
 - [`AgentCatalogContract.md`](AgentCatalogContract.md) — condensed,
   agent-facing walkthrough of `contract_catalog.yml`: what a valid
@@ -180,8 +176,6 @@ Entry point: `{resultfolder}/{code}/report/index.md` (only if `-rp` was used
   `contract_result.yml`, with worked examples.
 - [`AgentReport.md`](AgentReport.md) — design rationale for the tiered report
   read in step 6.
-- [`Design-Catalog-Contract.md`](Design-Catalog-Contract.md) — full
-  `experiment.yml` field reference and validation ordering.
 - [`validate_experiment.py`](../validate_experiment.py) /
   [`experiment.py`](../experiment.py) — the two entry points used in steps 4–5.
 - [`bexhoma/environment.py`](../bexhoma/environment.py) — generates
