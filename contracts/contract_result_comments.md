@@ -4,7 +4,7 @@ This file is **not** required to read a completed experiment's result
 folder. `contracts/contract_result.yml` is fully self-contained on its own:
 every field an agent needs — `entry_point`, `structure`, `tiers`,
 `provenance`, `versions`, `key_metrics_by_benchmark_type`, `validity`,
-`verdict_shape`, `known_gaps` — is encoded as actual parseable YAML data in
+`verdict_shape`, `answer_contract`, `known_gaps` — is encoded as actual parseable YAML data in
 that file, not as comments. Nothing in `contract_result.yml` should ever
 require reading this document, or any other file, to know what a result
 folder contains and how to decode its filenames — the only other files an
@@ -31,6 +31,9 @@ bexhoma source tree.
 
 ## See also
 
+- `docs/AgentWorkflow.md` — the end-to-end agent loop this file is the
+  output half of: question → contracts → `experiment.yml` → validate → run →
+  answer.
 - `docs/AgentResultContract.md` — prose version of this file, with worked
   examples and rationale.
 - `docs/Design-Catalog-Contract.md` — the input-side catalog contract

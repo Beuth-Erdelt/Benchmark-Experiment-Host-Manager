@@ -2,10 +2,10 @@
 # experiment run's result folder contains and how to decode its filenames.
 # Self-contained: every field an agent needs is data below (entry_point/
 # structure/tiers/provenance/versions/key_metrics_by_benchmark_type/
-# validity/verdict_shape/known_gaps), not comments. Design rationale and
-# provenance (not needed to read this file): contracts/contract_result_comments.md
+# validity/verdict_shape/answer_contract/known_gaps), not comments. Design
+# rationale and provenance (not needed to read this file): contracts/contract_result_comments.md
 
-result_contract_version: "1.3.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.4.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -69,6 +69,7 @@ provenance:
     "*.yml": "rendered K8s Job/Deployment/Service manifests actually submitted; every image: field is a concrete tag, BEXHOMA_PACKAGE_VERSION already substituted"
     "*.yaml": "same as *.yml"
     "*.describe.log": "kubectl describe pod: scheduling/image-pull/restart/OOMKill events"
+    "experiment.yml, experiment.yaml, contract_catalog.yml, contract_result.yml, catalog.yaml, environment.yml (whichever exist)": "the input(s) this run was actually built from, not a K8s manifest — a YAML-driven run (experiment.py) copies the experiment.yml/.yaml it was given, plus (catalog-driven only) the contract_catalog.yml/contract_result.yml pair that governed it, or (self-specified only) any catalog:/environment: pointer files the spec named; a hand-typed `python tpch.py ...` invocation writes none of these — see answer_contract.hypothesis below for what that means for an agent"
   loading:
     "*-loading-*.sql.log": "rendered SQL script SOURCE, despite the .log suffix"
     "*-loading-*.sh.log": "rendered bash script SOURCE, despite the .log suffix"
@@ -149,6 +150,28 @@ verdict_shape:
   fields: {passed: int, failed: int, skipped: int}
   source: "report/index.md frontmatter's overall_status"
   rule: "only a FAILED row scopes/invalidates metrics below it in report/index.md; a SKIPPED row never does"
+
+answer_contract:
+  hypothesis:
+    source_file: experiment.yml
+    source_location: "<result_dir>/experiment.yml"
+    source_fields: [title, hypothesis, discriminates, follow_up_of]
+    present_when: "the run was launched via `python experiment.py run <file>.yml` (catalog-driven) — copied verbatim at run start; see provenance.workflow above"
+    absent_when: "a direct entry-script run (e.g. `python tpch.py run -dbms ...`) never had a catalog file to copy — state 'no hypothesis recorded' rather than reconstructing one from workload params"
+    also_copied: [contract_catalog.yml, contract_result.yml]
+    also_copied_why: "the exact contracts that governed this run, frozen at run time — may differ from the repo's current copies of the same files if bexhoma was upgraded since"
+  steps:
+    - id: hypothesis
+      instruction: "Restate the question being tested, quoting experiment.yml's hypothesis field verbatim when present; otherwise state plainly that this run carries no recorded hypothesis."
+    - id: verdict
+      instruction: "State pass/fail/skip counts; note whether any FAILED row scopes/invalidates a metric reported below it."
+      source: verdict_shape
+    - id: evidence
+      instruction: "Cite the specific tier-1/tier-2 file and value backing every claim in the verdict."
+      source: tiers
+    - id: follow_up
+      instruction: "If the verdict does not fully resolve the hypothesis, or discriminates names a factor not yet varied, propose it as a new experiment.yml with follow_up_of set to this run's experiment_code."
+      source: "experiment.yml's discriminates/follow_up_of fields when present; otherwise known_gaps.cross_experiment_comparison applies"
 
 known_gaps:
   - "no sha256 image digest is recorded (a re-pushed tag is invisible to this contract)"

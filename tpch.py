@@ -296,10 +296,14 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
             split_portion = int(loading_pods_total/loading_pods_split)
             if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
-                for cell in resource_cells:
+                for cell_number, cell in enumerate(resource_cells, start=1):
                     # a swept resource cell needs its own configuration identity and
-                    # its own storage, or every cell would collide on the same PVC
-                    resource_suffix = cell['memory'] if len(resource_cells) > 1 else ''
+                    # its own storage, or every cell would collide on the same PVC.
+                    # The suffix is the 1-based cell position, never a single
+                    # resource value: cells that share a memory request but differ
+                    # in memory limit or CPU (e.g. -rr 64G,64G -lr 64G,32G) would
+                    # otherwise resolve to the same name and clobber each other.
+                    resource_suffix = str(cell_number) if len(resource_cells) > 1 else ''
                     configuration_name = f'PostgreSQL-{resource_suffix}' if resource_suffix else ''
                     alias = f'PostgreSQL@{resource_suffix}' if resource_suffix else 'DBMS A2'
                     if experiment.tenant_per == 'container':
@@ -401,10 +405,14 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("PgDuckDB" in args.dbms):
                 # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's DDL scripts and loading job)
-                for cell in resource_cells:
+                for cell_number, cell in enumerate(resource_cells, start=1):
                     # a swept resource cell needs its own configuration identity and
-                    # its own storage, or every cell would collide on the same PVC
-                    resource_suffix = cell['memory'] if len(resource_cells) > 1 else ''
+                    # its own storage, or every cell would collide on the same PVC.
+                    # The suffix is the 1-based cell position, never a single
+                    # resource value: cells that share a memory request but differ
+                    # in memory limit or CPU (e.g. -rr 64G,64G -lr 64G,32G) would
+                    # otherwise resolve to the same name and clobber each other.
+                    resource_suffix = str(cell_number) if len(resource_cells) > 1 else ''
                     configuration_name = f'PgDuckDB-{resource_suffix}' if resource_suffix else ''
                     alias = f'PgDuckDB@{resource_suffix}' if resource_suffix else 'DBMS A2'
                     name_format = 'PgDuckDB-{cluster}-{pods}'

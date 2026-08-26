@@ -113,7 +113,7 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
         raise ValueError(
             "Invalid selector. Expected e.g. "
             "deployment[sut].container[dbms].max_worker_processes "
-            "or deployment[sut]@PostgreSQL-32Gi.container[dbms].shared_buffers"
+            "or deployment[sut]@PostgreSQL-2.container[dbms].shared_buffers"
         )
     d = m.groupdict()
     d["kind"] = d["kind"].lower()

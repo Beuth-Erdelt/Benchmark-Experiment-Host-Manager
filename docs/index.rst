@@ -44,6 +44,7 @@
     ./Concept.md
     ./TestCases.md
     ./CONTRIBUTING.md
+    ./Agent.md
     ./bexhoma
 
 

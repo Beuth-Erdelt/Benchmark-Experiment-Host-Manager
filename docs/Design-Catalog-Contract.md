@@ -882,10 +882,12 @@ so their behavior is unchanged.
 `{request, limit}` dict — shared by every system in `systems:`, no sweep,
 exactly as above for `cpu` — or a list of them. A list crosses every
 `systems:` entry against every list entry: two systems × two memory
-entries resolves to four configurations (`PostgreSQL-32Gi`,
-`PostgreSQL-64Gi`, `PgDuckDB-32Gi`, `PgDuckDB-64Gi`), each with its own
-`derive:`d knob values (`shared_buffers` etc. computed from *that* cell's
-`memory_limit`). This is the same "list = swept, scalar = shared" idiom
+entries resolves to four configurations (`PostgreSQL-1`, `PostgreSQL-2`,
+`PgDuckDB-1`, `PgDuckDB-2` — the suffix is the 1-based cell position, not a
+resource value, since two cells may share a memory request while differing in
+limit or CPU), each with its own `derive:`d knob values (`shared_buffers` etc.
+computed from *that* cell's `memory_limit`). This is the same "list = swept,
+scalar = shared" idiom
 `workload.rounds` already uses for concurrency — see
 `bexhoma/experiments/tpch_catalog.py::build_tpch_argv()`'s `cpu_cells`/`memory_cells` handling.
 
@@ -898,8 +900,8 @@ just parse:
    `SutConfiguration.set_resources()` already applied per-configuration
    resources correctly before this change; only the CLI/entry-script loop
    that calls it once per cell was missing. Each cell also gets its own
-   `configuration=` name (`{docker}-{memory_request}`) and storage identity,
-   so concurrent cells don't collide on the same PVC.
+   `configuration=` name (`{docker}-{1-based cell position}`) and storage
+   identity, so concurrent cells don't collide on the same PVC.
 2. **The `--set` mechanism was experiment-global**, applied identically to
    every configuration matching a `deployment[NAME]` selector — two
    `PostgreSQL` cells would both receive whichever `shared_buffers` value
@@ -910,8 +912,8 @@ just parse:
    `@CONFIG` doesn't match its own `configuration` name. Unscoped `--set`
    (today's only form before this change) still applies to every matching
    configuration, so this is fully backward compatible.  `spec.py` predicts
-   each cell's `{docker}-{memory_request}` name statically and emits one
-   scoped `--set` per (system, cell, knob) triple.
+   each cell's `{docker}-{1-based cell position}` name statically and emits
+   one scoped `--set` per (system, cell, knob) triple.
 
 This `--set @CONFIG` scoping is deliberately a thin CLI-layer bridge, not
 the long-term mechanism: `resolve_system()`'s resolution (per-cell
@@ -1017,7 +1019,14 @@ had to duplicate the ~45 shared-flag defaults `bexhoma/cli_args.py`'s
    flags the spec actually sets** — e.g. `-sf`, `-t`, `-ne`, `-nc`, `-m`,
    `-rc`/`-lc`/`-rr`/`-lr`/`-rss`, `-rst` (derived from the resolved
    profile's `storage_class`) — falling back to `tpch.py`'s own argparse
-   defaults for everything else. Before any of that, it computes every named
+   defaults for everything else. One deliberate exception: the concurrent-SUT
+   caps `-ms`/`-mse` are **always** emitted, from `experiment.get(field, 1)`,
+   because `tpch.py`'s own default for them is "no limit" and the contract's
+   default is `1` (one SUT at a time — `catalog_concepts.sut_isolation`); so
+   an experiment that omits `max_sut`/`max_sut_experiment` still gets
+   `-ms 1 -mse 1` on the command, and `max_sut: 0` drops the flag to inherit
+   `tpch.py`'s no-limit behavior. Before any
+   of that, it computes every named
    system's effective post_load: `-xii`/`-xic`/`-xis`/`-xcol` are global CLI
    switches with no per-system scope in `tpch.py`, so when every system
    agrees, the shared flags are emitted exactly as before; when a
