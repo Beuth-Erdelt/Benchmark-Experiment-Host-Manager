@@ -43,18 +43,12 @@
     ./Tool.md
     ./Concept.md
     ./TestCases.md
-    ./AgentWorkflow.md
-    ./AgentCatalogContract.md
-    ./AgentResultContract.md
-    ./AgentReport.md
     ./CONTRIBUTING.md
+    ./Agent.md
     ./bexhoma
 
 
 .. include:: ../README.md
-   :parser: myst_parser.sphinx_
-
-.. include:: Agent.md
    :parser: myst_parser.sphinx_
 
 Indices and tables
