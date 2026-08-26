@@ -194,8 +194,12 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     # one (system_spec, ResolvedSystem, configuration_name) triple per resolved cell;
     # configuration_name is "" (unscoped) when there is only one cell, otherwise it
     # must match the configuration name tpch.py's own resource-sweep loop will give
-    # that cell (docker + "-" + memory request), so the --set operations emitted
-    # below land on the right configuration (see parse_set_arg's @CONFIG scope)
+    # that cell: "{system}-{1-based cell position}". A position, not a resource
+    # value -- two cells can share a memory request while differing in limit or
+    # CPU, and a value-based name would collide. tpch.py iterates its cells in the
+    # same order (the -rr/-lr/-rc/-lc list order this builder emits below), so
+    # cell N here is cell N there and the --set operations land on the right
+    # configuration (see parse_set_arg's @CONFIG scope).
     resolved_cells: list[tuple[dict[str, Any], ResolvedSystem, str]] = []
     for system_spec in system_specs:
         for cell_index in range(num_cells):
@@ -209,7 +213,7 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
             }
             resolved = spec.resolve_system(catalog, system_spec, resolve_inputs, memory_formatter=format_postgres_memory)
             configuration_name = (
-                f"{system_spec['name']}-{cell_memory.get('request')}" if num_cells > 1 else ""
+                f"{system_spec['name']}-{cell_index + 1}" if num_cells > 1 else ""
             )
             resolved_cells.append((system_spec, resolved, configuration_name))
 
