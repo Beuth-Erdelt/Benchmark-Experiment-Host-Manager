@@ -1019,7 +1019,14 @@ had to duplicate the ~45 shared-flag defaults `bexhoma/cli_args.py`'s
    flags the spec actually sets** — e.g. `-sf`, `-t`, `-ne`, `-nc`, `-m`,
    `-rc`/`-lc`/`-rr`/`-lr`/`-rss`, `-rst` (derived from the resolved
    profile's `storage_class`) — falling back to `tpch.py`'s own argparse
-   defaults for everything else. Before any of that, it computes every named
+   defaults for everything else. Two of those defaults matter for validity:
+   `-ms`/`--max-sut` and `-mse`/`--max-sut-experiment` both default to `1`,
+   so the resolved systems (× resource cells) are benchmarked one SUT at a
+   time rather than side by side, where they would interfere — see
+   `catalog_concepts.sut_isolation`. An experiment overrides this with the
+   top-level `max_sut`/`max_sut_experiment` fields (`0` = no limit), which
+   `build_argv()` emits as `-ms`/`-mse` only when actually set. Before any
+   of that, it computes every named
    system's effective post_load: `-xii`/`-xic`/`-xis`/`-xcol` are global CLI
    switches with no per-system scope in `tpch.py`, so when every system
    agrees, the shared flags are emitted exactly as before; when a

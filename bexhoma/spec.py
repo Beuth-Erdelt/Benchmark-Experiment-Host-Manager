@@ -60,7 +60,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.0.0"
+CATALOG_CONTRACT_VERSION = "1.1.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -417,7 +417,9 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     present and non-empty (``title``, ``hypothesis``, ``discriminates`` — an
     experiment.yml must state what it's testing and which factor it isolates
     before anything else is resolved); the optional ``follow_up_of``, if
-    present, is a string; the workload exists; every named
+    present, is a string; the optional ``max_sut``/``max_sut_experiment``
+    concurrent-SUT caps, if present, are non-negative integers (0 = no
+    limit); the workload exists; every named
     system is in the workload's ``supports:`` list; and, for each system's
     *effective* post_load (its own ``systems[].post_load`` override — a
     selection choice — or else the shared ``loading.post_load`` default),
@@ -437,6 +439,11 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     follow_up_of = experiment.get("follow_up_of")
     if follow_up_of is not None and not isinstance(follow_up_of, str):
         raise SpecError("'follow_up_of' must be a string (a prior run's experiment_code)")
+
+    for cap_field in ("max_sut", "max_sut_experiment"):
+        cap = experiment.get(cap_field)
+        if cap is not None and (isinstance(cap, bool) or not isinstance(cap, int) or cap < 0):
+            raise SpecError(f"'{cap_field}' must be a non-negative integer (0 = no limit)")
 
     workload_name = experiment["workload"]["name"]
     workloads = catalog.get("workloads", {})

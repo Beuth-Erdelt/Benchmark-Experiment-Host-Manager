@@ -17,6 +17,28 @@ import os
 __all__ = ["make_base_parser", "resolve_scaling_factor"]
 
 
+def _concurrent_sut_cap(value):
+    """Parse a ``-ms``/``-mse`` value into a concurrent-SUT cap.
+
+    A positive integer caps how many systems-under-test may run at the same
+    time. ``0`` (or any non-positive value) means *no limit* and is
+    normalised to ``None`` so the entry scripts' existing
+    ``if args.max_sut is not None`` guards simply leave the cap unset (its
+    ``clusters.py``/``experiments`` default, which is "no limit").
+
+    :param value: Raw CLI token.
+    :return: A positive ``int``, or ``None`` for "no limit".
+    :raises argparse.ArgumentTypeError: When ``value`` is not an integer.
+    """
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        raise argparse.ArgumentTypeError(
+            f"{value!r} is not an integer (use a positive count, or 0 for no limit)"
+        )
+    return parsed if parsed > 0 else None
+
+
 def resolve_scaling_factor(cluster, code, mode: str, cli_scaling_factor) -> str:
     """
     Returns the scaling factor an entry script should construct its experiment
@@ -80,8 +102,8 @@ def make_base_parser():
     p.add_argument('-m',   '--monitoring', help='enable Prometheus monitoring for the SUT', action='store_true')
     p.add_argument('-ma',  '--monitoring-app', help='enable application-level metrics collection', action='store_true', default=False)
     p.add_argument('-mc',  '--monitoring-cluster', help='enable node-level monitoring for the entire cluster', action='store_true', default=False)
-    p.add_argument('-ms',  '--max-sut', help='maximum number of DBMS configurations to run in parallel cluster-wide (default: no limit)', default=None)
-    p.add_argument('-mse', '--max-sut-experiment', help='maximum number of DBMS configurations in this experiment to run in parallel (default: no limit)', default=None)
+    p.add_argument('-ms',  '--max-sut', type=_concurrent_sut_cap, default=1, help='maximum number of SUT configurations running at the same time CLUSTER-WIDE (every bexhoma experiment sharing the cluster counts). Default 1 benchmarks one system at a time, because co-located SUTs interfere with each other and the measurement would no longer be attributable to a single configuration. 0 = no limit; N>1 = up to N concurrent SUTs (only sensible when they do not share a node)')
+    p.add_argument('-mse', '--max-sut-experiment', type=_concurrent_sut_cap, default=1, help='same as --max-sut but scoped to THIS experiment only; independent of --max-sut, both caps are enforced together. Default 1; 0 = no limit')
     p.add_argument('-et',  '--experiment-timeout', help='maximum wall-clock duration of the experiment in minutes; when exceeded, the experiment is stopped and all its components are removed from the cluster (default: no limit)', type=int, default=None)
     p.add_argument('-nc',  '--num-config', help='number of experiment repetitions per configuration', default=1)
     p.add_argument('-ne',  '--num-query-executors', help='comma-separated list of parallel client counts to sweep', default="1")

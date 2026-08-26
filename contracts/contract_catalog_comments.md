@@ -91,6 +91,46 @@ None of these were removed from the underlying bexhoma code (`tpch.py`,
 from the catalog's exposed surface. If the code paths for these are later
 found unused elsewhere, that's a separate cleanup, not implied by this one.
 
+## Single SUT at a time by default (2026-08-26)
+
+`catalog_concepts.sut_isolation` and two experiment_schema fields
+(`max_sut`, `max_sut_experiment`) were added; `bexhoma/cli_args.py`'s
+`-ms`/`--max-sut` **and** `-mse`/`--max-sut-experiment` defaults both
+changed from `None` (no limit) to `1` (`catalog_contract_version`
+1.0.0 -> 1.1.0, `spec.CATALOG_CONTRACT_VERSION` kept in lockstep).
+
+Rationale: the default benchmarking situation is one system-under-test at a
+time. A `systems:` list (and any `resources:` sweep crossed with it)
+resolves to several configurations, and before this change nothing stopped
+bexhoma from bringing two of their SUTs up concurrently on the same
+cluster. Co-located SUTs share node CPU, memory bandwidth, disk and network,
+so a side-by-side run measures that interference instead of the factor in
+`discriminates:`. Serialising on a cap of 1 keeps every measurement
+attributable to a single configuration.
+
+Design points:
+
+- **Two independent caps, kept independent.** `-ms` counts SUTs
+  cluster-wide (across every concurrent bexhoma experiment); `-mse` counts
+  only the current experiment's own. `bexhoma/experiments/base.py` enforces
+  both — a new SUT starts only if both allow it — so they compose without
+  either subsuming the other. Both are exposed as experiment.yml fields
+  because an experiment should be able to state its own isolation intent
+  without relying on the operator remembering a CLI flag.
+- **`0` means "no limit".** `_concurrent_sut_cap()` in `cli_args.py` is the
+  argparse `type` for both flags: it maps `0` (or any non-positive value)
+  to `None`, which is exactly the "no cap" sentinel the entry scripts'
+  existing `if args.max_sut is not None:` guards already understand. So the
+  change touches only `cli_args.py` — every entry script (`tpch.py`,
+  `ycsb.py`, `benchbase.py`, `hammerdb.py`, `tpcds.py`, `hardware.py`, ...)
+  picks up the new default and the `0` semantics for free.
+- **Absent field != `0`.** `build_tpch_argv()` emits `-ms`/`-mse` only when
+  the experiment.yml actually sets the field; an omitted field falls through
+  to `tpch.py`'s own default of `1`. Setting the field to `0` *does* emit
+  `-ms 0`, which the parser turns back into "no limit".
+- The many `docs/Example-*.md` recipes that pass `-ms $BEXHOMA_MS`
+  explicitly are unaffected.
+
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
 `experiments/tpch/PgDuckDB/` exists on disk but is unused: `tpch.py` points

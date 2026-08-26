@@ -261,6 +261,12 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
         argv.extend(["-ne", ",".join(str(round_clients) for round_clients in rounds)])
     _append_flag(argv, "-nc", workload_spec.get("repetitions"))
 
+    # Concurrent-SUT caps: omit when the spec omits them (tpch.py's own
+    # default of 1 -- one system at a time -- then applies); emit 0 verbatim,
+    # which tpch.py reads as "no limit" (see catalog_concepts.sut_isolation).
+    _append_flag(argv, "-ms", experiment.get("max_sut"))
+    _append_flag(argv, "-mse", experiment.get("max_sut_experiment"))
+
     if observe.get("monitoring_sut"):
         argv.append("-m")
     if observe.get("monitoring_cluster"):

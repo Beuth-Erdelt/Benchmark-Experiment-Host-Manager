@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.0.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.1.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   workloads:      {semantics: "what to run: params, loading behavior, physical-design semantics"}
@@ -39,6 +39,16 @@ catalog_concepts:                    # vocabulary used throughout this file's ow
                                 in the shipped k8s template -- still legal to set via profile/override,
                                 just not active by default. fixed: true (separate) marks a knob that isn't
                                 mechanically blocked but has no other legal value in practice for this pairing"}
+  sut_isolation:  {semantics: "the default situation is one system-under-test at a time, not several at once:
+                                every systems[] entry (crossed with any resources: sweep) is benchmarked on
+                                its own, next SUT started only after the previous is torn down. Co-located
+                                SUTs interfere (shared node CPU/memory-bandwidth/disk/network), so a
+                                side-by-side run would measure interference, not the discriminates: factor.
+                                Enforced by two independent caps, both default 1: top-level max_sut (-ms,
+                                cluster-wide) and max_sut_experiment (-mse, this experiment only). Set
+                                either to 0 (no limit) or N>1 for parallel SUTs -- only for SUTs on
+                                separate nodes. Omitting them keeps the serial default.
+                                Parallel loader pods / benchmarker clients run within one SUT and are exempt"}
 
 experiment_schema:
   required_header_fields: [title, hypothesis, discriminates]   # validate_experiment() rejects a missing/empty one before anything else resolves
@@ -52,11 +62,17 @@ experiment_schema:
     hypothesis: {type: str, required: true}
     discriminates: {type: "list[str]", required: true, example: "[system, concurrency, memory]"}
     follow_up_of: {type: str, required: false}
+    max_sut:            {type: int, default: 1, semantics: "max SUTs running at once CLUSTER-WIDE (-ms);
+                          1 = one system at a time, 0 = no limit, N>1 = up to N -- see catalog_concepts.sut_isolation"}
+    max_sut_experiment: {type: int, default: 1, semantics: "same, scoped to this experiment only (-mse);
+                          independent of max_sut, both enforced together; 0 = no limit"}
     workload:   {type: object, fields: [name, params, rounds, repetitions]}
     loading:    {type: object, fields: [pods, threads, split, post_load],
                  pitfall: "must be a TOP-LEVEL sibling of workload:, NOT nested under it -- a
                            workload.loading block silently resolves to {} instead of erroring"}
-    systems:    {type: list, item_fields: [name, profile, override, post_load]}
+    systems:    {type: list, item_fields: [name, profile, override, post_load],
+                 semantics: "one resolved configuration per entry; benchmarked one at a time,
+                             never concurrently -- see catalog_concepts.sut_isolation"}
     observe:    {type: object, fields: [monitoring_sut, monitoring_cluster, monitoring_app]}
     placement:  {type: object, fields: [sut, loading, benchmarking],
                  semantics: "each node named must exist, and not be tainted out, in environment.yml's nodes:"}
@@ -163,7 +179,11 @@ See [`dev/catalog/experiment.yml`](../dev/catalog/experiment.yml) for the
 maintained, real, runnable `experiment.yml` this resolves — a two-system
 (`PostgreSQL` vs. `PgDuckDB`) `analytical-ssd`-profile sweep across
 concurrency (1→16) and memory (64Gi→32Gi), with `discriminates: [system,
-concurrency, memory]`.
+concurrency, memory]`. Both systems (× every swept cell) resolve into one
+command, but bexhoma benchmarks them **one SUT at a time** — `max_sut` and
+`max_sut_experiment` both default to `1` — so the two never contend for the
+same node. Set either to `0` (no limit) or `N` in the experiment.yml to
+allow parallel SUTs; see `catalog_concepts.sut_isolation`.
 
 ## Known gaps versus an idealized contract
 

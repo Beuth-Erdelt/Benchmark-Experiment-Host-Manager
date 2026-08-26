@@ -9,7 +9,7 @@
 #   when:         the condition under which a rule/field actually applies
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
 
-catalog_contract_version: "1.0.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.1.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   workloads:
@@ -72,6 +72,29 @@ catalog_concepts:
     when: "a system declares its own default arg_style; an individual knob
       may override it -- e.g. duckdb_force_execution declares arg_style:
       env-var even though PgDuckDB's system-level default is pg-guc"
+  sut_isolation:
+    semantics: "every resolved configuration -- each systems[] entry, and
+      each resource-sweep cell (see experiment_schema.fields.resources) --
+      is benchmarked with only ONE system-under-test present in the cluster
+      at a time. bexhoma tears the current SUT down before starting the
+      next one; it never runs two side by side."
+    why: "the default situation is one system at a time, not several at
+      once: co-located SUTs contend for the same node CPU, memory
+      bandwidth, disk and network, so a side-by-side run measures that
+      mutual interference rather than the factor named in discriminates.
+      Serial execution keeps each measurement attributable to a single
+      configuration."
+    when: "this is the default for every experiment.yml, enforced by two
+      independent caps that both default to 1: experiment_schema.fields.max_sut
+      (cluster-wide, -ms) and .max_sut_experiment (this experiment only,
+      -mse). An experiment that genuinely wants parallel SUTs -- e.g. each
+      pinned to a different node via placement: -- sets one or both of those
+      fields to 0 (no limit) or N>1; the catalog argv builder then emits the
+      matching -ms/-mse flag. Omitting the fields keeps the serial default."
+    out_of_scope: "parallel LOADER pods (loading.pods) and parallel
+      BENCHMARKER pods/clients (workload.rounds) both run WITHIN one SUT --
+      that concurrency is the workload under test, not interference between
+      configurations, and this rule does not touch it"
   knob_status:
     semantics: "systems.<name>.knobs entries may carry a status: field.
       status: reference-only means the knob exists in the DBMS but is
@@ -123,6 +146,31 @@ experiment_schema:
       out_of_scope: "does not itself enforce or verify anything -- nothing in the
         result folder or this catalog checks that the named experiment_code
         actually exists or ran a comparable workload"
+    max_sut:
+      type: int
+      default: 1
+      semantics: "how many resolved configurations may have their
+        system-under-test running AT THE SAME TIME, counted CLUSTER-WIDE
+        (every bexhoma experiment sharing the cluster counts toward it).
+        1 = one system at a time; 0 = no limit; N>1 = up to N concurrent
+        SUTs. Maps to the -ms/--max-sut CLI flag."
+      why: "the default is one system at a time -- co-located SUTs contend
+        for the same node CPU/memory-bandwidth/disk/network, so a
+        side-by-side run measures interference, not the discriminates:
+        factor (see catalog_concepts.sut_isolation)"
+      when: "raise it above 1 only when the concurrent SUTs genuinely do
+        not share a node -- e.g. each pinned to a different node via
+        placement:"
+    max_sut_experiment:
+      type: int
+      default: 1
+      semantics: "same as max_sut, but counts only THIS experiment's own
+        configurations, ignoring anything else on the cluster. Independent
+        of max_sut: a new SUT starts only when BOTH caps allow it. 0 = no
+        limit. Maps to the -mse/--max-sut-experiment CLI flag."
+      out_of_scope: "leaving max_sut at 1 already serialises this
+        experiment's SUTs cluster-wide; max_sut_experiment only matters
+        once max_sut is 0 or >1"
     workload:
       type: object
       fields:
@@ -147,6 +195,9 @@ experiment_schema:
             workloads.<name>.loading.post_load below"
     systems:
       type: list
+      semantics: "one resolved configuration per entry (crossed with any
+        resource sweep, see resources below). They are benchmarked one at a
+        time, never concurrently -- see catalog_concepts.sut_isolation"
       item_fields:
         name: {type: str, required: true, semantics: "must be a key under this file's systems:"}
         profile: {type: str, required: false, semantics: "one of that system's profiles: keys"}
