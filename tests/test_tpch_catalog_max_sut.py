@@ -1,17 +1,17 @@
 """
 Tests for the concurrent-SUT caps (``max_sut`` / ``max_sut_experiment``).
 
-The default benchmarking situation is one system-under-test at a time (see
-``catalog_concepts.sut_isolation``). This covers:
+The catalog contract's default benchmarking situation is one
+system-under-test at a time (see ``catalog_concepts.sut_isolation``). Because
+``tpch.py``'s own ``-ms``/``-mse`` CLI defaults are "no limit", the default
+of 1 has to be applied by the argv builder, not inherited. This covers:
 
-* ``bexhoma/cli_args.py``: both ``-ms`` and ``-mse`` default to 1, and ``0``
-  is normalised to ``None`` ("no limit") so the entry scripts' existing
-  ``is not None`` guards leave the cap unset;
-* ``bexhoma/experiments/tpch_catalog.py::build_tpch_argv``: the caps are
-  emitted only when the experiment.yml actually sets them, and ``0`` is
-  passed through verbatim;
+* ``bexhoma/experiments/tpch_catalog.py::build_tpch_argv``: ``-ms``/``-mse``
+  are always emitted -- an absent field becomes ``-ms 1``/``-mse 1``; a
+  field set to 0 ("no limit") drops the flag so ``tpch.py`` inherits its own
+  no-limit default; an explicit N is passed through;
 * ``bexhoma/spec.py::validate_experiment``: a negative or non-integer cap
-  is rejected.
+  is rejected before any argv is built.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -29,7 +29,7 @@ _CATALOG_FILE = 'contracts/contract_catalog.yml'
 _BASE_SPEC = {
     'mode': 'run',
     'title': 'concurrent-SUT cap test',
-    'hypothesis': 'the caps reach tpch.py only when set',
+    'hypothesis': 'the caps reach tpch.py with the contract default of 1',
     'discriminates': ['system'],
     'workload': {'name': 'tpch', 'params': {'scaling_factor': 10}, 'rounds': [1], 'repetitions': 1},
     'loading': {'pods': 1, 'threads': 1},
@@ -48,34 +48,8 @@ def _flag_value(argv, flag):
     return argv[argv.index(flag) + 1] if flag in argv else None
 
 
-class MaxSutCliDefaultTest(unittest.TestCase):
-    """``-ms``/``-mse`` default to 1; ``0`` means "no limit" (``None``)."""
-
-    def _parse(self, extra):
-        return tpch.build_parser().parse_args(['run', '-dbms', 'PostgreSQL', *extra])
-
-    def test_both_caps_default_to_one(self):
-        args = self._parse([])
-        self.assertEqual(args.max_sut, 1)
-        self.assertEqual(args.max_sut_experiment, 1)
-
-    def test_zero_is_normalised_to_no_limit(self):
-        args = self._parse(['-ms', '0', '-mse', '0'])
-        self.assertIsNone(args.max_sut)
-        self.assertIsNone(args.max_sut_experiment)
-
-    def test_positive_value_passes_through(self):
-        args = self._parse(['-ms', '4', '-mse', '2'])
-        self.assertEqual(args.max_sut, 4)
-        self.assertEqual(args.max_sut_experiment, 2)
-
-    def test_non_integer_is_rejected(self):
-        with self.assertRaises(SystemExit):
-            self._parse(['-ms', 'lots'])
-
-
 class MaxSutArgvEmissionTest(unittest.TestCase):
-    """``build_tpch_argv`` emits ``-ms``/``-mse`` only when the spec sets them."""
+    """``build_tpch_argv`` applies the contract's default-1 SUT isolation."""
 
     def setUp(self):
         self.catalog = catalog_spec.load_catalog(_CATALOG_FILE)
@@ -85,26 +59,26 @@ class MaxSutArgvEmissionTest(unittest.TestCase):
         spec.update(overrides)
         return catalog_spec.build_argv(self.catalog, spec)
 
-    def test_absent_fields_emit_nothing(self):
+    def test_absent_fields_emit_the_default_of_one(self):
         argv = self._argv()
-        self.assertNotIn('-ms', argv)
-        self.assertNotIn('-mse', argv)
+        self.assertEqual(_flag_value(argv, '-ms'), '1')
+        self.assertEqual(_flag_value(argv, '-mse'), '1')
 
-    def test_zero_is_emitted_verbatim(self):
+    def test_zero_means_no_limit_and_drops_the_flag(self):
         argv = self._argv(max_sut=0)
-        self.assertEqual(_flag_value(argv, '-ms'), '0')
-        self.assertNotIn('-mse', argv)
+        self.assertNotIn('-ms', argv)
+        self.assertEqual(_flag_value(argv, '-mse'), '1')  # the other cap is untouched
 
-    def test_both_caps_emitted_when_set(self):
+    def test_explicit_values_pass_through(self):
         argv = self._argv(max_sut=3, max_sut_experiment=2)
         self.assertEqual(_flag_value(argv, '-ms'), '3')
         self.assertEqual(_flag_value(argv, '-mse'), '2')
 
-    def test_emitted_value_survives_a_round_trip_through_tpch_parser(self):
-        argv = self._argv(max_sut=0, max_sut_experiment=5)
+    def test_emitted_argv_parses_back_through_tpch(self):
+        argv = self._argv(max_sut=5)
         args = tpch.build_parser().parse_args(argv)
-        self.assertIsNone(args.max_sut)          # 0 -> no limit
-        self.assertEqual(args.max_sut_experiment, 5)
+        self.assertEqual(args.max_sut, '5')
+        self.assertEqual(args.max_sut_experiment, '1')
 
 
 class MaxSutValidationTest(unittest.TestCase):

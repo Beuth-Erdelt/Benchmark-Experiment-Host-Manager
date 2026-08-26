@@ -84,13 +84,15 @@ catalog_concepts:
       mutual interference rather than the factor named in discriminates.
       Serial execution keeps each measurement attributable to a single
       configuration."
-    when: "this is the default for every experiment.yml, enforced by two
-      independent caps that both default to 1: experiment_schema.fields.max_sut
-      (cluster-wide, -ms) and .max_sut_experiment (this experiment only,
-      -mse). An experiment that genuinely wants parallel SUTs -- e.g. each
-      pinned to a different node via placement: -- sets one or both of those
-      fields to 0 (no limit) or N>1; the catalog argv builder then emits the
-      matching -ms/-mse flag. Omitting the fields keeps the serial default."
+    when: "this is the default for every experiment.yml, via two independent
+      caps that both default to 1: experiment_schema.fields.max_sut
+      (cluster-wide) and .max_sut_experiment (this experiment only). The
+      catalog argv builder always emits them -- an absent field becomes
+      -ms 1 / -mse 1 explicitly (tpch.py's own CLI default is no limit, so
+      the builder must state the serial default rather than rely on it). An
+      experiment that genuinely wants parallel SUTs -- e.g. each pinned to a
+      different node via placement: -- sets one or both fields to N>1, or to
+      0 to lift the cap entirely (the builder then omits that flag)."
     out_of_scope: "parallel LOADER pods (loading.pods) and parallel
       BENCHMARKER pods/clients (workload.rounds) both run WITHIN one SUT --
       that concurrency is the workload under test, not interference between
