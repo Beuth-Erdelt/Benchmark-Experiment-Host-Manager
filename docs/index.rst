@@ -43,6 +43,10 @@
     ./Tool.md
     ./Concept.md
     ./TestCases.md
+    ./AgentWorkflow.md
+    ./AgentCatalogContract.md
+    ./AgentResultContract.md
+    ./AgentReport.md
     ./CONTRIBUTING.md
     ./bexhoma
 
