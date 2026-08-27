@@ -135,9 +135,10 @@ on for a YAML-driven run). At run start, `experiment.yml` itself plus the
 verbatim into the result folder — see `contract_result.yml`'s
 `provenance.workflow` and `answer_contract.hypothesis`.
 
-**Current limit:** `bexhoma/spec.py::build_argv()` only has an argv builder
-for the `tpch` workload today — a catalog-driven `experiment.yml` naming any
-other workload fails resolution at step 4, before step 5 is ever reached.
+**Current limit:** `bexhoma/spec.py::build_argv()` has argv builders for the
+`tpch` and `ycsb` workloads today — a catalog-driven `experiment.yml` naming
+`hammerdb`, `benchbase`, or `tpcds` fails resolution at step 4, before step 5
+is ever reached.
 
 ## Step 6 — read the result, answer per contract
 

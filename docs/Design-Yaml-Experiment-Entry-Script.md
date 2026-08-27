@@ -310,9 +310,12 @@ Deliberately separate, and left untouched by this plan:
   **CLI argv**, for a human or CI to actually run. `spec.py` itself is
   workload-agnostic (catalog loading, knob resolution, validation); it
   dispatches by `workload.name` to that workload's own argv builder —
-  today only `bexhoma/experiments/tpch_catalog.py` (`build_tpch_argv()`),
-  which owns the actual `tpch.py` flag mapping and PostgreSQL GUC
-  formatting. Scope today: TPC-H against PostgreSQL/PgDuckDB only.
+  today `bexhoma/experiments/tpch_catalog.py` (`build_tpch_argv()`) and
+  `bexhoma/experiments/ycsb_catalog.py` (`build_ycsb_argv()`), which own
+  the actual `tpch.py`/`ycsb.py` flag mapping and PostgreSQL GUC
+  formatting. Scope today: TPC-H against PostgreSQL/PgDuckDB, YCSB against
+  PostgreSQL. `experiment.py`'s catalog-driven branch dispatches the
+  resolved argv to that workload's own `run()` in-process.
 - **This new path** takes a *fully self-specified* `experiment.yaml`
   straight into Python objects — no argv is ever generated, nothing is
   handed to a shell.

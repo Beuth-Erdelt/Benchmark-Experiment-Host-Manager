@@ -13,12 +13,13 @@ can be run as ``python tpch.py <argv...>`` exactly like any other invocation.
 This module itself carries no workload- or DBMS-specific knowledge: catalog
 loading, ``derive:``/knob resolution, and validation are all generic.
 :func:`build_argv` dispatches by ``experiment['workload']['name']`` to that
-workload's own argv builder — today only ``tpch`` has one
-(:func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`), matching the
-prototype catalog in ``catalog.yaml`` (only the ``tpch`` workload against the
-``PostgreSQL``/``PgDuckDB`` system pair is translatable today). Extending to
-another workload means adding its own argv-builder module and a dispatch
-branch in :func:`build_argv`, not changing the resolution logic here.
+workload's own argv builder — today ``tpch``
+(:func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`) and ``ycsb``
+(:func:`bexhoma.experiments.ycsb_catalog.build_ycsb_argv`), matching the
+prototype catalog in ``catalog.yaml`` (``tpch`` against the
+``PostgreSQL``/``PgDuckDB`` pair, ``ycsb`` against ``PostgreSQL`` only).
+Extending to another workload means adding its own argv-builder module and a
+dispatch branch in :func:`build_argv`, not changing the resolution logic here.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -53,6 +54,7 @@ __all__ = [
     "validate_experiment",
     "validate_environment",
     "build_argv",
+    "entry_script_for_workload",
     "build_command",
     "translate",
 ]
@@ -60,7 +62,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.1.0"
+CATALOG_CONTRACT_VERSION = "1.2.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -613,14 +615,36 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     if workload_name == "tpch":
         from bexhoma.experiments.tpch_catalog import build_tpch_argv
         return build_tpch_argv(catalog, experiment)
+    if workload_name == "ycsb":
+        from bexhoma.experiments.ycsb_catalog import build_ycsb_argv
+        return build_ycsb_argv(catalog, experiment)
     raise SpecError(f"no argv builder implemented yet for workload '{workload_name}'")
+
+
+#: Catalog-driven workload name -> the entry script its argv runs through.
+_ENTRY_SCRIPT_BY_WORKLOAD = {
+    "tpch": "tpch.py",
+    "ycsb": "ycsb.py",
+}
+
+
+def entry_script_for_workload(workload_name: str) -> str:
+    """Return the entry script a catalog-driven workload's argv runs through.
+
+    :param workload_name: ``experiment['workload']['name']``.
+    :return: Entry script filename (e.g. ``"ycsb.py"``); falls back to
+        ``"tpch.py"`` for an unknown name so :func:`build_command` still renders.
+    :rtype: str
+    """
+    return _ENTRY_SCRIPT_BY_WORKLOAD.get(workload_name, "tpch.py")
 
 
 def build_command(argv: list[str], entry_script: str = "tpch.py") -> str:
     """Render an argument vector as a copy-pasteable shell command.
 
     :param argv: Argument vector, as returned by :func:`build_argv`.
-    :param entry_script: Entry script to invoke.
+    :param entry_script: Entry script to invoke — see
+        :func:`entry_script_for_workload`.
     :return: A single command string.
     :rtype: str
     """

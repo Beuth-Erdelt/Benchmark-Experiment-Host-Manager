@@ -9,7 +9,7 @@
 #   when:         the condition under which a rule/field actually applies
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
 
-catalog_contract_version: "1.1.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.2.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   workloads:
@@ -419,6 +419,144 @@ workloads:
       out_of_scope:
         time_series: "DBMSBenchmarker reports per-query and per-phase
           aggregates only -- no running per-second signal like YCSB/Benchbase produce"
+
+  ycsb:
+    why: "key-value / simple-schema OLTP: one usertable, single-row primary-key
+      reads and writes, 6 fixed access-pattern mixes (YCSB workloads a-f)"
+    resource_profile:
+      cpu: medium
+      memory: medium
+      why: "each operation is a single-row primary-key read or write, so per-op
+        CPU is low; sustained throughput is bound by client concurrency,
+        connection handling and storage IO latency rather than raw compute. The
+        working set is scaling_factor GB (rows are ~1 KB each) -- size
+        resources.memory to keep it cached when the hypothesis is about
+        in-memory performance, and weigh storage_class / IO latency heavily
+        otherwise"
+    supports: [PostgreSQL]
+    out_of_scope:
+      systems: [MySQL, MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService,
+        PGBouncer, Redis, Citus, CedarDB, Dragonfly]
+      why: "the full ycsb workload also supports these; trimmed to PostgreSQL for
+        this contract's prototype scope (matching workloads.tpch). Connection
+        pooling (PGBouncer) and per-system knobs (TiDB PD nodes, SUT replicas)
+        are out of scope with them"
+    modes: [run, start, load, summary]
+
+    params:
+      workload:
+        type: enum
+        values: [a, b, c, d, e, f]
+        required: true
+        why: "YCSB access-pattern mix: a=read/update 50/50, b=read-mostly 95/5,
+          c=read-only, d=read-latest (insert + read newest), e=short scans,
+          f=read-modify-write. Sets YCSB_WORKLOAD."
+      scaling_factor:
+        type: int
+        unit: GB
+        why: "dataset size: rows = scaling_factor * 1_000_000 (each row ~1 KB).
+          Also the default total operation count unless operations_scale is set."
+      operations_scale:
+        type: int
+        unit: millions
+        default: null
+        why: "total operation count for the benchmarking phase, in millions;
+          overrides the scaling_factor-derived default. Split across all
+          benchmarker pods (constant total work)."
+      timeout:
+        type: int
+        unit: seconds
+        why: "per-connection benchmark timeout"
+      target_base:
+        type: int
+        default: 16384
+        why: "base ops/sec throughput target per benchmarker pod; multiplied by
+          the per-phase *_target_factors below. Set the effective target to 0 to
+          run unthrottled (measure peak throughput)."
+      loading_target_factors:
+        type: list[float]
+        default: [1]
+        why: "multipliers on target_base for the loading phase; one loader sweep
+          cell per entry"
+      benchmarking_target_factors:
+        type: list[float]
+        default: [1]
+        why: "multipliers on target_base for the benchmarking phase; one
+          benchmarking sweep cell per entry"
+      batchsize:
+        type: int
+        default: null
+        why: "JDBC insert batch size during loading; unset = YCSB default (one
+          row per INSERT)"
+      logging_interval:
+        type: int
+        unit: seconds
+        default: 10
+        why: "status-line interval; also the resolution of the produced
+          time_series signal"
+      insert_order:
+        type: enum
+        values: [hashed, ordered]
+        default: hashed
+        why: "hashed = keys inserted in hash order (uniform key distribution);
+          ordered = sequential key order (append-heavy, hot end of the index)"
+      max_execution_time:
+        type: int
+        unit: seconds
+        default: 0
+        why: "wall-clock cap on the benchmarking phase only (0 = run every
+          operation); loading always runs to completion"
+
+    loading:
+      pods:
+        type: int
+        min: 1
+        why: "number of parallel loader pods; the total row count is split
+          across them"
+        support: "works for every DBMS"
+      threads:
+        type: int
+        min: 1
+        why: "loader threads per pod (YCSB_THREADCOUNT)"
+        support: "honored by YCSB's JDBC loader -- unlike tpch, prefer raising
+          threads and pods together to reach the loading throughput target"
+      out_of_scope: "no post_load block: YCSB creates and manages its own schema
+        (a single usertable with a primary key) through the JDBC binding, so
+        there is no indexes/constraints/statistics/storage_format selection to
+        make -- physical_design does not apply to this workload"
+
+    rounds:
+      type: list[int]
+      why: "parallel-client sweep; one benchmarking round per entry, each entry
+        being the number of concurrent benchmarker pods. Total operation count
+        is split across the pods (constant total work), so more pods raises
+        concurrency at the same total ops."
+    repetitions:
+      type: int
+      default: 1
+      why: "how many times the whole round list repeats"
+
+    produces:
+      per_operation:
+        metrics: [throughput, latency_avg, latency_p95, latency_p99]
+        unit: [ops/s, us, us, us]
+        why: "one row per YCSB operation type (READ / UPDATE / INSERT / SCAN /
+          READ-MODIFY-WRITE / CLEANUP), from YcsbEvaluator.get_summary_benchmark_per_phase()
+          -- the finest-grained breakdown available"
+      summary:
+        metrics: [throughput, latency_avg]
+        unit: [ops/s, us]
+        why: "whole-workload aggregate per phase; this is what a
+          system/round/repetition comparison is actually made on"
+      time_series:
+        metric: current_ops_per_sec
+        unit: ops/s
+        why: "per-interval throughput signal (resolution = logging_interval) for
+          both the loading and benchmarking phases -- YCSB and Benchbase produce
+          this running signal; DBMSBenchmarker workloads (tpch/tpcds) do not"
+      out_of_scope:
+        per_query: "YCSB has no query concept -- only operation-type buckets, so
+          there is no per-query breakdown like tpch/tpcds produce"
 
 systems:
   PostgreSQL:

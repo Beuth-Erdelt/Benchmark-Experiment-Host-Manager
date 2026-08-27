@@ -9,10 +9,11 @@ exist (see ``docs/Design-Yaml-Experiment-Entry-Script.md``'s "Relation to
   Python via :mod:`bexhoma.experiments.tpch_builder` — no argv is generated, no
   subprocess is spawned, nothing is re-parsed through ``tpch.py``'s own CLI.
 * **Catalog-driven** (``workload: {name: ..., params: ...}``, a dict —
-  :mod:`bexhoma.spec`'s schema): resolved against ``catalog.yaml`` into a
-  ``tpch.py`` argument vector, in-process, then run via :func:`tpch.run` —
-  the exact same build/dispatch logic ``python tpch.py <argv>`` uses.
-  Neither path spawns a subprocess or shell.
+  :mod:`bexhoma.spec`'s schema): resolved against ``catalog.yaml`` into the
+  argument vector of that workload's own entry script (``tpch.py`` for
+  ``workload.name == tpch``, ``ycsb.py`` for ``ycsb``), in-process, then run
+  via that script's ``run()`` — the exact same build/dispatch logic
+  ``python <script>.py <argv>`` uses. Neither path spawns a subprocess or shell.
 
 Usage: ``bexhoma experiment experiment.yaml`` or ``python experiment.py experiment.yaml``.
 For a catalog-driven file whose ``catalog.yaml`` doesn't sit alongside it, pass
@@ -36,7 +37,15 @@ import yaml
 from bexhoma.experiments import tpch_builder, tpch_catalog, tpch_loader
 from bexhoma import spec as catalog_spec
 
-__all__ = ["is_catalog_driven", "default_catalog_path", "run_experiment_yaml"]
+__all__ = ["is_catalog_driven", "default_catalog_path", "entry_module_for_workload", "run_experiment_yaml"]
+
+#: Catalog-driven workload name -> its entry-script module name. Each module
+#: must expose ``build_parser()`` and ``run(args, on_experiment_built=...)``
+#: (see :func:`tpch.run` / :func:`ycsb.run`).
+_ENTRY_MODULE_BY_WORKLOAD = {
+    "tpch": "tpch",
+    "ycsb": "ycsb",
+}
 
 #: Sibling output contract to contract_catalog.yml -- not itself consulted to
 #: build/validate this run, but copied alongside it so an agent reading the
@@ -107,6 +116,24 @@ def default_catalog_path(experiment_yaml_path: str) -> str:
     return os.path.join(os.path.dirname(os.path.abspath(experiment_yaml_path)), 'catalog.yaml')
 
 
+def entry_module_for_workload(workload_name: str):
+    """
+    Import and return the entry-script module a catalog-driven workload runs through.
+
+    :param workload_name: ``experiment.yml``'s ``workload.name`` (e.g. ``"tpch"``).
+    :return: The imported module (``tpch`` or ``ycsb``), exposing ``build_parser()``
+        and ``run(args, on_experiment_built=...)``.
+    :raises ValueError: When no entry script is wired up for the workload.
+    """
+    module_name = _ENTRY_MODULE_BY_WORKLOAD.get(workload_name)
+    if module_name is None:
+        raise ValueError(
+            f"catalog-driven workload '{workload_name}' has no entry script wired up "
+            f"(known: {sorted(_ENTRY_MODULE_BY_WORKLOAD)})"
+        )
+    return __import__(module_name)
+
+
 def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
     """
     Load an experiment YAML file and run it, dispatching on its schema.
@@ -119,18 +146,25 @@ def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
         raw_spec = yaml.safe_load(experiment_file)
 
     if is_catalog_driven(raw_spec):
-        import tpch
+        workload_name = raw_spec['workload']['name']
+        entry_module = entry_module_for_workload(workload_name)
         resolved_catalog_path = catalog_path or default_catalog_path(path)
         catalog = catalog_spec.load_catalog(resolved_catalog_path)
         argv = catalog_spec.build_argv(catalog, raw_spec)
         argv.append('-rp')  # YAML-driven runs always get the tiered Markdown report
-        parsed_args = tpch.build_parser().parse_args(argv)
-        # Per-system post_load selection (e.g. indexes on PostgreSQL, not on a
-        # co-running PgDuckDB) has no CLI representation -- -xii/-xic/-xis are
-        # global switches -- so it is applied in-process instead, via the same
-        # per-configuration override tpch.py already uses for Citus/tenant cases.
-        parsed_args.physical_design_overrides = tpch_catalog.resolve_physical_design_overrides(catalog, raw_spec)
-        tpch.run(
+        parsed_args = entry_module.build_parser().parse_args(argv)
+        if workload_name == 'tpch':
+            # Per-system post_load selection (e.g. indexes on PostgreSQL, not on a
+            # co-running PgDuckDB) has no CLI representation -- -xii/-xic/-xis are
+            # global switches -- so it is applied in-process instead, via the same
+            # per-configuration override tpch.py already uses for Citus/tenant cases.
+            parsed_args.physical_design_overrides = tpch_catalog.resolve_physical_design_overrides(catalog, raw_spec)
+        elif workload_name == 'ycsb':
+            # ycsb.py never constrains the SUT pod's resources on its own; a
+            # catalog-driven run opts in so the experiment.yml's resources: block
+            # actually reaches the PostgreSQL configuration (see ycsb.run()).
+            parsed_args.apply_sut_resources = 'resources' in raw_spec
+        entry_module.run(
             parsed_args,
             on_experiment_built=lambda experiment: _copy_catalog_provenance(
                 experiment.path, path, resolved_catalog_path
