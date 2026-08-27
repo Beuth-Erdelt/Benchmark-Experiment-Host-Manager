@@ -157,7 +157,7 @@ systems:
 
 `contracts/contract_catalog.yml` above is not an abstract schema requiring a
 separately instantiated `catalog.yaml` — it already **is** the concrete
-catalog data (`systems: [PostgreSQL, PgDuckDB]`, `workloads: [tpch]`).
+catalog data (`systems: [PostgreSQL, PgDuckDB]`, `workloads: [tpch, ycsb]`).
 `validate_experiment.py`'s own `-c` default points straight at it. The name
 `catalog.yaml` elsewhere in the codebase (`experiment.py`'s sibling-file
 lookup, `Design-Yaml-Experiment-Entry-Script.md`'s `catalog:` provenance
@@ -187,19 +187,26 @@ allow parallel SUTs; see `catalog_concepts.sut_isolation`.
 
 ## Known gaps versus an idealized contract
 
-- **Only one workload is translatable today.** `bexhoma/spec.py::build_argv()`
-  dispatches by `experiment.workload.name` to that workload's own argv
-  builder — only `tpch` has one
-  (`bexhoma/experiments/tpch_catalog.py::build_tpch_argv()`). A catalog-driven
-  `experiment.yml` naming `ycsb`, `hammerdb`, `benchbase`, or `tpcds` fails
+- **Two workloads are translatable today: `tpch` and `ycsb`.**
+  `bexhoma/spec.py::build_argv()` dispatches by `experiment.workload.name` to
+  that workload's own argv builder —
+  `bexhoma/experiments/tpch_catalog.py::build_tpch_argv()` and
+  `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()`. A catalog-driven
+  `experiment.yml` naming `hammerdb`, `benchbase`, or `tpcds` fails
   resolution with `SpecError: no argv builder implemented yet for workload
   '<name>'` — those workloads still run fine via their own entry scripts
-  (`ycsb.py`, `hammerdb.py`, ...) directly, just not through this catalog
-  contract yet.
-- **Only two systems are in scope for `tpch`.** The full `tpch` workload
-  (outside this contract) also supports `MonetDB`, `MySQL`, `MariaDB`,
-  `DatabaseService`, `Citus`, `CedarDB` — trimmed to `PostgreSQL`/`PgDuckDB`
-  for this prototype catalog (`workloads.tpch.out_of_scope.systems`).
+  directly, just not through this catalog contract yet.
+- **System scope is trimmed per workload.** `tpch` supports
+  `PostgreSQL`/`PgDuckDB` (the full workload outside this contract also
+  supports `MonetDB`, `MySQL`, `MariaDB`, `DatabaseService`, `Citus`,
+  `CedarDB`). `ycsb` supports `PostgreSQL` only (the full workload also
+  supports `MySQL`, `MariaDB`, `YugabyteDB`, `CockroachDB`, `TiDB`,
+  `DatabaseService`, `PGBouncer`, `Redis`, `Citus`, `CedarDB`, `Dragonfly`).
+  See each workload's `out_of_scope.systems`.
+- **`ycsb` has no resource sweep and no post_load.** `resources.cpu` /
+  `resources.memory` must each be a single `{request, limit}` dict (a list is
+  rejected), and YCSB manages its own schema so there is no
+  indexes/constraints/statistics selection.
 - **No comparative/historical validity check reads `follow_up_of`.** It
   records intended lineage structurally, but nothing enforces or verifies
   that the named `experiment_code` exists or ran a comparable workload — see

@@ -157,11 +157,29 @@ Scope decisions:
   `current_ops_per_sec`, both phases) — the running signal DBMSBenchmarker
   workloads can't produce. No `per_query` — YCSB has no query concept.
 
-Not added: an argv builder. `bexhoma/spec.py::build_argv()` still dispatches
-only `tpch`; a catalog-driven `ycsb` experiment validates against the
-catalog but `build_argv()` / `bexhoma.experiments.tpch_loader` still reject
-it as not-yet-translatable (see `test_experiment_loader.py`). Wiring a
-`ycsb` argv builder is separate follow-up work.
+End-to-end wiring (2026-08-27, same change): a catalog-driven `ycsb`
+experiment.yml now runs, not just validates.
+
+- `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()` translates the
+  spec into a `ycsb.py` argv; `bexhoma/spec.py::build_argv()` dispatches
+  `workload.name == "ycsb"` to it (alongside the existing `tpch` branch).
+- `ycsb.py` gained `build_parser()` + `run(args, on_experiment_built=...)`,
+  extracted from its `if __name__ == '__main__'` block exactly like
+  `tpch.py` — a plain `python ycsb.py ...` invocation is unchanged.
+- `experiment.py`'s catalog-driven branch dispatches by workload name
+  (`_ENTRY_MODULE_BY_WORKLOAD`): `tpch` -> `tpch.run`, `ycsb` -> `ycsb.run`.
+- No resource sweep and no per-system post_load for `ycsb`: `resources.cpu`
+  / `resources.memory` must each be a single `{request, limit}` dict, and
+  `build_ycsb_argv()` raises on a list. YCSB manages its own schema, so
+  there is no `-xii/-xic/-xis`-style physical-design step.
+- `ycsb.py` only constrains the PostgreSQL SUT pod's CPU/memory when the
+  catalog run opts in (`args.apply_sut_resources`, set by `experiment.py`
+  when the experiment.yml has a `resources:` block) — a plain CLI run still
+  leaves the SUT pod unconstrained.
+
+Still `tpch`-only: `bexhoma.experiments.tpch_loader` (the *self-specified*
+YAML path, `workload: ycsb` as a bare string), which is unrelated to the
+catalog path.
 
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 

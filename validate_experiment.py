@@ -55,7 +55,8 @@ def validate(experiment_path: str, catalog_path: str, environment_path: Optional
         print(f"  FAIL  {error}")
         return False
     print("  OK    resolves against catalog")
-    print("  command:", spec.build_command(argv))
+    entry_script = spec.entry_script_for_workload(experiment.get("workload", {}).get("name"))
+    print("  command:", spec.build_command(argv, entry_script))
 
     if environment_path is None:
         print("  SKIP  no environment.yml given; placement/resource-ceiling checks not run")
