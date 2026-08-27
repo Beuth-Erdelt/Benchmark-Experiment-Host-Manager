@@ -25,7 +25,8 @@ once it graduated from exploratory prototype to the real input contract
 those consume.
 
 Its scope is narrowed to the TPC-H/PostgreSQL/PgDuckDB slice chosen for the
-first implementation — see `docs/Design-Catalog-Contract.md` for the full
+first implementation, plus a basic YCSB/PostgreSQL workload (see below) —
+see `docs/Design-Catalog-Contract.md` for the full
 design rationale, the complete (all-workload, all-system) breadth pass this
 was extracted from, and open questions.
 
@@ -91,6 +92,95 @@ None of these were removed from the underlying bexhoma code (`tpch.py`,
 from the catalog's exposed surface. If the code paths for these are later
 found unused elsewhere, that's a separate cleanup, not implied by this one.
 
+## Single SUT at a time by default (2026-08-26)
+
+`catalog_concepts.sut_isolation` and two `experiment_schema` fields
+(`max_sut`, `max_sut_experiment`, both `default: 1`) were added
+(`catalog_contract_version` 1.0.0 -> 1.1.0, `spec.CATALOG_CONTRACT_VERSION`
+kept in lockstep). The `-ms`/`-mse` CLI defaults are **unchanged** (still
+`None` = no limit) — this is purely a catalog-contract addition.
+
+Rationale: the default benchmarking situation is one system-under-test at a
+time. A `systems:` list (and any `resources:` sweep crossed with it)
+resolves to several configurations, and nothing stops bexhoma from bringing
+two of their SUTs up concurrently on the same cluster. Co-located SUTs share
+node CPU, memory bandwidth, disk and network, so a side-by-side run measures
+that interference instead of the factor in `discriminates:`. A cap of 1
+keeps every measurement attributable to a single configuration.
+
+Design points:
+
+- **The default lives in the contract, not the CLI.** `tpch.py`'s own
+  `-ms`/`-mse` argparse defaults stay `None` (no limit); a bare
+  `python tpch.py ...` is unaffected. The serial default applies only to
+  catalog-driven runs: `build_tpch_argv()` reads `experiment.get(field, 1)`
+  and always emits `-ms N` / `-mse N`, so an experiment.yml that omits the
+  fields still gets `-ms 1 -mse 1` on the generated command.
+- **Two independent caps, kept independent.** `-ms` counts SUTs
+  cluster-wide (across every concurrent bexhoma experiment); `-mse` counts
+  only the current experiment's own. `bexhoma/experiments/base.py` enforces
+  both — a new SUT starts only if both allow it — so they compose without
+  either subsuming the other.
+- **`0` means "no limit".** In the YAML, `max_sut: 0` makes
+  `build_tpch_argv()` *omit* the `-ms` flag, so `tpch.py` falls back to its
+  own no-limit default. (`-ms 0` is never emitted — the entry scripts'
+  `int(args.max_sut)` would read a literal 0 as "cap at zero".)
+  `validate_experiment()` still requires a non-negative integer.
+
+## Basic YCSB workload added (2026-08-27)
+
+`workloads.ycsb` was added (`catalog_contract_version` 1.1.0 -> 1.2.0,
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep). Like `workloads.tpch`, it
+is deliberately trimmed to the prototype slice: `supports: [PostgreSQL]` only.
+
+Scope decisions:
+
+- **PostgreSQL only.** The full `ycsb.py` supports a dozen engines (MySQL,
+  MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService, PGBouncer, Redis,
+  Citus, CedarDB, Dragonfly); all are listed under `out_of_scope.systems`.
+  Connection pooling (PGBouncer's `-xnpp/-xnpi/-xnpo`) and the per-system
+  knobs (`-xnsr` SUT replicas, `-xnpd` TiDB PD nodes) only matter for those
+  engines, so they are left out of the catalog block entirely rather than
+  documented as unused.
+- **No `post_load` / `physical_design` for this workload.** YCSB creates and
+  manages its own schema (one `usertable` + primary key) through the JDBC
+  binding — there is no indexes/constraints/statistics/storage_format
+  selection to make. `loading.out_of_scope` states this explicitly.
+- **`params` mirror `ycsb.py`'s `-x*` flags**, renamed to catalog vocabulary:
+  `workload` (`-xwl`), `scaling_factor` (`-sf`, rows = SF·1e6),
+  `operations_scale` (`-xop`, millions), `target_base` (`-xtb`),
+  `loading_target_factors` (`-xnlf`), `benchmarking_target_factors`
+  (`-xnbf`), `batchsize` (`-xsbs`), `logging_interval` (`-xli`, seconds),
+  `insert_order` (`-xio`), `max_execution_time` (`-xmet`).
+- **`produces` grounded in `YcsbEvaluator`**: `per_operation` (one row per
+  op type), whole-workload `summary`, and a `time_series` (per-interval
+  `current_ops_per_sec`, both phases) — the running signal DBMSBenchmarker
+  workloads can't produce. No `per_query` — YCSB has no query concept.
+
+End-to-end wiring (2026-08-27, same change): a catalog-driven `ycsb`
+experiment.yml now runs, not just validates.
+
+- `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()` translates the
+  spec into a `ycsb.py` argv; `bexhoma/spec.py::build_argv()` dispatches
+  `workload.name == "ycsb"` to it (alongside the existing `tpch` branch).
+- `ycsb.py` gained `build_parser()` + `run(args, on_experiment_built=...)`,
+  extracted from its `if __name__ == '__main__'` block exactly like
+  `tpch.py` — a plain `python ycsb.py ...` invocation is unchanged.
+- `experiment.py`'s catalog-driven branch dispatches by workload name
+  (`_ENTRY_MODULE_BY_WORKLOAD`): `tpch` -> `tpch.run`, `ycsb` -> `ycsb.run`.
+- No resource sweep and no per-system post_load for `ycsb`: `resources.cpu`
+  / `resources.memory` must each be a single `{request, limit}` dict, and
+  `build_ycsb_argv()` raises on a list. YCSB manages its own schema, so
+  there is no `-xii/-xic/-xis`-style physical-design step.
+- `ycsb.py` only constrains the PostgreSQL SUT pod's CPU/memory when the
+  catalog run opts in (`args.apply_sut_resources`, set by `experiment.py`
+  when the experiment.yml has a `resources:` block) — a plain CLI run still
+  leaves the SUT pod unconstrained.
+
+Still `tpch`-only: `bexhoma.experiments.tpch_loader` (the *self-specified*
+YAML path, `workload: ycsb` as a bare string), which is unrelated to the
+catalog path.
+
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
 `experiments/tpch/PgDuckDB/` exists on disk but is unused: `tpch.py` points
@@ -101,6 +191,12 @@ orphaned directory by wiring it back in without knowing why it was unused.
 
 ## See also
 
+- `docs/AgentWorkflow.md` — the end-to-end agent loop this file is the
+  input half of: question → contracts → `experiment.yml` → validate → run →
+  answer.
+- `docs/AgentCatalogContract.md` — prose/condensed-YAML version of this
+  file's shape, worked example, and known gaps — the input-side counterpart
+  to `docs/AgentResultContract.md`.
 - `docs/Design-Catalog-Contract.md` — full design rationale, the
   all-workload/all-system breadth pass this contract was trimmed from, and
   open questions.

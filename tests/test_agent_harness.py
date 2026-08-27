@@ -1,6 +1,7 @@
 """Focused tests for the agent's validation and submission boundary."""
 from __future__ import annotations
 
+import argparse
 import contextlib
 import fcntl
 import io
@@ -442,7 +443,7 @@ class WorkspaceTest(unittest.TestCase):
         }
 
         self.assertEqual(scoped_configurations, {
-            f"{system}-resources-{cell}"
+            f"{system}-{cell}"
             for system in ("PostgreSQL", "PgDuckDB")
             for cell in (1, 2, 3)
         })
@@ -715,24 +716,54 @@ class WorkspaceTest(unittest.TestCase):
         parsed = object()
         parser = mock.Mock()
         parser.parse_args.return_value = parsed
+        entry_module = mock.Mock()
+        entry_module.build_parser.return_value = parser
         with (
             mock.patch.object(submit_adapter.catalog_spec, "load_catalog", return_value={}),
             mock.patch.object(
                 submit_adapter.catalog_spec, "build_argv", return_value=["-dbms", "PostgreSQL"]
             ) as build,
-            mock.patch.object(submit_adapter.tpch, "build_parser", return_value=parser),
-            mock.patch.object(submit_adapter.tpch, "run") as run,
+            mock.patch.object(
+                submit_adapter.experiment_cli,
+                "entry_module_for_workload",
+                return_value=entry_module,
+            ) as entry,
         ):
             submit_adapter.run(str(specification), "catalog.yml", "123")
 
         build.assert_called_once()
+        entry.assert_called_once_with("tpch")
         parser.parse_args.assert_called_once_with(
-            [
-                "-dbms", "PostgreSQL", "-e", "123",
-                "--max-sut-experiment", "1", "-rp",
-            ]
+            ["-dbms", "PostgreSQL", "-e", "123", "-rp"]
         )
-        run.assert_called_once_with(parsed)
+        entry_module.run.assert_called_once_with(parsed)
+
+    def test_agent_side_submit_adapter_routes_a_ycsb_specification(self) -> None:
+        """A non-tpch workload runs through its own entry script, resources included."""
+        specification = self.root / "submitted.yml"
+        specification.write_text(yaml.safe_dump({
+            "workload": {"name": "ycsb", "params": {"workload": "a"}},
+            "resources": {"cpu": {"request": 4, "limit": 4}},
+        }))
+        parsed = argparse.Namespace()
+        parser = mock.Mock()
+        parser.parse_args.return_value = parsed
+        entry_module = mock.Mock()
+        entry_module.build_parser.return_value = parser
+        with (
+            mock.patch.object(submit_adapter.catalog_spec, "load_catalog", return_value={}),
+            mock.patch.object(submit_adapter.catalog_spec, "build_argv", return_value=[]),
+            mock.patch.object(
+                submit_adapter.experiment_cli,
+                "entry_module_for_workload",
+                return_value=entry_module,
+            ) as entry,
+        ):
+            submit_adapter.run(str(specification), "catalog.yml", "123")
+
+        entry.assert_called_once_with("ycsb")
+        self.assertTrue(parsed.apply_sut_resources)
+        entry_module.run.assert_called_once_with(parsed)
 
     def test_list_results_persists_a_derived_finished_state(self) -> None:
         code = "42"

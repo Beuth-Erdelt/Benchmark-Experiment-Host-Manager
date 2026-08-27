@@ -1,8 +1,9 @@
 """Launch one validated catalog experiment with an agent-assigned result code.
 
 This small adapter deliberately lives in the agent package. It uses Bexhoma's
-existing catalog resolver and TPC-H parser without requiring a change to
-``experiment.py`` merely so the agent can know which result folder to await.
+existing catalog resolver and per-workload entry script without requiring a
+change to ``experiment.py`` merely so the agent can know which result folder to
+await.
 
 Authors: Leonhard Liu
 Copyright (C) 2026 Patrick K. Erdelt
@@ -18,10 +19,7 @@ from pathlib import Path
 import yaml
 
 from bexhoma import spec as catalog_spec
-import tpch
-
-
-_MAX_PARALLEL_SUTS = "1"
+import experiment as experiment_cli
 
 
 def run(path: str, catalog_path: str, experiment_code: str) -> None:
@@ -29,15 +27,18 @@ def run(path: str, catalog_path: str, experiment_code: str) -> None:
     specification = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
     catalog = catalog_spec.load_catalog(catalog_path)
     argv = catalog_spec.build_argv(catalog, specification)
-    # Bexhoma configurations share the TPC-H raw-data cache. Serial execution
-    # prevents two cold-cache generators from writing the same files and also
-    # keeps comparison systems from contending for host resources.
-    argv.extend([
-        "-e", experiment_code,
-        "--max-sut-experiment", _MAX_PARALLEL_SUTS,
-        "-rp",
-    ])
-    tpch.run(tpch.build_parser().parse_args(argv))
+    # Serial execution of the systems under test is the catalog contract's own
+    # default (catalog_concepts.sut_isolation): build_argv already emits the
+    # -ms/-mse caps, so this adapter must not restate them.
+    argv.extend(["-e", experiment_code, "-rp"])
+    workload_name = specification["workload"]["name"]
+    entry_module = experiment_cli.entry_module_for_workload(workload_name)
+    parsed_args = entry_module.build_parser().parse_args(argv)
+    if workload_name == "ycsb":
+        # ycsb.py ignores the SUT's resources: block unless a catalog-driven
+        # run opts in, exactly as experiment.py does for the same argv.
+        parsed_args.apply_sut_resources = "resources" in specification
+    entry_module.run(parsed_args)
 
 
 def main() -> int:

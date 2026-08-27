@@ -13,12 +13,13 @@ can be run as ``python tpch.py <argv...>`` exactly like any other invocation.
 This module itself carries no workload- or DBMS-specific knowledge: catalog
 loading, ``derive:``/knob resolution, and validation are all generic.
 :func:`build_argv` dispatches by ``experiment['workload']['name']`` to that
-workload's own argv builder — today only ``tpch`` has one
-(:func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`), matching the
-prototype catalog in ``catalog.yaml`` (only the ``tpch`` workload against the
-``PostgreSQL``/``PgDuckDB`` system pair is translatable today). Extending to
-another workload means adding its own argv-builder module and a dispatch
-branch in :func:`build_argv`, not changing the resolution logic here.
+workload's own argv builder — today ``tpch``
+(:func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`) and ``ycsb``
+(:func:`bexhoma.experiments.ycsb_catalog.build_ycsb_argv`), matching the
+prototype catalog in ``catalog.yaml`` (``tpch`` against the
+``PostgreSQL``/``PgDuckDB`` pair, ``ycsb`` against ``PostgreSQL`` only).
+Extending to another workload means adding its own argv-builder module and a
+dispatch branch in :func:`build_argv`, not changing the resolution logic here.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -52,8 +53,8 @@ __all__ = [
     "effective_post_load",
     "validate_experiment",
     "validate_environment",
-    "format_resource_cell_suffix",
     "build_argv",
+    "entry_script_for_workload",
     "build_command",
     "translate",
 ]
@@ -61,7 +62,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.0.0"
+CATALOG_CONTRACT_VERSION = "1.2.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -418,7 +419,9 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     present and non-empty (``title``, ``hypothesis``, ``discriminates`` — an
     experiment.yml must state what it's testing and which factor it isolates
     before anything else is resolved); the optional ``follow_up_of``, if
-    present, is a string; the workload exists; every named
+    present, is a string; the optional ``max_sut``/``max_sut_experiment``
+    concurrent-SUT caps, if present, are non-negative integers (0 = no
+    limit); the workload exists; every named
     system is in the workload's ``supports:`` list; and, for each system's
     *effective* post_load (its own ``systems[].post_load`` override — a
     selection choice — or else the shared ``loading.post_load`` default),
@@ -438,6 +441,11 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     follow_up_of = experiment.get("follow_up_of")
     if follow_up_of is not None and not isinstance(follow_up_of, str):
         raise SpecError("'follow_up_of' must be a string (a prior run's experiment_code)")
+
+    for cap_field in ("max_sut", "max_sut_experiment"):
+        cap = experiment.get(cap_field)
+        if cap is not None and (isinstance(cap, bool) or not isinstance(cap, int) or cap < 0):
+            raise SpecError(f"'{cap_field}' must be a non-negative integer (0 = no limit)")
 
     workload_name = experiment["workload"]["name"]
     workloads = catalog.get("workloads", {})
@@ -584,17 +592,6 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
             )
 
 
-def format_resource_cell_suffix(cell_index: int, cell_count: int) -> str:
-    """Format the stable identity shared by one swept resource cell.
-
-    :param cell_index: Zero-based position of the resource cell.
-    :param cell_count: Total number of resource cells.
-    :return: An empty suffix for one cell, otherwise ``resources-N``.
-    :rtype: str
-    """
-    return f"resources-{cell_index + 1}" if cell_count > 1 else ""
-
-
 def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:
     """Validate an experiment spec, then translate it into its workload's CLI argument vector.
 
@@ -618,14 +615,36 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     if workload_name == "tpch":
         from bexhoma.experiments.tpch_catalog import build_tpch_argv
         return build_tpch_argv(catalog, experiment)
+    if workload_name == "ycsb":
+        from bexhoma.experiments.ycsb_catalog import build_ycsb_argv
+        return build_ycsb_argv(catalog, experiment)
     raise SpecError(f"no argv builder implemented yet for workload '{workload_name}'")
+
+
+#: Catalog-driven workload name -> the entry script its argv runs through.
+_ENTRY_SCRIPT_BY_WORKLOAD = {
+    "tpch": "tpch.py",
+    "ycsb": "ycsb.py",
+}
+
+
+def entry_script_for_workload(workload_name: str) -> str:
+    """Return the entry script a catalog-driven workload's argv runs through.
+
+    :param workload_name: ``experiment['workload']['name']``.
+    :return: Entry script filename (e.g. ``"ycsb.py"``); falls back to
+        ``"tpch.py"`` for an unknown name so :func:`build_command` still renders.
+    :rtype: str
+    """
+    return _ENTRY_SCRIPT_BY_WORKLOAD.get(workload_name, "tpch.py")
 
 
 def build_command(argv: list[str], entry_script: str = "tpch.py") -> str:
     """Render an argument vector as a copy-pasteable shell command.
 
     :param argv: Argument vector, as returned by :func:`build_argv`.
-    :param entry_script: Entry script to invoke.
+    :param entry_script: Entry script to invoke — see
+        :func:`entry_script_for_workload`.
     :return: A single command string.
     :rtype: str
     """

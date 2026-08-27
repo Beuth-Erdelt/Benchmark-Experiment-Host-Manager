@@ -12,7 +12,7 @@ blocks embedded verbatim in every `report/index.md`
 `report/index.md` to interpret an actual run.
 
 ```yaml
-result_contract_version: "1.3.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
+result_contract_version: "1.4.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
                                     # bump tracks report_writer.py's own frontmatter/tier/layout changes
 
 entry_point:
@@ -122,11 +122,18 @@ validity:                                # from experiment._test_results -> repo
   verdict: {passed: int, failed: int, skipped: int}   # index.md frontmatter overall_status;
                                                         # only a FAILED row scopes/invalidates metrics below it — skipped never does
 
-answer_contract:
-  hypothesis: experiment.yml          # quote its recorded hypothesis when present
-  steps: [hypothesis, verdict, evidence, follow_up]
-                                      # answer for this run, cite tier-1/2 evidence,
-                                      # and propose one lineage-marked follow-up only if needed
+answer_contract:                         # how to structure the final written answer, once the above has been read
+  hypothesis:
+    source_file: experiment.yml          # <result_dir>/experiment.yml; fields: title, hypothesis, discriminates, follow_up_of
+    present_when: catalog-driven run     # `python experiment.py run <file>.yml` copies it in at run start
+    absent_when: direct entry-script run # e.g. `python tpch.py run -dbms ...` never had a catalog file to copy —
+                                          # state "no hypothesis recorded", don't reconstruct one from workload params
+    also_copied: [contract_catalog.yml, contract_result.yml]  # frozen at run time, may differ from the repo's current copies
+  steps:
+    - {id: hypothesis, instruction: "restate the question, quoting experiment.yml's hypothesis verbatim when present"}
+    - {id: verdict,     instruction: "hypothesis verdict (supported/refuted/inconclusive/invalid), then pass/fail/skip counts; note any FAILED row scoping a metric below it", source: [agent_summary_contract.verdict, verdict_shape]}
+    - {id: evidence,    instruction: "cite the specific tier-1/tier-2 file and value behind every claim", source: tiers}
+    - {id: follow_up,   instruction: "if unresolved, propose a new experiment.yml with follow_up_of set to this run's experiment_code", source: "experiment.yml discriminates/follow_up_of, else known_gaps.cross_experiment_comparison"}
 
 agent_summary_contract:               # optional agent extension; not written by BeXhoma
   version: "1.0.0"
@@ -270,9 +277,10 @@ column an agent should treat as "the" headline number:
   `experiment_run`s returned the same rows.
 - **Per-system post_load selection isn't a queryable field.** A catalog-driven
   experiment can choose, per named system, whether indexes/constraints/
-  statistics were applied after loading (`contract_catalog.yml`'s `systems[].post_load`
-  — see [Design-Catalog-Contract.md](Design-Catalog-Contract.md)'s "Validation
-  ordering"). `connections.config`/`queries.config` record *which* SUT ran,
+  statistics were applied after loading (`contract_catalog.yml`'s
+  `systems[].post_load` — see
+  [`AgentCatalogContract.md`](AgentCatalogContract.md)'s catalog concepts).
+  `connections.config`/`queries.config` record *which* SUT ran,
   not *which post-load steps* it received — an agent has to fall back to
   tier-3's `*-loading-*.sql.log` (the rendered DDL source, per
   `provenance.loading` above) and check for `CREATE INDEX`/constraint/`ANALYZE`
@@ -280,6 +288,11 @@ column an agent should treat as "the" headline number:
 
 ## See also
 
+- [`AgentWorkflow.md`](AgentWorkflow.md) — the end-to-end loop this contract
+  is one half of: question → contracts → `experiment.yml` → validate → run →
+  answer.
+- [`AgentCatalogContract.md`](AgentCatalogContract.md) — the input-side
+  counterpart: what a valid `experiment.yml` may contain.
 - [`AgentReport.md`](AgentReport.md) — design rationale for the tiered report,
   `index.md`'s eleven sections, the Full Metric Catalog.
 - `bexhoma/report_writer.py` module docstring — the same output contract,

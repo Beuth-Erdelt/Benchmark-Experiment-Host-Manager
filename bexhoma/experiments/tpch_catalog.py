@@ -191,10 +191,15 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
             f"got {len(cpu_cells)} cpu entries and {len(memory_cells)} memory entries"
         )
 
-    # One (system_spec, ResolvedSystem, configuration_name) triple per resolved
-    # cell. Swept cells use their stable position so CPU-only sweeps and cells
-    # sharing a memory request cannot collapse onto one configuration. tpch.py
-    # uses the same formatter.
+    # one (system_spec, ResolvedSystem, configuration_name) triple per resolved cell;
+    # configuration_name is "" (unscoped) when there is only one cell, otherwise it
+    # must match the configuration name tpch.py's own resource-sweep loop will give
+    # that cell: "{system}-{1-based cell position}". A position, not a resource
+    # value -- two cells can share a memory request while differing in limit or
+    # CPU, and a value-based name would collide. tpch.py iterates its cells in the
+    # same order (the -rr/-lr/-rc/-lc list order this builder emits below), so
+    # cell N here is cell N there and the --set operations land on the right
+    # configuration (see parse_set_arg's @CONFIG scope).
     resolved_cells: list[tuple[dict[str, Any], ResolvedSystem, str]] = []
     for system_spec in system_specs:
         for cell_index in range(num_cells):
@@ -207,13 +212,8 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
                 "scaling_factor": params.get("scaling_factor"),
             }
             resolved = spec.resolve_system(catalog, system_spec, resolve_inputs, memory_formatter=format_postgres_memory)
-            resource_suffix = spec.format_resource_cell_suffix(
-                cell_index, num_cells
-            )
             configuration_name = (
-                f"{system_spec['name']}-{resource_suffix}"
-                if resource_suffix
-                else ""
+                f"{system_spec['name']}-{cell_index + 1}" if num_cells > 1 else ""
             )
             resolved_cells.append((system_spec, resolved, configuration_name))
 
@@ -261,6 +261,15 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     if rounds:
         argv.extend(["-ne", ",".join(str(round_clients) for round_clients in rounds)])
     _append_flag(argv, "-nc", workload_spec.get("repetitions"))
+
+    # Concurrent-SUT caps. The contract default is 1 -- one system at a time,
+    # see catalog_concepts.sut_isolation -- so an absent field emits an
+    # explicit "-ms 1"/"-mse 1" (tpch.py's own CLI default is "no limit").
+    # A field set to 0 means "no limit": the flag is simply omitted.
+    for field_name, flag in (("max_sut", "-ms"), ("max_sut_experiment", "-mse")):
+        cap = experiment.get(field_name, 1)
+        if cap:
+            _append_flag(argv, flag, cap)
 
     if observe.get("monitoring_sut"):
         argv.append("-m")

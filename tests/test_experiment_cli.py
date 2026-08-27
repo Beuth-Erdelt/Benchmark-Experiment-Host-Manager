@@ -17,6 +17,7 @@ import experiment as experiment_cli
 from bexhoma.experiments import tpch_loader as experiment_loader
 
 _CATALOG_DRIVEN_FILE = 'dev/catalog/experiment.yml'
+_CATALOG_DRIVEN_YCSB_FILE = 'dev/catalog/experiment-ycsb.yml'
 _CATALOG_FILE = 'contracts/contract_catalog.yml'
 _SELF_SPECIFIED_FILE = 'dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml'
 
@@ -70,6 +71,25 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
             experiment_cli.run_experiment_yaml(
                 _CATALOG_DRIVEN_FILE, _CATALOG_FILE, experiment_code='1234567890')
         self.assertEqual(mock_run.call_args[0][0].experiment, '1234567890')
+
+    def test_catalog_driven_ycsb_file_resolves_and_calls_ycsb_run(self) -> None:
+        """A ``workload.name: ycsb`` catalog file is translated into a ycsb.py argv
+        and handed to ycsb.run(), not tpch.run()."""
+        import tpch
+        import ycsb
+        with mock.patch.object(ycsb, 'run') as mock_ycsb_run, \
+             mock.patch.object(tpch, 'run') as mock_tpch_run:
+            experiment_cli.run_experiment_yaml(_CATALOG_DRIVEN_YCSB_FILE, _CATALOG_FILE)
+        mock_tpch_run.assert_not_called()
+        mock_ycsb_run.assert_called_once()
+        parsed_args = mock_ycsb_run.call_args[0][0]
+        self.assertEqual(parsed_args.mode, 'run')
+        self.assertEqual(parsed_args.dbms, ['PostgreSQL'])
+        self.assertEqual(parsed_args.workload, 'a')
+        self.assertEqual(parsed_args.num_query_executors, '1,2,4,8')
+        self.assertTrue(parsed_args.apply_sut_resources)
+        self.assertTrue(parsed_args.write_report)
+        self.assertTrue(callable(mock_ycsb_run.call_args.kwargs['on_experiment_built']))
 
     def test_self_specified_file_routes_to_experiment_builder(self) -> None:
         """A self-specified file is validated and handed to experiment_builder, not tpch.run()."""

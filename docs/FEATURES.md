@@ -1177,3 +1177,36 @@ The occasion is that interpretation prompts already reach about 49k tokens,
 three quarters of the old window, and the harness aborts a phase rather than
 compacting when the window runs out. No other knob changed: concurrency stays
 nominal because the agent runs one sequential conversation per phase.
+
+### 2026-08-27 — Merge bexhoma v0.10.12 and adapt the agent to it
+
+Asked to merge the upstream master branch into the prototype branch, review the
+differences, and say whether the agent's own code has to change because of them.
+
+Upstream brought two releases. The first adds concurrent-SUT caps to the catalog
+contract, so an experiment can state how many systems under test may share the
+cluster, with a documented default of one at a time. The second adds YCSB as a
+second catalog workload, which means a catalog-driven experiment is no longer
+necessarily a TPC-H experiment and each workload now runs through its own entry
+script.
+
+Both sides had independently fixed the same defect, where two swept resource
+cells that share a memory request collapsed onto one configuration identity.
+Upstream's fix names a cell by its position alone; the local one wrapped the same
+idea in a shared helper. The merge keeps upstream's version, because the bexhoma
+package is a fixed dependency here, and drops the local helper and the assertion
+that expected its naming.
+
+Two things in the agent did have to change, both in the module that launches a
+validated specification. It no longer passes a concurrency cap of its own, since
+the contract now emits that cap for every experiment and restating it would let
+the agent's copy drift from the contract's. And it now selects the entry script
+from the experiment's workload rather than always calling the TPC-H one, opting a
+YCSB run into the resource limits its entry script otherwise ignores — without
+this, an experiment the agent is now free to author from the catalog would have
+been fed to the wrong parser.
+
+One pre-existing gap surfaced while checking that path and was deliberately left
+alone: the agent's launcher never applies per-system post-load selection, so an
+experiment that asks for indexes on one system but not another silently gets the
+shared default. The supported entry point applies it; the agent's does not.

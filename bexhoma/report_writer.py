@@ -74,8 +74,10 @@ from bexhoma.benchmarks.base import Section
 
 __all__ = ["write_markdown_report"]
 
-#: Bump whenever the frontmatter fields, tiers, or file layout change.
-SCHEMA_VERSION = "1.3.0"
+#: Bump whenever the frontmatter fields, tiers, or file layout change --
+#: also tracks contracts/contract_result.yml, which documents this same
+#: output shape as data an agent can read without this module's source.
+SCHEMA_VERSION = "1.4.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
