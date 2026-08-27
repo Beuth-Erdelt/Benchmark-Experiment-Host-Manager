@@ -19,6 +19,7 @@ from pathlib import Path
 import yaml
 
 from bexhoma import spec as catalog_spec
+from bexhoma.experiments import tpch_catalog
 import experiment as experiment_cli
 
 
@@ -34,7 +35,16 @@ def run(path: str, catalog_path: str, experiment_code: str) -> None:
     workload_name = specification["workload"]["name"]
     entry_module = experiment_cli.entry_module_for_workload(workload_name)
     parsed_args = entry_module.build_parser().parse_args(argv)
-    if workload_name == "ycsb":
+    if workload_name == "tpch":
+        # Per-system post_load selection has no CLI representation -- -xii/-xic/
+        # -xis are global switches -- so it is attached in-process, exactly as
+        # experiment.py does for the same argv. Without it an experiment that
+        # asks for indexes on one system but not another silently gets the
+        # shared default on both.
+        parsed_args.physical_design_overrides = (
+            tpch_catalog.resolve_physical_design_overrides(catalog, specification)
+        )
+    elif workload_name == "ycsb":
         # ycsb.py ignores the SUT's resources: block unless a catalog-driven
         # run opts in, exactly as experiment.py does for the same argv.
         parsed_args.apply_sut_resources = "resources" in specification

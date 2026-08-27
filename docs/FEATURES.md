@@ -1206,7 +1206,11 @@ YCSB run into the resource limits its entry script otherwise ignores — without
 this, an experiment the agent is now free to author from the catalog would have
 been fed to the wrong parser.
 
-One pre-existing gap surfaced while checking that path and was deliberately left
-alone: the agent's launcher never applies per-system post-load selection, so an
-experiment that asks for indexes on one system but not another silently gets the
-shared default. The supported entry point applies it; the agent's does not.
+One pre-existing gap surfaced while checking that path, and was closed straight
+after in a follow-up request. The agent's launcher never applied per-system
+post-load selection, so an experiment asking for indexes on one system but not
+another silently got the shared default on both. That choice has no command-line
+form, because the index, constraint and statistics switches are global, so the
+supported entry point attaches it to the parsed arguments in memory and the
+agent's launcher now does the same. A test covers it by giving two systems
+different post-load selections and asserting they no longer resolve alike.

@@ -642,4 +642,55 @@ PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max 
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
 - waiting 30s -               : 

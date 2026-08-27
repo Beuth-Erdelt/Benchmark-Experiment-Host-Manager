@@ -713,7 +713,7 @@ class WorkspaceTest(unittest.TestCase):
     def test_agent_side_submit_adapter_uses_bexhoma_resolver(self) -> None:
         specification = self.root / "submitted.yml"
         specification.write_text(_SPEC)
-        parsed = object()
+        parsed = argparse.Namespace()
         parser = mock.Mock()
         parser.parse_args.return_value = parsed
         entry_module = mock.Mock()
@@ -737,6 +737,29 @@ class WorkspaceTest(unittest.TestCase):
             ["-dbms", "PostgreSQL", "-e", "123", "-rp"]
         )
         entry_module.run.assert_called_once_with(parsed)
+
+    def test_agent_side_submit_adapter_applies_per_system_post_load(self) -> None:
+        """A post_load choice made for one system alone must reach the run."""
+        experiment = yaml.safe_load(_SPEC)
+        experiment["loading"] = {"post_load": {"indexes": False}}
+        experiment["systems"][0]["post_load"] = {"indexes": True}
+        specification = self.root / "submitted.yml"
+        specification.write_text(yaml.safe_dump(experiment))
+        parsed = argparse.Namespace()
+        parser = mock.Mock()
+        parser.parse_args.return_value = parsed
+        entry_module = mock.Mock()
+        entry_module.build_parser.return_value = parser
+        with mock.patch.object(
+            submit_adapter.experiment_cli,
+            "entry_module_for_workload",
+            return_value=entry_module,
+        ):
+            submit_adapter.run(
+                str(specification), str(self.workspace.catalog_path), "123")
+
+        overrides = parsed.physical_design_overrides
+        self.assertNotEqual(overrides["PostgreSQL"], overrides["PgDuckDB"])
 
     def test_agent_side_submit_adapter_routes_a_ycsb_specification(self) -> None:
         """A non-tpch workload runs through its own entry script, resources included."""

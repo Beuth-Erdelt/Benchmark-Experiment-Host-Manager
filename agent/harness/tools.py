@@ -128,6 +128,8 @@ class Workspace:
     :ivar catalog_path: Path to ``contract_catalog.yml``, used by ``validate``.
     :ivar environment_path: Path to ``environment.yml``, or ``None`` to skip the
         cluster-fit checks.
+    :ivar allow_parallel_runs: Whether ``submit`` may start a run while another
+        agent-started experiment is still benchmarking in this result root.
     """
 
     def __init__(
@@ -139,6 +141,7 @@ class Workspace:
         results_root: str | None = None,
         status_dir: str = "status",
         run_directory: Path | None = None,
+        allow_parallel_runs: bool = False,
     ) -> None:
         self.root = Path(root).resolve()
         self.inbox = (self.root / inbox).resolve()
@@ -149,6 +152,7 @@ class Workspace:
         self.results_root = Path(results_root).resolve() if results_root else None
         self.status_dir = (self.root / status_dir).resolve()
         self.run_directory = run_directory
+        self.allow_parallel_runs = allow_parallel_runs
         self._validated: dict[Path, tuple[str, ...]] = {}
         self._returned_read_characters = 0
         self._result_directory: Path | None = None
@@ -461,11 +465,17 @@ class Workspace:
             )
 
         lock_fd = os.open(self.results_root / _RUN_LOCK, os.O_CREAT | os.O_RDWR, 0o600)
+        parallel = False
         try:
             fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as error:
-            os.close(lock_fd)
-            raise ToolError("submit refused: another agent-started experiment is still running") from error
+            if not self.allow_parallel_runs:
+                os.close(lock_fd)
+                raise ToolError("submit refused: another agent-started experiment is still running") from error
+            # The operator asked for this run to go ahead anyway. The lock stays
+            # with its current holder; this run simply does not wait for it, and
+            # says so in its result so the trajectory records the choice.
+            parallel = True
 
         try:
             code = self._new_code()
