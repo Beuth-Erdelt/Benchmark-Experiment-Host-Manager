@@ -25,7 +25,8 @@ once it graduated from exploratory prototype to the real input contract
 those consume.
 
 Its scope is narrowed to the TPC-H/PostgreSQL/PgDuckDB slice chosen for the
-first implementation — see `docs/Design-Catalog-Contract.md` for the full
+first implementation, plus a basic YCSB/PostgreSQL workload (see below) —
+see `docs/Design-Catalog-Contract.md` for the full
 design rationale, the complete (all-workload, all-system) breadth pass this
 was extracted from, and open questions.
 
@@ -125,6 +126,42 @@ Design points:
   own no-limit default. (`-ms 0` is never emitted — the entry scripts'
   `int(args.max_sut)` would read a literal 0 as "cap at zero".)
   `validate_experiment()` still requires a non-negative integer.
+
+## Basic YCSB workload added (2026-08-27)
+
+`workloads.ycsb` was added (`catalog_contract_version` 1.1.0 -> 1.2.0,
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep). Like `workloads.tpch`, it
+is deliberately trimmed to the prototype slice: `supports: [PostgreSQL]` only.
+
+Scope decisions:
+
+- **PostgreSQL only.** The full `ycsb.py` supports a dozen engines (MySQL,
+  MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService, PGBouncer, Redis,
+  Citus, CedarDB, Dragonfly); all are listed under `out_of_scope.systems`.
+  Connection pooling (PGBouncer's `-xnpp/-xnpi/-xnpo`) and the per-system
+  knobs (`-xnsr` SUT replicas, `-xnpd` TiDB PD nodes) only matter for those
+  engines, so they are left out of the catalog block entirely rather than
+  documented as unused.
+- **No `post_load` / `physical_design` for this workload.** YCSB creates and
+  manages its own schema (one `usertable` + primary key) through the JDBC
+  binding — there is no indexes/constraints/statistics/storage_format
+  selection to make. `loading.out_of_scope` states this explicitly.
+- **`params` mirror `ycsb.py`'s `-x*` flags**, renamed to catalog vocabulary:
+  `workload` (`-xwl`), `scaling_factor` (`-sf`, rows = SF·1e6),
+  `operations_scale` (`-xop`, millions), `target_base` (`-xtb`),
+  `loading_target_factors` (`-xnlf`), `benchmarking_target_factors`
+  (`-xnbf`), `batchsize` (`-xsbs`), `logging_interval` (`-xli`, seconds),
+  `insert_order` (`-xio`), `max_execution_time` (`-xmet`).
+- **`produces` grounded in `YcsbEvaluator`**: `per_operation` (one row per
+  op type), whole-workload `summary`, and a `time_series` (per-interval
+  `current_ops_per_sec`, both phases) — the running signal DBMSBenchmarker
+  workloads can't produce. No `per_query` — YCSB has no query concept.
+
+Not added: an argv builder. `bexhoma/spec.py::build_argv()` still dispatches
+only `tpch`; a catalog-driven `ycsb` experiment validates against the
+catalog but `build_argv()` / `bexhoma.experiments.tpch_loader` still reject
+it as not-yet-translatable (see `test_experiment_loader.py`). Wiring a
+`ycsb` argv builder is separate follow-up work.
 
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
