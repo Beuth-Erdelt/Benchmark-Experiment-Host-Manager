@@ -1,0 +1,25 @@
+# Durable controller image for one complete benchmark-agent investigation.
+FROM registry.k8s.io/kubectl:v1.33.4 AS kubectl
+
+FROM python:3.12-slim
+
+COPY --from=kubectl /bin/kubectl /usr/local/bin/kubectl
+RUN apt-get update \
+    && apt-get install --yes --no-install-recommends bash ca-certificates curl procps \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/bexhoma
+COPY pyproject.toml requirements.txt README.md LICENSE tpch.py ./
+COPY agent ./agent
+COPY bexhoma ./bexhoma
+COPY contracts ./contracts
+COPY dev ./dev
+COPY experiments ./experiments
+COPY k8s ./k8s
+
+RUN python -m pip install --no-cache-dir ".[agent]"
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+ENTRYPOINT ["python", "-m", "agent.lifecycle_controller"]

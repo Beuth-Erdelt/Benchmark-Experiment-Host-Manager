@@ -1,0 +1,1 @@
+At a 10 GB TPC-H workload, under 16 CPU cores and 64 GiB RAM, does PostgreSQL remain the better choice than forced-DuckDB PgDuckDB for concurrent analytical reporting?

@@ -14,7 +14,7 @@ spec:
       automountServiceAccountToken: false
       imagePullSecrets:
       - name: dockerhub
-      nodeSelector: 
+      nodeSelector: {kubernetes.io/hostname: cl-worker36}
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"

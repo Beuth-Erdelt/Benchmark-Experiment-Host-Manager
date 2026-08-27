@@ -28,9 +28,12 @@ from types import SimpleNamespace
 from importlib.metadata import version
 from pathlib import Path
 import math
-from typing import List, Tuple, Optional
+from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
+
+if TYPE_CHECKING:
+    from bexhoma.configurations.base import SutConfiguration
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -168,6 +171,7 @@ class ExperimentBase():
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
+        self.max_loading_minutes: Optional[int] = None                   # abort a configuration that remains in loading after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
         self.num_tenants = 0                                            # number of tenants for multi-tenant experiments
         self.tenant_per = ""                                            # granularity of tenancy: 'container', 'schema', etc.
@@ -224,6 +228,7 @@ class ExperimentBase():
         self.benchmarks: list = []                                        # ordered Benchmark objects; index+1 = benchmark_index
         self.evaluators: dict = {}                                        # benchmark.name → evaluator instance
         self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary
+        self._runtime_test_results: list[tuple[bool, str]] = []          # failures detected before show_summary rebuilds its test list
         self.set_eval_parameters(code = self.code)
     def process(self) -> None:
         """
@@ -524,6 +529,8 @@ class ExperimentBase():
         self.resetscript_active = args.activate_reset
         if args.experiment_timeout is not None:
             self.max_experiment_minutes = int(args.experiment_timeout)
+        if args.loading_timeout is not None:
+            self.max_loading_minutes = int(args.loading_timeout)
         multi_tenant_num = int(args.multi_tenant_num)
         multi_tenant_by = args.multi_tenant_by
         multi_tenant_volume = args.multi_tenant_volume
@@ -664,6 +671,8 @@ class ExperimentBase():
             self.workload['info'] = self.workload['info']+"\nMaximum DBMS across the whole cluster is {}.".format(self.cluster.max_sut)
         if self.max_experiment_minutes is not None:
             self.workload['info'] = self.workload['info']+"\nExperiment is aborted and removed from the cluster after {} minutes.".format(self.max_experiment_minutes)
+        if self.max_loading_minutes is not None:
+            self.workload['info'] = self.workload['info']+"\nEach configuration has a loading timeout of {} minutes; diagnostics are captured before teardown.".format(self.max_loading_minutes)
         if skip_shutdown:
             self.workload['info'] = self.workload['info']+"\nSUT pods are kept running after the experiment finishes."
         if test_result:
@@ -1442,6 +1451,57 @@ class ExperimentBase():
         if os.path.isfile(filename_local):
             print("{:30s}: uploading workload file".format("Experiment"))
             self.upload_experiment_file(filename=filename)
+
+    def _loading_abort_reason(
+        self,
+        config: "SutConfiguration",
+        now: datetime,
+    ) -> Optional[str]:
+        """Return why an active load must abort, or ``None`` while it may continue."""
+        if not config.loading_started or config.loading_finished:
+            config.loading_started_at = None
+            return None
+
+        jobs = self.cluster.get_jobs(
+            app=config.appname, component='loading', experiment=config.code,
+            configuration=config.configuration,
+        ) or []
+        for job in jobs:
+            if self.cluster.get_job_failed(job):
+                return (
+                    f"Loading job {job} for {config.configuration} reached "
+                    "Kubernetes' terminal Failed condition"
+                )
+
+        if config.loading_started_at is None:
+            config.loading_started_at = now
+        if self.max_loading_minutes is None:
+            return None
+        elapsed_seconds = (now - config.loading_started_at).total_seconds()
+        if elapsed_seconds >= self.max_loading_minutes * SECONDS_PER_MINUTE:
+            return (
+                f"Loading for {config.configuration} exceeded its "
+                f"{self.max_loading_minutes} minute timeout"
+            )
+        return None
+
+    def _abort_loading_if_needed(
+        self,
+        config: "SutConfiguration",
+        now: datetime,
+    ) -> bool:
+        """Capture diagnostics and remove the experiment when loading must abort."""
+        reason = self._loading_abort_reason(config, now)
+        if reason is None:
+            return False
+        print(
+            f"{'Experiment':30s}: {reason}; capturing diagnostics and "
+            "removing all components"
+        )
+        self._runtime_test_results.append((False, reason))
+        self.remove_experiment()
+        return True
+
     def work_benchmark_list(self, intervals: int = 30, stop_after_starting: bool = False, stop_after_loading: bool = False, stop_after_benchmarking: bool = False) -> None:
         """
         Run typical workflow:
@@ -1498,6 +1558,8 @@ class ExperimentBase():
             for config in self.configurations:
                 # check if sut is running
                 if not config.status.sut_running():
+                    if self._abort_loading_if_needed(config, datetime.utcnow()):
+                        return
                     if not config.experiment_done:
                         if not config.status.sut_pending():
                             we_can_start_new_sut = True
@@ -1530,6 +1592,8 @@ class ExperimentBase():
                     continue
                 # check if loading is done
                 config.loader.check()
+                if self._abort_loading_if_needed(config, datetime.utcnow()):
+                    return
                 # start loading
                 if not config.loading_started:
                     # check if monitoring has started
@@ -2539,7 +2603,7 @@ class ExperimentBase():
             ``bexhoma.benchmarks`` pipeline's ``show_summary(write_report=...)``;
             this legacy path has no tiered-report counterpart, so it is ignored.
         """
-        self._test_results = []
+        self._test_results = list(self._runtime_test_results)
         self.cluster.logger.debug('base.show_summary()')
         connections_sorted, monitoring_applications = self.show_summary_header()
         resultfolder = self.cluster.config['benchmarker']['resultfolder']
@@ -2970,4 +3034,3 @@ class TpcxaiExperiment(ExperimentBase):
         self.set_queryfile('queries-tpcxai.config')
     def set_queries_profiling(self):
         self.set_queryfile('queries-tpcxai-profiling.config')
-

@@ -1,0 +1,149 @@
+# One Kubernetes Job owns one complete agent investigation. Before applying,
+# create `agent-lifecycle-input` with `cluster.config` and `task.txt`, build and
+# publish agent/Dockerfile.lifecycle, and replace the image below.
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: agent-lifecycle-state
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 100Gi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: agent-lifecycle
+---
+# Namespace-scoped mutation is the controller's operational boundary. The
+# language model never receives a terminal or Kubernetes tool; only the
+# deterministic lifecycle and BeXhoma processes use these permissions.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: agent-lifecycle
+rules:
+  - apiGroups: [""]
+    resources:
+      - configmaps
+      - endpoints
+      - events
+      - persistentvolumeclaims
+      - pods
+      - pods/exec
+      - pods/log
+      - services
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: ["apps"]
+    resources: [daemonsets, deployments, replicasets, statefulsets]
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: ["batch"]
+    resources: [jobs]
+    verbs: [get, list, watch, create, update, patch, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: agent-lifecycle
+subjects:
+  - kind: ServiceAccount
+    name: agent-lifecycle
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: agent-lifecycle
+---
+# Cluster facts are read-only and become the bounded environment descriptor
+# given to the model. Experiment mutation remains confined to one namespace.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: agent-lifecycle-environment-reader
+rules:
+  - apiGroups: [""]
+    resources: [nodes]
+    verbs: [get, list, watch]
+  - apiGroups: ["storage.k8s.io"]
+    resources: [storageclasses]
+    verbs: [get, list, watch]
+  - apiGroups: ["scheduling.k8s.io"]
+    resources: [priorityclasses]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: agent-lifecycle-environment-reader
+subjects:
+  - kind: ServiceAccount
+    name: agent-lifecycle
+    # Set this to the namespace in which this manifest is applied.
+    namespace: replace-me
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: agent-lifecycle-environment-reader
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  # Use a new name and matching AGENT_LIFECYCLE_ID for each investigation.
+  name: agent-lifecycle-example
+spec:
+  # There is no global runtime cap: SF10/SF100 investigations may take days.
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: agent-lifecycle
+    spec:
+      serviceAccountName: agent-lifecycle
+      restartPolicy: OnFailure
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: controller
+          # Build agent/Dockerfile.lifecycle and replace this placeholder.
+          image: ghcr.io/example/bexhoma-agent:replace-me
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: AGENT_LIFECYCLE_ID
+              value: agent-lifecycle-example
+            - name: AGENT_MODEL
+              value: qwen3.8-27b
+            - name: AGENT_BASE_URL
+              value: http://vllm-qwen38-service/v1
+            - name: MODEL_SERVER_BASE_URL
+              value: http://vllm-qwen38-service/v1
+            - name: MODEL_SERVER_MANIFEST
+              value: /opt/bexhoma/agent/k8s/vllm-qwen38-27b.yml
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            # Required only when the supplied cluster.config has more than one
+            # context. It selects which cluster-specific settings to preserve.
+            - name: AGENT_SOURCE_CONTEXT
+              value: ""
+          resources:
+            requests:
+              cpu: "1"
+              memory: 2Gi
+            limits:
+              cpu: "4"
+              memory: 8Gi
+          volumeMounts:
+            - name: state
+              mountPath: /state
+            - name: input
+              mountPath: /input
+              readOnly: true
+      volumes:
+        - name: state
+          persistentVolumeClaim:
+            claimName: agent-lifecycle-state
+        - name: input
+          configMap:
+            name: agent-lifecycle-input

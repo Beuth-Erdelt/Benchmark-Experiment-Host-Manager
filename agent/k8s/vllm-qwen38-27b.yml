@@ -5,13 +5,22 @@
 # servers in this cluster: one Pod that downloads the weights into a PVC on
 # first start and serves them from there afterwards.
 #
-# Placement note: this pins to the H200 node (cl-worker37) and deliberately not
-# to cl-worker36. cl-worker36 is where bexhoma puts the system under test, and
-# a model server competing for that node's CPU, memory and page cache would
-# contaminate the very measurements the agent is designing.
+# The pod is self-cleaning: an idle watchdog beside the server releases the GPU
+# once nothing has sent a request for IDLE_SHUTDOWN_SECONDS, so a forgotten
+# server does not hold a Hopper node indefinitely. This is independent of the
+# operator wrapper, which shuts the server down promptly when it is in charge.
+#
+# Placement note: this accepts either Hopper node (H100 or H200), whichever the
+# scheduler can place first, and deliberately excludes cl-worker36. cl-worker36
+# is where bexhoma puts the system under test, and a model server competing for
+# that node's CPU, memory and page cache would contaminate the measurements the
+# agent is designing.
+#
+# The objects carry no namespace of their own: dev/model_server.sh applies them
+# into MODEL_SERVER_NAMESPACE, so this manifest is not tied to one account.
 #
 # Reach it from a laptop with:
-#   kubectl -n lliu port-forward svc/vllm-qwen38-service 8000:80
+#   kubectl -n "$MODEL_SERVER_NAMESPACE" port-forward svc/vllm-qwen38-service 8000:80
 #
 # Authors: Leonhard Liu
 # Copyright (C) 2026 Patrick K. Erdelt
@@ -21,10 +30,10 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: qwen38-27b-model-pvc
-  namespace: lliu
 spec:
   accessModes:
     - ReadWriteOnce
+  # Per-cluster: name a storage class your account can claim 150Gi from.
   storageClassName: cephcsi
   resources:
     requests:
@@ -35,7 +44,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: vllm-qwen38-service
-  namespace: lliu
 spec:
   selector:
     app: vllm-qwen38-server
@@ -48,7 +56,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: vllm-qwen38-server
-  namespace: lliu
+  annotations:
+    # The switch replaces older immutable Pod specifications before apply.
+    bexhoma.local/model-server-generation: idle-watchdog-v2
   labels:
     app: vllm-qwen38-server
 spec:
@@ -64,6 +74,12 @@ spec:
           value: "INFO"
         - name: NCCL_IGNORE_CPU_AFFINITY
           value: "1"
+        # Comfortably longer than any gap between the agent's own calls within
+        # one phase, and far shorter than the hours a benchmark takes.
+        - name: IDLE_SHUTDOWN_SECONDS
+          value: "1200"
+        - name: IDLE_POLL_SECONDS
+          value: "60"
       resources:
         limits:
           nvidia.com/gpu: "1"
@@ -103,6 +119,11 @@ spec:
           set -euo pipefail
           MODEL_REPO="Qwen/Qwen3.8-27B-FP8"
           LOCAL_DIR="/models/qwen3.8-27b-fp8"
+          # Zero disables the watchdog and restores a server that runs until
+          # something deletes it.
+          IDLE_SHUTDOWN_SECONDS="${IDLE_SHUTDOWN_SECONDS:-1200}"
+          IDLE_POLL_SECONDS="${IDLE_POLL_SECONDS:-60}"
+          SHUTDOWN_GRACE_SECONDS=30
 
           python3 -c "import vllm, transformers; print('vllm', vllm.__version__, '| transformers', transformers.__version__)"
 
@@ -126,11 +147,27 @@ spec:
           # parsers matter most here: qwen3_coder turns the model's tool syntax
           # into structured tool_calls, and qwen3 splits its thinking out of the
           # visible answer, which is what llm.py expects to receive.
-          exec python3 -m vllm.entrypoints.openai.api_server \
+          #
+          # 128k rather than the recipe's 64k, because interpretation prompts
+          # already reach ~49k tokens and the phase aborts rather than compacting
+          # when the window runs out. Well inside the model's native 262144
+          # positions, so no rope scaling is involved. Affordable because only
+          # every fourth layer is full attention -- the rest keep a fixed-size
+          # linear-attention state -- which puts a full-length sequence at
+          # roughly 4 GiB of KV cache, not the ~16 GiB a dense 27B would need.
+          #
+          # Started in the background rather than exec'd, because the shell
+          # stays alive as the idle watchdog below. That is what makes the pod
+          # self-cleaning: the agent is stateless between phases, so a server
+          # nobody is talking to is a stranded GPU, and the operator wrapper
+          # that normally shuts it down is absent whenever a phase was launched
+          # by hand.
+          python3 -m vllm.entrypoints.openai.api_server \
             --model "$LOCAL_DIR" \
             --served-model-name qwen3.8-27b \
             --tensor-parallel-size 1 \
-            --max-model-len 65536 \
+            --max-model-len 131072 \
+            --max-num-seqs 512 \
             --kv-cache-dtype fp8 \
             --gpu-memory-utilization 0.90 \
             --reasoning-parser qwen3 \
@@ -138,9 +175,125 @@ spec:
             --tool-call-parser qwen3_coder \
             --trust-remote-code \
             --host 0.0.0.0 \
-            --port 8000
-  nodeSelector:
-    gpu: h200
+            --port 8000 &
+          VLLM_PID=$!
+
+          if [ "$IDLE_SHUTDOWN_SECONDS" -le 0 ]; then
+              wait "$VLLM_PID"
+              exit $?
+          fi
+
+          # Two independent signals of use, because either alone is wrong. The
+          # gauges catch a single long request that spans several polls; the
+          # monotonic counters catch short requests that start and finish
+          # entirely between two polls and would otherwise be invisible.
+          probe_activity() {
+              python3 - <<'PY'
+          import sys
+          import urllib.request
+
+          IN_FLIGHT = ("vllm:num_requests_running", "vllm:num_requests_waiting")
+          COMPLETED = ("vllm:request_success_total", "vllm:prompt_tokens_total",
+                       "vllm:generation_tokens_total")
+          in_flight = 0.0
+          completed = 0.0
+          saw_in_flight = False
+          saw_completed = False
+          try:
+              with urllib.request.urlopen(
+                      "http://127.0.0.1:8000/metrics", timeout=10) as response:
+                  body = response.read().decode("utf-8", "replace")
+          except OSError as error:
+              print(f"metrics unreadable: {error}", file=sys.stderr)
+              sys.exit(1)
+          for line in body.splitlines():
+              if line.startswith("#"):
+                  continue
+              name, _, value = line.rpartition(" ")
+              name = name.split("{", 1)[0].strip()
+              try:
+                  value = float(value)
+              except ValueError:
+                  continue
+              if name in IN_FLIGHT:
+                  in_flight += value
+                  saw_in_flight = True
+              elif name in COMPLETED:
+                  completed += value
+                  saw_completed = True
+          # Never report idleness from metric names this vLLM build does not
+          # publish. Both classes are required: gauges protect long requests,
+          # while counters reveal short requests completed between two polls.
+          if not saw_in_flight or not saw_completed:
+              print("incomplete vLLM request metrics in /metrics", file=sys.stderr)
+              sys.exit(1)
+          print(f"{in_flight:.0f} {completed:.3f}")
+          PY
+          }
+
+          idle_seconds=0
+          last_completed=""
+          while true; do
+              sleep "$IDLE_POLL_SECONDS"
+
+              # A server that died on its own must exit non-zero so that
+              # restartPolicy OnFailure brings it back; only the idle path
+              # below is allowed to end the pod successfully.
+              if ! kill -0 "$VLLM_PID" 2>/dev/null; then
+                  vllm_status=0
+                  wait "$VLLM_PID" || vllm_status=$?
+                  echo "vLLM exited with status ${vllm_status}; restarting"
+                  # Non-zero even when vLLM exited cleanly: only the idle path
+                  # may end this pod successfully, or a server that quietly
+                  # stopped would drop the GPU mid-investigation.
+                  exit $(( vllm_status == 0 ? 1 : vllm_status ))
+              fi
+
+              if ! reading=$(probe_activity); then
+                  idle_seconds=0
+                  continue
+              fi
+              in_flight="${reading%% *}"
+              completed="${reading##* }"
+              if [ "$in_flight" != "0" ] || [ "$completed" != "$last_completed" ]; then
+                  idle_seconds=0
+                  last_completed="$completed"
+                  continue
+              fi
+
+              idle_seconds=$((idle_seconds + IDLE_POLL_SECONDS))
+              if [ "$idle_seconds" -ge "$IDLE_SHUTDOWN_SECONDS" ]; then
+                  echo "no requests for ${idle_seconds}s; releasing the GPU"
+                  kill -TERM "$VLLM_PID" 2>/dev/null || true
+                  remaining_grace_seconds="$SHUTDOWN_GRACE_SECONDS"
+                  while kill -0 "$VLLM_PID" 2>/dev/null \
+                      && [ "$remaining_grace_seconds" -gt 0 ]; do
+                      sleep 1
+                      remaining_grace_seconds=$((remaining_grace_seconds - 1))
+                  done
+                  if kill -0 "$VLLM_PID" 2>/dev/null; then
+                      echo "vLLM did not stop within ${SHUTDOWN_GRACE_SECONDS}s; forcing shutdown"
+                      kill -KILL "$VLLM_PID" 2>/dev/null || true
+                  fi
+                  wait "$VLLM_PID" 2>/dev/null || true
+                  exit 0
+              fi
+          done
+  # OnFailure, not the default Always: it lets a crashed server come back while
+  # allowing the idle watchdog's clean exit to actually end the pod. Under
+  # Always the pod would restart itself immediately and take the GPU again.
+  restartPolicy: OnFailure
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          # Per-cluster: this is how nodes are labelled here. A cluster that
+          # labels its GPUs differently leaves the pod Pending indefinitely,
+          # which the wrapper waits through rather than reporting.
+          - matchExpressions:
+              - key: gpu
+                operator: In
+                values: [h100, h200]
   volumes:
     - name: dshm
       emptyDir:

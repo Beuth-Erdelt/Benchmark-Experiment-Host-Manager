@@ -21,12 +21,22 @@ from bexhoma import spec as catalog_spec
 import tpch
 
 
+_MAX_PARALLEL_SUTS = "1"
+
+
 def run(path: str, catalog_path: str, experiment_code: str) -> None:
     """Resolve and execute a catalog experiment through Bexhoma's normal path."""
     specification = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
     catalog = catalog_spec.load_catalog(catalog_path)
     argv = catalog_spec.build_argv(catalog, specification)
-    argv.extend(["-e", experiment_code, "-rp"])
+    # Bexhoma configurations share the TPC-H raw-data cache. Serial execution
+    # prevents two cold-cache generators from writing the same files and also
+    # keeps comparison systems from contending for host resources.
+    argv.extend([
+        "-e", experiment_code,
+        "--max-sut-experiment", _MAX_PARALLEL_SUTS,
+        "-rp",
+    ])
     tpch.run(tpch.build_parser().parse_args(argv))
 
 

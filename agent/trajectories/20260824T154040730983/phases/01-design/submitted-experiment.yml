@@ -1,0 +1,46 @@
+mode: run
+title: "PostgreSQL vs forced-DuckDB PgDuckDB on 10 GB TPC-H at 16 cores / 64 GiB"
+hypothesis: >
+  At a 10 GB TPC-H workload under a fixed budget of 16 CPU cores and 64 GiB RAM,
+  PostgreSQL remains the better choice than forced-DuckDB PgDuckDB for concurrent
+  analytical reporting: across a sweep of concurrent query streams (1, 2, 4),
+  PostgreSQL sustains equal or higher throughput (Power@Size / Throughput@Size)
+  and lower geo-mean query time than PgDuckDB run with duckdb_force_execution=true.
+discriminates:
+  - system
+  - concurrency
+workload:
+  name: tpch
+  params:
+    scaling_factor: 10
+    timeout: 300
+    query_repeats: 1
+    verify_result: false
+  rounds: [1, 2, 4]
+  repetitions: 3
+loading:
+  pods: 2
+  threads: 1
+  split: 1
+  post_load:
+    statistics: true
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override:
+      duckdb_force_execution: true
+placement:
+  sut: cl-worker34
+  loading: cl-worker38
+  benchmarking: cl-worker39
+resources:
+  cpu:
+    request: 16
+    limit: 16
+  memory:
+    request: 64Gi
+    limit: 64Gi
+  storage:
+    size: 50Gi

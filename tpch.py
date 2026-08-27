@@ -13,6 +13,7 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
+from bexhoma.spec import format_resource_cell_suffix
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -296,10 +297,11 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
             split_portion = int(loading_pods_total/loading_pods_split)
             if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
-                for cell in resource_cells:
+                for cell_index, cell in enumerate(resource_cells):
                     # a swept resource cell needs its own configuration identity and
                     # its own storage, or every cell would collide on the same PVC
-                    resource_suffix = cell['memory'] if len(resource_cells) > 1 else ''
+                    resource_suffix = format_resource_cell_suffix(
+                        cell_index, len(resource_cells))
                     configuration_name = f'PostgreSQL-{resource_suffix}' if resource_suffix else ''
                     alias = f'PostgreSQL@{resource_suffix}' if resource_suffix else 'DBMS A2'
                     if experiment.tenant_per == 'container':
@@ -401,10 +403,11 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("PgDuckDB" in args.dbms):
                 # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's DDL scripts and loading job)
-                for cell in resource_cells:
+                for cell_index, cell in enumerate(resource_cells):
                     # a swept resource cell needs its own configuration identity and
                     # its own storage, or every cell would collide on the same PVC
-                    resource_suffix = cell['memory'] if len(resource_cells) > 1 else ''
+                    resource_suffix = format_resource_cell_suffix(
+                        cell_index, len(resource_cells))
                     configuration_name = f'PgDuckDB-{resource_suffix}' if resource_suffix else ''
                     alias = f'PgDuckDB@{resource_suffix}' if resource_suffix else 'DBMS A2'
                     name_format = 'PgDuckDB-{cluster}-{pods}'

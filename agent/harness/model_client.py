@@ -17,15 +17,63 @@ See LICENSE for details.
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from openai import OpenAI
+from openai import APIConnectionError, OpenAI, OpenAIError, RateLimitError
 
-__all__ = ["ToolCall", "Reply", "ChatModel"]
+__all__ = [
+    "ModelUnreachable", "ContextWindowExhausted", "ToolCall", "Reply", "ChatModel",
+]
 
 #: vLLM does not check credentials, but the OpenAI client insists on a key.
 _PLACEHOLDER_API_KEY = "EMPTY"
+
+#: Held back from the context window, because the served chat template adds
+#: tokens no client-side estimate can see.
+_CONTEXT_MARGIN_TOKENS = 512
+#: Below this much room, a turn cannot produce a usable answer, so the phase
+#: stops with a reported reason instead of letting the server refuse the request.
+_MINIMUM_GENERATION_TOKENS = 1024
+#: Attempts made when a metered endpoint refuses a turn for rate limiting.
+#: Hosted providers meter per minute, so a phase that would otherwise die
+#: mid-investigation waits the meter out instead.
+_RATE_LIMIT_ATTEMPTS = 6
+#: First wait after a refused turn; doubled per attempt up to the cap below.
+_RATE_LIMIT_BACKOFF_SECONDS = 5.0
+_RATE_LIMIT_BACKOFF_CAP_SECONDS = 60.0
+
+#: Field names servers publish their context length under, in the order tried.
+_CONTEXT_WINDOW_FIELDS = ("max_model_len", "max_context_length")
+
+#: Characters per token for the messages appended since the last exchange.
+#: Deliberately low: overestimating the appended text shrinks the generation
+#: budget slightly, while underestimating it would overflow the window.
+_CHARACTERS_PER_TOKEN = 3
+
+
+class ContextWindowExhausted(RuntimeError):
+    """Raised when the conversation leaves no room to generate an answer.
+
+    The server would refuse such a request outright, which is a setup problem
+    (a per-turn ceiling too large for this window, or a phase that read too
+    much), not a crash: callers report it the way they report the endpoint
+    being unreachable.
+    """
+
+
+class ModelUnreachable(RuntimeError):
+    """Raised when the configured endpoint could not be reached at all.
+
+    Also raised when a metered endpoint kept refusing the turn for rate
+    limiting until the retries below were spent, which leaves the phase just as
+    unable to continue.
+
+    Deliberately not the client library's own exception: this module is the only
+    one that knows which server is behind the endpoint, and callers report a
+    misconfigured endpoint the way they report any other setup mistake.
+    """
 
 
 @dataclass
@@ -80,9 +128,98 @@ class ChatModel:
         timeout: float = 600.0,
     ) -> None:
         self.model = model
+        self.base_url = base_url
         self.temperature = temperature
         self.max_tokens = max_tokens
         self._client = OpenAI(base_url=base_url, api_key=api_key, timeout=timeout)
+        self._context_window: int | None = None
+        self._context_window_asked = False
+        self._counted_messages = 0
+        self._counted_prompt_tokens = 0
+        #: Seam so a test can exercise the backoff without waiting for it.
+        self._sleep = time.sleep
+
+    def _window(self) -> int | None:
+        """Return the served context length, asking the server once.
+
+        :return: Tokens the server accepts per request, or ``None`` when it does
+            not publish the figure.
+        :rtype: int | None
+        """
+        if not self._context_window_asked:
+            self._context_window_asked = True
+            try:
+                for entry in self._client.models.list().data:
+                    if entry.id == self.model:
+                        self._context_window = _published_window(entry)
+                        break
+            except OpenAIError:
+                # A server that will not list its models still answers requests;
+                # without a window the per-turn ceiling stands unchanged.
+                self._context_window = None
+        return self._context_window
+
+    def _prompt_tokens(self, messages: list[dict[str, Any]]) -> int:
+        """Estimate the tokens this conversation will occupy.
+
+        Anchored on the exact count the server reported for the previous
+        request, so only the turns appended since then are estimated.
+
+        :param messages: Full conversation about to be sent.
+        :return: Estimated prompt tokens.
+        :rtype: int
+        """
+        appended = messages
+        counted = 0
+        if self._counted_messages and len(messages) >= self._counted_messages:
+            appended = messages[self._counted_messages:]
+            counted = self._counted_prompt_tokens
+        characters = sum(len(json.dumps(message, default=str)) for message in appended)
+        return counted + characters // _CHARACTERS_PER_TOKEN
+
+    def _generation_budget(self, messages: list[dict[str, Any]]) -> int:
+        """Cap this turn's output so the request fits the server's window.
+
+        :param messages: Full conversation about to be sent.
+        :return: Tokens this turn may generate.
+        :rtype: int
+        :raises ContextWindowExhausted: When too little room is left to answer.
+        """
+        window = self._window()
+        if window is None:
+            return self.max_tokens
+        room = window - self._prompt_tokens(messages) - _CONTEXT_MARGIN_TOKENS
+        if room < _MINIMUM_GENERATION_TOKENS:
+            raise ContextWindowExhausted(
+                f"the conversation leaves {max(room, 0)} of {window} tokens for an "
+                f"answer, below the {_MINIMUM_GENERATION_TOKENS} needed"
+            )
+        return min(self.max_tokens, room)
+
+    def _create_with_backoff(self, request: dict[str, Any]) -> Any:
+        """Send one request, waiting out a metered endpoint's rate limit.
+
+        A self-hosted server queues requests instead of refusing them, so this
+        only ever engages against a hosted API. Waiting is the right response
+        there: the alternative is losing a whole investigation to a per-minute
+        quota that clears on its own.
+
+        :param request: Keyword arguments for the chat-completions call.
+        :return: The server's completion.
+        :raises ModelUnreachable: When every attempt was refused.
+        """
+        wait = _RATE_LIMIT_BACKOFF_SECONDS
+        for attempt in range(1, _RATE_LIMIT_ATTEMPTS + 1):
+            try:
+                return self._client.chat.completions.create(**request)
+            except RateLimitError as error:
+                if attempt == _RATE_LIMIT_ATTEMPTS:
+                    raise ModelUnreachable(
+                        f"{self.base_url} refused {_RATE_LIMIT_ATTEMPTS} attempts for "
+                        f"rate limiting: {error}"
+                    ) from error
+                self._sleep(_retry_after(error) or wait)
+                wait = min(wait * 2, _RATE_LIMIT_BACKOFF_CAP_SECONDS)
 
     def reply(
         self,
@@ -96,16 +233,24 @@ class ChatModel:
             which forces a text-only turn.
         :return: The parsed assistant turn.
         :rtype: Reply
+        :raises ModelUnreachable: When the endpoint did not answer at all.
+        :raises ContextWindowExhausted: When the conversation leaves no room to
+            answer, so the server would refuse the request.
         """
         request: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "temperature": self.temperature,
-            "max_tokens": self.max_tokens,
+            "max_tokens": self._generation_budget(messages),
         }
         if tools:
             request["tools"] = tools
-        response = self._client.chat.completions.create(**request)
+        try:
+            response = self._create_with_backoff(request)
+        except APIConnectionError as error:
+            raise ModelUnreachable(
+                f"no answer from {self.base_url}: {error}"
+            ) from error
         message = response.choices[0].message
         replayed = message.model_dump(exclude_none=True)
         # A reasoning model returns its thinking in a separate field. Qwen's own
@@ -116,13 +261,51 @@ class ChatModel:
         reasoning = replayed.pop("reasoning", None)
         legacy_reasoning = replayed.pop("reasoning_content", None)
         reasoning = reasoning or legacy_reasoning
+        usage = response.usage.model_dump() if response.usage else {}
+        if isinstance(usage.get("prompt_tokens"), int):
+            # Anchor the next turn's estimate on what the server actually counted.
+            self._counted_messages = len(messages)
+            self._counted_prompt_tokens = usage["prompt_tokens"]
         return Reply(
             text=message.content or "",
             reasoning=reasoning or "",
             tool_calls=[_parse_tool_call(call) for call in (message.tool_calls or [])],
             message=replayed,
-            usage=response.usage.model_dump() if response.usage else {},
+            usage=usage,
         )
+
+
+def _retry_after(error: RateLimitError) -> float | None:
+    """Return the wait the refusing server asked for, when it named one.
+
+    :param error: The refusal raised by the client library.
+    :return: Seconds to wait, or ``None`` when no usable header was sent.
+    :rtype: float | None
+    """
+    response = getattr(error, "response", None)
+    header = getattr(response, "headers", {}).get("retry-after") if response else None
+    try:
+        return float(header) if header is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _published_window(entry: Any) -> int | None:
+    """Return the context length a listed model publishes, if it publishes one.
+
+    The field is not part of the OpenAI protocol, so each server names it
+    differently: vLLM reports ``max_model_len``, Mistral ``max_context_length``.
+    A server that reports neither leaves the window unknown.
+
+    :param entry: One model as the server listed it.
+    :return: Tokens the server accepts per request, or ``None``.
+    :rtype: int | None
+    """
+    for field in _CONTEXT_WINDOW_FIELDS:
+        length = getattr(entry, field, None)
+        if isinstance(length, int) and not isinstance(length, bool):
+            return length
+    return None
 
 
 def _parse_tool_call(call: Any) -> ToolCall:

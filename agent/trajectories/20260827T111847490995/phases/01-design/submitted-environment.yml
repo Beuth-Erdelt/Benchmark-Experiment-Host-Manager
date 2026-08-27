@@ -1,0 +1,233 @@
+environment_contract_version: 1.0.0
+cluster:
+  context: oidc_ds_cluster
+  namespace: lliu
+  collected_at: '2026-08-27T07:32:05.868720+00:00'
+nodes:
+- name: cl-worker36
+  labels:
+    kubernetes.io/hostname: cl-worker36
+    kubernetes.io/arch: amd64
+    cpu: xeon-platinum-8570
+    gpu: b200
+  capacity:
+    cpu: '224'
+    ephemeral-storage: 1844165180Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 2113450364Ki
+    nvidia.com/gpu: '8'
+  allocatable:
+    cpu: '224'
+    ephemeral-storage: '1699582627075'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 2113347964Ki
+    nvidia.com/gpu: '8'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.2.1
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+excluded_nodes:
+- name: cl-master1
+  taints:
+  - key: node-role.kubernetes.io/control-plane
+    value: ''
+    effect: NoSchedule
+- name: cl-master2
+  taints:
+  - key: node-role.kubernetes.io/control-plane
+    value: ''
+    effect: NoSchedule
+- name: cl-master3
+  taints:
+  - key: node-role.kubernetes.io/control-plane
+    value: ''
+    effect: NoSchedule
+- name: cl-worker17
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker19
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker2
+  taints:
+  - key: old-node
+    value: 'true'
+    effect: PreferNoSchedule
+- name: cl-worker20
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker21
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker22
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker23
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker24
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker25
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker27
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker28
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker29
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker3
+  taints:
+  - key: old-node
+    value: 'true'
+    effect: PreferNoSchedule
+- name: cl-worker30
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker31
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker32
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker33
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker34
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker35
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker37
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker38
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker39
+  taints: []
+  reason: 'not usable for bexhoma on this cluster: CephFS either fails to mount or
+    is unverified here, and k8s/ templates pin every bexhoma pod to cl-worker36'
+- name: cl-worker4
+  taints:
+  - key: old-node
+    value: 'true'
+    effect: PreferNoSchedule
+- name: cl-worker5
+  taints:
+  - key: old-node
+    value: 'true'
+    effect: PreferNoSchedule
+storage_classes:
+- name: ceph
+  alias: null
+  provisioner: ceph.rook.io/block
+  parameters:
+    blockPool: k8svol
+    clusterNamespace: rook-ceph
+    fstype: ext4
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+- name: cephcsi
+  alias: cephcsi
+  provisioner: rook-ceph.rbd.csi.ceph.com
+  parameters:
+    clusterID: rook-ceph
+    csi.storage.k8s.io/controller-expand-secret-name: rook-csi-rbd-provisioner
+    csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+    csi.storage.k8s.io/fstype: ext4
+    csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+    csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+    csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+    csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+    imageFeatures: layering
+    imageFormat: '2'
+    pool: k8svol
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+- name: cephxfs
+  alias: null
+  provisioner: ceph.rook.io/block
+  parameters:
+    blockPool: k8svol
+    clusterNamespace: rook-ceph
+    fstype: xfs
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+- name: local-cache
+  alias: null
+  provisioner: kubernetes.io/no-provisioner
+  parameters: {}
+  reclaim_policy: Retain
+  volume_binding_mode: WaitForFirstConsumer
+- name: local-hdd
+  alias: local-hdd
+  provisioner: kubernetes.io/no-provisioner
+  parameters: {}
+  reclaim_policy: Delete
+  volume_binding_mode: WaitForFirstConsumer
+- name: rook-ceph-bucket
+  alias: null
+  provisioner: rook-ceph.ceph.rook.io/bucket
+  parameters:
+    objectStoreName: object-store
+    objectStoreNamespace: rook-ceph
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+- name: shared
+  alias: shared
+  provisioner: rook-ceph.cephfs.csi.ceph.com
+  parameters:
+    clusterID: rook-ceph
+    csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
+    csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+    csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+    csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+    csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+    csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+    fsName: home
+    pool: home-data0
+    provisionVolume: 'true'
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+resource_limits:
+  max_allocatable_cpu: '256'
+  max_allocatable_memory: 2113347964Ki
+  max_free_cpu: null
+  max_free_memory: null
+  node_count: 16
+  namespace_resource_quotas: []
+  namespace_limit_ranges: []

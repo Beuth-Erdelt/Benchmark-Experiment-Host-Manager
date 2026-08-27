@@ -1,0 +1,45 @@
+mode: run
+title: "TPC-H SF1 system choice under 16c/64GiB: single vs concurrent analysts"
+hypothesis: >
+  Under a 16-core / 64 GiB budget, PgDuckDB with forced DuckDB execution
+  beats PostgreSQL on a 1 GB TPC-H analytical workload (higher Throughput@Size,
+  lower Geo Times), and that system ranking is preserved when the workload moves
+  from 1 to 2 concurrent analysts.
+discriminates: [system, concurrency]
+workload:
+  name: tpch
+  params:
+    scaling_factor: 1
+    timeout: 300
+    query_repeats: 2
+  rounds: [1, 2]
+  repetitions: 3
+loading:
+  pods: 2
+  threads: 1
+  post_load:
+    statistics: true
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override:
+      duckdb_force_execution: true
+observe:
+  monitoring_sut: true
+  monitoring_cluster: false
+  monitoring_app: false
+placement:
+  sut: cl-worker21
+  loading: cl-worker17
+  benchmarking: cl-worker19
+resources:
+  cpu:
+    request: 16
+    limit: 16
+  memory:
+    request: 64Gi
+    limit: 64Gi
+  storage:
+    size: 10Gi

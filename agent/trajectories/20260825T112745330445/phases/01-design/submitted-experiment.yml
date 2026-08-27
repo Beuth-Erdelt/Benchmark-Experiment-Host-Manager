@@ -1,0 +1,52 @@
+mode: run
+title: "TPC-H 10GB: PostgreSQL vs forced-DuckDB PgDuckDB at 16 CPU / 64 GiB, 1-4 concurrent streams"
+hypothesis: >
+  Under a fixed budget of 16 CPU cores and 64 GiB RAM, PostgreSQL's native
+  executor remains the better choice than PgDuckDB with forced DuckDB
+  execution (duckdb_force_execution=true) for concurrent analytical TPC-H
+  reporting at 10 GB: PostgreSQL achieves lower per-query latency and higher
+  throughput than forced-DuckDB PgDuckDB at 1, 2, and 4 concurrent streams,
+  and the direction of the gap is stable across the concurrency sweep.
+discriminates: [system, concurrency]
+workload:
+  name: tpch
+  params:
+    scaling_factor: 10
+    timeout: 3600
+    verify_result: true
+  rounds: [1, 2, 4]
+  repetitions: 3
+loading:
+  pods: 4
+  threads: 1
+  split: 1
+  timeout_minutes: 120
+  post_load:
+    indexes: false
+    constraints: false
+    statistics: true
+    storage_format: heap
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override:
+      duckdb_force_execution: true
+observe:
+  monitoring_sut: true
+  monitoring_cluster: false
+  monitoring_app: false
+placement:
+  sut: cl-worker17
+  loading: cl-worker17
+  benchmarking: cl-worker17
+resources:
+  cpu:
+    request: 16
+    limit: 16
+  memory:
+    request: 64Gi
+    limit: 64Gi
+  storage:
+    size: 50Gi

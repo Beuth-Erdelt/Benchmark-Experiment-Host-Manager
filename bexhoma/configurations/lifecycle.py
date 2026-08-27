@@ -337,6 +337,93 @@ scrape_configs:
         for service in services:
             cfg.experiment.cluster.delete_service(service)
 
+    def stop_maintaining(
+        self,
+        app: str = '',
+        component: str = 'maintaining',
+        experiment: str = '',
+        configuration: str = '',
+    ) -> None:
+        """Stop a maintaining job and remove all its pods.
+
+        :param app: App label.
+        :param component: Component label (default ``'maintaining'``).
+        :param experiment: Experiment code.
+        :param configuration: DBMS configuration name.
+        """
+        cfg = self._config
+        if len(app) == 0:
+            app = cfg.appname
+        if len(configuration) == 0:
+            configuration = cfg.configuration
+        if len(experiment) == 0:
+            experiment = cfg.code
+        jobs = cfg.experiment.cluster.get_jobs(app, component, experiment, configuration)
+        for job in jobs:
+            success = cfg.experiment.cluster.get_job_status(job)
+            print(job, success)
+            cfg.experiment.cluster.delete_job(job)
+        pods = cfg.experiment.cluster.get_job_pods(app, component, experiment, configuration)
+        for pod in pods:
+            status = cfg.experiment.cluster.get_pod_status(pod)
+            print(pod, status)
+            containers = cfg.experiment.cluster.get_pod_containers(pod)
+            for container in containers:
+                stdout = cfg.experiment.cluster.pod_log(pod=pod, container=container)
+                filename_log = cfg.path + '/' + pod + '.' + container + '.log'
+                with open(filename_log, "w") as log_file:
+                    log_file.write(stdout)
+            cfg.experiment.cluster.delete_pod(pod)
+
+    def _capture_loading_diagnostics(
+        self,
+        app: str = '',
+        component: str = 'loading',
+        experiment: str = '',
+        configuration: str = '',
+    ) -> None:
+        """Store loader and SUT diagnostics while their Kubernetes objects exist.
+
+        :param app: App label.
+        :param component: Loading component label.
+        :param experiment: Experiment code.
+        :param configuration: DBMS configuration name.
+        """
+        cfg = self._config
+        app = app or cfg.appname
+        configuration = configuration or cfg.configuration
+        experiment = experiment or cfg.code
+        cluster = cfg.experiment.cluster
+
+        jobs = cluster.get_jobs(app, component, experiment, configuration) or []
+        for job in jobs:
+            if not cluster.job_description_exists(job):
+                cluster.store_job_description(job)
+
+        loader_pods = cluster.get_job_pods(
+            app, component, experiment, configuration
+        ) or []
+        sut_pods = cluster.get_pods(
+            app=app, component='sut', experiment=experiment,
+            configuration=configuration,
+        ) or []
+        run_number = cfg.num_experiment_to_apply_done + 1
+        diagnostic_pods = (
+            [(pod, None) for pod in loader_pods]
+            + [(pod, run_number) for pod in sut_pods]
+        )
+        for pod, number in diagnostic_pods:
+            for container in cluster.get_pod_containers(pod) or []:
+                if container and (
+                    number is not None
+                    or not cluster.pod_log_exists(pod, container)
+                ):
+                    cluster.store_pod_log(
+                        pod_name=pod, container=container, number=number
+                    )
+            if number is not None or not cluster.pod_description_exists(pod):
+                cluster.store_pod_description(pod_name=pod, number=number)
+
     def stop_loading(
         self,
         app: str = '',
@@ -358,6 +445,10 @@ scrape_configs:
             configuration = cfg.configuration
         if len(experiment) == 0:
             experiment = cfg.code
+        self._capture_loading_diagnostics(
+            app=app, component=component, experiment=experiment,
+            configuration=configuration,
+        )
         jobs = cfg.experiment.cluster.get_jobs(app, component, experiment, configuration)
         for job in jobs:
             success = cfg.experiment.cluster.get_job_status(job)

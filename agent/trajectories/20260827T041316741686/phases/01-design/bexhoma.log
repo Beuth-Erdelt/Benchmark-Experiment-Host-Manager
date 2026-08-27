@@ -1,0 +1,681 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1787796951
+Experiment                    : starts at 2026-08-27 04:15:52.319320 (151667.186950552)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=3) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Timeout per query is 600.
+PgDuckDB queries are forced through the DuckDB execution engine.
+Experiment uses bexhoma version 0.10.8.
+Experiment is limited to DBMS ['PostgreSQL', 'PgDuckDB'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker21.
+Benchmarking is fixed to cl-worker21.
+SUT is fixed to cl-worker21.
+Database uses ephemeral storage of size 20Gi.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 2] times the number of benchmarking pods.
+Experiment is run 3 times.
+Each configuration has a loading timeout of 30 minutes; diagnostics are captured before teardown.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB')].
+SUT requests 16 CPU and 64Gi RAM. CPU limit is 16. RAM limit is 64Gi.
+Cluster monitoring            : is running
+PostgreSQL-1                  : will start now
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1787796951
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1787796951
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather = 2
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers = 4
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes = 6
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 20480MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 49152MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].work_mem = 1024MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem = 2048MB
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PgDuckDB-1                    : will start now
+PgDuckDB-1                    : deployments ['sut']
+PgDuckDB-1                    : stateful sets []
+PgDuckDB-1                    : pvcs ['sut']
+PgDuckDB-1                    : name of SUT pods = bexhoma-sut-pgduckdb-1-1787796951
+PgDuckDB-1                    : name of SUT service = bexhoma-sut-pgduckdb-1-1787796951
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 20480MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 49152MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem = 1024MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 2048MB
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1                  : is not loaded yet
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1787796951-665598b979-clprs to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type schema
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is not loaded yet
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1787796951-69798b66cf-szccr to load scripts
+PgDuckDB-1                    : start asynch loading scripts of type schema
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : showing loader times (tpch-loader)
+PgDuckDB-1                    : generator times (start/end per pod and container) [(1787797124, 1787797279)]
+PgDuckDB-1                    : loader times (start/end per pod and container) [(1787797285, 1787797383)]
+PgDuckDB-1                    : total times (start/end per pod and container) [(1787797124, 1787797279), (1787797285, 1787797383)]
+PgDuckDB-1                    : generator timespan (first to last [s]) = 155
+PgDuckDB-1                    : loader timespan (first to last [s]) = 98
+PgDuckDB-1                    : total timespan (first to last [s]) = 259
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PgDuckDB-1-1787796951 initialized to 1.
+PgDuckDB-1                    : benchmarks done 0 of 3. This will be client 1
+pgduckdb-1-1-1-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787796951
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787796951-1-1-1-gf54j: ..found
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+pgduckdb-1-1-1-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787796951/pgduckdb-1-1-1-1.config
+pgduckdb-1-1-1-1              : showing benchmarker times
+pgduckdb-1-1-1-1              : benchmarker timespan job from 1787797415 to 1787797608
+pgduckdb-1-1-1-1              : benchmarker timespan pods from 1787797444 to 1787797574
+pgduckdb-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 130
+pgduckdb-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1787797444, 1787797574)]
+pgduckdb-1-1-1-1              : found and updated times {'benchmarker': [(1787797444, 1787797574)]}
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PgDuckDB-1-1787796951 initialized to 2.
+PgDuckDB-1                    : benchmarks done 0 of 3. This will be client 2
+pgduckdb-1-1-2-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787796951
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787796951-1-2-1-7sx6m: found
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+pgduckdb-1-1-2-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787796951/pgduckdb-1-1-2-1.config
+pgduckdb-1-1-2-1              : showing benchmarker times
+pgduckdb-1-1-2-1              : benchmarker timespan job from 1787797648 to 1787797821
+pgduckdb-1-1-2-1              : benchmarker timespan pods from 1787797651 to 1787797781
+pgduckdb-1-1-2-1              : benchmarker timespan (start to end single container [s]) = 130
+pgduckdb-1-1-2-1              : benchmarker times (start/end per pod and container) = [(1787797651, 1787797781), (1787797652, 1787797775)]
+pgduckdb-1-1-2-1              : found and updated times {'benchmarker': [(1787797651, 1787797781), (1787797652, 1787797775)]}
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : can be stopped
+PgDuckDB-1                    : had 0 0 restarts at worker bexhoma-sut-pgduckdb-1-1787796951-69798b66cf-szccr
+PgDuckDB-1                    : still being removed
+- waiting 30s -               : done
+PgDuckDB-1                    : starts again
+PgDuckDB-1                    : deployments ['sut']
+PgDuckDB-1                    : stateful sets []
+PgDuckDB-1                    : pvcs ['sut']
+PgDuckDB-1                    : name of SUT pods = bexhoma-sut-pgduckdb-1-1787796951
+PgDuckDB-1                    : name of SUT service = bexhoma-sut-pgduckdb-1-1787796951
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : deployment[bexhoma-deployment-postgres] not found in file
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].random_page_cost = 1.1
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_io_concurrency = 200
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].io_method = io_uring
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers_per_gather = 2
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_parallel_workers = 4
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].max_worker_processes = 6
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].shared_buffers = 20480MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].effective_cache_size = 49152MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem = 1024MB
+PgDuckDB-1                    : updated deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem = 2048MB
+- waiting 10s -               : done
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is not loaded yet
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1787796951-7f46c944f8-n8f2b to load scripts
+PgDuckDB-1                    : start asynch loading scripts of type schema
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : showing loader times (tpch-loader)
+PgDuckDB-1                    : generator times (start/end per pod and container) [(1787798039, 1787798039)]
+PgDuckDB-1                    : loader times (start/end per pod and container) [(1787798041, 1787798138)]
+PgDuckDB-1                    : total times (start/end per pod and container) [(1787798039, 1787798039), (1787798041, 1787798138)]
+PgDuckDB-1                    : generator timespan (first to last [s]) = 0
+PgDuckDB-1                    : loader timespan (first to last [s]) = 97
+PgDuckDB-1                    : total timespan (first to last [s]) = 99
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PgDuckDB-1-1787796951 initialized to 1.
+PgDuckDB-1                    : benchmarks done 1 of 3. This will be client 1
+pgduckdb-1-2-1-1              : start benchmarking (benchmark_run=1)
+PgDuckDB-1                    : benchmarking results in folder /home/ll/benchmarks/1787796951
+- waiting 10s -               : done
+PgDuckDB-1                    : benchmarking is waiting for job bexhoma-benchmarker-pgduckdb-1-1787796951-2-1-1-knn5h: found
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has running benchmarks
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+pgduckdb-1-2-1-1              : wrote benchmarking_timespans to /home/ll/benchmarks/1787796951/pgduckdb-1-2-1-1.config
+pgduckdb-1-2-1-1              : showing benchmarker times
+pgduckdb-1-2-1-1              : benchmarker timespan job from 1787798171 to 1787798935
+pgduckdb-1-2-1-1              : benchmarker timespan pods from 1787798180 to 1787798907
+pgduckdb-1-2-1-1              : benchmarker timespan (start to end single container [s]) = 727
+pgduckdb-1-2-1-1              : benchmarker times (start/end per pod and container) = [(1787798180, 1787798907)]
+pgduckdb-1-2-1-1              : found and updated times {'benchmarker': [(1787798180, 1787798907)]}
+- waiting 30s -               : done
+Experiment                    : Loading for PostgreSQL-1 exceeded its 30 minute timeout; capturing diagnostics and removing all components
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+bexhoma-loading-postgresql-1-1787796951-1-1-1 0
+bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 Pending
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster logs bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 --container=sensor --tail=-1
+Raw output (bytes): b'Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing\n'
+Decoded with utf-8:
+Error from server (BadRequest): container "sensor" in pod "bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288" is waiting to start: PodInitializing
+
+Bexhoma                       : no data error for log /home/ll/benchmarks/1787796951/bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288.sensor.log
+bexhoma-loading-postgresql-1-1787796951-1-1-1-bx288 Pending
+Experiment                    : ends at 2026-08-27 04:51:09.570838 (153784.438465284) - 2117.25s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Queries SF=3
+* Type: tpch
+* Duration: 2118s 
+* Code: 1787796951
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=3) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 600.
+  * PgDuckDB queries are forced through the DuckDB execution engine.
+  * Experiment uses bexhoma version 0.10.8.
+  * Experiment is limited to DBMS ['PostgreSQL', 'PgDuckDB'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker21.
+  * Benchmarking is fixed to cl-worker21.
+  * SUT is fixed to cl-worker21.
+  * Database uses ephemeral storage of size 20Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1, 2] times the number of benchmarking pods.
+  * Experiment is run 3 times.
+  * Each configuration has a loading timeout of 30 minutes; diagnostics are captured before teardown.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB')].
+  * SUT requests 16 CPU and 64Gi RAM. CPU limit is 16. RAM limit is 64Gi.
+
+### Connections
+* pgduckdb-1-1-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:608117149696
+  * CPU:AMD EPYC 7542 32-Core Processor
+  * Cores:64
+  * host:6.8.0-137-generic
+  * node:cl-worker21
+  * disk:179362
+  * datadisk:7152
+  * cpu_list:0-63
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787796951
+* pgduckdb-1-1-2-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:608117149696
+  * CPU:AMD EPYC 7542 32-Core Processor
+  * Cores:64
+  * host:6.8.0-137-generic
+  * node:cl-worker21
+  * disk:182665
+  * datadisk:7152
+  * cpu_list:0-63
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787796951
+* pgduckdb-1-1-2-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:608117149696
+  * CPU:AMD EPYC 7542 32-Core Processor
+  * Cores:64
+  * host:6.8.0-137-generic
+  * node:cl-worker21
+  * disk:182665
+  * datadisk:7152
+  * cpu_list:0-63
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787796951
+* pgduckdb-1-2-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
+  * RAM:608117149696
+  * CPU:AMD EPYC 7542 32-Core Processor
+  * Cores:64
+  * host:6.8.0-137-generic
+  * node:cl-worker21
+  * disk:182869
+  * datadisk:7152
+  * cpu_list:0-63
+  * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20480MB', '-c', 'effective_cache_size=49152MB', '-c', 'work_mem=1024MB', '-c', 'maintenance_work_mem=2048MB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * eval_parameters
+    * code:1787796951
+
+### SUT Container Restarts
+* bexhoma-sut-pgduckdb-1-1787796951-69798b66cf-szccr: 0 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PgDuckDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 1 Client 2: tpch (2 pods)
+* DBMS PgDuckDB-1 - Experiment 2 Client 1: tpch (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: tpch (2 pods)
+* DBMS PostgreSQL-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS PostgreSQL-1 - Experiment 2 Client 2: tpch (2 pods)
+* DBMS PostgreSQL-1 - Experiment 3 Client 1: tpch (1 pods)
+* DBMS PostgreSQL-1 - Experiment 3 Client 2: tpch (2 pods)
+* DBMS PgDuckDB-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 1 Client 2: tpch (2 pods)
+* DBMS PgDuckDB-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 2 Client 2: tpch (2 pods)
+* DBMS PgDuckDB-1 - Experiment 3 Client 1: tpch (1 pods)
+* DBMS PgDuckDB-1 - Experiment 3 Client 2: tpch (2 pods)
+
+### Loading
+
+#### Per Run
+
+|              |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
+|:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
+| PgDuckDB-1-1 |                1 |    3 |      259.00 |           0.00 |          155.00 |         98.00 |            0.00 |              1 |           0 |             | None           |             0 | False         |               41.70 |
+| PgDuckDB-1-2 |                2 |    3 |       99.00 |           0.00 |            0.00 |         97.00 |            0.00 |              1 |           0 |             | None           |             0 | False         |              109.09 |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS               | configuration   | phase          | job              |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                |
+|:-------------------|:----------------|:---------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:-------------------|
+| pgduckdb-1-1-1-1-1 | PgDuckDB-1      | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               21 |        130 |            4.48 |             2409.14 |           1744.62 |          -1 | pgduckdb-1-1-1-1-1 |
+| pgduckdb-1-1-2-1-1 | PgDuckDB-1      | pgduckdb-1-1-2 | pgduckdb-1-1-2-1 |                1 |        2 |               1 |           1 | 3.00 |               21 |        130 |            4.39 |             2459.30 |           1744.62 |          -1 | pgduckdb-1-1-2-1-1 |
+| pgduckdb-1-1-2-1-2 | PgDuckDB-1      | pgduckdb-1-1-2 | pgduckdb-1-1-2-1 |                1 |        2 |               1 |           1 | 3.00 |               21 |        123 |            4.21 |             2566.22 |           1843.90 |          -1 | pgduckdb-1-1-2-1-2 |
+| pgduckdb-1-2-1-1-1 | PgDuckDB-1      | pgduckdb-1-2-1 | pgduckdb-1-2-1-1 |                2 |        1 |               1 |           1 | 3.00 |               21 |        727 |            4.54 |             2379.09 |            311.97 |          -1 | pgduckdb-1-2-1-1-1 |
+
+#### Per Phase
+
+|                | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               21 |        130 |            4.48 |             2409.14 |           1744.62 |          -1 |
+| pgduckdb-1-1-2 | pgduckdb-1-1-2 |                1 |        2 |               1 |           2 | 3.00 |               42 |        130 |            4.30 |             2512.19 |           3489.23 |          -1 |
+| pgduckdb-1-2-1 | pgduckdb-1-2-1 |                2 |        1 |               1 |           1 | 3.00 |               21 |        727 |            4.54 |             2379.09 |            311.97 |          -1 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   pgduckdb-1-1-1-1-1 |   pgduckdb-1-1-2-1-1 |   pgduckdb-1-1-2-1-2 |   pgduckdb-1-2-1-1-1 |
+|:----------------------------------------------------|---------------------:|---------------------:|---------------------:|---------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |              4803.68 |              4535.14 |              4631.06 |              4675.27 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |              2274.80 |              1923.90 |              2019.05 |              2195.06 |
+| Shipping Priority (TPC-H Q3)                        |              6487.72 |              6026.37 |              5313.40 |              6606.91 |
+| Order Priority Checking Query (TPC-H Q4)            |              6962.43 |              6122.14 |              6195.10 |              7459.28 |
+| Forecasting Revenue Change (TPC-H Q6)               |              2661.58 |              2526.02 |              2531.41 |              2626.53 |
+| Volume Shipping Query (TPC-H Q7)                    |              5829.14 |              5717.72 |              5717.74 |              6035.95 |
+| National Market Share (TPC-H Q8)                    |              8228.49 |              7568.86 |              7524.14 |              7491.27 |
+| Product Type Profit Measure (TPC-H Q9)              |              8705.01 |              8625.47 |              8703.19 |              9328.19 |
+| Returned Item Reporting Query (TPC-H Q10)           |              4808.99 |              4807.30 |              4410.48 |              5186.83 |
+| Important Stock Identification (TPC-H Q11)          |              1246.23 |              1104.95 |              1141.99 |              1130.61 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |              6614.51 |              6440.86 |              6394.96 |              6742.16 |
+| Customer Distribution (TPC-H Q13)                   |              2134.40 |              2156.68 |              2142.87 |              2191.20 |
+| Promotion Effect Query (TPC-H Q14)                  |              4580.01 |              4624.04 |              4228.06 |              4910.42 |
+| Top Supplier Query (TPC-H Q15)                      |              3284.79 |              3246.46 |              3103.54 |              3291.14 |
+| Parts/Supplier Relationship (TPC-H Q16)             |              1140.07 |              1124.17 |              1073.36 |              1188.74 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |             12557.90 |             12573.41 |             11374.50 |             13206.46 |
+| Large Volume Customer (TPC-H Q18)                   |              5809.06 |              8226.64 |              5376.56 |              5660.02 |
+| Discounted Revenue (TPC-H Q19)                      |              5102.25 |              5052.29 |              5024.38 |              5005.55 |
+| Potential Part Promotion (TPC-H Q20)                |              4930.37 |              4825.72 |              4601.58 |              5076.13 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |             19998.98 |             19866.16 |             19563.00 |             20876.67 |
+| Global Sales Opportunity Query (TPC-H Q22)          |              1648.88 |              1650.32 |              1629.91 |              1695.65 |
+
+### Errors (failed queries)
+
+|                    |   Pricing Summary Report (TPC-H Q1) |   Minimum Cost Supplier Query (TPC-H Q2) |   Shipping Priority (TPC-H Q3) |   Order Priority Checking Query (TPC-H Q4) |   Local Supplier Volume (TPC-H Q5) |   Forecasting Revenue Change (TPC-H Q6) |   Volume Shipping Query (TPC-H Q7) |   National Market Share (TPC-H Q8) |   Product Type Profit Measure (TPC-H Q9) |   Returned Item Reporting Query (TPC-H Q10) |   Important Stock Identification (TPC-H Q11) |   Shipping Modes and Order Priority (TPC-H Q12) |   Customer Distribution (TPC-H Q13) |   Promotion Effect Query (TPC-H Q14) |   Top Supplier Query (TPC-H Q15) |   Parts/Supplier Relationship (TPC-H Q16) |   Small-Quantity-Order Revenue (TPC-H Q17) |   Large Volume Customer (TPC-H Q18) |   Discounted Revenue (TPC-H Q19) |   Potential Part Promotion (TPC-H Q20) |   Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |   Global Sales Opportunity Query (TPC-H Q22) |
+|:-------------------|------------------------------------:|-----------------------------------------:|-------------------------------:|-------------------------------------------:|-----------------------------------:|----------------------------------------:|-----------------------------------:|-----------------------------------:|-----------------------------------------:|--------------------------------------------:|---------------------------------------------:|------------------------------------------------:|------------------------------------:|-------------------------------------:|---------------------------------:|------------------------------------------:|-------------------------------------------:|------------------------------------:|---------------------------------:|---------------------------------------:|------------------------------------------------------:|---------------------------------------------:|
+| pgduckdb-1-2-1-1-1 |                                0.00 |                                     0.00 |                           0.00 |                                       0.00 |                               1.00 |                                    0.00 |                               0.00 |                               0.00 |                                     0.00 |                                        0.00 |                                         0.00 |                                            0.00 |                                0.00 |                                 0.00 |                             0.00 |                                      0.00 |                                       0.00 |                                0.00 |                             0.00 |                                   0.00 |                                                  0.00 |                                         0.00 |
+* Local Supplier Volume (TPC-H Q5)
+  * pgduckdb-1-2-1-1-1: numRun 1: : org.postgresql.util.PSQLException: ERROR: (PGDuckDB/Duckdb_ExecCustomScan_Cpp) Executor Error: Query cancelled
+
+### Warnings (result mismatch)
+
+No warnings
+Experiment                    : cleaning up per-connection artefacts
+Experiment                    : cleaning up per-connection artefacts completed
+
+### Tests
+* TEST failed: Loading for PostgreSQL-1 exceeded its 30 minute timeout
+* TEST passed: No SUT container restarts
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST failed: SQL errors
+* TEST passed: No SQL warnings
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST failed: Workflow as planned

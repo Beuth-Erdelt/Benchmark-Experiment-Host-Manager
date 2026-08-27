@@ -1,0 +1,56 @@
+mode: run
+title: "TPC-H SF10: PostgreSQL vs forced-PgDuckDB under 16 CPU / 64 GiB, 1800 s per-query timeout"
+hypothesis: >
+  Under a fixed 16 CPU / 64 GiB envelope, PostgreSQL's failure on Q2/Q17/Q20
+  at the 600 s per-query timeout in run 1787668255 was an artifact of the
+  timeout cap rather than a genuine capability gap: with the per-query
+  timeout extended to 1800 s, PostgreSQL completes all 22 TPC-H queries and
+  remains the faster system than forced-DuckDB PgDuckDB (duckdb_force_execution
+  = true) at every concurrency level 1, 2, and 4, with lower per-query
+  latency and higher Power@Size. The only factor that varies between the two
+  systems is the system itself; workload, resources, physical design, and
+  profile are held identical to the prior run, with the per-query timeout as
+  the sole changed parameter.
+discriminates: [system, concurrency]
+follow_up_of: "1787668255"
+workload:
+  name: tpch
+  params:
+    scaling_factor: 10
+    timeout: 1800
+  rounds: [1, 2, 4]
+  repetitions: 3
+loading:
+  pods: 4
+  threads: 1
+  split: 1
+  timeout_minutes: 120
+  post_load:
+    indexes: false
+    constraints: false
+    statistics: true
+    storage_format: heap
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override:
+      duckdb_force_execution: true
+observe:
+  monitoring_sut: true
+  monitoring_cluster: false
+  monitoring_app: false
+placement:
+  sut: cl-worker28
+  loading: cl-worker29
+  benchmarking: cl-worker27
+resources:
+  cpu:
+    request: 16
+    limit: 16
+  memory:
+    request: 64Gi
+    limit: 64Gi
+  storage:
+    size: 50Gi

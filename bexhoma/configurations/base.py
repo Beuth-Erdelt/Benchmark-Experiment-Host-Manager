@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+from datetime import datetime
 import logging
 import os
 import re
@@ -173,6 +174,7 @@ class SutConfiguration:
         self.time_index = 0                                                       #: Seconds taken for index creation.
         self.times_scripts = {}                                                  #: Per-script timing dict.
         self.loading_started = False                                             #: True once loading has been initiated.
+        self.loading_started_at: Optional[datetime] = None                       #: Local wall-clock start used for the load-only timeout.
         self.loading_after_time = None                                           #: Optional unix timestamp after which loading should start.
         self.loading_finished = False                                            #: True once loading has completed.
         self.client = 1                                                          #: Current position in the benchmarker sequence.
@@ -255,6 +257,7 @@ class SutConfiguration:
         self.time_schema = 0
         self.time_index = 0
         self.loading_started = False
+        self.loading_started_at = None
         self.loading_after_time = None
         self.loading_finished = False
         self.client = 1

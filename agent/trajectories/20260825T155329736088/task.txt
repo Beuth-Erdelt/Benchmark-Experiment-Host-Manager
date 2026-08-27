@@ -1,0 +1,1 @@
+Retry the failed 10 GB TPC-H comparison: under 16 CPU cores and 64 GiB RAM, does PostgreSQL remain the better choice than forced-DuckDB PgDuckDB for concurrent analytical reporting? Preserve the PostgreSQL-versus-forced-PgDuckDB comparison and use a single comparable 1, 2, 4 stream, three-repetition design.

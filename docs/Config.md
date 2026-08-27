@@ -89,7 +89,7 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 
 ```python
 'monitor': {
-    'service_monitoring':             'https://prometheus.mycluster.com/api/v1/',
+    'service_monitoring':             'http://prometheus.monitor.svc.cluster.local:9090/api/v1/',
     'service_monitoring_application': 'http://{service}.{namespace}.svc.cluster.local:9090/api/v1/',
     'extend': 20,
     'shift':  0,
@@ -115,7 +115,7 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 
 | Key | Description |
 |---|---|
-| `service_monitoring` | URL of the **cluster-level** Prometheus API (`/api/v1/` suffix required). This is used for hardware metrics (CPU, memory, network, disk I/O). If a preinstalled Prometheus is running in your cluster, set its external or in-cluster URL here. Bexhoma tests reachability at the start of each experiment. |
+| `service_monitoring` | URL of the **cluster-level** Prometheus API (`/api/v1/` suffix required). The default points to the shared `prometheus` service in the `monitor` namespace. This is used for hardware metrics (CPU, memory, network, disk I/O). Replace it with your external or in-cluster URL when using another Prometheus installation. Bexhoma tests reachability at the start of each experiment. |
 | `service_monitoring_application` | URL template for the **per-experiment** Prometheus that bexhoma installs itself (used for application-level metrics with `-ma`). The placeholders `{service}` and `{namespace}` are substituted automatically. Leave as-is unless you have a custom application exporter setup. |
 
 #### Timing adjustments

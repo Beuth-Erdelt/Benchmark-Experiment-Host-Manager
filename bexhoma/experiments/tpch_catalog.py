@@ -191,11 +191,10 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
             f"got {len(cpu_cells)} cpu entries and {len(memory_cells)} memory entries"
         )
 
-    # one (system_spec, ResolvedSystem, configuration_name) triple per resolved cell;
-    # configuration_name is "" (unscoped) when there is only one cell, otherwise it
-    # must match the configuration name tpch.py's own resource-sweep loop will give
-    # that cell (docker + "-" + memory request), so the --set operations emitted
-    # below land on the right configuration (see parse_set_arg's @CONFIG scope)
+    # One (system_spec, ResolvedSystem, configuration_name) triple per resolved
+    # cell. Swept cells use their stable position so CPU-only sweeps and cells
+    # sharing a memory request cannot collapse onto one configuration. tpch.py
+    # uses the same formatter.
     resolved_cells: list[tuple[dict[str, Any], ResolvedSystem, str]] = []
     for system_spec in system_specs:
         for cell_index in range(num_cells):
@@ -208,8 +207,13 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
                 "scaling_factor": params.get("scaling_factor"),
             }
             resolved = spec.resolve_system(catalog, system_spec, resolve_inputs, memory_formatter=format_postgres_memory)
+            resource_suffix = spec.format_resource_cell_suffix(
+                cell_index, num_cells
+            )
             configuration_name = (
-                f"{system_spec['name']}-{cell_memory.get('request')}" if num_cells > 1 else ""
+                f"{system_spec['name']}-{resource_suffix}"
+                if resource_suffix
+                else ""
             )
             resolved_cells.append((system_spec, resolved, configuration_name))
 
@@ -243,6 +247,7 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-nlp", loading.get("pods"))
     _append_flag(argv, "-nlt", loading.get("threads"))
     _append_flag(argv, "-xnls", loading.get("split"))
+    _append_flag(argv, "--loading-timeout", loading.get("timeout_minutes"))
     if post_load.get("indexes"):
         argv.append("-xii")
     if post_load.get("constraints"):

@@ -22,6 +22,7 @@ spec:
       labels: {app: bexhoma, component: messagequeue}
     spec:
       #nodeName: cl-worker28
+      nodeSelector: {kubernetes.io/hostname: cl-worker36}
       containers:
         - name: master
           image: redis

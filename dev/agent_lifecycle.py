@@ -3,7 +3,9 @@
 
 This is an operator-side wrapper, not part of :mod:`agent`.  It invokes the
 agent's public CLI as a child process and observes only the durable investigation
-trajectory and result files. Neither the agent nor a submitted experiment
+trajectory and result files -- including the status file in which the agent
+records where each submitted run landed, which is how the two stay agreed on
+that without a second setting. Neither the agent nor a submitted experiment
 imports it, so both continue to work unchanged when this module is absent.
 
 Lifecycle:
@@ -19,12 +21,15 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Sequence
+
+from dotenv import load_dotenv
 
 
 class LifecycleError(RuntimeError):
@@ -37,9 +42,11 @@ class LifecycleConfig:
 
     root: Path
     trajectories: Path
-    results: Path
     status: Path
     server_script: Path
+    #: Only set when an operator overrode it; otherwise each run's directory is
+    #: read from the status file the agent wrote at submission.
+    results: Path | None = None
     poll_seconds: float = 30.0
     benchmark_timeout_seconds: float = 0.0
     server_retry_seconds: float = 60.0
@@ -105,8 +112,8 @@ class AgentLifecycle:
                 phase, outcome = self._read_phase_state(current)
                 code = outcome.get("code")
                 if code:
-                    # Submission waits until the exact result directory exists,
-                    # so reaching this point means the benchmark is running.
+                    # Submission may return while the exact result directory is
+                    # still starting, but the assigned code is already durable.
                     self.server.switch("down")
                     report = self._wait_for_report(str(code))
                     print(f"benchmark {code} finished: {report}", flush=True)
@@ -230,9 +237,33 @@ class AgentLifecycle:
         # to wait for. Normal design completion always has a code.
         return bool(outcome.get("summary")) and outcome.get("code") is None
 
+    def _result_directory(self, code: str, status_file: Path) -> Path:
+        """Return where a submitted benchmark is writing its results.
+
+        Read from the status file the agent wrote at submission, so the wrapper
+        cannot disagree with the agent about where a run landed. ``--results``
+        remains a fallback for a status file written before that field existed.
+
+        :param code: Experiment code of the submitted benchmark.
+        :param status_file: The agent's status file for that code.
+        :return: The run's result directory.
+        :rtype: Path
+        :raises LifecycleError: When neither source can name the directory.
+        """
+        if status_file.is_file():
+            recorded = json.loads(status_file.read_text(encoding="utf-8")).get("results")
+            if recorded:
+                return Path(recorded)
+        if self.config.results is None:
+            raise LifecycleError(
+                f"cannot locate results for benchmark {code}: no directory recorded "
+                f"in {status_file}, and no --results given"
+            )
+        return self.config.results / code
+
     def _wait_for_report(self, code: str) -> Path:
-        report = self.config.results / code / "report" / "index.md"
         status_file = self.config.status / f"{code}.json"
+        report = self._result_directory(code, status_file) / "report" / "index.md"
         deadline = (
             time.monotonic() + self.config.benchmark_timeout_seconds
             if self.config.benchmark_timeout_seconds > 0 else None
@@ -242,9 +273,11 @@ class AgentLifecycle:
             if status_file.is_file():
                 status = json.loads(status_file.read_text(encoding="utf-8"))
                 if status.get("state") == "failed":
+                    self._cleanup_failed_benchmark(code)
                     raise LifecycleError(f"benchmark {code} is marked failed")
                 pid = status.get("pid")
                 if isinstance(pid, int) and pid > 0 and not _pid_alive(pid):
+                    self._cleanup_failed_benchmark(code)
                     raise LifecycleError(
                         f"benchmark {code} process {pid} exited before producing {report}"
                     )
@@ -252,6 +285,22 @@ class AgentLifecycle:
                 raise LifecycleError(f"timed out waiting for benchmark {code}: {report}")
             self._sleep(self.config.poll_seconds)
         return report
+
+    def _cleanup_failed_benchmark(self, code: str) -> None:
+        """Remove live Kubernetes objects for one definitively failed run."""
+        manager = Path(sys.executable).with_name("bexperiments")
+        print(f"benchmark {code} failed; removing its cluster resources", flush=True)
+        result = subprocess.run(
+            [str(manager), "stop", "-e", code],
+            cwd=self.config.root,
+            check=False,
+        )
+        if result.returncode:
+            print(
+                f"warning: cleanup for benchmark {code} exited with "
+                f"status {result.returncode}",
+                file=sys.stderr,
+            )
 
 
 def _pid_alive(pid: int) -> bool:
@@ -262,6 +311,31 @@ def _pid_alive(pid: int) -> bool:
     except PermissionError:
         return True
     return True
+
+
+def _raise_on_signal(number: int, _frame: Any) -> None:
+    """Turn a termination signal into the exception the cleanup path expects.
+
+    :param number: Signal number delivered to this process.
+    :param _frame: Interrupted stack frame, unused.
+    :raises LifecycleError: Always, so that :meth:`AgentLifecycle.run` stops the
+        model server on its way out.
+    """
+    raise LifecycleError(f"received {signal.Signals(number).name}")
+
+
+def _install_signal_handlers() -> None:
+    """Make polite termination and terminal hangup run the cleanup path.
+
+    Python's defaults end the process outright, which would leave the GPU held
+    by a server nobody is going to use. Raising instead unwinds through
+    ``subprocess.run``, which kills the agent child, and then through the
+    ``finally`` block that shuts the server down.
+    """
+    for name in ("SIGTERM", "SIGHUP"):
+        number = getattr(signal, name, None)
+        if number is not None:
+            signal.signal(number, _raise_on_signal)
 
 
 def _path_from_root(root: Path, value: str) -> Path:
@@ -280,8 +354,9 @@ def _parser() -> argparse.ArgumentParser:
         "AGENT_BASE_URL", "http://localhost:8001/v1"))
     parser.add_argument("--api-key", default=os.environ.get("AGENT_API_KEY", "EMPTY"))
     parser.add_argument("--root", default=os.getcwd())
-    parser.add_argument("--results", default=os.environ.get(
-        "AGENT_RESULTS", "/home/ll/benchmarks"))
+    parser.add_argument("--results", default=os.environ.get("AGENT_RESULTS"),
+                        help="bexhoma's result folder; defaults to the resultfolder "
+                             "declared in cluster.config")
     parser.add_argument("--trajectories", default="agent/trajectories")
     parser.add_argument("--status", default="status")
     parser.add_argument("--server-script", default="dev/model_server.sh")
@@ -305,6 +380,10 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    # Same .env as the agent CLI reads, so the wrapper and its child phase agree
+    # on which model server is meant without exporting anything by hand.
+    load_dotenv()
+    _install_signal_handlers()
     args = _parser().parse_args()
     if not args.model:
         print("error: no model given; pass --model or set AGENT_MODEL", file=sys.stderr)
@@ -326,7 +405,7 @@ def main() -> int:
     config = LifecycleConfig(
         root=root,
         trajectories=_path_from_root(root, args.trajectories),
-        results=Path(args.results).resolve(),
+        results=Path(args.results).resolve() if args.results else None,
         status=_path_from_root(root, args.status),
         server_script=_path_from_root(root, args.server_script),
         poll_seconds=args.poll_seconds,
@@ -340,8 +419,8 @@ def main() -> int:
         "--base-url", args.base_url,
         "--api-key", args.api_key,
         "--root", str(root),
-        "--results", str(config.results),
         "--trajectories", str(config.trajectories),
+        "--status", str(config.status),
         "--attempts", str(args.attempts),
         "--followups", str(args.followups),
         "--temperature", str(args.temperature),
@@ -350,6 +429,10 @@ def main() -> int:
         "--environment", args.environment,
         "--inbox", args.inbox,
     ]
+    # Only forwarded when the operator overrode it; otherwise the agent reads
+    # the result folder from Bexhoma's own configuration.
+    if config.results is not None:
+        agent_command.extend(["--results", str(config.results)])
     if args.dry_run:
         agent_command.append("--dry-run")
 

@@ -23,7 +23,6 @@ from typing import Any
 __all__ = [
     "DESIGN_SYSTEM_PROMPT", "design_messages",
     "INTERPRET_SYSTEM_PROMPT", "interpret_messages",
-    "FOLLOWUP_DECISION_SYSTEM_PROMPT", "followup_decision_messages",
     "FOLLOWUP_AUTHOR_SYSTEM_PROMPT", "followup_author_messages",
 ]
 
@@ -62,7 +61,8 @@ are guessing.
 - validate(path) dry-run checks a written specification against the catalog and
   the environment. It runs nothing and costs no cluster time. It returns
   "valid", a list of "errors", whether the environment was checked, and an
-  "estimate" of how many benchmark runs the design expands to.
+  "estimate" of how many benchmark phases the design expands to plus its
+  conservative query/loading timeout budget.
 - submit(path) launches the exact file that most recently passed validate.
 
 Those are the only tools. You have no shell, no network, and no way to read any
@@ -96,9 +96,9 @@ question, and stop. Do not call any more tools after that.
 INTERPRET_SYSTEM_PROMPT = """\
 You are the experimenter in an automated benchmarking loop. Earlier you designed
 an experiment and it has now run on the cluster. You are in the INTERPRET phase:
-read what came back and say what it means. Do not decide on or design another
-experiment in this context; the harness performs that review separately so
-report evidence and experiment authoring do not compete for one context window.
+read this one result and say what it means. You may recommend one follow-up, but
+do not write its YAML in this context. The harness gives authoring a fresh,
+separately bounded context.
 
 # How to read a result folder
 
@@ -106,7 +106,7 @@ Start from the report named below and follow the links in it. The result
 contract at {result_contract_path} describes how a result folder is laid out --
 what the entry point is, how files are grouped, what the folder and file names
 encode, and which validity checks must be read before any number is believed.
-Read that contract if a file's meaning is not obvious.
+Read that contract before recording the interpretation.
 
 Follow links from the report. Do not go looking for files that no link leads to,
 and do not guess at paths.
@@ -126,110 +126,74 @@ that errored, a run that never warmed up, monitoring that recorded nothing, a
 system that restarted mid-run. Check what the contract says makes a result
 trustworthy before you quote any figure from it. If the run is not sound, say
 so plainly -- that is a finding, not a failure to report one.
+Read the report's `### Tests` section explicitly when the whole index is too
+large to open. The harness compares the failed-check count you record with the
+index frontmatter and returns that exact count with the validity read; use it
+rather than inferring or approximating the count.
 
 # Tools
 
 - read_file(path, section?) reads the report, the files it links to, and the
   result contract. Use `section` for targeted reads from large Markdown pages.
-- list_results() shows which experiments exist and which have finished.
-- record_interpretation(questions) records whether every explicit part of the
-  user's question is settled, partial, or unresolved.
+- assess_comparison_quality(path) deterministically checks a TPC-H
+  `benchmarking.md` page for incomplete query coverage, non-comparable
+  whole-workload throughput, and suspicious repetitions. Call it before
+  recording a comparative TPC-H interpretation.
+- record_interpretation(hypothesis_verdict, validity, comparison_quality,
+  questions, follow_up) records the scientific verdict separately from the
+  mechanical validity checks, whether every explicit part of the user's
+  question is settled, and the smallest useful follow-up when one is warranted.
 
 Those are the only tools. You have no shell and no network.
 
 # Stopping
 
-When you have read enough, call record_interpretation exactly once. Split the
-original request into all of its explicit questions. "Partial" means the data
-points in a direction but does not establish the requested claim; a practical
-recommendation does not make an unresolved causal question settled. For every
-partial or unresolved question, state what evidence is missing. A settled
-question must have an empty `missing` field.
+When you have read enough, call record_interpretation exactly once. Its
+`validity.failed_checks` must equal the report frontmatter. When that number is
+nonzero, `validity.scope` must explain which metrics or conclusions are affected.
+Every validity and question `evidence_paths` entry must be a path successfully
+opened with read_file in this context.
 
-After the record is accepted, write a self-contained study report. A reader must
-not need an earlier answer, trajectory, YAML file, or report page to understand
-what was asked, what was tested, and what was learned. Use exactly these Markdown
-sections, in this order:
+Record one `hypothesis_verdict` for the hypothesis in the archived
+experiment.yml. Its status is `supported`, `refuted`, `inconclusive`, or
+`invalid`; this is the scientific finding, not a restatement of the report's
+pass/fail/skip counts. Give a concise conclusion and cite only evidence paths
+inside the current result folder that you opened in this context.
 
-# Benchmark Study Result
-## Original question
-Restate the original question faithfully.
-## Hypothesis
-State the hypothesis or hypotheses tested by the experiment chain.
-## Experiments performed
-Describe every completed experiment available in the current and previous-run
-handoffs: experiment code, treatment, workload, scale, rounds/concurrency,
-repetitions, resources, and controls. Highlight what changed and what stayed
-fixed; do not dump the YAML.
-## Validity
-State whether each experiment is trustworthy and cite the checks that justify
-using or rejecting its metrics.
-## Results
-Present the decisive aggregate and per-query evidence with units and source
-paths. Use compact tables when they make comparisons clearer.
-## Interpretation
-Explain what the evidence means for every part of the original question and
-what the stated hypothesis got right or wrong. Separate evidence from mechanism
-inference.
-## Follow-up experiment
-If a previous-run handoff records a follow-up, explain why it was needed, what
-controlled intervention it made, and what uncertainty it resolved. Otherwise
-state that no completed follow-up is available in this chain; do not recommend
-or reject a new one in this evidence context.
-## Final verdict
-Give the direct answer and list any remaining limitation or unresolved question.
+Record `comparison_quality` exactly as the deterministic assessment reports it:
+query coverage, whole-workload throughput comparability, and the phase names of
+all suspect repetitions. A suspect repetition is a warning that must be
+disclosed, not evidence you may silently discard. When coverage is partial,
+separate speed on the common successful queries from completion of the planned
+workload. Do not use whole-workload throughput to rank systems when the
+assessment marks it non-comparable.
 
-Quote the numbers you rely on. Do not open with validity or assume the reader
-remembers earlier phases.
-"""
+Split the original request into all of its explicit questions. Set each
+question's evidence validity to `supported`, `limited`, or `invalid`. "Partial"
+means the data points in a direction but does not establish the requested claim;
+a practical recommendation does not make an unresolved causal question settled.
+For every partial or unresolved question, state what evidence is missing. A
+settled question must have an empty `missing` field and supported evidence.
 
-FOLLOWUP_DECISION_SYSTEM_PROMPT = """\
-You are reviewing whether one more benchmark experiment is warranted. This is a
-fresh context: do not reopen result pages. The completed interpretation below is
-the evidence handoff.
+Choose `follow_up.action=followup` only when an important question is partial or
+unresolved and one safe, concrete experiment can materially discriminate the
+alternatives. Prefer the smallest controlled intervention. Put a focused query
+subset in `target_queries`; otherwise set `full_workload_required=true` and
+explain why the full workload is necessary. Choose `finish` when the result is
+settled or the result contract exposes no evidential route forward. For finish,
+leave the experiment fields empty, use an empty query list, and set
+`full_workload_required=false`.
 
-# Read the design space before deciding
-
-Before making the decision, read the catalog and, when one exists, the environment
-descriptor in full:
-
-- {catalog_path} -- the supported experiment schema, systems, workloads, and
-  parameters that can be varied.
-- {environment_path}
-
-The catalog is for evaluating possible next experiments, not for reinterpreting
-the finished result. Do not decide from the previous specification alone: it is
-one example, not the complete set of available interventions.
-
-# Decision rule
-
-Review every explicit question and its recorded status. A directional indication
-is not a settled causal claim. If an important question is partial or unresolved
-and one safe, feasible experiment can materially discriminate the alternatives,
-choose `followup`. Controlled manipulation of a parameter can provide evidence
-even when passive monitoring is unavailable.
-
-Choose `finish` only when every important question is settled, or when the
-catalog and environment show that no safe, feasible experiment can resolve what
-remains. A merely adequate deployment recommendation is not enough when the user
-explicitly asked for the unresolved mechanism.
-
-# Tools and stopping
-
-- read_file(path) reads the catalog and environment named above.
-- record_followup_decision(action, rationale, unresolved_question,
-  experiment_goal) records the decision; it does not launch anything.
-
-Call record_followup_decision exactly once, after the required reads. For
-`finish`, leave unresolved_question and experiment_goal empty and explain why no
-follow-up is warranted. For `followup`, name the question still open and describe
-the controlled intervention and observable discriminator, without writing YAML.
-After the record is accepted, reply with one short sentence and stop.
+After the record is accepted, answer according to the `answer_contract` you
+read. Discuss only this experiment. A reader must not need an earlier result,
+trajectory, or conversation to understand what was tested and learned. Quote
+the values you rely on and cite their paths. Do not call another tool after the
+record is accepted.
 """
 
 FOLLOWUP_AUTHOR_SYSTEM_PROMPT = """\
 You are authoring one approved follow-up experiment in a fresh context. The
-interpretation and the informed follow-up decision are supplied below. Turn that
+interpretation and its recorded follow-up plan are supplied below. Turn that
 decision into one specification, validate it, submit it, and stop.
 
 # Read these first
@@ -240,7 +204,18 @@ decision into one specification, validate it, submit it, and stop.
 Read the catalog and, when one exists, the environment descriptor before writing.
 Do not invent fields or knobs the catalog does not declare. Keep unrelated factors
 fixed, make the proposed intervention attributable in the result configuration
-names, and check that the run estimate is proportionate.
+names, and check that the run estimate is proportionate. If the approved
+decision lists `target_queries`, set `workload.params.active_queries` to exactly
+that list; validation rejects a broader follow-up. If it explicitly requires the
+full workload, preserve it and explain the cost in the closing account.
+Set `follow_up_of` to exactly `{experiment_code}`. The follow-up must change at
+least one execution-relevant field from its parent; changing only its title,
+hypothesis, discriminates, or lineage is rejected as a repeated experiment.
+The compact summaries of earlier ancestors are supplied below when available.
+Do not repeat a hypothesis that an ancestor already settled unless the approved
+follow-up explicitly explains why that conclusion must be challenged. Target
+the current unresolved question instead. These summaries are orientation, not
+evidence for interpreting the current experiment.
 
 # Tools and budgets
 
@@ -313,7 +288,6 @@ def interpret_messages(
     report_path: str,
     result_contract_path: str,
     specification: str | None,
-    previous_experiment: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Build the opening conversation for the interpretation phase.
 
@@ -327,67 +301,11 @@ def interpret_messages(
     :param report_path: Entry point of the finished result folder.
     :param result_contract_path: Path to ``contract_result.yml``.
     :param specification: The experiment that ran, or ``None`` if unavailable.
-    :param previous_experiment: Bounded handoff from the preceding experiment
-        in a follow-up chain, when one exists.
     :return: System and user messages, in OpenAI message shape.
     :rtype: list[dict[str, Any]]
     """
     system = INTERPRET_SYSTEM_PROMPT.format(result_contract_path=result_contract_path)
     user = f"The question was:\n\n{task}\n\nThe report is at {report_path}."
-    if specification:
-        user += f"\n\nThe experiment that ran was:\n\n{specification}"
-    if previous_experiment:
-        user += "\n\nPrevious experiment in this follow-up chain:"
-        if previous_experiment.get("report"):
-            user += f"\n\nPrevious report: {previous_experiment['report']}"
-        if previous_experiment.get("specification"):
-            user += (
-                "\n\nPrevious experiment specification:\n\n"
-                + previous_experiment["specification"]
-            )
-        if previous_experiment.get("summary"):
-            user += (
-                "\n\nPrevious interpretation and follow-up rationale:\n\n"
-                + previous_experiment["summary"]
-            )
-        if previous_experiment.get("followup_decision"):
-            user += (
-                "\n\nRecorded reason for the follow-up:\n\n"
-                + json.dumps(
-                    previous_experiment["followup_decision"],
-                    ensure_ascii=False,
-                    indent=2,
-                )
-            )
-        user += (
-            "\n\nTreat this as a compact handoff; verify current-run claims "
-            "against the current report."
-        )
-    return [{"role": "system", "content": system}, {"role": "user", "content": user}]
-
-
-def followup_decision_messages(
-    task: str,
-    specification: str | None,
-    interpretation: str,
-    question_assessments: list[dict[str, Any]],
-    catalog_path: str,
-    environment_path: str | None,
-) -> list[dict[str, Any]]:
-    """Build the fresh, design-space-informed follow-up decision context."""
-    environment = (
-        _ENVIRONMENT_AVAILABLE.format(path=environment_path)
-        if environment_path else _ENVIRONMENT_MISSING
-    )
-    system = FOLLOWUP_DECISION_SYSTEM_PROMPT.format(
-        catalog_path=catalog_path, environment_path=environment,
-    )
-    user = (
-        f"The original question was:\n\n{task}\n\n"
-        f"Completed interpretation:\n\n{interpretation}\n\n"
-        "Recorded question coverage:\n\n"
-        + json.dumps(question_assessments, ensure_ascii=False, indent=2)
-    )
     if specification:
         user += f"\n\nThe experiment that ran was:\n\n{specification}"
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -397,21 +315,38 @@ def followup_author_messages(
     task: str,
     specification: str | None,
     interpretation: str,
-    decision: dict[str, str],
+    decision: dict[str, Any],
+    ancestor_summaries: list[dict[str, Any]],
+    experiment_code: str,
     catalog_path: str,
     environment_path: str | None,
     inbox: str,
     attempts: int,
     dry_run: bool = False,
 ) -> list[dict[str, Any]]:
-    """Build a fresh context for authoring an approved follow-up."""
+    """Build a fresh context for authoring an approved follow-up.
+
+    :param task: Original benchmark question.
+    :param specification: Parent experiment specification, when available.
+    :param interpretation: One-result interpretation that motivated the follow-up.
+    :param decision: Structured follow-up plan accepted during interpretation.
+    :param ancestor_summaries: Compact records from earlier lineage members.
+    :param experiment_code: Parent result code required by ``follow_up_of``.
+    :param catalog_path: Path to the input catalog.
+    :param environment_path: Path to the cluster descriptor, or ``None``.
+    :param inbox: Directory where the model may write its draft.
+    :param attempts: Number of validation attempts available.
+    :param dry_run: Whether submission is withheld after successful validation.
+    :return: System and user messages, in OpenAI message shape.
+    :rtype: list[dict[str, Any]]
+    """
     environment = (
         _ENVIRONMENT_AVAILABLE.format(path=environment_path)
         if environment_path else _ENVIRONMENT_MISSING
     )
     system = FOLLOWUP_AUTHOR_SYSTEM_PROMPT.format(
         catalog_path=catalog_path, environment_path=environment,
-        inbox=inbox, attempts=attempts,
+        inbox=inbox, attempts=attempts, experiment_code=experiment_code,
     )
     if dry_run:
         system = system.replace(
@@ -420,14 +355,18 @@ def followup_author_messages(
         ).replace(
             "- submit(path) launches only the exact validated bytes.\n", ""
         ).replace(
-            "Once validation succeeds, submit\nthat exact file. Then report the experiment code and what the run will settle.",
-            "Once validation succeeds, stop and report what the proposed run would settle.",
+            "Once validation succeeds, submit\nthat exact file. Then report the "
+            "experiment code and what the run will settle.",
+            "Once validation succeeds, stop and report what the proposed run "
+            "would settle.",
         )
     user = (
         f"The original question was:\n\n{task}\n\n"
         f"Completed interpretation:\n\n{interpretation}\n\n"
         "Approved follow-up decision:\n\n"
         + json.dumps(decision, ensure_ascii=False, indent=2)
+        + "\n\nEarlier ancestor summaries, oldest first:\n\n"
+        + json.dumps(ancestor_summaries, ensure_ascii=False, indent=2)
     )
     if specification:
         user += f"\n\nThe experiment that ran was:\n\n{specification}"

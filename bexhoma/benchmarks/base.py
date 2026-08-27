@@ -357,7 +357,7 @@ class Benchmark:
         :param write_report: When ``True``, also write a tiered Markdown report
             (``report/index.md`` + detail files) to the result folder.
         """
-        experiment._test_results = []
+        experiment._test_results = list(experiment._runtime_test_results)
         self._prepare_evaluator(experiment)
         connections_sorted, monitoring_applications = experiment.show_summary_header()
         workflow_section: Section | None = None

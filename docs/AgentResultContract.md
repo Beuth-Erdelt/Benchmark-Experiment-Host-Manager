@@ -111,14 +111,30 @@ validity:                                # from experiment._test_results -> repo
     kind: absolute
   - id: no_sql_errors                    # DBMSBenchmarker-family (TPC-H/TPC-DS) only
     kind: absolute
-  - id: no_sql_warnings                  # = no result-set mismatch across systems; DBMSBenchmarker-family only
-    kind: absolute
+  - id: no_sql_warnings                  # = no result-set mismatch WITHIN one driver process; DBMSBenchmarker-family only
+    kind: absolute                       # one pod = one process = one connection, so at numRun=1 it compares nothing
   - id: monitoring_component_cpu_nonzero # per monitored component; SKIPPED (not failed) when phase < 1 scrape interval
+    kind: absolute
+  - id: loaded_data_complete             # NOT IMPLEMENTED — see Known gaps
     kind: absolute
   - id: cross_experiment_comparison      # NOT IMPLEMENTED — see Known gaps
     kind: comparative
   verdict: {passed: int, failed: int, skipped: int}   # index.md frontmatter overall_status;
                                                         # only a FAILED row scopes/invalidates metrics below it — skipped never does
+
+answer_contract:
+  hypothesis: experiment.yml          # quote its recorded hypothesis when present
+  steps: [hypothesis, verdict, evidence, follow_up]
+                                      # answer for this run, cite tier-1/2 evidence,
+                                      # and propose one lineage-marked follow-up only if needed
+
+agent_summary_contract:               # optional agent extension; not written by BeXhoma
+  version: "1.0.0"
+  output_file: agent_summary.yml
+  fields: [experiment_code, follow_up_of, hypothesis, verdict,
+           technical_validity, unresolved_question]
+                                      # verdict is supported/refuted/inconclusive/invalid;
+                                      # evidence paths are relative to this result folder
 ```
 
 ---
@@ -222,8 +238,36 @@ column an agent should treat as "the" headline number:
   experiment code" (see every `index.md`'s Interpretation Rules) is a rule an
   agent must apply itself — nothing in the result folder does it automatically.
   `contract_catalog.yml`'s `experiment_schema.fields.follow_up_of` lets an
-  experiment.yml record which prior experiment_code it follows up on, but
-  that's bookkeeping only — nothing reads or validates it yet.
+  experiment.yml record which prior experiment code it follows up on. The
+  optional agent harness writes one compact `agent_summary.yml` after
+  interpreting a result, supplies those summaries to later follow-up authoring,
+  validates that a newly authored follow-up names the current code, and requires
+  an execution-relevant change. It still does not compare ancestor metrics or
+  treat their summaries as evidence for the current result. BeXhoma itself does
+  not enforce these conditions or write the summary.
+- **Nothing verifies that the data actually loaded.** A loading phase counts as
+  successful when its Kubernetes Job exits 0; no row count, table size or
+  ingested-volume check exists in tier 1 or 2, and the per-table loader scripts
+  report success unconditionally — they inspect neither the client's exit status
+  nor its output. A database that is missing whole tables, because a node or
+  service blip refused new connections part-way through the load, therefore
+  passes every check: the metric columns stay non-zero, a query over an empty
+  table returns an empty result quickly rather than erroring, and
+  `no_sql_warnings` cannot see it. The evidence exists, but only in tier 3:
+  the post-load statistics script's `*.stderr.log` carries `ANALYZE VERBOSE`'s
+  live row count per table, its `*.stdout.log` prints the reference-table counts
+  that script selects (TPC-H expects `nation=25`, `region=5`), and each loader
+  pod's `*.sensor.log` shows one row-count line per table — replaced by a client
+  connection error for any table that never made it. `benchmarking.md`
+  corroborates: a repetition whose per-query latency collapses by orders of
+  magnitude on exactly the queries that touch the missing tables.
+- **`no_sql_warnings` never compared two systems.** The driver compares a result
+  set against the first one *the same process* stored — across a query's
+  `numRun` repetitions on one connection, and across connections only when one
+  process drives several. BeXhoma gives every benchmarking pod its own process
+  and exactly one connection, so at `numRun=1` nothing is compared at all. A
+  PASS is not evidence that two configurations, two phases or two
+  `experiment_run`s returned the same rows.
 - **Per-system post_load selection isn't a queryable field.** A catalog-driven
   experiment can choose, per named system, whether indexes/constraints/
   statistics were applied after loading (`contract_catalog.yml`'s `systems[].post_load`

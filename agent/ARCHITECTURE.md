@@ -26,7 +26,7 @@ flowchart TB
     subgraph L[Optional local test lifecycle · dev/agent_lifecycle.py]
         direction TB
         L0[Start or resume one investigation]:::local
-        LU[Ensure vLLM is UP<br/>retry until shared GPU is available]:::local
+        LU[Ensure vLLM is UP<br/>retry until H100 or H200 is available]:::local
         LD[Ensure vLLM is DOWN<br/>wait until pod is deleted]:::local
         LW[Poll exact experiment code<br/>report or failed process]:::local
         LF[Final cleanup: vLLM DOWN<br/>also on error or Ctrl-C]:::local
@@ -54,24 +54,23 @@ flowchart TB
 
     subgraph I[3 · INTERPRET evidence context · fresh model window]
         direction TB
-        I1[Read report/index.md first<br/>consult archived result contract]:::model
+        I1[Read one exact report/index.md<br/>consult its archived result contract]:::model
         I2[Establish validity before metrics<br/>open targeted evidence only]:::model
-        I3[Optional deterministic table reduction<br/>compare_query_latency]:::guard
-        I4{Record every explicit question<br/>settled · partial · unresolved}:::guard
+        I3[Deterministic comparison-quality check<br/>when linked TPC-H evidence exists]:::guard
+        I4{Record questions and one decision<br/>finish · followup}:::guard
         I1 --> I2 --> I3 --> I4
     end
 
-    subgraph F[4 · FOLLOW-UP gate · two fresh model windows]
+    subgraph F[4 · FOLLOW-UP authoring · fresh model window]
         direction TB
-        F0{Useful unresolved question<br/>and budget remaining?}:::guard
-        F1[Decision context<br/>reread catalog + environment]:::model
-        F2{record_followup_decision<br/>finish or followup}:::guard
-        F3[Authoring context<br/>reread inputs; write → validate → submit]:::model
-        F0 -- yes --> F1 --> F2
-        F2 -- followup --> F3
+        F0{Follow-up recorded<br/>and budget remaining?}:::guard
+        F1[Authoring context<br/>reread catalog + environment]:::model
+        F2{Exact follow_up_of<br/>and controlled change?}:::guard
+        F3[Write → validate → submit]:::model
+        F0 -- yes --> F1 --> F2 --> F3
     end
 
-    A([Final aggregated answer.md]):::artifact
+    A([One-result answer.md]):::artifact
     P[(reports/<br/>one report per phase)]:::artifact
     T[(one trajectory.jsonl<br/>append-only across all phases)]:::artifact
     C[(Input contract<br/>contract_catalog.yml + environment.yml)]:::artifact
@@ -88,12 +87,10 @@ flowchart TB
     R -. authoritative evidence .-> I1
     I4 --> F0
     F0 -- no --> A --> LF
-    F2 -- finish --> A
     F3 -- new code --> B1
 
     D1 -. logged .-> T
     I1 -. logged .-> T
-    F1 -. logged .-> T
     F3 -. logged .-> T
     D5 -. phase account .-> P
     I4 -. phase interpretation .-> P
@@ -125,20 +122,23 @@ consultation measurable in the trajectory.
 | Model exchange | `model_client.py::ChatModel` | Calls an OpenAI-compatible endpoint; parses tool calls; logs but does not replay reasoning |
 | Design instructions | `prompts.py::design_messages` | Requires contract reads, one attributable design, validation, and submission |
 | Tool boundary | `tools.py::Workspace` | Canonical read/write scopes; complete-file writes; structured tool errors |
-| Agent validation | `validation.py::validate_spec` | Shape, catalog, environment, and methodology checks; expanded run count |
+| Agent validation | `validation.py::validate_spec` | Shape, catalog, environment, and methodology checks; expanded run count and conservative declared-timeout budget |
 | Shared resolution | `bexhoma/spec.py` | Existing profile, override, quantity, environment, and command resolution |
-| Submission | `tools.py::submit`, `submit.py` | Fingerprint check, immutable copy, code allocation, result-root lock, agent-side catalog launch adapter, provenance archive |
-| Execution | Normal Bexhoma workload modules | Workload execution, raw files, validity results, tiered report; no Bexhoma code modification required |
-| State recovery | `agent.py::_carry_forward` | Rebuilds question, exact specification, code, budget, and previous-result handoff from trajectory data |
-| Evidence interpretation | `prompts.py::interpret_messages`, `agent.py::run_interpret` | Fresh read-only context; validity-first analysis; structured question coverage |
-| Deterministic comparison | `tools.py::compare_query_latency` | Matched-run TPC-H per-query reduction without model arithmetic |
-| Follow-up decision | `prompts.py::followup_decision_messages` | Fresh read-only context; complete design-space reread; finish/follow-up record |
-| Follow-up authoring | `prompts.py::followup_author_messages` | Fresh mutation context; same write/validate/submit boundary as design |
-| Local automation | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Optional vLLM switching, result polling, retry, resume, and cleanup |
+| Submission | `tools.py::submit`, `submit.py` | Full catalog-and-environment fingerprint check, immutable provenance snapshot, code allocation, result-root lock, agent-side catalog launch adapter, and result-folder archive |
+| Execution | Bexhoma workload and lifecycle modules | Workload execution, optional per-configuration loading deadline, diagnostics-before-teardown, raw files, validity results, and tiered report |
+| State recovery | `agent.py::_carry_forward` | Rebuilds the question, exact current specification, code, and budget from trajectory data without carrying an earlier result into interpretation |
+| Evidence interpretation | `prompts.py::interpret_messages`, `agent.py::_InterpretationGate` | Selects one exact report; requires its Tests evidence and result contract; verifies failed-check count and cited read paths; records question coverage and one finish/follow-up decision |
+| Deterministic comparison | `tools.py::assess_comparison_quality` | Reports TPC-H query coverage, throughput comparability, and repetition-anomaly warnings without relying on model arithmetic |
+| Follow-up authoring | `prompts.py::followup_author_messages`, `agent.py::_author_followup` | Fresh mutation context; receives compact ancestor summaries, rereads the design contract, and enforces the current experiment code as lineage, a material controlled change, and any approved query subset before shared validation |
+| Portable lineage summary | `agent.py::_write_agent_summary`, `contracts/contract_result.yml` | Persists one experiment code, parent, hypothesis, scientific verdict, technical validity, and unresolved question without copying ancestor reports into context |
+| Design-space gate | `agent.py::_DesignSpaceGate` | Refuses initial or follow-up authoring until that context has reread the catalog and environment |
+| Local automation | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Optional vLLM switching, result polling, retry, resume, model cleanup, and exact experiment cleanup after a definitive benchmark-process failure |
 
 One reusable loop, `agent.py::_converse`, drives every model context with a
-different prompt, tool list, stopping predicate, and budget. A text answer is
-rejected when the phase still requires a structured record.
+different prompt, tool list, stopping predicate, and budget. `run_interpret`
+uses one evidence context and, only when that context records a useful
+follow-up, one fresh authoring context. A text answer is rejected when the
+phase still requires a structured record.
 
 ## Capability boundary
 
@@ -148,14 +148,17 @@ filesystem access. Tools are exposed by context:
 | Context | Tools |
 |---|---|
 | Design | `read_file`, `write_file`, `validate`, `submit` |
-| Evidence interpretation | `read_file`, `compare_query_latency`, `list_results`, `record_interpretation` |
-| Follow-up decision | `read_file`, `record_followup_decision` |
+| Evidence interpretation | `read_file`, `assess_comparison_quality`, `record_interpretation` |
 | Follow-up authoring | `read_file`, `write_file`, `validate`, `submit` |
 
-Writes resolve to one YAML file directly inside the inbox. Reads resolve only
-inside contracts, the inbox, the configured result root, or explicitly allowed
-environment files. Canonicalization happens before authorization, blocking
-`..` and symlink escapes.
+Writes resolve to one YAML file directly inside the inbox. During design,
+reads resolve only inside contracts, the inbox, or the explicitly allowed
+environment file. During interpretation, the initial readable set is the exact
+report, its result contract, and its archived experiment; reading a Markdown
+page adds only existing local files linked from that page and still inside that
+result directory. Another result and an unlinked file remain unreadable.
+Canonicalization happens before authorization, blocking `..` and symlink
+escapes.
 
 Successful validation stores a fingerprint of the specification, catalog, and
 environment. Submission recomputes it and refuses changed bytes. The result
@@ -166,14 +169,22 @@ folder archives those exact inputs, while the trajectory records their hashes.
 Each process performs one durable phase and exits, but all processes belonging
 to the same question share one investigation directory and trajectory:
 
-1. Design ends after submission and records the experiment code.
+1. Design ends after submission and records the experiment code. Once the
+   validated specification exists, the investigation directory gains an
+   `-sf<scale>-<model>` suffix; failed or incomplete designs keep their
+   timestamp-only working name. A slow launch may still be in `starting` state;
+   the lifecycle follows that exact code until its result directory and report
+   appear.
 2. Execution is detached and owns the result-root lock.
 3. Interpretation reopens the investigation only after its exact report exists
    and appends its events to the same `trajectory.jsonl`.
-4. With budget, evidence, follow-up selection, and follow-up authoring use
-   separate context windows and separate file-read allowances.
+4. Evidence interpretation examines only that result and records whether one
+   follow-up is justified. With budget, follow-up authoring uses a separate
+   context and file-read allowance.
 5. A submitted follow-up ends that invocation. Its result is interpreted by a
-   later process with a bounded handoff reconstructed from the same trajectory.
+   later process as a new, self-contained result. Its `follow_up_of` field
+   preserves lineage. Follow-up authoring receives the ancestors' compact
+   `agent_summary.yml` records, not their reports, metrics, or trajectories.
 
 The follow-up count is persisted in outcomes. A successful submission consumes
 one unit. The loop ends when interpretation is complete without a new code.
@@ -182,26 +193,33 @@ one unit. The loop ends when interpretation is complete without a new code.
 
 Every phase response is preserved under `reports/`. The top-level `answer.md`
 is not an intermediate status file: it is written only when an interpretation
-finishes without submitting another experiment. That final interpretation is
-required to aggregate the complete study, and the harness copies it verbatim;
-it does not silently rewrite or correct model output. Interpretation prompts
-require the report to be self-contained and use this order:
+finishes without submitting another experiment. The interpretation first
+records a compact validity, question-coverage, comparison-quality, and
+follow-up assessment, then writes the answer in a tool-free turn according to
+the archived result contract's `answer_contract`. The answer covers the current
+experiment only: its hypothesis, validity verdict, evidence, and one proposed
+follow-up when needed. The harness does not synthesize earlier reports or force
+a larger multi-experiment report template.
 
-1. original question;
-2. hypothesis;
-3. experiments performed;
-4. validity;
-5. results;
-6. interpretation;
-7. follow-up rationale and intervention, when present;
-8. final verdict and remaining limitations.
+Before accepting the structured record, the harness requires the exact report
+index and result contract to have been read, verifies the recorded
+failed-check count against report frontmatter, and rejects evidence paths that
+were not read in that context. For a TPC-H report with benchmarking evidence,
+the model must also reproduce the deterministic query-coverage,
+whole-workload-throughput, and suspect-repetition record exactly. A suspect
+repeat is disclosed but not automatically invalidated. A settled question also
+requires evidence marked as supported. The investigation contains `task.txt`,
+immutable per-phase submission/log artifacts under `phases/`, all phase
+accounts under `reports/`, and one append-only `trajectory.jsonl` for lineage
+and audit, not model context aggregation.
 
-The final context receives the current specification, the preceding
-specification and report, the previous interpretation, and the structured
-follow-up decision. This gives the model the complete study chain needed to
-write those sections. The investigation also contains `task.txt`, immutable
-per-phase submission/log artifacts under `phases/`, all phase accounts under
-`reports/`, and one append-only `trajectory.jsonl` for the whole chain.
+Successful interpretation writes `agent_summary.yml` beside the selected
+result. It separates the scientific hypothesis status from the report's
+mechanical pass/fail/skip counts and rewrites cited evidence as paths relative
+to that result directory. A follow-up walks `follow_up_of` and loads only valid
+summary records, oldest first. The current report remains the sole evidence for
+the current interpretation; history is supplied only to authoring so it can
+avoid returning to a settled hypothesis.
 
 ## Local lifecycle wrapper
 
@@ -218,19 +236,64 @@ vLLM up → design → vLLM down → wait for report
         → final answer → vLLM down
 ```
 
-The low-level switch refreshes the local OIDC login noninteractively, applies
-the pinned vLLM manifest, waits for readiness and the local API, and waits for
-pod deletion on shutdown. The wrapper retries startup indefinitely by default
+The low-level switch refreshes the local OIDC login noninteractively, clears a
+pod that has already finished or carries an older immutable manifest generation,
+applies the pinned vLLM manifest, waits for
+readiness and the local API, and waits for pod deletion on shutdown. The wrapper retries startup indefinitely by default
 because releasing a shared GPU creates a race: another workload can take it
 before interpretation begins. Set a finite `--server-start-attempts` to fail
 instead. `--resume` continues a submitted investigation without submitting it
 again. The `finally` block requests shutdown after success, failure, or
-interruption; the weights PVC is retained.
+interruption, including a `SIGTERM` or a terminal `SIGHUP`, which the wrapper
+converts into that same path rather than letting them end the process outright;
+the weights PVC is retained.
 
-Autonomous switching does not mean guaranteed immediate capacity. If every H200
-is allocated, the vLLM pod remains Pending and interpretation waits until a GPU
-returns. Kubernetes priority or a reserved GPU would be required for a bounded
-restart time.
+Shutdown does not depend on the wrapper. The model server pod carries its own
+idle watchdog beside the server process and releases the GPU once nothing has
+sent a request for twenty minutes, so a phase launched by hand does not strand a
+Hopper node. Both in-flight gauges and monotonic completion counters count as
+use, and metrics that cannot be read, or that a future vLLM no longer publishes
+under these names, keep the server up rather than ending it on unexplained
+silence. The pod's `OnFailure` restart policy lets a crashed server return while
+allowing the watchdog's clean exit to end the pod; every other exit path is
+forced non-zero so only idleness can end it. The wrapper remains the prompt
+path, since it hands the GPU back the moment a benchmark starts rather than
+twenty minutes later.
+
+Autonomous switching does not mean guaranteed immediate capacity. The vLLM pod
+accepts either compatible Hopper node (`gpu in [h100, h200]`), whichever becomes
+available first. If both are allocated, it remains Pending and interpretation
+waits until one returns. Kubernetes priority or a reserved GPU would be required
+for a bounded restart time.
+
+## Kubernetes lifecycle controller
+
+`agent/k8s/lifecycle-controller.yml` turns the local phase loop into a durable
+Kubernetes Job. The Job owns one investigation, stores its trajectory, status,
+and reports on a persistent volume, and uses `restartPolicy: OnFailure`. A
+replacement controller recovers a submission from durable status even if the
+previous process stopped after BeXhoma started but before the agent wrote its
+phase outcome. It then uses the ordinary lifecycle `--resume` path, so the
+experiment is not submitted twice. If Pod replacement also ended the detached
+BeXhoma process, the controller reacquires the shared result lock and restarts
+BeXhoma's own resume path with the same code, archived catalog, and immutable
+submitted specification.
+
+The controller creates a kubeconfig that follows the Pod service account's
+rotating token, replaces the source configuration's local login context with
+that in-cluster context, and refreshes `environment.yml` before design. This
+removes the workstation and expiring interactive login from the lifecycle. Its
+role can mutate BeXhoma and model-server objects only in its namespace. A
+separate read-only cluster role exposes node, storage-class, and priority-class
+facts needed to build the bounded environment descriptor. The model itself has
+neither credential nor Kubernetes tool access.
+
+Agent submission adds BeXhoma's existing one-SUT-per-experiment limit. Database
+configurations therefore execute sequentially, while the query streams inside
+the active configuration still follow the experiment's concurrency rounds.
+This is both an isolation rule for credible measurements and an agent-side
+workaround for BeXhoma's shared raw-data cache: a cold scale-factor directory
+has one producer rather than two concurrent generators.
 
 ## Placement and replay
 
@@ -304,19 +367,29 @@ process boundaries.
 
 - The catalog implements a narrow prototype surface, not every Bexhoma workload
   and system.
-- Duration estimation is not calibrated.
+- Validation reports a conservative declared-timeout budget, not a calibrated
+  runtime prediction; startup, teardown, and ordinary early query completion
+  mean actual duration will differ.
 - Environment validation checks declared capacity and may lack current free
   capacity.
 - The filesystem lock serializes harness launches on one host/result root, not
   direct Bexhoma commands or cluster-wide submissions.
-- Cross-experiment validity remains an interpretation responsibility.
+- The result root is read from Bexhoma's own `cluster.config`, so agent and
+  benchmark cannot disagree about it; a checkout without that file is told to
+  create one rather than defaulted to a path belonging to this cluster.
+- The harness deliberately does not perform cross-experiment synthesis or
+  cross-run validity checks. `follow_up_of` preserves lineage, while each
+  interpretation remains scoped to one result.
 - Exact cross-cluster numbers require pinned images and package versions plus
   captured hardware, storage, and runtime conditions.
 - Temperature zero does not guarantee identical model decisions; exact model
   weights, tokenizer, and serving configuration are not archived by the
   trajectory.
-- The optional local lifecycle can wait for shared GPU capacity but cannot
+- The optional local lifecycle can wait for shared H100/H200 capacity but cannot
   create or reserve it.
+- The pod's idle watchdog bounds how long a forgotten server holds a GPU, but it
+  deliberately fails open: if its metric names stop matching a future vLLM, the
+  server keeps running and the release falls back to an explicit shutdown.
 
 ## Documentation ownership
 

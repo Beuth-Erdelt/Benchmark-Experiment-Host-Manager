@@ -1,0 +1,1 @@
+At TPC-H scale factor 3, which system provides better full-workload analytical performance under identical 16 CPU and 64 GiB SUT limits: PostgreSQL or PgDuckDB, and does the ranking remain stable from 1 to 2 concurrent query streams? Use three experiment repetitions. Use scale factor 1 only if scale factor 3 is rejected by catalog or environment validation.

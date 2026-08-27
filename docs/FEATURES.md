@@ -24,13 +24,32 @@ follow up on a benchmark. The full current description and visual flow live in
 | Structured validation verdict | `agent/harness/validation.py` | Done |
 | Catalog, shape, environment, and methodology validation | `agent/harness/validation.py`, `contracts/contract_catalog.yml` | Done |
 | Phase-scoped tools, path policy, immutable submission, and deterministic query comparison | `agent/harness/tools.py` | Done |
-| Tiered result reading and self-contained final study-report structure | `agent/harness/prompts.py`, `agent/harness/tools.py` | Done |
+| Exact one-result selection, link-reachable evidence reads, and result-contract answer structure | `agent/harness/prompts.py`, `agent/harness/tools.py`, `contracts/contract_result.yml` | Done and regression-tested |
 | Model adapter for the self-hosted server | `agent/harness/model_client.py` | Done |
-| Design, interpretation, staged follow-up, durable carry-forward, single-investigation trajectory, phase reports, aggregated final report, and CLI | `agent/harness/agent.py` | Done |
-| Model server manifest | `agent/k8s/vllm-qwen38-27b.yml` | Done |
+| Per-turn output sized to the served context window, with an exhausted window reported like other setup errors | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
+| Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
+| Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py`, `agent/trajectories/` | Done and regression-tested; incomplete designs remain timestamp-only |
+| Model server manifest with idle GPU release | `agent/k8s/vllm-qwen38-27b.yml` | Done |
+| Durable Kubernetes lifecycle controller with in-cluster authentication and restart recovery | `agent/lifecycle_controller.py`, `agent/k8s/lifecycle-controller.yml`, `agent/Dockerfile.lifecycle` | Done and regression-tested; image publication and target-cluster values remain deployment steps |
+| Sequential isolation of agent-submitted SUT configurations | `agent/harness/submit.py`, `contracts/contract_catalog.yml` | Done and regression-tested through BeXhoma's public one-SUT option |
+| Result-contract disclosure of unverified loading and of the warnings check's real scope | `contracts/contract_result.yml`, `docs/AgentResultContract.md` | Done |
+| Result root taken from Bexhoma's `cluster.config` | `agent/harness/tools.py` | Done |
 | Environment refresh with local cluster facts | `dev/catalog/refresh_environment.py` (gitignored) | Done |
 | Repeated same-system treatments rejected before Bexhoma collapses them | `agent/harness/validation.py` | Done and regression-tested |
-| Local server/benchmark lifecycle, retry, resume, and cleanup | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Local-only; unit- and cluster-checked |
+| Distinct identities for every CPU or memory resource-sweep cell | `bexhoma/spec.py`, `tpch.py` | Done and regression-tested |
+| Component-aware peak resource validation for pinned benchmarker placement | `contracts/contract_catalog.yml`, `agent/harness/validation.py` | Done and regression-tested; mirrors the current BeXhoma template limits |
+| Stable upstream BeXhoma integration | repository history, `bexhoma/experiments/tpch_catalog.py` | v0.10.10 merged; local agent and loading safeguards preserved and regression-tested |
+| Environment-checked submission gate and recoverable slow-start state | `agent/harness/tools.py` | Done and regression-tested |
+| Agent-exposed per-configuration loading timeout and automatic failure diagnostics | `contracts/contract_catalog.yml`, `bexhoma/spec.py`, `bexhoma/experiments/base.py`, `bexhoma/configurations/lifecycle.py` | Done and regression-tested |
+| Enforced initial catalog/environment consultation | `agent/harness/agent.py` | Done and regression-tested |
+| Validity-first evidence gate, read-path citations, and result-contract-driven answer | `agent/harness/agent.py`, `agent/harness/tools.py` | Done and regression-tested |
+| Deterministic query coverage, throughput comparability, and repetition-anomaly disclosure | `agent/harness/tools.py`, `agent/harness/agent.py`, `agent/harness/prompts.py` | Done and regression-tested without changing BeXhoma |
+| Conservative timeout-cost estimate and enforced focused-query follow-ups | `agent/harness/validation.py`, `agent/harness/agent.py`, `agent/harness/prompts.py`, `contracts/contract_catalog.yml` | Done and regression-tested |
+| Exact `follow_up_of` lineage and rejection of execution-identical follow-ups | `agent/harness/agent.py` | Done and regression-tested without changing BeXhoma |
+| Portable per-experiment hypothesis verdict and compact ancestor memory for follow-up authoring | `agent/harness/agent.py`, `agent/harness/prompts.py`, `contracts/contract_result.yml` | Done and regression-tested without changing BeXhoma |
+| Installable agent and TPC-H launcher package | `pyproject.toml` | Done and wheel-smoke-tested outside the checkout |
+| Maintained-suite test discovery | `pyproject.toml` | Done; plain `pytest` runs `tests/` |
+| Local server/benchmark lifecycle, retry, resume, signal-safe cleanup, namespace restoration, restart of a self-finished pod, and exact failed-experiment cleanup | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Local-only; unit- and cluster-checked |
 | Quick start | `agent/README.md` | Done |
 | Full pipeline, annotated visual, replay rules, and decision record | `agent/ARCHITECTURE.md` | Done; all older agent-pipeline descriptions merged here |
 | Critic as a separate invocation | — | Optional evaluation, intentionally outside the prototype |
@@ -40,19 +59,492 @@ prompts and tools. Contracts are read rather than embedded, all reads and writes
 are logged, and submission is bound to the exact validated specification and
 contract hashes.
 
+### Cluster configuration
+
+The default cluster-level monitoring endpoint points to the shared Prometheus
+service in the `monitor` namespace. The per-experiment application-monitoring
+endpoint remains templated because Bexhoma creates that service in the active
+experiment namespace.
+
 ### Model server
 
 `agent/k8s/vllm-qwen38-27b.yml` serves `Qwen/Qwen3.8-27B-FP8` through vLLM's
-OpenAI-compatible API on the cluster's H200 node. It follows the pattern already
+OpenAI-compatible API on the first available H100 or H200 node. It follows the pattern already
 used for the other model servers in this namespace: one pod that downloads the
 weights into a persistent volume on first start and serves them from there
 afterwards. It is deliberately not placed on the node bexhoma uses for the
 system under test, because a model server competing for that node's resources
 would contaminate the measurements the agent is designing.
 
+The pod releases its GPU on its own once nothing has sent it a request for
+twenty minutes, so a server left behind by a hand-launched phase does not hold a
+Hopper node indefinitely. The operator wrapper still shuts it down immediately
+when it is in charge; the watchdog is the backstop for when it is not.
+
+Which server the agent talks to is not fixed to that pod. The agent CLI
+(`agent/harness/agent.py`) and the local lifecycle wrapper
+(`dev/agent_lifecycle.py`) load an optional `.env` from the repository root at
+startup, supplying `AGENT_MODEL`, `AGENT_BASE_URL`, and `AGENT_API_KEY` where
+the shell has not already exported them. An exported variable overrides the
+file, and the corresponding command-line flag overrides both. `.env.example`
+documents a block per backend — the bundled vLLM server through a port forward,
+the same server by its in-cluster service name, a local Ollama, OpenAI, and
+Mistral — and `.env` itself is gitignored so keys stay out of the history. The
+loader is `python-dotenv`, added to the `agent` extra alongside the OpenAI
+client.
+
+Two adjustments in the model adapter make a hosted endpoint usable in place of
+the self-hosted one. The context-length probe accepts either spelling a server
+publishes it under (`max_model_len` for vLLM, `max_context_length` for
+Mistral), so the per-turn budget guard keeps working off the cluster. And a
+turn refused for rate limiting is retried with a doubling wait, honouring a
+`retry-after` header when one is sent, before the phase reports the endpoint as
+unusable. A self-hosted server queues requests rather than refusing them, so
+this engages only against a metered API, where a per-minute quota would
+otherwise end an investigation mid-design.
+
 ---
 
 ## Part 2 — Request log
+
+### 2026-08-27 — Configure the model backend from a .env file
+
+Asked whether a `.env` file existed for choosing the model server, and for a
+configuration that swaps the agent easily between the cluster's vLLM server, a
+hosted API such as OpenAI or Mistral, and a local Ollama. No such file existed:
+the three settings were readable only from exported shell variables or flags.
+
+Both entrypoints now load a repository-root `.env` before parsing arguments, so
+the file supplies `AGENT_MODEL`, `AGENT_BASE_URL`, and `AGENT_API_KEY` when the
+shell has not. Precedence runs flag over exported variable over file, which
+keeps a one-off override possible without editing the file. A committed
+`.env.example` documents a block for each backend, `.env` is gitignored, and
+`python-dotenv` joins the `agent` extra. Where the three existing settings may
+come from is all that changed for the self-hosted path.
+
+Running the first Mistral-backed investigation then exposed two gaps the
+self-hosted server had hidden, both fixed in the model adapter: the served
+context window went undetected because Mistral publishes it under a different
+field name, and a design phase died on a rate-limit refusal four turns in.
+Refused turns are now waited out. No contract or BeXhoma code changed.
+
+### 2026-08-27 — Label successful trajectories with scale and model
+
+Asked to check the trajectory archive as well as the result folders, rename the
+two verified end-to-end investigations, and make future trajectory names expose
+the experiment scale factor and model used. The SF1 and SF10 investigations are
+now named `20260824T095408142020-sf1-qwen3.8-27b` and
+`20260825T162917565149-sf10-qwen3.8-27b`. No incomplete historical trajectory
+was renamed or removed.
+
+A new design still begins in a timestamp-only directory because the scale
+factor is not known until the generated experiment has passed validation. On
+successful completion, the harness reads the validated specification and
+renames the directory to `<timestamp>-sf<scale>-<model>`. It records that
+relocation in the append-only trajectory and resolves archived specifications
+from their stable phase-relative location when resuming, so the readable name
+does not break interpretation or lifecycle discovery. Submission-status paths
+are relocated with the directory, and the lifecycle wrapper now passes its
+configured persistent status directory into every agent phase. This preserves
+restart recovery in the Kubernetes controller as well as in local runs. Unsafe
+model-name characters, such as the slash in a repository-style model
+identifier, become hyphens. Incomplete designs retain timestamp-only names
+rather than advertising unvalidated metadata. No BeXhoma code or Kubernetes
+template was changed.
+
+### 2026-08-27 — Preserve compact hypothesis verdicts across follow-ups
+
+Asked to adopt the proposed per-experiment `code / hypothesis / verdict`
+record so a follow-up can consider what its ancestors already settled without
+oscillating between hypotheses. The one-result evidence boundary remains
+unchanged: interpretation reads and judges exactly one result folder.
+
+The structured interpretation now records a scientific hypothesis status —
+supported, refuted, inconclusive, or invalid — separately from the report's
+mechanical pass/fail/skip checks. After that record is accepted, the harness
+writes `agent_summary.yml` into the interpreted result folder. It contains the
+experiment code, parent code, archived hypothesis, scientific verdict,
+technical validity, unresolved next question, and result-relative evidence
+paths. The artifact is produced from the existing interpretation call; no
+second model response or competing conclusion is introduced.
+
+Follow-up authoring walks `follow_up_of` and receives valid ancestor summaries
+oldest-first. It does not receive ancestor reports, metrics, trajectories, or
+conversations, and the summaries are explicitly orientation rather than
+evidence for the current interpretation. Traversal stops safely at a missing,
+malformed, mismatched, or cyclic record. The result contract documents this
+agent extension separately from BeXhoma's unchanged result schema version.
+No BeXhoma implementation or Kubernetes template was changed.
+
+### 2026-08-27 — Make the experiment lifecycle durable and isolate system loaders
+
+Asked why an SF3 comparison exposed a loader failure that earlier comparisons
+did not, how to prevent it, and to move the full experiment lifecycle into a
+Pod without changing BeXhoma. Earlier generator logs showed zero-second
+generation for both systems because those scale-factor directories were
+already complete. In the failed SF3 run, PostgreSQL and PgDuckDB entered a new
+shared directory one second apart; one generated the files while the other
+blocked forever on an interactive overwrite prompt. The 30-minute loading
+deadline detected that hang rather than causing it.
+
+No BeXhoma implementation or template was changed. The agent submission adapter
+now invokes BeXhoma's existing maximum-one-SUT option for every submitted run.
+System configurations consequently load and benchmark sequentially, preventing
+both cold-cache generator races and cross-system resource contention. The input
+contract discloses this execution invariant, while concurrent query streams
+inside the active SUT remain controlled by the experiment's rounds.
+
+The new lifecycle controller is packaged as a Kubernetes Job rather than a bare
+Pod. A persistent volume holds trajectories, statuses, inbox files, refreshed
+environment facts, and results. The controller uses a namespace-scoped service
+account instead of an expiring workstation login, writes a runtime cluster
+configuration from the supplied portable settings, and resumes the latest
+durable submission after restart. It also recovers the narrow case where the
+benchmark was recorded in status after launch but the agent process stopped
+before writing its phase outcome. Because Pod replacement also ends detached
+children, the replacement controller reacquires the shared result lock and
+restarts BeXhoma's own resume path with the same experiment code, archived
+catalog, and immutable submitted specification. Cluster-wide permissions are read-only and
+limited to the node, storage-class, and priority-class facts used in the
+environment contract; the model still has no terminal or Kubernetes tool.
+
+The quick start documents image build and publication, input ConfigMap creation,
+the four target-cluster values that must be supplied, Job launch, and log
+following. There is deliberately no Job runtime deadline because a valid SF10
+or SF100 investigation may run for days.
+
+### 2026-08-26 — Remove only stale failed-experiment resources
+
+Asked whether the many pods visible in k9s consumed benchmark resources, to
+remove stale ones safely, and to prevent failed experiments from leaving them
+again. The inventory separated shared BeXhoma infrastructure from
+experiment-scoped objects. The per-node `bexhoma-monitoring-default-*` Pods are
+the expected monitoring DaemonSet, while the dashboard and message queue are
+shared services; they were retained. Completed unrelated Jobs do not consume
+CPU or memory. Only resources carrying the exact codes of two previously failed
+experiments were removed, and their result folders were preserved.
+
+The local lifecycle now invokes Bexhoma's existing `stop -e <code>` cleanup when
+the exact submitted benchmark is marked failed or its process has exited before
+writing a report. It never applies an unscoped delete and does not clean a live
+run merely because the wrapper is interrupted, preserving the documented
+resume behavior. The input contract also tells the experimenter to choose a
+scale-appropriate loading deadline rather than leave a hung loader unlimited;
+there is intentionally no fixed deadline that would be wrong for SF10 or SF100.
+Tests verify the exact cleanup code and the existing server-shutdown behavior.
+
+### 2026-08-26 — Make one experiment the unit of interpretation
+
+Asked to implement the supervisor's intended prototype model: the agent
+evaluates one completed experiment at a time, reports what remains open, and
+may design one next experiment carrying `follow_up_of`, without loading prior
+reports into the same context or producing a cross-experiment synthesis. The
+change was restricted to the agent, its contracts, tests, and documentation;
+no BeXhoma implementation or Kubernetes template was changed.
+
+Interpretation now starts from one explicit `report/index.md`. The portable
+command accepts that file directly through `--report`, so it does not depend on
+this machine's trajectory, status, or cluster configuration files; when no
+result root is configured, it derives that root from the selected report. In
+the evidence context, the exact report, exact result contract, and archived
+experiment are the initial readable interface. A successful Markdown read
+exposes only existing local files linked from that page and still inside the
+same result directory. Unlinked files and sibling experiment folders are
+rejected by code, not merely discouraged by the prompt.
+
+The interpretation's structured record now includes its finish-or-follow-up
+decision. This removes the separate decision context, the model-facing result
+listing, the cross-result latency tool, the previous-result handoff, and the
+fixed eight-section aggregation template. The closing answer follows the
+archived result contract's `answer_contract` and discusses the current
+experiment only. If a follow-up is justified and budget remains, a fresh
+authoring context rereads the input catalog and environment. Before shared
+validation can accept the draft, the harness requires `follow_up_of` to equal
+the current experiment code and rejects a draft whose execution-relevant fields
+are identical to its parent. Focused-query and cost checks remain unchanged.
+
+The local BeXhoma report writer remains at schema version 1.3.0, so the result
+contract keeps that version rather than implying a BeXhoma change. The new
+`answer_contract` is consumed by the agent as an interpretation instruction; it
+does not alter the generated result-folder layout or report frontmatter.
+
+Regression tests cover the exact read boundary, standalone one-result behavior,
+combined interpretation decision, mandatory lineage, repeat rejection, and the
+reduced phase-specific tool sets.
+
+### 2026-08-26 — Keep every turn inside the served context window
+
+Asked for the minimum change that prevents the context and output window
+failures, after an interpretation died without leaving a trace. That phase had
+finished its analysis and had its structured record accepted; the single
+remaining turn, which writes the report as prose, asked to reserve half the
+window on top of a conversation that already filled half, so the server refused
+the request outright. Because only an unreachable endpoint was translated into a
+reported failure, a refused request ended the process with a stack trace and no
+record, and eleven minutes of accepted work were lost.
+
+The reading guardrails already bound what enters a context — capped whole-file
+and section reads, a cumulative allowance per phase, fresh contexts between
+stages — but nothing related the per-turn output reservation to any of it. The
+model adapter now asks the server once for the context length it serves and
+sizes each turn's reservation to what the conversation actually leaves, keeping
+the configured ceiling whenever it fits. The estimate is anchored on the prompt
+count the server reported for the previous request, so only the turns appended
+since then are approximated, and a margin is held back for the chat template.
+When too little room remains to answer at all, the adapter raises before
+sending, and the phase reports the exhausted window and records an aborted
+event exactly as it already did for an unreachable endpoint. A server that does
+not publish its window keeps the configured ceiling unchanged.
+
+This also resolves a conflict between the two documented window failures. A
+model that spends a whole turn thinking and returns nothing is remedied by
+raising the per-turn ceiling, which is what the failed run had done at twice the
+default; that remedy is now safe, because a ceiling too large for the remaining
+window is narrowed instead of overflowing it.
+
+### 2026-08-26 — Disclose the unverified load in the result contract
+
+Asked to improve the result contract after a completed follow-up run reported a
+clean-looking repetition whose numbers were physically impossible. In that run
+the Kubernetes node hosting the system under test lost its readiness part-way
+through one loading phase, so every new connection was refused; three tables and
+part of a fourth never loaded, and the run still reported ten passed checks. The
+contract said nothing about loading being unverified, and its `no_sql_warnings`
+entry claimed a result-set comparison "across systems" that the driver never
+performs.
+
+The contract now lists `loaded_data_complete` among its validity entries, marked
+not implemented, and states plainly that a loading phase counts as successful
+when its Kubernetes Job exits zero. A new known gap explains why a partial load
+survives every implemented check, and names the tier-3 evidence that exposes
+one: the post-load statistics script's stderr carries a live row count per
+table, its stdout prints the reference-table counts that script already selects,
+and each loader pod's log shows a row count per table or the client error that
+replaced it. The `no_sql_warnings` entry now describes what the driver actually
+compares — result sets stored inside one process — and records that BeXhoma
+gives every benchmarking pod its own process and one connection, so the check
+passes vacuously at a single query repetition and never certifies agreement
+between two systems, phases or repetitions. Two loader-pod log patterns that
+the detection recipe depends on were missing from the provenance listing and are
+now described, and the pod-description entry now mentions node-readiness events,
+which is where this incident's root cause was recorded.
+
+The contract version stays at 1.3.0: it is pinned by test to the report writer's
+schema version, and the report's own shape did not change — only the description
+of what its checks are worth.
+
+### 2026-08-26 — Finalize prototype interpretation and follow-up safeguards
+
+Asked to begin the agreed prototype-finalization improvements after updating
+from upstream, while changing only the agent codebase and leaving BeXhoma
+untouched. Upstream `master` was already fully merged. The newer `dev` branch
+was inspected but not merged because it is unreleased and would change
+BeXhoma; its relevant additions are an output answer contract and agent-facing
+documentation, which are compatible with this implementation.
+
+The interpretation boundary now computes a deterministic TPC-H comparison
+quality record from `benchmarking.md`. It reports planned and commonly
+successful queries, per-configuration query coverage, whether whole-workload
+throughput is comparable, and repetitions whose geometric-mean latency differs
+by at least threefold from the median of their peers at the same concurrency.
+Such a repetition is marked suspect but is never invalidated automatically.
+The model must run this assessment and reproduce its coverage, throughput, and
+suspect-phase fields exactly before its structured interpretation is accepted.
+This prevents a prose conclusion from silently turning partial query coverage
+into a whole-workload win or discarding an inconvenient repetition.
+
+Validation now reports a conservative timeout budget alongside the existing
+expanded phase count. It multiplies the declared or catalog-default per-query
+deadline by the active-query count, query repeats, and sequential phases, and
+adds declared per-configuration loading deadlines. The value is explicitly a
+deadline ceiling for comparing designs, not a calibrated runtime prediction.
+The TPC-H contract now records BeXhoma's existing 600-second query-timeout
+default so an omitted timeout no longer hides this cost from the agent.
+
+Follow-up decisions now record either a focused query list or an explicit need
+for the full workload, together with a cost rationale. When a list is chosen,
+the authoring gate rejects validation until `workload.params.active_queries`
+matches it exactly. Tests cover partial coverage and non-comparable throughput,
+the threefold anomaly warning, exact structured interpretation, timeout-budget
+arithmetic, rejection and repair of an overly broad follow-up, and preservation
+of a concise user question while operational context remains in the system
+prompt and contracts.
+
+### 2026-08-25 — Refresh the prototype onto BeXhoma v0.10.10
+
+Asked to stop the failed retry and pull the latest BeXhoma repository before
+starting again. Stable upstream `v0.10.10` was merged into the prototype branch
+through a recoverable stash because the checkout contained extensive local
+agent and loading-safety work. The updated BeXhoma lifecycle and generic
+contract engine were retained. Local loading-failure diagnostics remain in the
+lifecycle, while loading-timeout translation and stable resource-sweep names
+were moved into upstream's new workload-specific TPC-H translator instead of
+restoring the superseded generic implementation.
+
+The only upstream-merge conflict was the ignore file, resolved by retaining
+both sets of rules. Reapplying local work then required the two adaptations
+above. The full maintained test suite passes after integration.
+
+### 2026-08-25 — Reject unsafe benchmarker placement before submission
+
+Asked to keep the BeXhoma resource-template divergence as a local follow-up and
+fix the failed retry entirely at the agent boundary. The TPC-H catalog now tells
+the agent that each concurrent stream creates one benchmarker Pod whose current
+BeXhoma template declares limits of 16 CPU cores and 128 GiB memory. These
+limits are independent of `resources.cpu` and `resources.memory`, which continue
+to configure only the system under test. An inline contract comment marks the
+values as local BeXhoma/cluster settings that must remain synchronized.
+
+When `placement.benchmarking` pins those Pods to a node, agent validation now
+multiplies the per-Pod limits by the largest concurrency round and compares the
+peak with that node's allocatable CPU and memory. If the system under test is
+pinned to the same node, its largest declared limits are added to the peak. A
+rejected design receives the computed Pod count, required capacity, available
+capacity, and the useful remedies: reduce concurrency or choose a separate,
+larger benchmark node. The check deliberately uses limits rather than requests.
+Requests answer whether Kubernetes can schedule a Pod; limits describe the
+maximum resource envelope that could distort or exhaust a benchmark node.
+
+This fixes the contract gap exposed by the retry, where four benchmarker Pods
+could expand to 512 GiB despite a 64 GiB database budget. It does not claim to
+identify or repair the original PgDuckDB loader's no-output failure; the loading
+deadline and preserved diagnostics documented below are the mechanism for
+capturing that root cause on a new attempt.
+
+Known divergence for later: the catalog currently mirrors fixed values from
+BeXhoma's benchmarker template. A permanent execution-host change should expose
+or derive those component limits from one source so a template edit cannot make
+the agent contract stale. That BeXhoma change is intentionally outside this
+agent-only implementation.
+
+### 2026-08-25 — Bound loading and preserve failure diagnostics
+
+Asked to expose a BeXhoma loading timeout and failure-log capture to the agent,
+which required a narrow change to the execution host rather than prompt-only
+instructions. The input contract now accepts an optional loading timeout in
+minutes. It is translated to BeXhoma's command line and measured independently
+for each resolved system configuration from the moment that configuration
+actually begins loading. A configuration waiting for cluster capacity does not
+consume the deadline, and omitting the field preserves the previous unlimited
+loading behavior.
+
+Failure capture is automatic rather than another opt-in switch. A terminally
+failed Kubernetes loader Job or an expired loading deadline stops the
+experiment, but only after BeXhoma stores the loader and system-under-test
+container logs, Pod descriptions, and loader Job descriptions. The parent Job
+description is important because it retains the terminal condition and events
+for failed Pods that Kubernetes may already have replaced or garbage-collected.
+The same diagnostics-before-teardown rule also applies when loading is stopped
+through the existing experiment-wide timeout or another cleanup path.
+
+This deliberately avoids a disable knob: failure diagnostics are part of the
+experiment's audit record, and making them optional could discard the only
+evidence explaining why a run produced no report. Tests cover contract bounds,
+backward-compatible omission, translation, active loading, per-configuration
+expiry, terminal Job failure, and capture ordering before deletion.
+
+### 2026-08-24 — Allow either Hopper GPU for the model server
+
+Initially requested H100 placement for the next agent benchmark, then allowed
+H200 as well while waiting for capacity. The model-server affinity therefore
+admits nodes labelled `gpu: h100` or `gpu: h200`, and the quick start describes
+that the scheduler uses whichever compatible GPU becomes available first.
+
+### 2026-08-24 — Use the cluster's shared Prometheus endpoint by default
+
+Asked to apply the endpoint confirmed by the cluster administrator after the
+agent benchmark produced no CPU or memory measurements. The working
+`cluster.config`, checked-in template, and configuration guide now use
+`http://prometheus.monitor.svc.cluster.local:9090/api/v1/` for cluster-level
+monitoring. Application monitoring keeps its service and namespace placeholders
+because those endpoints belong to each experiment.
+
+The endpoint was checked from the running Bexhoma dashboard pod. It returned
+HTTP 200, the node-memory metric used by Bexhoma's health probe, and container
+memory series for the active PgDuckDB system-under-test pods.
+
+### 2026-08-24 — Give interpretation prose its own output budget
+
+Asked to address the token-budget risk in requiring the complete study report
+inside the structured interpretation call. That call now records only validity,
+question coverage, conclusions, and the paths supporting them. Once accepted,
+the model writes the self-contained Markdown report in a separate tool-free
+turn, so the report does not pay JSON-escaping overhead or compete with the
+structured record for the same generated output.
+
+The harness validates the final prose before accepting it. Its title and all
+eight required section headings must occur exactly once, in order, with no
+additional level-one or level-two headings. A malformed report is returned to
+the model for correction within the bounded phase. This preserves the structural
+guardrail without trying to judge the semantic correctness of natural-language
+inference.
+
+### 2026-08-24 — Add the remaining lean prototype guardrails
+
+Asked to implement the remaining high-benefit review items except automatic
+cross-experiment comparability, which was judged beyond the prototype boundary.
+
+Initial design now uses the same design-space gate as follow-up work. It cannot
+write a specification before reading the complete catalog and, when present,
+the environment descriptor. This turns the initial prompt instruction into the
+same auditable enforcement already used later in the loop.
+
+Interpretation now requires successful reads of the exact report index, its
+Tests evidence, and the archived result contract before accepting conclusions.
+The recorded failed-check count must match report frontmatter; failed checks
+require a scope explanation. Every question declares whether its evidence is
+supported, limited, or invalid and cites paths actually read in that model
+context. A settled question requires supported evidence. The initially shipped
+structured report object was replaced by the separate validated prose turn
+described above, which reduces generation overhead while retaining the required
+section contract. The harness deliberately does not attempt to prove the
+semantic correctness of natural-language inference.
+
+Package discovery now includes the agent package and the root-level TPC-H
+launcher that its detached submission adapter imports. A built wheel was
+installed in a temporary environment outside the checkout; the agent imported,
+the launcher was discoverable, and the command-line help ran. Pytest is also
+configured to collect the maintained `tests/` directory, avoiding the
+executable root-level benchmark script during normal test runs.
+
+### 2026-08-24 — Repair execution-validity defects found by the paper review
+
+Asked to begin implementing the recommended fixes from a comprehensive review
+of the agent prototype against the paper. This first batch addresses the three
+execution defects that could collapse treatments, submit without checking the
+target cluster, or lose the identity of a live experiment.
+
+Resource sweeps now share one stable positional identity between the catalog
+translator and the TPC-H configuration builder. CPU-only sweeps and cells that
+share a memory request therefore produce distinct configurations and storage
+scopes instead of all receiving the same memory-derived name.
+
+Catalog-only validation remains available for an explicit dry run, but it no
+longer authorizes submission. The workspace records a submission fingerprint
+only after the environment checks have also passed, so a missing descriptor
+cannot silently reach Kubernetes.
+
+A detached process that is still alive when the startup wait expires now
+returns its preassigned experiment code with `starting` state instead of
+raising and losing the code from the phase outcome. The exact specification,
+catalog, environment, and result contract are snapshotted before launch and
+named in its status file; result discovery archives those snapshots when the
+folder becomes observable. Regression tests cover all three paths.
+
+### 2026-08-24 — Restore the configured Kubernetes namespace on every server operation
+
+Requested a portable fix for the model-server and benchmark workflow after a
+valid Keycloak token was used with a context that had lost its namespace. The
+server wrapper now reapplies `MODEL_SERVER_NAMESPACE` on every invocation,
+including when the token is still valid, so namespaced resources do not fall
+back to `default`. The agent quick start documents both this environment
+variable and the matching Bexhoma cluster configuration setting.
+
+The standard model-server manifest also caps vLLM at 512 concurrent sequences.
+The H100 has fewer available Mamba cache blocks than vLLM's default sequence
+limit, so this portable cap prevents startup failure when Kubernetes selects an
+H100. The agent uses only a small number of concurrent model requests, so it
+does not constrain the benchmark study.
 
 ### 2026-08-18 — Build the design-and-validate loop, and host a model on the cluster
 
@@ -428,8 +920,9 @@ The local wrapper now owns the complete server/design/wait/interpret/follow-up
 loop, resumes durable investigations, waits for actual pod deletion, and
 retries vLLM startup while shared GPU capacity is unavailable. A live check
 confirmed noninteractive login and shutdown; restart correctly remained Pending
-when the H200 pool had no free GPU, which is now an automatic wait rather than a
-terminal lifecycle failure.
+when the compatible GPU pool had no free GPU, which is now an automatic wait
+rather than a terminal lifecycle failure. Placement accepts either Hopper GPU,
+so a packed H200 no longer blocks startup while an H100 is free.
 
 `agent/ARCHITECTURE.md` now contains the single complete pipeline description,
 annotated Mermaid flow, module sequence, lifecycle boundary, replay options,
@@ -448,3 +941,239 @@ loader, and benchmarker. Replaying elsewhere requires target-node substitution
 or omission of the optional placement block, followed by validation against a
 fresh target environment. The local hard-coded template `nodeSelector` edits
 must remain outside the portable repository.
+
+### 2026-08-23 — Let the model server release its own GPU
+
+Asked to finish the in-pod idle-shutdown implementation after the local wrapper
+crashed and left vLLM holding a GPU long after the experiment had finished.
+
+The cause was that shutdown lived only in the wrapper's cleanup path, so it
+happened only when the wrapper itself was the thing that started the phase. The
+last three interpretation phases were launched by hand, so nothing ever asked
+for the GPU back. Daemonizing was rejected: it would have survived only a closed
+terminal, still lost the GPU to a hard kill or a reboot, and added a lock file,
+detachment, log redirection, and supervision for the sake of switching one pod
+off. It also keeps the authority over an idle GPU on the operator's machine
+rather than in the pod that holds it.
+
+The model server pod is now self-cleaning. A watchdog runs beside the server in
+the same container and releases the GPU once nothing has sent a request for
+`IDLE_SHUTDOWN_SECONDS` (20 minutes by default, tunable through the pod
+environment, zero to disable). It reads the server's own metrics endpoint and
+treats both in-flight gauges and monotonic completion counters as use, so
+neither a single long request nor a burst of short ones between polls is
+mistaken for silence. Unreadable metrics, or metric names a future vLLM does not
+publish, keep the server up rather than shutting it down on an unexplained
+absence of evidence. The pod's restart policy became `OnFailure`, which lets a
+crashed server come back while allowing the watchdog's clean exit to actually
+end the pod; every non-idle exit is forced non-zero so only the idle path can
+end it. An idle server gets thirty seconds to stop cleanly before the watchdog
+forces it down, so a hung serving process cannot defeat the resource release.
+Because a finished pod keeps its name, the server switch now clears a
+pod that is neither Running nor Pending before applying the manifest, and leaves
+a healthy current-generation one alone so an `up` on a live server stays cheap.
+An explicit pod-generation annotation makes the one-time replacement of an
+older running manifest deterministic, since Kubernetes cannot update a Pod's
+command or restart policy in place.
+
+The wrapper additionally converts `SIGTERM` and `SIGHUP` into its normal
+interruption path, so a polite kill or a terminal hangup now stops the agent
+child and shuts the server down instead of ending the process outright. Prompt
+shutdown through the wrapper remains the fast path; the watchdog is the backstop
+for every launch the wrapper did not drive.
+
+### 2026-08-24 — Full prototype review, and the three findings acted on
+
+Asked for a verdict on the whole prototype: whether it is still compact and
+readable, whether it meets what the paper describes, whether it would run on
+another cluster, and what could be refactored. The review found no correctness
+bugs, one latent trap, two duplications, and two illustrated-but-unbuilt items
+that the contracts already declare as gaps. The first three findings were then
+applied.
+
+The tool schema lists are no longer shared between phases. Follow-up authoring
+held the very same list object as design, and the dry-run path edited that
+object in place to withhold submission, so both names changed together for the
+life of the process. Nothing failed in practice, because a design process never
+reaches follow-up authoring, but a second call in one process would have
+silently disarmed a real run. Authoring now holds a copy, withholding is a
+function that returns a new list, and the design phase takes a `dry_run`
+argument instead of mutating imported state. Two regression tests cover it, one
+of which also covers the previously untested design dry-run path.
+
+A submission that could not be confirmed now says what it actually left behind.
+Previously, if the result folder did not appear within the wait, submission
+raised a single message and the detached benchmark carried on running, holding
+the run lock, with nothing left to interpret it. The wait now distinguishes a
+child that exited from one that is still working, and the still-working case
+reports the process id and the fact that the lock is held, so the run can be
+followed or stopped deliberately. The child is deliberately not killed, since
+that would discard real cluster work over a slow start.
+
+Interpretation was split into the three phases it already was. `run_interpret`
+had grown to 204 lines carrying three nested handlers, and the rule that a fresh
+context must reread the whole design space before acting was written out twice,
+once for the follow-up decision and once for authoring. Evidence interpretation,
+follow-up decision, and follow-up authoring are now separate functions, the
+duplicated rule lives in one `_DesignSpaceGate`, and the orchestrator is 99
+lines. Behaviour is unchanged and the existing staged-context tests continue to
+pass unmodified.
+
+Left deliberately: the shared conversation loop's parameter count, which reflects
+real per-phase differences; the duplicated resource-cell counting and the shape
+checker's repetition, both contained and cosmetic; and the personal absolute path
+that defaults the result root, which is the single most likely obstacle for
+anyone cloning this elsewhere and is recorded here as outstanding.
+
+### 2026-08-24 — Take the result folder from Bexhoma instead of hardcoding it
+
+Asked to fix the last portability item from the review, and whether a relative
+path could be used.
+
+The agent and the lifecycle wrapper both defaulted the result root to an
+absolute path belonging to this cluster, so a fresh checkout elsewhere pointed
+at a directory that does not exist. A relative default would have been no better,
+because the value is not the agent's to choose: it has to name the directory
+Bexhoma actually writes into, and Bexhoma takes that from the `resultfolder`
+entry of `cluster.config` — the file every user already creates as their first
+setup step, and the only one the experiment path the agent submits through will
+read. The agent now reads the same entry, so the two agree on any cluster
+without a second setting. Relative values are supported and resolve against the
+repository, which lets a checkout keep its results beside itself; Windows-style
+values are normalised the way Bexhoma normalises them. A checkout with no
+configuration is told to create one instead of being defaulted anywhere.
+
+Precedence is `--results`, then `AGENT_RESULTS`, then the configured folder,
+then a clear error.
+
+The wrapper needed the same directory in order to poll for a report, but it is
+run as a script from a subdirectory and so cannot import the agent package. It
+now reads each run's directory from the status file the agent already writes at
+submission, which is both simpler and stronger: the wrapper observes what the
+agent recorded rather than recomputing it, so the two cannot drift. It forwards
+`--results` to the agent only when an operator actually overrode it, and its own
+`--results` survives as a fallback for status files written before that field
+existed. Four new tests cover configured, relative, Windows, absent, and
+recorded-directory resolution.
+
+### 2026-08-24 — Make the quick start sufficient for a stranger
+
+Asked whether `agent/README.md` alone is enough for another person or a coding
+agent to start an experiment. It was not. Walking it against a clean checkout
+found two instructions that fail outright and three per-cluster values it never
+mentions.
+
+The agent's model client was not a declared dependency of anything, so following
+"install the repository dependencies" produced an environment in which the very
+first agent command dies on an import. It is now an optional extra, installed
+with `pip install -e ".[agent]"`, so ordinary bexhoma users do not inherit a
+package they have no use for. The published metadata was checked to confirm the
+extra resolves.
+
+The documented namespace override could not work. The manifest pinned a
+namespace on all three of its objects, and the switch applied it without a
+namespace flag, so the file's value won while every other command in the switch
+looked in the configured namespace instead; kubectl also rejects a conflicting
+flag outright. The manifest now pins no namespace and the switch supplies one on
+apply, which makes `MODEL_SERVER_NAMESPACE` genuinely decide where the server is
+created. Verified against the cluster with a client-side dry run in both a
+foreign namespace and the usual one.
+
+Three values remain necessarily per-cluster and are now named where someone will
+look: the storage class for the weights volume and the GPU node labels are
+commented in the manifest and listed in the quick start, and the OIDC login
+helper — which defaults to a script path on this machine only — is documented
+with a no-op override for clusters reached through an ordinary kubeconfig. The
+GPU-label case is called out specifically because it fails silently: a
+mislabelled cluster leaves the pod unschedulable, and startup waits for capacity
+by design rather than reporting an error, so the quick start now recommends a
+bounded `--server-start-attempts` when first bringing this up somewhere new.
+
+The prerequisites also now create the virtual environment they had been assuming,
+and state that `cluster.config` must be copied from the template before anything
+runs.
+
+Checked end to end against a checkout containing only committed files: the
+prerequisites complete, a relative `resultfolder` resolves beside the checkout,
+the design phase proceeds through configuration, catalog, and workspace setup to
+the model call, and the quick start's own verification command passes.
+
+### 2026-08-24 — Report an unreachable model endpoint as a setup mistake
+
+Asked to make a wrong `--base-url` read like the harness's other startup errors
+instead of a stack trace. It was the one remaining place where an ordinary
+misconfiguration surfaced as an unhandled exception from the client library.
+
+The model adapter now converts a connection failure into its own
+`ModelUnreachable`, which keeps the client library's exception types inside the
+only module that is supposed to know which server is behind the endpoint. The
+command line catches it around both phases and prints the same shape of message
+as the missing-model and missing-result-folder errors: what failed, which
+endpoint, and how to correct it, including the `/v1` suffix that most
+OpenAI-compatible servers expect and that is easy to omit. It exits 2, as every
+other misconfiguration in that entry point does, and records an `aborted` event
+so a phase that never reached the model is still auditable rather than leaving
+an empty directory. Timeouts are covered too, being a subclass of the same
+failure. One test covers the exit code, the message, and the recorded event.
+
+### 2026-08-24 — The two remaining review refactors
+
+Asked to finish the two tidying items the review had left outstanding. Both are
+behaviour-preserving; the existing validation tests cover them unchanged.
+
+The run counter and the repetitions rule each worked out independently how many
+systems, resource-sweep cells, rounds, and repetitions an experiment expands to.
+They now share one measurement. The duplication had already produced a
+disagreement: on an empty sweep list the counter read one cell while the
+repetitions rule read zero, which would have made it conclude the experiment
+compares nothing and skip its own check. Shape validation rejects an empty list
+before either sees it, so this was never reachable, but the two can no longer
+drift.
+
+The shape checker was a hundred-line ladder repeating the same three lines
+twelve times. It is now five named checks — workload, systems, resources,
+declared factors, and the top-level walk that sequences them — none longer than
+twenty-eight lines, and the top-level function reads as the list of checks it
+performs. Nothing about what is accepted or rejected changed, and the first
+error found is still the one returned.
+
+While there, the factor-mismatch error now reports which factors actually
+disagree. It had computed exactly that set and then discarded it, leaving the
+agent to diff two lists itself in order to repair its specification.
+
+### 2026-08-27 — Put the bexhoma package out of bounds
+
+Asked to record in both instruction files that the bexhoma code base is not to
+be modified, and that active work belongs to the agent implementation alone.
+
+The scope section of `CLAUDE.md` and `AGENTS.md` now states this before its
+existing rules: `bexhoma/`, the top-level experiment drivers, `k8s/` and
+`contracts/` are a fixed external dependency the agent is written against, and
+a bexhoma bug that blocks the agent is to be reported with a proposed change
+rather than fixed in place without being asked.
+
+The immediate occasion was a genuine bexhoma defect found while looking into
+long-lived monitoring pods: stopping without naming an experiment deletes the
+cluster-wide monitoring service while leaving its daemon set running, which
+strands the collectors and makes the next run redeploy on top of them. Under
+the new rule that stays a report, not a patch.
+
+### 2026-08-27 — Double the served context window to 128k
+
+Asked whether 128k tokens is achievable on the H100/H200 model server, and to
+raise the setting if it does not put the server at risk.
+
+The served window in `agent/k8s/vllm-qwen38-27b.yml` goes from 65536 to 131072
+tokens. Reading the model's own `config.json` off the weights volume settled the
+two questions that mattered. Its native position limit is 262144 with plain
+rotary encoding and no scaling factor, so 128k needs nothing enabled and loses
+no quality. And it is a hybrid: of 64 layers only every fourth is full
+attention, the other 48 keeping a fixed-size linear-attention state that does
+not grow with sequence length. A full 128k sequence therefore costs roughly
+4 GiB of KV cache rather than the ~16 GiB a dense 27B model would need, which
+fits the H100's 80 GB many times over and the H200's 141 GB with far more room.
+
+The occasion is that interpretation prompts already reach about 49k tokens,
+three quarters of the old window, and the harness aborts a phase rather than
+compacting when the window runs out. No other knob changed: concurrency stays
+nominal because the agent runs one sequential conversation per phase.

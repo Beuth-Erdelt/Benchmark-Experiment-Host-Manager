@@ -52,6 +52,7 @@ __all__ = [
     "effective_post_load",
     "validate_experiment",
     "validate_environment",
+    "format_resource_cell_suffix",
     "build_argv",
     "build_command",
     "translate",
@@ -581,6 +582,17 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
             raise SpecError(
                 f"resources.storage_class '{storage_class}' is not in environment.yml's storage_classes"
             )
+
+
+def format_resource_cell_suffix(cell_index: int, cell_count: int) -> str:
+    """Format the stable identity shared by one swept resource cell.
+
+    :param cell_index: Zero-based position of the resource cell.
+    :param cell_count: Total number of resource cells.
+    :return: An empty suffix for one cell, otherwise ``resources-N``.
+    :rtype: str
+    """
+    return f"resources-{cell_index + 1}" if cell_count > 1 else ""
 
 
 def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:

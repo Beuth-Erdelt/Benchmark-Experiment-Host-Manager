@@ -1,0 +1,561 @@
+environment_contract_version: 1.0.0
+cluster:
+  context: oidc_ds_cluster
+  namespace: lliu
+  collected_at: '2026-08-26T20:08:23.609778+00:00'
+nodes:
+- name: cl-worker17
+  labels:
+    kubernetes.io/hostname: cl-worker17
+    kubernetes.io/arch: amd64
+    cpu: e5-2630
+    gpu: k80
+  capacity:
+    cpu: '32'
+    ephemeral-storage: 114790532Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 330054844Ki
+    nvidia.com/gpu: '0'
+  allocatable:
+    cpu: '30'
+    ephemeral-storage: 114790532Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: '318929868344'
+    nvidia.com/gpu: '0'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker19
+  labels:
+    kubernetes.io/hostname: cl-worker19
+    kubernetes.io/arch: amd64
+    cpu: e5-2630
+    gpu: p100
+  capacity:
+    cpu: '40'
+    ephemeral-storage: 114790532Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 792481208Ki
+    nvidia.com/gpu: '8'
+  allocatable:
+    cpu: '40'
+    ephemeral-storage: '105790954117'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 792378808Ki
+    nvidia.com/gpu: '8'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-1060-nvidia
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker20
+  labels:
+    kubernetes.io/hostname: cl-worker20
+    kubernetes.io/arch: amd64
+    cpu: xeon-4110
+    gpu: v100
+  capacity:
+    cpu: '32'
+    ephemeral-storage: 1272931600Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 791216684Ki
+    nvidia.com/gpu: '2'
+  allocatable:
+    cpu: '32'
+    ephemeral-storage: '1173133760618'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 791114284Ki
+    nvidia.com/gpu: '2'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker21
+  labels:
+    kubernetes.io/hostname: cl-worker21
+    kubernetes.io/arch: amd64
+    cpu: epyc-7542
+    gpu: 'false'
+  capacity:
+    cpu: '64'
+    ephemeral-storage: 1844810260Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 593864404Ki
+  allocatable:
+    cpu: '64'
+    ephemeral-storage: '1700177132802'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 593762004Ki
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker22
+  labels:
+    kubernetes.io/hostname: cl-worker22
+    kubernetes.io/arch: amd64
+    cpu: epyc-7502
+    gpu: v100
+  capacity:
+    cpu: '128'
+    ephemeral-storage: 575735880Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527909468Ki
+    nvidia.com/gpu: '2'
+  allocatable:
+    cpu: '128'
+    ephemeral-storage: '530598186130'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527807068Ki
+    nvidia.com/gpu: '2'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker23
+  labels:
+    kubernetes.io/hostname: cl-worker23
+    kubernetes.io/arch: amd64
+    cpu: epyc-7352
+    gpu: v100
+  capacity:
+    cpu: '96'
+    ephemeral-storage: 234312928Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527920708Ki
+    nvidia.com/gpu: '2'
+  allocatable:
+    cpu: '96'
+    ephemeral-storage: '215942794088'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527818308Ki
+    nvidia.com/gpu: '2'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker24
+  labels:
+    kubernetes.io/hostname: cl-worker24
+    kubernetes.io/arch: amd64
+    cpu: epyc-7352
+    gpu: a100
+  capacity:
+    cpu: '96'
+    ephemeral-storage: 229637452Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527920732Ki
+    nvidia.com/gpu: '1'
+  allocatable:
+    cpu: '96'
+    ephemeral-storage: '211633875413'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527818332Ki
+    nvidia.com/gpu: '1'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker25
+  labels:
+    kubernetes.io/hostname: cl-worker25
+    kubernetes.io/arch: amd64
+    cpu: epyc-7352
+    gpu: v100
+  capacity:
+    cpu: '96'
+    ephemeral-storage: 229637452Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527920716Ki
+    nvidia.com/gpu: '1'
+  allocatable:
+    cpu: '96'
+    ephemeral-storage: '211633875413'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527818316Ki
+    nvidia.com/gpu: '1'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker27
+  labels:
+    kubernetes.io/hostname: cl-worker27
+    kubernetes.io/arch: amd64
+    cpu: epyc-7742
+    gpu: a100
+  capacity:
+    cpu: '256'
+    ephemeral-storage: 1844166204Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1052130140Ki
+    nvidia.com/gpu: '8'
+  allocatable:
+    cpu: '256'
+    ephemeral-storage: '1699583570793'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1052027740Ki
+    nvidia.com/gpu: '8'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.2.1
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker28
+  labels:
+    kubernetes.io/hostname: cl-worker28
+    kubernetes.io/arch: amd64
+    cpu: epyc-7742
+    gpu: a100
+  capacity:
+    cpu: '256'
+    ephemeral-storage: 1844166204Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1052131460Ki
+    nvidia.com/gpu: '8'
+  allocatable:
+    cpu: '256'
+    ephemeral-storage: '1699583570793'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1052029060Ki
+    nvidia.com/gpu: '8'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-1060-nvidia
+  container_runtime_version: containerd://2.2.1
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker29
+  labels:
+    kubernetes.io/hostname: cl-worker29
+    kubernetes.io/arch: amd64
+    cpu: epyc-7502
+    gpu: a100
+  capacity:
+    cpu: '128'
+    ephemeral-storage: 459849800Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1056389372Ki
+    nvidia.com/gpu: '1'
+  allocatable:
+    cpu: '128'
+    ephemeral-storage: '423797574979'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1056286972Ki
+    nvidia.com/gpu: '1'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker34
+  labels:
+    kubernetes.io/hostname: cl-worker34
+    kubernetes.io/arch: amd64
+    cpu: epyc-7453
+    gpu: h100
+  capacity:
+    cpu: '56'
+    ephemeral-storage: 459218032Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1056298608Ki
+    nvidia.com/gpu: '1'
+  allocatable:
+    cpu: '56'
+    ephemeral-storage: '423215337591'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1056196208Ki
+    nvidia.com/gpu: '1'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker36
+  labels:
+    kubernetes.io/hostname: cl-worker36
+    kubernetes.io/arch: amd64
+    cpu: xeon-platinum-8570
+    gpu: b200
+  capacity:
+    cpu: '224'
+    ephemeral-storage: 1844165180Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 2113450364Ki
+    nvidia.com/gpu: '8'
+  allocatable:
+    cpu: '224'
+    ephemeral-storage: '1699582627075'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 2113347964Ki
+    nvidia.com/gpu: '8'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.2.1
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker37
+  labels:
+    kubernetes.io/hostname: cl-worker37
+    kubernetes.io/arch: amd64
+    cpu: epyc-7453
+    gpu: h200
+  capacity:
+    cpu: '128'
+    ephemeral-storage: 920762148Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1056498000Ki
+    nvidia.com/gpu: '4'
+  allocatable:
+    cpu: '128'
+    ephemeral-storage: '848574394192'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 1056395600Ki
+    nvidia.com/gpu: '4'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker38
+  labels:
+    kubernetes.io/hostname: cl-worker38
+    kubernetes.io/arch: amd64
+    cpu: xeon-gold-6430
+    gpu: l40
+  capacity:
+    cpu: '128'
+    ephemeral-storage: 459218032Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527825056Ki
+    nvidia.com/gpu: '2'
+  allocatable:
+    cpu: '128'
+    ephemeral-storage: '423215337591'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527722656Ki
+    nvidia.com/gpu: '2'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+- name: cl-worker39
+  labels:
+    kubernetes.io/hostname: cl-worker39
+    kubernetes.io/arch: amd64
+    cpu: xeon-6767p
+    gpu: l4
+  capacity:
+    cpu: '256'
+    ephemeral-storage: 459283568Ki
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527927628Ki
+    nvidia.com/gpu: '2'
+  allocatable:
+    cpu: '256'
+    ephemeral-storage: '423275735568'
+    hugepages-1Gi: '0'
+    hugepages-2Mi: '0'
+    memory: 527825228Ki
+    nvidia.com/gpu: '2'
+  os_image: Ubuntu 24.04.4 LTS
+  kernel_version: 6.8.0-137-generic
+  container_runtime_version: containerd://2.3.3
+  architecture: amd64
+  free: {}
+  hardware_baseline: {}
+excluded_nodes:
+- name: cl-master1
+  taints:
+  - key: node-role.kubernetes.io/control-plane
+    value: ''
+    effect: NoSchedule
+- name: cl-master2
+  taints:
+  - key: node-role.kubernetes.io/control-plane
+    value: ''
+    effect: NoSchedule
+- name: cl-master3
+  taints:
+  - key: node-role.kubernetes.io/control-plane
+    value: ''
+    effect: NoSchedule
+- name: cl-worker2
+  taints:
+  - key: old-node
+    value: 'true'
+    effect: PreferNoSchedule
+- name: cl-worker3
+  taints:
+  - key: old-node
+    value: 'true'
+    effect: PreferNoSchedule
+- name: cl-worker30
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker31
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker32
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker33
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker35
+  taints:
+  - key: node-role.kubernetes.io/storage
+    value: ''
+    effect: NoSchedule
+- name: cl-worker4
+  taints:
+  - key: old-node
+    value: 'true'
+    effect: PreferNoSchedule
+- name: cl-worker5
+  taints:
+  - key: old-node
+    value: 'true'
+    effect: PreferNoSchedule
+storage_classes:
+- name: ceph
+  alias: null
+  provisioner: ceph.rook.io/block
+  parameters:
+    blockPool: k8svol
+    clusterNamespace: rook-ceph
+    fstype: ext4
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+- name: cephcsi
+  alias: cephcsi
+  provisioner: rook-ceph.rbd.csi.ceph.com
+  parameters:
+    clusterID: rook-ceph
+    csi.storage.k8s.io/controller-expand-secret-name: rook-csi-rbd-provisioner
+    csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+    csi.storage.k8s.io/fstype: ext4
+    csi.storage.k8s.io/node-stage-secret-name: rook-csi-rbd-node
+    csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+    csi.storage.k8s.io/provisioner-secret-name: rook-csi-rbd-provisioner
+    csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+    imageFeatures: layering
+    imageFormat: '2'
+    pool: k8svol
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+- name: cephxfs
+  alias: null
+  provisioner: ceph.rook.io/block
+  parameters:
+    blockPool: k8svol
+    clusterNamespace: rook-ceph
+    fstype: xfs
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+- name: local-cache
+  alias: null
+  provisioner: kubernetes.io/no-provisioner
+  parameters: {}
+  reclaim_policy: Retain
+  volume_binding_mode: WaitForFirstConsumer
+- name: local-hdd
+  alias: local-hdd
+  provisioner: kubernetes.io/no-provisioner
+  parameters: {}
+  reclaim_policy: Delete
+  volume_binding_mode: WaitForFirstConsumer
+- name: rook-ceph-bucket
+  alias: null
+  provisioner: rook-ceph.ceph.rook.io/bucket
+  parameters:
+    objectStoreName: object-store
+    objectStoreNamespace: rook-ceph
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+- name: shared
+  alias: shared
+  provisioner: rook-ceph.cephfs.csi.ceph.com
+  parameters:
+    clusterID: rook-ceph
+    csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
+    csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+    csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+    csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+    csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+    csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+    fsName: home
+    pool: home-data0
+    provisionVolume: 'true'
+  reclaim_policy: Delete
+  volume_binding_mode: Immediate
+resource_limits:
+  max_allocatable_cpu: '256'
+  max_allocatable_memory: 2113347964Ki
+  max_free_cpu: null
+  max_free_memory: null
+  node_count: 16
+  namespace_resource_quotas: []
+  namespace_limit_ranges: []

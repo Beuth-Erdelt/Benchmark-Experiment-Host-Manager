@@ -1,0 +1,37 @@
+mode: run
+title: "TPC-H SF2: PostgreSQL vs forced-execution PgDuckDB at 16 CPU / 64 GiB, 1-2 streams"
+hypothesis: >
+  PostgreSQL's full-workload (all 22 TPC-H queries) advantage over
+  forced-execution PgDuckDB observed at SF1 persists at SF2 under identical
+  16-CPU/64-GiB resource limits, and the system ranking is stable when
+  concurrency increases from 1 to 2 parallel query streams.
+discriminates: [system, concurrency]
+workload:
+  name: tpch
+  params:
+    scaling_factor: 2
+  rounds: [1, 2]
+  repetitions: 3
+loading:
+  pods: 4
+  threads: 1
+  split: 1
+  timeout_minutes: 60
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override:
+      duckdb_force_execution: true
+placement:
+  sut: cl-worker36
+  loading: cl-worker36
+  benchmarking: cl-worker36
+resources:
+  cpu:
+    request: 16
+    limit: 16
+  memory:
+    request: 64Gi
+    limit: 64Gi

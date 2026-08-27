@@ -1,0 +1,1 @@
+Does PostgreSQL's full-workload advantage observed at TPC-H SF1 persist at SF2 against forced-execution PgDuckDB under identical 16-CPU/64-GiB limits, and does the ranking remain stable from one to two concurrent query streams? Use the complete 22-query workload and three experiment repetitions.

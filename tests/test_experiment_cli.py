@@ -63,6 +63,14 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
         self.assertEqual(sorted(parsed_args.dbms), ['PgDuckDB', 'PostgreSQL'])
         self.assertEqual(parsed_args.scaling_factor, '10')
 
+    def test_catalog_driven_file_accepts_preassigned_code(self) -> None:
+        """The harness can know the result folder before launching the run."""
+        import tpch
+        with mock.patch.object(tpch, 'run') as mock_run:
+            experiment_cli.run_experiment_yaml(
+                _CATALOG_DRIVEN_FILE, _CATALOG_FILE, experiment_code='1234567890')
+        self.assertEqual(mock_run.call_args[0][0].experiment, '1234567890')
+
     def test_self_specified_file_routes_to_experiment_builder(self) -> None:
         """A self-specified file is validated and handed to experiment_builder, not tpch.run()."""
         import tpch

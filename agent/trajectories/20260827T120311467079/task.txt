@@ -1,0 +1,1 @@
+Choose a database system for a 1 GB analytical reporting workload under 16 CPU cores and 64 GiB RAM, and determine whether the recommendation remains valid with concurrent analysts.
