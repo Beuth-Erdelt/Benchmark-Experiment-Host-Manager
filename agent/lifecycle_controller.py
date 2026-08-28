@@ -13,7 +13,6 @@ See LICENSE for details.
 from __future__ import annotations
 
 import ast
-import fcntl
 import json
 import os
 import pprint
@@ -24,6 +23,8 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+
+from agent.harness import _runlock
 
 __all__ = ["main"]
 
@@ -240,14 +241,11 @@ def _resume_benchmark_orchestrator(
     if not catalog:
         raise ControllerError(f"benchmark {status.get('code')} has no archived catalog")
 
-    lock_descriptor = os.open(results / _RUN_LOCK, os.O_CREAT | os.O_RDWR, 0o600)
-    try:
-        fcntl.flock(lock_descriptor, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except BlockingIOError as error:
-        os.close(lock_descriptor)
+    lock_path = results / _RUN_LOCK
+    if not _runlock.try_claim(lock_path, os.getpid()):
         raise ControllerError(
             "another agent experiment holds the shared benchmark lock"
-        ) from error
+        )
 
     log_path = Path(status["log"])
     try:
@@ -266,12 +264,13 @@ def _resume_benchmark_orchestrator(
                 stdout=log,
                 stderr=subprocess.STDOUT,
                 start_new_session=True,
-                pass_fds=(lock_descriptor,),
             )
     except (OSError, ValueError):
-        os.close(lock_descriptor)
+        _runlock.release(lock_path)
         raise
-    os.close(lock_descriptor)
+    # Hand the lock to the resumed child's own PID, so it stays held for as
+    # long as that process runs rather than only while this one does.
+    _runlock.record(lock_path, process.pid)
     status["pid"] = process.pid
     status["state"] = "running"
     status["resumed_after_controller_restart"] = True

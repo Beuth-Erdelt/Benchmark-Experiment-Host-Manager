@@ -384,6 +384,28 @@ def _failure_reason(run: Path) -> str:
 
 
 def _pid_alive(pid: int) -> bool:
+    """Report whether a process ID is currently running.
+
+    ``os.kill(pid, 0)`` is a POSIX liveness probe; on Windows signal 0 instead
+    triggers a console-control event, so that platform is probed through the
+    Win32 API directly.
+
+    :param pid: Process ID to probe.
+    :return: ``True`` if the process exists (including when its liveness
+        cannot be determined because it belongs to another user), ``False``
+        otherwise.
+    :rtype: bool
+    """
+    if os.name == "nt":
+        import ctypes
+        process_query_limited_information = 0x1000
+        handle = ctypes.windll.kernel32.OpenProcess(
+            process_query_limited_information, False, pid
+        )
+        if not handle:
+            return False
+        ctypes.windll.kernel32.CloseHandle(handle)
+        return True
     try:
         os.kill(pid, 0)
     except ProcessLookupError:

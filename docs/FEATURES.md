@@ -142,9 +142,62 @@ situation in which two submissions can allocate a code at once, the experiment
 code is reserved atomically: the status file is created exclusively, so of two
 runs racing for the same rounded second exactly one wins it.
 
+The lock itself (`agent.harness._runlock`) records the holding process's PID
+in the lock file rather than relying on an OS advisory lock handed down to the
+detached child, because Windows' `subprocess.Popen` has no equivalent of
+POSIX's `pass_fds` to inherit one. "Locked" means the recorded PID is still
+alive, checked through `os.kill(pid, 0)` on POSIX and `OpenProcess` on
+Windows; a short-lived same-process lock (`fcntl` on POSIX, `msvcrt` on
+Windows) only brackets the read-check-write around that PID, so two runs
+claiming at the same instant cannot both succeed. This is what makes the
+`agent/` harness runnable from a Windows workstation as well as Linux.
+
 ---
 
 ## Part 2 — Request log
+
+### 2026-08-28 — Make the agent harness run on Windows
+
+Asked to make the `agent/` folder runnable under Windows: conform to its path
+syntax and replace `fcntl`, which does not exist there, with something that
+does. Told to keep the change as small as possible, and separately that the
+harness must also work with files that live at UNC paths
+(`\\server\share\...`), since a Windows workstation reaches network storage
+that way.
+
+`fcntl.flock` was used for exactly one thing: keeping a second agent-started
+benchmark from submitting while an earlier one still runs. That guard relied
+on a Windows-incompatible trick to survive the handover to a detached BeXhoma
+child — the locked file descriptor was passed into the child via
+`subprocess.Popen(pass_fds=...)`, which Windows' `Popen` does not support at
+all. A literal swap of the locking primitive could not fix that half of the
+mechanism, so the guard was redesigned rather than patched: the shared
+`agent.harness._runlock` module now records the holding process's PID in the
+lock file, and "locked" means that PID is still alive, checked with
+`os.kill(pid, 0)` on POSIX and the Win32 `OpenProcess` API on Windows. A
+short-lived, same-process lock — `fcntl` on POSIX, `msvcrt` on Windows — only
+brackets the read-check-write around that PID, so two runs claiming at the
+same instant cannot both succeed. Both call sites that used the old
+descriptor-inheritance trick (`Workspace.submit` and the in-cluster lifecycle
+controller's resume path) now claim the lock before launching BeXhoma and hand
+it to the child's real PID once the process exists, and both were previously
+tested by directly `flock`-ing the lock file to simulate a held lock; those
+tests now write the test process's own (guaranteed-live) PID into the file
+instead, which works the same way on either platform.
+
+A second, unrelated instance of the POSIX-only liveness check
+(`os.kill(pid, 0)` used as "is this PID still running") turned up in
+`Workspace.list_results` and, once pointed out, in `dev/agent_lifecycle.py`'s
+own watchdog. Both now use the same cross-platform check.
+
+The rest of the folder's path handling needed no change: every path in
+`agent/` already goes through `pathlib.Path`, whose `resolve()` and
+`is_relative_to()` already understand UNC roots the same way they understand
+drive letters, so the containment checks that scope what the model may read
+and write keep working unchanged. The one place that hand-parses a path string
+— reading BeXhoma's own Windows-path normalisation of its configured result
+folder, so the agent agrees with BeXhoma about where results land — mirrors
+BeXhoma's behaviour deliberately and was left as is.
 
 ### 2026-08-28 — Act on the pre-handover review
 

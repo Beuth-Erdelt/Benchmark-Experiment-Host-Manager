@@ -14,7 +14,6 @@ See LICENSE for details.
 from __future__ import annotations
 
 import ast
-import fcntl
 import hashlib
 import json
 import os
@@ -28,6 +27,7 @@ from pathlib import Path
 from typing import Any
 
 from agent.harness import validation
+from agent.harness import _runlock
 
 __all__ = [
     "ToolError", "Workspace", "default_result_root", "without_submit",
@@ -460,8 +460,9 @@ class Workspace:
         bexhoma is launched detached, so the run outlives this process and the
         agent can exit rather than sit through twenty minutes of benchmarking.
         Submission is allowed only for the exact bytes that passed validation.
-        The detached child inherits a lock on the shared result root, preventing
-        agent-started benchmark runs from overlapping.
+        The shared result root carries a lock naming the detached child as its
+        holder for as long as that child runs, preventing agent-started
+        benchmark runs from overlapping.
 
         :param path: Path of the specification to submit.
         :return: ``{"code": ..., "log": ...}``, or ``{"error": ...}``.
@@ -483,18 +484,13 @@ class Workspace:
                 "since validate"
             )
 
-        lock_fd = os.open(self.results_root / _RUN_LOCK, os.O_CREAT | os.O_RDWR, 0o600)
-        parallel = False
-        try:
-            fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as error:
-            if not self.allow_parallel_runs:
-                os.close(lock_fd)
-                raise ToolError("submit refused: another agent-started experiment is still running") from error
-            # The operator asked for this run to go ahead anyway. The lock stays
-            # with its current holder; this run simply does not wait for it, and
-            # says so in its result so the trajectory records the choice.
-            parallel = True
+        lock_path = self.results_root / _RUN_LOCK
+        parallel = not _runlock.try_claim(lock_path, os.getpid())
+        if parallel and not self.allow_parallel_runs:
+            raise ToolError("submit refused: another agent-started experiment is still running")
+        # The operator asked for this run to go ahead anyway. The lock stays
+        # with its current holder; this run simply does not wait for it, and
+        # says so in its result so the trajectory records the choice.
 
         code = None
         try:
@@ -508,18 +504,20 @@ class Workspace:
                     [sys.executable, "-m", "agent.harness.submit", str(submitted),
                      "--catalog", self.catalog_path, "--experiment-code", code],
                     cwd=self.root, stdout=log, stderr=subprocess.STDOUT,
-                    start_new_session=True, pass_fds=(lock_fd,),
+                    start_new_session=True,
                 )
         except Exception:
-            os.close(lock_fd)
+            if not parallel:
+                _runlock.release(lock_path)
             if code is not None:
                 # Release the reserved code: nothing was launched under it.
                 (self.status_dir / f"{code}.json").unlink(missing_ok=True)
             raise
-        # The detached child inherits the lock when this run took it. When the
-        # operator allowed a parallel run, the descriptor carries no lock and the
-        # child simply keeps the file open.
-        os.close(lock_fd)
+        # Hand the lock to the detached child's own PID, so it stays held for as
+        # long as that process runs -- even after this one exits -- without
+        # relying on descriptor inheritance, which Windows does not support here.
+        if not parallel:
+            _runlock.record(lock_path, process.pid)
         self._write_status(
             code, submitted, process.pid, provenance, str(log_path), "starting"
         )
@@ -710,7 +708,7 @@ class Workspace:
             report = result_directory / "report" / "index.md"
             if report.is_file():
                 entry["state"] = "finished"
-            elif entry.get("pid") and not _pid_alive(entry["pid"]):
+            elif entry.get("pid") and not _runlock.pid_alive(entry["pid"]):
                 entry["state"] = "failed"
             if entry.get("state") != stored_state:
                 # Persist the derived terminal state. The harness does not need
@@ -988,16 +986,6 @@ def _assess_comparison_quality(text: str) -> dict[str, Any]:
             "invalidate it automatically."
         ),
     }
-
-
-def _pid_alive(pid: int) -> bool:
-    try:
-        os.kill(pid, 0)
-        return True
-    except ProcessLookupError:
-        return False
-    except PermissionError:
-        return True
 
 
 #: Tool definitions in the OpenAI function-calling shape, which is what the

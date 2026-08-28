@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import argparse
 import contextlib
-import fcntl
 import io
 import json
 import os
@@ -965,9 +964,9 @@ class WorkspaceTest(unittest.TestCase):
 
     def test_submit_refuses_while_run_lock_is_held(self) -> None:
         self._validate()
-        lock = (self.root / "results" / ".bexhoma-agent.lock").open("w")
-        self.addCleanup(lock.close)
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        # This test process's own pid is guaranteed to be alive, standing in
+        # for another agent-started experiment holding the run lock.
+        (self.root / "results" / ".bexhoma-agent.lock").write_text(str(os.getpid()))
         result = self.workspace.call("submit", {"path": self.path})
         self.assertIn("still running", result["error"])
 
@@ -975,9 +974,7 @@ class WorkspaceTest(unittest.TestCase):
         """Serial is the default; sharing the cluster is a deliberate choice."""
         self.workspace.allow_parallel_runs = True
         self._validate()
-        lock = (self.root / "results" / ".bexhoma-agent.lock").open("w")
-        self.addCleanup(lock.close)
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        (self.root / "results" / ".bexhoma-agent.lock").write_text(str(os.getpid()))
 
         # The detached bexhoma process is stood in for by its result folder,
         # which is what submit waits for before reporting the run as running.
