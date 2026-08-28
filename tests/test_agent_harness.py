@@ -992,6 +992,48 @@ class WorkspaceTest(unittest.TestCase):
         self.assertNotIn("error", result)
         self.assertTrue(result["parallel_with_running_experiment"])
 
+    def test_two_submissions_in_the_same_second_get_different_codes(self) -> None:
+        """The code is a rounded second, so allocation has to be atomic.
+
+        Without an exclusive reservation, two runs allowed to share the cluster
+        would pick the same code, overwrite each other's status file and report
+        one result folder for two experiments.
+        """
+        with mock.patch("agent.harness.tools.time.time", return_value=1000.0):
+            first = self.workspace._new_code()
+            second = self.workspace._new_code()
+
+        self.assertNotEqual(first, second)
+        self.assertEqual({first, second}, {"1000", "1001"})
+        for code in (first, second):
+            reserved = json.loads(
+                (self.root / "status" / f"{code}.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(reserved["state"], "reserved")
+            self.assertEqual(reserved["results"], str(self.root / "results" / code))
+
+    def test_a_reserved_code_that_never_launched_is_released(self) -> None:
+        """A submission that dies before launch must not keep the code it took."""
+        self._validate()
+        with mock.patch(
+            "agent.harness.tools.subprocess.Popen", side_effect=OSError("no exec"),
+        ), mock.patch("agent.harness.tools.time.time", return_value=2000.0):
+            result = self.workspace.call("submit", {"path": self.path})
+
+        self.assertIn("error", result)
+        self.assertFalse((self.root / "status" / "2000.json").exists())
+
+    def test_a_reservation_is_ignored_by_readers_that_need_a_specification(self) -> None:
+        """A leftover reservation is inert: listed, but never mistaken for a run."""
+        with mock.patch("agent.harness.tools.time.time", return_value=3000.0):
+            code = self.workspace._new_code()
+
+        listed = self.workspace.list_results()["experiments"]
+
+        self.assertEqual([entry["code"] for entry in listed], [code])
+        self.assertNotIn("spec", listed[0])
+        self.assertIsNone(listed[0]["report"])
+
     def test_interpretation_can_submit_one_followup(self) -> None:
         assessment = {
             "question": "what causes degradation?", "status": "unresolved",
@@ -1948,7 +1990,7 @@ class PhaseTest(unittest.TestCase):
             argv = [
                 "agent", "--model", "Qwen/Qwen3.8-27B-FP8",
                 "--root", str(root), "--trajectories", "investigations",
-                "--results", str(results), "--environment", "",
+                "--results", str(results), "--environment", "", "--method", "",
                 "--status", "durable-status",
                 "--task", "question",
             ]
@@ -2004,7 +2046,7 @@ class PhaseTest(unittest.TestCase):
             argv = [
                 "agent", "--model", "fake", "--root", str(root),
                 "--trajectories", "investigations", "--results", str(root / "results"),
-                "--environment", "", "--task", "question",
+                "--environment", "", "--method", "", "--task", "question",
                 "--base-url", "http://127.0.0.1:9/v1",
             ]
             unreachable = ModelUnreachable("no answer from http://127.0.0.1:9/v1")
@@ -2025,6 +2067,32 @@ class PhaseTest(unittest.TestCase):
             events = [json.loads(line) for line in log.read_text().splitlines()]
             self.assertEqual(events[-1]["type"], "aborted")
 
+    def test_a_handbook_path_that_names_no_file_is_refused(self) -> None:
+        """Silently designing without it would run the ablation's other arm."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "contracts").mkdir()
+            (root / "contracts" / "contract_catalog.yml").write_text("version: 1\n")
+            (root / "results").mkdir()
+
+            argv = [
+                "agent", "--model", "fake", "--root", str(root),
+                "--trajectories", "investigations", "--results", str(root / "results"),
+                "--environment", "", "--task", "question",
+                "--method", "agent/experiment_design_handbok.md",
+            ]
+            stderr = io.StringIO()
+            with (
+                mock.patch("sys.argv", argv),
+                mock.patch("agent.harness.agent.model_client.ChatModel"),
+                mock.patch("agent.harness.agent.run_design") as design,
+                contextlib.redirect_stderr(stderr),
+            ):
+                self.assertEqual(agent_main(), 2)
+
+            design.assert_not_called()
+            self.assertIn("no experiment design handbook at", stderr.getvalue())
+
     def test_an_exhausted_context_window_is_reported_and_recorded(self) -> None:
         """A phase that outgrew the window must say so, not die mid-turn."""
         with tempfile.TemporaryDirectory() as directory:
@@ -2036,7 +2104,7 @@ class PhaseTest(unittest.TestCase):
             argv = [
                 "agent", "--model", "fake", "--root", str(root),
                 "--trajectories", "investigations", "--results", str(root / "results"),
-                "--environment", "", "--task", "question", "--max-tokens", "32768",
+                "--environment", "", "--method", "", "--task", "question", "--max-tokens", "32768",
             ]
             exhausted = ContextWindowExhausted("0 of 65536 tokens left for an answer")
             stderr = io.StringIO()
@@ -2077,7 +2145,7 @@ class PhaseTest(unittest.TestCase):
             design_argv = [
                 "agent", "--model", "fake", "--root", str(root),
                 "--trajectories", "investigations", "--results", str(results),
-                "--environment", "", "--task", "question",
+                "--environment", "", "--method", "", "--task", "question",
             ]
             with (
                 mock.patch("sys.argv", design_argv),
@@ -2110,7 +2178,7 @@ class PhaseTest(unittest.TestCase):
             interpret_argv = [
                 "agent", "--phase", "interpret", "--model", "fake",
                 "--root", str(root), "--trajectories", "investigations",
-                "--results", str(results), "--environment", "",
+                "--results", str(results), "--environment", "", "--method", "",
                 "--run", str(investigation),
             ]
             with (
@@ -2170,7 +2238,7 @@ class PhaseTest(unittest.TestCase):
             argv = [
                 "agent", "--phase", "interpret", "--model", "fake",
                 "--root", str(root), "--trajectories", "investigations",
-                "--environment", "", "--report", str(report),
+                "--environment", "", "--method", "", "--report", str(report),
             ]
             with (
                 mock.patch("sys.argv", argv),
@@ -2221,7 +2289,8 @@ class PhaseTest(unittest.TestCase):
             self.assertEqual(_phase_number(investigation), 3)
 
     def test_stages_expose_only_the_tools_they_need(self) -> None:
-        names = lambda schemas: {tool["function"]["name"] for tool in schemas}
+        def names(schemas):
+            return {tool["function"]["name"] for tool in schemas}
         self.assertEqual(
             names(INTERPRET_TOOLS),
             {

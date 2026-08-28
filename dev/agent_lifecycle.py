@@ -31,7 +31,8 @@ import sys
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import Any
+from collections.abc import Callable, Sequence
 
 from dotenv import load_dotenv
 
@@ -39,6 +40,14 @@ from dotenv import load_dotenv
 #: How often the wait for a benchmark says that it is still waiting. A run takes
 #: hours, and polling silently is indistinguishable from having died.
 _WAIT_NOTICE_SECONDS = 600.0
+
+#: How much of a refusal, or of the agent's own account, a failure message keeps.
+_REASON_CHARS = 400
+
+#: The only two answers to who owns the model endpoint. ``bundled`` is started
+#: and stopped by this wrapper; ``external`` is already running.
+_BUNDLED_SERVER = "bundled"
+_SERVER_OWNERS = frozenset({_BUNDLED_SERVER, "external"})
 
 
 class LifecycleError(RuntimeError):
@@ -222,6 +231,7 @@ class AgentLifecycle:
             raise LifecycleError(
                 f"agent {phase} phase failed with exit code {result.returncode}; "
                 f"investigation: {investigation}"
+                f"{_failure_reason(investigation)}"
             )
         return investigation
 
@@ -249,13 +259,14 @@ class AgentLifecycle:
             raise LifecycleError(f"trajectory has no complete phase outcome: {log}")
         return phase, outcome
 
-    @staticmethod
-    def _is_final(phase: str, outcome: dict[str, Any]) -> bool:
+    def _is_final(self, phase: str, outcome: dict[str, Any]) -> bool:
         if phase == "interpret":
             return outcome.get("phase_complete") is True
-        # A dry-run design is complete without a submission and has no benchmark
-        # to wait for. Normal design completion always has a code.
-        return bool(outcome.get("summary")) and outcome.get("code") is None
+        # Only a dry run ends at design: it validates and stops, with no
+        # benchmark to wait for. Any other design that reaches here submitted
+        # nothing -- it ran out of validation attempts or turns -- and saying
+        # "final verdict" of it would name an answer file that was never written.
+        return "--dry-run" in self.agent_command and bool(outcome.get("summary"))
 
     def _result_directory(self, code: str, status_file: Path) -> Path:
         """Return where a submitted benchmark is writing its results.
@@ -329,6 +340,47 @@ class AgentLifecycle:
                 f"status {result.returncode}",
                 file=sys.stderr,
             )
+
+
+def _failure_reason(run: Path) -> str:
+    """Read from the trajectory why a phase stopped, to report it where it failed.
+
+    The agent explains itself on the way out, but that scrolls past during a long
+    run, and an exit code and a directory tell an operator nothing about why a
+    question could not be answered. The refusal that ended the attempt and the
+    agent's own closing account are both durable, so they are repeated here.
+
+    :param run: Investigation directory of the phase that failed.
+    :return: Indented lines to append to the error message, empty when the
+        trajectory says nothing useful.
+    :rtype: str
+    """
+    log = run / "trajectory.jsonl"
+    if not log.is_file():
+        return ""
+    refusal = ""
+    summary = ""
+    for line in log.read_text(encoding="utf-8").splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            # A killed process can leave its last line half written.
+            continue
+        if event.get("type") == "tool_call":
+            result = event.get("result") or {}
+            refusals = result.get("errors") or []
+            if refusals:
+                refusal = str(refusals[0].get("message", "")).strip()
+            elif result.get("error"):
+                refusal = str(result["error"]).strip()
+        elif event.get("type") == "outcome":
+            summary = str(event.get("summary") or "").strip()
+    parts = []
+    if refusal:
+        parts.append(f"last refusal: {refusal[:_REASON_CHARS]}")
+    if summary:
+        parts.append(f"the agent reported: {summary[:_REASON_CHARS]}")
+    return "".join(f"\n  {part}" for part in parts)
 
 
 def _pid_alive(pid: int) -> bool:
@@ -435,6 +487,15 @@ def main() -> int:
         return 2
 
     root = Path(args.root).resolve()
+    # Checked here as well as in the phase itself, so a mistyped handbook path
+    # is reported before a model server is started for a run that cannot use it.
+    if args.method and not _path_from_root(root, args.method).is_file():
+        print(f"error: no experiment design handbook at "
+              f"{_path_from_root(root, args.method)}. Pass an existing --method, "
+              "or an empty one (set AGENT_METHOD empty) to design without a "
+              "handbook.", file=sys.stderr)
+        return 2
+
     config = LifecycleConfig(
         root=root,
         trajectories=_path_from_root(root, args.trajectories),
@@ -446,11 +507,14 @@ def main() -> int:
         server_retry_seconds=args.server_retry_seconds,
         server_start_attempts=args.server_start_attempts,
     )
+    # Keep credentials out of the child process command line, where tools such
+    # as ps expose them. The agent already reads this inherited environment
+    # variable, including when --api-key supplied the wrapper's override.
+    os.environ["AGENT_API_KEY"] = args.api_key
     agent_command = [
         sys.executable, "-m", "agent.harness.agent",
         "--model", args.model,
         "--base-url", args.base_url,
-        "--api-key", args.api_key,
         "--root", str(root),
         "--trajectories", str(config.trajectories),
         "--status", str(config.status),
@@ -472,9 +536,19 @@ def main() -> int:
     if args.dry_run:
         agent_command.append("--dry-run")
 
-    # .env says who owns the endpoint: the bundled vLLM server is started and
-    # stopped here, any other value is already running and is left alone.
-    bundled = os.environ.get("AGENT_MODEL_SERVER", "bundled") == "bundled"
+    # .env says who owns the endpoint: bundled means the vLLM server is started
+    # and stopped here, external means it is already running and is left alone.
+    # Anything else is a typo, and guessing at one would quietly change which
+    # lifecycle a run gets.
+    owner = os.environ.get("AGENT_MODEL_SERVER", _BUNDLED_SERVER)
+    if owner not in _SERVER_OWNERS:
+        print(
+            f"error: AGENT_MODEL_SERVER is {owner!r}; it must be "
+            f"{' or '.join(sorted(_SERVER_OWNERS))}",
+            file=sys.stderr,
+        )
+        return 2
+    bundled = owner == _BUNDLED_SERVER
     lifecycle = AgentLifecycle(
         config, agent_command, ModelServer(config.server_script, bundled))
     try:

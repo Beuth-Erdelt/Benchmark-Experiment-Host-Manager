@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import os
 import re
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple
 
 import yaml
 
@@ -92,7 +92,7 @@ def _error(message: str, stage: str = CATALOG_STAGE) -> dict[str, str]:
     return {"stage": stage, "message": message}
 
 
-def _check_int(value: Any, definition: dict[str, Any], path: str) -> Optional[dict[str, str]]:
+def _check_int(value: Any, definition: dict[str, Any], path: str) -> dict[str, str] | None:
     """Check one value is an integer within the ``min``/``max`` its definition declares."""
     # bool is a subclass of int in Python, so it has to be excluded explicitly.
     if isinstance(value, bool) or not isinstance(value, int):
@@ -105,7 +105,7 @@ def _check_int(value: Any, definition: dict[str, Any], path: str) -> Optional[di
     return None
 
 
-def _check_value(value: Any, definition: Any, path: str) -> Optional[dict[str, str]]:
+def _check_value(value: Any, definition: Any, path: str) -> dict[str, str] | None:
     """Check one field's value against the type and bounds the catalog declares.
 
     Enforces the primitive types used by ``experiment_schema``. Domain-specific
@@ -116,7 +116,7 @@ def _check_value(value: Any, definition: Any, path: str) -> Optional[dict[str, s
         string for fields the catalog documents without a full definition.
     :param path: Dotted path of the field, for the error message.
     :return: An error entry, or ``None`` when the value fits.
-    :rtype: Optional[dict[str, str]]
+    :rtype: dict[str, str] | None
     """
     if not isinstance(definition, dict):
         return None
@@ -209,7 +209,7 @@ def _schema_locations(
 
 
 def _defined_elsewhere(
-    name: str, path: str, locations: Optional[dict[str, list[str]]],
+    name: str, path: str, locations: dict[str, list[str]] | None,
 ) -> str:
     """Name the blocks defining ``name``, other than the one it was written in."""
     if not locations:
@@ -221,8 +221,8 @@ def _defined_elsewhere(
 
 def _check_fields(
     value: Any, allowed: Any, path: str,
-    locations: Optional[dict[str, list[str]]] = None,
-) -> Optional[dict[str, str]]:
+    locations: dict[str, list[str]] | None = None,
+) -> dict[str, str] | None:
     """Reject unknown keys, then check each known key's value against its definition.
 
     :param value: The block being checked.
@@ -260,7 +260,7 @@ def _check_fields(
     return None
 
 
-def _check_requests_fit_limits(resources: dict[str, Any]) -> Optional[dict[str, str]]:
+def _check_requests_fit_limits(resources: dict[str, Any]) -> dict[str, str] | None:
     """Reject a resource cell that requests more than its own limit allows."""
     for resource, parse in (("cpu", spec.parse_cpu_quantity), ("memory", spec.parse_memory_quantity)):
         cells = resources.get(resource, {})
@@ -319,8 +319,8 @@ def _expansion(experiment: dict[str, Any]) -> _Expansion:
 
 def _check_workload_shape(
     catalog: dict[str, Any], experiment: Any, schema: dict[str, Any],
-    locations: Optional[dict[str, list[str]]] = None,
-) -> Optional[dict[str, str]]:
+    locations: dict[str, list[str]] | None = None,
+) -> dict[str, str] | None:
     """Check the workload block and the loading block its contract governs."""
     workload = experiment.get("workload", {})
     if error := _check_fields(workload, schema["workload"]["fields"], "workload",
@@ -347,8 +347,8 @@ def _check_workload_shape(
 
 def _check_systems_shape(
     experiment: Any, schema: dict[str, Any],
-    locations: Optional[dict[str, list[str]]] = None,
-) -> Optional[dict[str, str]]:
+    locations: dict[str, list[str]] | None = None,
+) -> dict[str, str] | None:
     """Check each system entry, and refuse treatments Bexhoma would merge."""
     systems = experiment.get("systems", [])
     if not isinstance(systems, list):
@@ -372,8 +372,8 @@ def _check_systems_shape(
 
 def _check_resources_shape(
     experiment: Any, schema: dict[str, Any],
-    locations: Optional[dict[str, list[str]]] = None,
-) -> Optional[dict[str, str]]:
+    locations: dict[str, list[str]] | None = None,
+) -> dict[str, str] | None:
     """Check the resource block, each sweep cell, storage, and request/limit sanity."""
     fields = schema["resources"]["fields"]
     resources = experiment.get("resources", {})
@@ -394,7 +394,7 @@ def _check_resources_shape(
 
 def _check_declared_factors(
     experiment: Any, schema: dict[str, Any],
-) -> Optional[dict[str, str]]:
+) -> dict[str, str] | None:
     """Require ``discriminates`` to name exactly the factors the experiment varies."""
     declared = experiment.get("discriminates", [])
     if not isinstance(declared, list):
@@ -552,7 +552,7 @@ def _timeout_budget(
     }
 
 
-def _check_falsifiable_claim(experiment: dict[str, Any]) -> Optional[dict[str, str]]:
+def _check_falsifiable_claim(experiment: dict[str, Any]) -> dict[str, str] | None:
     """Refuse a hypothesis no measurement could contradict (handbook M1.1).
 
     Decidable only in the crude sense the handbook describes: whether the claim
@@ -562,7 +562,7 @@ def _check_falsifiable_claim(experiment: dict[str, Any]) -> Optional[dict[str, s
 
     :param experiment: Loaded experiment.yml.
     :return: An error object, or ``None`` when the claim names an outcome.
-    :rtype: Optional[dict[str, str]]
+    :rtype: dict[str, str] | None
     """
     hypothesis = experiment.get("hypothesis")
     if not isinstance(hypothesis, str) or not hypothesis.strip():
@@ -585,7 +585,7 @@ def _check_falsifiable_claim(experiment: dict[str, Any]) -> Optional[dict[str, s
     }
 
 
-def _check_fixed_envelope(experiment: dict[str, Any]) -> Optional[dict[str, str]]:
+def _check_fixed_envelope(experiment: dict[str, Any]) -> dict[str, str] | None:
     """Refuse an elastic resource envelope in a comparison (handbook M2.3).
 
     When the guaranteed allocation is below the permitted maximum, the share an
@@ -595,7 +595,7 @@ def _check_fixed_envelope(experiment: dict[str, Any]) -> Optional[dict[str, str]
 
     :param experiment: Loaded experiment.yml.
     :return: An error object, or ``None`` when every cell is fixed.
-    :rtype: Optional[dict[str, str]]
+    :rtype: dict[str, str] | None
     """
     resources = experiment.get("resources")
     if not isinstance(resources, dict):
@@ -623,7 +623,7 @@ def _check_fixed_envelope(experiment: dict[str, Any]) -> Optional[dict[str, str]
 def _check_repetitions(
     catalog: dict[str, Any],
     experiment: dict[str, Any],
-) -> Optional[dict[str, str]]:
+) -> dict[str, str] | None:
     """Refuse a comparison that repeats too few times to support a conclusion.
 
     The threshold is read from the workload's own ``minimum_for_conclusions``
@@ -640,7 +640,7 @@ def _check_repetitions(
     :param catalog: Loaded ``contract_catalog.yml``.
     :param experiment: Loaded experiment.yml.
     :return: An error object, or ``None`` when the experiment is acceptable.
-    :rtype: Optional[dict[str, str]]
+    :rtype: dict[str, str] | None
     """
     workload = experiment.get("workload") or {}
     declared = (
@@ -715,7 +715,7 @@ def _check_component_placement(
     catalog: dict[str, Any],
     environment: dict[str, Any],
     experiment: dict[str, Any],
-) -> Optional[dict[str, str]]:
+) -> dict[str, str] | None:
     """Check peak co-located SUT and benchmarker limits against pinned nodes.
 
     Kubernetes schedules Pods from their requests, but that alone permits a
@@ -727,7 +727,7 @@ def _check_component_placement(
     :param environment: Loaded ``environment.yml``.
     :param experiment: Loaded experiment specification.
     :return: An environment-stage error, or ``None`` when pinned components fit.
-    :rtype: Optional[dict[str, str]]
+    :rtype: dict[str, str] | None
     """
     workload = experiment.get("workload") or {}
     components = (
@@ -807,8 +807,8 @@ def _check_component_placement(
 def _verdict(
     errors: list[dict[str, str]],
     environment_checked: bool,
-    experiment: Optional[dict[str, Any]] = None,
-    catalog: Optional[dict[str, Any]] = None,
+    experiment: dict[str, Any] | None = None,
+    catalog: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Assemble the verdict object the agent receives.
 
@@ -837,7 +837,7 @@ def _verdict(
 
 def _check_storage_class(
     environment: dict[str, Any], experiment: dict[str, Any],
-) -> Optional[dict[str, str]]:
+) -> dict[str, str] | None:
     """Name the storage classes this cluster offers when the spec asks for another.
 
     The shared resolver rejects an unavailable class without saying which ones
@@ -846,7 +846,7 @@ def _check_storage_class(
     :param environment: The cluster descriptor.
     :param experiment: The specification being validated.
     :return: An error entry, or ``None`` when the requested class exists.
-    :rtype: Optional[dict[str, str]]
+    :rtype: dict[str, str] | None
     """
     requested = (experiment.get("resources") or {}).get("storage_class")
     if requested is None:
@@ -871,7 +871,7 @@ def _check_storage_class(
 def validate_spec(
     experiment_path: str,
     catalog_path: str,
-    environment_path: Optional[str] = None,
+    environment_path: str | None = None,
 ) -> dict[str, Any]:
     """Dry-run validate an experiment.yml and report the result as a verdict.
 

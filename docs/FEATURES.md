@@ -56,6 +56,9 @@ follow up on a benchmark. The full current description and visual flow live in
 | Maintained-suite test discovery | `pyproject.toml` | Done; plain `pytest` runs `tests/` |
 | Local server/benchmark lifecycle, retry, resume, signal-safe cleanup, namespace restoration, restart of a self-finished pod, and exact failed-experiment cleanup | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Local-only; unit- and cluster-checked |
 | Unattended phase chaining for endpoints we do not host, including hosted APIs and a local Ollama | `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
+| Secret-safe model credential handoff from the lifecycle wrapper to agent phases | `dev/agent_lifecycle.py`, `tests/test_agent_lifecycle.py` | Done and regression-tested; `.env` remains local and the key is absent from child command lines |
+| Collision-safe experiment-code allocation for parallel submissions | `agent/harness/tools.py`, `tests/test_agent_harness.py` | Done and regression-tested |
+| Configuration that rejects a typo instead of failing open | `dev/agent_lifecycle.py`, `agent/harness/agent.py` | Done and regression-tested; `AGENT_MODEL_SERVER` and `AGENT_METHOD` |
 | Quick start | `agent/README.md` | Done |
 | Full pipeline, annotated visual, replay rules, and decision record | `agent/ARCHITECTURE.md` | Done; all older agent-pipeline descriptions merged here |
 | Critic as a separate invocation | — | Optional evaluation, intentionally outside the prototype |
@@ -134,11 +137,140 @@ measurement policy rather than a filesystem need — BeXhoma already isolates
 every experiment in its own code-named directory — and `--allow-parallel-runs`
 on the agent CLI lifts it for one run. The submitted run then records in its
 trajectory that it started alongside another, so the timings are never read
-later as if the cluster had been quiet.
+later as if the cluster had been quiet. Because that lifted lock is the one
+situation in which two submissions can allocate a code at once, the experiment
+code is reserved atomically: the status file is created exclusively, so of two
+runs racing for the same rounded second exactly one wins it.
 
 ---
 
 ## Part 2 — Request log
+
+### 2026-08-28 — Act on the pre-handover review
+
+Asked to work through an outside review of the branch that is about to be
+handed over, apply the findings that hold up, and say where they do not.
+
+Three of them were defects and are fixed. The experiment code is a rounded
+wall-clock second, and allocation only checked whether the result directory
+already existed, so two submissions started in the same second could take the
+same code, overwrite each other's status file and both name one result folder.
+That window is only reachable when the run lock has deliberately been lifted,
+which is exactly the feature that was asked for the day before, so the fix
+keeps the feature and makes the allocation atomic instead of removing it: the
+status file now doubles as the reservation and is created exclusively, so of
+two runs racing for a code exactly one wins it and the other moves on. A
+submission that fails before launching releases the code it took, and a
+reservation that is somehow left behind carries no specification path, which is
+what every reader already skips on.
+
+Two settings failed open, meaning a typo changed behaviour instead of being
+reported. Any value of `AGENT_MODEL_SERVER` other than `bundled` was treated as
+an external endpoint, so a misspelling of `bundled` silently stopped the
+wrapper from starting and stopping the model server; only the two real answers
+are accepted now. A handbook path that named no file silently designed without
+a handbook, which is the other arm of the with/without ablation and therefore a
+different experiment from the one that was asked for; an empty value still
+means that deliberately, but a non-empty path that names no file is refused, by
+the wrapper before it starts a server and by the phase itself.
+
+The YCSB experiment the schema-dispatch test loads was missing from a clean
+checkout, because `.gitignore` excludes every `experiment*.yml`. It is now
+tracked through an explicit force-add, exactly as `dev/catalog/experiment.yml`
+already was, so the repair follows the convention already in the repository and
+changes no test. A tracked-files-only export of the tree now runs the whole
+suite with one expected failure, the harness-revision test, which has no commit
+to read because an export carries no `.git`.
+
+Two documentation findings were correct. The architecture document still
+described the implemented slice as TPC-H only while the README and the code
+also covered YCSB, and the README reached its main command only after a hundred
+and forty lines of model-server and cluster material. The architecture document
+now names both workloads, and the README opens with the six commands that take
+a fresh checkout to an answered question, saying which of the later sections are
+operator reference rather than part of a first run. The detailed sections were
+left where they are: moving them into the architecture document would scatter
+the operator material across two files rather than shorten it.
+
+The mechanical style findings were applied where they were real. Every
+`Optional[...]` annotation and its docstring counterpart is now the `X | None`
+form the repository's conventions ask for, a loop variable that shadowed an
+imported name was renamed, and an assigned lambda became a function. Two were
+declined. The timestamps the review wanted made timezone-aware are what name
+trajectory directories, and switching them to UTC would rename runs against
+more than two hundred tracked trajectories for no benefit. The export lists are
+grouped by kind rather than alphabetically, which is deliberate and worth more
+than sorting.
+
+One finding was not acted on. Generated trajectories are already tracked
+evidence in this repository rather than build output, so they are not excluded;
+they are committed separately from the code instead, which is what makes the
+code commit reviewable on its own.
+
+
+### 2026-08-28 — Keep model API keys out of Git and child command lines
+
+Asked to remove the keys held in `.env` from the backup submission and every
+future submission. The backup needed no history rewrite: `.env` is ignored, was
+not present in the backup tree, and has never been tracked in the repository's
+reachable history. The local file remains available to run the agent and was
+not read or changed.
+
+The lifecycle wrapper did copy that local key into the command line of each
+agent phase, where a process-listing tool could read it. It now leaves the key
+in the inherited `AGENT_API_KEY` environment variable that the agent already
+supports and omits both `--api-key` and its value from the child command. A
+command-line override on the wrapper is retained for compatibility but is
+transferred into that environment variable before the child starts. A regression
+test checks that the override reaches the environment and that neither the flag
+nor the value appears in the constructed command.
+
+### 2026-08-28 — Say what a run is doing while it does it
+
+A started investigation printed nothing for minutes and looked stuck. Asked for
+it to be watched, and for progress messages so an operator can see what is
+happening.
+
+The run was not stuck; it was silent. A phase spends most of its time inside a
+single model call and writes everything durable to the trajectory, so the
+terminal stayed empty while the design was in fact progressing turn by turn.
+Every phase now prints a running commentary: one line as each turn is handed to
+the model, and one line per tool call naming the file it touched and, when the
+call was refused, the first line of the refusal. The model client says when it
+is waiting out a rate limit and for how long, which used to be an unexplained
+pause of up to a minute. The wrapper names each phase as it starts it, and
+repeats that a benchmark is still running every ten minutes, since that wait
+lasts hours and polling silently is indistinguishable from having died.
+
+The same run exposed a second defect. Its design ran out of validation attempts
+without submitting anything, and the wrapper treated that as a finished
+investigation and printed a final verdict pointing at an answer file that had
+never been written. Only a dry run legitimately ends at design; any other design
+that reaches that point submitted nothing and is now reported as the failure it
+is.
+
+Reporting it as a failure was still only an exit code and a directory, which
+says nothing about why a question went unanswered. The trajectory did hold the
+reason all along -- every refusal with the check that issued it, and the model's
+own closing account, which is where a question that turns out to be unanswerable
+gets described -- so both are now read back out. The agent ends an unfinished
+phase by saying how many times the specification was validated, whether the
+budget ran out, what the last refusal was, and what the agent itself said about
+the attempt. The wrapper repeats the refusal and that account beneath its own
+error, so the last thing printed is the reason rather than a path to go looking
+in. Each phase also announces itself with the model and endpoint it is using and
+the investigation directory it is writing to, and the validate and submit lines
+now say whether validation passed and which experiment code a submission got.
+
+The investigation itself chose correctly, which is what the question was written
+to test: given an application that reads and updates single rows by primary key,
+it picked the key-value workload over the analytical one without being told
+which to use. It could not submit, because comparing four CPU cores against
+eight means a resource sweep, and BeXhoma's YCSB launcher does not translate
+sweep lists yet, while the catalog contract advertises `resources.cpu` sweeps
+without excluding YCSB. The agent spent two of its three validation attempts
+discovering that. Reported here rather than worked around: the catalog and the
+launcher are a fixed dependency for this work.
 
 ### 2026-08-28 — Sweep the documentation and restart the investigation on Mistral
 

@@ -496,6 +496,7 @@ class Workspace:
             # says so in its result so the trajectory records the choice.
             parallel = True
 
+        code = None
         try:
             code = self._new_code()
             submitted = (self.run_directory or self.inbox) / _SUBMITTED_SPEC
@@ -511,6 +512,9 @@ class Workspace:
                 )
         except Exception:
             os.close(lock_fd)
+            if code is not None:
+                # Release the reserved code: nothing was launched under it.
+                (self.status_dir / f"{code}.json").unlink(missing_ok=True)
             raise
         # The detached child inherits the lock when this run took it. When the
         # operator allowed a parallel run, the descriptor carries no lock and the
@@ -573,11 +577,47 @@ class Workspace:
         return (spec_hash, *(_sha256(path) for path in paths))
 
     def _new_code(self) -> str:
-        """Allocate the exact experiment code before launch."""
+        """Allocate the exact experiment code before launch, atomically.
+
+        The code is a rounded wall-clock second, so two submissions started in
+        the same second would otherwise pick the same one, overwrite each
+        other's status file and both point at a single result folder. The
+        status file therefore doubles as the reservation: it is created
+        exclusively, so of two runs racing for a code exactly one wins it and
+        the other moves on to the next second.
+
+        :return: The reserved experiment code.
+        :rtype: str
+        """
         code = round(time.time())
-        while (self.results_root / str(code)).exists():
+        while True:
+            if not (self.results_root / str(code)).exists():
+                try:
+                    self._reserve_code(str(code))
+                except FileExistsError:
+                    # Another submission holds this code already.
+                    pass
+                else:
+                    return str(code)
             code += 1
-        return str(code)
+
+    def _reserve_code(self, code: str) -> None:
+        """Claim one experiment code by creating its status file exclusively.
+
+        The record deliberately omits the specification path, which is not
+        written yet. Readers that need one skip an entry without it, so a
+        reservation left behind by a failed submission is inert rather than
+        misleading.
+
+        :param code: Candidate experiment code.
+        :raises FileExistsError: When the code is already reserved.
+        """
+        with (self.status_dir / f"{code}.json").open("x", encoding="utf-8") as status:
+            json.dump({
+                "code": code,
+                "state": "reserved",
+                "results": str(self.results_root / code),
+            }, status, indent=2)
 
     def _await_result_folder(self, code: str, process: subprocess.Popen[Any]) -> str:
         """Wait briefly for the exact result folder assigned to the child.

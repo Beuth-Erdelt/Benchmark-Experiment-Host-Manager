@@ -1,6 +1,7 @@
 """Tests for the optional operator-side vLLM lifecycle wrapper."""
 from __future__ import annotations
 
+import argparse
 import ast
 import json
 import os
@@ -21,6 +22,7 @@ from agent.lifecycle_controller import (
     _write_in_cluster_kubeconfig,
     _write_runtime_cluster_config,
 )
+from dev import agent_lifecycle as lifecycle_module
 from dev.agent_lifecycle import (
     AgentLifecycle,
     LifecycleConfig,
@@ -121,6 +123,135 @@ def _trajectory(directory: Path, phase: str, **outcome) -> Path:
 
 
 class AgentLifecycleTest(unittest.TestCase):
+    def test_main_keeps_api_key_out_of_child_command(self) -> None:
+        """Pass a configured key through the environment, never through argv."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            final_run = root / "run"
+            final_run.mkdir()
+            arguments = argparse.Namespace(
+                task="question",
+                resume=None,
+                model="served-model",
+                base_url="https://model.example/v1",
+                api_key="cli-secret-value",
+                root=str(root),
+                results=None,
+                trajectories="trajectories",
+                status="status",
+                server_script="dev/model_server.sh",
+                poll_seconds=1.0,
+                benchmark_timeout_seconds=0.0,
+                server_retry_seconds=1.0,
+                server_start_attempts=1,
+                attempts=1,
+                followups=0,
+                temperature=0.0,
+                max_tokens=1024,
+                catalog="contracts/contract_catalog.yml",
+                environment="dev/catalog/environment.yml",
+                method="",
+                inbox="inbox",
+                dry_run=True,
+            )
+            parser = mock.Mock()
+            parser.parse_args.return_value = arguments
+            lifecycle = mock.Mock()
+            lifecycle.run.return_value = final_run
+
+            with (
+                mock.patch.object(lifecycle_module, "load_dotenv"),
+                mock.patch.object(lifecycle_module, "_install_signal_handlers"),
+                mock.patch.object(lifecycle_module, "_parser", return_value=parser),
+                mock.patch.object(lifecycle_module, "ModelServer"),
+                mock.patch.object(
+                    lifecycle_module, "AgentLifecycle", return_value=lifecycle,
+                ) as lifecycle_class,
+                mock.patch.dict(os.environ, {"AGENT_API_KEY": "file-secret-value"}),
+            ):
+                self.assertEqual(lifecycle_module.main(), 0)
+                child_command = lifecycle_class.call_args.args[1]
+                self.assertEqual(os.environ["AGENT_API_KEY"], "cli-secret-value")
+
+            self.assertNotIn("--api-key", child_command)
+            self.assertNotIn("cli-secret-value", child_command)
+
+    def _wrapper_arguments(self, root: Path, **overrides) -> argparse.Namespace:
+        """Build a complete wrapper argument set, so a test states only its point."""
+        arguments = argparse.Namespace(
+            task="question", resume=None, model="served-model",
+            base_url="https://model.example/v1", api_key="key", root=str(root),
+            results=None, trajectories="trajectories", status="status",
+            server_script="dev/model_server.sh", poll_seconds=1.0,
+            benchmark_timeout_seconds=0.0, server_retry_seconds=1.0,
+            server_start_attempts=1, attempts=1, followups=0, temperature=0.0,
+            max_tokens=1024, catalog="contracts/contract_catalog.yml",
+            environment="dev/catalog/environment.yml", method="", inbox="inbox",
+            dry_run=True,
+        )
+        for name, value in overrides.items():
+            setattr(arguments, name, value)
+        return arguments
+
+    def _run_main(self, arguments: argparse.Namespace, environment: dict[str, str]) -> int:
+        """Run the wrapper's ``main`` with everything below the argument check stubbed."""
+        parser = mock.Mock()
+        parser.parse_args.return_value = arguments
+        lifecycle = mock.Mock()
+        lifecycle.run.return_value = Path(arguments.root) / "run"
+        with (
+            mock.patch.object(lifecycle_module, "load_dotenv"),
+            mock.patch.object(lifecycle_module, "_install_signal_handlers"),
+            mock.patch.object(lifecycle_module, "_parser", return_value=parser),
+            mock.patch.object(lifecycle_module, "ModelServer"),
+            mock.patch.object(lifecycle_module, "AgentLifecycle", return_value=lifecycle),
+            mock.patch.dict(os.environ, environment, clear=False),
+        ):
+            return lifecycle_module.main()
+
+    def test_a_misspelled_model_server_owner_is_refused(self) -> None:
+        """Only two answers exist, and guessing at a third changes the lifecycle."""
+        with tempfile.TemporaryDirectory() as temporary:
+            code = self._run_main(
+                self._wrapper_arguments(Path(temporary)),
+                {"AGENT_MODEL_SERVER": "bundeled"},
+            )
+
+        self.assertEqual(code, 2)
+
+    def test_both_model_server_owners_are_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            for owner in ("bundled", "external"):
+                (Path(temporary) / "run").mkdir(exist_ok=True)
+                code = self._run_main(
+                    self._wrapper_arguments(Path(temporary)),
+                    {"AGENT_MODEL_SERVER": owner},
+                )
+                self.assertEqual(code, 0, owner)
+
+    def test_a_handbook_path_that_names_no_file_is_refused(self) -> None:
+        """A typo would otherwise silently run the ablation's other arm."""
+        with tempfile.TemporaryDirectory() as temporary:
+            code = self._run_main(
+                self._wrapper_arguments(
+                    Path(temporary), method="agent/experiment_design_handbok.md",
+                ),
+                {"AGENT_MODEL_SERVER": "bundled"},
+            )
+
+        self.assertEqual(code, 2)
+
+    def test_an_empty_handbook_path_still_designs_without_one(self) -> None:
+        """Empty is the deliberate no-handbook arm and stays legal."""
+        with tempfile.TemporaryDirectory() as temporary:
+            (Path(temporary) / "run").mkdir()
+            code = self._run_main(
+                self._wrapper_arguments(Path(temporary), method=""),
+                {"AGENT_MODEL_SERVER": "bundled"},
+            )
+
+        self.assertEqual(code, 0)
+
     def test_controller_job_has_durable_state_and_retry_semantics(self) -> None:
         documents = list(yaml.safe_load_all(
             CONTROLLER_MANIFEST.read_text(encoding="utf-8")
@@ -439,6 +570,25 @@ probe_activity() {{
             lifecycle.invocations, [("design", None), ("interpret", design)])
         run_command.assert_not_called()
 
+    def test_a_design_that_never_submitted_is_a_failure_not_a_verdict(self) -> None:
+        """Running out of validation attempts must not be reported as an answer."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code=None,
+            summary="I designed an experiment but the catalog refused it")
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=[design])
+
+        with self.assertRaisesRegex(LifecycleError, "neither a submitted benchmark"):
+            lifecycle.run("question")
+
+    def test_a_dry_run_still_ends_at_a_validated_design(self) -> None:
+        """With no benchmark to wait for, the validated design is the whole run."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code=None, summary="validated")
+        lifecycle = _Lifecycle(
+            self.config, ["agent", "--dry-run"], self.server, runs=[design])
+
+        self.assertEqual(lifecycle.run("question"), design)
+
     def test_who_owns_the_endpoint_decides_whether_the_switch_runs(self) -> None:
         """.env chooses the backend, so it also decides whether a server is switched."""
         commands: list[list[str]] = []
@@ -579,6 +729,35 @@ probe_activity() {{
             lifecycle.run("question")
 
         self.assertEqual(server.actions, ["up", "up", "down"])
+
+    def test_a_failed_phase_reports_what_refused_it(self) -> None:
+        """An exit code and a path do not say why a question went unanswered."""
+        investigation = _trajectory(
+            self.trajectories / "one", "design", code="101", summary="submitted")
+        lifecycle = AgentLifecycle(self.config, ["agent"], self.server)
+
+        def refuse(*args, **kwargs):
+            with (investigation / "trajectory.jsonl").open("a", encoding="utf-8") as log:
+                log.write(json.dumps({"type": "meta", "phase": "interpret"}) + "\n")
+                log.write(json.dumps({
+                    "type": "tool_call", "tool": "validate",
+                    "result": {"valid": False, "errors": [
+                        {"stage": "catalog", "message": "resources.cpu is a sweep list"},
+                    ]},
+                }) + "\n")
+                log.write(json.dumps({
+                    "type": "outcome", "code": None,
+                    "summary": "the catalog forbids the comparison this question needs",
+                }) + "\n")
+            return mock.Mock(returncode=1)
+
+        with mock.patch("dev.agent_lifecycle.subprocess.run", side_effect=refuse):
+            with self.assertRaises(LifecycleError) as failure:
+                lifecycle._invoke_agent("interpret", source=investigation)
+
+        message = str(failure.exception)
+        self.assertIn("resources.cpu is a sweep list", message)
+        self.assertIn("the catalog forbids the comparison this question needs", message)
 
     def test_real_invoker_appends_interpretation_to_same_investigation(self) -> None:
         investigation = _trajectory(

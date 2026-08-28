@@ -354,8 +354,8 @@ def _published_window(entry: Any) -> int | None:
     :return: Tokens the server accepts per request, or ``None``.
     :rtype: int | None
     """
-    for field in _CONTEXT_WINDOW_FIELDS:
-        length = getattr(entry, field, None)
+    for name in _CONTEXT_WINDOW_FIELDS:
+        length = getattr(entry, name, None)
         if isinstance(length, int) and not isinstance(length, bool):
             return length
     return None

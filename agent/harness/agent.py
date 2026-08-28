@@ -26,7 +26,8 @@ import sys
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Optional
+from typing import Any
+from collections.abc import Callable
 
 import yaml
 from dotenv import load_dotenv
@@ -88,7 +89,7 @@ def _timestamp() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-def _file_sha256(path: Optional[str]) -> Optional[str]:
+def _file_sha256(path: str | None) -> str | None:
     source = Path(path) if path else None
     return hashlib.sha256(source.read_bytes()).hexdigest() if source and source.is_file() else None
 
@@ -100,7 +101,7 @@ _PROGRESS_ERROR_CHARS = 120
 _MARKDOWN_HEADING = re.compile(r"^#{1,6}[ \t]+.+?\s*$", re.MULTILINE)
 
 
-def _present_method_sections(method: Optional[Path]) -> tuple[str, ...]:
+def _present_method_sections(method: Path | None) -> tuple[str, ...]:
     """Return the required handbook chapters that the handbook actually has.
 
     The chapter list is stated by heading, and headings get rewritten as the
@@ -145,12 +146,12 @@ def _harness_revision() -> dict[str, Any]:
             "sources_sha256": digest.hexdigest()}
 
 
-def _checked_out_commit(root: Path) -> Optional[str]:
+def _checked_out_commit(root: Path) -> str | None:
     """Return the commit a checkout has at HEAD, or ``None`` when it is not one.
 
     :param root: Repository root to read ``.git`` from.
     :return: Full commit hash, or ``None``.
-    :rtype: Optional[str]
+    :rtype: str | None
     """
     head = root / ".git" / "HEAD"
     try:
@@ -193,7 +194,7 @@ def _loggable(tool: str, result: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
-def _progress(line: str, stage: Optional[str], turn: int) -> None:
+def _progress(line: str, stage: str | None, turn: int) -> None:
     """Print what the phase is doing now, so a long run is visibly alive.
 
     A phase spends minutes at a time inside a single model call and writes
@@ -219,7 +220,90 @@ def _tool_progress(tool: str, arguments: dict[str, Any], result: dict[str, Any])
     if error:
         first_line = str(error).splitlines()[0][:_PROGRESS_ERROR_CHARS]
         return f"{line} -- refused: {first_line}"
+    if tool == "validate":
+        if result.get("valid"):
+            return f"{line} -- passed"
+        refusals = result.get("errors") or []
+        first = refusals[0] if refusals else {}
+        stage = str(first.get("stage", "")).strip()
+        message = str(first.get("message", "")).splitlines()[0][:_PROGRESS_ERROR_CHARS]
+        return f"{line} -- refused by the {stage} check: {message}" if message else line
+    if tool == "submit" and result.get("code"):
+        return f"{line} -- submitted as experiment {result['code']}"
     return line
+
+
+def _phase_account(trajectory_path: Path, phase: str, outcome: dict[str, Any]) -> list[str]:
+    """Say why a phase ended without finishing, in plain sentences.
+
+    The trajectory holds the evidence already -- every refusal, the notice that
+    ended a spent budget, and the model's own closing account, which is where a
+    question that turned out to be unanswerable is described. An operator should
+    not have to open that file to find out what stopped the run.
+
+    :param trajectory_path: The phase's trajectory log.
+    :param phase: ``design`` or ``interpret``.
+    :param outcome: The phase outcome as recorded.
+    :return: Lines to print, most important first.
+    :rtype: list[str]
+    """
+    attempts = 0
+    refusal = ""
+    exhausted = False
+    for event in _trajectory_events(trajectory_path):
+        if event.get("type") == "budget_exhausted":
+            exhausted = True
+            continue
+        if event.get("type") != "tool_call":
+            continue
+        result = event.get("result") or {}
+        if event.get("tool") == "validate":
+            attempts += 1
+            refusals = result.get("errors") or []
+            if refusals:
+                stage = str(refusals[0].get("stage", "")).strip() or "catalog"
+                message = str(refusals[0].get("message", "")).strip()
+                refusal = f"the {stage} check refused it: {message}"
+        elif result.get("error"):
+            refusal = refusal or str(result["error"]).strip()
+
+    if phase == "design":
+        lines = ["error: the design phase submitted no experiment."]
+        if attempts and refusal:
+            spent = " and its validation budget was spent" if exhausted else ""
+            lines.append(
+                f"The specification was validated {attempts} time(s){spent}. "
+                f"Last time, {refusal}"
+            )
+        elif refusal:
+            lines.append(f"The last tool call was refused: {refusal}")
+        else:
+            lines.append(
+                "No specification was ever validated, so the phase ran out of turns "
+                "before it had something to submit."
+            )
+    else:
+        lines = ["error: the interpretation recorded no complete verdict."]
+        if refusal:
+            lines.append(f"The last tool call was refused: {refusal}")
+
+    summary = str(outcome.get("summary") or "").strip()
+    if summary:
+        lines.append(f"The agent's own account of the attempt: {summary}")
+    return lines
+
+
+def _trajectory_events(path: Path) -> list[dict[str, Any]]:
+    """Read a trajectory log, skipping a line a killed process left half-written."""
+    events: list[dict[str, Any]] = []
+    if not path.is_file():
+        return events
+    for line in path.read_text(encoding="utf-8").splitlines():
+        try:
+            events.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return events
 
 
 def _converse(
@@ -229,13 +313,13 @@ def _converse(
     trajectory: Trajectory,
     tool_schemas: list[dict[str, Any]],
     max_turns: int,
-    limited_tool: Optional[str] = None,
+    limited_tool: str | None = None,
     limit: int = 0,
-    done_when: Optional[Callable[[str, dict[str, Any]], bool]] = None,
-    handover_pending: Optional[Callable[[list[tuple[str, dict[str, Any], dict[str, Any]]]], bool]] = None,
-    tool_handler: Optional[Callable[[str, dict[str, Any]], dict[str, Any]]] = None,
-    closing_validator: Optional[Callable[[str], Optional[str]]] = None,
-    stage: Optional[str] = None,
+    done_when: Callable[[str, dict[str, Any]], bool] | None = None,
+    handover_pending: Callable[[list[tuple[str, dict[str, Any], dict[str, Any]]]], bool] | None = None,
+    tool_handler: Callable[[str, dict[str, Any]], dict[str, Any]] | None = None,
+    closing_validator: Callable[[str], str | None] | None = None,
+    stage: str | None = None,
     require_done: bool = False,
 ) -> tuple[str, int, list[tuple[str, dict[str, Any], dict[str, Any]]]]:
     """Drive the model until it stops calling tools, the phase is done, or turns run out.
@@ -359,7 +443,7 @@ def _report_failed_checks(path: Path) -> int | None:
 
 def _write_agent_summary(
     report_path: str,
-    specification: Optional[str],
+    specification: str | None,
     hypothesis_verdict: dict[str, Any],
     validity: dict[str, Any],
     follow_up: dict[str, Any],
@@ -479,8 +563,8 @@ def run_design(
     trajectory: Trajectory,
     catalog_path: str,
     catalog_sha256: str,
-    environment_path: Optional[str],
-    method_path: Optional[str] = None,
+    environment_path: str | None,
+    method_path: str | None = None,
     attempts: int = _DEFAULT_ATTEMPTS,
     followups: int = _DEFAULT_FOLLOWUPS,
     dry_run: bool = False,
@@ -560,7 +644,7 @@ def run_design(
 _HANDBOOK_ENTRY_SECTION = "## Navigation"
 
 
-def _is_handbook_entry(section: Optional[str]) -> bool:
+def _is_handbook_entry(section: str | None) -> bool:
     """Report whether a read covers the handbook's routing chapter.
 
     A whole-file read (no section) covers it by definition; a section read does
@@ -594,14 +678,14 @@ class _DesignSpaceGate:
     """
 
     def __init__(
-        self, workspace: tools.Workspace, environment_path: Optional[str],
-        method_path: Optional[str] = None,
+        self, workspace: tools.Workspace, environment_path: str | None,
+        method_path: str | None = None,
     ) -> None:
         self._workspace = workspace
         self.required = {Path(workspace.catalog_path).resolve()}
         if environment_path:
             self.required.add((workspace.root / environment_path).resolve())
-        self._handbook: Optional[Path] = None
+        self._handbook: Path | None = None
         if method_path:
             self._handbook = (workspace.root / method_path).resolve()
             self.required.add(self._handbook)
@@ -925,7 +1009,7 @@ def _interpret_evidence(
     trajectory: Trajectory,
     report_path: str,
     result_contract_path: str,
-    method_path: Optional[str] = None,
+    method_path: str | None = None,
 ) -> tuple[
     str, dict[str, Any], list[dict[str, Any]], dict[str, Any],
     dict[str, Any], dict[str, Any], list[Any], int,
@@ -986,7 +1070,7 @@ def _interpret_evidence(
 
 def _author_followup(
     task: str,
-    specification: Optional[str],
+    specification: str | None,
     interpretation: str,
     decision: dict[str, Any],
     ancestor_summaries: list[dict[str, Any]],
@@ -995,8 +1079,8 @@ def _author_followup(
     model: model_client.ChatModel,
     trajectory: Trajectory,
     catalog_path: str,
-    environment_path: Optional[str],
-    method_path: Optional[str],
+    environment_path: str | None,
+    method_path: str | None,
     attempts: int,
     dry_run: bool,
 ) -> tuple[str, list[Any], int]:
@@ -1118,15 +1202,15 @@ def _author_followup(
 def run_interpret(
     task: str,
     report_path: str,
-    specification: Optional[str],
+    specification: str | None,
     workspace: tools.Workspace,
     model: model_client.ChatModel,
     trajectory: Trajectory,
     result_contract_path: str,
     followups: int = _DEFAULT_FOLLOWUPS,
     catalog_path: str = _DEFAULT_CATALOG,
-    environment_path: Optional[str] = _DEFAULT_ENVIRONMENT,
-    method_path: Optional[str] = None,
+    environment_path: str | None = _DEFAULT_ENVIRONMENT,
+    method_path: str | None = None,
     attempts: int = _DEFAULT_ATTEMPTS,
     dry_run: bool = False,
 ) -> dict[str, Any]:
@@ -1249,7 +1333,7 @@ def run_interpret(
 
 def _carry_forward(
     run_directory: Path, root: Path,
-) -> tuple[str, Optional[str], Optional[str], Optional[int]]:
+) -> tuple[str, str | None, str | None, int | None]:
     """Rebuild what the next phase needs from an investigation's log.
 
     Deterministic on purpose: the task verbatim, the specification that ran and
@@ -1452,13 +1536,13 @@ def _write_reports(
     phase: str,
     summary: str,
     final: bool,
-) -> tuple[Path, Optional[Path]]:
+) -> tuple[Path, Path | None]:
     """Preserve a phase account and expose a completed interpretation as the answer."""
     reports = run_directory / "reports"
     reports.mkdir(parents=True, exist_ok=True)
     phase_report = reports / f"{phase_number:02d}-{phase}.md"
     phase_report.write_text(summary + "\n", encoding="utf-8")
-    final_report: Optional[Path] = None
+    final_report: Path | None = None
     if final:
         final_report = run_directory / "answer.md"
         final_report.write_text(summary + "\n", encoding="utf-8")
@@ -1543,7 +1627,7 @@ def main() -> int:
               "AGENT_RESULTS", file=sys.stderr)
         return 2
     trajectories = root / args.trajectories
-    source: Optional[Path] = None
+    source: Path | None = None
     if args.phase == "design":
         run_directory = trajectories / datetime.now().strftime("%Y%m%dT%H%M%S%f")
     else:
@@ -1571,13 +1655,25 @@ def main() -> int:
         trajectory.record("setup_error", error=str(error))
         print(f"error: {error}", file=sys.stderr)
         return 2
-    method_path = args.method if (root / args.method).is_file() else None
+    # An empty value is how a run is deliberately asked to design without the
+    # handbook, which is the other arm of the with/without ablation. A path that
+    # names no file is a typo, and silently designing without the handbook would
+    # turn it into a different experiment than the one that was asked for.
+    method_path = args.method or None
+    if method_path is not None and not (root / method_path).is_file():
+        print(f"error: no experiment design handbook at {root / method_path}. "
+              "Pass an existing --method, or an empty one (set AGENT_METHOD empty) "
+              "to design without a handbook.", file=sys.stderr)
+        return 2
     workspace = tools.Workspace(
         root=str(root), inbox=args.inbox, catalog_path=args.catalog,
         environment_path=args.environment or None, method_path=method_path,
         results_root=str(results),
         status_dir=args.status, run_directory=phase_directory,
         allow_parallel_runs=args.allow_parallel_runs)
+
+    print(f"{args.phase} phase with {model.model} at {args.base_url}", flush=True)
+    print(f"investigation: {run_directory}", flush=True)
 
     if args.phase == "design":
         if not args.task:
@@ -1690,7 +1786,11 @@ def main() -> int:
     for key in ("validated_path", "code", "files_read", "bytes_read", "characters_returned"):
         if outcome.get(key):
             print(f"  {key}: {outcome[key]}")
-    return 0 if complete else 1
+    if not complete:
+        for line in _phase_account(trajectory.path, args.phase, outcome):
+            print(line, file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

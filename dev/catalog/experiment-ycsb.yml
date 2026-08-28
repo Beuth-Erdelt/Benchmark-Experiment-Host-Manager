@@ -1,0 +1,39 @@
+# experiment-ycsb.yml — sample catalog-driven YCSB experiment.
+#
+# Fixture for tests/test_experiment_cli.py's YCSB dispatch test. The
+# repository's .gitignore excludes experiment*.yml, so this file is tracked
+# through an explicit force-add, exactly as dev/catalog/experiment.yml is.
+# Without it a clean checkout cannot run the full test suite.
+
+mode: run
+
+title: "PostgreSQL read/update throughput under rising client concurrency (YCSB-A, SF1)"
+hypothesis: "PostgreSQL's YCSB-A throughput scales with concurrent clients up to 8, then flattens as connection handling rather than storage becomes the limit"
+discriminates: [concurrency]
+
+workload:
+  name: ycsb
+  params:
+    workload: a
+    scaling_factor: 1
+    timeout: 600
+  rounds: [1, 2, 4, 8]
+  repetitions: 1
+
+loading:
+  pods: 1
+  threads: 4
+  # no post_load: YCSB manages its own single-table schema through the JDBC
+  # binding, so physical_design does not apply (contract_catalog.yml,
+  # workloads.ycsb.loading.out_of_scope)
+
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+
+observe: {monitoring_sut: true, monitoring_cluster: false, monitoring_app: false}
+
+resources:
+  cpu: {request: 4, limit: 4}
+  memory: {request: 8Gi, limit: 8Gi}
+  storage: {size: 20Gi}

@@ -7,7 +7,8 @@ see [README.md](README.md).
 
 The prototype demonstrates a bounded autonomous experimenter, not a general
 agent framework. Its implemented catalog slice is TPC-H with PostgreSQL and
-PgDuckDB. Bexhoma executes experiments through its normal entry point; agent
+PgDuckDB, and YCSB with PostgreSQL. Bexhoma executes experiments through its
+normal entry point; agent
 policy remains in `agent/`.
 
 ## Annotated end-to-end flow

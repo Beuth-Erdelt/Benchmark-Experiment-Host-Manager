@@ -171,8 +171,7 @@ experiments rests on the model's priors.
   ways out; the wrapper can chain phases for an endpoint it does not host, which
   is what makes Mistral and a local Ollama run unattended; and interpretation is
   reachable for a workload whose benchmarker writes no per-query tables.
-- Loose end: the wrapper passes the model API key to each phase as a
-  command-line argument, so it is visible in the machine's process list. Both
-  keys in the local `.env` were exposed today and should be rotated. Handing the
-  key through the child's environment instead would fix it; the agent already
-  reads it from there.
+- Resolved after this brief: the wrapper passes the model API key to each phase
+  through the child's inherited environment rather than a command-line
+  argument visible in the machine's process list. Keys exposed before that fix
+  should still be rotated.

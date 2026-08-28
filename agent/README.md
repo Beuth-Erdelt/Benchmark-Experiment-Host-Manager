@@ -5,6 +5,39 @@ submits it through Bexhoma, interprets the finished report, and may submit a
 budgeted follow-up. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full annotated
 pipeline, contracts, module map, replay rules, and limitations.
 
+## The short path
+
+Six commands take a fresh checkout from nothing to an answered question. Each
+one is explained in full further down; the sections after
+[One-command local lifecycle](#one-command-local-lifecycle) are operator
+reference material — self-hosting the model server, the unattended Kubernetes
+Job, driving the phases by hand, and replaying a run elsewhere — and are not
+needed for a first run.
+
+```sh
+# 1. install with the agent extra, which ordinary bexhoma use does not include
+python3 -m venv .venv && .venv/bin/pip install -e ".[agent]"
+
+# 2. point bexhoma at the cluster, then edit the copy
+cp k8s-cluster.config cluster.config
+
+# 3. describe the cluster the agent will design against
+.venv/bin/python -m bexhoma.environment --output dev/catalog/environment.yml
+
+# 4. choose the model endpoint, then edit the copy
+cp .env.example .env
+
+# 5. answer a question end to end: design, benchmark, interpretation, follow-up
+.venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>" --followups 1
+
+# 6. continue an investigation whose benchmark was already submitted
+.venv/bin/python dev/agent_lifecycle.py --resume agent/trajectories/<run-id>
+```
+
+The run prints the investigation directory it writes to and, at the end, the
+path of the final verdict. To check the installation without a cluster, run the
+test suite in [Verification](#verification).
+
 ## Prerequisites
 
 1. Create an environment and install the repository **with the agent extra**.
@@ -58,7 +91,10 @@ the server serves the model under, `AGENT_BASE_URL` is its OpenAI-compatible
 endpoint, and `AGENT_API_KEY` is the credential (the placeholder `EMPTY` for a
 server that checks none). Copy `.env.example` in the repository root to `.env`
 and edit it; the agent CLI and the local lifecycle wrapper both read that file
-at startup. It is ignored by git, so real API keys stay out of the history.
+at startup. It is ignored by git, so real API keys stay out of the history. The
+lifecycle wrapper also keeps the key in the child process's inherited
+environment rather than copying it into a command-line argument visible to
+process-listing tools.
 
 An exported shell variable overrides the file, and a command-line flag
 (`--model`, `--base-url`, `--api-key`) overrides both, so one run can use a
