@@ -1,0 +1,1 @@
+Treat this as an independent study. Under identical 16-CPU/64-GiB system-under-test limits at TPC-H SF1, which system delivers better complete-workload performance, PostgreSQL or PgDuckDB with forced DuckDB execution, and is the ranking stable between one and two concurrent query streams? Run all 22 queries, use three experiment repetitions, and cap each query at 180 seconds.

@@ -117,6 +117,14 @@ spec:
               value: http://vllm-qwen38-service/v1
             - name: MODEL_SERVER_BASE_URL
               value: http://vllm-qwen38-service/v1
+            # Who owns the endpoint: bundled starts and stops the vLLM pod
+            # around every phase, external leaves a hosted API alone.
+            - name: AGENT_MODEL_SERVER
+              value: bundled
+            # The experiment design handbook. Set it empty for the
+            # without-handbook arm of the ablation.
+            - name: AGENT_METHOD
+              value: agent/experiment_design_handbook.md
             - name: MODEL_SERVER_MANIFEST
               value: /opt/bexhoma/agent/k8s/vllm-qwen38-27b.yml
             - name: POD_NAMESPACE

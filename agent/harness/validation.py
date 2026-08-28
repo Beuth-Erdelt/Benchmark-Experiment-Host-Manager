@@ -12,6 +12,7 @@ See LICENSE for details.
 from __future__ import annotations
 
 import os
+import re
 from typing import Any, NamedTuple, Optional
 
 import yaml
@@ -35,18 +36,52 @@ ENVIRONMENT_STAGE = "environment"
 #: The specification is legal and would run, but could not support its own claim.
 METHODOLOGY_STAGE = "methodology"
 
+#: Display path of the specification's top level, where nested blocks are named
+#: by their own key rather than by a dotted path from the root.
+_ROOT_PATH = "experiment.yml"
+#: Suffix marking a block that repeats, so ``systems[0]`` and the schema's
+#: ``systems[]`` compare equal when locating a misplaced field.
+_INDEX_SUFFIX = "[]"
+_INDEXED = re.compile(r"\[\d+\]")
+
 #: Every ``type:`` the catalog is allowed to declare. The first group is
 #: enforced by :func:`_check_value`; the second is recognised but left to
 #: Patrick's resolver. A type outside this set is a typo in the contract, which
 #: would otherwise switch that field's check off silently.
 _KNOWN_TYPES = frozenset({
     "int", "str", "bool", "object", "list", "enum",
-    "list[int]", "list[str]", "object or list[object]",
+    "list[int]", "list[str]", "list[float]", "object or list[object]",
     "float", "memory", "quantity", "duration",
 })
 
 #: Rounds an experiment runs when it declares no concurrency sweep -- one round
 #: of one client, which is what tpch.py falls back to.
+#: Fewest repetitions from which a spread can be estimated at all, used when the
+#: catalog names no minimum of its own for the workload (handbook M5.1).
+_SPREAD_FLOOR = 2
+
+#: Words that state adequacy instead of a testable outcome. A hypothesis built
+#: only from these cannot be refuted by any measurement (handbook M1.1).
+_ADEQUACY_STEMS = (
+    "acceptab", "adequat", "reasonab", "satisfactor", "sufficient", "successful",
+    "smooth", "properly", "correctly", "perform well", "performs well",
+    "scale well", "scales well", "handle", "handles", "cope", "copes",
+    "good performance", "fine",
+)
+
+#: Ways a hypothesis can name an outcome some measurement could contradict: a
+#: direction, a margin, or a number to fall on one side of.
+_COMPARATIVE_MARKERS = (
+    "faster", "slower", "higher", "lower", "better", "worse", "more", "less",
+    "fewer", "greater", "smaller", "shorter", "longer", "cheaper",
+    "outperform", "beat", "exceed", "exceeds", "above", "below", "at least",
+    "at most", "no more than", "no less than", "within", "than", "double",
+    "doubles", "halve", "halves", "unchanged", "flat", "rises", "rise",
+    "falls", "fall", "grows", "grow", "drops", "drop", "degrade", "degrades",
+    "improve", "improves", "increase", "increases", "decrease", "decreases",
+    "differ", "differs", "same", "equal",
+)
+
 _DEFAULT_ROUNDS = [1]
 _DEFAULT_REPETITIONS = 1
 _GIBIBYTE_BYTES = 1024 ** 3
@@ -113,6 +148,16 @@ def _check_value(value: Any, definition: Any, path: str) -> Optional[dict[str, s
                     return error
             elif not isinstance(item, str):
                 return _error(f"{item_path} must be a string, not {type(item).__name__}")
+    if declared == "list[float]":
+        if not isinstance(value, list):
+            return _error(f"{path} must be a list of numbers, not {type(value).__name__}")
+        if not value:
+            return _error(f"{path} must not be empty")
+        for index, item in enumerate(value):
+            # bool is a subclass of int, so an accidental true/false must not pass.
+            if isinstance(item, bool) or not isinstance(item, (int, float)):
+                return _error(
+                    f"{path}[{index}] must be a number, not {type(item).__name__}")
     if declared == "object or list[object]":
         cells = value if isinstance(value, list) else [value]
         if not cells or any(not isinstance(cell, dict) for cell in cells):
@@ -120,17 +165,95 @@ def _check_value(value: Any, definition: Any, path: str) -> Optional[dict[str, s
     return None
 
 
-def _check_fields(value: Any, allowed: Any, path: str) -> Optional[dict[str, str]]:
-    """Reject unknown keys, then check each known key's value against its definition."""
+def _schema_locations(
+    catalog: dict[str, Any], experiment: Any,
+) -> dict[str, list[str]]:
+    """Index every field name the contract defines against the blocks it is legal in.
+
+    Walks the experiment schema and the contract of the workload this
+    specification names, so a field rejected in one block can be pointed at the
+    block that accepts it.
+
+    :param catalog: Loaded ``contract_catalog.yml``.
+    :param experiment: Loaded experiment.yml, read only for its workload name.
+    :return: Field name to the sorted display paths defining it.
+    :rtype: dict[str, list[str]]
+    """
+    found: dict[str, set[str]] = {}
+
+    def walk(fields: Any, path: str) -> None:
+        if not isinstance(fields, dict):
+            return
+        for name, definition in fields.items():
+            found.setdefault(name, set()).add(path)
+            if not isinstance(definition, dict):
+                continue
+            child = name if path == _ROOT_PATH else f"{path}.{name}"
+            walk(definition.get("fields"), child)
+            walk(definition.get("item_fields"), f"{child}{_INDEX_SUFFIX}")
+
+    schema = catalog.get("experiment_schema", {}).get("fields", {})
+    walk(schema, _ROOT_PATH)
+
+    workload = experiment.get("workload") if isinstance(experiment, dict) else None
+    name = workload.get("name") if isinstance(workload, dict) else None
+    contract = catalog.get("workloads", {}).get(name, {})
+    if isinstance(contract, dict):
+        walk(contract.get("params"), "workload.params")
+        loading = contract.get("loading")
+        walk(loading, "loading")
+        if isinstance(loading, dict):
+            walk(loading.get("post_load"), "loading.post_load")
+
+    return {field: sorted(paths) for field, paths in found.items()}
+
+
+def _defined_elsewhere(
+    name: str, path: str, locations: Optional[dict[str, list[str]]],
+) -> str:
+    """Name the blocks defining ``name``, other than the one it was written in."""
+    if not locations:
+        return ""
+    here = _INDEXED.sub(_INDEX_SUFFIX, path)
+    others = [where for where in locations.get(name, []) if where != here]
+    return " or ".join(others)
+
+
+def _check_fields(
+    value: Any, allowed: Any, path: str,
+    locations: Optional[dict[str, list[str]]] = None,
+) -> Optional[dict[str, str]]:
+    """Reject unknown keys, then check each known key's value against its definition.
+
+    :param value: The block being checked.
+    :param allowed: The field definitions legal in this block.
+    :param path: Display path of the block, used in messages.
+    :param locations: Field name to the paths the contract defines it at, used
+        to point a misplaced field at the block it belongs in.
+    """
     if not isinstance(value, dict):
         return _error(f"{path} must be an object")
     unknown = set(value) - set(allowed)
     if unknown:
-        return _error(f"{path} contains unknown field '{sorted(unknown)[0]}'")
+        name = sorted(unknown)[0]
+        message = f"{path} contains unknown field '{name}'"
+        # A field that is legal elsewhere is misplaced rather than invented, and
+        # the schema already knows where it belongs. Saying so turns a rejection
+        # the author has to search the contract to resolve into one they can act
+        # on, the way an unavailable storage class names the classes that exist.
+        if elsewhere := _defined_elsewhere(name, path, locations):
+            message += f"; the contract defines '{name}' under {elsewhere}"
+        return _error(message)
     for name, definition in allowed.items():
         if isinstance(definition, dict) and definition.get("required") and not value.get(name):
             return _error(f"{path} is missing required field '{name}'")
     for name, item in value.items():
+        # YAML's null says "no value" just as plainly as leaving the key out,
+        # and the catalog documents null as meaning unset for the fields whose
+        # profiles accept it. Only a required field may not be null, which the
+        # missing-field check above already rejects.
+        if item is None:
+            continue
         error = _check_value(item, allowed[name], f"{path}.{name}")
         if error:
             return error
@@ -196,14 +319,17 @@ def _expansion(experiment: dict[str, Any]) -> _Expansion:
 
 def _check_workload_shape(
     catalog: dict[str, Any], experiment: Any, schema: dict[str, Any],
+    locations: Optional[dict[str, list[str]]] = None,
 ) -> Optional[dict[str, str]]:
     """Check the workload block and the loading block its contract governs."""
     workload = experiment.get("workload", {})
-    if error := _check_fields(workload, schema["workload"]["fields"], "workload"):
+    if error := _check_fields(workload, schema["workload"]["fields"], "workload",
+                              locations):
         return error
     contract = catalog.get("workloads", {}).get(workload.get("name"), {})
     if error := _check_fields(
-        workload.get("params", {}), contract.get("params", {}), "workload.params"
+        workload.get("params", {}), contract.get("params", {}), "workload.params",
+        locations,
     ):
         return error
 
@@ -212,15 +338,16 @@ def _check_workload_shape(
     # the schema block carries the shape. Merge so both are enforced from where
     # each is declared, rather than duplicating the bounds into the schema.
     loading_fields = {**schema["loading"]["fields"], **contract.get("loading", {})}
-    if error := _check_fields(loading, loading_fields, "loading"):
+    if error := _check_fields(loading, loading_fields, "loading", locations):
         return error
     return _check_fields(loading.get("post_load", {}),
                          contract.get("loading", {}).get("post_load", {}),
-                         "loading.post_load")
+                         "loading.post_load", locations)
 
 
 def _check_systems_shape(
     experiment: Any, schema: dict[str, Any],
+    locations: Optional[dict[str, list[str]]] = None,
 ) -> Optional[dict[str, str]]:
     """Check each system entry, and refuse treatments Bexhoma would merge."""
     systems = experiment.get("systems", [])
@@ -228,7 +355,8 @@ def _check_systems_shape(
         return {"stage": CATALOG_STAGE, "message": "systems must be a list"}
     item_fields = schema["systems"]["item_fields"]
     for index, system in enumerate(systems):
-        if error := _check_fields(system, item_fields, f"systems[{index}]"):
+        if error := _check_fields(system, item_fields, f"systems[{index}]",
+                                  locations):
             return error
     names = [system["name"] for system in systems]
     if repeated := sorted({name for name in names if names.count(name) > 1}):
@@ -244,20 +372,22 @@ def _check_systems_shape(
 
 def _check_resources_shape(
     experiment: Any, schema: dict[str, Any],
+    locations: Optional[dict[str, list[str]]] = None,
 ) -> Optional[dict[str, str]]:
     """Check the resource block, each sweep cell, storage, and request/limit sanity."""
     fields = schema["resources"]["fields"]
     resources = experiment.get("resources", {})
-    if error := _check_fields(resources, fields, "resources"):
+    if error := _check_fields(resources, fields, "resources", locations):
         return error
     for resource in ("cpu", "memory"):
         cells = resources.get(resource, {})
         for index, cell in enumerate(cells if isinstance(cells, list) else [cells]):
             if error := _check_fields(cell, fields[resource]["item_fields"],
-                                      f"resources.{resource}[{index}]"):
+                                      f"resources.{resource}[{index}]", locations):
                 return error
     if error := _check_fields(resources.get("storage", {}),
-                              fields["storage"]["fields"], "resources.storage"):
+                              fields["storage"]["fields"], "resources.storage",
+                              locations):
         return error
     return _check_requests_fit_limits(resources)
 
@@ -285,40 +415,62 @@ def _check_declared_factors(
         if isinstance(resources.get(resource), list) and len(resources[resource]) > 1:
             varied.add(resource)
     if mismatch := varied.symmetric_difference(declared):
-        return {"stage": METHODOLOGY_STAGE,
-                "message": "discriminates must name exactly the varied factors; "
-                           f"declared {sorted(declared)}, varied {sorted(varied)}; "
-                           f"they differ on {sorted(mismatch)}"}
+        message = ("M2.6: discriminates must name exactly the varied factors; "
+                   f"declared {sorted(declared)}, varied {sorted(varied)}; "
+                   f"they differ on {sorted(mismatch)}")
+        # An experiment that varies nothing cannot satisfy the rule by editing
+        # discriminates, which the catalog requires to be a non-empty list, so
+        # the only way out is a second treatment.
+        if not varied:
+            message += (". This experiment runs a single treatment, so there is "
+                        "nothing to isolate: add a second system the workload "
+                        "supports, a second entry in rounds to vary concurrency, "
+                        "or a list of cpu or memory cells")
+        return {"stage": METHODOLOGY_STAGE, "message": message}
     return None
 
 
 def _check_contract_shape(
     catalog: dict[str, Any], experiment: Any,
-) -> Optional[dict[str, str]]:
+) -> list[dict[str, str]]:
     """Reject fields outside the schema embedded in the agent's catalog.
+
+    Independent sections are checked in full rather than stopping at the first
+    fault, so an author sees every structural problem in one verdict instead of
+    discovering them one validation at a time.
 
     :param catalog: Loaded ``contract_catalog.yml``.
     :param experiment: Loaded experiment.yml.
-    :return: The first problem found, or ``None`` when the shape is legal.
-    :rtype: Optional[dict[str, str]]
+    :return: Every problem found, empty when the shape is legal.
+    :rtype: list[dict[str, str]]
     """
     if not isinstance(catalog, dict):
-        return {"stage": CATALOG_STAGE, "message": "catalog must be an object"}
+        return [{"stage": CATALOG_STAGE, "message": "catalog must be an object"}]
     schema = catalog.get("experiment_schema", {}).get("fields", {})
-    if error := _check_fields(experiment, schema, "experiment.yml"):
-        return error
-    if error := _check_workload_shape(catalog, experiment, schema):
-        return error
-    if error := _check_systems_shape(experiment, schema):
-        return error
-    for section in ("observe", "placement"):
-        if error := _check_fields(
-            experiment.get(section, {}), schema[section]["fields"], section
-        ):
-            return error
-    if error := _check_resources_shape(experiment, schema):
-        return error
-    return _check_declared_factors(experiment, schema)
+    locations = _schema_locations(catalog, experiment)
+    # Every section check below indexes into the document, so a top level that
+    # is not a well-formed object is reported alone rather than used.
+    if top_level_error := _check_fields(experiment, schema, _ROOT_PATH, locations):
+        return [top_level_error]
+
+    errors = []
+    for error in (
+        _check_workload_shape(catalog, experiment, schema, locations),
+        _check_systems_shape(experiment, schema, locations),
+        *(_check_fields(experiment.get(section, {}),
+                        schema[section]["fields"], section, locations)
+          for section in ("observe", "placement")),
+        _check_resources_shape(experiment, schema, locations),
+    ):
+        if error:
+            errors.append(error)
+
+    # The declared-factors rule counts systems, rounds and resource cells, so a
+    # section that failed its shape check would make it count nonsense. Only ask
+    # once the structure it reads is known to be sound.
+    if not errors and (error := _check_declared_factors(experiment, schema)):
+        errors.append(error)
+    return errors
 
 
 
@@ -400,6 +552,74 @@ def _timeout_budget(
     }
 
 
+def _check_falsifiable_claim(experiment: dict[str, Any]) -> Optional[dict[str, str]]:
+    """Refuse a hypothesis no measurement could contradict (handbook M1.1).
+
+    Decidable only in the crude sense the handbook describes: whether the claim
+    names any outcome at all. A hypothesis built purely from adequacy language
+    is confirmed by every possible run, which makes the experiment unable to
+    fail rather than merely likely to succeed.
+
+    :param experiment: Loaded experiment.yml.
+    :return: An error object, or ``None`` when the claim names an outcome.
+    :rtype: Optional[dict[str, str]]
+    """
+    hypothesis = experiment.get("hypothesis")
+    if not isinstance(hypothesis, str) or not hypothesis.strip():
+        return None
+    text = hypothesis.lower()
+    if any(character.isdigit() for character in text):
+        return None
+    if any(marker in text for marker in _COMPARATIVE_MARKERS):
+        return None
+    if not any(stem in text for stem in _ADEQUACY_STEMS):
+        return None
+    return {
+        "stage": METHODOLOGY_STAGE,
+        "message": (
+            "M1.1: the hypothesis states adequacy rather than an outcome a "
+            "measurement could contradict, so every possible run confirms it. "
+            "Say which quantity moves in which direction, or against which "
+            "threshold it is judged, so that some result would refute it"
+        ),
+    }
+
+
+def _check_fixed_envelope(experiment: dict[str, Any]) -> Optional[dict[str, str]]:
+    """Refuse an elastic resource envelope in a comparison (handbook M2.3).
+
+    When the guaranteed allocation is below the permitted maximum, the share an
+    arm actually receives depends on what else runs on the machine, so the
+    envelope becomes an uncontrolled factor varying exactly where the comparison
+    is made.
+
+    :param experiment: Loaded experiment.yml.
+    :return: An error object, or ``None`` when every cell is fixed.
+    :rtype: Optional[dict[str, str]]
+    """
+    resources = experiment.get("resources")
+    if not isinstance(resources, dict):
+        return None
+    for name in ("cpu", "memory"):
+        cells = resources.get(name)
+        for cell in (cells if isinstance(cells, list) else [cells]):
+            if not isinstance(cell, dict):
+                continue
+            request, limit = cell.get("request"), cell.get("limit")
+            if request is None or limit is None or str(request) == str(limit):
+                continue
+            return {
+                "stage": METHODOLOGY_STAGE,
+                "message": (
+                    f"M2.3: resources.{name} guarantees {request} but permits "
+                    f"{limit}, so each arm receives whatever the node happens to "
+                    "have free and the envelope varies where the comparison is "
+                    "made. Set request and limit to the same value"
+                ),
+            }
+    return None
+
+
 def _check_repetitions(
     catalog: dict[str, Any],
     experiment: dict[str, Any],
@@ -429,8 +649,14 @@ def _check_repetitions(
         .get("repetitions", {})
     )
     minimum = declared.get("minimum_for_conclusions") if isinstance(declared, dict) else None
-    if not minimum:
-        return None
+    # A workload that names no minimum is still bound by M5.1: two runs are the
+    # fewest from which any spread can be estimated at all.
+    source = (
+        f"'{workload.get('name')}' declares minimum_for_conclusions={minimum}"
+        if minimum else
+        f"the handbook admits no comparison below {_SPREAD_FLOOR} repetitions"
+    )
+    minimum = minimum or _SPREAD_FLOOR
 
     expansion = _expansion(experiment)
     compares = (expansion.systems > 1 or expansion.resource_cells > 1
@@ -442,11 +668,10 @@ def _check_repetitions(
     return {
         "stage": METHODOLOGY_STAGE,
         "message": (
-            f"workload.repetitions={repetitions} but this experiment compares "
-            f"several configurations, and '{workload.get('name')}' declares "
-            f"minimum_for_conclusions={minimum}: with fewer repetitions a "
-            "difference between them cannot be told apart from run-to-run "
-            f"variance. Raise repetitions to at least {minimum}"
+            f"M5.1: workload.repetitions={repetitions} but this experiment "
+            f"compares several configurations, and {source}: with fewer "
+            "repetitions a difference between them cannot be told apart from "
+            f"run-to-run variance. Raise repetitions to at least {minimum}"
         ),
     }
 
@@ -610,6 +835,39 @@ def _verdict(
     }
 
 
+def _check_storage_class(
+    environment: dict[str, Any], experiment: dict[str, Any],
+) -> Optional[dict[str, str]]:
+    """Name the storage classes this cluster offers when the spec asks for another.
+
+    The shared resolver rejects an unavailable class without saying which ones
+    exist, which leaves an author guessing at a closed list it cannot see.
+
+    :param environment: The cluster descriptor.
+    :param experiment: The specification being validated.
+    :return: An error entry, or ``None`` when the requested class exists.
+    :rtype: Optional[dict[str, str]]
+    """
+    requested = (experiment.get("resources") or {}).get("storage_class")
+    if requested is None:
+        return None
+    available = sorted(
+        entry["name"] for entry in environment.get("storage_classes", [])
+        if isinstance(entry, dict) and "name" in entry
+    )
+    if requested in available:
+        return None
+    return {
+        "stage": ENVIRONMENT_STAGE,
+        "message": (
+            f"resources.storage_class {requested!r} is not offered by this cluster; "
+            f"it has {', '.join(available) or 'none'}. Omit the field entirely to "
+            "take node-local storage instead, which every profile that lists null "
+            "among its allowed classes permits."
+        ),
+    }
+
+
 def validate_spec(
     experiment_path: str,
     catalog_path: str,
@@ -635,13 +893,13 @@ def validate_spec(
     # has been restructured raises rather than returning a verdict. Report that
     # as a broken contract instead of letting it escape as a tool-call crash.
     try:
-        shape_error = _check_contract_shape(catalog, experiment)
+        shape_errors = _check_contract_shape(catalog, experiment)
     except (KeyError, TypeError) as error:
         return _verdict([{"stage": CATALOG_STAGE,
                           "message": f"the catalog is missing the structure validation needs: {error}"}],
                         False)
-    if shape_error:
-        return _verdict([shape_error], False)
+    if shape_errors:
+        return _verdict(shape_errors, False)
 
     try:
         spec.build_argv(catalog, experiment)
@@ -651,29 +909,46 @@ def validate_spec(
             experiment, catalog,
         )
 
-    methodology_error = _check_repetitions(catalog, experiment)
-    if methodology_error is not None:
-        return _verdict([methodology_error], False, experiment, catalog)
+    # Principles of the handbook that are decidable from the
+    # specification alone; the rest is the agent's to apply. They are
+    # independent of each other, so all of them are reported together rather
+    # than one per attempt -- a design with three method defects would
+    # otherwise cost three attempts to learn about them.
+    methodology_errors = [
+        error for error in (
+            _check_falsifiable_claim(experiment),
+            _check_fixed_envelope(experiment),
+            _check_repetitions(catalog, experiment),
+        ) if error is not None
+    ]
+    if methodology_errors:
+        return _verdict(methodology_errors, False, experiment, catalog)
 
     if not environment_path or not os.path.isfile(environment_path):
         return _verdict([], False, experiment, catalog)
 
     try:
         environment = spec.load_environment(environment_path)
-        spec.validate_environment(environment, experiment)
     except (OSError, yaml.YAMLError) as error:
         return _verdict(
             [{"stage": PARSE_STAGE, "message": str(error)}], False,
             experiment, catalog,
         )
-    except spec.SpecError as error:
-        return _verdict(
-            [{"stage": ENVIRONMENT_STAGE, "message": str(error)}], True,
-            experiment, catalog,
-        )
 
-    component_error = _check_component_placement(catalog, environment, experiment)
-    if component_error is not None:
-        return _verdict([component_error], True, experiment, catalog)
+    # Storage class and pod placement fail independently of each other, so both
+    # are reported together. The shared resolver is only asked once the storage
+    # class is known to exist, because an unavailable class is the fault it
+    # would report anyway, in less helpful words.
+    environment_errors = []
+    if storage_error := _check_storage_class(environment, experiment):
+        environment_errors.append(storage_error)
+    else:
+        try:
+            spec.validate_environment(environment, experiment)
+        except spec.SpecError as error:
+            environment_errors.append(
+                {"stage": ENVIRONMENT_STAGE, "message": str(error)})
+    if component_error := _check_component_placement(catalog, environment, experiment):
+        environment_errors.append(component_error)
 
-    return _verdict([], True, experiment, catalog)
+    return _verdict(environment_errors, True, experiment, catalog)

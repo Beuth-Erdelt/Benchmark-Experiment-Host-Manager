@@ -1,0 +1,3 @@
+I designed an experiment to compare PostgreSQL and PgDuckDB for a 1 GB analytical reporting workload under 16 CPU cores and 64 GiB RAM, and to test the recommendation under concurrent analysts. The specification set a 1 GB TPC-H dataset, pinned the SUT to cl-worker21, and swept concurrency via rounds [1, 4, 8] with 3 repetitions. It enabled indexes, constraints, and statistics post-load and forced PgDuckDB to use its vectorized engine.
+
+Validation failed on the final check because the benchmarker’s declared peak CPU limits for round 8 (8 concurrent clients) plus the SUT’s 16 cores exceed the allocatable 64 cores on cl-worker21. Lowering rounds to [1, 4] would resolve the CPU over-commit, but I have no remaining validate attempts to confirm that change.

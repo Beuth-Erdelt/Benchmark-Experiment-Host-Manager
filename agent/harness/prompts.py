@@ -43,6 +43,7 @@ Nothing about this deployment is in this prompt. Begin by reading:
   the rules relating the two. Its `why:` fields explain what each field is for;
   use them to map the question onto concrete parameters.
 - {environment_path}
+- {method_path}
 
 Do not invent fields, flags, query numbers, system names or tuning knobs the
 catalog does not declare, and do not fall back on what you know about these
@@ -75,6 +76,14 @@ experiment that validates but cannot answer the question is a failure: the
 factor under test must be the only thing that varies, and everything else must
 be held equal across the systems being compared. Check the run estimate too -- a
 design nobody has time to run does not answer anything either.
+
+The experiment design handbook is methodological guidance rather than a
+contract: the catalog says which experiments are legal and the result contract
+says which claims are supportable, while the handbook carries the reasoning that
+separates an experiment answering its question from one that merely runs. It
+gives no values to copy, only the reasons, so that you decide what this
+particular question needs. Read its Navigation chapter first; it routes a
+question like yours to the chapters worth reading.
 
 # Budgets
 
@@ -131,6 +140,7 @@ large to open. The harness compares the failed-check count you record with the
 index frontmatter and returns that exact count with the validity read; use it
 rather than inferring or approximating the count.
 
+{method_requirement}
 # Tools
 
 - read_file(path, section?) reads the report, the files it links to, and the
@@ -200,6 +210,7 @@ decision into one specification, validate it, submit it, and stop.
 
 - {catalog_path} -- the complete supported design space and specification schema.
 - {environment_path}
+- {method_path}
 
 Read the catalog and, when one exists, the environment descriptor before writing.
 Do not invent fields or knobs the catalog does not declare. Keep unrelated factors
@@ -228,6 +239,71 @@ You have at most {attempts} validation attempts. Once validation succeeds, submi
 that exact file. Then report the experiment code and what the run will settle.
 """
 
+#: How the experiment design handbook is described when one is configured. It
+#: sits beside the two contracts without being one: the catalog says what is
+#: legal and the result contract what is claimable, while this says what is
+#: sound. Being longer than a whole-file read, it is introduced as a document to
+#: navigate rather than one to read straight through.
+_METHOD_AVAILABLE = (
+    "{path} -- the experiment design handbook: guidance on what makes a "
+    "specification a sound experiment rather than merely a legal one. It is "
+    "organised into chapters -- how a claim has to be stated to be testable, "
+    "what a comparison has to hold equal, what the load model decides, which "
+    "regime the data size puts you in, how much repetition tells an effect from "
+    "noise, what the environment contributes, how measurements may be combined, "
+    "and what fits the budget. It is too long for one read: request the section "
+    "`## Navigation` first, which says which chapters a question like yours "
+    "needs, then request those chapters by their exact headings. Each principle "
+    "carries an identifier such as M2.3, and a rejection that cites one is "
+    "pointing at the chapter worth re-reading."
+)
+
+#: Handbook chapters an interpretation must have read before it may record a
+#: verdict, in reading order. Navigation explains how the handbook is used at
+#: all; the four chapters are the ones whose principles bear on reading a
+#: finished measurement rather than only on planning one -- which factor
+#: actually varied, what a load model makes a throughput number mean, what
+#: repetition establishes, and how metrics may be combined and reported.
+INTERPRET_METHOD_SECTIONS = (
+    "## Navigation",
+    "## M2. Factors and controls",
+    "## M3. The load model",
+    "## M5. Repetition and noise",
+    "## M7. Metrics",
+)
+
+#: The interpretation phase's handbook requirement. It names the chapters and
+#: nothing else on purpose: spelling out which mistakes to avoid would put the
+#: guidance in the prompt rather than in the handbook, and there would be no
+#: way to tell which of the two a better verdict came from.
+_METHOD_INTERPRET_REQUIRED = """\
+# Method before verdict
+
+{path} is the experiment design handbook -- the methodological guidance the
+design phase works from. Its principles govern reading a measurement as much as
+planning one, and it carries identifiers such as M2.3 so a specific principle
+can be pointed at.
+
+Before you may record a verdict you must read, by their exact headings and in
+this order:
+
+{sections}
+
+Recording is refused until you have read them. Apply what they say to how you
+state the verdict. Where a principle does not hold for the result in front of
+you, the reason it gives is what governs, not the sentence.
+"""
+
+#: Shown instead when the deployment configures none, so the agent knows the
+#: method rules are its own responsibility rather than absent.
+_METHOD_MISSING = (
+    "(No experiment design handbook is configured here, so nothing states what "
+    "makes a design sound. Apply ordinary experimental method yourself: one "
+    "factor at a "
+    "time, everything else held equal, a claim some outcome could refute, and "
+    "enough repetition to tell an effect from noise.)"
+)
+
 #: How the environment descriptor is described when one exists for this cluster.
 _ENVIRONMENT_AVAILABLE = (
     "{path} -- the cluster you actually have: which nodes exist, what capacity "
@@ -250,6 +326,7 @@ def design_messages(
     task: str,
     catalog_path: str,
     environment_path: str | None,
+    method_path: str | None,
     inbox: str,
     attempts: int,
     followups: int,
@@ -260,6 +337,8 @@ def design_messages(
     :param catalog_path: Path the agent should read the catalog from.
     :param environment_path: Path to the environment descriptor, or ``None`` when
         it has not been generated for this cluster yet.
+    :param method_path: Path to the handbook, or ``None`` when this
+        deployment configures none.
     :param inbox: Directory name the agent may write into.
     :param attempts: How many times the agent may call validate.
     :param followups: How many follow-up experiments it will be offered later.
@@ -276,6 +355,10 @@ def design_messages(
             if environment_path
             else _ENVIRONMENT_MISSING
         ),
+        method_path=(
+            _METHOD_AVAILABLE.format(path=method_path)
+            if method_path else _METHOD_MISSING
+        ),
     )
     return [
         {"role": "system", "content": system},
@@ -288,6 +371,8 @@ def interpret_messages(
     report_path: str,
     result_contract_path: str,
     specification: str | None,
+    method_path: str | None = None,
+    method_sections: tuple[str, ...] = INTERPRET_METHOD_SECTIONS,
 ) -> list[dict[str, Any]]:
     """Build the opening conversation for the interpretation phase.
 
@@ -301,10 +386,18 @@ def interpret_messages(
     :param report_path: Entry point of the finished result folder.
     :param result_contract_path: Path to ``contract_result.yml``.
     :param specification: The experiment that ran, or ``None`` if unavailable.
+    :param method_path: Path to the handbook, or ``None`` when none is
+        configured; without one the phase carries no reading requirement.
+    :param method_sections: Chapters that must be read before recording.
     :return: System and user messages, in OpenAI message shape.
     :rtype: list[dict[str, Any]]
     """
-    system = INTERPRET_SYSTEM_PROMPT.format(result_contract_path=result_contract_path)
+    requirement = "" if method_path is None else _METHOD_INTERPRET_REQUIRED.format(
+        path=method_path,
+        sections="\n".join(f"- `{section}`" for section in method_sections),
+    )
+    system = INTERPRET_SYSTEM_PROMPT.format(
+        result_contract_path=result_contract_path, method_requirement=requirement)
     user = f"The question was:\n\n{task}\n\nThe report is at {report_path}."
     if specification:
         user += f"\n\nThe experiment that ran was:\n\n{specification}"
@@ -320,6 +413,7 @@ def followup_author_messages(
     experiment_code: str,
     catalog_path: str,
     environment_path: str | None,
+    method_path: str | None,
     inbox: str,
     attempts: int,
     dry_run: bool = False,
@@ -334,6 +428,7 @@ def followup_author_messages(
     :param experiment_code: Parent result code required by ``follow_up_of``.
     :param catalog_path: Path to the input catalog.
     :param environment_path: Path to the cluster descriptor, or ``None``.
+    :param method_path: Path to the handbook, or ``None``.
     :param inbox: Directory where the model may write its draft.
     :param attempts: Number of validation attempts available.
     :param dry_run: Whether submission is withheld after successful validation.
@@ -346,6 +441,10 @@ def followup_author_messages(
     )
     system = FOLLOWUP_AUTHOR_SYSTEM_PROMPT.format(
         catalog_path=catalog_path, environment_path=environment,
+        method_path=(
+            _METHOD_AVAILABLE.format(path=method_path)
+            if method_path else _METHOD_MISSING
+        ),
         inbox=inbox, attempts=attempts, experiment_code=experiment_code,
     )
     if dry_run:

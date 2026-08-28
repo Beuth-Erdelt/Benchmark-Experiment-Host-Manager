@@ -1,0 +1,43 @@
+mode: run
+title: YCSB quick smoke test on PostgreSQL
+
+hypothesis: PostgreSQL can execute YCSB workload b with single-row primary-key operations at non-zero throughput under a minimal resource envelope, and throughput increases with concurrency.
+
+discriminates: [concurrency]
+
+workload:
+  name: ycsb
+  params:
+    workload: b
+    scaling_factor: 1
+    operations_scale: 1
+    timeout: 60
+    target_base: 0
+    max_execution_time: 300
+  rounds: [1, 2]
+  repetitions: 2
+
+loading:
+  pods: 1
+  threads: 2
+  timeout_minutes: 10
+
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+
+observe:
+  monitoring_sut: true
+  monitoring_cluster: false
+  monitoring_app: true
+
+placement:
+  sut: cl-worker21
+  loading: cl-worker21
+  benchmarking: cl-worker21
+
+resources:
+  cpu: {request: "2", limit: "2"}
+  memory: {request: "4Gi", limit: "4Gi"}
+  storage:
+    size: "10Gi"

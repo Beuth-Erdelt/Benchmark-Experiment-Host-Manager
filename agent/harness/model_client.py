@@ -17,14 +17,18 @@ See LICENSE for details.
 from __future__ import annotations
 
 import json
+import sys
 import time
 from dataclasses import dataclass, field
 from typing import Any
 
-from openai import APIConnectionError, OpenAI, OpenAIError, RateLimitError
+from openai import (
+    APIConnectionError, InternalServerError, OpenAI, OpenAIError, RateLimitError,
+)
 
 __all__ = [
-    "ModelUnreachable", "ContextWindowExhausted", "ToolCall", "Reply", "ChatModel",
+    "ModelNotServed", "ModelUnreachable", "ContextWindowExhausted", "ToolCall",
+    "Reply", "ChatModel",
 ]
 
 #: vLLM does not check credentials, but the OpenAI client insists on a key.
@@ -39,10 +43,10 @@ _MINIMUM_GENERATION_TOKENS = 1024
 #: Attempts made when a metered endpoint refuses a turn for rate limiting.
 #: Hosted providers meter per minute, so a phase that would otherwise die
 #: mid-investigation waits the meter out instead.
-_RATE_LIMIT_ATTEMPTS = 6
+_RETRY_ATTEMPTS = 6
 #: First wait after a refused turn; doubled per attempt up to the cap below.
-_RATE_LIMIT_BACKOFF_SECONDS = 5.0
-_RATE_LIMIT_BACKOFF_CAP_SECONDS = 60.0
+_RETRY_BACKOFF_SECONDS = 5.0
+_RETRY_BACKOFF_CAP_SECONDS = 60.0
 
 #: Field names servers publish their context length under, in the order tried.
 _CONTEXT_WINDOW_FIELDS = ("max_model_len", "max_context_length")
@@ -74,6 +78,10 @@ class ModelUnreachable(RuntimeError):
     one that knows which server is behind the endpoint, and callers report a
     misconfigured endpoint the way they report any other setup mistake.
     """
+
+
+class ModelNotServed(RuntimeError):
+    """Raised when a multi-model endpoint does not serve the configured model."""
 
 
 @dataclass
@@ -139,6 +147,40 @@ class ChatModel:
         #: Seam so a test can exercise the backoff without waiting for it.
         self._sleep = time.sleep
 
+    def resolve_served_model(self) -> str:
+        """Resolve a configured alias against the endpoint's model list.
+
+        A dedicated endpoint often serves one model under an implementation-
+        chosen identifier. That identifier is unambiguous and safe to adopt.
+        A multi-model endpoint requires an exact configured match instead.
+
+        :return: Model identifier that subsequent requests will use.
+        :rtype: str
+        :raises ModelNotServed: When no exact match exists and the endpoint does
+            not advertise exactly one alternative.
+        """
+        try:
+            identifiers = [
+                entry.id for entry in self._client.models.list().data
+                if isinstance(getattr(entry, "id", None), str) and entry.id
+            ]
+        except OpenAIError:
+            # Some compatible servers do not implement model discovery. Let the
+            # first completion retain the configured name and report any error.
+            return self.model
+        if self.model in identifiers:
+            return self.model
+        if len(identifiers) != 1:
+            available = ", ".join(identifiers) or "none"
+            raise ModelNotServed(
+                f"configured model {self.model!r} is not served; available models: "
+                f"{available}"
+            )
+        self.model = identifiers[0]
+        self._context_window = None
+        self._context_window_asked = False
+        return self.model
+
     def _window(self) -> int | None:
         """Return the served context length, asking the server once.
 
@@ -197,29 +239,40 @@ class ChatModel:
         return min(self.max_tokens, room)
 
     def _create_with_backoff(self, request: dict[str, Any]) -> Any:
-        """Send one request, waiting out a metered endpoint's rate limit.
+        """Send one request, waiting out a refusal the endpoint will recover from.
 
-        A self-hosted server queues requests instead of refusing them, so this
-        only ever engages against a hosted API. Waiting is the right response
-        there: the alternative is losing a whole investigation to a per-minute
-        quota that clears on its own.
+        Two refusals are temporary and worth waiting for rather than losing an
+        investigation to: a metered API's per-minute quota, which clears on its
+        own, and a hosted endpoint that is momentarily out of capacity. A
+        self-hosted server queues instead of refusing, so this only engages
+        against a hosted API.
 
         :param request: Keyword arguments for the chat-completions call.
         :return: The server's completion.
         :raises ModelUnreachable: When every attempt was refused.
         """
-        wait = _RATE_LIMIT_BACKOFF_SECONDS
-        for attempt in range(1, _RATE_LIMIT_ATTEMPTS + 1):
+        wait = _RETRY_BACKOFF_SECONDS
+        for attempt in range(1, _RETRY_ATTEMPTS + 1):
             try:
                 return self._client.chat.completions.create(**request)
-            except RateLimitError as error:
-                if attempt == _RATE_LIMIT_ATTEMPTS:
+            except (RateLimitError, InternalServerError) as error:
+                refusal = (
+                    "rate limiting" if isinstance(error, RateLimitError)
+                    else "a server-side failure"
+                )
+                if attempt == _RETRY_ATTEMPTS:
                     raise ModelUnreachable(
-                        f"{self.base_url} refused {_RATE_LIMIT_ATTEMPTS} attempts for "
-                        f"rate limiting: {error}"
+                        f"{self.base_url} refused {_RETRY_ATTEMPTS} attempts for "
+                        f"{refusal}: {error}"
                     ) from error
-                self._sleep(_retry_after(error) or wait)
-                wait = min(wait * 2, _RATE_LIMIT_BACKOFF_CAP_SECONDS)
+                delay = _retry_after(error) or wait
+                print(
+                    f"the endpoint refused this turn for {refusal}; "
+                    f"retrying attempt {attempt + 1} of {_RETRY_ATTEMPTS} in {delay:g}s",
+                    file=sys.stderr, flush=True,
+                )
+                self._sleep(delay)
+                wait = min(wait * 2, _RETRY_BACKOFF_CAP_SECONDS)
 
     def reply(
         self,
@@ -275,7 +328,7 @@ class ChatModel:
         )
 
 
-def _retry_after(error: RateLimitError) -> float | None:
+def _retry_after(error: OpenAIError) -> float | None:
     """Return the wait the refusing server asked for, when it named one.
 
     :param error: The refusal raised by the client library.

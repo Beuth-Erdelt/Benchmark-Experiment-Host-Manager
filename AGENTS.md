@@ -111,6 +111,35 @@ accesses) still resolve correctly after the change.
 Before introducing a new pattern, check how similar things are already done in
 the codebase and follow the existing convention.
 
+## Cluster access
+Experiments run on the BHT `ds_cluster`, whose API server is internal to the
+university network and resolves only over the VPN. Login is OIDC-based, and a
+token is obtained without any prompt by
+`~/git/BIRD-Interact/scripts/kube-login.sh`, which reads `KUBE_USERNAME` and
+`KUBE_PASSWORD` from the gitignored `~/git/BIRD-Interact/.kube.env`, exchanges
+them for a token, and writes it into the kubelogin cache. Never copy those
+credentials into this repository. If a permission classifier refuses to run the
+script because it touches credentials, ask the user to run it themselves with
+the `!` prefix rather than reading the credentials file directly.
+
+Two failure modes recur and are worth checking before blaming anything else:
+
+- The login script rewrites `~/.kube/config` from a template that carries no
+  namespace, so afterwards the context points at `default`, where the account
+  has no rights. bexhoma issues `kubectl create` without a namespace flag, so
+  the rejection is swallowed and the run polls forever for a dashboard that was
+  never created. Always run
+  `kubectl config set-context oidc_ds_cluster --namespace=lliu` immediately
+  after logging in, and confirm with `kubectl config get-contexts`.
+- The access token lives about five minutes and the refresh token about thirty,
+  and kubectl only refreshes it while it is actually being used. A phase that
+  talks solely to the language model — an agent design run, for example — can
+  easily outlive that window, and the first cluster call afterwards falls back
+  to an interactive password prompt that a background process can never answer.
+  The symptom is a hung `kubectl-oidc_login get-token` process, an empty
+  `bexhoma.log`, and every later kubectl call blocking on the same cache lock.
+  Kill the stuck processes, log in again, and restart the affected step.
+
 ## PEP 8
 - Remove unused imports.
 - `if x is not None` — never `if not x is None`.

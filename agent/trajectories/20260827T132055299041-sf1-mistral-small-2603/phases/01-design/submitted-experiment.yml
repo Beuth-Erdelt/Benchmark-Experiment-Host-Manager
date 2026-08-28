@@ -1,0 +1,57 @@
+mode: run
+title: "Select DBMS for 1 GB analytical workload under 16 CPU/64 GiB RAM and test under concurrency"
+hypothesis: "For a 1 GB analytical reporting workload constrained to 16 CPU cores and 64 GiB RAM, PostgreSQL and PgDuckDB will deliver comparable performance at low concurrency, but PgDuckDB’s vectorized execution will scale better under higher concurrent analyst load. The recommendation will therefore depend on expected concurrency."
+discriminates: [system, concurrency]
+
+workload:
+  name: tpch
+  params:
+    scaling_factor: 1
+    timeout: 600
+    query_repeats: 1
+    measure_datatransfer: false
+    active_queries: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+    recreate_parameter: false
+    shuffle_queries: false
+    refresh_streams: 0
+    store_explain: false
+  rounds: [1, 2, 4]
+  repetitions: 3
+
+loading:
+  pods: 2
+  threads: 2
+  split: 1
+  timeout_minutes: 30
+  post_load:
+    indexes: true
+    constraints: true
+    statistics: true
+    storage_format: heap
+
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+  - name: PgDuckDB
+    profile: analytical-ssd
+    override:
+      duckdb_force_execution: true
+
+observe:
+  monitoring_sut: true
+  monitoring_cluster: true
+  monitoring_app: true
+
+placement:
+  sut: cl-worker21
+  loading: cl-worker21
+  benchmarking: cl-worker27
+
+resources:
+  cpu: {request: "16", limit: "16"}
+  memory: {request: "64Gi", limit: "64Gi"}
+  storage:
+    size: "100Gi"
+
+max_sut: 1
+max_sut_experiment: 1

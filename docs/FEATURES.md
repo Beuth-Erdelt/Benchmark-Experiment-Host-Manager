@@ -23,9 +23,14 @@ follow up on a benchmark. The full current description and visual flow live in
 |---|---|---|
 | Structured validation verdict | `agent/harness/validation.py` | Done |
 | Catalog, shape, environment, and methodology validation | `agent/harness/validation.py`, `contracts/contract_catalog.yml` | Done |
+| Experiment design handbook: navigable chapters of methodological guidance, read from its Navigation chapter at design and follow-up authoring, hashed into provenance, with its four decidable principles enforced and cited by identifier | `agent/experiment_design_handbook.md`, `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/validation.py` | Done and regression-tested |
+| Handbook switched off in one setting, for the with/without ablation | `agent/harness/agent.py`, `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
+| Handbook reachable and required during interpretation: named chapters must be read before a verdict may be recorded, and a renamed chapter is dropped rather than demanded | `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/tools.py` | Done and regression-tested |
+| Cluster session renewed at submission time, after the phase that can run long | `agent/harness/submit.py`, `.env.example` | Done and regression-tested |
+| Full coverage of the parameter types the catalog declares, including YCSB's throughput sweeps | `agent/harness/validation.py` | Done and regression-tested |
 | Phase-scoped tools, path policy, immutable submission, and deterministic query comparison | `agent/harness/tools.py` | Done |
 | Exact one-result selection, link-reachable evidence reads, and result-contract answer structure | `agent/harness/prompts.py`, `agent/harness/tools.py`, `contracts/contract_result.yml` | Done and regression-tested |
-| Model adapter for the self-hosted server | `agent/harness/model_client.py` | Done |
+| Model adapter with single-model endpoint discovery for portable server naming | `agent/harness/model_client.py` | Done and regression-tested |
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py`, `agent/trajectories/` | Done and regression-tested; incomplete designs remain timestamp-only |
@@ -50,6 +55,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Installable agent and TPC-H launcher package | `pyproject.toml` | Done and wheel-smoke-tested outside the checkout |
 | Maintained-suite test discovery | `pyproject.toml` | Done; plain `pytest` runs `tests/` |
 | Local server/benchmark lifecycle, retry, resume, signal-safe cleanup, namespace restoration, restart of a self-finished pod, and exact failed-experiment cleanup | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Local-only; unit- and cluster-checked |
+| Unattended phase chaining for endpoints we do not host, including hosted APIs and a local Ollama | `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
 | Quick start | `agent/README.md` | Done |
 | Full pipeline, annotated visual, replay rules, and decision record | `agent/ARCHITECTURE.md` | Done; all older agent-pipeline descriptions merged here |
 | Critic as a separate invocation | — | Optional evaluation, intentionally outside the prototype |
@@ -85,16 +91,25 @@ Which server the agent talks to is not fixed to that pod. The agent CLI
 (`agent/harness/agent.py`) and the local lifecycle wrapper
 (`dev/agent_lifecycle.py`) load an optional `.env` from the repository root at
 startup, supplying `AGENT_MODEL`, `AGENT_BASE_URL`, and `AGENT_API_KEY` where
-the shell has not already exported them. An exported variable overrides the
-file, and the corresponding command-line flag overrides both. `.env.example`
+the shell has not already exported them. The same file carries the two settings
+that decide how a run is conducted rather than who answers it:
+`AGENT_MODEL_SERVER`, which says whether the wrapper starts and stops that pod
+or leaves an endpoint it does not own alone, and `AGENT_METHOD`, which names the
+experiment design handbook and, left empty, designs without one. An exported
+variable overrides the file, and the corresponding command-line flag overrides
+both. `.env.example`
 documents a block per backend — the bundled vLLM server through a port forward,
 the same server by its in-cluster service name, a local Ollama, OpenAI, and
 Mistral — and `.env` itself is gitignored so keys stay out of the history. The
 loader is `python-dotenv`, added to the `agent` extra alongside the OpenAI
 client.
 
-Two adjustments in the model adapter make a hosted endpoint usable in place of
-the self-hosted one. The context-length probe accepts either spelling a server
+Three adjustments in the model adapter make a hosted endpoint usable in place of
+the self-hosted one. Before the first prompt, a dedicated endpoint's sole
+advertised model identifier replaces a stale configured alias; a multi-model
+endpoint still requires an exact match. This prevents a server implementation's
+naming choice from breaking an otherwise portable deployment. The context-length
+probe accepts either spelling a server
 publishes it under (`max_model_len` for vLLM, `max_context_length` for
 Mistral), so the per-turn budget guard keeps working off the cluster. And a
 turn refused for rate limiting is retried with a doubling wait, honouring a
@@ -103,9 +118,651 @@ unusable. A self-hosted server queues requests rather than refusing them, so
 this engages only against a metered API, where a per-minute quota would
 otherwise end an investigation mid-design.
 
+### Trajectory provenance
+
+Each phase records the model, its sampling parameters, the digests of the
+catalog, result contract and cluster descriptor it read, and the harness itself
+— the commit at HEAD plus a fingerprint of the harness sources, so an
+uncommitted edit to the validator or the prompts is visible in the record. Two
+trajectories are comparable only when both the model and that fingerprint are.
+
+### Concurrency between agent runs
+
+An agent-started experiment holds an exclusive lock on the result root for as
+long as it benchmarks, so a second run refuses to submit. The lock expresses a
+measurement policy rather than a filesystem need — BeXhoma already isolates
+every experiment in its own code-named directory — and `--allow-parallel-runs`
+on the agent CLI lifts it for one run. The submitted run then records in its
+trajectory that it started alongside another, so the timings are never read
+later as if the cluster had been quiet.
+
 ---
 
 ## Part 2 — Request log
+
+### 2026-08-28 — Sweep the documentation and restart the investigation on Mistral
+
+Asked to bring the documentation in line with the two simplified settings, drop
+what had become legacy, and start a fresh Mistral run on a question that does not
+say which workload to use.
+
+Every place that still described the old machinery now describes the settings.
+The architecture record says that the server steps of the phase chain happen only
+for a server this machine owns, and that an in-cluster run chooses both the
+server and the handbook through the Job's environment, since the controller
+passes its environment on unchanged rather than forwarding flags. The Job
+manifest carries both variables with their defaults, which is where an
+in-cluster ablation arm is now selected. The inventory entry for the model server
+lists the two settings beside the three that say who answers. Both environment
+files carry `AGENT_METHOD` as a written-out setting rather than a commented
+suggestion, so the ablation is run by emptying a line that is already there. The
+two
+request-log entries whose mechanism was replaced today keep their text and gain a
+line saying what superseded them, since the log is a record of what was asked and
+when, not of what the code looks like now.
+
+The run started from the same one command, with Mistral `mistral-small-2603`
+selected in the environment file and the handbook on. Its question describes an
+application that reads and updates single rows by primary key at a high request
+rate and asks whether four or eight CPU cores serve more of those requests per
+second. It names no benchmark: choosing the key-value workload over the
+analytical one is part of what the design is being judged on.
+
+### 2026-08-28 — Switch the handbook on and off from the environment file
+
+Asked for the handbook to be optional in the same way the model server now is:
+one setting, changed either in the environment file or on the command line that
+starts a run, so the with/without ablation costs no edit to any file.
+
+It was already a single setting, but only for a run started in the cluster: the
+handbook path was a command-line option on both the agent and the wrapper, and
+only the in-cluster controller read it from `AGENT_METHOD` and forwarded it. A
+local run therefore had to be given the empty path by hand. Both command lines
+now take their default from `AGENT_METHOD`, so `.env` decides for every way of
+starting a run, an empty value designs without a handbook, and `--method` still
+overrides the file for a single run. The controller forwards nothing, because
+the wrapper reads the same variable out of the environment it is handed.
+
+The rule for what counts as no handbook is unchanged: any path that is not a
+file, the empty one included, leaves the design phase without one, and the
+trajectory records that absence as it always has.
+
+### 2026-08-28 — Read who owns the model server from the environment file
+
+Asked to make yesterday's ownership setting really basic: instead of a wrapper
+per kind of endpoint, simply take the value from the environment file.
+
+What the setting does is unchanged; the machinery around it is gone. Ownership
+was a pair of interchangeable server objects, chosen by a factory from a
+validated mode name, reached through a command-line flag whose default came from
+the environment and which the in-cluster controller then had to forward on the
+command line. It is now one boolean on the single server adapter: the lifecycle
+wrapper reads `AGENT_MODEL_SERVER` once at startup, from the same `.env` it
+already reads the model name, endpoint, and key from, and the adapter's switch
+returns immediately when the endpoint is not ours to start. The controller
+forwards nothing, because the variable is already in the environment it hands to
+the wrapper, in the cluster as well as locally. An exported shell variable still
+overrides the file for one run, exactly as the other model settings do.
+
+One message had to know the difference and no longer does. The line printed
+while a benchmark runs said the model server was down, which was untrue for an
+endpoint we never stopped; it now only names the benchmark it is waiting for,
+since the switch script announces the shutdown itself whenever there is one.
+
+### 2026-08-28 — Stop the handbook from disclaiming the phase that reads it
+
+Scored a replayed interpretation against five criteria and reported the result:
+quoting figures at one consistent scope was fixed, stating a level as a range
+across repetitions rather than as two separate facts was improved, and the false
+claim about which factor had varied was gone though no more precise naming
+replaced it. Two criteria were untouched — latency was never reported beside
+throughput, and the headline still generalized past the two levels measured.
+Observed that the required reading changed how figures are quoted while leaving
+what the verdict chooses to discuss alone, and proposed the likely cause: the
+Navigation chapter, which interpretation now reads first, opened by disclaiming
+the task that phase is performing.
+
+The diagnosis was right, and the contradiction was direct rather than merely a
+missing note. The interpretation prompt tells the agent that the handbook's
+principles govern reading a measurement as much as planning one; the first
+chapter it is then required to read said the handbook does not tell you how to
+read a finished result, which checks decide validity, or how a conclusion must
+be structured. The agent was being pointed at a document that declined the job
+in its opening paragraph.
+
+Navigation now says the principles apply to reading a measurement as much as to
+planning one, and confines the disclaimer to the mechanics that genuinely belong
+to the result contract: which files a result folder holds, which checks decide
+validity, and how a verdict is structured and cited. What a finished number may
+be said to show, at what scope, against how much variation, and how far beyond
+the measured levels a conclusion may reach, are named as questions the chapters
+do answer. The routing that followed the chapter table was written entirely for
+designing, so a second paragraph now says which chapters carry the weight once a
+run has finished and what each one governs there. Handbook version 0.4.0.
+
+No principle was added or reworded in the same change. The criterion about
+reporting latency beside throughput has no principle behind it to route to — the
+load-model chapter requires the concurrency behind a latency figure but says
+nothing about the operating point behind a throughput figure — and that gap is
+real. Filling it at the same time as the routing fix would leave no way to tell
+which of the two changed the verdict, so it waits for the next replay.
+
+### 2026-08-27 — Renew the cluster session at submission time
+
+Asked to fix the expired cluster session first, as it is cross-cutting, wastes
+completed model work and can invalidate any workload. A design phase that ran
+for two hours handed its experiment to a cluster whose session had expired after
+thirty minutes; the login helper fell back to a password prompt, and a
+background run has no terminal to answer it, so the submission hung for three
+and a half hours and produced nothing.
+
+The submission adapter now runs a configured shell command to renew credentials
+immediately before an experiment is handed to the cluster, which is the last
+moment before the session is needed and after the phase that can run long. The
+command is named by an environment setting and is absent by default, so a
+deployment that needs no login is unaffected. A failure stops the submission
+with the login's own message, and so does a hang, since a login waiting on input
+would otherwise block the submission indefinitely. Three tests cover the absent,
+failing and succeeding cases.
+
+### 2026-08-27 — Require the handbook before an interpretation may record a verdict
+
+Asked to replay a finished YCSB result with the same model and settings but with
+the handbook's Navigation section and its chapters on factors, load model,
+repetition and metrics required before recording, and to score the replay on
+five faults the first verdict showed: mixing per-client with aggregate figures,
+misnaming the varied factor, ignoring latency beside throughput, leaving the
+conclusion unbounded by the levels actually measured, and not reflecting the
+spread of the two repetitions.
+
+The first verdict could not have consulted the handbook at all. Interpretation
+restricts reads to the report, the files it links to and the result contract, so
+the handbook was outside the phase's reach rather than merely unrequired. It is
+now reachable there, and the phase refuses to record a verdict until the named
+chapters have been read by their exact headings.
+
+The prompt names the chapters and deliberately nothing else. Listing the faults
+to avoid would move the guidance out of the handbook and into the prompt, and a
+better verdict would then say nothing about what the handbook is worth. A
+heading absent from the current handbook is dropped rather than demanded, since
+chapter titles are rewritten between revisions and requiring a missing one would
+make the verdict unreachable.
+
+The replay ran on the same report, the same model and the same settings, so the
+only difference between the two verdicts is handbook access. The gate refused
+the first attempt to record, the model read the five chapters, and the second
+attempt was accepted. Two of the five faults are gone: the verdict no longer
+mixes a single client's rate with the two-client total, quoting each level's
+figure at the same scope, and it now states each level as a range across the two
+repetitions rather than as two unconnected runs. One is half fixed: it no longer
+calls the varied factor "threads", which was simply wrong, but it names it only
+as concurrency and never says the level is a count of client pods. Two are
+unchanged: latency appears nowhere, though the chapter on metrics was read, and
+the headline conclusion still says throughput increases with concurrency without
+bounding that to the one and two clients actually measured.
+
+The pattern is that required reading improved how figures are quoted and left
+what the verdict chooses to discuss untouched. A plausible cause sits in the
+handbook itself: its Navigation chapter, which the phase now reads first, states
+that the handbook does not tell you how to read a finished result folder. An
+interpretation is told to read chapters that open by disclaiming the task it is
+performing. Whether adding an interpretation-facing note changes the outcome is
+the next thing to test.
+
+### 2026-08-27 — Make the handbook a single on/off setting
+
+Asked whether the handbook could be left out by changing one parameter, which is
+what the planned ablation needs: the same question and model designed with and
+without it, to measure what the document is worth.
+
+It was already true of a direct agent run. The design command takes a handbook
+path, treats a path that is not a file as no handbook at all, and then swaps the
+prompt for a variant that tells the agent no handbook is configured and that
+ordinary experimental method is its own responsibility. The gate stops requiring
+a read, and the trajectory records that none was present and no digest taken, so
+the two arms of an ablation are distinguishable after the fact.
+
+It was not true of the two ways a run is actually launched. The local wrapper
+forwarded the catalog and environment settings but not the handbook, and the
+in-cluster controller passed neither, so both paths always got the default. Both
+now forward it, the wrapper as a `--method` option defaulting to the handbook and
+the controller from an `AGENT_METHOD` environment variable with the same default.
+Passing an empty value at any of the three levels turns the handbook off, and
+changes nothing else about the run.
+
+*Superseded on 2026-08-28: both command lines take their default from
+`AGENT_METHOD`, and the controller forwards nothing.*
+
+### 2026-08-27 — Settle the handbook's role, and require its routing chapter
+
+Reviewed the reframed handbook and asked for five things: keep it out of
+interpretation and remove the reachability that let the model open it there
+anyway, correct the inventory that claimed the validator citations were still
+missing when they had shipped, finish removing "method contract" and "third
+contract" from every place a reader meets them, narrow two principles that had
+drifted from the science, and correct one citation.
+
+The handbook is now unreachable during interpretation. It had been added to the
+files a result-scoped context may open, justified by a comment claiming it
+governs conclusions as much as designs — which is the result contract's job, not
+its own. The prompt never asked for it there, so the reachability bought
+nothing and blurred the division it was supposed to respect.
+
+Reading the Navigation chapter is now what satisfies the design-space gate. The
+handbook is longer than a whole-file read allows and is meant to be read one
+chapter at a time, but the gate counted any successful read, so a single chapter
+— or the sources list — could stand in for having consulted it at all. A
+whole-file read still counts, since it contains the routing chapter by
+definition. The refusal now names the chapter to read rather than only the file.
+
+Two principles were narrowed because they overreached. The rule about resource
+envelopes had been written around a container's guarantee and limit, which is a
+fact about one orchestrator rather than about experiments; it now states the
+general hazard — opportunistic access to a shared resource becoming an
+uncontrolled factor — and leaves request-equals-limit as the local validator
+policy derived from it. The rule on summarizing rates said to use the harmonic
+mean, which is only correct when each observation covers the same amount of
+work; it now asks for the underlying totals first and, failing those, for the
+mean that matches how the observations were taken.
+
+Terminology was finished off in the validator's comments, docstrings and
+rejection messages, the design and follow-up prompts, the command-line help, the
+agent README and the brief's own title. The Manolescu and Manegold tutorial now
+cites the CWI record, which confirms the authors, title, tutorial status and
+ICDE 2008 venue.
+
+The two inventory rows that contradicted each other are merged into one. The
+validator already cites M1.1, M2.3, M5.1 and M2.6, and the tests assert those
+identifiers; the row claiming otherwise was written before that work landed.
+
+### 2026-08-27 — Reframe the handbook as guidance and make it navigable
+
+Reviewed the first draft of the handbook and asked for five changes: rename and
+reframe it as an experiment design handbook rather than a third contract, add a
+navigation section and chapter introductions so it can be read selectively,
+remove the passage telling the model which principles are mechanically checked,
+narrow the principles that were stated as universal laws when their applicability
+depends on the question, and align the design prompt with selective reads.
+
+Two facts found while checking those proposals set the priorities. First, the
+harness was already wired for this document before it existed: the design CLI
+defaults to `agent/experiment_design_handbook.md` and activates only when that file is
+present, the design prompt carries a slot describing it, the design-space gate
+requires it to be read before the agent may act, and the trajectory records its
+SHA-256 together with whether one was configured at all. Writing the file
+switched that machinery on. Second, a whole-file read of any Markdown file is
+refused above 24,000 characters, and that check runs before the more generous
+48,000-character allowance given to contracts, so the 25,381-character draft
+could not be read whole; worse, the gate marks a required file as read only when
+content comes back, so the agent could have satisfied it with one section and
+proceeded having seen a ninth of the document.
+
+The handbook is now titled *Experiment Design Handbook* and says in its own text
+that it is guidance rather than a binding interface, with the three roles stated
+explicitly: the catalog defines legal experiments, the result contract defines
+supportable claims, and the handbook supplies method. The file name and the
+`M1.1`-style identifiers are unchanged, because both are internal and renaming
+the file would break the wiring described above. A `## Navigation` section now
+carries the framing and a table routing a question to the chapters it needs, and
+every chapter opens with its purpose, the observable features of a question that
+make it relevant, a few reasoning questions rather than instructions, and
+cross-references. Chapters are Markdown sections requested by exact heading; the
+largest is 3,762 characters against a 12,000-character section limit, and a
+load-model design reading navigation plus five chapters consumes about 17,800
+characters where the single mandatory read would have cost 25,381. Which chapters
+were actually read is already visible in the trajectory, since every tool call is
+logged with its arguments.
+
+Three principles were narrowed because they were wrong as stated rather than
+merely strict. Requiring one factor or a full factorial outlawed fractional
+factorial designs, which deliberately alias known effects and are standard
+practice; the principle now asks for a design whose effects are identifiable and
+whose aliasing can be stated, which still rules out an unplanned subset of
+combinations. Attributing coordinated omission to closed or rate-limited
+generators as such was too broad, since a closed model correctly describes a
+population that genuinely waits; the error is using such measurements to describe
+demand that arrives independently, and the principle now says so. Requiring a
+rival explanation of every experiment contradicted the same chapter's allowance
+for descriptive measurement, and is now scoped to comparative and causal claims.
+
+The chapter on the scope of a conclusion was removed, along with the chapter
+mapping principles to mechanical checks. Most of the scope chapter restated what
+the result contract and the interpretation gate already enforce — read validity
+before performance, report what was run, structure and cite the verdict — and two
+normative sources for one rule will drift. Its genuinely design-time content
+survived: include the levels you intend to conclude about, cover the conditions
+where the change under test might do harm, and instrument the resource you may
+later want to blame. The summary-statistics rules were kept rather than deleted,
+because nothing else in the repository carries them.
+
+The mapping from principles to decidable checks is recorded here instead of in
+the handbook, so that removing it from the model's view does not lose it. A
+checker can decide whether a hypothesis states any criterion a result could fail
+(M1.1), whether a resource request differs from its limit in an experiment that
+compares anything (M2.3), whether a comparison is attempted with too few
+repetitions to separate an effect from noise (M5.1), and whether the declared
+factors are exactly the varied ones (M2.6, already enforced). A rejection may
+cite the identifier as its reason; the agent is no longer told in advance which
+principles carry a check, because a list of what is enforced invites designing
+for the checker.
+
+One citation was corrected: the Manolescu and Manegold tutorial had been given
+the URL of a different 2007 panel paper.
+
+### 2026-08-27 — Write the experiment handbook from the public literature
+
+Asked to act on the brief in `agent/task.md`: survey the public literature on
+benchmarking method and turn it into a handbook the agent can read before it
+designs, organised into chapters that each carry guidelines and the common
+pitfalls those guidelines exist to prevent. Asked mid-task to keep the text
+general rather than tied to the one or two workloads this deployment currently
+runs, and to build it on definitive published sources — the developer's own
+benchmarking papers and the wider database-benchmarking literature — rather than
+on recollection.
+
+`agent/experiment_design_handbook.md` is that handbook, versioned like the other contracts
+so a run can record which text it saw. It lives in the agent's own directory
+because the shared contracts directory is out of bounds for agent work, which
+settles one of the brief's open questions; the remaining ones about how it is
+read and hashed are untouched, since nothing in the harness reads it yet.
+
+Nine chapters follow the order design decisions actually arise: the claim and
+what would refute it, factors and parity between the things being compared, the
+load model and what a throttled run may not claim, dataset size against the
+memory envelope, repetition against noise, the measurement environment, metrics
+and the summaries that distort them, the scope a result licenses, and cost.
+Every principle has a stable identifier so a rejection can cite the principle it
+enforces instead of paraphrasing it, and a closing chapter says which principles
+are decidable by a checker and which are judgments no rule list can close. No
+principle names a workload, a system or a value to copy, which is the brief's
+guard against a handbook that turns experimental design into instruction
+following.
+
+The sources chapter records where each principle comes from: Gray's benchmark
+criteria and Huppler on benchmark construction, Manolescu and Manegold on
+performance evaluation in database research, the DBTest fair-benchmarking
+pitfalls and their checklist, TPC's steady-state and disclosure requirements,
+Jain's mistakes and games, Hoefler and Belli's reporting rules, Heiser's
+benchmarking crimes, the open-versus-closed load-model result, coordinated
+omission, measurement bias, rigorous repetition, cloud performance variability,
+the SIGMOD reproducibility initiative, and the three TPCTC papers describing the
+infrastructure this agent runs on.
+
+### 2026-08-27 — Report every structural fault in one verdict
+
+Asked why the input contract had not kept a locally hosted Qwen3.5 inside the
+space of valid designs. Classifying every validation error recorded across the
+stored trajectories showed that none of them was an illegal value drawn from one
+of the catalog's enumerated menus. Roughly half were structural — a field that
+exists in the schema written at the wrong depth, or given the wrong YAML type —
+and the rest were relations between fields that no per-field menu can express.
+
+The measurement also showed the validator had never once returned more than a
+single error: forty-nine verdicts carried exactly one, and none carried two. An
+author therefore had to discover independent faults one at a time, spending a
+whole validation attempt on each. Since the design phase budgets turns per
+attempt, a specification with four unrelated problems could not be repaired
+inside the budget however capable its author was.
+
+The shape check now runs every independent section and collects what each finds,
+so the workload block, the systems list, the observation and placement sections
+and the resource block all report together. Two ordering constraints remain,
+because they are real data dependencies rather than early exits: a document whose
+top level is not a well-formed object is reported on its own, since every section
+check indexes into it, and the declared-factors rule is asked only once the
+structure it counts is known to be sound. The environment stage now reports an
+unavailable storage class alongside a placement that will not fit its node, which
+previously masked each other. No rule changed, and the catalog was read, not
+modified — only how many of the existing rules an author hears about at once.
+
+A misplaced field is now pointed at the block that accepts it. The rejection
+previously said only that a field was unknown where it was written, although the
+schema already knew the field was legal one level up, so an author had to search
+the contract to resolve a question the validator could have answered. The
+unknown-field message now names the defining block, following the same principle
+as the storage-class check, which exists because rejecting a value without naming
+the alternatives leaves an author guessing at a closed list it cannot see. A
+field the contract does not define anywhere is still reported plainly, so no
+false direction is invented. This is a wording change: the rule and the set of
+accepted specifications are unchanged, which the unchanged pass count over the
+stored specifications confirms.
+
+
+### 2026-08-27 — Report independent method violations together
+
+A design run spent its whole validation budget learning one rule per rejection:
+that a factor must be declared, that this workload runs on one system only, that
+it supports no resource sweep, that the envelope must be fixed, and that a
+comparison needs repetition — six attempts, each teaching one thing, ending with
+no experiment. The verdict deliberately reports the first problem found, which
+is right for errors that can mask one another but wrong for the method checks,
+which are independent by construction.
+
+The decidable principles of the method contract are now evaluated together and
+reported in one verdict, so a design carrying three of them learns about all
+three at once. The catalog and environment stages are unchanged, since a
+specification that fails to resolve cannot be checked further anyway.
+
+### 2026-08-27 — Stop discarding a design that passed on its last attempt
+
+The first design run under the method contract reached a valid specification on
+its final validation attempt and then could not submit it. Spending the
+validation budget withdrew every tool, submission included, so an experiment
+that was ready to run was thrown away and the phase reported that it had ended
+with nothing. Individual calls to the exhausted tool were already refused one by
+one, which made the blanket withdrawal both redundant and destructive.
+
+The budget now bounds re-checking rather than handing over. When the last
+validation passed and nothing has been submitted since, the tools stay available
+for that one act, and the notice tells the agent to submit the exact file that
+passed and edit nothing further. When there is nothing owed the behaviour is
+unchanged. The same rule covers follow-up authoring, which had the same defect.
+
+### 2026-08-27 — Survive a momentary failure of the hosted endpoint
+
+The first design run after the method contract went in died on the model
+provider's side: the endpoint answered that it was out of capacity, which the
+client raised as a server error rather than a refusal. The adapter already waits
+out a metered API's per-minute quota, because losing a whole investigation to a
+limit that clears by itself is the wrong trade; a momentary capacity failure is
+the same trade and was not covered. Both refusals are now retried with the same
+widening wait, and the message says which of the two exhausted the attempts.
+
+### 2026-08-27 — Integrate the method contract as the third contract
+
+The handbook drafted in `agent/task.md` was written, and asked to be wired in.
+It states experimental method — how a claim has to be stated to be testable,
+what must be held equal, what the load model decides, which regime the data size
+puts a run in, how much repetition a comparison needs, and what may be concluded
+— with every principle carrying an identifier such as M2.3.
+
+It now sits beside the other two contracts everywhere they appear. The design
+phase and the follow-up author are pointed at it, must read it before writing a
+specification, and are told it is normative rather than advisory and that it
+gives reasons rather than values to copy. Its digest is recorded in the
+trajectory beside the catalog and cluster descriptor, so two runs are comparable
+only when they saw the same handbook — which is what makes the with-and-without
+comparison measurable later. It stays readable during interpretation too, since
+it governs what may be concluded as much as what may be designed. The
+per-context read allowance grew to fit three contracts and a cluster descriptor
+in one design conversation.
+
+The document names four principles a machine can decide, and the validator now
+enforces exactly those and cites them: a hypothesis that states adequacy instead
+of an outcome any measurement could contradict (M1.1), a resource envelope whose
+guarantee is below its limit while a comparison is being made (M2.3), declared
+factors that are not the varied ones (M2.6, already enforced and now cited), and
+a comparison with too few repetitions to separate an effect from noise (M5.1).
+The repetition rule previously applied only where the catalog named a minimum,
+which silently exempted YCSB; the handbook binds every comparison, so a workload
+that names no minimum now falls back to the fewest runs from which any spread
+can be estimated. Everything else in the handbook is left to the agent by
+design, since the space of ways to mismatch a claim and a design is not
+enumerable.
+
+### 2026-08-27 — Make interpretation reachable for a non-analytical workload
+
+The first YCSB investigation to reach interpretation could not finish it. Before
+recording conclusions the agent must run the deterministic comparison-quality
+check on the benchmarking page, and that check reads only the analytical
+benchmarker's per-query tables. Handed a key-value report it answers that there
+are no recognisable comparison tables, which the gate read as "the check has not
+been run" rather than "there is nothing here to check". The model, which had
+read the measurements correctly, was refused four identical times and ran out of
+turns. The phase then failed on the first field the missing record would have
+carried, so an unmet precondition surfaced as an internal error.
+
+A benchmarking page with no comparison tables now counts as assessed, with the
+comparison judgments marked not applicable — the same answer the code already
+gave when there is no benchmarking page at all — so the record stays reachable
+for any benchmarker that does not write per-query tables. A phase that ends
+without its structured record now reports that in a sentence instead of
+breaking. The wrapper also stops announcing the state of a model server it does
+not own, now that it can drive an endpoint it never starts.
+
+Both defects are the same shape as the validator gaps found earlier today: the
+harness was written against the analytical workload and assumes it in places
+that only surface when another workload is driven end to end.
+
+### 2026-08-27 — Write down the experiment-handbook idea as a brief
+
+Observed that more validator rules will not fix what the YCSB design got wrong,
+because the two contracts describe what an experiment may express and what may
+be claimed from a result, while neither describes how to turn a question into a
+sound design. Asked for the idea to be written down for a future session rather
+than built now.
+
+`agent/task.md` records it: the evidence from this session's designs, the split
+between defects a checker can decide and judgments it cannot, the proposal to
+add a handbook of experimental method as a third hashed contract, the two risks
+worth designing against — prescriptiveness that turns design into instruction
+following, and the context budget the existing contracts already consume — and
+the open questions. Nothing was implemented; the file is a brief, and it is not
+the benchmark question the lifecycle controller reads.
+
+### 2026-08-27 — Chain the phases for models we do not host
+
+Asked for Mistral and a local Ollama to run the full investigation
+automatically, the way the self-hosted model already does, instead of having
+each phase started by hand. The gap was real and narrow. Everything that makes
+an investigation unattended — waiting for the exact report, resuming after a
+restart, cleaning up a failed experiment, carrying an approved follow-up
+through a second cycle — lives in the local wrapper and was already independent
+of which model answers. What the wrapper could not do was leave the model alone:
+it started and stopped the bundled vLLM server at every phase boundary, so
+pointing it at an endpoint somebody else runs would have tried to raise a pod
+that nothing needed.
+
+Ownership of the endpoint is now a setting rather than an assumption. The
+default keeps today's behaviour and starts and stops the bundled server; the
+other value says the endpoint is already there and reduces the wrapper to the
+phase chain it always was underneath. Each backend block in the example
+environment file carries the right value, so choosing a backend chooses this
+too, and the in-cluster controller passes the choice through instead of
+assuming the bundled server. The agent itself is unchanged and still starts no
+server in any configuration.
+
+*Superseded on 2026-08-28: the setting is read straight from the environment
+file into one boolean, and the controller forwards nothing.*
+
+### 2026-08-27 — Teach the validator the throughput-sweep type YCSB uses
+
+Asked to run a quick YCSB example against PostgreSQL with the hosted Mistral
+model. The design phase spent all three of its attempts on a single rejection
+the model could do nothing about: the agent's validator did not recognise the
+type the catalog declares for YCSB's two throughput-sweep fields, a list of
+multipliers on the target operation rate, and reported it as a typo in the
+contract. That type arrived with the YCSB workload in the merged upstream
+release, and the agent's list of known types had never been extended to match.
+
+The validator now knows that type and checks it the way it checks the other
+list types: the value has to be a non-empty list of numbers, and a bare number
+is rejected with a message saying so. The author is told what shape to write
+instead of being told the contract is broken. Only the agent's validator
+changed; the catalog was read, not modified.
+
+The second attempt then stalled on that same contract rule from a different
+side. The contract requires every experiment to isolate at least one factor,
+and the validator requires the declared factor to be one the experiment
+actually varies, so a run with a single system, a single round and no resource
+sweep cannot be expressed at all. The rejection said only that the declaration
+and the varied factors disagreed, which is unhelpful precisely in this case:
+the declaration cannot be emptied to match, because the catalog requires it to
+name something. The model read the message as an instruction to add a system
+and picked one the workload does not support.
+
+That rejection now says what to do when nothing is varied — add a second
+system the workload supports, a second round to vary concurrency, or a list of
+resource cells — while the ordinary mismatch message is unchanged. The rule
+itself is untouched; only what it tells the author is different.
+
+### 2026-08-27 — Discover the model identifier served by an endpoint
+
+Asked to restart an independent SF1 study with three minutes per query and up
+to three follow-ups. The local vLLM server came up, but the launch had overridden
+only the model name while the active `.env` still selected Mistral's hosted base
+URL. Model discovery exposed the mixed configuration before the first prompt;
+no benchmark was submitted.
+
+The agent now checks the endpoint's advertised model list before recording
+provenance or sending a prompt. It keeps an exact match, adopts the sole model
+identifier exposed by a dedicated endpoint, and refuses to guess when a
+multi-model endpoint has no match. Completed trajectory names and provenance
+therefore carry the identifier that actually handled the investigation. The
+change is confined to the agent; BeXhoma is untouched.
+
+### 2026-08-27 — Record which harness drove each trajectory
+
+Asked for the harness revision to be recorded in trajectories, after the
+validator improvements above made two runs by different models no longer
+strictly comparable. A trajectory already named the model, the sampling
+parameters, and the exact contracts and cluster descriptor it saw, but nothing
+about the code that posed the task and judged the answers.
+
+Every phase now opens by recording the commit at HEAD together with a
+fingerprint of the harness sources. The commit alone would not settle it,
+because phases are routinely run with uncommitted work in the tree, so the
+sources are hashed directly and the commit stands beside them as the readable
+label. The commit is read from the checkout's own files rather than by running
+git, which keeps it working in an installed copy without a checkout and free of
+side effects.
+
+### 2026-08-27 — Stop the validator from rejecting a correct specification
+
+Four Mistral-driven design attempts failed on the same field, and three of the
+failures were the validator's fault rather than the model's. The catalog states
+that a null storage class means the field is unset, and the profiles that allow
+node-local storage list null among their permitted values, but the agent's own
+type check rejected an explicit null as a type error. A model that had
+correctly worked out that the field should carry no value was told it was
+wrong. An explicit null now reads exactly as an omitted optional field does.
+
+The second change is to what a rejection says. The shared resolver refuses a
+storage class the cluster does not offer without naming the ones it has, so the
+author is guessing at a closed list. The agent now checks the requested class
+against the cluster descriptor first and quotes the available names back, along
+with the fact that omitting the field takes node-local storage instead. Only the
+agent's validator changed; the shared resolver and the contracts were not
+touched.
+
+Note for comparisons: this improves the quality of the feedback a model gets
+during design, so trajectories recorded after it are not strictly comparable to
+the archived Qwen runs, which faced the older, less informative validator.
+
+### 2026-08-27 — Allow two agent investigations to run at once
+
+Asked why a validated specification could not be submitted while another
+investigation was benchmarking, and pointed out that BeXhoma gives every
+experiment its own result directory anyway. That is correct: the refusal came
+from the harness's own lock on the result root, which exists to keep two
+benchmarks from measuring each other, not to keep their files apart.
+
+The lock stays the default and now has an explicit way out. `--allow-parallel-runs`
+lets one run submit while another is still benchmarking, and the submission
+result carries a flag saying it did, so the trajectory records the choice
+instead of leaving a reader to guess why the timings look noisy. The interim
+workaround used during this session — pointing the second run at its own result
+folder — is no longer needed and splits the archive for no benefit.
 
 ### 2026-08-27 — Configure the model backend from a .env file
 
@@ -1214,3 +1871,29 @@ form, because the index, constraint and statistics switches are global, so the
 supported entry point attaches it to the parsed arguments in memory and the
 agent's launcher now does the same. A test covers it by giving two systems
 different post-load selections and asserting they no longer resolve alike.
+
+### 2026-08-27 — Offer the local Qwen3.5 tags as Ollama options
+
+Asked what context window the locally installed Qwen3.5 9B has, whether this
+machine can run it, and to add the 4B alongside it as an option without making
+it active.
+
+Both models are listed as commented blocks in the local-Ollama section of `.env`
+and `.env.example`. The Mistral block stays the active one; nothing was
+switched over.
+
+The measurements behind the note in that section were taken on this machine.
+Ollama serves whichever window a tag pins in its `num_ctx` parameter rather than
+the model's architectural maximum, which for Qwen3.5 is 262144 tokens. Both
+`ctx64k` tags pin 65536. The plain `qwen3.5:9b-q4_K_M` tag pins nothing and so
+loads at Ollama's 4096-token default, which would silently truncate an agent
+conversation, and the previously listed `qwen3:8b` had the same problem. Recent
+trajectories peak near 26k prompt tokens, so 64k leaves roughly two and a half
+times the observed need.
+
+The 9B runs but does not fit: its weights are 6.6 GB against 8 GB of card, so at
+a 64k window Ollama places 38% of it in system memory. Generation falls from
+18 tokens per second on an empty context to 9.3 at a 25k-token prompt and 5.3
+near the full window, while prompt processing stays fast at roughly 1300 tokens
+per second. The 4B fits the card entirely at the same 64k window and generates
+at about 100 tokens per second, which is why it is worth having listed.

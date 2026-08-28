@@ -38,7 +38,18 @@ pipeline, contracts, module map, replay rules, and limitations.
    ```
 
 The active catalog is `contracts/contract_catalog.yml`. The current prototype
-supports TPC-H with PostgreSQL and PgDuckDB.
+supports TPC-H with PostgreSQL and PgDuckDB, and YCSB with PostgreSQL.
+
+Three documents govern a run. The catalog says what an experiment may express.
+The result contract, `contracts/contract_result.yml`, says what may be claimed
+from a finished result. The experiment design handbook, `agent/experiment_design_handbook.md`, says
+what makes a design sound rather than merely legal: it is read before every
+design and every follow-up, its digest is recorded in the trajectory, and the
+few principles a machine can decide are enforced by the validator, which cites
+them by identifier. `AGENT_METHOD` in `.env` says which handbook that is, and an
+empty value designs without one, which is the other arm of the with/without
+ablation. `--method` overrides the file for a single run, on the agent CLI and on
+the lifecycle wrapper alike; any path that is not a file means no handbook.
 
 ## Choosing the model server
 
@@ -59,7 +70,11 @@ service name, a local Ollama, OpenAI, and Mistral. Ollama and Mistral serve the
 same protocol under a `/v1` path, so nothing but these three values changes.
 
 Two differences are worth knowing when you leave the self-hosted server. The
-agent asks the endpoint how long a context it accepts and shrinks each turn's
+agent first resolves the configured model name against the endpoint's model
+list. A dedicated endpoint advertising exactly one model may choose its own
+identifier, which the agent adopts; an endpoint advertising several models
+requires an exact configured match. The agent then asks how long a context it
+accepts and shrinks each turn's
 output budget to fit; servers name that figure differently, so both the vLLM
 spelling and the hosted one are read. A server that publishes neither leaves the
 agent on the fixed per-turn ceiling `--max-tokens` sets, which still works but
@@ -67,9 +82,14 @@ loses that safety margin. And a metered API refuses turns once a per-minute
 quota is reached, where a self-hosted server would simply queue them, so a
 refused turn is retried with a widening wait before the phase gives up.
 
-The lifecycle wrapper described below starts and stops the bundled vLLM server
-around each phase. It is only useful when that server is the backend; pointing
-`AGENT_BASE_URL` at a hosted API means running the agent CLI directly instead.
+One more setting decides who owns the endpoint. `AGENT_MODEL_SERVER=bundled`,
+the default, means the lifecycle wrapper below starts and stops the vLLM server
+around every phase. `AGENT_MODEL_SERVER=external` means the endpoint is already
+there — a hosted API, or an Ollama running on your machine — so the wrapper
+only chains the phases and never touches a server. Each block in `.env.example`
+already carries the right value, and an exported `AGENT_MODEL_SERVER` overrides
+the file for one shell, exactly as the three settings above do. The agent CLI
+itself never starts a server in either case.
 
 ## Self-hosted model server
 
@@ -124,6 +144,22 @@ AGENT_MODEL=qwen3.8-27b \
   --followups 1
 ```
 
+With `AGENT_MODEL_SERVER=external` in `.env` the same command drives Mistral,
+OpenAI, or a local Ollama end to end: design, benchmark, interpretation, and an
+approved follow-up run without anyone starting a phase by hand, and no server is
+started or stopped along the way.
+
+```sh
+.venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>"
+```
+
+The ablation's other arm is the same command with the handbook switched off,
+either by leaving `AGENT_METHOD` empty in `.env` or for one run:
+
+```sh
+AGENT_METHOD= .venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>"
+```
+
 Results land wherever `cluster.config` declares its `resultfolder`, which is the
 same setting bexhoma itself reads, so the two cannot disagree. A relative value
 there resolves against the repository. Override it for one run with `--results`,
@@ -158,6 +194,21 @@ GPU once twenty minutes pass without a request. Set `IDLE_SHUTDOWN_SECONDS` in
 the manifest to change that window, or to `0` to keep the server up until
 something deletes it. Running `dev/model_server.sh down` is still the quickest
 way to hand the GPU back.
+
+## Running two investigations at once
+
+An agent-started run takes an exclusive lock on the result folder, so a second
+run refuses to submit while the first is still benchmarking. That is a
+measurement policy, not a filesystem constraint: BeXhoma already gives every
+experiment its own directory, named by the experiment code. Serial execution is
+the default because two benchmarks sharing a cluster measure each other.
+
+Pass `--allow-parallel-runs` to the agent CLI to submit anyway. The run then
+starts alongside the one already in flight and records that it did so in its
+trajectory, so a later reader knows the timings were not taken on a quiet
+cluster. Pin the two investigations to different nodes with `placement:` before
+doing this, or the numbers will describe the interference rather than the
+systems.
 
 ## Autonomous Kubernetes lifecycle
 

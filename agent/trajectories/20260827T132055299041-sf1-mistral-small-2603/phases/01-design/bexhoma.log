@@ -1,0 +1,144 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1787829906
+Experiment                    : starts at 2026-08-27 13:25:07.336242 (184622.203871724)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+Query selection is limited to Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8, Q9, Q10, Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q18, Q19, Q20, Q21, Q22.
+All instances use the same query parameters.
+Timeout per query is 600.
+PgDuckDB queries are forced through the DuckDB execution engine.
+Import sets indexes, constraints, statistics recomputation after loading.
+Experiment uses bexhoma version 0.10.8.
+System metrics are monitored by a cluster-wide installation.
+Application metrics are monitored by sidecar containers.
+Experiment is limited to DBMS ['PostgreSQL', 'PgDuckDB'].
+Import is handled by 2 processes (pods).
+Loading is fixed to cl-worker21.
+Benchmarking is fixed to cl-worker27.
+SUT is fixed to cl-worker21.
+Database uses ephemeral storage of size 100Gi.
+Loading is tested with [2] threads, split into [2] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 2, 4] times the number of benchmarking pods.
+Experiment is run 3 times.
+Maximum DBMS per experiment is 1.
+Maximum DBMS across the whole cluster is 1.
+Each configuration has a loading timeout of 30 minutes; diagnostics are captured before teardown.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20480MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '49152MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1024MB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-pg-duck', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2048MB')].
+SUT requests 16 CPU and 64Gi RAM. CPU limit is 16. RAM limit is 64Gi.
+Cluster monitoring            : is running
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : 

@@ -1,0 +1,3 @@
+I designed a minimal YCSB-on-PostgreSQL experiment and wrote it to inbox/ycsb-postgres-example.yml. The specification sets a small 1 GB dataset, workload A (50/50 read/update), one loader pod with 4 threads, a single benchmarking round, and pins everything to node cl-worker21 with modest CPU/memory requests and a local-hdd volume.
+
+The only unresolved issue is that the validator rejected the workload.params.loading_target_factors and benchmarking_target_factors fields because it insisted they must be a list[float], yet the catalog’s schema for ycsb.params declares them as list[float]. I could not reconcile this mismatch within the remaining validate budget, so the file remains unvalidated.

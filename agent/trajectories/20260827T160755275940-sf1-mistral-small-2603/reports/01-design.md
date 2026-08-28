@@ -1,0 +1,2 @@
+Summary:
+I designed a simple YCSB benchmark against PostgreSQL. The experiment runs a single PostgreSQL system with a 1 GB dataset and 1 million operations, using workload A (50/50 read/update). It compares two concurrency levels (1 and 2 clients) to satisfy the discriminates factor. The system is configured with 2 CPU cores and 4 GiB memory, using ephemeral storage for speed. Monitoring is enabled to capture basic metrics. The experiment is expected to run quickly and demonstrate YCSB performance on PostgreSQL.

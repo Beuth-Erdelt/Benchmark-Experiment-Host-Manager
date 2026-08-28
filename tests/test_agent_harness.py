@@ -6,6 +6,7 @@ import contextlib
 import fcntl
 import io
 import json
+import os
 import shutil
 import tempfile
 import unittest
@@ -15,8 +16,9 @@ from unittest import mock
 
 import yaml
 
-from agent.harness import prompts, submit as submit_adapter
+from agent.harness import agent as agent_module, prompts, submit as submit_adapter
 from agent.harness.agent import (
+    _harness_revision,
     Trajectory,
     _carry_forward,
     _phase_number,
@@ -25,11 +27,13 @@ from agent.harness.agent import (
     run_design,
     run_interpret,
 )
-from openai import RateLimitError
+from openai import InternalServerError, RateLimitError
 
 from agent.harness.model_client import (
-    ChatModel, ContextWindowExhausted, ModelUnreachable, Reply, ToolCall,
+    ChatModel, ContextWindowExhausted, ModelNotServed, ModelUnreachable, Reply,
+    ToolCall,
 )
+from agent.harness import tools as tools_module
 from agent.harness.tools import (
     DESIGN_TOOLS,
     FOLLOWUP_AUTHOR_TOOLS,
@@ -54,6 +58,25 @@ workload:
 systems:
   - {name: PostgreSQL, profile: analytical-ssd}
   - {name: PgDuckDB, profile: analytical-ssd}
+resources:
+  cpu: {request: 4, limit: 4}
+  memory: {request: 8Gi, limit: 8Gi}
+  storage: {size: 10Gi}
+"""
+
+_YCSB_SPEC = """\
+mode: run
+title: key-value smoke test
+hypothesis: a second client stream raises throughput on one PostgreSQL instance
+discriminates: [concurrency]
+workload:
+  name: ycsb
+  params: {workload: a, scaling_factor: 1, target_base: 1000,
+    loading_target_factors: [1], benchmarking_target_factors: [1]}
+  rounds: [1, 2]
+  repetitions: 2
+systems:
+  - {name: PostgreSQL, profile: analytical-ssd}
 resources:
   cpu: {request: 4, limit: 4}
   memory: {request: 8Gi, limit: 8Gi}
@@ -238,6 +261,134 @@ class WorkspaceTest(unittest.TestCase):
         self.workspace.write_file(self.path, _SPEC)
         self.assertTrue(self.workspace.validate(self.path)["valid"])
 
+    def test_an_explicit_null_reads_as_an_omitted_optional_field(self) -> None:
+        """The catalog documents null as meaning unset; rejecting it contradicts that."""
+        self.workspace.write_file(
+            self.path, _SPEC.replace("  storage: {size: 10Gi}",
+                                     "  storage: {size: 10Gi}\n  storage_class: null"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+
+    def test_a_throughput_sweep_of_factors_is_a_list_of_numbers(self) -> None:
+        """The catalog declares these sweeps as list[float]; the validator must know it."""
+        self.workspace.write_file(self.path, _YCSB_SPEC)
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+
+    def test_the_method_contract_is_readable_and_hashed_into_provenance(self) -> None:
+        """The third contract has to reach the model and the trajectory alike."""
+        method = self.root / "agent" / "experiment_design_handbook.md"
+        method.parent.mkdir(parents=True, exist_ok=True)
+        method.write_text("# Method contract\n\n- M1.1 state a refutable claim\n")
+        workspace = Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            environment_path="environment.yml",
+            method_path="agent/experiment_design_handbook.md",
+            results_root=str(self.root / "results"), run_directory=self.run,
+        )
+
+        self.assertIn("M1.1", workspace.read_file("agent/experiment_design_handbook.md")["text"])
+
+    def test_a_claim_no_measurement_could_refute_is_rejected(self) -> None:
+        """M1.1: adequacy language means every possible run confirms the hypothesis."""
+        self.workspace.write_file(self.path, _SPEC.replace(
+            "hypothesis: one system is faster under concurrency",
+            "hypothesis: both systems perform acceptably under concurrency"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        self.assertIn("M1.1", verdict["errors"][0]["message"])
+
+    def test_a_claim_naming_a_threshold_is_accepted(self) -> None:
+        """The check refuses vagueness, not any particular wording."""
+        self.workspace.write_file(self.path, _SPEC.replace(
+            "hypothesis: one system is faster under concurrency",
+            "hypothesis: PgDuckDB completes the workload in under 60 seconds"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+
+    def test_an_elastic_resource_envelope_is_rejected_in_a_comparison(self) -> None:
+        """M2.3: a burstable arm receives whatever the node has spare."""
+        self.workspace.write_file(self.path, _SPEC.replace(
+            "  cpu: {request: 4, limit: 4}", "  cpu: {request: 2, limit: 4}"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        message = verdict["errors"][0]["message"]
+        self.assertIn("M2.3", message)
+        self.assertIn("request and limit", message)
+
+    def test_a_workload_with_no_declared_minimum_still_needs_repetition(self) -> None:
+        """M5.1 binds every comparison, not only the workloads the catalog covers."""
+        self.workspace.write_file(
+            self.path, _YCSB_SPEC.replace("  repetitions: 2", "  repetitions: 1"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        self.assertIn("M5.1", verdict["errors"][0]["message"])
+
+    def test_independent_method_violations_are_reported_together(self) -> None:
+        """One lesson per attempt spends the budget on round trips, not on design."""
+        self.workspace.write_file(self.path, _YCSB_SPEC.replace(
+            "  repetitions: 2", "  repetitions: 1").replace(
+            "  cpu: {request: 4, limit: 4}", "  cpu: {request: 2, limit: 4}"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        cited = " ".join(error["message"] for error in verdict["errors"])
+        self.assertIn("M2.3", cited)
+        self.assertIn("M5.1", cited)
+
+    def test_a_single_treatment_is_told_how_to_become_an_experiment(self) -> None:
+        """discriminates cannot be emptied, so the only way out is a second treatment."""
+        self.workspace.write_file(
+            self.path, _YCSB_SPEC.replace("  rounds: [1, 2]", "  rounds: [1]"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        message = verdict["errors"][0]["message"]
+        self.assertIn("a second entry in rounds", message)
+
+    def test_a_single_factor_written_as_a_bare_number_says_what_to_write(self) -> None:
+        """Blaming the contract leaves the author no way forward; name the shape instead."""
+        self.workspace.write_file(
+            self.path, _YCSB_SPEC.replace("loading_target_factors: [1]",
+                                          "loading_target_factors: 1"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        self.assertIn("must be a list of numbers",
+                      verdict["errors"][0]["message"])
+
+    def test_an_unavailable_storage_class_names_the_ones_the_cluster_has(self) -> None:
+        """A closed list the author cannot see has to be quoted back to them."""
+        (self.root / "environment.yml").write_text(
+            _ENVIRONMENT + "storage_classes:\n- {name: ceph}\n- {name: local-hdd}\n")
+        self.workspace.write_file(
+            self.path, _SPEC.replace("  storage: {size: 10Gi}",
+                                     "  storage: {size: 10Gi}\n  storage_class: ssd"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        message = verdict["errors"][0]["message"]
+        self.assertIn("ceph", message)
+        self.assertIn("local-hdd", message)
+        self.assertIn("Omit the field", message)
+
     def test_submit_requires_unchanged_validated_bytes(self) -> None:
         self._validate()
         self.workspace.write_file(self.path, _SPEC + "# changed\n")
@@ -370,23 +521,29 @@ class WorkspaceTest(unittest.TestCase):
         self.assertIn("not a runtime prediction", estimate["basis"])
 
     def test_file_reads_have_a_cumulative_context_limit(self) -> None:
+        allowance = tools_module._READ_CONTEXT_CHARACTER_LIMIT
+        chunk = tools_module._READ_CHARACTER_LIMIT
         path = self.root / "results" / "big.log"
-        path.write_text("x" * 40_000)
-        for _ in range(3):
+        path.write_text("x" * (chunk * 2))
+        whole_reads, remainder = divmod(allowance, chunk)
+        for _ in range(whole_reads):
             self.assertIn("text", self.workspace.read_file(str(path)))
         last = self.workspace.read_file(str(path))
-        self.assertEqual(last["returned_characters"], 8_000)
+        self.assertEqual(last["returned_characters"], remainder)
         self.assertIn("budget is exhausted", self.workspace.read_file(str(path))["error"])
 
     def test_a_fresh_model_context_resets_only_the_read_allowance(self) -> None:
+        allowance = tools_module._READ_CONTEXT_CHARACTER_LIMIT
+        chunk = tools_module._READ_CHARACTER_LIMIT
         path = self.root / "results" / "big.log"
-        path.write_text("x" * 40_000)
-        for _ in range(3):
+        path.write_text("x" * (chunk * 2))
+        for _ in range(allowance // chunk):
             self.workspace.read_file(str(path))
         self.workspace.reset_read_context()
         result = self.workspace.read_file(str(path))
-        self.assertEqual(result["returned_characters"], 24_000)
-        self.assertEqual(result["context_characters_remaining"], 56_000)
+        self.assertEqual(result["returned_characters"], chunk)
+        self.assertEqual(
+            result["context_characters_remaining"], allowance - chunk)
 
     def test_yaml_does_not_accept_markdown_sections(self) -> None:
         self.workspace.write_file(self.path, "# Comment\nvalue: true\n")
@@ -814,6 +971,27 @@ class WorkspaceTest(unittest.TestCase):
         result = self.workspace.call("submit", {"path": self.path})
         self.assertIn("still running", result["error"])
 
+    def test_submit_may_be_allowed_alongside_a_running_experiment(self) -> None:
+        """Serial is the default; sharing the cluster is a deliberate choice."""
+        self.workspace.allow_parallel_runs = True
+        self._validate()
+        lock = (self.root / "results" / ".bexhoma-agent.lock").open("w")
+        self.addCleanup(lock.close)
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+        # The detached bexhoma process is stood in for by its result folder,
+        # which is what submit waits for before reporting the run as running.
+        (self.root / "results" / "999").mkdir(parents=True)
+        with (
+            mock.patch("agent.harness.tools.subprocess.Popen") as popen,
+            mock.patch.object(Workspace, "_new_code", return_value="999"),
+        ):
+            popen.return_value = mock.Mock(pid=4321, returncode=None)
+            result = self.workspace.call("submit", {"path": self.path})
+
+        self.assertNotIn("error", result)
+        self.assertTrue(result["parallel_with_running_experiment"])
+
     def test_interpretation_can_submit_one_followup(self) -> None:
         assessment = {
             "question": "what causes degradation?", "status": "unresolved",
@@ -1205,7 +1383,152 @@ class WorkspaceTest(unittest.TestCase):
             and "error" in event.get("result", {})
         ]
         self.assertEqual(len(rejected), 1)
-        self.assertIn("complete catalog", rejected[0]["result"]["error"])
+        self.assertIn("every contract", rejected[0]["result"]["error"])
+
+    def test_a_design_that_passes_on_its_last_attempt_can_still_be_submitted(self) -> None:
+        """The budget bounds re-checking, not handing over a specification that passed."""
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _tool_reply(ToolCall("submit", "submit", {"path": self.path})),
+            _text_reply("Submitted."),
+        ])
+
+        # submit waits for the result folder the detached process would create.
+        (self.root / "results" / "999").mkdir(parents=True)
+        with (
+            mock.patch.object(
+                tools_module.subprocess, "Popen", return_value=_Process()),
+            mock.patch.object(Workspace, "_new_code", return_value="999"),
+        ):
+            outcome = run_design(
+                task="question", workspace=self.workspace, model=model,
+                trajectory=Trajectory(self.run),
+                catalog_path="contracts/contract_catalog.yml",
+                catalog_sha256="0" * 64, environment_path=None, attempts=1,
+            )
+
+        self.assertIsNotNone(outcome["code"])
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        exhausted = next(
+            event for event in events if event["type"] == "budget_exhausted")
+        self.assertTrue(exhausted["handover_pending"])
+
+    def test_design_reads_the_method_contract_before_writing(self) -> None:
+        """The handbook is a required read, not an optional reference."""
+        method = self.root / "agent" / "experiment_design_handbook.md"
+        method.parent.mkdir(parents=True, exist_ok=True)
+        method.write_text("# Method contract\n\n- M1.1 state a refutable claim\n")
+        workspace = Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            environment_path=None, method_path="agent/experiment_design_handbook.md",
+            results_root=str(self.root / "results"), run_directory=self.run,
+        )
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+            ),
+            _tool_reply(
+                ToolCall("method", "read_file",
+                         {"path": "agent/experiment_design_handbook.md"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _text_reply("The design validates."),
+        ])
+
+        outcome = run_design(
+            task="question", workspace=workspace, model=model,
+            trajectory=Trajectory(self.run),
+            catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None,
+            method_path="agent/experiment_design_handbook.md", attempts=1, dry_run=True,
+        )
+
+        self.assertEqual(outcome["validated_path"], self.path)
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        refused = [
+            event for event in events
+            if event.get("tool") == "write_file"
+            and "error" in event.get("result", {})
+        ]
+        self.assertEqual(len(refused), 1)
+        self.assertIn("experiment_design_handbook.md", str(refused[0]["result"]["missing"]))
+        meta = next(event for event in events if event.get("type") == "meta")
+        self.assertTrue(meta["method_present"])
+        self.assertEqual(len(meta["method_sha256"]), 64)
+
+    def test_one_handbook_chapter_does_not_stand_in_for_navigation(self) -> None:
+        """A chapter read leaves the gate closed; the routing chapter opens it."""
+        method = self.root / "agent" / "experiment_design_handbook.md"
+        method.parent.mkdir(parents=True, exist_ok=True)
+        method.write_text(
+            "# Experiment Design Handbook\n\n"
+            "## Navigation\n\nRead M1 for any claim.\n\n"
+            "## M1. The claim\n\n- M1.1 state a refutable claim\n"
+        )
+        workspace = Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            environment_path=None,
+            method_path="agent/experiment_design_handbook.md",
+            results_root=str(self.root / "results"), run_directory=self.run,
+        )
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("chapter", "read_file",
+                         {"path": "agent/experiment_design_handbook.md",
+                          "section": "## M1. The claim"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+            ),
+            _tool_reply(
+                ToolCall("navigation", "read_file",
+                         {"path": "agent/experiment_design_handbook.md",
+                          "section": "## Navigation"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _text_reply("The design validates."),
+        ])
+
+        outcome = run_design(
+            task="question", workspace=workspace, model=model,
+            trajectory=Trajectory(self.run),
+            catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None,
+            method_path="agent/experiment_design_handbook.md", attempts=1,
+            dry_run=True,
+        )
+
+        self.assertEqual(outcome["validated_path"], self.path)
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        refused = [
+            event for event in events
+            if event.get("tool") == "write_file"
+            and "error" in event.get("result", {})
+        ]
+        self.assertEqual(len(refused), 1)
+        missing = str(refused[0]["result"]["missing"])
+        self.assertIn("experiment_design_handbook.md", missing)
+        self.assertIn("Navigation", missing)
 
     def test_interpretation_cannot_finish_without_question_coverage(self) -> None:
         assessment = {
@@ -1285,6 +1608,60 @@ class WorkspaceTest(unittest.TestCase):
         ]
         self.assertEqual(len(rejected), 1)
 
+    def test_a_report_without_comparison_tables_is_assessed_not_blocked(self) -> None:
+        """YCSB's benchmarker writes no per-query tables; the record must stay reachable."""
+        benchmarking = self.root / "results" / "old" / "report" / "benchmarking.md"
+        benchmarking.write_text("""\
+#### Per Phase
+
+| DBMS | phase | pod_count | [OVERALL].Throughput(ops/sec) |
+|:--|:--|--:|--:|
+| postgresql-1-1-1 | postgresql-1-1-1 | 1 | 999.86 |
+| postgresql-1-1-2 | postgresql-1-1-2 | 2 | 1999.39 |
+""")
+        assessment = {
+            "question": "does latency rise with load?", "status": "settled",
+            "conclusion": "yes", "evidence": "the 99th percentile grows",
+            "missing": "", "evidence_paths": [_REPORT_PATH, str(benchmarking)],
+        }
+        quality = {
+            "query_coverage": "not_applicable",
+            "whole_workload_throughput": "not_applicable",
+            "suspect_repetitions": [],
+        }
+        accepted = _record_arguments([assessment], comparison_quality=quality)
+        model = _Model([
+            _evidence_record_reply("too-early", accepted),
+            _tool_reply(ToolCall(
+                "quality", "assess_comparison_quality", {"path": str(benchmarking)}
+            )),
+            _tool_reply(ToolCall("record", "record_interpretation", accepted)),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="question", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
+        self.assertTrue(outcome["phase_complete"])
+        self.assertEqual(
+            outcome["comparison_quality"]["query_coverage"], "not_applicable")
+
+    def test_an_interpretation_that_never_records_fails_readably(self) -> None:
+        """Running out of turns must report the phase, not break on a missing field."""
+        model = _Model([_text_reply("I could not record this.")] * 30)
+
+        with self.assertRaises(agent_module.InterpretationIncomplete):
+            run_interpret(
+                task="question", report_path=_REPORT_PATH, specification=_SPEC,
+                workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+                result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+                environment_path=None,
+            )
+
     def test_interpretation_requires_report_contract_and_read_evidence(self) -> None:
         assessment = {
             "question": "is it faster?", "status": "settled", "conclusion": "yes",
@@ -1334,6 +1711,107 @@ class WorkspaceTest(unittest.TestCase):
             and "error" in event.get("result", {})
         ]
         self.assertEqual(len(rejected), 3)
+
+    def _handbook_workspace(self, headings: tuple[str, ...]) -> Workspace:
+        """Build a workspace whose handbook carries exactly these chapters."""
+        method = self.root / "agent" / "experiment_design_handbook.md"
+        method.parent.mkdir(parents=True, exist_ok=True)
+        method.write_text("# Experiment Design Handbook\n\n" + "\n\n".join(
+            f"{heading}\n\nWhat this chapter says about method.\n"
+            for heading in headings
+        ))
+        return Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            environment_path="environment.yml",
+            method_path="agent/experiment_design_handbook.md",
+            results_root=str(self.root / "results"), run_directory=self.run,
+        )
+
+    def test_a_verdict_waits_for_the_required_handbook_chapters(self) -> None:
+        """Interpretation is where the design's method claims are judged, so the
+        chapters that govern that judgement must be read before a verdict."""
+        workspace = self._handbook_workspace(prompts.INTERPRET_METHOD_SECTIONS)
+        arguments = _record_arguments([{
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+            "evidence_paths": [_REPORT_PATH],
+        }])
+        chapter_reads = [
+            ToolCall(section, "read_file", {
+                "path": "agent/experiment_design_handbook.md", "section": section,
+            })
+            for section in prompts.INTERPRET_METHOD_SECTIONS
+        ]
+        model = _Model([
+            _tool_reply(
+                ToolCall("report", "read_file", {"path": _REPORT_PATH}),
+                ToolCall("contract", "read_file", {"path": _RESULT_CONTRACT_PATH}),
+                ToolCall("too-early", "record_interpretation", arguments),
+            ),
+            _tool_reply(*chapter_reads,
+                        ToolCall("record", "record_interpretation", arguments)),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="question", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None, attempts=1,
+            method_path="agent/experiment_design_handbook.md",
+        )
+
+        self.assertTrue(outcome["phase_complete"])
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        rejections = [
+            event["result"] for event in events
+            if event.get("tool") == "record_interpretation"
+            and "error" in event.get("result", {})
+        ]
+        self.assertEqual(len(rejections), 1)
+        self.assertIn("handbook", rejections[0]["error"])
+        self.assertEqual(len(rejections[0]["missing"]),
+                         len(prompts.INTERPRET_METHOD_SECTIONS))
+
+    def test_a_chapter_the_handbook_no_longer_has_is_not_demanded(self) -> None:
+        """Headings get rewritten between revisions; demanding a heading that no
+        longer exists would make the verdict unreachable."""
+        present = tuple(prompts.INTERPRET_METHOD_SECTIONS[:2])
+        workspace = self._handbook_workspace(present)
+        arguments = _record_arguments([{
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+            "evidence_paths": [_REPORT_PATH],
+        }])
+        model = _Model([
+            _tool_reply(
+                ToolCall("report", "read_file", {"path": _REPORT_PATH}),
+                ToolCall("contract", "read_file", {"path": _RESULT_CONTRACT_PATH}),
+                *[
+                    ToolCall(section, "read_file", {
+                        "path": "agent/experiment_design_handbook.md",
+                        "section": section,
+                    })
+                    for section in present
+                ],
+                ToolCall("record", "record_interpretation", arguments),
+            ),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="question", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None, attempts=1,
+            method_path="agent/experiment_design_handbook.md",
+        )
+
+        self.assertTrue(outcome["phase_complete"])
 
     def test_failed_validity_checks_require_exact_count_and_scope(self) -> None:
         report = _REPORT.replace("failed: 0", "failed: 1")
@@ -1476,11 +1954,14 @@ class PhaseTest(unittest.TestCase):
             ]
             with (
                 mock.patch("sys.argv", argv),
-                mock.patch("agent.harness.agent.model_client.ChatModel"),
+                mock.patch(
+                    "agent.harness.agent.model_client.ChatModel"
+                ) as model_class,
                 mock.patch(
                     "agent.harness.agent.run_design", side_effect=design_phase
                 ),
             ):
+                model_class.return_value.model = "Qwen/Qwen3.8-27B-FP8"
                 self.assertEqual(agent_main(), 0)
 
             investigation = next((root / "investigations").iterdir())
@@ -1757,7 +2238,8 @@ class PhaseTest(unittest.TestCase):
 
         messages = prompts.design_messages(
             task=question, catalog_path="contracts/contract_catalog.yml",
-            environment_path="environment.yml", inbox="inbox",
+            environment_path="environment.yml",
+            method_path="agent/experiment_design_handbook.md", inbox="inbox",
             attempts=3, followups=1,
         )
 
@@ -1841,6 +2323,85 @@ class PhaseTest(unittest.TestCase):
         self.assertIn("Discuss only this experiment", system)
         self.assertNotIn("previous experiment", messages[1]["content"])
 
+    def test_interpret_prompt_names_the_chapters_without_their_lessons(self) -> None:
+        """Naming which mistakes to avoid would move the guidance into the prompt,
+        leaving no way to tell whether a better verdict came from the handbook."""
+        messages = prompts.interpret_messages(
+            task="Which configuration is faster?",
+            report_path="results/42/report/index.md",
+            result_contract_path="results/42/contract_result.yml",
+            specification=_SPEC,
+            method_path="agent/experiment_design_handbook.md",
+        )
+
+        system = messages[0]["content"]
+        self.assertIn("agent/experiment_design_handbook.md", system)
+        for section in prompts.INTERPRET_METHOD_SECTIONS:
+            self.assertIn(section, system)
+        for lesson in ("aggregate", "per-client", "latency alongside", "bound the"):
+            self.assertNotIn(lesson, system)
+
+    def test_interpret_prompt_carries_no_requirement_without_a_handbook(self) -> None:
+        messages = prompts.interpret_messages(
+            task="Which configuration is faster?",
+            report_path="results/42/report/index.md",
+            result_contract_path="results/42/contract_result.yml",
+            specification=_SPEC,
+        )
+
+        self.assertNotIn("Method before verdict", messages[0]["content"])
+
+
+class ClusterCredentialTest(unittest.TestCase):
+    """A design phase can outlive the cluster session it was launched with."""
+
+    def setUp(self) -> None:
+        self.submit = submit_adapter
+        self.previous = os.environ.get("AGENT_CLUSTER_LOGIN")
+
+    def tearDown(self) -> None:
+        if self.previous is None:
+            os.environ.pop("AGENT_CLUSTER_LOGIN", None)
+        else:
+            os.environ["AGENT_CLUSTER_LOGIN"] = self.previous
+
+    def test_no_configured_command_is_not_an_error(self) -> None:
+        os.environ.pop("AGENT_CLUSTER_LOGIN", None)
+
+        self.assertIsNone(self.submit.refresh_cluster_credentials())
+
+    def test_a_failed_login_stops_the_submission(self) -> None:
+        """Submitting on an expired session wastes the whole design phase."""
+        os.environ["AGENT_CLUSTER_LOGIN"] = "echo denied >&2; exit 3"
+
+        with self.assertRaises(RuntimeError) as raised:
+            self.submit.refresh_cluster_credentials()
+
+        self.assertIn("denied", str(raised.exception))
+
+    def test_a_successful_login_lets_the_submission_proceed(self) -> None:
+        os.environ["AGENT_CLUSTER_LOGIN"] = "true"
+
+        self.assertIsNone(self.submit.refresh_cluster_credentials())
+
+
+class HarnessRevisionTest(unittest.TestCase):
+    def test_a_trajectory_identifies_the_harness_that_drove_it(self) -> None:
+        """Comparing two runs is only sound when the harness is comparable too."""
+        revision = _harness_revision()
+
+        self.assertEqual(len(revision["sources_sha256"]), 64)
+        self.assertEqual(len(revision["commit"] or ""), 40)
+
+    def test_editing_the_harness_changes_the_recorded_fingerprint(self) -> None:
+        """An uncommitted edit is exactly what a commit alone would miss."""
+        before = _harness_revision()["sources_sha256"]
+        extra = Path(agent_module.__file__).resolve().parent / "_fingerprint_probe.py"
+        extra.write_text("# temporary\n", encoding="utf-8")
+        self.addCleanup(extra.unlink)
+
+        self.assertNotEqual(_harness_revision()["sources_sha256"], before)
+
 
 class ChatModelTest(unittest.TestCase):
     @staticmethod
@@ -1901,6 +2462,47 @@ class ChatModelTest(unittest.TestCase):
         self.assertEqual(model._sleep.call_count, 2)
         first, second = (call.args[0] for call in model._sleep.call_args_list)
         self.assertGreater(second, first)
+
+    def test_a_momentary_server_failure_is_waited_out_too(self) -> None:
+        """A hosted endpoint out of capacity recovers; the investigation should survive it."""
+        model = self._model()
+        answer = model._client.chat.completions.create.return_value
+        failure = InternalServerError(
+            "upstream connect error", response=mock.Mock(headers={}), body=None)
+        model._client.chat.completions.create.side_effect = [failure, answer]
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.text, "answer")
+        self.assertEqual(model._sleep.call_count, 1)
+
+    def test_single_served_model_replaces_a_stale_configured_alias(self) -> None:
+        """A dedicated endpoint makes its sole advertised identifier unambiguous."""
+        model = self._model()
+        model._client.models.list.return_value.data[0].id = "served-id"
+
+        selected = model.resolve_served_model()
+
+        self.assertEqual(selected, "served-id")
+        self.assertEqual(model.model, "served-id")
+
+    def test_exact_model_match_is_kept_on_a_multi_model_endpoint(self) -> None:
+        """Discovery must not replace an explicit match with another model."""
+        model = self._model()
+        model._client.models.list.return_value.data.append(mock.Mock(id="other"))
+
+        selected = model.resolve_served_model()
+
+        self.assertEqual(selected, "fake")
+
+    def test_multi_model_endpoint_requires_an_exact_configured_match(self) -> None:
+        """Choosing arbitrarily between several advertised models is unsafe."""
+        model = self._model()
+        model.model = "missing"
+        model._client.models.list.return_value.data.append(mock.Mock(id="other"))
+
+        with self.assertRaises(ModelNotServed):
+            model.resolve_served_model()
 
     def test_an_endpoint_that_never_stops_refusing_is_reported_as_unreachable(self) -> None:
         """Waiting forever would hide a quota that is exhausted, not merely busy."""

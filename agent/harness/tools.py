@@ -32,7 +32,14 @@ from agent.harness import validation
 __all__ = [
     "ToolError", "Workspace", "default_result_root", "without_submit",
     "DESIGN_TOOLS", "INTERPRET_TOOLS", "FOLLOWUP_AUTHOR_TOOLS",
+    "NO_COMPARISON_TABLES",
 ]
+
+#: The deterministic comparison-quality assessment only understands DBMSBenchmarker's
+#: per-query tables. A report built from another benchmarker -- YCSB's, for one --
+#: has nothing for it to read, which is an answer about the report rather than a
+#: failure of the tool.
+NO_COMPARISON_TABLES = "the report has no recognizable TPC-H comparison tables"
 
 #: Bexhoma reads its settings from this file in the working directory, and the
 #: experiment path the agent submits through does not let a caller choose
@@ -67,12 +74,14 @@ _SECTION_CHARACTER_LIMIT = 12_000
 #: reject them, never silently remove their tail.
 _AUTHORITATIVE_CHARACTER_LIMIT = 48_000
 _AUTHORITATIVE_FILENAMES = {
-    "contract_catalog.yml", "contract_result.yml", "environment.yml",
-    "experiment.yml", "submitted-experiment.yml",
+    "contract_catalog.yml", "contract_result.yml", "experiment_design_handbook.md",
+    "environment.yml", "experiment.yml", "submitted-experiment.yml",
 }
 #: Hard ceiling on file text returned during one agent invocation. This bounds
-#: prompt growth even when the model keeps opening large evidence pages.
-_READ_CONTEXT_CHARACTER_LIMIT = 80_000
+#: prompt growth even when the model keeps opening large evidence pages. It
+#: allows for all three contracts plus the cluster descriptor in one design
+#: context, with room left for a draft to be read back.
+_READ_CONTEXT_CHARACTER_LIMIT = 110_000
 
 #: A phase is suspicious when its aggregate latency differs by at least this
 #: factor from the median of the other repetitions at the same concurrency.
@@ -138,6 +147,7 @@ class Workspace:
         inbox: str,
         catalog_path: str,
         environment_path: str | None = None,
+        method_path: str | None = None,
         results_root: str | None = None,
         status_dir: str = "status",
         run_directory: Path | None = None,
@@ -148,6 +158,9 @@ class Workspace:
         self.catalog_path = str((self.root / catalog_path).resolve())
         self.environment_path = (
             str((self.root / environment_path).resolve()) if environment_path else None
+        )
+        self.method_path = (
+            str((self.root / method_path).resolve()) if method_path else None
         )
         self.results_root = Path(results_root).resolve() if results_root else None
         self.status_dir = (self.root / status_dir).resolve()
@@ -167,6 +180,8 @@ class Workspace:
         self._readable_files = {self.catalog_path}
         if self.environment_path:
             self._readable_files.add(self.environment_path)
+        if self.method_path:
+            self._readable_files.add(self.method_path)
 
     def reset_read_context(self) -> None:
         """Start a fresh model context with a fresh cumulative read allowance.
@@ -197,6 +212,10 @@ class Workspace:
         experiment = self._result_directory / "experiment.yml"
         if experiment.is_file():
             self._reachable_result_files.add(experiment)
+        # The handbook is methodological knowledge, not evidence: reading a
+        # result soundly needs the same principles that designing one does.
+        if self.method_path:
+            self._reachable_result_files.add(Path(self.method_path))
         self.reset_read_context()
 
     def restore_design_reads(self) -> None:
@@ -493,7 +512,10 @@ class Workspace:
         except Exception:
             os.close(lock_fd)
             raise
-        os.close(lock_fd)  # the detached child now holds the run lock
+        # The detached child inherits the lock when this run took it. When the
+        # operator allowed a parallel run, the descriptor carries no lock and the
+        # child simply keeps the file open.
+        os.close(lock_fd)
         self._write_status(
             code, submitted, process.pid, provenance, str(log_path), "starting"
         )
@@ -520,9 +542,9 @@ class Workspace:
                 "spec": str(submitted),
                 "message": (
                     f"bexhoma has not created result folder {code} within "
-                    f"{_CODE_WAIT_SECONDS}s but is still running and holds the "
-                    "run lock"
+                    f"{_CODE_WAIT_SECONDS}s but is still running"
                 ),
+                "parallel_with_running_experiment": parallel,
             }
         self._archive_provenance(code, provenance)
         self._write_status(
@@ -534,6 +556,7 @@ class Workspace:
             "pid": process.pid,
             "log": str(log_path),
             "spec": str(submitted),
+            "parallel_with_running_experiment": parallel,
         }
 
     def _fingerprint(
@@ -891,7 +914,7 @@ def _assess_comparison_quality(text: str) -> dict[str, Any]:
     planned_queries.update(common_queries)
     configurations.update(errors)
     if not planned_queries and not configurations:
-        return {"error": "the report has no recognizable TPC-H comparison tables"}
+        return {"error": NO_COMPARISON_TABLES}
 
     coverage = {}
     for configuration in sorted(configurations):

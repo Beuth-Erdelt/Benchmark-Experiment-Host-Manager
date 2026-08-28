@@ -1,0 +1,39 @@
+title: Quick YCSB example on PostgreSQL
+hypothesis: PostgreSQL can execute a simple YCSB workload with acceptable throughput and latency.
+discriminates: [concurrency]
+
+mode: run
+
+workload:
+  name: ycsb
+  params:
+    workload: a
+    scaling_factor: 1
+    operations_scale: 1
+    timeout: 600
+    target_base: 1000
+    loading_target_factors: [1]
+    benchmarking_target_factors: [1]
+    batchsize: null
+    logging_interval: 10
+    insert_order: hashed
+    max_execution_time: 0
+  rounds: [1, 2]
+  repetitions: 1
+
+loading:
+  pods: 1
+  threads: 1
+
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+
+resources:
+  cpu: {request: "2", limit: "4"}
+  memory: {request: "4Gi", limit: "8Gi"}
+  storage:
+    size: 10Gi
+
+observe:
+  monitoring_sut: true

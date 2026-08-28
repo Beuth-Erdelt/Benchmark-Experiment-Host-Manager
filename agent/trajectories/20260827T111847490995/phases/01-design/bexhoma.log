@@ -693,4 +693,366 @@ PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max 
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+postgresql-1-2-1-1            : wrote benchmarking_timespans to /home/ll/benchmarks/1787822388/postgresql-1-2-1-1.config
+postgresql-1-2-1-1            : showing benchmarker times
+postgresql-1-2-1-1            : benchmarker timespan job from 1787827001 to 1787828968
+postgresql-1-2-1-1            : benchmarker timespan pods from 1787827003 to 1787828951
+postgresql-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 1948
+postgresql-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1787827003, 1787828951)]
+postgresql-1-2-1-1            : found and updated times {'benchmarker': [(1787827003, 1787828951)]}
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-PostgreSQL-1-1787822388 initialized to 2.
+PostgreSQL-1                  : benchmarks done 1 of 3. This will be client 2
+postgresql-1-2-2-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder /home/ll/benchmarks/1787822388
+- waiting 10s -               : done
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1787822388-2-2-1-bchwl: found
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+postgresql-1-2-2-1            : wrote benchmarking_timespans to /home/ll/benchmarks/1787822388/postgresql-1-2-2-1.config
+postgresql-1-2-2-1            : showing benchmarker times
+postgresql-1-2-2-1            : benchmarker timespan job from 1787829006 to 1787831052
+postgresql-1-2-2-1            : benchmarker timespan pods from 1787829011 to 1787831045
+postgresql-1-2-2-1            : benchmarker timespan (start to end single container [s]) = 2034
+postgresql-1-2-2-1            : benchmarker times (start/end per pod and container) = [(1787829011, 1787831045), (1787829011, 1787831021)]
+postgresql-1-2-2-1            : found and updated times {'benchmarker': [(1787829011, 1787831045), (1787829011, 1787831021)]}
+- waiting 30s -               : done
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1787822388-7b7895b945-xj7df
+PostgreSQL-1                  : still being removed
+- waiting 30s -               : done
+PostgreSQL-1                  : starts again
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1787822388
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1787822388
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather = 2
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers = 4
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes = 6
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 20480MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 49152MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].work_mem = 1024MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem = 2048MB
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+- waiting 10s -               : done
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : is not loaded yet
+Command failed!
+Return code: 1
+Command: kubectl --context oidc_ds_cluster cp "/home/ll/benchmarks/1787822388/bexhoma-loading-postgresql-1-initschema-tpch-postgres.sql.log" bexhoma-sut-postgresql-1-1787822388-d9f847d44-6zmjq:/tmp/initschema-tpch.sql.uploadtmp -c dbms --retries 20
+Raw output (bytes): b'error: context deadline exceeded\n'
+Decoded with utf-8:
+error: context deadline exceeded
+
+upload_file: attempt 1/3 failed, retrying in 10s ...
+- waiting 10s -               : done
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1787822388-d9f847d44-6zmjq to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type schema
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : showing loader times (tpch-loader)
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1787831278, 1787831278), (1787831286, 1787831286), (1787831279, 1787831279), (1787831284, 1787831284)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1787831289, 1787831303), (1787831289, 1787831305), (1787831290, 1787831306), (1787831289, 1787831305)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1787831278, 1787831278), (1787831286, 1787831286), (1787831279, 1787831279), (1787831284, 1787831284), (1787831289, 1787831303), (1787831289, 1787831305), (1787831290, 1787831306), (1787831289, 1787831305)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 8
+PostgreSQL-1                  : loader timespan (first to last [s]) = 17
+PostgreSQL-1                  : total timespan (first to last [s]) = 28
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-1-PostgreSQL-1-1787822388 initialized to 1.
+PostgreSQL-1                  : benchmarks done 2 of 3. This will be client 1
+postgresql-1-3-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder /home/ll/benchmarks/1787822388
+- waiting 10s -               : done
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1787822388-3-1-1-v9mrn: found
+PgDuckDB-1                    : has to wait - 1 running and 0 pending pods: max is 1 pods per experiment
+- waiting 30s -               : done
+PostgreSQL-1                  : will start now
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1787822388
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1787822388
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather = 2
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers = 4
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes = 6
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 20480MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 49152MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].work_mem = 1024MB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem = 2048MB
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PostgreSQL-1                  : deployment[bexhoma-deployment-pg-duck] not found in file
+PgDuckDB-1                    : has to wait - 0 running and 1 pending pods: max is 1 pods per experiment
 - waiting 30s -               : 

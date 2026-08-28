@@ -39,6 +39,9 @@ _DEFAULT_INBOX = "inbox"
 _DEFAULT_CATALOG = os.path.join("contracts", "contract_catalog.yml")
 _DEFAULT_RESULT_CONTRACT = os.path.join("contracts", "contract_result.yml")
 _DEFAULT_ENVIRONMENT = os.path.join("dev", "catalog", "environment.yml")
+#: The experiment design handbook: what makes a design sound, beside what the catalog
+#: makes legal and what the result contract makes claimable.
+_DEFAULT_METHOD = "agent/experiment_design_handbook.md"
 _DEFAULT_TRAJECTORIES = os.path.join("agent", "trajectories")
 _DEFAULT_BASE_URL = "http://localhost:8000/v1"
 _AGENT_SUMMARY_NAME = "agent_summary.yml"
@@ -68,6 +71,14 @@ _EXHAUSTED_NOTICE = (
     "you got to and what was still unresolved."
 )
 
+#: Shown instead when the last attempt succeeded: the budget bounds editing, not
+#: the act of handing over a specification that already passed.
+_EXHAUSTED_WITH_PASS_NOTICE = (
+    "Your {tool} budget is used up, but the last file you validated passed. "
+    "Submit that exact file now, then reply with a short account of what you "
+    "designed. Do not edit it further -- there is no attempt left to re-check it."
+)
+
 def _timestamp() -> str:
     """Return the current UTC time in ISO 8601 form.
 
@@ -80,6 +91,76 @@ def _timestamp() -> str:
 def _file_sha256(path: Optional[str]) -> Optional[str]:
     source = Path(path) if path else None
     return hashlib.sha256(source.read_bytes()).hexdigest() if source and source.is_file() else None
+
+
+#: How much of a refused tool call's message the running commentary repeats.
+_PROGRESS_ERROR_CHARS = 120
+
+#: Markdown heading, used to check which handbook chapters a revision still has.
+_MARKDOWN_HEADING = re.compile(r"^#{1,6}[ \t]+.+?\s*$", re.MULTILINE)
+
+
+def _present_method_sections(method: Optional[Path]) -> tuple[str, ...]:
+    """Return the required handbook chapters that the handbook actually has.
+
+    The chapter list is stated by heading, and headings get rewritten as the
+    handbook is revised. Requiring a chapter that no longer exists would make
+    the verdict unreachable, so a heading absent from the file is dropped
+    rather than demanded.
+
+    :param method: Resolved handbook path, or ``None`` when none is configured.
+    :return: Required chapter headings present in the file, in reading order.
+    :rtype: tuple[str, ...]
+    """
+    if method is None or not method.is_file():
+        return ()
+    text = method.read_text(encoding="utf-8", errors="replace")
+    present = {match.group(0).strip() for match in _MARKDOWN_HEADING.finditer(text)}
+    return tuple(
+        section for section in prompts.INTERPRET_METHOD_SECTIONS if section in present
+    )
+
+
+def _harness_revision() -> dict[str, Any]:
+    """Identify the harness that drove this phase.
+
+    A trajectory already records which model designed it, but the validator and
+    prompts a model faced change too, so comparing two runs is only sound when
+    the harness is comparable as well. The commit alone would not settle it,
+    because phases are routinely run with uncommitted work in the tree, so the
+    harness sources are fingerprinted directly and the commit is recorded beside
+    them as the readable label. The commit is read from the checkout's own files
+    rather than by running git, which keeps this usable in an installed copy and
+    free of side effects.
+
+    :return: ``{"commit": ..., "sources_sha256": ...}``, with a ``None`` commit
+        outside a git checkout.
+    :rtype: dict[str, Any]
+    """
+    package = Path(__file__).resolve().parent
+    digest = hashlib.sha256()
+    for source in sorted(package.glob("*.py")):
+        digest.update(source.read_bytes())
+    return {"commit": _checked_out_commit(package.parents[1]),
+            "sources_sha256": digest.hexdigest()}
+
+
+def _checked_out_commit(root: Path) -> Optional[str]:
+    """Return the commit a checkout has at HEAD, or ``None`` when it is not one.
+
+    :param root: Repository root to read ``.git`` from.
+    :return: Full commit hash, or ``None``.
+    :rtype: Optional[str]
+    """
+    head = root / ".git" / "HEAD"
+    try:
+        reference = head.read_text(encoding="utf-8").strip()
+        if not reference.startswith("ref:"):
+            return reference or None
+        return (root / ".git" / reference.split(" ", 1)[1]).read_text(
+            encoding="utf-8").strip() or None
+    except OSError:
+        return None
 
 
 class Trajectory:
@@ -112,6 +193,35 @@ def _loggable(tool: str, result: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _progress(line: str, stage: Optional[str], turn: int) -> None:
+    """Print what the phase is doing now, so a long run is visibly alive.
+
+    A phase spends minutes at a time inside a single model call and writes
+    everything durable to the trajectory, which leaves the terminal silent. This
+    is that missing running commentary and nothing else: the trajectory stays
+    the record.
+
+    :param line: What is happening, already phrased for a reader.
+    :param stage: Stage label when a phase has several, otherwise ``None``.
+    :param turn: Model turn the line belongs to.
+    """
+    prefix = f"{stage} turn {turn}" if stage else f"turn {turn}"
+    print(f"[{prefix}] {line}", flush=True)
+
+
+def _tool_progress(tool: str, arguments: dict[str, Any], result: dict[str, Any]) -> str:
+    """Describe one tool call and how it came out, in a single line."""
+    path = str(arguments.get("path", "")).strip()
+    section = str(arguments.get("section", "")).strip()
+    target = f"{path} [{section}]" if section else path
+    line = f"{tool} {target}".rstrip()
+    error = result.get("error") if isinstance(result, dict) else None
+    if error:
+        first_line = str(error).splitlines()[0][:_PROGRESS_ERROR_CHARS]
+        return f"{line} -- refused: {first_line}"
+    return line
+
+
 def _converse(
     messages: list[dict[str, Any]],
     model: model_client.ChatModel,
@@ -122,6 +232,7 @@ def _converse(
     limited_tool: Optional[str] = None,
     limit: int = 0,
     done_when: Optional[Callable[[str, dict[str, Any]], bool]] = None,
+    handover_pending: Optional[Callable[[list[tuple[str, dict[str, Any], dict[str, Any]]]], bool]] = None,
     tool_handler: Optional[Callable[[str, dict[str, Any]], dict[str, Any]]] = None,
     closing_validator: Optional[Callable[[str], Optional[str]]] = None,
     stage: Optional[str] = None,
@@ -141,6 +252,9 @@ def _converse(
     :param limited_tool: Name of a tool that may only be called so many times.
     :param limit: How many times that tool may be called.
     :param done_when: Called with each tool result; returning ``True`` ends the phase.
+    :param handover_pending: Called with the events so far once the budget is
+        spent; ``True`` keeps the tools available for a handover still owed,
+        such as submitting a specification that has already passed.
     :param tool_handler: Optional dispatcher for stage-local record tools.
     :param closing_validator: Return an error message for an invalid closing answer.
     :param stage: Optional stage label written on assistant and tool events.
@@ -158,11 +272,22 @@ def _converse(
     while turn < max_turns:
         turn += 1
         spent = limited_tool is not None and remaining <= 0
+        # Spending the budget bounds how often a design may be re-checked. When
+        # the last check passed, withdrawing every tool would also withdraw the
+        # handover, discarding a specification that is ready to run.
+        pending = bool(spent and not finished and handover_pending
+                       and handover_pending(events))
         if spent and not finished and not notified:
-            messages.append({"role": "user", "content": _EXHAUSTED_NOTICE.format(tool=limited_tool)})
-            trajectory.record("budget_exhausted", turn=turn, tool=limited_tool)
+            notice = (
+                _EXHAUSTED_WITH_PASS_NOTICE if pending else _EXHAUSTED_NOTICE
+            ).format(tool=limited_tool)
+            messages.append({"role": "user", "content": notice})
+            trajectory.record("budget_exhausted", turn=turn, tool=limited_tool,
+                              handover_pending=pending)
             notified = True
-        reply = model.reply(messages, None if (finished or spent) else tool_schemas)
+        _progress("waiting for the model", stage, turn)
+        reply = model.reply(
+            messages, None if (finished or (spent and not pending)) else tool_schemas)
         stage_field = {"stage": stage} if stage else {}
         trajectory.record("assistant", turn=turn, text=reply.text,
                           reasoning=reply.reasoning,
@@ -206,6 +331,7 @@ def _converse(
                 if done_when is not None and done_when(call.name, result):
                     finished = True
             events.append((call.name, call.arguments, result))
+            _progress(_tool_progress(call.name, call.arguments, result), stage, turn)
             trajectory.record("tool_call", turn=turn, tool=call.name,
                               args=call.arguments, result=_loggable(call.name, result),
                               **stage_field)
@@ -328,6 +454,24 @@ def _load_ancestor_summaries(
     return summaries
 
 
+def _submission_owed(
+    events: list[tuple[str, dict[str, Any], dict[str, Any]]],
+) -> bool:
+    """Report whether a specification has passed validation but not been submitted.
+
+    :param events: Tool calls made in this phase so far.
+    :return: ``True`` when the most recent validation passed and nothing was
+        submitted afterwards.
+    :rtype: bool
+    """
+    for name, _, result in reversed(events):
+        if name == "submit" and "code" in result:
+            return False
+        if name == "validate":
+            return bool(result.get("valid"))
+    return False
+
+
 def run_design(
     task: str,
     workspace: tools.Workspace,
@@ -336,6 +480,7 @@ def run_design(
     catalog_path: str,
     catalog_sha256: str,
     environment_path: Optional[str],
+    method_path: Optional[str] = None,
     attempts: int = _DEFAULT_ATTEMPTS,
     followups: int = _DEFAULT_FOLLOWUPS,
     dry_run: bool = False,
@@ -349,6 +494,8 @@ def run_design(
     :param catalog_path: Path the agent is told to read the catalog from.
     :param catalog_sha256: Digest of that catalog, recorded for provenance.
     :param environment_path: Path to the environment descriptor, or ``None``.
+    :param method_path: Path to the handbook, or ``None`` when this
+        deployment configures none.
     :param attempts: How many validate calls the agent may make.
     :param followups: How many follow-up experiments it is told it will get.
     :param dry_run: Withhold the submission tool so nothing reaches the cluster.
@@ -357,26 +504,30 @@ def run_design(
     """
     messages = prompts.design_messages(
         task=task, catalog_path=catalog_path, environment_path=environment_path,
-        inbox=workspace.inbox.name, attempts=attempts, followups=followups)
+        method_path=method_path, inbox=workspace.inbox.name, attempts=attempts,
+        followups=followups)
     trajectory.record("meta", phase="design", model=model.model,
+                      harness=_harness_revision(),
                       params={"temperature": model.temperature, "max_tokens": model.max_tokens},
                       catalog_sha256=catalog_sha256,
                       environment_sha256=_file_sha256(environment_path),
                       environment_present=environment_path is not None,
+                      method_sha256=_file_sha256(method_path),
+                      method_present=method_path is not None,
                       budgets={"validate_attempts": attempts, "followups": followups})
     trajectory.record("task", text=task)
 
     design_tools = (
         tools.without_submit(tools.DESIGN_TOOLS) if dry_run else tools.DESIGN_TOOLS
     )
-    gate = _DesignSpaceGate(workspace, environment_path)
+    gate = _DesignSpaceGate(workspace, environment_path, method_path)
 
     def handler(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         if name == "read_file":
             return gate.read_file(arguments)
         if name == "write_file" and (missing := gate.missing()):
             return {
-                "error": "read the complete catalog and environment before authoring",
+                "error": "read every contract you were pointed at before authoring",
                 "missing": missing,
             }
         return workspace.call(name, arguments)
@@ -386,6 +537,7 @@ def run_design(
         max_turns=_TURNS_PER_ATTEMPT * attempts + _CLOSING_TURNS,
         limited_tool="validate", limit=attempts,
         done_when=lambda name, result: name == "submit" and "code" in result,
+        handover_pending=None if dry_run else _submission_owed,
         tool_handler=handler)
 
     validated = [args["path"] for name, args, result in events
@@ -402,6 +554,29 @@ def run_design(
                     turns=turns)
 
 
+#: The handbook chapter that routes a question to the others. Requiring this one
+#: keeps a single chapter read from standing in for having consulted the
+#: handbook at all.
+_HANDBOOK_ENTRY_SECTION = "## Navigation"
+
+
+def _is_handbook_entry(section: Optional[str]) -> bool:
+    """Report whether a read covers the handbook's routing chapter.
+
+    A whole-file read (no section) covers it by definition; a section read does
+    so only when it names that chapter, in either the bare or the hashed form
+    ``read_file`` accepts.
+
+    :param section: The ``section`` argument as the model emitted it, if any.
+    :return: True when this read shows the agent the routing chapter.
+    :rtype: bool
+    """
+    if section is None:
+        return True
+    wanted = _HANDBOOK_ENTRY_SECTION.lstrip("#").strip().casefold()
+    return section.strip().lstrip("#").strip().casefold() == wanted
+
+
 class _DesignSpaceGate:
     """Track whether one fresh context has consulted the whole design space yet.
 
@@ -410,16 +585,26 @@ class _DesignSpaceGate:
     rule once, so it cannot drift between design, follow-up selection, and
     follow-up authoring.
 
+    The handbook is longer than a whole-file read allows, so it is consulted one
+    chapter at a time. Any single chapter would otherwise satisfy this gate while
+    leaving the agent ignorant of the rest, so the chapter that routes to the
+    others is the one required here.
+
     :ivar required: Authoritative files this context has to read before acting.
     """
 
     def __init__(
         self, workspace: tools.Workspace, environment_path: Optional[str],
+        method_path: Optional[str] = None,
     ) -> None:
         self._workspace = workspace
         self.required = {Path(workspace.catalog_path).resolve()}
         if environment_path:
             self.required.add((workspace.root / environment_path).resolve())
+        self._handbook: Optional[Path] = None
+        if method_path:
+            self._handbook = (workspace.root / method_path).resolve()
+            self.required.add(self._handbook)
         self._seen: set[Path] = set()
 
     def read_file(self, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -430,17 +615,37 @@ class _DesignSpaceGate:
         :rtype: dict[str, Any]
         """
         result = self._workspace.call("read_file", arguments)
-        if "text" in result:
-            self._seen.add((self._workspace.root / arguments["path"]).resolve())
+        if "text" not in result:
+            return result
+        source = (self._workspace.root / arguments["path"]).resolve()
+        if source == self._handbook and not _is_handbook_entry(arguments.get("section")):
+            return result
+        self._seen.add(source)
         return result
 
     def missing(self) -> list[str]:
         """Return the required files this context has not read yet.
 
         :return: Sorted paths, empty once the design space has been consulted.
+            The handbook names the chapter that satisfies it, since reading any
+            other chapter leaves it outstanding.
         :rtype: list[str]
         """
-        return sorted(str(path) for path in self.required - self._seen)
+        return sorted(
+            f"{path} (read its {_HANDBOOK_ENTRY_SECTION} section first)"
+            if path == self._handbook else str(path)
+            for path in self.required - self._seen
+        )
+
+
+#: What the interpretation records when the report holds no comparison tables to
+#: assess, either because no benchmarking page exists or because its benchmarker
+#: does not produce per-query tables.
+_QUALITY_NOT_APPLICABLE = {
+    "query_coverage": "not_applicable",
+    "whole_workload_throughput": "not_applicable",
+    "suspect_repetitions": [],
+}
 
 
 class _InterpretationGate:
@@ -451,6 +656,7 @@ class _InterpretationGate:
         workspace: tools.Workspace,
         report_path: str,
         result_contract_path: str,
+        method_path: str | None = None,
     ) -> None:
         self._workspace = workspace
         self.report = self._resolve(report_path)
@@ -461,6 +667,9 @@ class _InterpretationGate:
         self._read_paths: set[Path] = set()
         self._validity_read = False
         self.comparison_quality: dict[str, Any] | None = None
+        self.method = self._resolve(method_path) if method_path else None
+        self.required_method_sections = _present_method_sections(self.method)
+        self._method_sections_read: set[str] = set()
 
     def _resolve(self, path: str) -> Path:
         """Resolve one model-visible path against the workspace root."""
@@ -476,6 +685,8 @@ class _InterpretationGate:
             return result
         source = self._resolve(arguments["path"])
         self._read_paths.add(source)
+        if source == self.method and result.get("section"):
+            self._method_sections_read.add(str(result["section"]).strip())
         section = str(result.get("section", "")).lstrip("# ").strip().casefold()
         if source == self.report and (not result.get("section") or section == "tests"):
             self._validity_read = True
@@ -505,6 +716,14 @@ class _InterpretationGate:
         if "error" not in result:
             self.comparison_quality = result
             self._read_paths.add(source)
+            return result
+        # A benchmarker whose report carries no per-query comparison tables leaves
+        # nothing to assess. Treating that as an unmet precondition would make the
+        # record unreachable for the whole workload, so it counts as assessed.
+        if result.get("error") == tools.NO_COMPARISON_TABLES:
+            self.comparison_quality = dict(_QUALITY_NOT_APPLICABLE)
+            self._read_paths.add(source)
+            return {**_QUALITY_NOT_APPLICABLE, "reason": result["error"]}
         return result
 
     def validate_record(self, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -519,6 +738,15 @@ class _InterpretationGate:
         if missing_reads:
             return {"error": "read the report, validity checks, and result contract first",
                     "missing": missing_reads}
+        unread_chapters = [
+            section for section in self.required_method_sections
+            if section not in self._method_sections_read
+        ]
+        if unread_chapters:
+            return {
+                "error": "read the required handbook chapters before recording a verdict",
+                "missing": [f"{self.method} — {section}" for section in unread_chapters],
+            }
         if self.failed_checks is None:
             return {"error": "report frontmatter has no valid overall_status.failed count"}
 
@@ -540,11 +768,7 @@ class _InterpretationGate:
                 ],
             }
         else:
-            expected_quality = {
-                "query_coverage": "not_applicable",
-                "whole_workload_throughput": "not_applicable",
-                "suspect_repetitions": [],
-            }
+            expected_quality = dict(_QUALITY_NOT_APPLICABLE)
         if recorded_quality != expected_quality:
             return {
                 "error": "comparison_quality must match the deterministic assessment",
@@ -690,6 +914,10 @@ class _InterpretationGate:
         return {"recorded": True, "questions": len(questions)}
 
 
+class InterpretationIncomplete(RuntimeError):
+    """Raised when an interpretation phase ends without its structured record."""
+
+
 def _interpret_evidence(
     messages: list[dict[str, Any]],
     workspace: tools.Workspace,
@@ -697,6 +925,7 @@ def _interpret_evidence(
     trajectory: Trajectory,
     report_path: str,
     result_contract_path: str,
+    method_path: Optional[str] = None,
 ) -> tuple[
     str, dict[str, Any], list[dict[str, Any]], dict[str, Any],
     dict[str, Any], dict[str, Any], list[Any], int,
@@ -720,7 +949,8 @@ def _interpret_evidence(
     comparison_quality: dict[str, Any] = {}
     follow_up: dict[str, Any] = {}
     workspace.restrict_to_result(report_path, result_contract_path)
-    gate = _InterpretationGate(workspace, report_path, result_contract_path)
+    gate = _InterpretationGate(
+        workspace, report_path, result_contract_path, method_path)
 
     def handler(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         if name == "read_file":
@@ -766,6 +996,7 @@ def _author_followup(
     trajectory: Trajectory,
     catalog_path: str,
     environment_path: Optional[str],
+    method_path: Optional[str],
     attempts: int,
     dry_run: bool,
 ) -> tuple[str, list[Any], int]:
@@ -788,7 +1019,7 @@ def _author_followup(
     :rtype: tuple[str, list, int]
     """
     workspace.restore_design_reads()
-    gate = _DesignSpaceGate(workspace, environment_path)
+    gate = _DesignSpaceGate(workspace, environment_path, method_path)
 
     try:
         parent_experiment = yaml.safe_load(specification) if specification else None
@@ -809,7 +1040,7 @@ def _author_followup(
         if name == "read_file":
             return gate.read_file(arguments)
         if name == "write_file" and (missing := gate.missing()):
-            return {"error": "read the complete catalog and environment before authoring",
+            return {"error": "read every contract you were pointed at before authoring",
                     "missing": missing}
         if name == "validate":
             draft = workspace.call("read_file", {"path": arguments.get("path", "")})
@@ -865,8 +1096,8 @@ def _author_followup(
         task=task, specification=specification, interpretation=interpretation,
         decision=decision, ancestor_summaries=ancestor_summaries,
         experiment_code=experiment_code, catalog_path=catalog_path,
-        environment_path=environment_path, inbox=workspace.inbox.name,
-        attempts=attempts, dry_run=dry_run)
+        environment_path=environment_path, method_path=method_path,
+        inbox=workspace.inbox.name, attempts=attempts, dry_run=dry_run)
     author_tools = tools.FOLLOWUP_AUTHOR_TOOLS
     if dry_run:
         author_tools = tools.without_submit(author_tools)
@@ -879,6 +1110,7 @@ def _author_followup(
             if dry_run else
             (lambda name, result: name == "submit" and "code" in result)
         ),
+        handover_pending=None if dry_run else _submission_owed,
         tool_handler=handler, stage="followup_authoring")
     return summary, events, turns
 
@@ -894,6 +1126,7 @@ def run_interpret(
     followups: int = _DEFAULT_FOLLOWUPS,
     catalog_path: str = _DEFAULT_CATALOG,
     environment_path: Optional[str] = _DEFAULT_ENVIRONMENT,
+    method_path: Optional[str] = None,
     attempts: int = _DEFAULT_ATTEMPTS,
     dry_run: bool = False,
 ) -> dict[str, Any]:
@@ -912,12 +1145,14 @@ def run_interpret(
     """
     messages = prompts.interpret_messages(
         task=task, report_path=report_path, result_contract_path=result_contract_path,
-        specification=specification)
+        specification=specification, method_path=method_path)
     trajectory.record("meta", phase="interpret", model=model.model,
+                      harness=_harness_revision(),
                       params={"temperature": model.temperature, "max_tokens": model.max_tokens},
                       report=report_path,
                       catalog_sha256=_file_sha256(catalog_path),
                       environment_sha256=_file_sha256(environment_path),
+                      method_sha256=_file_sha256(method_path),
                       result_contract_sha256=_file_sha256(result_contract_path),
                       budgets={"followups": followups})
     trajectory.record("task", text=task)
@@ -932,9 +1167,20 @@ def run_interpret(
         all_events,
         total_turns,
     ) = _interpret_evidence(
-        messages, workspace, model, trajectory, report_path, result_contract_path
+        messages, workspace, model, trajectory, report_path, result_contract_path,
+        method_path
     )
     all_events = list(all_events)
+    # A phase that ran out of turns before recording leaves nothing to summarise;
+    # say so instead of failing on the first field the record would have carried.
+    if not hypothesis_verdict:
+        trajectory.record("phase_error", phase="interpret",
+                          reason="no structured interpretation was recorded",
+                          turns=total_turns)
+        raise InterpretationIncomplete(
+            "the interpretation phase ended without a structured record after "
+            f"{total_turns} turns"
+        )
     author_summary = ""
     report = Path(report_path)
     report = (
@@ -961,7 +1207,8 @@ def run_interpret(
             experiment_code=experiment_code,
             workspace=workspace, model=model,
             trajectory=trajectory, catalog_path=catalog_path,
-            environment_path=environment_path, attempts=attempts, dry_run=dry_run)
+            environment_path=environment_path, method_path=method_path,
+            attempts=attempts, dry_run=dry_run)
         all_events.extend(author_events)
         total_turns += author_turns
 
@@ -1065,6 +1312,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("-r", "--root", default=os.getcwd())
     parser.add_argument("-i", "--inbox", default=_DEFAULT_INBOX)
     parser.add_argument("-c", "--catalog", default=_DEFAULT_CATALOG)
+    parser.add_argument("-M", "--method",
+                        default=os.environ.get("AGENT_METHOD", _DEFAULT_METHOD),
+                        help="experiment design handbook; set AGENT_METHOD empty, or "
+                             "pass an empty path, to design without one")
     parser.add_argument("-e", "--environment", default=_DEFAULT_ENVIRONMENT,
                         help="pass an empty string only for a dry run")
     parser.add_argument("-R", "--results", default=os.environ.get("AGENT_RESULTS"),
@@ -1077,6 +1328,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tokens", type=int, default=_DEFAULT_MAX_TOKENS,
                         help="ceiling on tokens generated per turn, thinking included")
+    parser.add_argument("--allow-parallel-runs", action="store_true",
+                        help="submit even while another agent-started experiment "
+                             "is still benchmarking in this result folder; the "
+                             "two then share the cluster")
     parser.add_argument("--dry-run", action="store_true",
                         help="design and validate only; do not submit to the cluster")
     return parser
@@ -1310,10 +1565,19 @@ def main() -> int:
     model = model_client.ChatModel(model=args.model, base_url=args.base_url,
                                    api_key=args.api_key, temperature=args.temperature,
                                    max_tokens=args.max_tokens)
+    try:
+        model.resolve_served_model()
+    except model_client.ModelNotServed as error:
+        trajectory.record("setup_error", error=str(error))
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+    method_path = args.method if (root / args.method).is_file() else None
     workspace = tools.Workspace(
         root=str(root), inbox=args.inbox, catalog_path=args.catalog,
-        environment_path=args.environment or None, results_root=str(results),
-        status_dir=args.status, run_directory=phase_directory)
+        environment_path=args.environment or None, method_path=method_path,
+        results_root=str(results),
+        status_dir=args.status, run_directory=phase_directory,
+        allow_parallel_runs=args.allow_parallel_runs)
 
     if args.phase == "design":
         if not args.task:
@@ -1332,6 +1596,7 @@ def main() -> int:
                 environment_path=(
                     args.environment if (root / args.environment).is_file() else None
                 ),
+                method_path=method_path,
                 attempts=args.attempts, followups=args.followups, dry_run=args.dry_run)
         except model_client.ModelUnreachable as error:
             return _report_unreachable(error, args.base_url, trajectory)
@@ -1384,11 +1649,15 @@ def main() -> int:
                 environment_path=(
                     args.environment if (root / args.environment).is_file() else None
                 ),
+                method_path=method_path,
                 attempts=args.attempts, dry_run=args.dry_run)
         except model_client.ModelUnreachable as error:
             return _report_unreachable(error, args.base_url, trajectory)
         except model_client.ContextWindowExhausted as error:
             return _report_context_exhausted(error, args.max_tokens, trajectory)
+        except InterpretationIncomplete as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 1
 
     if not outcome.get("summary"):
         print("error: the model produced no closing answer; it most likely spent the "
@@ -1403,7 +1672,7 @@ def main() -> int:
     if args.phase == "design" and complete:
         previous_directory = run_directory
         run_directory = _label_design_investigation(
-            run_directory, trajectory, root, workspace.status_dir, args.model, outcome
+            run_directory, trajectory, root, workspace.status_dir, model.model, outcome
         )
         if run_directory != previous_directory:
             phase_directory = run_directory / phase_directory.relative_to(

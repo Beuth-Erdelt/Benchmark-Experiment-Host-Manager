@@ -236,6 +236,13 @@ vLLM up → design → vLLM down → wait for report
         → final answer → vLLM down
 ```
 
+The vLLM steps happen only for a server this machine owns. `AGENT_MODEL_SERVER`
+in `.env` says whether it does: the default `bundled` gives the chain above,
+while `external` names an endpoint that is already answering — a hosted API, or
+an Ollama on the workstation — and leaves the same chain with the four switch
+steps removed. Nothing else about a run changes with it, and the agent CLI
+starts no server in either case.
+
 The low-level switch refreshes the local OIDC login noninteractively, clears a
 pod that has already finished or carries an older immutable manifest generation,
 applies the pinned vLLM manifest, waits for
@@ -287,6 +294,11 @@ role can mutate BeXhoma and model-server objects only in its namespace. A
 separate read-only cluster role exposes node, storage-class, and priority-class
 facts needed to build the bounded environment descriptor. The model itself has
 neither credential nor Kubernetes tool access.
+
+The controller passes its own environment on unchanged, so the Job's environment
+block is where an in-cluster run chooses its model server (`AGENT_MODEL_SERVER`)
+and its handbook (`AGENT_METHOD`, empty for the without-handbook arm of the
+ablation), exactly as `.env` does locally.
 
 Agent submission adds BeXhoma's existing one-SUT-per-experiment limit. Database
 configurations therefore execute sequentially, while the query streams inside

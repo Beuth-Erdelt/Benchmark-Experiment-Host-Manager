@@ -25,7 +25,9 @@ from dev.agent_lifecycle import (
     AgentLifecycle,
     LifecycleConfig,
     LifecycleError,
+    ModelServer,
     _install_signal_handlers,
+    _parser,
 )
 
 __all__: list[str] = []
@@ -260,6 +262,20 @@ class AgentLifecycleTest(unittest.TestCase):
             self.assertTrue(persisted["resumed_after_controller_restart"])
             self.assertIn("resuming BeXhoma", log.read_text(encoding="utf-8"))
 
+    def test_the_handbook_is_one_switch_from_the_wrapper_to_the_agent(self) -> None:
+        """The ablation needs the handbook off without editing any file."""
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("AGENT_METHOD", None)
+            default = _parser().parse_args(["--task", "q"])
+        self.assertEqual(default.method, "agent/experiment_design_handbook.md")
+
+        without = _parser().parse_args(["--task", "q", "--method", ""])
+        self.assertEqual(without.method, "")
+
+        with mock.patch.dict(os.environ, {"AGENT_METHOD": ""}):
+            from_environment = _parser().parse_args(["--task", "q"])
+        self.assertEqual(from_environment.method, "")
+
     def test_model_manifest_accepts_h100_or_h200(self) -> None:
         expressions = _model_pod()["spec"]["affinity"]["nodeAffinity"][
             "requiredDuringSchedulingIgnoredDuringExecution"
@@ -403,6 +419,40 @@ probe_activity() {{
         self.assertEqual(result, design)
         self.assertEqual(self.server.actions, ["up", "down", "up", "down"])
         self.assertEqual(lifecycle.invocations, [("design", None), ("interpret", design)])
+
+    def test_an_endpoint_we_do_not_host_is_chained_without_being_switched(self) -> None:
+        """A hosted API or a running Ollama needs the phase chain, not a server switch."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        final = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        self._report("101")
+        server = ModelServer(self.config.server_script, bundled=False)
+        lifecycle = _Lifecycle(self.config, ["agent"], server, runs=[design, final])
+
+        with mock.patch("dev.agent_lifecycle.subprocess.run") as run_command:
+            result = lifecycle.run("question")
+
+        self.assertEqual(result, design)
+        self.assertEqual(
+            lifecycle.invocations, [("design", None), ("interpret", design)])
+        run_command.assert_not_called()
+
+    def test_who_owns_the_endpoint_decides_whether_the_switch_runs(self) -> None:
+        """.env chooses the backend, so it also decides whether a server is switched."""
+        commands: list[list[str]] = []
+
+        def record(command: list[str], check: bool) -> subprocess.CompletedProcess:
+            commands.append(command)
+            return subprocess.CompletedProcess(command, 0)
+
+        ModelServer(self.config.server_script, run_command=record).switch("up")
+        ModelServer(
+            self.config.server_script, bundled=False, run_command=record).switch("up")
+
+        self.assertEqual(
+            commands, [["bash", str(self.config.server_script), "up"]])
 
     def test_followup_repeats_the_off_wait_on_cycle(self) -> None:
         design = _trajectory(

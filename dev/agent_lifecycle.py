@@ -15,6 +15,10 @@ Lifecycle:
 3. restart vLLM for interpretation;
 4. repeat steps 2-3 for an approved follow-up; and
 5. stop vLLM after the final verdict, or after any failure/interruption.
+
+An endpoint this machine does not own -- a hosted API, or an Ollama already
+running -- has nothing to start or stop, so ``AGENT_MODEL_SERVER=external`` in
+:file:`.env` keeps the same phase chain and drops steps 1, 3 and 5.
 """
 from __future__ import annotations
 
@@ -30,6 +34,11 @@ from pathlib import Path
 from typing import Any, Callable, Sequence
 
 from dotenv import load_dotenv
+
+
+#: How often the wait for a benchmark says that it is still waiting. A run takes
+#: hours, and polling silently is indistinguishable from having died.
+_WAIT_NOTICE_SECONDS = 600.0
 
 
 class LifecycleError(RuntimeError):
@@ -54,20 +63,30 @@ class LifecycleConfig:
 
 
 class ModelServer:
-    """Small adapter around the independently usable server switch."""
+    """Small adapter around the independently usable server switch.
+
+    ``bundled`` says who owns the endpoint. The vLLM server in
+    :file:`dev/model_server.sh` is this wrapper's to start and stop; a hosted
+    API or an Ollama that is already running answers on its own, so switching
+    it does nothing and the phase chain is all that is left to do.
+    """
 
     def __init__(
         self,
         script: Path,
+        bundled: bool = True,
         run_command: Callable[..., subprocess.CompletedProcess[Any]] = subprocess.run,
     ) -> None:
         self.script = script
+        self.bundled = bundled
         self._run_command = run_command
 
     def switch(self, state: str) -> None:
         """Bring the server ``up`` or ``down``, failing on operator errors."""
         if state not in {"up", "down"}:
             raise ValueError(f"unsupported model-server state: {state}")
+        if not self.bundled:
+            return
         result = self._run_command(["bash", str(self.script), state], check=False)
         if result.returncode:
             raise LifecycleError(
@@ -173,6 +192,7 @@ class AgentLifecycle:
                 raise LifecycleError("interpretation needs the current investigation")
             command.extend(["--run", str(source)])
 
+        print(f"starting the {phase} phase", flush=True)
         log = source / "trajectory.jsonl" if source is not None else None
         previous_size = log.stat().st_size if log is not None and log.is_file() else None
         result = subprocess.run(command, cwd=self.config.root, check=False)
@@ -268,8 +288,16 @@ class AgentLifecycle:
             time.monotonic() + self.config.benchmark_timeout_seconds
             if self.config.benchmark_timeout_seconds > 0 else None
         )
-        print(f"model server down; waiting for benchmark {code}", flush=True)
+        # The switch script announces the shutdown itself when there is one.
+        print(f"waiting for benchmark {code}", flush=True)
+        started = time.monotonic()
+        next_notice = started + _WAIT_NOTICE_SECONDS
         while not report.is_file():
+            if time.monotonic() >= next_notice:
+                minutes = (time.monotonic() - started) / 60
+                print(f"benchmark {code} still running after {minutes:.0f} min",
+                      flush=True)
+                next_notice += _WAIT_NOTICE_SECONDS
             if status_file.is_file():
                 status = json.loads(status_file.read_text(encoding="utf-8"))
                 if status.get("state") == "failed":
@@ -374,6 +402,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-tokens", type=int, default=16384)
     parser.add_argument("--catalog", default="contracts/contract_catalog.yml")
     parser.add_argument("--environment", default="dev/catalog/environment.yml")
+    parser.add_argument("--method",
+                        default=os.environ.get(
+                            "AGENT_METHOD", "agent/experiment_design_handbook.md"),
+                        help="experiment design handbook; set AGENT_METHOD empty, or "
+                             "pass an empty string, to design without one")
     parser.add_argument("--inbox", default="inbox")
     parser.add_argument("--dry-run", action="store_true")
     return parser
@@ -427,6 +460,9 @@ def main() -> int:
         "--max-tokens", str(args.max_tokens),
         "--catalog", args.catalog,
         "--environment", args.environment,
+        # Forwarded even when empty: an empty value is how a run is asked to
+        # design without the handbook, which is what the ablation compares.
+        "--method", args.method,
         "--inbox", args.inbox,
     ]
     # Only forwarded when the operator overrode it; otherwise the agent reads
@@ -436,7 +472,11 @@ def main() -> int:
     if args.dry_run:
         agent_command.append("--dry-run")
 
-    lifecycle = AgentLifecycle(config, agent_command, ModelServer(config.server_script))
+    # .env says who owns the endpoint: the bundled vLLM server is started and
+    # stopped here, any other value is already running and is left alone.
+    bundled = os.environ.get("AGENT_MODEL_SERVER", "bundled") == "bundled"
+    lifecycle = AgentLifecycle(
+        config, agent_command, ModelServer(config.server_script, bundled))
     try:
         final_run = lifecycle.run(
             task=args.task,
@@ -448,7 +488,8 @@ def main() -> int:
 
     answer = final_run / "answer.md"
     print(f"final verdict: {answer}")
-    print("model server is down")
+    if bundled:
+        print("model server is down")
     return 0
 
 
