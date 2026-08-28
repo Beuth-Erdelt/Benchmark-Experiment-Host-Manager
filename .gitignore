@@ -39,3 +39,4 @@ dev/catalog/refresh_environment.py
 .claude/*
 .env
 /env
+paper/

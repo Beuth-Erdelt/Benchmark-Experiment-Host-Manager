@@ -16,7 +16,7 @@ This run (code 1787691294) retried the failed 10 GB TPC-H comparison with the pe
 
 **PgDuckDB fails only Q1**, and only once (connection `pgduckdb-1-1-3-1-4`, error: `Query cancelled`). All other 21 queries complete.
 
-**On the 18 queries both systems completed, PostgreSQL is faster at every concurrency level** (from `report/index.md` Key Metrics):
+**On the 18 queries both systems completed, PostgreSQL is faster at every concurrency level** (from `report/indexagent/trajectories/20260825T162917565149-sf10-qwen3.8-27b/phases/04-interpret.md` Key Metrics):
 
 | Concurrency | PostgreSQL Geo Times [s] | PgDuckDB Geo Times [s] | PostgreSQL Power@Size | PgDuckDB Power@Size |
 |---|---|---|---|---|
