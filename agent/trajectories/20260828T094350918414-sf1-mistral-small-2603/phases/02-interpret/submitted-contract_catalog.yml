@@ -1,0 +1,709 @@
+# Self-contained input contract for building a valid experiment.yml — every
+# field an agent needs is data below (catalog_concepts/experiment_schema/
+# workloads/systems), not comments. Design rationale and provenance (not
+# needed to build a valid file): contracts/contract_catalog_comments.md
+#
+# Vocabulary used throughout this file's own descriptive fields:
+#   semantics:    what a field/value means, or what happens when it's set
+#   why:          the rationale behind a design choice
+#   when:         the condition under which a rule/field actually applies
+#   out_of_scope: what's explicitly excluded, unsupported, or not covered
+
+catalog_contract_version: "1.2.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+
+catalog_concepts:
+  experimental_design:
+    semantics: "turn constraints into controls or factors according to the hypothesis"
+    bounded_resources: "a user-given maximum is a hard ceiling, not necessarily
+      the only useful treatment. If resource pressure is a plausible rival
+      explanation for a system or concurrency effect, sweep two values at or
+      below the ceiling -- normally half the ceiling and the ceiling -- and name
+      that resource in discriminates. Keep one fixed value when the resource
+      cannot help distinguish the hypotheses or the added run cost is unjustified."
+    bounded_loading: "for a run that loads data, set loading.timeout_minutes to
+      a scale-appropriate deadline. There is deliberately no universal value:
+      larger scaling factors need longer, but leaving it unset can strand loader
+      and SUT objects indefinitely if a loader hangs. Expiry captures diagnostics
+      before removing the experiment."
+  workloads:
+    semantics: "what to run: params, loading behavior, physical-design semantics"
+  systems:
+    semantics: "what to run it on: server knobs, physical-design support, profiles"
+  physical_design:
+    semantics: "a system's physical_design block (under systems.<name>) states
+      CAPABILITY only -- which post_load-style options (indexes/constraints/
+      statistics/storage_format) that system can support at all"
+    why: "capability and selection are different axes on purpose: a system
+      can be fully capable of an option, and a given experiment.yml can
+      still choose not to apply it"
+    out_of_scope: "whether an option is actually applied to a run -- that's
+      a separate, per-experiment SELECTION made via loading.post_load /
+      systems[].post_load in experiment_schema below, not physical_design's job"
+  derive:
+    why: "lets a handful of profile knobs scale with an experiment's own
+      resource limits, instead of being fixed literals an expert hand-tunes once"
+    semantics: "arithmetic expression evaluated once per resolved resource
+      cell; the four inputs below are the only names in scope"
+    inputs: [memory_limit, cpu_limit, storage_class, scaling_factor]
+    out_of_scope: "no functions, no conditionals, no string ops -- only
+      +, -, *, / over the inputs above"
+  extends:
+    semantics: "systems.<name>.extends: BaseName merges BaseName's knobs:
+      and profiles: into this system (base entries first, this system's own
+      entries of the same name win). Every OTHER top-level key
+      (physical_design, deployment, image, arg_style, ...) is NOT merged:
+      this system's own value replaces the base's outright if declared, or
+      falls back to the base's only if this system doesn't declare that key
+      at all."
+    when: "used to formalize DDL/config reuse between systems that share
+      most of their configuration, e.g. PgDuckDB extends: PostgreSQL"
+    out_of_scope: "extends does NOT imply capability parity automatically --
+      a system that extends another still needs its own explicit
+      physical_design: block, since that key is never merged"
+  profile_ref:
+    semantics: "a systems.<name>.profiles.<profile>.ref: 'System.profiles.name'
+      pointer resolves to that OTHER system's profile object directly (same
+      knobs:/derive:/requires:), instead of declaring its own knobs/derive"
+    when: "used for profile parity between systems -- e.g.
+      PgDuckDB.profiles.analytical-ssd refs PostgreSQL.profiles.analytical-ssd,
+      so both resolve identical knob values from the same memory/cpu limits"
+  requires:
+    semantics: "a profile's requires: {storage_class: [...]} lists which
+      resources.storage_class values an experiment.yml using that profile
+      may set; null in the list means leaving resources.storage_class unset
+      is also acceptable"
+    when: "only checked when a systems[] entry actually names a profile:
+      that declares requires: -- a profile without requires: imposes no
+      storage_class constraint at all"
+    out_of_scope: "an experiment.yml whose resources.storage_class isn't in
+      the allowed set fails resolution before any command is produced"
+  arg_style:
+    semantics: "how a resolved knob value is applied. pg-guc: via a --set
+      deployment[...].container[dbms].<name>=<value> Postgres GUC patch
+      (the default for every system in this file). env-var: via the knob's
+      own env_var name instead of a GUC patch."
+    when: "a system declares its own default arg_style; an individual knob
+      may override it -- e.g. duckdb_force_execution declares arg_style:
+      env-var even though PgDuckDB's system-level default is pg-guc"
+  sut_isolation:
+    semantics: "every resolved configuration -- each systems[] entry, and
+      each resource-sweep cell (see experiment_schema.fields.resources) --
+      is benchmarked with only ONE system-under-test present in the cluster
+      at a time. bexhoma tears the current SUT down before starting the
+      next one; it never runs two side by side."
+    why: "the default situation is one system at a time, not several at
+      once: co-located SUTs contend for the same node CPU, memory
+      bandwidth, disk and network, so a side-by-side run measures that
+      mutual interference rather than the factor named in discriminates.
+      Serial execution keeps each measurement attributable to a single
+      configuration."
+    when: "this is the default for every experiment.yml, via two independent
+      caps that both default to 1: experiment_schema.fields.max_sut
+      (cluster-wide) and .max_sut_experiment (this experiment only). The
+      catalog argv builder always emits them -- an absent field becomes
+      -ms 1 / -mse 1 explicitly (tpch.py's own CLI default is no limit, so
+      the builder must state the serial default rather than rely on it). An
+      experiment that genuinely wants parallel SUTs -- e.g. each pinned to a
+      different node via placement: -- sets one or both fields to N>1, or to
+      0 to lift the cap entirely (the builder then omits that flag)."
+    out_of_scope: "parallel LOADER pods (loading.pods) and parallel
+      BENCHMARKER pods/clients (workload.rounds) both run WITHIN one SUT --
+      that concurrency is the workload under test, not interference between
+      configurations, and this rule does not touch it"
+  knob_status:
+    semantics: "systems.<name>.knobs entries may carry a status: field.
+      status: reference-only means the knob exists in the DBMS but is
+      commented out (inactive) in the shipped k8s template -- still legal
+      to set via a profile's knobs:/derive: or systems[].override:, just
+      not active by any system default. A knob with no status: field is
+      already active in the shipped template."
+    out_of_scope: "fixed: true (separate from status) marks a knob that
+      isn't mechanically blocked from being overridden, but has no other
+      legal value in practice for this pairing -- e.g.
+      PostgreSQL.knobs.shared_preload_libraries must stay pg_duckdb for
+      PgDuckDB to function at all"
+
+experiment_schema:
+  why: "full top-level shape every experiment.yml must follow"
+  semantics: "every field below is a SIBLING of every other field at the top of the file"
+  out_of_scope: "loading: nested under workload: (i.e. a workload.loading
+    block); the agent validator rejects it because loading: must be a top-level
+    sibling of workload:, not nested inside it"
+  fields:
+    mode:
+      type: enum
+      values: [run, profiling, start, load, empty, summary]
+      default: run
+    title:
+      type: str
+      required: true
+      semantics: "short human-readable name"
+    hypothesis:
+      type: str
+      required: true
+      semantics: "prose statement of what's being tested"
+    discriminates:
+      type: "list[str]"
+      required: true
+      values: [system, concurrency, cpu, memory]
+      semantics: "factor(s) the experiment isolates, e.g. [system] or [system, concurrency]"
+    follow_up_of:
+      type: str
+      required: false
+      semantics: "the experiment_code (contract_result.yml's structure.experiment_code --
+        a unix-timestamp-seconds string) of a prior run this experiment follows up on"
+      why: "lets an agent reconstruct comparison lineage structurally instead of
+        relying on prose buried in hypothesis; feeds the not-yet-implemented
+        cross_experiment_comparison validity check (see contract_result.yml's
+        validity/known_gaps) once that exists"
+      when: "set only when this experiment is a deliberate follow-up to a specific
+        prior run; omit entirely for a first/standalone experiment"
+      out_of_scope: "does not itself enforce or verify anything -- nothing in the
+        result folder or this catalog checks that the named experiment_code
+        actually exists or ran a comparable workload"
+    max_sut:
+      type: int
+      default: 1
+      semantics: "how many resolved configurations may have their
+        system-under-test running AT THE SAME TIME, counted CLUSTER-WIDE
+        (every bexhoma experiment sharing the cluster counts toward it).
+        1 = one system at a time; 0 = no limit; N>1 = up to N concurrent
+        SUTs. Maps to the -ms/--max-sut CLI flag."
+      why: "the default is one system at a time -- co-located SUTs contend
+        for the same node CPU/memory-bandwidth/disk/network, so a
+        side-by-side run measures interference, not the discriminates:
+        factor (see catalog_concepts.sut_isolation)"
+      when: "raise it above 1 only when the concurrent SUTs genuinely do
+        not share a node -- e.g. each pinned to a different node via
+        placement:"
+    max_sut_experiment:
+      type: int
+      default: 1
+      semantics: "same as max_sut, but counts only THIS experiment's own
+        configurations, ignoring anything else on the cluster. Independent
+        of max_sut: a new SUT starts only when BOTH caps allow it. 0 = no
+        limit. Maps to the -mse/--max-sut-experiment CLI flag."
+      out_of_scope: "leaving max_sut at 1 already serialises this
+        experiment's SUTs cluster-wide; max_sut_experiment only matters
+        once max_sut is 0 or >1"
+    workload:
+      type: object
+      fields:
+        name: {type: str, required: true, semantics: "must be a key under this file's workloads:"}
+        params: {type: object, semantics: "legal keys/types/defaults are workloads.<name>.params below"}
+        rounds: {type: "list[int]", min: 1, semantics: "parallel-client sweep;
+          one benchmarking round per entry; each entry is a client count, so
+          it must be at least 1"}
+        repetitions: {type: int, default: 1, min: 1, semantics: "how many times the whole round list repeats"}
+    loading:
+      type: object
+      fields:
+        pods: {type: int, semantics: "number of parallel loader pods"}
+        threads: {type: int, semantics: "loader threads, split across pods;
+          support varies by DBMS loader (e.g. MySQL honors it, others ignore
+          it) -- see workloads.tpch.loading.threads.support below; prefer
+          pods to scale load at the current state"}
+        split: {type: int, default: 1, semantics: "number of parallel loader batches"}
+        timeout_minutes:
+          type: int
+          min: 1
+          required: false
+          semantics: "maximum wall-clock loading time for each resolved system
+            configuration, measured from when that configuration starts loading;
+            checked on BeXhoma's orchestration polling interval; on expiry
+            BeXhoma captures loader and SUT diagnostics before removing the
+            experiment; unset means no load-only deadline"
+        post_load:
+          type: object
+          semantics: "SHARED default applied to every system in systems:
+            below, unless a system sets its own post_load"
+          when: "legal option names/values are workload-specific -- see
+            workloads.<name>.loading.post_load below"
+    systems:
+      type: list
+      semantics: "one resolved configuration per entry (crossed with any
+        resource sweep, see resources below). They are benchmarked one at a
+        time, never concurrently -- see catalog_concepts.sut_isolation"
+      item_fields:
+        name: {type: str, required: true, semantics: "must be a key under this file's systems:"}
+        profile: {type: str, required: false, semantics: "one of that system's profiles: keys"}
+        override: {type: object, required: false, semantics: "{knob_name: value}; applied after the profile's knobs/derive, wins over both"}
+        post_load:
+          type: object
+          required: false
+          semantics: "same shape as loading.post_load above; replaces the
+            shared default for THIS system only. Systems may diverge freely --
+            e.g. PostgreSQL: {indexes: true} with PgDuckDB's post_load omitted
+            entirely -- indexes/constraints/statistics are independent
+            switches (see workloads.tpch.loading.post_load below), so every
+            one of the 8 combinations is legal per system"
+          when: "when every named system resolves to the same effective
+            post_load (the shared default, or matching per-system overrides),
+            bexhoma/spec.py::build_argv() emits it as tpch.py's shared
+            -xii/-xic/-xis CLI flags; when systems diverge, those flags are
+            global switches that can't represent the difference, so
+            resolve_physical_design_overrides() resolves the per-system
+            selection separately and experiment.py applies it in-process via
+            SutConfiguration.set_experiment(indexing=...) -- not through argv"
+    observe:
+      type: object
+      why: "monitoring metrics only become reliable after a few scrape
+        intervals have accumulated -- a phase shorter than roughly 2-5
+        minutes can show 0/NaN readings rather than a real signal; keep
+        rounds/query_repeats long enough for the phase to clear this warm-up
+        window if monitoring results matter"
+      fields:
+        monitoring_sut: {type: bool, semantics: "scrape the system-under-test's own metrics"}
+        monitoring_cluster: {type: bool, semantics: "scrape cluster-wide metrics"}
+        monitoring_app: {type: bool, semantics: "scrape benchmarker/loader app metrics"}
+    placement:
+      type: object
+      semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"
+      fields:
+        sut: {type: str, required: false, semantics: "Kubernetes node name to pin the system-under-test to"}
+        loading: {type: str, required: false, semantics: "node name for loader pods"}
+        benchmarking: {type: str, required: false, semantics: "node name for benchmarker pods"}
+    resources:
+      type: object
+      fields:
+        cpu:
+          type: "object or list[object]"
+          item_fields: {request: quantity, limit: quantity}
+          semantics: "a single {request, limit} dict is shared by every system"
+          when: "a LIST crosses every systems: entry against every list
+            entry, one resolved configuration per (system, cell) pair --
+            a resource sweep"
+        memory:
+          type: "object or list[object]"
+          item_fields: {request: quantity, limit: quantity}
+          semantics: "a single {request, limit} dict is shared by every system"
+          when: "same sweep rule as cpu"
+          out_of_scope: "resources.cpu and resources.memory sweep lists of
+            different lengths (when both have more than one entry) -- must
+            share one length, or either may be a single shared dict
+            broadcast across every cell"
+        storage:
+          type: object
+          fields:
+            size: {type: quantity, required: false, semantics: "PersistentVolumeClaim size, or node-local disk request if storage_class is unset"}
+        storage_class:
+          type: str
+          required: false
+          semantics: "must name one of environment.yml's storage_classes,
+            or be left unset entirely for ephemeral/node-local storage: no
+            PersistentVolumeClaim is provisioned, and the SUT gets whatever
+            disk its scheduled node has attached -- typically fast, since
+            there's no network-storage hop, but tied to that node's lifetime"
+          when: "a profile only constrains this choice when it declares
+            requires: {storage_class: [...]} -- see catalog_concepts.requires"
+  quantity_format:
+    semantics: "Kubernetes-style quantities, used by resources.cpu/memory/storage.size"
+    memory_and_storage_size:
+      semantics: "an integer byte count, or a number followed by a suffix"
+      binary_suffixes: [Ki, Mi, Gi, Ti]
+      decimal_suffixes: [K, M, G, T]
+      out_of_scope: [KB, MB, GB, TB]
+      examples: ["32G", "32Gi", "512Mi"]
+    cpu:
+      semantics: "a plain number of cores, or millicores with a trailing m suffix"
+      examples: ["8", "0.5", "500m"]
+
+workloads:
+  tpch:
+    why: "star-schema OLAP: 22 queries, multi-way joins, official TPC-H"
+    resource_profile:
+      cpu: high
+      memory: high
+      why: "multi-way hash joins and aggregation across 22 queries are CPU- and
+        RAM-bound, and working-set size scales directly with scaling_factor;
+        concurrent streams divide the available memory and worker budget, so a
+        lower-memory cell can distinguish memory pressure from thread contention.
+        Storage bandwidth matters less by comparison — weigh cpu/memory headroom
+        heavily when choosing placement and experiment.yml resources"
+    supports: [PostgreSQL, PgDuckDB]
+    component_resources:
+      benchmarker:
+        replicas:
+          per_concurrent_stream: 1
+        per_pod_limit: {cpu: 16, memory: 128Gi}  # Local BeXhoma/cluster template values; keep them in sync.
+        semantics: "one benchmarker pod per concurrent stream in the active
+          round; when placement.benchmarking is set, all are pinned there"
+        why: "the current BeXhoma benchmarker template fixes these limits
+          independently of resources.cpu/memory, which configure only the SUT"
+    out_of_scope:
+      systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB]
+      why: "the full tpch workload also supports these; trimmed to prototype scope for this contract"
+    modes: [profiling, run, start, load, empty, summary]
+
+    params:
+      scaling_factor:
+        type: int
+        unit: GB
+        min: 1
+        why: "TPC-H scale factor, controls database size"
+      timeout:
+        type: int
+        unit: seconds
+        default: 600
+        min: 1
+        why: "per-query timeout; it also bounds the worst-case cost of every
+          sequential benchmark phase, so raise it only when the additional
+          runtime can resolve a named uncertainty"
+      query_repeats:
+        type: int
+        default: 1
+        min: 1
+        why: "repeat each query N times per round; also useful for
+          statistical verification (more samples per query) and to prolong
+          a short-running round so monitoring metrics have time to warm up"
+      measure_datatransfer:
+        type: bool
+        default: false
+        why: "additionally record bytes transferred per query"
+      active_queries:
+        type: list[int]
+        default: all
+        min: 1
+        max: 22
+        why: "restrict to a query subset, e.g. [5, 7, 8, 9, 21] = multi-way joins;
+          TPC-H defines exactly 22 queries, so every entry must be in 1..22"
+      recreate_parameter:
+        type: bool
+        default: false
+        why: "regenerate random query parameters for each stream"
+      shuffle_queries:
+        type: bool
+        default: false
+        why: "shuffle query execution order independently per stream"
+      refresh_streams:
+        type: int
+        default: 0
+        why: "number of RF1/RF2 refresh-stream pairs run parallel to query streams"
+      refresh_stream_offset:
+        type: int
+        default: 0
+        why: "starting OFFSET+1 for the refresh stream"
+      store_explain:
+        type: bool
+        default: false
+        why: "run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol"
+        when: "requires an 'explain' key in the DBMS connection's JDBC config"
+
+    loading:
+      pods:
+        type: int
+        min: 1
+        why: "number of parallel loader pods"
+        support: "works for every DBMS"
+      threads:
+        type: int
+        min: 1
+        why: "loader threads, split across pods"
+        support: "only honored by some DBMS loaders (e.g. MySQL); ignored by
+          others. Prefer pods over threads at the current state -- use
+          threads=1 and scale via pods instead"
+      split:
+        type: int
+        default: 1
+        why: "number of parallel loader batches"
+      post_load:
+        # legality menu (option names + legal values) for tpch; support vs.
+        # selection are documented in catalog_concepts.physical_design and
+        # experiment_schema.fields.systems.item_fields.post_load above.
+        # indexes/constraints/statistics are mutually independent -- every one
+        # of the 8 boolean combinations maps to its own k8s-cluster.config
+        # volumes.tpch.initscripts key (bexhoma/spec.py::resolve_indexing_key()).
+        indexes:
+          type: bool
+          default: false
+          why: "create indexes on all tables after loading; without this, plans fall back to sequential scans"
+        constraints:
+          type: bool
+          default: false
+          why: "add primary-key/foreign-key constraints after loading; deferred because per-row checks slow bulk COPY"
+        statistics:
+          type: bool
+          default: false
+          why: "run ANALYZE after loading; without it the planner has no cardinality estimates for round 1"
+        storage_format:
+          type: enum
+          values: [heap]
+          default: heap
+          out_of_scope: "columnar exists in the general schema (Citus) but is out of scope for this pair"
+
+    rounds:
+      type: list[int]
+      why: "comma-separated parallel-client sweep; one benchmarking round per entry"
+      rule_of_thumb: "official TPC-H sizes the number of concurrent query
+        streams as floor(log(scaling_factor, 3)) + 2 -- e.g. SF=100 -> 6,
+        SF=1000 -> 8; use as a starting point for the max entry in rounds,
+        not a hard requirement"
+    repetitions:
+      type: int
+      default: 1
+      why: "how many times the whole round list repeats"
+      minimum_for_conclusions: 3
+      when: "the default of 1 is for smoke tests only. A single repetition gives
+        no way to tell a real difference between systems from run-to-run
+        variance, so any experiment whose hypothesis compares systems or claims
+        an effect must set at least 3 (behavioural rule from issue #764).
+        Note this multiplies runtime: total runs are
+        systems x resource_cells x len(rounds) x repetitions"
+
+    produces:
+      per_query:
+        metric: latency
+        unit: ms
+        why: "mean execution latency per query (DbmsBenchmarkerEvaluator.get_query_latencies()),
+          one row per entry in active_queries — the finest-grained breakdown available"
+      summary:
+        metrics: [Power@Size, Throughput@Size, Geo Times]
+        unit: [Q/h, Q/h, s]
+        why: "geo-mean-derived per-phase metrics (get_summary_benchmark_per_phase());
+          this is what a system/round/repetition comparison is actually made on"
+      quality:
+        metric: sql_errors_warnings
+        why: "per-query error/warning counts (get_total_errors()/get_total_warnings()),
+          recorded as pass/fail tests, not a performance metric"
+      out_of_scope:
+        time_series: "DBMSBenchmarker reports per-query and per-phase
+          aggregates only -- no running per-second signal like YCSB/Benchbase produce"
+
+  ycsb:
+    why: "key-value / simple-schema OLTP: one usertable, single-row primary-key
+      reads and writes, 6 fixed access-pattern mixes (YCSB workloads a-f)"
+    resource_profile:
+      cpu: medium
+      memory: medium
+      why: "each operation is a single-row primary-key read or write, so per-op
+        CPU is low; sustained throughput is bound by client concurrency,
+        connection handling and storage IO latency rather than raw compute. The
+        working set is scaling_factor GB (rows are ~1 KB each) -- size
+        resources.memory to keep it cached when the hypothesis is about
+        in-memory performance, and weigh storage_class / IO latency heavily
+        otherwise"
+    supports: [PostgreSQL]
+    out_of_scope:
+      systems: [MySQL, MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService,
+        PGBouncer, Redis, Citus, CedarDB, Dragonfly]
+      why: "the full ycsb workload also supports these; trimmed to PostgreSQL for
+        this contract's prototype scope (matching workloads.tpch). Connection
+        pooling (PGBouncer) and per-system knobs (TiDB PD nodes, SUT replicas)
+        are out of scope with them"
+    modes: [run, start, load, summary]
+
+    params:
+      workload:
+        type: enum
+        values: [a, b, c, d, e, f]
+        required: true
+        why: "YCSB access-pattern mix: a=read/update 50/50, b=read-mostly 95/5,
+          c=read-only, d=read-latest (insert + read newest), e=short scans,
+          f=read-modify-write. Sets YCSB_WORKLOAD."
+      scaling_factor:
+        type: int
+        unit: GB
+        why: "dataset size: rows = scaling_factor * 1_000_000 (each row ~1 KB).
+          Also the default total operation count unless operations_scale is set."
+      operations_scale:
+        type: int
+        unit: millions
+        default: null
+        why: "total operation count for the benchmarking phase, in millions;
+          overrides the scaling_factor-derived default. Split across all
+          benchmarker pods (constant total work)."
+      timeout:
+        type: int
+        unit: seconds
+        why: "per-connection benchmark timeout"
+      target_base:
+        type: int
+        default: 16384
+        why: "base ops/sec throughput target per benchmarker pod; multiplied by
+          the per-phase *_target_factors below. Set the effective target to 0 to
+          run unthrottled (measure peak throughput)."
+      loading_target_factors:
+        type: list[float]
+        default: [1]
+        why: "multipliers on target_base for the loading phase; one loader sweep
+          cell per entry"
+      benchmarking_target_factors:
+        type: list[float]
+        default: [1]
+        why: "multipliers on target_base for the benchmarking phase; one
+          benchmarking sweep cell per entry"
+      batchsize:
+        type: int
+        default: null
+        why: "JDBC insert batch size during loading; unset = YCSB default (one
+          row per INSERT)"
+      logging_interval:
+        type: int
+        unit: seconds
+        default: 10
+        why: "status-line interval; also the resolution of the produced
+          time_series signal"
+      insert_order:
+        type: enum
+        values: [hashed, ordered]
+        default: hashed
+        why: "hashed = keys inserted in hash order (uniform key distribution);
+          ordered = sequential key order (append-heavy, hot end of the index)"
+      max_execution_time:
+        type: int
+        unit: seconds
+        default: 0
+        why: "wall-clock cap on the benchmarking phase only (0 = run every
+          operation); loading always runs to completion"
+
+    loading:
+      pods:
+        type: int
+        min: 1
+        why: "number of parallel loader pods; the total row count is split
+          across them"
+        support: "works for every DBMS"
+      threads:
+        type: int
+        min: 1
+        why: "loader threads per pod (YCSB_THREADCOUNT)"
+        support: "honored by YCSB's JDBC loader -- unlike tpch, prefer raising
+          threads and pods together to reach the loading throughput target"
+      out_of_scope: "no post_load block: YCSB creates and manages its own schema
+        (a single usertable with a primary key) through the JDBC binding, so
+        there is no indexes/constraints/statistics/storage_format selection to
+        make -- physical_design does not apply to this workload"
+
+    rounds:
+      type: list[int]
+      why: "parallel-client sweep; one benchmarking round per entry, each entry
+        being the number of concurrent benchmarker pods. Total operation count
+        is split across the pods (constant total work), so more pods raises
+        concurrency at the same total ops."
+    repetitions:
+      type: int
+      default: 1
+      why: "how many times the whole round list repeats"
+
+    produces:
+      per_operation:
+        metrics: [throughput, latency_avg, latency_p95, latency_p99]
+        unit: [ops/s, us, us, us]
+        why: "one row per YCSB operation type (READ / UPDATE / INSERT / SCAN /
+          READ-MODIFY-WRITE / CLEANUP), from YcsbEvaluator.get_summary_benchmark_per_phase()
+          -- the finest-grained breakdown available"
+      summary:
+        metrics: [throughput, latency_avg]
+        unit: [ops/s, us]
+        why: "whole-workload aggregate per phase; this is what a
+          system/round/repetition comparison is actually made on"
+      time_series:
+        metric: current_ops_per_sec
+        unit: ops/s
+        why: "per-interval throughput signal (resolution = logging_interval) for
+          both the loading and benchmarking phases -- YCSB and Benchbase produce
+          this running signal; DBMSBenchmarker workloads (tpch/tpcds) do not"
+      out_of_scope:
+        per_query: "YCSB has no query concept -- only operation-type buckets, so
+          there is no per-query breakdown like tpch/tpcds produce"
+
+systems:
+  PostgreSQL:
+    why: "the baseline OLTP/OLAP RDBMS this pairing compares against"
+    deployment: bexhoma-deployment-postgres
+    image: postgres:18.3
+    arg_style: pg-guc
+
+    knobs:
+      # see catalog_concepts.knob_status for what status: reference-only means
+      max_connections:                     {type: int, default: 640}
+      max_worker_processes:                {type: int, default: 16}
+      max_parallel_workers:                {type: int, default: 16}
+      max_parallel_workers_per_gather:     {type: int, default: 8}
+      max_parallel_maintenance_workers:    {type: int, default: 4}
+      shared_buffers:                      {type: memory, default: 16GB}
+      effective_cache_size:                {type: memory, default: 40GB}
+      work_mem:                            {type: memory, default: 512MB}
+      maintenance_work_mem:                {type: memory, default: 2GB}
+      autovacuum:                          {type: enum, values: [on, off], default: off}
+      wal_level:                           {type: enum, values: [minimal, replica, logical], default: minimal}
+      max_wal_senders:                     {type: int, default: 0}
+      max_wal_size:                        {type: memory, default: 32GB}
+      checkpoint_timeout:                  {type: duration, default: 1h}
+      checkpoint_completion_target:        {type: float, default: 1.0}
+      lock_timeout:                        {type: duration, default: 30s}
+      idle_in_transaction_session_timeout: {type: int, unit: ms, default: 30000}
+      effective_io_concurrency:  {type: int, status: reference-only}
+      io_method:                 {type: enum, values: [sync, io_uring], status: reference-only}
+      random_page_cost:          {type: float, status: reference-only}
+      seq_page_cost:             {type: float, status: reference-only}
+      default_statistics_target: {type: int, status: reference-only}
+      fsync:                     {type: enum, values: [on, off], status: reference-only}
+      synchronous_commit:        {type: enum, values: [on, off], status: reference-only}
+      wal_compression:           {type: enum, values: [on, off], status: reference-only}
+
+    physical_design:
+      indexes: true
+      constraints: true
+      statistics: true
+      storage_format: [heap]
+
+    profiles:
+      analytical-ssd:
+        why: "OLAP on node-local NVMe, sized from this experiment's memory limit"
+        requires: {storage_class: [ssd, null]}
+        knobs:
+          random_page_cost: 1.1
+          effective_io_concurrency: 200
+          io_method: io_uring
+          max_parallel_workers_per_gather: 2
+          max_parallel_workers: 4
+          max_worker_processes: 6
+        derive:
+          shared_buffers:       "0.3125 * memory_limit"
+          effective_cache_size: "0.75 * memory_limit"
+          work_mem:              "0.015625 * memory_limit"
+          maintenance_work_mem:  "0.03125 * memory_limit"
+
+  PgDuckDB:
+    why: "PostgreSQL plus the pg_duckdb extension, adding a vectorized DuckDB execution engine alongside Postgres' own planner"
+    semantics: "knobs: below only lists PgDuckDB-specific additions -- every
+      other knob inherits unchanged from PostgreSQL via extends (see
+      catalog_concepts.extends)"
+    extends: PostgreSQL
+    deployment: bexhoma-deployment-pg-duck
+    image: pgduckdb/pgduckdb:18-v1.1.1
+    arg_style: pg-guc
+
+    knobs:
+      shared_preload_libraries:
+        type: str
+        default: pg_duckdb
+        fixed: true
+        why: "loads the pg_duckdb extension; not meant to be overridden"
+      duckdb_force_execution:
+        type: bool
+        default: false
+        arg_style: env-var
+        env_var: DUCKDB_FORCE_EXECUTION
+        why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"
+        when: "set this to true whenever the hypothesis compares PgDuckDB's
+          execution engine against another system. Left at its default on
+          heap-stored tables, pg_duckdb's cost-based routing normally keeps
+          queries in PostgreSQL's own executor, so the extension is loaded but
+          idle and the experiment measures PostgreSQL against PostgreSQL. Leave
+          it false only when the routing behaviour itself is what's under test."
+
+    physical_design:
+      # explicitly re-declared, not inherited via extends -- see
+      # catalog_concepts.extends.out_of_scope
+      indexes: true
+      constraints: true
+      statistics: true
+      storage_format: [heap]
+      out_of_scope: "columnar (native `USING duckdb` tables) deliberately
+        NOT listed as supported: blocked upstream (github.com/duckdb/pg_duckdb#385)"
+
+    profiles:
+      analytical-ssd:
+        ref: PostgreSQL.profiles.analytical-ssd
