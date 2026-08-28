@@ -35,6 +35,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py`, `agent/trajectories/` | Done and regression-tested; incomplete designs remain timestamp-only |
+| Phase completeness decided by work done, not by closing prose: a submitted (or dry-run-validated) design succeeds even when the model returns an empty final message, with a substituted plain-sentence report | `agent/harness/agent.py` | Done and regression-tested |
 | Model server manifest with idle GPU release | `agent/k8s/vllm-qwen38-27b.yml` | Done |
 | Durable Kubernetes lifecycle controller with in-cluster authentication and restart recovery | `agent/lifecycle_controller.py`, `agent/k8s/lifecycle-controller.yml`, `agent/Dockerfile.lifecycle` | Done and regression-tested; image publication and target-cluster values remain deployment steps |
 | Sequential isolation of agent-submitted SUT configurations | `agent/harness/submit.py`, `contracts/contract_catalog.yml` | Done and regression-tested through BeXhoma's public one-SUT option |
@@ -187,6 +188,35 @@ decode, the field is reported as null rather than guessed, since a wrong
 mapping is worse than an absent one. The resolution reuses the same pairing
 function validation uses, so what a design was told it would run and what the
 assessor says it did run cannot drift apart.
+
+### 2026-08-28 — Do not fail a design phase that submitted an experiment
+
+A design run submitted a YCSB-on-PostgreSQL experiment successfully — the
+detached BeXhoma child started, the result folder appeared, and the experiment
+code was recorded — but the phase still exited with a failure, reporting that
+it had "submitted no experiment" and quoting a methodology refusal from an
+earlier validation attempt that a later attempt had already fixed. The user
+asked whether Windows process-watching was at fault. It was not: the submission
+path worked end to end.
+
+The real cause was that a reasoning model spent its entire per-turn token
+budget on the hidden thinking channel when asked for its closing account, and
+returned an empty visible message. The command-line entry point decided whether
+a phase was complete by requiring that free-text summary to be non-empty, so an
+empty summary forced the phase to "incomplete" even though an experiment code
+existed. That path then skipped the investigation-labelling step, wrote an
+empty phase report, and printed a misleading explanation.
+
+Completeness of a design phase is now decided by its actual work: an experiment
+reached the cluster, or — under `--dry-run` — a specification passed
+validation. `run_design` records this as `phase_complete`, mirroring what the
+interpretation phase already did. When the closing message is empty but the
+phase is complete, the harness now substitutes a short plain-sentence account
+of what was submitted so the report is not blank, while still printing the
+"raise --max-tokens" warning. Separately, the helper that explains why an
+incomplete phase stopped no longer cites a refusal that a subsequent successful
+validation superseded; it now says plainly that a specification passed but was
+not submitted before the phase ended.
 
 ### 2026-08-28 — Make the agent harness run on Windows
 

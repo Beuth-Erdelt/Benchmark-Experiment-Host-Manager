@@ -250,6 +250,7 @@ def _phase_account(trajectory_path: Path, phase: str, outcome: dict[str, Any]) -
     attempts = 0
     refusal = ""
     exhausted = False
+    last_validate_passed = False
     for event in _trajectory_events(trajectory_path):
         if event.get("type") == "budget_exhausted":
             exhausted = True
@@ -261,15 +262,27 @@ def _phase_account(trajectory_path: Path, phase: str, outcome: dict[str, Any]) -
             attempts += 1
             refusals = result.get("errors") or []
             if refusals:
+                last_validate_passed = False
                 stage = str(refusals[0].get("stage", "")).strip() or "catalog"
                 message = str(refusals[0].get("message", "")).strip()
                 refusal = f"the {stage} check refused it: {message}"
+            elif result.get("valid"):
+                # A later successful validation supersedes an earlier refusal:
+                # the design that stood at the end of the phase was accepted.
+                last_validate_passed = True
+                refusal = ""
         elif result.get("error"):
             refusal = refusal or str(result["error"]).strip()
 
     if phase == "design":
         lines = ["error: the design phase submitted no experiment."]
-        if attempts and refusal:
+        if last_validate_passed:
+            spent = " and its validation budget was then spent" if exhausted else ""
+            lines.append(
+                f"A specification passed validation{spent} but the phase ended "
+                "before it was submitted to the cluster."
+            )
+        elif attempts and refusal:
             spent = " and its validation budget was spent" if exhausted else ""
             lines.append(
                 f"The specification was validated {attempts} time(s){spent}. "
@@ -628,12 +641,18 @@ def run_design(
                  if name == "validate" and result.get("valid")]
     submissions = [result for name, _, result in events
                    if name == "submit" and "code" in result]
+    # The phase is complete once its real work is done: an experiment reached
+    # the cluster, or -- for a dry run -- a specification passed validation. The
+    # closing prose the model is asked for afterwards is a courtesy for the
+    # reader, not the deliverable, so its absence does not make the phase fail.
+    phase_complete = bool(submissions) or (dry_run and bool(validated))
     return _outcome(trajectory,
                     validated_path=validated[-1] if validated else None,
                     code=submissions[-1]["code"] if submissions else None,
                     submitted_spec=submissions[-1].get("spec") if submissions else None,
                     followups_remaining=followups,
                     summary=summary,
+                    phase_complete=phase_complete,
                     attempts_used=sum(1 for name, _, _ in events if name == "validate"),
                     turns=turns)
 
@@ -1620,6 +1639,33 @@ def _label_design_investigation(
     return labelled_directory
 
 
+def _fallback_summary(phase: str, outcome: dict[str, Any]) -> str:
+    """Stand in for a closing account the model never wrote.
+
+    A reasoning model can spend its whole per-turn token budget thinking and
+    then return an empty final message. When the phase's real work already
+    succeeded, the run is still complete, so this keeps its report from being
+    blank by stating plainly what was accomplished.
+
+    :param phase: ``design`` or ``interpret``.
+    :param outcome: The phase outcome as recorded.
+    :return: A short plain-sentence account.
+    :rtype: str
+    """
+    if phase == "design" and outcome.get("code"):
+        specification = outcome.get("validated_path") or "the validated specification"
+        return (
+            f"Submitted experiment {outcome['code']} from {specification}. The "
+            "model produced no closing summary of its own before the phase ended."
+        )
+    if phase == "design" and outcome.get("validated_path"):
+        return (
+            f"Validated {outcome['validated_path']} without submitting it. The "
+            "model produced no closing summary of its own before the phase ended."
+        )
+    return "The model produced no closing summary of its own before the phase ended."
+
+
 def _write_reports(
     run_directory: Path,
     trajectory: Trajectory,
@@ -1846,16 +1892,24 @@ def main() -> int:
             print(f"error: {error}", file=sys.stderr)
             return 1
 
-    if not outcome.get("summary"):
+    complete = outcome.get("phase_complete")
+    if complete is None:
+        complete = bool(outcome.get("code")) or (
+            bool(outcome.get("summary"))
+            and (args.phase == "interpret" or args.dry_run)
+        )
+    final = bool(complete) and not outcome.get("code")
+    summary_text = outcome.get("summary") or ""
+    if not summary_text:
         print("error: the model produced no closing answer; it most likely spent the "
               "whole per-turn token budget thinking. Raise --max-tokens and retry.",
               file=sys.stderr)
-    complete = outcome.get("phase_complete")
-    if complete is None:
-        complete = bool(outcome.get("summary")) and (
-            args.phase == "interpret" or args.dry_run or bool(outcome.get("code"))
-        )
-    final = bool(complete) and not outcome.get("code")
+        # The closing prose is not the deliverable. When the phase's real work
+        # already succeeded, stand in for the missing account so the report is
+        # not blank; only a phase that also failed its work is left to
+        # _phase_account below.
+        if complete:
+            summary_text = _fallback_summary(args.phase, outcome)
     if args.phase == "design" and complete:
         previous_directory = run_directory
         run_directory = _label_design_investigation(
@@ -1867,8 +1921,7 @@ def main() -> int:
             )
             workspace.run_directory = phase_directory
     phase_report, _ = _write_reports(
-        run_directory, trajectory, phase_number, args.phase,
-        outcome["summary"] or "", final,
+        run_directory, trajectory, phase_number, args.phase, summary_text, final,
     )
 
     print(f"investigation: {run_directory}")

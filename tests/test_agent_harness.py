@@ -20,6 +20,8 @@ from agent.harness.agent import (
     _harness_revision,
     Trajectory,
     _carry_forward,
+    _fallback_summary,
+    _phase_account,
     _phase_number,
     _write_reports,
     main as agent_main,
@@ -1813,6 +1815,62 @@ resources:
             event for event in events if event["type"] == "budget_exhausted")
         self.assertTrue(exhausted["handover_pending"])
 
+    def test_a_submitted_design_is_complete_without_a_closing_summary(self) -> None:
+        """A reasoning model can burn its whole turn thinking and answer nothing.
+
+        The experiment still reached the cluster, so the phase is complete and
+        must not be reported as a failure.
+        """
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _tool_reply(ToolCall("submit", "submit", {"path": self.path})),
+            _text_reply(""),
+        ])
+
+        (self.root / "results" / "999").mkdir(parents=True)
+        with (
+            mock.patch.object(
+                tools_module.subprocess, "Popen", return_value=_Process()),
+            mock.patch.object(Workspace, "_new_code", return_value="999"),
+        ):
+            outcome = run_design(
+                task="question", workspace=self.workspace, model=model,
+                trajectory=Trajectory(self.run),
+                catalog_path="contracts/contract_catalog.yml",
+                catalog_sha256="0" * 64, environment_path=None, attempts=1,
+            )
+
+        self.assertEqual(outcome["summary"], "")
+        self.assertTrue(outcome["phase_complete"])
+        self.assertIsNotNone(outcome["code"])
+
+    def test_phase_account_does_not_cite_a_superseded_refusal(self) -> None:
+        """An earlier failed attempt is not why a later, passing design stopped."""
+        log = self.run / "trajectory.jsonl"
+        events = [
+            {"type": "tool_call", "tool": "validate", "result": {
+                "valid": False,
+                "errors": [{"stage": "methodology", "message": "M2.3: elastic CPU"}],
+            }},
+            {"type": "tool_call", "tool": "validate", "result": {
+                "valid": True, "errors": [],
+            }},
+            {"type": "budget_exhausted", "turn": 3},
+        ]
+        log.write_text(
+            "\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8"
+        )
+
+        lines = _phase_account(log, "design", {"summary": ""})
+
+        self.assertNotIn("M2.3", " ".join(lines))
+        self.assertIn("passed validation", " ".join(lines))
+
     def test_design_reads_the_method_contract_before_writing(self) -> None:
         """The handbook is a required read, not an optional reference."""
         method = self.root / "agent" / "experiment_design_handbook.md"
@@ -2482,6 +2540,59 @@ class PhaseTest(unittest.TestCase):
                     investigation
                 )
             )
+
+    def test_a_submitted_design_without_a_summary_still_succeeds(self) -> None:
+        """An empty closing message is not a phase failure once an experiment ran."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "contracts").mkdir()
+            (root / "contracts" / "contract_catalog.yml").write_text("version: 1\n")
+            results = root / "results"
+            results.mkdir()
+
+            def design_phase(**kwargs):
+                trajectory = kwargs["trajectory"]
+                submitted = kwargs["workspace"].run_directory / "submitted-experiment.yml"
+                submitted.write_text(_SPEC)
+                trajectory.record(
+                    "meta", phase="design", model="qwen3.5:9b", budgets={"followups": 1},
+                )
+                trajectory.record("task", text="question")
+                outcome = {
+                    "summary": "", "code": "77", "phase_complete": True,
+                    "validated_path": "inbox/spec.yml",
+                    "submitted_spec": str(submitted), "followups_remaining": 1,
+                }
+                trajectory.record("outcome", **outcome)
+                return outcome
+
+            argv = [
+                "agent", "--model", "qwen3.5:9b", "--root", str(root),
+                "--trajectories", "investigations", "--results", str(results),
+                "--environment", "", "--method", "", "--task", "question",
+            ]
+            stderr = io.StringIO()
+            with (
+                mock.patch("sys.argv", argv),
+                mock.patch(
+                    "agent.harness.agent.model_client.ChatModel"
+                ) as model_class,
+                mock.patch(
+                    "agent.harness.agent.run_design", side_effect=design_phase
+                ),
+                contextlib.redirect_stderr(stderr),
+            ):
+                model_class.return_value.model = "qwen3.5:9b"
+                self.assertEqual(agent_main(), 0)
+
+            self.assertIn("no closing answer", stderr.getvalue())
+            self.assertNotIn("submitted no experiment", stderr.getvalue())
+            investigation = next((root / "investigations").iterdir())
+            self.assertTrue(investigation.name.endswith("-sf1-qwen3.5-9b"))
+            phase_report = (
+                investigation / "reports" / "01-design.md"
+            ).read_text()
+            self.assertIn("Submitted experiment 77", phase_report)
 
     def test_an_unreachable_endpoint_reads_like_the_other_setup_errors(self) -> None:
         """A wrong --base-url is a misconfiguration, not a crash to decipher."""
