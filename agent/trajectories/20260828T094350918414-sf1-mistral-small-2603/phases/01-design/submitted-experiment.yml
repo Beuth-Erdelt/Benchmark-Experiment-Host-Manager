@@ -1,0 +1,42 @@
+mode: run
+title: "YCSB workload a: single-row primary-key 50/50 read/update; 1 GB dataset; sweep concurrency to find throughput ceiling and latency inflection"
+hypothesis: "As we add concurrent clients up to the system’s saturation point, throughput rises roughly linearly with client count; beyond that point, throughput plateaus and response latency begins to increase sharply. We will measure the exact concurrency level where this transition occurs for PostgreSQL on local-hdd storage."
+discriminates: [concurrency]
+
+workload:
+  name: ycsb
+  params:
+    workload: a
+    scaling_factor: 1
+    operations_scale: 1
+    timeout: 600
+    target_base: 0
+    logging_interval: 10
+    insert_order: hashed
+  rounds: [1, 2, 4, 8, 16, 32]
+  repetitions: 3
+
+loading:
+  pods: 2
+  threads: 4
+  timeout_minutes: 45
+
+systems:
+  - name: PostgreSQL
+    profile: analytical-ssd
+
+observe:
+  monitoring_sut: true
+  monitoring_cluster: true
+  monitoring_app: true
+
+placement:
+  sut: cl-worker36
+  loading: cl-worker36
+
+resources:
+  cpu: {request: "8", limit: "8"}
+  memory: {request: "16Gi", limit: "16Gi"}
+  storage:
+    size: "20Gi"
+  storage_class: null
