@@ -1,0 +1,1 @@
+The nightly reporting job's performance depends on either CPU cores or memory. Halving CPU from 16 to 8 cores or halving memory from 64 GiB to 32 GiB will each cause a measurable slowdown in query latency; the experiment will determine which resource is the bottleneck and whether either cut is safe on its own.
