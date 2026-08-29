@@ -134,14 +134,22 @@ the cluster. They are a convenience, not part of the pipeline: any
 OpenAI-compatible endpoint does. If you use them, four values are specific to
 the cluster they were written for.
 
-**Context and namespace** are environment variables. The defaults name this
-development cluster; the manifest itself pins no namespace, so these decide
-where the server objects are created.
+**Context and namespace** are environment variables, and the manifest itself
+pins neither, so these decide where the server objects are created.
 
 ```sh
 export MODEL_SERVER_CONTEXT="<kubeconfig context>"
 export MODEL_SERVER_NAMESPACE="<writable namespace>"
 ```
+
+The context defaults to the one on this development machine. The namespace has
+no default and `dev/model_server.sh` refuses to run without it, because the
+switch writes it into the kube context as well, where every later
+namespace-less `kubectl` call inherits it; a default would quietly place both
+the model server and the benchmark in whichever account that default named.
+Export it for a direct call, or put `MODEL_SERVER_NAMESPACE` in `.env` when
+`dev/agent_lifecycle.py` is driving the switch. The in-cluster lifecycle Job
+needs neither: it reads its own namespace and passes that down.
 
 Bexhoma must use the same namespace: set
 `credentials.k8s.context.<kubeconfig context>.namespace` in `cluster.config` to
@@ -377,12 +385,17 @@ follow-up decision records those query numbers and authoring is required to use
 the same `active_queries` subset. A full-workload follow-up remains possible,
 but its decision must state why the broader cost is scientifically necessary.
 
-For comparative TPC-H results, interpretation runs a deterministic quality
-assessment before accepting the model's conclusion. It separates completion of
-the planned query set from speed on the common successful queries, marks
-whole-workload throughput non-comparable when any planned query errored, and
-surfaces unusually different repetitions as warnings rather than silently
-discarding them.
+Interpretation runs a deterministic quality and result assessment before
+accepting the model's conclusion. Where query-level data exists, it separates
+completion of the planned query set from speed on the common successful
+queries, marks whole-workload throughput non-comparable when a planned query
+errored, and surfaces unusually different repetitions as warnings. Independently
+of workload name, it uses the archived `discriminates` factors to compute
+ordered concurrency, CPU, and memory shapes and categorical system rankings.
+The structured interpretation must reproduce those shapes, rankings, and
+factor-level means exactly; it cannot call a measured rise a plateau or quote a
+different value. Failed monitoring checks also carry exact affected phases and
+whether performance metrics remain usable.
 
 ## Outputs
 

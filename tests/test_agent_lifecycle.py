@@ -133,6 +133,7 @@ class AgentLifecycleTest(unittest.TestCase):
                 task="question",
                 resume=None,
                 model="served-model",
+                interpret_model=None,
                 base_url="https://model.example/v1",
                 api_key="cli-secret-value",
                 root=str(root),
@@ -180,6 +181,7 @@ class AgentLifecycleTest(unittest.TestCase):
         """Build a complete wrapper argument set, so a test states only its point."""
         arguments = argparse.Namespace(
             task="question", resume=None, model="served-model",
+            interpret_model=None,
             base_url="https://model.example/v1", api_key="key", root=str(root),
             results=None, trajectories="trajectories", status="status",
             server_script="dev/model_server.sh", poll_seconds=1.0,
@@ -406,6 +408,12 @@ class AgentLifecycleTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"AGENT_METHOD": ""}):
             from_environment = _parser().parse_args(["--task", "q"])
         self.assertEqual(from_environment.method, "")
+
+    def test_the_wrapper_defaults_to_three_validation_attempts(self) -> None:
+        """The wrapper must pass the direct agent CLI's retry budget unchanged."""
+        arguments = _parser().parse_args(["--task", "q"])
+
+        self.assertEqual(arguments.attempts, 3)
 
     def test_model_manifest_accepts_h100_or_h200(self) -> None:
         expressions = _model_pod()["spec"]["affinity"]["nodeAffinity"][
@@ -784,6 +792,60 @@ probe_activity() {{
             if json.loads(line).get("type") == "meta"
         ]
         self.assertEqual(phases, ["design", "interpret"])
+
+    def test_the_verdict_may_run_on_a_stronger_model_than_the_design(self) -> None:
+        investigation = _trajectory(
+            self.trajectories / "one", "design", code="101", summary="submitted"
+        )
+        lifecycle = AgentLifecycle(
+            self.config, ["agent", "--model", "small"], self.server,
+            interpret_model="large",
+        )
+        commands: list[list[str]] = []
+
+        def record(command, *args, **kwargs):
+            commands.append(list(command))
+            with (investigation / "trajectory.jsonl").open("a", encoding="utf-8") as log:
+                log.write(json.dumps({"type": "meta", "phase": "interpret"}) + "\n")
+                log.write(json.dumps({
+                    "type": "outcome", "code": None,
+                    "summary": "aggregated verdict", "phase_complete": True,
+                }) + "\n")
+            return mock.Mock(returncode=0)
+
+        with mock.patch("dev.agent_lifecycle.subprocess.run", side_effect=record):
+            lifecycle._invoke_agent("interpret", source=investigation)
+
+        # argparse keeps the last --model, so the override must come after the
+        # base command's own for the interpretation to run on the larger model.
+        command = commands[0]
+        self.assertEqual(command[-2:], ["--model", "large"])
+        self.assertGreater(
+            len(command) - 2, command.index("--model"),
+            "the design model must still be present and overridden, not removed",
+        )
+
+    def test_without_an_override_the_verdict_keeps_the_design_model(self) -> None:
+        investigation = _trajectory(
+            self.trajectories / "one", "design", code="101", summary="submitted"
+        )
+        lifecycle = AgentLifecycle(self.config, ["agent", "--model", "small"], self.server)
+        commands: list[list[str]] = []
+
+        def record(command, *args, **kwargs):
+            commands.append(list(command))
+            with (investigation / "trajectory.jsonl").open("a", encoding="utf-8") as log:
+                log.write(json.dumps({"type": "meta", "phase": "interpret"}) + "\n")
+                log.write(json.dumps({
+                    "type": "outcome", "code": None,
+                    "summary": "aggregated verdict", "phase_complete": True,
+                }) + "\n")
+            return mock.Mock(returncode=0)
+
+        with mock.patch("dev.agent_lifecycle.subprocess.run", side_effect=record):
+            lifecycle._invoke_agent("interpret", source=investigation)
+
+        self.assertEqual(commands[0].count("--model"), 1)
 
 
 if __name__ == "__main__":

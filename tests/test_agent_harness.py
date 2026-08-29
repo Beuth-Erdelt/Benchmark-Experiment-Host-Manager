@@ -33,6 +33,7 @@ from agent.harness.model_client import (
     ToolCall,
 )
 from agent.harness import tools as tools_module
+from agent.harness import validation
 from agent.harness.tools import (
     DESIGN_TOOLS,
     FOLLOWUP_AUTHOR_TOOLS,
@@ -179,6 +180,7 @@ def _followup_spec(query: int = 5, code: str = "old") -> str:
 def _record_arguments(
     questions: list[dict[str, Any]], failed_checks: int = 0, scope: str = "",
     comparison_quality: dict[str, Any] | None = None,
+    result_claims: dict[str, Any] | None = None,
     follow_up: dict[str, Any] | None = None,
     hypothesis_verdict: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -200,12 +202,17 @@ def _record_arguments(
         "validity": {
             "failed_checks": failed_checks,
             "scope": scope,
+            "affected_phases": [],
+            "performance_metrics_affected": failed_checks > 0,
             "evidence_paths": [_REPORT_PATH],
         },
         "comparison_quality": comparison_quality or {
             "query_coverage": "not_applicable",
             "whole_workload_throughput": "not_applicable",
             "suspect_repetitions": [],
+        },
+        "result_claims": result_claims or {
+            "ordered_sweeps": [], "categorical_comparisons": [],
         },
         "questions": normalized,
         "follow_up": follow_up or {
@@ -509,6 +516,258 @@ class WorkspaceTest(unittest.TestCase):
             result["suspect_repetitions"][0]["status"], "suspect_not_invalid"
         )
 
+    def test_result_characterization_uses_declared_factors_not_workload_names(self) -> None:
+        """A future workload gets the same numeric-sweep check from its report shape."""
+        report = self.root / "results" / "future" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Aggregate Throughput [items/s] |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 100 |
+| postgresql-1-2-1 | 2 | 1 | 110 |
+| postgresql-1-1-2 | 1 | 2 | 210 |
+| postgresql-1-2-2 | 2 | 2 | 230 |
+""")
+        specification = """\
+discriminates: [concurrency]
+workload: {name: future-benchmarker, rounds: [1, 2]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        result = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]
+
+        self.assertEqual(result["unsupported_factors"], [])
+        self.assertEqual(result["ordered_sweeps"][0]["shape"], "rises_throughout")
+        self.assertEqual(
+            [item["mean"] for item in result["ordered_sweeps"][0]["values"]],
+            [105.0, 220.0],
+        )
+
+    def test_ordered_shape_vocabulary_has_deterministic_boundaries(self) -> None:
+        """Every allowed typed shape follows from resolvable steps alone."""
+        # Noiseless levels, so the five-percent floor alone decides resolvability.
+        cases = [
+            ([(1, 10), (2, 20), (3, 30)], ("rises_throughout", None)),
+            ([(1, 30), (2, 20), (3, 10)], ("falls_throughout", None)),
+            ([(1, 10), (2, 20), (3, 20.5)], ("saturates_at_level", 2)),
+            ([(1, 10), (2, 20), (3, 12)], ("reverses_beyond_level", 2)),
+            ([(1, 10), (2, 10.4), (3, 10.2)], ("flat", None)),
+            ([(1, 10), (2, 20), (3, 18), (4, 30)], ("non_monotone", None)),
+        ]
+
+        for levels, expected in cases:
+            with self.subTest(expected=expected[0]):
+                noiseless = [
+                    (level, mean, tools_module._SHAPE_NOISE_FLOOR * abs(mean))
+                    for level, mean in levels
+                ]
+                self.assertEqual(tools_module._classify_shape(noiseless), expected)
+
+    def test_a_step_inside_its_own_repetition_spread_is_not_a_trend(self) -> None:
+        """Noise must not be read as movement, whichever way it happens to fall."""
+        # Two levels 20 apart, but each level's own repetitions range over 60.
+        noisy = [(1, 100.0, 30.0), (2, 120.0, 30.0)]
+        self.assertEqual(tools_module._classify_shape(noisy), ("flat", None))
+        # The same means, measured tightly, are a rise.
+        tight = [(1, 100.0, 1.0), (2, 120.0, 1.0)]
+        self.assertEqual(tools_module._classify_shape(tight), ("rises_throughout", None))
+
+    def test_latency_columns_are_characterized_alongside_throughput(self) -> None:
+        """The question asked about response time, so latency needs a typed claim too."""
+        metrics = tools_module._characterized_metrics([
+            "phase", "pod_count", "[OVERALL].Throughput(ops/sec)",
+            "[UPDATE].99thPercentileLatency(us)", "Geo Times [s]",
+        ])
+        self.assertEqual(metrics, [
+            ("[OVERALL].Throughput(ops/sec)", "higher_is_better"),
+            ("[UPDATE].99thPercentileLatency(us)", "lower_is_better"),
+            ("Geo Times [s]", "lower_is_better"),
+        ])
+
+    def test_characterization_handles_resource_sweeps_and_system_comparisons(self) -> None:
+        """Every factor type in the contract has a typed deterministic result."""
+        report = self.root / "results" / "factors" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 100 |
+| postgresql-1-2-1 | 2 | 1 | 110 |
+| postgresql-2-1-1 | 1 | 1 | 180 |
+| postgresql-2-2-1 | 2 | 1 | 200 |
+| pgduckdb-1-1-1 | 1 | 1 | 140 |
+| pgduckdb-1-2-1 | 2 | 1 | 150 |
+| pgduckdb-2-1-1 | 1 | 1 | 230 |
+| pgduckdb-2-2-1 | 2 | 1 | 250 |
+""")
+        specification = """\
+discriminates: [system, memory]
+workload: {name: any-benchmarker, rounds: [1]}
+systems: [{name: PostgreSQL}, {name: PgDuckDB}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory:
+    - {request: 4Gi, limit: 4Gi}
+    - {request: 8Gi, limit: 8Gi}
+"""
+
+        result = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]
+
+        self.assertEqual(result["unsupported_factors"], [])
+        self.assertEqual(len(result["ordered_sweeps"]), 2)
+        self.assertTrue(all(
+            item["factor"] == "memory" for item in result["ordered_sweeps"]
+        ))
+        self.assertEqual(len(result["categorical_comparisons"]), 2)
+        self.assertTrue(all(
+            item["ranking"] == ["PgDuckDB", "PostgreSQL"]
+            for item in result["categorical_comparisons"]
+        ))
+
+    def test_characterization_handles_cpu_sweeps(self) -> None:
+        """CPU cells use cores as ordered levels, including millicore input."""
+        report = self.root / "results" / "cpu" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 100 |
+| postgresql-1-2-1 | 2 | 1 | 110 |
+| postgresql-2-1-1 | 1 | 1 | 190 |
+| postgresql-2-2-1 | 2 | 1 | 210 |
+""")
+        specification = """\
+discriminates: [cpu]
+workload: {name: any-benchmarker, rounds: [1]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu:
+    - {request: 500m, limit: 500m}
+    - {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        claim = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]["ordered_sweeps"][0]
+
+        self.assertEqual(claim["factor"], "cpu")
+        self.assertEqual(
+            [value["level"] for value in claim["values"]], [0.5, 2.0]
+        )
+
+    def test_assessor_labels_each_configuration_with_its_hardware(self) -> None:
+        """Coverage entries name the CPU and memory their configuration ran with."""
+        report = self.root / "results" / "labels" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | client | pod_count | Geo Times [s] | Throughput |
+|:--|--:|--:|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 1 | 0.29 | 100 |
+| postgresql-2-1-1 | 1 | 1 | 1 | 0.56 | 200 |
+""")
+        specification = """\
+discriminates: [cpu]
+workload: {name: any-benchmarker, rounds: [1]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu:
+    - {request: 16, limit: 16}
+    - {request: 8, limit: 8}
+  memory: {request: 64Gi, limit: 64Gi}
+"""
+
+        systems = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["systems"]
+
+        self.assertEqual(
+            systems["postgresql-1"]["resources"], {"cpu": "16", "memory": "64Gi"}
+        )
+        self.assertEqual(
+            systems["postgresql-2"]["resources"], {"cpu": "8", "memory": "64Gi"}
+        )
+
+    def test_assessor_leaves_hardware_unknown_without_a_specification(self) -> None:
+        """With no archived specification the hardware is reported null, not guessed."""
+        report = self.root / "results" / "unlabelled" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | client | pod_count | Geo Times [s] | Throughput |
+|:--|--:|--:|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 1 | 0.29 | 100 |
+| postgresql-2-1-1 | 1 | 1 | 1 | 0.56 | 200 |
+""")
+
+        systems = self.workspace.assess_comparison_quality(str(report))["systems"]
+
+        self.assertIsNone(systems["postgresql-1"]["resources"])
+        self.assertIsNone(systems["postgresql-2"]["resources"])
+
+    def test_assessor_scopes_monitoring_failure_without_tainting_performance(self) -> None:
+        """A missing monitoring sample names its phase and leaves throughput usable."""
+        result_directory = self.root / "results" / "scope"
+        report_directory = result_directory / "report"
+        report_directory.mkdir(parents=True)
+        benchmarking = report_directory / "benchmarking.md"
+        benchmarking.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 100 |
+| postgresql-1-2-1 | 2 | 1 | 110 |
+""")
+        (report_directory / "index.md").write_text("""\
+### Tests
+
+| status | label |
+|:--|:--|
+| failed | Benchmarking phase: SUT deployment contains 0 or NaN in CPU [CPUs] |
+""")
+        (report_directory / "monitoring.md").write_text("""\
+### Benchmarking phase: SUT deployment
+
+| | CPU [CPUs] |
+|:--|--:|
+| postgresql-1-1-1 | 2.5 |
+| postgresql-1-2-1 | 0.0 |
+""")
+        specification = """\
+discriminates: [concurrency]
+workload: {name: any-benchmarker, rounds: [1, 2]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        scope = self.workspace.assess_comparison_quality(
+            str(benchmarking), specification
+        )["validity_scope"]
+
+        self.assertEqual(scope["affected_phases"], ["postgresql-1-2-1"])
+        self.assertEqual(scope["affected_phase_count"], 1)
+        self.assertEqual(scope["benchmark_phase_count"], 2)
+        self.assertFalse(scope["performance_metrics_affected"])
+
     def test_validation_estimates_the_declared_timeout_budget(self) -> None:
         self.workspace.write_file(self.path, _SPEC)
 
@@ -581,6 +840,60 @@ class WorkspaceTest(unittest.TestCase):
         result = self.workspace.validate(self.path)
         self.assertTrue(result["valid"])
         self.assertEqual(result["estimate"]["runs"], 24)
+
+    def _both_resources_swept(self, cpus: list[str], memories: list[str]) -> str:
+        """Build a spec sweeping cpu and memory, both declared as factors."""
+        def cells(field: str, values: list[str]) -> str:
+            entries = "".join(
+                f"\n    - {{request: {value}, limit: {value}}}" for value in values
+            )
+            return f"{field}:{entries}"
+
+        return (
+            _SPEC
+            .replace("[system, concurrency]", "[system, concurrency, cpu, memory]")
+            .replace("cpu: {request: 4, limit: 4}", cells("cpu", cpus))
+            .replace("memory: {request: 8Gi, limit: 8Gi}", cells("memory", memories))
+        )
+
+    def test_resources_swept_in_lockstep_cannot_attribute_either_factor(self) -> None:
+        """Paired cpu and memory lists resolve to machines no contrast separates."""
+        self.workspace.write_file(
+            self.path, self._both_resources_swept(["2", "4"], ["4Gi", "8Gi"])
+        )
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        message = result["errors"][0]["message"]
+        self.assertEqual(result["errors"][0]["stage"], validation.METHODOLOGY_STAGE)
+        self.assertIn("no effect can be attributed to cpu or memory", message)
+        # The resolved machines are shown, because an author who believes the
+        # two lists cross has no other way to see that they pair.
+        self.assertIn("cpu=2, memory=4Gi", message)
+        self.assertIn("cpu=4, memory=8Gi", message)
+        self.assertEqual(
+            result["estimate"]["configurations"],
+            ["cpu=2, memory=4Gi", "cpu=4, memory=8Gi"],
+        )
+
+    def test_a_cross_written_out_in_full_is_attributable(self) -> None:
+        """Repeating entries so every combination appears restores the contrast."""
+        self.workspace.write_file(
+            self.path,
+            self._both_resources_swept(
+                ["2", "4", "2", "4"], ["4Gi", "4Gi", "8Gi", "8Gi"]
+            ),
+        )
+
+        result = self.workspace.validate(self.path)
+
+        self.assertTrue(result["valid"], result["errors"])
+        self.assertEqual(
+            result["estimate"]["configurations"],
+            ["cpu=2, memory=4Gi", "cpu=4, memory=4Gi",
+             "cpu=2, memory=8Gi", "cpu=4, memory=8Gi"],
+        )
 
     def test_cpu_only_sweep_has_distinct_resource_cell_identities(self) -> None:
         """Every CPU treatment must address a different runtime configuration."""
@@ -1294,6 +1607,46 @@ class WorkspaceTest(unittest.TestCase):
         self.assertFalse(validate_results[0]["valid"])
         self.assertTrue(validate_results[1]["valid"])
 
+    def test_validation_repair_keeps_the_full_previous_verdict_in_context(self) -> None:
+        """A retry must see the complete structured rejection it is repairing."""
+        invalid_specification = _SPEC.replace("mode: run", "mode: unknown")
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file", {
+                    "path": "contracts/contract_catalog.yml",
+                }),
+                ToolCall("write-invalid", "write_file", {
+                    "path": self.path, "text": invalid_specification,
+                }),
+                ToolCall("validate-invalid", "validate", {"path": self.path}),
+            ),
+            _tool_reply(
+                ToolCall("write-valid", "write_file", {
+                    "path": self.path, "text": _SPEC,
+                }),
+                ToolCall("validate-valid", "validate", {"path": self.path}),
+            ),
+            _text_reply("The repaired design validates."),
+        ])
+
+        outcome = run_design(
+            task="question", workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run),
+            catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None,
+            attempts=2, dry_run=True,
+        )
+
+        previous_verdict = next(
+            json.loads(message["content"])
+            for message in model.messages[1]
+            if message.get("tool_call_id") == "validate-invalid"
+        )
+        self.assertFalse(previous_verdict["valid"])
+        self.assertTrue(previous_verdict["errors"])
+        self.assertIn("estimate", previous_verdict)
+        self.assertEqual(outcome["validated_path"], self.path)
+
     def test_followup_requires_exact_lineage_and_a_controlled_change(self) -> None:
         """Lineage metadata alone must not turn a repeated run into a follow-up."""
         assessment = {
@@ -1668,7 +2021,19 @@ class WorkspaceTest(unittest.TestCase):
             "whole_workload_throughput": "not_applicable",
             "suspect_repetitions": [],
         }
-        accepted = _record_arguments([assessment], comparison_quality=quality)
+        claims = {
+            "ordered_sweeps": [{
+                "factor": "concurrency",
+                "context": {"system": "PostgreSQL"},
+                "metric": "[OVERALL].Throughput(ops/sec)",
+                "shape": "rises_throughout",
+                "turning_level": None,
+            }],
+            "categorical_comparisons": [],
+        }
+        accepted = _record_arguments(
+            [assessment], comparison_quality=quality, result_claims=claims
+        )
         model = _Model([
             _evidence_record_reply("too-early", accepted),
             _tool_reply(ToolCall(
@@ -1688,6 +2053,86 @@ class WorkspaceTest(unittest.TestCase):
         self.assertTrue(outcome["phase_complete"])
         self.assertEqual(
             outcome["comparison_quality"]["query_coverage"], "not_applicable")
+
+    def test_interpretation_rejects_a_shape_that_contradicts_measured_means(self) -> None:
+        """The incident's false plateau must fail before a follow-up can be selected."""
+        benchmarking = self.root / "results" / "old" / "report" / "benchmarking.md"
+        benchmarking.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | [OVERALL].Throughput(ops/sec) |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 16 | 25000 |
+| postgresql-1-2-1 | 2 | 16 | 27000 |
+| postgresql-1-3-1 | 3 | 16 | 26000 |
+| postgresql-1-1-2 | 1 | 32 | 52000 |
+| postgresql-1-2-2 | 2 | 32 | 54000 |
+| postgresql-1-3-2 | 3 | 32 | 56000 |
+""")
+        assessment = {
+            "question": "did throughput saturate?", "status": "settled",
+            "conclusion": "no", "evidence": "the mean more than doubled",
+            "missing": "", "evidence_paths": [_REPORT_PATH, str(benchmarking)],
+        }
+        correct_claims = {
+            "ordered_sweeps": [{
+                "factor": "concurrency",
+                "context": {},
+                "metric": "[OVERALL].Throughput(ops/sec)",
+                "shape": "rises_throughout",
+                "turning_level": None,
+            }],
+            "categorical_comparisons": [],
+        }
+        wrong_claims = json.loads(json.dumps(correct_claims))
+        wrong_claims["ordered_sweeps"][0]["shape"] = "saturates_at_level"
+        wrong_claims["ordered_sweeps"][0]["turning_level"] = 16.0
+        quality = {
+            "query_coverage": "not_applicable",
+            "whole_workload_throughput": "not_applicable",
+            "suspect_repetitions": [],
+        }
+        wrong = _record_arguments(
+            [assessment], comparison_quality=quality, result_claims=wrong_claims
+        )
+        accepted = _record_arguments(
+            [assessment], comparison_quality=quality, result_claims=correct_claims
+        )
+        model = _Model([
+            _evidence_record_reply("too-early", wrong),
+            _tool_reply(ToolCall(
+                "characterize", "assess_comparison_quality", {"path": str(benchmarking)}
+            )),
+            _tool_reply(ToolCall("wrong", "record_interpretation", wrong)),
+            _tool_reply(ToolCall("correct", "record_interpretation", accepted)),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="did throughput saturate?", report_path=_REPORT_PATH,
+            specification=_YCSB_SPEC.replace("rounds: [1, 2]", "rounds: [16, 32]"),
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
+        self.assertEqual(
+            outcome["result_claims"]["ordered_sweeps"][0]["shape"],
+            "rises_throughout",
+        )
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        rejection = next(
+            event for event in events
+            if event.get("tool") == "record_interpretation"
+            and event.get("result", {}).get("claimed") == wrong_claims
+        )
+        self.assertEqual(
+            rejection["result"]["expected"]["ordered_sweeps"][0]["shape"],
+            "rises_throughout",
+        )
 
     def test_an_interpretation_that_never_records_fails_readably(self) -> None:
         """Running out of turns must report the phase, not break on a missing field."""
@@ -1948,6 +2393,12 @@ class WorkspaceTest(unittest.TestCase):
         self.assertEqual(len(rejected), 1)
 
 class PhaseTest(unittest.TestCase):
+    def test_design_defaults_to_three_validation_attempts(self) -> None:
+        """The direct agent CLI must leave room for a first check and five repairs."""
+        arguments = agent_module._build_parser().parse_args([])
+
+        self.assertEqual(arguments.attempts, 3)
+
     def test_completed_design_labels_investigation_with_scale_and_model(self) -> None:
         """A validated design gains readable metadata without breaking resume."""
         with tempfile.TemporaryDirectory() as directory:

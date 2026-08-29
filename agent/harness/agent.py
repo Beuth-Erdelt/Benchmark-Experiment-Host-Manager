@@ -731,6 +731,39 @@ _QUALITY_NOT_APPLICABLE = {
     "suspect_repetitions": [],
 }
 
+_EMPTY_RESULT_CLAIMS: dict[str, list[Any]] = {
+    "ordered_sweeps": [], "categorical_comparisons": [],
+}
+
+
+def _checkable_result_claims(characterization: dict[str, Any]) -> dict[str, Any]:
+    """Project assessor detail onto the conclusion the model must commit to.
+
+    Only the claim is asked for, never the measurements behind it. The harness
+    already holds those and files them with the record, so making the model
+    retype them would buy nothing and cost a repair round per slipped digit.
+    """
+    ordered = [
+        {
+            "factor": result["factor"],
+            "context": result["context"],
+            "metric": result["metric"],
+            "shape": result["shape"],
+            "turning_level": result["turning_level"],
+        }
+        for result in characterization.get("ordered_sweeps", [])
+    ]
+    categorical = [
+        {
+            "factor": result["factor"],
+            "context": result["context"],
+            "metric": result["metric"],
+            "ranking": result["ranking"],
+        }
+        for result in characterization.get("categorical_comparisons", [])
+    ]
+    return {"ordered_sweeps": ordered, "categorical_comparisons": categorical}
+
 
 class _InterpretationGate:
     """Require validity-first reads and trace every cited evidence path."""
@@ -741,6 +774,7 @@ class _InterpretationGate:
         report_path: str,
         result_contract_path: str,
         method_path: str | None = None,
+        specification: str | None = None,
     ) -> None:
         self._workspace = workspace
         self.report = self._resolve(report_path)
@@ -751,6 +785,9 @@ class _InterpretationGate:
         self._read_paths: set[Path] = set()
         self._validity_read = False
         self.comparison_quality: dict[str, Any] | None = None
+        self.result_claims: dict[str, Any] | None = None
+        self.validity_scope: dict[str, Any] | None = None
+        self._specification = specification
         self.method = self._resolve(method_path) if method_path else None
         self.required_method_sections = _present_method_sections(self.method)
         self._method_sections_read: set[str] = set()
@@ -796,16 +833,31 @@ class _InterpretationGate:
                 "error": "assess the benchmarking.md page beside the report index",
                 "expected": str(self.benchmarking),
             }
-        result = self._workspace.call("assess_comparison_quality", arguments)
+        result = self._workspace.assess_comparison_quality(
+            arguments["path"], self._specification
+        )
         if "error" not in result:
             self.comparison_quality = result
+            self.result_claims = _checkable_result_claims(
+                result.get("result_characterization", {})
+            )
+            self.validity_scope = result.get("validity_scope")
+            if (
+                not isinstance(self.validity_scope, dict)
+                or self.validity_scope.get("failed_checks") != self.failed_checks
+            ):
+                self.validity_scope = {
+                    "affected_phases": [],
+                    "performance_metrics_affected": bool(self.failed_checks),
+                }
             self._read_paths.add(source)
             return result
-        # A benchmarker whose report carries no per-query comparison tables leaves
-        # nothing to assess. Treating that as an unmet precondition would make the
-        # record unreachable for the whole workload, so it counts as assessed.
+        # A benchmarker whose report carries neither per-phase nor per-query
+        # comparison tables leaves nothing to assess. Treating that as an unmet
+        # precondition would make its record unreachable, so it counts as assessed.
         if result.get("error") == tools.NO_COMPARISON_TABLES:
             self.comparison_quality = dict(_QUALITY_NOT_APPLICABLE)
+            self.result_claims = dict(_EMPTY_RESULT_CLAIMS)
             self._read_paths.add(source)
             return {**_QUALITY_NOT_APPLICABLE, "reason": result["error"]}
         return result
@@ -859,6 +911,18 @@ class _InterpretationGate:
                 "expected": expected_quality,
             }
 
+        recorded_claims = arguments.get("result_claims")
+        expected_claims = self.result_claims or dict(_EMPTY_RESULT_CLAIMS)
+        if recorded_claims != expected_claims:
+            return {
+                "error": (
+                    "result_claims must match the deterministic characterization; "
+                    "the shape, turning level and ranking are checked fields"
+                ),
+                "expected": expected_claims,
+                "claimed": recorded_claims,
+            }
+
         hypothesis_verdict = arguments.get("hypothesis_verdict")
         verdict_statuses = {"supported", "refuted", "inconclusive", "invalid"}
         if (
@@ -906,6 +970,27 @@ class _InterpretationGate:
             return {"error": "validity.scope must be text"}
         if self.failed_checks > 0 and not validity["scope"].strip():
             return {"error": "failed validity checks require a scope explanation"}
+        expected_affected_phases = (
+            self.validity_scope.get("affected_phases", [])
+            if self.validity_scope else []
+        )
+        expected_performance_scope = (
+            self.validity_scope.get("performance_metrics_affected", False)
+            if self.validity_scope else self.failed_checks > 0
+        )
+        if validity.get("affected_phases") != expected_affected_phases:
+            return {
+                "error": "validity.affected_phases must match the deterministic scope",
+                "expected": expected_affected_phases,
+            }
+        if validity.get("performance_metrics_affected") is not expected_performance_scope:
+            return {
+                "error": (
+                    "validity.performance_metrics_affected must match the "
+                    "deterministic scope"
+                ),
+                "expected": expected_performance_scope,
+            }
         unread_validity = self._unread(validity.get("evidence_paths"))
         if unread_validity is None:
             return {"error": "validity.evidence_paths must be a non-empty path list"}
@@ -1010,9 +1095,10 @@ def _interpret_evidence(
     report_path: str,
     result_contract_path: str,
     method_path: str | None = None,
+    specification: str | None = None,
 ) -> tuple[
     str, dict[str, Any], list[dict[str, Any]], dict[str, Any],
-    dict[str, Any], dict[str, Any], list[Any], int,
+    dict[str, Any], dict[str, Any], dict[str, Any], list[Any], int,
 ]:
     """Read the finished result folder and record how far it answers the question.
 
@@ -1023,18 +1109,20 @@ def _interpret_evidence(
     :param report_path: Exact report entry point for this experiment.
     :param result_contract_path: Exact result contract governing the report.
     :return: Report, scientific verdict, question assessments, validity
-        assessment, comparison quality, follow-up plan, events, and turns used.
+        assessment, comparison quality, checkable result claims, follow-up plan,
+        events, and turns used.
     :rtype: tuple[str, dict[str, Any], list[dict[str, Any]], dict[str, Any],
-        dict[str, Any], dict[str, Any], list, int]
+        dict[str, Any], dict[str, Any], dict[str, Any], list, int]
     """
     hypothesis_verdict: dict[str, Any] = {}
     question_assessments: list[dict[str, Any]] = []
     validity_assessment: dict[str, Any] = {}
     comparison_quality: dict[str, Any] = {}
+    result_claims: dict[str, Any] = {}
     follow_up: dict[str, Any] = {}
     workspace.restrict_to_result(report_path, result_contract_path)
     gate = _InterpretationGate(
-        workspace, report_path, result_contract_path, method_path)
+        workspace, report_path, result_contract_path, method_path, specification)
 
     def handler(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         if name == "read_file":
@@ -1049,6 +1137,7 @@ def _interpret_evidence(
             question_assessments[:] = arguments["questions"]
             validity_assessment.update(arguments["validity"])
             comparison_quality.update(arguments["comparison_quality"])
+            result_claims.update(arguments["result_claims"])
             follow_up.update(arguments["follow_up"])
         return result
 
@@ -1064,7 +1153,7 @@ def _interpret_evidence(
         comparison_quality["details"] = gate.comparison_quality
     return (
         interpretation, hypothesis_verdict, question_assessments, validity_assessment,
-        comparison_quality, follow_up, events, turns,
+        comparison_quality, result_claims, follow_up, events, turns,
     )
 
 
@@ -1247,12 +1336,13 @@ def run_interpret(
         question_assessments,
         validity_assessment,
         comparison_quality,
+        result_claims,
         decision,
         all_events,
         total_turns,
     ) = _interpret_evidence(
         messages, workspace, model, trajectory, report_path, result_contract_path,
-        method_path
+        method_path, specification
     )
     all_events = list(all_events)
     # A phase that ran out of turns before recording leaves nothing to summarise;
@@ -1320,6 +1410,7 @@ def run_interpret(
                     hypothesis_verdict=hypothesis_verdict,
                     validity_assessment=validity_assessment,
                     comparison_quality=comparison_quality,
+                    result_claims=result_claims,
                     followup_decision=decision or None,
                     agent_summary_path=str(agent_summary_path),
                     ancestor_summaries_loaded=len(ancestor_summaries),

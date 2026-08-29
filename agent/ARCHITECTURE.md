@@ -128,8 +128,8 @@ consultation measurable in the trajectory.
 | Submission | `tools.py::submit`, `submit.py` | Full catalog-and-environment fingerprint check, immutable provenance snapshot, code allocation, result-root lock, agent-side catalog launch adapter, and result-folder archive |
 | Execution | Bexhoma workload and lifecycle modules | Workload execution, optional per-configuration loading deadline, diagnostics-before-teardown, raw files, validity results, and tiered report |
 | State recovery | `agent.py::_carry_forward` | Rebuilds the question, exact current specification, code, and budget from trajectory data without carrying an earlier result into interpretation |
-| Evidence interpretation | `prompts.py::interpret_messages`, `agent.py::_InterpretationGate` | Selects one exact report; requires its Tests evidence and result contract; verifies failed-check count and cited read paths; records question coverage and one finish/follow-up decision |
-| Deterministic comparison | `tools.py::assess_comparison_quality` | Reports TPC-H query coverage, throughput comparability, and repetition-anomaly warnings without relying on model arithmetic |
+| Evidence interpretation | `prompts.py::interpret_messages`, `agent.py::_InterpretationGate` | Selects one exact report; requires its Tests evidence and result contract; verifies failed-check count, affected phase scope, cited read paths, typed result claims, and one finish/follow-up decision |
+| Deterministic comparison | `tools.py::assess_comparison_quality` | Reports query coverage where applicable, throughput comparability, repetition-anomaly warnings, and checkable factor results without relying on model arithmetic or workload names |
 | Follow-up authoring | `prompts.py::followup_author_messages`, `agent.py::_author_followup` | Fresh mutation context; receives compact ancestor summaries, rereads the design contract, and enforces the current experiment code as lineage, a material controlled change, and any approved query subset before shared validation |
 | Portable lineage summary | `agent.py::_write_agent_summary`, `contracts/contract_result.yml` | Persists one experiment code, parent, hypothesis, scientific verdict, technical validity, and unresolved question without copying ancestor reports into context |
 | Design-space gate | `agent.py::_DesignSpaceGate` | Refuses initial or follow-up authoring until that context has reread the catalog and environment |
@@ -140,6 +140,16 @@ different prompt, tool list, stopping predicate, and budget. `run_interpret`
 uses one evidence context and, only when that context records a useful
 follow-up, one fresh authoring context. A text answer is rejected when the
 phase still requires a structured record.
+
+The interpretation assessor reads the archived `discriminates` declaration as
+the authoritative factor list. Concurrency, CPU, and memory become ordered
+series, split so every other declared factor stays fixed; system becomes a
+categorical ranking at each fixed context. The record must reproduce every
+computed shape or ranking and its factor-level means exactly. A report shape
+that cannot expose one of its declared factors reports that limitation without
+inventing a comparison. Failed monitoring checks are similarly traced to their
+zero or non-finite phase rows, so a monitoring-only defect cannot silently
+consume or invalidate unrelated performance evidence.
 
 ## Capability boundary
 

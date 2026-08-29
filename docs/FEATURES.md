@@ -22,6 +22,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Component | Location | Status |
 |---|---|---|
 | Structured validation verdict | `agent/harness/validation.py` | Done |
+| Six-call default validation budget for initial designs and follow-up authoring, with every prior verdict retained in the same model conversation | `agent/harness/agent.py`, `dev/agent_lifecycle.py` | Done and regression-tested |
 | Catalog, shape, environment, and methodology validation | `agent/harness/validation.py`, `contracts/contract_catalog.yml` | Done |
 | Experiment design handbook: navigable chapters of methodological guidance, read from its Navigation chapter at design and follow-up authoring, hashed into provenance, with its four decidable principles enforced and cited by identifier | `agent/experiment_design_handbook.md`, `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/validation.py` | Done and regression-tested |
 | Handbook switched off in one setting, for the with/without ablation | `agent/harness/agent.py`, `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
@@ -42,6 +43,8 @@ follow up on a benchmark. The full current description and visual flow live in
 | Environment refresh with local cluster facts | `dev/catalog/refresh_environment.py` (gitignored) | Done |
 | Repeated same-system treatments rejected before Bexhoma collapses them | `agent/harness/validation.py` | Done and regression-tested |
 | Distinct identities for every CPU or memory resource-sweep cell | `bexhoma/spec.py`, `tpch.py` | Done and regression-tested |
+| Resolved resource configurations reported on every validation verdict, and factors that never vary alone refused as unattributable | `agent/harness/validation.py`, `agent/harness/prompts.py` | Done and regression-tested |
+| Per-configuration CPU and memory reported beside the result assessor's coverage figures | `agent/harness/tools.py` | Done and regression-tested |
 | Component-aware peak resource validation for pinned benchmarker placement | `contracts/contract_catalog.yml`, `agent/harness/validation.py` | Done and regression-tested; mirrors the current BeXhoma template limits |
 | Stable upstream BeXhoma integration | repository history, `bexhoma/experiments/tpch_catalog.py` | v0.10.10 merged; local agent and loading safeguards preserved and regression-tested |
 | Environment-checked submission gate and recoverable slow-start state | `agent/harness/tools.py` | Done and regression-tested |
@@ -49,6 +52,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Enforced initial catalog/environment consultation | `agent/harness/agent.py` | Done and regression-tested |
 | Validity-first evidence gate, read-path citations, and result-contract-driven answer | `agent/harness/agent.py`, `agent/harness/tools.py` | Done and regression-tested |
 | Deterministic query coverage, throughput comparability, and repetition-anomaly disclosure | `agent/harness/tools.py`, `agent/harness/agent.py`, `agent/harness/prompts.py` | Done and regression-tested without changing BeXhoma |
+| Workload-independent result characterization for every declared system, concurrency, CPU, and memory factor across every throughput and latency metric, with variance-aware typed shapes, rankings, and failed-check scope enforced before interpretation is accepted | `agent/harness/tools.py`, `agent/harness/agent.py`, `agent/harness/prompts.py` | Done and regression-tested without changing BeXhoma |
 | Conservative timeout-cost estimate and enforced focused-query follow-ups | `agent/harness/validation.py`, `agent/harness/agent.py`, `agent/harness/prompts.py`, `contracts/contract_catalog.yml` | Done and regression-tested |
 | Exact `follow_up_of` lineage and rejection of execution-identical follow-ups | `agent/harness/agent.py` | Done and regression-tested without changing BeXhoma |
 | Portable per-experiment hypothesis verdict and compact ancestor memory for follow-up authoring | `agent/harness/agent.py`, `agent/harness/prompts.py`, `contracts/contract_result.yml` | Done and regression-tested without changing BeXhoma |
@@ -58,7 +62,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Unattended phase chaining for endpoints we do not host, including hosted APIs and a local Ollama | `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
 | Secret-safe model credential handoff from the lifecycle wrapper to agent phases | `dev/agent_lifecycle.py`, `tests/test_agent_lifecycle.py` | Done and regression-tested; `.env` remains local and the key is absent from child command lines |
 | Collision-safe experiment-code allocation for parallel submissions | `agent/harness/tools.py`, `tests/test_agent_harness.py` | Done and regression-tested |
-| Configuration that rejects a typo instead of failing open | `dev/agent_lifecycle.py`, `agent/harness/agent.py` | Done and regression-tested; `AGENT_MODEL_SERVER` and `AGENT_METHOD` |
+| Configuration that rejects a typo instead of failing open | `dev/agent_lifecycle.py`, `agent/harness/agent.py`, `dev/model_server.sh` | Done; `AGENT_MODEL_SERVER` and `AGENT_METHOD` regression-tested, the account-free `MODEL_SERVER_NAMESPACE` checked against a stubbed kubectl |
 | Quick start | `agent/README.md` | Done |
 | Full pipeline, annotated visual, replay rules, and decision record | `agent/ARCHITECTURE.md` | Done; all older agent-pipeline descriptions merged here |
 | Critic as a separate invocation | — | Optional evaluation, intentionally outside the prototype |
@@ -98,7 +102,11 @@ the shell has not already exported them. The same file carries the two settings
 that decide how a run is conducted rather than who answers it:
 `AGENT_MODEL_SERVER`, which says whether the wrapper starts and stops that pod
 or leaves an endpoint it does not own alone, and `AGENT_METHOD`, which names the
-experiment design handbook and, left empty, designs without one. An exported
+experiment design handbook and, left empty, designs without one. A fourth,
+`AGENT_INTERPRET_MODEL`, names a separate model for the interpretation phase, so
+the verdict can be read by a larger model than the one that designed the run;
+left unset, both phases use `AGENT_MODEL`. Both phases still share one endpoint
+and one key, so the override selects a different model from the same provider. An exported
 variable overrides the file, and the corresponding command-line flag overrides
 both. `.env.example`
 documents a block per backend — the bundled vLLM server through a port forward,
@@ -156,6 +164,30 @@ claiming at the same instant cannot both succeed. This is what makes the
 
 ## Part 2 — Request log
 
+### 2026-08-29 — Name the hardware each configuration ran on
+
+Asked to carry the resource labels next to the measurements, after a failed
+interpretation showed why their absence matters. Bexhoma labels its
+configurations `postgresql-1`, `postgresql-2` and so on, and neither the key
+metric table nor the per-phase table says what hardware each of those labels
+received; the only place the mapping exists is the connections page, whose name
+does not announce that it holds the answer. The interpreting model never opened
+it. Holding a question about three hardware scenarios and a table of two
+unlabelled configurations, it assigned the labels itself, and its verdict
+compared a machine that had never been built while calling the machine that had
+run untested.
+
+The result assessor already decoded that mapping internally, to decide which
+factors its typed claims can support, but it kept the answer to itself. Each
+entry of its per-configuration coverage record now carries the CPU and memory
+that configuration ran with, written the way the specification wrote them, so
+the mapping arrives in the same reply as the coverage figures that use those
+same labels. Where the archived specification is missing or a label does not
+decode, the field is reported as null rather than guessed, since a wrong
+mapping is worse than an absent one. The resolution reuses the same pairing
+function validation uses, so what a design was told it would run and what the
+assessor says it did run cannot drift apart.
+
 ### 2026-08-28 — Make the agent harness run on Windows
 
 Asked to make the `agent/` folder runnable under Windows: conform to its path
@@ -198,6 +230,267 @@ and write keep working unchanged. The one place that hand-parses a path string
 — reading BeXhoma's own Windows-path normalisation of its configured result
 folder, so the agent agrees with BeXhoma about where results land — mirrors
 BeXhoma's behaviour deliberately and was left as is.
+
+### 2026-08-28 — Reflect back what a resource sweep actually resolves to
+
+Asked to build the reflection step, after a live design run walked into a
+confound the harness could not see. The investigation had been given a
+right-sizing question: a reporting job runs on sixteen cores and sixty-four
+gibibytes, finance wants to halve the machine, and the answer has to say which
+of the two resources the job actually depends on. The agent reported that it had
+built a two-by-two factorial design, meaning all four combinations of the two
+settings, and named each of the four machines in its summary. What it had
+written was a list of two core counts beside a list of two memory sizes, and
+those lists are paired by position rather than crossed, so the specification
+resolved to two machines and not four: the full-size one and the halved one,
+with both cuts applied together and neither applied alone. Nothing in the
+validation objected, the benchmark ran, and no measurement it produced could
+attribute a slowdown to either resource.
+
+The existing rule that the declared factors must be exactly the varied ones was
+satisfied, because both resources genuinely varied. What was missing is that
+varying two factors in lockstep isolates neither. Validation now resolves the
+sweep the way Bexhoma resolves it and checks, for every resource factor the
+specification declares, that some pair of resolved configurations differs in
+that factor alone. When none does, the design is refused as unattributable
+against handbook rule M2.1, and the refusal prints the configurations it
+resolved to, so an author holding the wrong picture of four machines sees the
+two that will actually run. Both repairs are named: repeat entries in both lists
+until every combination appears, which does give the full factorial, or sweep
+one resource here and the other in a follow-up.
+
+The resolved configurations are now reported on every verdict rather than only
+on a refusal, since an author who believes the lists cross has no other way to
+find out that they pair, and the design prompt says to read them back. Only
+these two resources need the check: systems and concurrency levels are crossed
+with the resource sweep by construction, so neither can move in lockstep with
+anything. The check is static and costs no cluster time, which is the point —
+the run that prompted it had already spent an hour proving nothing.
+
+Amended 2026-08-29, on the objection that a refusal must not be worded for
+the run that prompted it. The message had illustrated the repair with the
+very core counts and memory sizes this task asks about, which a refused
+author could copy without understanding the pairing, and which would have
+made the next attempt at the same question meaningless as a test. The
+example is now stated as a shape rather than as values: two levels of each
+resource need four entries in both lists, one alternating and the other
+changing every second entry. Nothing else about the check was task-specific,
+since it reads whatever the specification declares and prints whatever it
+resolves to.
+
+### 2026-08-28 — Refuse to run the model server in a defaulted namespace
+
+Asked how the short vLLM block in `.env` knows it belongs to the `lliu` account,
+whether another person using it would fail, and then to make the namespace fail
+loudly when it is unset, portably.
+
+The endpoint in `.env` carries no identity at all. `http://vllm-qwen38-service/v1`
+is an unqualified Kubernetes service name, and Kubernetes resolves such a name
+against the namespace of whatever pod is looking it up, so the same three lines
+mean a different server depending on where the caller runs. The account entered
+through four other places instead: the kube context, the namespace declared in
+`cluster.config`, the login command in `AGENT_CLUSTER_LOGIN`, and one default in
+`dev/model_server.sh`. The first three are gitignored or carry placeholders in
+their tracked templates, which left the switch's default as the only account
+name in shipped code.
+
+That default was worse than a wrong address, because the switch writes the
+namespace into the caller's kube context before using it. A colleague who never
+set the variable would have had their context repointed at this account for the
+rest of the session, and bexhoma issues its object creation without naming a
+namespace, so the benchmark itself would have followed the model server there —
+succeeding and displacing a running pod where the account had write access, and
+failing confusingly where it did not.
+
+`MODEL_SERVER_NAMESPACE` is now required. The switch checks it before its first
+kubectl call and exits with a message naming the three ways it can be supplied,
+so neither `up` nor `down` can touch a cluster without it. Portability was
+already most of the way there: the in-cluster lifecycle controller reads the
+Job's own namespace from the downward API and passes it down, so that path never
+sees the error, and the manifests still declare no namespace of their own. What
+was missing was the local path, where `.env` now carries the value and the
+lifecycle wrapper hands it to the switch through the environment it already
+loads. The example file lists it commented out, so an unedited copy triggers the
+new message rather than guessing.
+
+### 2026-08-28 — Review the arithmetic gate and repair what it got wrong
+
+Asked to review the result-characterization change for whether it fixes the
+wrong verdict, and to correct anything over-engineered, hardcoded, or specific
+to the one experiment that failed. The architecture held up: keying the
+characterization to the contract's own `discriminates` vocabulary covers every
+experiment the contract can express, the factorial handling holds peer factors
+fixed correctly, and every degraded path fails closed rather than inventing a
+claim. Four repairs followed.
+
+The shape classifier decided plateaus against a fixed five percent of the mean
+while ignoring the repetition spread it had already computed. On the incident's
+own data the 16-client level ranged over 14,023 around a mean of 22,059, so the
+boundary sat far inside the noise. Resolution is now derived per level from its
+repetitions, floored at five percent, and a step counts only when it clears the
+combined resolution of both ends. The incident still classifies as
+`rises_throughout`; a step inside its own spread is now reported as no movement.
+
+Only throughput was characterized, although the question that started this asked
+where response time begins to suffer. Every throughput and latency column is now
+characterized, each tagged with the direction that is an improvement, and the
+shape vocabulary was made descriptive rather than evaluative so it reads
+correctly in both directions.
+
+Requiring the model to retype the computed means was the one genuinely
+over-engineered part: four hundred bytes of digit-perfect floating point for the
+simplest single-factor case, which is what had pushed the validation budget from
+three attempts to six. The model now records the conclusion only, the harness
+files the measurements itself, and the budget is back to three.
+
+The claim builder was one 177-line function doing four jobs; it is now five
+functions of at most 67 lines. The factor-unit lookup degrades instead of
+raising when the vocabulary grows, and the deliberate coupling between the
+validity scoper and Bexhoma's English check labels is documented where it lives.
+
+### 2026-08-28 — Make interpretation claims checkable against the measurements
+
+Asked to verify the erroneous first interpretation in investigation
+`20260828T094350918414-sf1-mistral-small-2603`, assess a proposed deterministic
+repair, and implement the parts that hold up. The repair had to generalize
+across experiment types instead of replacing the YCSB blind spot with another
+workload-specific rule.
+
+The diagnosis is confirmed. Mean throughput across the three repetitions was
+2,012.98, 2,779.54, 6,153.67, 14,873.10, 22,058.87, and 53,580.99 operations
+per second at 1, 2, 4, 8, 16, and 32 clients. It rose at every tested level;
+the 32-client mean was 2.429 times the 16-client mean. The accepted verdict
+nevertheless called the latter increase a plateau, marked the hypothesis
+supported, and submitted an 18–28-client follow-up to locate a saturation point
+the experiment had not observed. The single failed check was also narrower
+than the interpretation's attention implied: one SUT CPU monitoring cell was
+zero in phase `postgresql-1-3-6-1`, one of eighteen benchmark phases, while the
+throughput and latency measurements remained in scope.
+
+The existing deterministic assessor now derives dimensions from the archived
+`discriminates` declaration and the report's summary table, never from a
+workload name. It handles all four factors the contract permits. Concurrency,
+CPU, and memory produce ordered series with the other declared factors held
+fixed; system produces a categorical ranking at each fixed context. Every
+throughput and latency column the table carries is characterized separately and
+tagged with the direction that counts as an improvement, so a question about
+response time is grounded in the same way as one about throughput, and a
+system ranking on a latency metric puts the fastest system first. Each ordered
+series reports repetition mean, minimum, maximum, spread, resolution, the ratio
+from the highest tested level, marginal metric gain per added factor unit, a
+shape, and a turning level only when the data establish one. A report that
+cannot expose a declared factor names it as unsupported rather than inventing
+an order or blocking the rest of the interpretation.
+
+Shapes are decided against each level's own repetitions rather than a fixed
+tolerance. A step is movement only when it exceeds the combined resolution of
+the two levels it joins, where a level's resolution is half its observed
+repetition range, floored at five percent of its mean so that a single
+repetition cannot claim perfect precision. This matters on real data: the
+incident's 16-client level had a 14,023 spread around a 22,059 mean, so a
+five-percent rule was deciding shapes inside its own noise. The vocabulary is
+descriptive rather than evaluative -- `rises_throughout`, `falls_throughout`,
+`saturates_at_level`, `reverses_beyond_level`, `flat`, `non_monotone` -- because
+a latency series that rises throughout is bad news while a throughput series
+that does is good.
+
+The interpretation record now carries a typed projection of those results. The
+model records the conclusion alone: the shape and its turning level, or the
+system ranking. It is never asked to copy the measurements back, because the
+harness already holds them and files them with the record, so requiring the
+transcription would only cost a repair round per slipped digit. The harness
+checks every factor, context, metric, shape, turning level and ranking against
+the computed characterization, and its refusal returns the expected and claimed
+records together. A regression test recreates the incident:
+`saturates_at_level` at 16 clients is refused against a 26,000 to 54,000
+operations-per-second rise, and the corrected `rises_throughout` record is
+accepted. Separate coverage proves the same parser on an unknown future
+workload name, on combined system-and-memory factors, on latency columns, and
+on a step that sits inside its own repetition spread.
+
+Failed-check scope is part of the same deterministic response. For monitoring
+failures, the assessor follows the failed Tests row to the matching monitoring
+table, lists zero or non-finite phase rows, counts them against all benchmark
+phases, and records whether throughput or latency is affected. The model must
+copy the affected phase list and the performance-scope Boolean into its record.
+This gives validity and findings symmetrical, typed attention without adding a
+second model or a per-workload checker.
+
+The Universal Scalability Law was evaluated but not added. It is an appropriate
+two-parameter model for controlled throughput-versus-load data, but this run's
+unconstrained fit gives a negative coherency coefficient; enforcing the model's
+non-negative physical coefficients puts the coherency term at zero and yields
+no finite peak. The unusually wide 16-client spread further makes a numerical
+peak estimate false precision. The deterministic result can soundly say that
+no peak was observed in range; a USL fit should wait for data that identify its
+parameters and should remain specific to concurrency claims. Hypothesis
+blinding was likewise not added: doing it honestly needs a staged reveal or a
+separate interpretation context, while merely moving the same prediction lower
+in one prompt is not blinding. The arithmetic gate addresses the demonstrated
+failure directly and makes a later blinding experiment measurable.
+
+### 2026-08-28 — Give design validation six attempts and audit wasted calls
+
+Asked to raise the default validation budget from three calls to six, confirm
+whether a repair sees the preceding rejection without overfilling the model's
+context, and inspect the failed investigation for incorrect handbook headings
+and other invalid calls. No catalog or handbook values were to be removed as a
+shortcut.
+
+Both the direct agent command and the lifecycle wrapper now default to six
+validation calls. Initial design and follow-up authoring already share the same
+bounded conversation loop, so each validation verdict remains in the model's
+message history in full; only the trajectory copy removes large file contents.
+The failed verdicts are small beside the catalog, environment and selected
+handbook chapters. In the inspected Mistral run, prompt use reached about 21,700
+tokens after three validations, leaving enough room for three further concise
+repair cycles under the served context limit. Explicit `--attempts` values
+continue to override the default.
+
+The heading audit found eighteen failed reads of the current handbook, all from
+`mistral-small-2603`. After opening `## Navigation`, that model repeatedly
+treated the chapters listed inside it as child sections and guessed headings
+such as `### M1. The claim`; the chapters are sibling `##` sections. Each
+refusal returned the exact available headings and the model then corrected
+itself. Those reads spent turns and context but did not spend validation calls.
+The failed design also wasted one real validation on a file that the earlier
+read-before-write gate had refused to create, then used its other two checks on
+`local-hdd` and unavailable literal `ssd`. The retry increase is shipped here;
+the contracts and Markdown selector retain their existing values and exact
+heading semantics pending a separate decision about making section lookup more
+forgiving.
+
+### 2026-08-28 — Run the verdict on a larger model than the design
+
+Asked, after an interpretation contradicted its own results table, to look
+through the sibling `spektrum-news` repository for larger models, check which
+were actually reachable, and put one behind the verdict.
+
+Five providers are configured there. Cerebras, Groq, NVIDIA NIM and OpenRouter
+all authenticate; the Mistral key in that repository is out of credit. Probed
+with a tool-calling request carrying the six throughput measurements the failed
+interpretation misread, OpenRouter's `nemotron-3-ultra-550b-a55b:free` answered
+correctly but took longer than five minutes for a single turn, which no
+twenty-turn phase can absorb. This repository's own Mistral key turned out to
+serve the large models as well, so `mistral-large-latest` — the fallback model
+that same sibling repository already names — is the one integrated: a larger
+model reached through the endpoint and key that are already configured, with no
+second provider's credentials copied into this repository.
+
+The wrapper gained `--interpret-model`, defaulting from
+`AGENT_INTERPRET_MODEL`, and passes it as a second `--model` after the base
+command's own when it invokes an interpretation; argparse keeps the last one it
+parses, so the design phase is untouched. Left unset, both phases run on
+`AGENT_MODEL` exactly as before.
+
+This addresses only one of the four causes found for the wrong verdict, and the
+weakest-evidenced one: probed in isolation on those same six numbers, the small
+model that got it wrong in the real run answers correctly. The other three —
+that the harness checks the procedure an interpretation followed but never
+compares its claim against the numbers, that the deterministic assessor covers
+only the analytical workload and returned "not applicable" for this one, and
+that the design phase's hypothesis is in context as a prediction to confirm —
+are unaddressed and are the larger part of the fix.
 
 ### 2026-08-28 — Act on the pre-handover review
 
@@ -259,7 +552,6 @@ One finding was not acted on. Generated trajectories are already tracked
 evidence in this repository rather than build output, so they are not excluded;
 they are committed separately from the code instead, which is what makes the
 code commit reviewable on its own.
-
 
 ### 2026-08-28 — Keep model API keys out of Git and child command lines
 
@@ -711,7 +1003,6 @@ field the contract does not define anywhere is still reported plainly, so no
 false direction is invented. This is a wording change: the rule and the set of
 accepted specifications are unchanged, which the unchanged pass count over the
 stored specifications confirms.
-
 
 ### 2026-08-27 — Report independent method violations together
 

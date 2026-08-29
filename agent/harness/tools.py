@@ -15,7 +15,9 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import itertools
 import json
+import math
 import os
 import re
 import shutil
@@ -26,6 +28,8 @@ import time
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 from agent.harness import validation
 from agent.harness import _runlock
 
@@ -35,11 +39,11 @@ __all__ = [
     "NO_COMPARISON_TABLES",
 ]
 
-#: The deterministic comparison-quality assessment only understands DBMSBenchmarker's
-#: per-query tables. A report built from another benchmarker -- YCSB's, for one --
-#: has nothing for it to read, which is an answer about the report rather than a
-#: failure of the tool.
-NO_COMPARISON_TABLES = "the report has no recognizable TPC-H comparison tables"
+#: A benchmarking page without either per-query comparison tables or a
+#: characterisable numeric sweep has nothing the deterministic assessor can use.
+NO_COMPARISON_TABLES = (
+    "the report has no recognizable per-phase or per-query comparison tables"
+)
 
 #: Bexhoma reads its settings from this file in the working directory, and the
 #: experiment path the agent submits through does not let a caller choose
@@ -87,6 +91,35 @@ _READ_CONTEXT_CHARACTER_LIMIT = 110_000
 #: factor from the median of the other repetitions at the same concurrency.
 #: The result remains usable; this is a disclosure gate, not an invalidation.
 _REPETITION_ANOMALY_RATIO = 3.0
+#: Relative noise assumed at a level even when its repetitions agree exactly.
+#: One repetition, or repetitions that happen to land on the same value, would
+#: otherwise claim perfect precision and make every step look resolvable.
+_SHAPE_NOISE_FLOOR = 0.05
+
+#: Factors the catalog lets an experiment isolate. Everything the contract can
+#: express is characterisable; anything else is refused at design time.
+_DISCRIMINATING_FACTORS = {"system", "concurrency", "cpu", "memory"}
+
+#: Aggregate metrics worth characterising, by the direction that is an
+#: improvement. Exact names first, then substrings so a benchmarker this
+#: contract has not met yet still yields a characterisation.
+_HIGHER_IS_BETTER = (
+    "[OVERALL].Throughput(ops/sec)", "Throughput@Size", "Power@Size [~Q/h]",
+)
+_LOWER_IS_BETTER = ("Geo Times [s]",)
+_METRIC_SUBSTRINGS = (
+    ("throughput", "higher_is_better"), ("latency", "lower_is_better"),
+)
+
+#: Unit each ordered factor is swept in, for the assessor's own prose.
+_FACTOR_UNITS = {"concurrency": "clients", "cpu": "cores", "memory": "GiB"}
+
+#: Shapes an ordered series may take. They describe the series, not whether it
+#: is good news: a latency series that rises throughout is getting worse.
+_SHAPE_VALUES = {
+    "rises_throughout", "falls_throughout", "saturates_at_level",
+    "reverses_beyond_level", "flat", "non_monotone",
+}
 
 _MARKDOWN_HEADING = re.compile(r"^(#{1,6})[ \t]+(.+?)\s*$", re.MULTILINE)
 _MARKDOWN_LINK = re.compile(r"!?\[[^]]*]\(([^)]+)\)")
@@ -426,15 +459,32 @@ class Workspace:
         """
         self._validated.pop(self._resolve_in_inbox(path), None)
 
-    def assess_comparison_quality(self, path: str) -> dict[str, Any]:
-        """Summarize query coverage, throughput validity, and repeat anomalies.
+    def assess_comparison_quality(
+        self, path: str, specification: str | None = None,
+    ) -> dict[str, Any]:
+        """Summarize result quality and claims that can be checked mechanically.
 
-        :param path: Path to a TPC-H ``benchmarking.md`` evidence page.
+        :param path: Path to a report's ``benchmarking.md`` evidence page.
+        :param specification: Archived experiment specification, when already loaded.
         :return: Deterministic quality assessment for the interpretation gate.
         :rtype: dict[str, Any]
         """
         source = self._resolve_readable(path)
-        result = _assess_comparison_quality(source.read_text(encoding="utf-8"))
+        if specification is None:
+            experiment_path = source.parent.parent / "experiment.yml"
+            if experiment_path.is_file():
+                specification = experiment_path.read_text(encoding="utf-8")
+        report_path = source.parent / "index.md"
+        monitoring_path = source.parent / "monitoring.md"
+        result = _assess_comparison_quality(
+            source.read_text(encoding="utf-8"),
+            specification,
+            report_path.read_text(encoding="utf-8") if report_path.is_file() else None,
+            (
+                monitoring_path.read_text(encoding="utf-8")
+                if monitoring_path.is_file() else None
+            ),
+        )
         if "error" not in result:
             result["path"] = path
         return result
@@ -943,7 +993,559 @@ def _error_coverage(text: str) -> tuple[set[int], dict[str, set[int]], int]:
     return set(query_columns.values()), errors, total
 
 
-def _assess_comparison_quality(text: str) -> dict[str, Any]:
+def _numeric_quantity(value: Any, factor: str) -> float | None:
+    """Return one CPU or memory limit in a common numeric unit."""
+    if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+        return None
+    match = re.fullmatch(r"\s*([0-9]+(?:\.[0-9]+)?)\s*([A-Za-z]*)\s*", str(value))
+    if match is None:
+        return None
+    number = float(match.group(1))
+    suffix = match.group(2).casefold()
+    if factor == "cpu":
+        return number / 1000 if suffix == "m" else number if not suffix else None
+    memory_multipliers = {
+        "": 1 / (1024 ** 3), "ki": 1 / (1024 ** 2), "mi": 1 / 1024,
+        "gi": 1, "ti": 1024,
+    }
+    multiplier = memory_multipliers.get(suffix)
+    return number * multiplier if multiplier is not None else None
+
+
+def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float]] | None:
+    """Return the CPU and memory values for each resolved resource cell."""
+    resources = experiment.get("resources")
+    if not isinstance(resources, dict):
+        return None
+    cpu = resources.get("cpu")
+    memory = resources.get("memory")
+    cpu_cells = cpu if isinstance(cpu, list) else [cpu]
+    memory_cells = memory if isinstance(memory, list) else [memory]
+    cell_count = max(len(cpu_cells), len(memory_cells))
+    if len(cpu_cells) not in (1, cell_count) or len(memory_cells) not in (1, cell_count):
+        return None
+
+    dimensions = []
+    for index in range(cell_count):
+        values: dict[str, float] = {}
+        for factor, cells in (("cpu", cpu_cells), ("memory", memory_cells)):
+            cell = cells[index if len(cells) > 1 else 0]
+            if not isinstance(cell, dict):
+                return None
+            numeric = _numeric_quantity(cell.get("limit", cell.get("request")), factor)
+            if numeric is None:
+                return None
+            values[factor] = numeric
+        dimensions.append(values)
+    return dimensions
+
+
+def _configuration_cell(
+    configuration: str, experiment: dict[str, Any], cell_count: int,
+) -> tuple[str, int] | None:
+    """Decode which system and which resource cell one report label names.
+
+    :param configuration: A report configuration label such as ``postgresql-2``.
+    :param experiment: The archived experiment.yml.
+    :param cell_count: How many resource cells the specification resolved to.
+    :return: The system name and the zero-based cell index, or ``None`` when the
+        label does not decode.
+    :rtype: tuple[str, int] | None
+    """
+    systems = experiment.get("systems")
+    if not isinstance(systems, list):
+        return None
+    normalized = configuration.casefold()
+    matches = []
+    for system in systems:
+        if not isinstance(system, dict) or not isinstance(system.get("name"), str):
+            return None
+        name = system["name"]
+        slug = re.sub(r"[^a-z0-9]+", "-", name.casefold()).strip("-")
+        if normalized == slug or normalized.startswith(f"{slug}-"):
+            matches.append((len(slug), name, slug))
+    if not matches:
+        return None
+    _, system_name, system_slug = max(matches)
+
+    cell_index = 0
+    if cell_count > 1:
+        suffix = normalized[len(system_slug):].strip("-")
+        match = re.fullmatch(r"(\d+)", suffix)
+        if match is None:
+            return None
+        cell_index = int(match.group(1)) - 1
+        if cell_index not in range(cell_count):
+            return None
+    return system_name, cell_index
+
+
+def _configuration_dimensions(
+    configuration: str, experiment: dict[str, Any], resource_cells: list[dict[str, float]],
+) -> dict[str, str | float] | None:
+    """Decode contract factors from one report configuration label."""
+    decoded = _configuration_cell(configuration, experiment, len(resource_cells))
+    if decoded is None:
+        return None
+    system_name, cell_index = decoded
+    return {"system": system_name, **resource_cells[cell_index]}
+
+
+def _configuration_resources(
+    configuration: str, experiment: dict[str, Any],
+) -> dict[str, str] | None:
+    """Return the CPU and memory one report configuration actually ran with.
+
+    The report labels its rows ``postgresql-1``, ``postgresql-2`` and so on, and
+    says nowhere what hardware each of them had, so a reader comparing two rows
+    has to open the connections page to learn which is which. Resolving the
+    sweep the way :func:`agent.harness.validation.resolved_configurations` does
+    puts that mapping next to the measurements instead.
+
+    :param configuration: A report configuration label such as ``postgresql-2``.
+    :param experiment: The archived experiment.yml.
+    :return: The CPU and memory settings as the specification wrote them, or
+        ``None`` when the label or the specification does not decode.
+    :rtype: dict[str, str] | None
+    """
+    cells = validation.resolved_configurations(experiment)
+    decoded = _configuration_cell(configuration, experiment, len(cells))
+    if decoded is None:
+        return None
+    _, cell_index = decoded
+    labels = {}
+    for resource, cell in cells[cell_index].items():
+        value = cell.get("limit", cell.get("request")) if isinstance(cell, dict) else None
+        if value is None:
+            return None
+        labels[resource] = str(value)
+    return labels
+
+
+def _level_noise(values: list[float], mean: float) -> float:
+    """Estimate one level's measurement noise from its own repetitions.
+
+    :param values: Every measurement taken at this factor level.
+    :param mean: Mean of those measurements.
+    :return: Half-width below which a difference is not resolvable here.
+    :rtype: float
+    """
+    half_range = (max(values) - min(values)) / 2 if len(values) > 1 else 0.0
+    return max(half_range, _SHAPE_NOISE_FLOOR * abs(mean))
+
+
+def _step_direction(
+    first: tuple[float, float], second: tuple[float, float],
+) -> int:
+    """Compare two adjacent levels given as ``(mean, noise)``.
+
+    :return: ``1`` when the second is resolvably higher, ``-1`` when resolvably
+        lower, and ``0`` when the repetitions cannot tell them apart.
+    :rtype: int
+    """
+    first_mean, first_noise = first
+    second_mean, second_noise = second
+    if abs(second_mean - first_mean) <= first_noise + second_noise:
+        return 0
+    return 1 if second_mean > first_mean else -1
+
+
+def _consistent_direction(steps: list[int]) -> int | None:
+    """Return the single resolvable direction in ``steps``.
+
+    :return: ``0`` when nothing is resolvable, ``1`` or ``-1`` when every
+        resolvable step agrees, and ``None`` when they disagree.
+    :rtype: int | None
+    """
+    directions = {step for step in steps if step}
+    if len(directions) > 1:
+        return None
+    return directions.pop() if directions else 0
+
+
+def _classify_shape(
+    levels: list[tuple[float, float, float]],
+) -> tuple[str, float | None]:
+    """Classify an ordered series and name the level where it turns.
+
+    Steps its own repetitions cannot resolve count as no movement, so noise does
+    not masquerade as a trend. The names describe the series, not whether it is
+    good news: a latency series that rises throughout is getting worse.
+
+    :param levels: Ordered ``(level, mean, noise)`` triples.
+    :return: The shape and, where the shape has one, its turning level.
+    :rtype: tuple[str, float | None]
+    """
+    steps = [
+        _step_direction((first_mean, first_noise), (second_mean, second_noise))
+        for (_, first_mean, first_noise), (_, second_mean, second_noise)
+        in itertools.pairwise(levels)
+    ]
+    overall = _consistent_direction(steps)
+    if overall == 0:
+        return "flat", None
+    if overall is not None:
+        if steps[-1]:
+            return ("rises_throughout" if overall > 0 else "falls_throughout"), None
+        # It moved, then stopped moving. Saturation begins where the trailing run
+        # of unresolvable steps starts, which is the last level that gained.
+        index = len(steps)
+        while index and not steps[index - 1]:
+            index -= 1
+        return "saturates_at_level", levels[index][0]
+    # Resolvable steps disagree. A single reversal about one turning point is
+    # still a shape; alternating up and down is not.
+    for turn in range(1, len(steps)):
+        before = _consistent_direction(steps[:turn])
+        after = _consistent_direction(steps[turn:])
+        if before and after and before == -after:
+            return "reverses_beyond_level", levels[turn][0]
+    return "non_monotone", None
+
+
+def _characterized_metrics(headers: list[str]) -> list[tuple[str, str]]:
+    """Choose the aggregate metrics worth characterising, without naming a workload.
+
+    Exact names are recognised first so a report's headline metrics win; the
+    substrings keep a benchmarker this contract has not met yet working unaided.
+
+    :param headers: Column headers of the per-phase summary table.
+    :return: Each metric with the direction that counts as an improvement.
+    :rtype: list[tuple[str, str]]
+    """
+    directions: dict[str, str] = {}
+    for header in headers:
+        if header in _HIGHER_IS_BETTER:
+            directions[header] = "higher_is_better"
+        elif header in _LOWER_IS_BETTER:
+            directions[header] = "lower_is_better"
+        else:
+            for needle, direction in _METRIC_SUBSTRINGS:
+                if needle in header.casefold():
+                    directions[header] = direction
+                    break
+    return [(header, directions[header]) for header in headers if header in directions]
+
+
+def _expected_levels(
+    factor: str, experiment: dict[str, Any], resource_cells: list[dict[str, float]],
+) -> set[float]:
+    """Return the levels the specification declared for one ordered factor."""
+    if factor != "concurrency":
+        return {cell[factor] for cell in resource_cells}
+    workload = experiment.get("workload")
+    declared = workload.get("rounds") if isinstance(workload, dict) else None
+    return {
+        float(level) for level in declared or []
+        if isinstance(level, (int, float)) and not isinstance(level, bool)
+    }
+
+
+def _decode_observations(
+    experiment: dict[str, Any],
+    headers: list[str],
+    rows: list[list[str]],
+    metrics: list[tuple[str, str]],
+    resource_cells: list[dict[str, float]],
+) -> list[tuple[dict[str, str | float], dict[str, float]]]:
+    """Decode each report row into its factor coordinates and metric values."""
+    positions = {name: headers.index(name) for name in ("phase", "pod_count")}
+    positions.update({metric: headers.index(metric) for metric, _ in metrics})
+    observations = []
+    for row in rows:
+        phase = _plain_markdown_cell(row[positions["phase"]])
+        dimensions = _configuration_dimensions(
+            phase.rsplit("-", 2)[0], experiment, resource_cells
+        )
+        if dimensions is None:
+            continue
+        try:
+            dimensions["concurrency"] = float(row[positions["pod_count"]])
+            values = {metric: float(row[positions[metric]]) for metric, _ in metrics}
+        except ValueError:
+            continue
+        observations.append((dimensions, values))
+    return observations
+
+
+def _group_by_context(
+    observations: list[tuple[dict[str, str | float], dict[str, float]]],
+    factor: str,
+    peers: list[str],
+) -> dict[tuple[tuple[str, str | float], ...], dict[Any, list[dict[str, float]]]]:
+    """Group observations by the peer factors held fixed, then by this factor's level."""
+    grouped: dict[
+        tuple[tuple[str, str | float], ...], dict[Any, list[dict[str, float]]]
+    ] = {}
+    for dimensions, values in observations:
+        if factor not in dimensions or any(peer not in dimensions for peer in peers):
+            continue
+        context = tuple((peer, dimensions[peer]) for peer in peers)
+        level = dimensions[factor]
+        grouped.setdefault(context, {}).setdefault(level, []).append(values)
+    return grouped
+
+
+def _ordered_sweep_claims(
+    factor: str,
+    discriminates: list[str],
+    experiment: dict[str, Any],
+    observations: list[tuple[dict[str, str | float], dict[str, float]]],
+    resource_cells: list[dict[str, float]],
+    metrics: list[tuple[str, str]],
+) -> list[dict[str, Any]]:
+    """Characterise one ordered factor, once per metric and per fixed peer context."""
+    expected_levels = _expected_levels(factor, experiment, resource_cells)
+    peers = [item for item in discriminates if item != factor]
+    claims = []
+    for context, measurements in sorted(
+        _group_by_context(observations, factor, peers).items(),
+        key=lambda item: str(item[0]),
+    ):
+        levels = {float(level): values for level, values in measurements.items()}
+        if len(levels) < 2 or set(levels) != expected_levels:
+            continue
+        for metric, direction in metrics:
+            per_level = {
+                level: [values[metric] for values in repetitions]
+                for level, repetitions in levels.items()
+            }
+            summary = sorted(
+                (level, statistics.mean(values), _level_noise(values, statistics.mean(values)))
+                for level, values in per_level.items()
+            )
+            shape, turning_level = _classify_shape(summary)
+            highest_mean = summary[-1][1]
+            claims.append({
+                "factor": factor,
+                "factor_unit": _FACTOR_UNITS.get(factor, "levels"),
+                "context": dict(context),
+                "metric": metric,
+                "direction": direction,
+                "shape": shape,
+                "turning_level": turning_level,
+                "values": [
+                    {
+                        "level": level,
+                        "mean": round(mean, 2),
+                        "minimum": round(min(per_level[level]), 2),
+                        "maximum": round(max(per_level[level]), 2),
+                        "spread": round(
+                            max(per_level[level]) - min(per_level[level]), 2
+                        ),
+                        "resolution": round(noise, 2),
+                        "highest_level_ratio": (
+                            round(highest_mean / mean, 3) if mean else None
+                        ),
+                    }
+                    for level, mean, noise in summary
+                ],
+                "marginal_returns": [
+                    {
+                        "from_level": first_level,
+                        "to_level": second_level,
+                        "metric_gain_per_factor_unit": round(
+                            (second_mean - first_mean) / (second_level - first_level), 2
+                        ),
+                    }
+                    for (first_level, first_mean, _), (second_level, second_mean, _)
+                    in itertools.pairwise(summary)
+                ],
+            })
+    return claims
+
+
+def _categorical_claims(
+    discriminates: list[str],
+    experiment: dict[str, Any],
+    observations: list[tuple[dict[str, str | float], dict[str, float]]],
+    metrics: list[tuple[str, str]],
+) -> list[dict[str, Any]]:
+    """Rank the systems compared at each fixed context, once per metric."""
+    expected_systems = {
+        system["name"] for system in experiment.get("systems", [])
+        if isinstance(system, dict) and isinstance(system.get("name"), str)
+    }
+    peers = [item for item in discriminates if item != "system"]
+    claims = []
+    for context, measurements in sorted(
+        _group_by_context(observations, "system", peers).items(),
+        key=lambda item: str(item[0]),
+    ):
+        if len(measurements) < 2 or set(measurements) != expected_systems:
+            continue
+        for metric, direction in metrics:
+            means = {
+                str(system): round(
+                    statistics.mean(values[metric] for values in repetitions), 2
+                )
+                for system, repetitions in measurements.items()
+            }
+            # Best first, which for a latency metric is the smallest.
+            better = -1 if direction == "higher_is_better" else 1
+            claims.append({
+                "factor": "system",
+                "context": dict(context),
+                "metric": metric,
+                "direction": direction,
+                "ranking": sorted(
+                    means, key=lambda system: (better * means[system], system)
+                ),
+                "values": [
+                    {"level": system, "mean": means[system]}
+                    for system in sorted(means)
+                ],
+            })
+    return claims
+
+
+def _loaded_specification(specification: str | None) -> dict[str, Any] | None:
+    """Parse the archived experiment.yml, or return ``None`` when it is unusable."""
+    if not specification:
+        return None
+    try:
+        experiment = yaml.safe_load(specification)
+    except yaml.YAMLError:
+        return None
+    return experiment if isinstance(experiment, dict) else None
+
+
+def _unsupported(reason: str) -> dict[str, Any]:
+    """Return a characterisation that claims nothing, and says why."""
+    return {
+        "ordered_sweeps": [], "categorical_comparisons": [],
+        "unsupported_factors": [reason] if isinstance(reason, str) else list(reason),
+    }
+
+
+def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
+    """Build typed claims from the factors the archived specification varied.
+
+    :param text: The report's ``benchmarking.md`` page.
+    :param specification: The archived ``experiment.yml``, when it is available.
+    :return: Ordered sweeps, categorical comparisons, and the factors that could
+        not be characterised.
+    :rtype: dict[str, Any]
+    """
+    if not specification:
+        return _unsupported("archived experiment specification is unavailable")
+    experiment = _loaded_specification(specification)
+    if experiment is None:
+        return _unsupported("archived experiment specification is invalid")
+    discriminates = experiment.get("discriminates")
+    if not isinstance(discriminates, list) or any(
+        factor not in _DISCRIMINATING_FACTORS for factor in discriminates
+    ):
+        return _unsupported("discriminates is absent or unsupported")
+
+    table = _markdown_table(text, "#### Per Phase")
+    resource_cells = _resource_dimensions(experiment)
+    if table is None or resource_cells is None:
+        return _unsupported(discriminates)
+    headers, rows = table
+    metrics = _characterized_metrics(headers)
+    if not metrics or not {"phase", "pod_count"}.issubset(headers):
+        return _unsupported(discriminates)
+    observations = _decode_observations(
+        experiment, headers, rows, metrics, resource_cells
+    )
+
+    unsupported = []
+    ordered_sweeps = []
+    for factor in (item for item in discriminates if item != "system"):
+        claims = _ordered_sweep_claims(
+            factor, discriminates, experiment, observations, resource_cells, metrics
+        )
+        ordered_sweeps.extend(claims)
+        if not claims:
+            unsupported.append(factor)
+    categorical = []
+    if "system" in discriminates:
+        categorical = _categorical_claims(
+            discriminates, experiment, observations, metrics
+        )
+        if not categorical:
+            unsupported.append("system")
+    return {
+        "ordered_sweeps": ordered_sweeps,
+        "categorical_comparisons": categorical,
+        "unsupported_factors": unsupported,
+    }
+
+
+def _validity_scope(
+    report_text: str | None, benchmarking_text: str, monitoring_text: str | None,
+) -> dict[str, Any]:
+    """Locate the phases and performance metrics touched by failed checks."""
+    benchmark_table = _markdown_table(benchmarking_text, "#### Per Phase")
+    benchmark_phases: set[str] = set()
+    if benchmark_table is not None and "phase" in benchmark_table[0]:
+        position = benchmark_table[0].index("phase")
+        benchmark_phases = {
+            _plain_markdown_cell(row[position]) for row in benchmark_table[1]
+        }
+
+    tests = _markdown_table(report_text or "", "### Tests")
+    failed_labels = []
+    if tests is not None and {"status", "label"}.issubset(tests[0]):
+        status_position = tests[0].index("status")
+        label_position = tests[0].index("label")
+        failed_labels = [
+            row[label_position] for row in tests[1]
+            if row[status_position].strip().casefold() == "failed"
+        ]
+
+    affected_phases: set[str] = set()
+    details = []
+    monitoring_only = bool(failed_labels)
+    # Bexhoma writes its check labels as English sentences, so recognising the
+    # CPU-monitoring family means matching its wording. Deliberate coupling: any
+    # label this misses -- a query failure, a loading timeout, a reworded check --
+    # falls through to "performance may be affected", which is the safe answer.
+    monitoring_pattern = re.compile(
+        r"^(.*?): (.*?) contains (?:no )?0 or NaN in CPU \[CPUs\]$",
+        re.IGNORECASE,
+    )
+    for label in failed_labels:
+        match = monitoring_pattern.fullmatch(label.strip())
+        if match is None:
+            monitoring_only = False
+            details.append({"failed_check": label, "affected_phases": []})
+            continue
+        heading = f"### {match.group(1)}: {match.group(2)}"
+        table = _markdown_table(monitoring_text or "", heading)
+        phases = []
+        if table is not None and "CPU [CPUs]" in table[0]:
+            cpu_position = table[0].index("CPU [CPUs]")
+            for row in table[1]:
+                try:
+                    value = float(row[cpu_position])
+                except ValueError:
+                    continue
+                if value == 0 or not math.isfinite(value):
+                    phases.append(_plain_markdown_cell(row[0]))
+        affected_phases.update(phases)
+        details.append({
+            "failed_check": label,
+            "affected_phases": sorted(phases),
+            "scope": "monitoring data only",
+        })
+    return {
+        "failed_checks": len(failed_labels),
+        "benchmark_phase_count": len(benchmark_phases),
+        "affected_phase_count": len(affected_phases),
+        "affected_phases": sorted(affected_phases),
+        "performance_metrics_affected": bool(failed_labels) and not monitoring_only,
+        "details": details,
+    }
+
+
+def _assess_comparison_quality(
+    text: str,
+    specification: str | None = None,
+    report_text: str | None = None,
+    monitoring_text: str | None = None,
+) -> dict[str, Any]:
     """Build the deterministic quality record used by the interpretation gate."""
     latency = _parse_query_latency(text)
     common_queries = set(latency.get("queries", {})) if "error" not in latency else set()
@@ -951,20 +1553,58 @@ def _assess_comparison_quality(text: str) -> dict[str, Any]:
     planned_queries, errors, error_count = _error_coverage(text)
     planned_queries.update(common_queries)
     configurations.update(errors)
-    if not planned_queries and not configurations:
+    characterization = _shape_claims(text, specification)
+    if error_count:
+        invalid_factors = {
+            claim["factor"] for claim in characterization["ordered_sweeps"]
+        }
+        invalid_factors.update(
+            claim["factor"]
+            for claim in characterization["categorical_comparisons"]
+        )
+        characterization["ordered_sweeps"] = []
+        characterization["categorical_comparisons"] = []
+        characterization["unsupported_factors"] = sorted(
+            set(characterization["unsupported_factors"]) | invalid_factors
+        )
+        characterization["unusable_reason"] = (
+            "planned queries failed, so aggregate throughput does not represent "
+            "the same completed work across factor levels"
+        )
+    has_query_comparison = bool(planned_queries or configurations)
+    if (
+        not has_query_comparison
+        and _markdown_table(text, "#### Per Phase") is None
+        and not characterization["ordered_sweeps"]
+        and not characterization["categorical_comparisons"]
+    ):
         return {"error": NO_COMPARISON_TABLES}
 
+    # Bexhoma labels its configurations postgresql-1, postgresql-2 and so on and
+    # states nowhere in the metric tables what hardware each of them received, so
+    # a reader comparing two rows would otherwise have to guess which is which.
+    experiment = _loaded_specification(specification)
     coverage = {}
     for configuration in sorted(configurations):
         errored = errors.get(configuration, set())
         coverage[configuration] = {
+            "resources": (
+                _configuration_resources(configuration, experiment)
+                if experiment is not None else None
+            ),
             "completed_queries": sorted(planned_queries - errored),
             "errored_queries": sorted(errored),
             "completed_count": len(planned_queries - errored),
             "planned_count": len(planned_queries),
         }
-    coverage_status = "partial" if error_count else "complete"
-    throughput_status = "not_comparable" if error_count else "comparable"
+    coverage_status = (
+        "partial" if error_count else "complete" if has_query_comparison
+        else "not_applicable"
+    )
+    throughput_status = (
+        "not_comparable" if error_count else "comparable" if has_query_comparison
+        else "not_applicable"
+    )
     return {
         "query_coverage": coverage_status,
         "planned_queries": sorted(planned_queries),
@@ -978,6 +1618,8 @@ def _assess_comparison_quality(text: str) -> dict[str, Any]:
             "counts do not represent the same whole workload across systems."
             if error_count else
             "Every planned query completed, so whole-workload throughput is comparable."
+            if has_query_comparison else
+            "This report has no per-query workload whose completion can be compared."
         ),
         "suspect_repetitions": anomalies,
         "anomaly_policy": (
@@ -985,6 +1627,8 @@ def _assess_comparison_quality(text: str) -> dict[str, Any]:
             "from the median of peer repetitions at the same concurrency; do not "
             "invalidate it automatically."
         ),
+        "result_characterization": characterization,
+        "validity_scope": _validity_scope(report_text, text, monitoring_text),
     }
 
 
@@ -1094,9 +1738,9 @@ _ASSESS_COMPARISON_QUALITY = {
     "function": {
         "name": "assess_comparison_quality",
         "description": (
-            "Deterministically assess one TPC-H benchmarking.md page for query "
-            "coverage, whole-workload throughput comparability, and suspicious "
-            "repetitions. Call this before recording a comparative interpretation."
+            "Deterministically assess one benchmarking.md page. It checks query "
+            "coverage where available and characterizes every contract-declared "
+            "system, concurrency, CPU, or memory factor the aggregate table exposes."
         ),
         "parameters": {
             "type": "object",
@@ -1175,13 +1819,21 @@ _RECORD_INTERPRETATION = {
                     "properties": {
                         "failed_checks": {"type": "integer", "minimum": 0},
                         "scope": {"type": "string"},
+                        "affected_phases": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        "performance_metrics_affected": {"type": "boolean"},
                         "evidence_paths": {
                             "type": "array",
                             "items": {"type": "string"},
                             "minItems": 1,
                         },
                     },
-                    "required": ["failed_checks", "scope", "evidence_paths"],
+                    "required": [
+                        "failed_checks", "scope", "affected_phases",
+                        "performance_metrics_affected", "evidence_paths",
+                    ],
                 },
                 "comparison_quality": {
                     "type": "object",
@@ -1203,6 +1855,68 @@ _RECORD_INTERPRETATION = {
                         "query_coverage", "whole_workload_throughput",
                         "suspect_repetitions",
                     ],
+                },
+                "result_claims": {
+                    "type": "object",
+                    "properties": {
+                        "ordered_sweeps": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "factor": {
+                                        "type": "string",
+                                        "enum": sorted(
+                                            _DISCRIMINATING_FACTORS - {"system"}
+                                        ),
+                                    },
+                                    "context": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": ["string", "number"],
+                                        },
+                                    },
+                                    "metric": {"type": "string"},
+                                    "shape": {
+                                        "type": "string",
+                                        "enum": sorted(_SHAPE_VALUES),
+                                    },
+                                    "turning_level": {
+                                        "type": ["number", "null"],
+                                    },
+                                },
+                                "required": [
+                                    "factor", "context", "metric", "shape",
+                                    "turning_level",
+                                ],
+                            },
+                        },
+                        "categorical_comparisons": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "factor": {"type": "string", "enum": ["system"]},
+                                    "context": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": ["string", "number"],
+                                        },
+                                    },
+                                    "metric": {"type": "string"},
+                                    "ranking": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                        "minItems": 2,
+                                    },
+                                },
+                                "required": [
+                                    "factor", "context", "metric", "ranking",
+                                ],
+                            },
+                        },
+                    },
+                    "required": ["ordered_sweeps", "categorical_comparisons"],
                 },
                 "follow_up": {
                     "type": "object",
@@ -1226,7 +1940,7 @@ _RECORD_INTERPRETATION = {
                 },
             },
             "required": [
-                "hypothesis_verdict", "validity", "comparison_quality",
+                "hypothesis_verdict", "validity", "comparison_quality", "result_claims",
                 "questions", "follow_up",
             ],
         },

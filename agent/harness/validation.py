@@ -11,6 +11,7 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
+import itertools
 import os
 import re
 from typing import Any, NamedTuple
@@ -24,6 +25,7 @@ __all__ = [
     "CATALOG_STAGE",
     "ENVIRONMENT_STAGE",
     "count_runs",
+    "resolved_configurations",
     "validate_spec",
 ]
 
@@ -430,6 +432,104 @@ def _check_declared_factors(
     return None
 
 
+def resolved_configurations(experiment: dict[str, Any]) -> list[dict[str, Any]]:
+    """Resolve the resource sweep into the configurations that will actually run.
+
+    ``resources.cpu`` and ``resources.memory`` are paired by position rather
+    than crossed: configuration *i* takes entry *i* of each list, and a single
+    entry is broadcast to every configuration. This mirrors the pairing
+    :func:`bexhoma.experiments.tpch_catalog.build_tpch_argv` performs on the
+    same specification, so what is reported here is what Bexhoma will run. A
+    design that means to cross the two has to enumerate the combinations
+    itself.
+
+    :param experiment: A loaded experiment.yml.
+    :return: One ``{"cpu": cell, "memory": cell}`` mapping per configuration.
+    :rtype: list[dict[str, Any]]
+    """
+    resources = experiment.get("resources") or {}
+    swept = {}
+    for resource in ("cpu", "memory"):
+        cells = resources.get(resource) or {}
+        swept[resource] = cells if isinstance(cells, list) else [cells]
+    count = max(len(cells) for cells in swept.values())
+    return [
+        {
+            resource: cells[index] if len(cells) > 1 else cells[0]
+            for resource, cells in swept.items()
+        }
+        for index in range(count)
+    ]
+
+
+def _describe_configuration(configuration: dict[str, Any]) -> str:
+    """Render one resolved configuration as a ``cpu=..., memory=...`` line."""
+    return ", ".join(
+        f"{resource}={cell.get('limit', cell.get('request', 'unset'))}"
+        for resource, cell in configuration.items()
+    )
+
+
+def _varies_alone(configurations: list[dict[str, Any]], factor: str) -> bool:
+    """Whether two configurations differ in ``factor`` and agree on every other."""
+    return any(
+        first[factor] != second[factor]
+        and all(first[other] == second[other] for other in first if other != factor)
+        for first, second in itertools.combinations(configurations, 2)
+    )
+
+
+def _check_factor_attribution(experiment: dict[str, Any]) -> dict[str, str] | None:
+    """Require every declared resource factor to vary on its own somewhere.
+
+    ``system`` and ``concurrency`` are crossed with the resource sweep -- every
+    system runs in every configuration, and every entry of ``workload.rounds``
+    runs in every configuration -- so neither can move in lockstep with
+    anything else. Only ``cpu`` and ``memory`` share the position-paired sweep
+    of :func:`resolved_configurations`, so only they can be declared as
+    separate factors while varying together, which leaves a difference between
+    configurations attributable to neither.
+
+    :param experiment: A loaded experiment.yml.
+    :return: An error entry, or ``None`` when every declared factor is separable.
+    :rtype: dict[str, str] | None
+    """
+    declared = [
+        factor for factor in experiment.get("discriminates") or []
+        if factor in ("cpu", "memory")
+    ]
+    if len(declared) < 2:
+        return None
+    configurations = resolved_configurations(experiment)
+    unattributable = sorted(
+        factor for factor in declared
+        if not _varies_alone(configurations, factor)
+    )
+    if not unattributable:
+        return None
+    listing = "\n".join(
+        f"  {index + 1}. {_describe_configuration(configuration)}"
+        for index, configuration in enumerate(configurations)
+    )
+    return {
+        "stage": METHODOLOGY_STAGE,
+        "message": (
+            "M2.1: no effect can be attributed to "
+            f"{' or '.join(unattributable)}. resources.cpu and resources.memory "
+            "are paired by position, not crossed, so this specification resolves "
+            f"to {len(configurations)} configuration(s):\n{listing}\n"
+            f"No two of them differ in {' or '.join(unattributable)} alone, so a "
+            "difference between them could equally be caused by the other "
+            "resource. Either enumerate the cross yourself, repeating entries so "
+            "that every combination appears: two levels of each resource need four "
+            "entries in both lists, with one list alternating and the other "
+            "changing every second entry, which resolves to the four "
+            "configurations of a full factorial. Or sweep one resource in this "
+            "experiment and the other in a follow-up."
+        ),
+    }
+
+
 def _check_contract_shape(
     catalog: dict[str, Any], experiment: Any,
 ) -> list[dict[str, str]]:
@@ -821,6 +921,15 @@ def _verdict(
     estimate = {
         "runs": count_runs(experiment) if isinstance(experiment, dict) else None,
         "duration_min": None,
+        # What the resource lists resolve to, reported on every verdict. The two
+        # lists pair by position rather than crossing, so an author who believes
+        # otherwise has no other way to notice that the four configurations they
+        # intended became two.
+        "configurations": (
+            [_describe_configuration(configuration)
+             for configuration in resolved_configurations(experiment)]
+            if isinstance(experiment, dict) else None
+        ),
     }
     if isinstance(experiment, dict) and isinstance(catalog, dict):
         estimate.update(_timeout_budget(catalog, experiment))
@@ -918,6 +1027,7 @@ def validate_spec(
         error for error in (
             _check_falsifiable_claim(experiment),
             _check_fixed_envelope(experiment),
+            _check_factor_attribution(experiment),
             _check_repetitions(catalog, experiment),
         ) if error is not None
     ]

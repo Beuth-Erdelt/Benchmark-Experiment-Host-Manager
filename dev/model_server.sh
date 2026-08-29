@@ -24,7 +24,7 @@ PORT="${MODEL_SERVER_PORT:-8001}"
 BASE_URL="${MODEL_SERVER_BASE_URL:-http://localhost:$PORT/v1}"
 LOGIN="${KUBE_LOGIN_SCRIPT:-$HOME/git/BIRD-Interact/scripts/kube-login.sh}"
 CONTEXT="${MODEL_SERVER_CONTEXT:-oidc_ds_cluster}"
-NAMESPACE="${MODEL_SERVER_NAMESPACE:-lliu}"
+NAMESPACE="${MODEL_SERVER_NAMESPACE:-}"
 START_TIMEOUT="${MODEL_SERVER_START_TIMEOUT_SECONDS:-2400}"
 STOP_TIMEOUT="${MODEL_SERVER_STOP_TIMEOUT_SECONDS:-300}"
 GENERATION="${MODEL_SERVER_GENERATION:-idle-watchdog-v2}"
@@ -32,6 +32,26 @@ GENERATION="${MODEL_SERVER_GENERATION:-idle-watchdog-v2}"
 # A benchmark outlives the cluster token by hours, so a later `up` would fail at
 # exactly the moment interpretation needs the server unless we refresh here.
 ensure_login() {
+    # Required, with no default. The namespace decides whose objects this script
+    # creates and deletes, and the set-context calls below write it into the
+    # caller's kubeconfig, where every later namespace-less kubectl call --
+    # bexhoma's SUT creation included -- inherits it. A default would therefore
+    # not merely misplace the model server, it would redirect the whole run into
+    # the account the default happens to name.
+    if [ -z "$NAMESPACE" ]; then
+        cat >&2 <<'USAGE'
+error: MODEL_SERVER_NAMESPACE is unset and has no default; it names the
+       namespace the model server is created in and deleted from.
+
+  dev/model_server.sh directly : export MODEL_SERVER_NAMESPACE=<namespace>
+  dev/agent_lifecycle.py       : MODEL_SERVER_NAMESPACE=<namespace> in .env
+  in-cluster lifecycle Job     : set automatically from the Job's namespace
+
+It must equal credentials.k8s.context.<context>.namespace in cluster.config,
+or bexhoma will place the benchmark somewhere else than the model server.
+USAGE
+        exit 2
+    fi
     if [ "${MODEL_SERVER_IN_CLUSTER:-0}" = "1" ]; then
         kubectl config set-context "$CONTEXT" --namespace="$NAMESPACE" >/dev/null
         return

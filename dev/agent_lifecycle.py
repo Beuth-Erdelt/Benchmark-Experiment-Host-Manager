@@ -44,6 +44,9 @@ _WAIT_NOTICE_SECONDS = 600.0
 #: How much of a refusal, or of the agent's own account, a failure message keeps.
 _REASON_CHARS = 400
 
+#: Validation calls passed to each design and follow-up authoring phase.
+_DEFAULT_ATTEMPTS = 3
+
 #: The only two answers to who owns the model endpoint. ``bundled`` is started
 #: and stopped by this wrapper; ``external`` is already running.
 _BUNDLED_SERVER = "bundled"
@@ -112,11 +115,13 @@ class AgentLifecycle:
         agent_command: Sequence[str],
         server: ModelServer,
         sleep: Callable[[float], None] = time.sleep,
+        interpret_model: str | None = None,
     ) -> None:
         self.config = config
         self.agent_command = list(agent_command)
         self.server = server
         self._sleep = sleep
+        self.interpret_model = interpret_model
 
     def run(self, task: str | None, resume: Path | None = None) -> Path:
         """Run through the final verdict and return its investigation directory.
@@ -200,6 +205,11 @@ class AgentLifecycle:
             if source is None:
                 raise LifecycleError("interpretation needs the current investigation")
             command.extend(["--run", str(source)])
+            if self.interpret_model:
+                # Judging a finished result is harder than designing one, so the
+                # verdict may run on a stronger model. argparse keeps the last
+                # --model it parses, so this overrides the base command's.
+                command.extend(["--model", self.interpret_model])
 
         print(f"starting the {phase} phase", flush=True)
         log = source / "trajectory.jsonl" if source is not None else None
@@ -452,6 +462,11 @@ def _parser() -> argparse.ArgumentParser:
     start.add_argument("--task", help="question for a new design run")
     start.add_argument("--resume", help="submitted investigation to resume")
     parser.add_argument("--model", default=os.environ.get("AGENT_MODEL"))
+    parser.add_argument("--interpret-model",
+                        default=os.environ.get("AGENT_INTERPRET_MODEL"),
+                        help="model for the interpretation phase; defaults to "
+                             "--model, so the verdict can run on a stronger "
+                             "model than the design")
     parser.add_argument("--base-url", default=os.environ.get(
         "AGENT_BASE_URL", "http://localhost:8001/v1"))
     parser.add_argument("--api-key", default=os.environ.get("AGENT_API_KEY", "EMPTY"))
@@ -470,7 +485,7 @@ def _parser() -> argparse.ArgumentParser:
         "--server-start-attempts", type=int, default=0,
         help="model-server start attempts; zero retries until capacity returns",
     )
-    parser.add_argument("--attempts", type=int, default=3)
+    parser.add_argument("--attempts", type=int, default=_DEFAULT_ATTEMPTS)
     parser.add_argument("--followups", type=int, default=1)
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tokens", type=int, default=16384)
@@ -572,7 +587,8 @@ def main() -> int:
         return 2
     bundled = owner == _BUNDLED_SERVER
     lifecycle = AgentLifecycle(
-        config, agent_command, ModelServer(config.server_script, bundled))
+        config, agent_command, ModelServer(config.server_script, bundled),
+        interpret_model=args.interpret_model)
     try:
         final_run = lifecycle.run(
             task=args.task,

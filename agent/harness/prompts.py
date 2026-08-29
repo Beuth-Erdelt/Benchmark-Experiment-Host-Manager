@@ -62,8 +62,9 @@ are guessing.
 - validate(path) dry-run checks a written specification against the catalog and
   the environment. It runs nothing and costs no cluster time. It returns
   "valid", a list of "errors", whether the environment was checked, and an
-  "estimate" of how many benchmark phases the design expands to plus its
-  conservative query/loading timeout budget.
+  "estimate" of how many benchmark phases the design expands to, the resource
+  "configurations" it resolves to, and its conservative query/loading timeout
+  budget.
 - submit(path) launches the exact file that most recently passed validate.
 
 Those are the only tools. You have no shell, no network, and no way to read any
@@ -75,7 +76,10 @@ The specification states a hypothesis and names the factors it isolates. An
 experiment that validates but cannot answer the question is a failure: the
 factor under test must be the only thing that varies, and everything else must
 be held equal across the systems being compared. Check the run estimate too -- a
-design nobody has time to run does not answer anything either.
+design nobody has time to run does not answer anything either -- and read back
+the configurations the specification resolved to. The cpu and memory lists are
+paired by position rather than crossed, so a design that means to vary them
+independently has to list every combination itself.
 
 The experiment design handbook is methodological guidance rather than a
 contract: the catalog says which experiments are legal and the result contract
@@ -145,12 +149,16 @@ rather than inferring or approximating the count.
 
 - read_file(path, section?) reads the report, the files it links to, and the
   result contract. Use `section` for targeted reads from large Markdown pages.
-- assess_comparison_quality(path) deterministically checks a TPC-H
-  `benchmarking.md` page for incomplete query coverage, non-comparable
-  whole-workload throughput, and suspicious repetitions. Call it before
-  recording a comparative TPC-H interpretation.
+- assess_comparison_quality(path) deterministically checks a `benchmarking.md`
+  page for incomplete query coverage, non-comparable whole-workload throughput,
+  suspicious repetitions, and checkable result claims. Its result
+  characterisation follows the factors named by the archived experiment rather
+  than the workload name: it describes ordered concurrency, CPU, and memory
+  sweeps and ranks categorical system comparisons wherever the summary table
+  exposes enough structure, once for every throughput and latency metric the
+  table carries.
 - record_interpretation(hypothesis_verdict, validity, comparison_quality,
-  questions, follow_up) records the scientific verdict separately from the
+  result_claims, questions, follow_up) records the scientific verdict separately from the
   mechanical validity checks, whether every explicit part of the user's
   question is settled, and the smallest useful follow-up when one is warranted.
 
@@ -161,6 +169,9 @@ Those are the only tools. You have no shell and no network.
 When you have read enough, call record_interpretation exactly once. Its
 `validity.failed_checks` must equal the report frontmatter. When that number is
 nonzero, `validity.scope` must explain which metrics or conclusions are affected.
+Copy `validity.affected_phases` and `validity.performance_metrics_affected`
+from the assessor's deterministic scope. A monitoring-only failure does not
+invalidate throughput or latency; state how many benchmark phases it touches.
 Every validity and question `evidence_paths` entry must be a path successfully
 opened with read_file in this context.
 
@@ -177,6 +188,24 @@ disclosed, not evidence you may silently discard. When coverage is partial,
 separate speed on the common successful queries from completion of the planned
 workload. Do not use whole-workload throughput to rank systems when the
 assessment marks it non-comparable.
+
+Record `result_claims` exactly as the assessor reports its checkable
+projection: one entry per factor, metric and fixed context it characterised.
+Report the conclusion only -- the shape and its turning level for an ordered
+sweep, the ranking for a system comparison. Do not copy the measurements; the
+harness files those with the record itself.
+
+Shapes describe the series, not whether it is good news. A latency metric that
+rises throughout is getting worse, and the assessor names each metric's
+`direction` so you can say which. A step smaller than the repetitions at that
+level can resolve counts as no movement, which is why a sweep whose spread
+swamps its differences is reported as saturating or non-monotone rather than
+as a trend: say so in prose instead of asserting the trend anyway.
+
+The harness rejects a changed shape, turning level or ranking and returns both
+the computed and the claimed conclusion. Treat factors the assessor lists as
+unsupported as free-prose limitations; do not invent a typed conclusion for
+evidence the report does not expose.
 
 Split the original request into all of its explicit questions. Set each
 question's evidence validity to `supported`, `limited`, or `invalid`. "Partial"
