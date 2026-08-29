@@ -52,6 +52,11 @@ _DEFAULT_ATTEMPTS = 3
 _BUNDLED_SERVER = "bundled"
 _SERVER_OWNERS = frozenset({_BUNDLED_SERVER, "external"})
 
+#: Runs Bexhoma's experiment manager (the ``bexperiments`` console script) with
+#: ``python -c`` rather than by locating the installed wrapper, whose name and
+#: directory differ between POSIX and Windows.
+_MANAGER_ENTRY = "from bexhoma.scripts.experimentsmanager import manage; manage()"
+
 
 class LifecycleError(RuntimeError):
     """Raised when an agent phase or benchmark cannot complete."""
@@ -78,9 +83,11 @@ class ModelServer:
     """Small adapter around the independently usable server switch.
 
     ``bundled`` says who owns the endpoint. The vLLM server in
-    :file:`dev/model_server.sh` is this wrapper's to start and stop; a hosted
-    API or an Ollama that is already running answers on its own, so switching
-    it does nothing and the phase chain is all that is left to do.
+    :file:`dev/model_server.sh`, or its PowerShell port
+    :file:`dev/model_server.ps1` on Windows, is this wrapper's to start and
+    stop; a hosted API or an Ollama that is already running answers on its
+    own, so switching it does nothing and the phase chain is all that is left
+    to do.
     """
 
     def __init__(
@@ -93,13 +100,30 @@ class ModelServer:
         self.bundled = bundled
         self._run_command = run_command
 
+    def _command(self, state: str) -> list[str]:
+        """Return the interpreter and switch-script call for this platform.
+
+        The switch ships as a POSIX shell script and a PowerShell port with
+        the same behaviour. A Windows workstation has no ``bash`` but always
+        has ``powershell``, so the interpreter follows the script's suffix
+        rather than being fixed.
+
+        :param state: ``up`` or ``down``.
+        :return: the argument vector for :func:`subprocess.run`.
+        :rtype: list[str]
+        """
+        if self.script.suffix == ".ps1":
+            return ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
+                    "-File", str(self.script), state]
+        return ["bash", str(self.script), state]
+
     def switch(self, state: str) -> None:
         """Bring the server ``up`` or ``down``, failing on operator errors."""
         if state not in {"up", "down"}:
             raise ValueError(f"unsupported model-server state: {state}")
         if not self.bundled:
             return
-        result = self._run_command(["bash", str(self.script), state], check=False)
+        result = self._run_command(self._command(state), check=False)
         if result.returncode:
             raise LifecycleError(
                 f"model-server command {state!r} failed with exit code {result.returncode}"
@@ -337,10 +361,9 @@ class AgentLifecycle:
 
     def _cleanup_failed_benchmark(self, code: str) -> None:
         """Remove live Kubernetes objects for one definitively failed run."""
-        manager = Path(sys.executable).with_name("bexperiments")
         print(f"benchmark {code} failed; removing its cluster resources", flush=True)
         result = subprocess.run(
-            [str(manager), "stop", "-e", code],
+            [sys.executable, "-c", _MANAGER_ENTRY, "stop", "-e", code],
             cwd=self.config.root,
             check=False,
         )
@@ -476,7 +499,11 @@ def _parser() -> argparse.ArgumentParser:
                              "declared in cluster.config")
     parser.add_argument("--trajectories", default="agent/trajectories")
     parser.add_argument("--status", default="status")
-    parser.add_argument("--server-script", default="dev/model_server.sh")
+    parser.add_argument(
+        "--server-script",
+        default="dev/model_server.ps1" if sys.platform == "win32"
+        else "dev/model_server.sh",
+    )
     parser.add_argument("--poll-seconds", type=float, default=30.0)
     parser.add_argument("--benchmark-timeout-seconds", type=float, default=0.0,
                         help="zero waits indefinitely")

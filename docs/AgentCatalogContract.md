@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.1.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.3.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   workloads:      {semantics: "what to run: params, loading behavior, physical-design semantics"}
@@ -67,7 +67,7 @@ experiment_schema:
     max_sut_experiment: {type: int, default: 1, semantics: "same, scoped to this experiment only (-mse);
                           independent of max_sut, both enforced together; 0 = no limit"}
     workload:   {type: object, fields: [name, params, rounds, repetitions]}
-    loading:    {type: object, fields: [pods, threads, split, post_load],
+    loading:    {type: object, fields: [pods, threads, post_load],
                  pitfall: "must be a TOP-LEVEL sibling of workload:, NOT nested under it -- a
                            workload.loading block silently resolves to {} instead of erroring"}
     systems:    {type: list, item_fields: [name, profile, override, post_load],
@@ -103,7 +103,6 @@ workloads:
     loading:
       pods:   {type: int, min: 1, support: "works for every DBMS"}
       threads: {type: int, min: 1, support: "only honored by some loaders (e.g. MySQL); prefer pods"}
-      split:  {type: int, default: 1}
       post_load:   # indexes/constraints/statistics are mutually independent -- all 8 combinations legal per system
         indexes:    {type: bool, default: false}
         constraints: {type: bool, default: false}

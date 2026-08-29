@@ -32,7 +32,7 @@ spec:
         - {name: DBMSBENCHMARKER_DEV, value: '0'}
         resources:
           requests: {cpu: 1000m, memory: 1Gi}
-          limits: {cpu: 16000m, memory: 128Gi}
+          limits: {cpu: 16000m, memory: 16Gi}
         securityContext:
           allowPrivilegeEscalation: false
           #runAsNonRoot: true

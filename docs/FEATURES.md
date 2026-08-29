@@ -34,7 +34,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Model adapter with single-model endpoint discovery for portable server naming | `agent/harness/model_client.py` | Done and regression-tested |
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
-| Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py`, `agent/trajectories/` | Done and regression-tested; incomplete designs remain timestamp-only |
+| Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py`, `agent/trajectories/` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
 | Phase completeness decided by work done, not by closing prose: a submitted (or dry-run-validated) design succeeds even when the model returns an empty final message, with a substituted plain-sentence report | `agent/harness/agent.py` | Done and regression-tested |
 | Model server manifest with idle GPU release | `agent/k8s/vllm-qwen38-27b.yml` | Done |
 | Durable Kubernetes lifecycle controller with in-cluster authentication and restart recovery | `agent/lifecycle_controller.py`, `agent/k8s/lifecycle-controller.yml`, `agent/Dockerfile.lifecycle` | Done and regression-tested; image publication and target-cluster values remain deployment steps |
@@ -60,6 +60,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Installable agent and TPC-H launcher package | `pyproject.toml` | Done and wheel-smoke-tested outside the checkout |
 | Maintained-suite test discovery | `pyproject.toml` | Done; plain `pytest` runs `tests/` |
 | Local server/benchmark lifecycle, retry, resume, signal-safe cleanup, namespace restoration, restart of a self-finished pod, and exact failed-experiment cleanup | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Local-only; unit- and cluster-checked |
+| Windows PowerShell port of the low-level model-server switch (`up`/`down`), behaviour-for-behaviour with the shell version, selected automatically by the lifecycle wrapper on Windows | `dev/model_server.ps1`, `dev/agent_lifecycle.py` | Local-only operator helper; parse-, usage-, and unit-checked |
 | Unattended phase chaining for endpoints we do not host, including hosted APIs and a local Ollama | `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
 | Secret-safe model credential handoff from the lifecycle wrapper to agent phases | `dev/agent_lifecycle.py`, `tests/test_agent_lifecycle.py` | Done and regression-tested; `.env` remains local and the key is absent from child command lines |
 | Collision-safe experiment-code allocation for parallel submissions | `agent/harness/tools.py`, `tests/test_agent_harness.py` | Done and regression-tested |
@@ -188,6 +189,70 @@ decode, the field is reported as null rather than guessed, since a wrong
 mapping is worse than an absent one. The resolution reuses the same pairing
 function validation uses, so what a design was told it would run and what the
 assessor says it did run cannot drift apart.
+### 2026-08-29 — Run the Bexhoma cleanup command through the interpreter, not the installed wrapper
+
+A local lifecycle run on Windows reached a benchmark that Bexhoma marked failed
+and tried to remove its cluster resources, but crashed with
+`FileNotFoundError: [WinError 2]` before running anything. The wrapper located
+the `bexperiments` command by taking the running interpreter's path and
+swapping the final component for `bexperiments`. That is where `pip` puts the
+console script on Linux, but on Windows console scripts go into a `Scripts\`
+subdirectory and carry a `.exe` suffix, so the path the wrapper built named a
+file that does not exist.
+
+The cleanup call now runs the same code the console script runs — Bexhoma's
+`manage()` entry point — through `python -c`, using the interpreter already
+running the wrapper. This is the pattern the harness uses everywhere else it
+starts a child (`sys.executable` with `-m` or `-c`), needs nothing on `PATH`,
+and does not depend on where or under what name `pip` placed the wrapper. The
+one test that pinned the old path now pins the new command line.
+
+### 2026-08-29 — Do not fail a design phase on a denied directory rename
+
+A design run on Windows submitted its experiment successfully — the detached
+Bexhoma child started and the experiment code was assigned — but the phase then
+crashed with `PermissionError: [WinError 5]` while renaming its own trajectory
+directory to add the scale factor and model name to it.
+
+The rename is denied because the detached Bexhoma child inherits the handle to
+the `bexhoma.log` file that lives inside that directory and keeps it open for
+the whole benchmark, and Windows refuses to rename a directory that another
+process has a handle into. POSIX allows the move, which is why this never
+surfaced before. The directory label is cosmetic, and a timestamp-only
+directory is already a documented, resumable state, so the rename is now
+best-effort: a failed rename records an `investigation_label_skipped` event and
+the phase carries on and exits successfully with the timestamp-only directory,
+exactly as it already did when the target name was already taken. On Windows a
+completed design therefore keeps its timestamp-only name; on POSIX nothing
+changes. A unit test drives the denied-rename path.
+
+### 2026-08-29 — Provide a PowerShell version of the model-server switch
+
+Asked for a PowerShell version of `dev/model_server.sh`, the shell helper that
+brings the self-hosted vLLM model server up or down. The shell script depends on
+tools that are not present on a Windows workstation — `setsid`, `nohup`,
+`pkill`, and a POSIX shell — so running it under Git Bash there fails partway
+through rather than cleanly.
+
+`dev/model_server.ps1` is a behaviour-for-behaviour port. It keeps the same two
+verbs, the same environment-variable overrides (`MODEL_SERVER_CONTEXT`,
+`MODEL_SERVER_NAMESPACE`, `MODEL_SERVER_PORT`, and the rest), the same login
+refresh before every operation, the same replace-if-stale rule for a pod left in
+a finished or older generation, and the same wait loop that does not return
+until the endpoint answers a `/models` request. The three POSIX-only pieces are
+replaced with native equivalents: the detached port-forward is started with
+`Start-Process` writing to a log file under `%TEMP%`, the port-forward is torn
+down by matching `kubectl` command lines through `Win32_Process` instead of
+`pkill`, and the health check uses `Invoke-WebRequest` instead of `curl`.
+
+Running `dev/agent_lifecycle.py` on Windows with `AGENT_MODEL_SERVER=bundled`
+then failed anyway, because the wrapper always started the switch with `bash`,
+which a Windows workstation does not have. The wrapper now chooses the switch
+script by platform — the PowerShell port on Windows, the shell script
+elsewhere — and picks the interpreter from the script's suffix, so a `.ps1`
+switch runs through `powershell` and a `.sh` switch through `bash`. The
+in-cluster lifecycle controller is on Linux and is unaffected. A unit test
+covers the PowerShell path; the existing shell-path test is unchanged.
 
 ### 2026-08-28 — Do not fail a design phase that submitted an experiment
 
@@ -2403,3 +2468,28 @@ a 64k window Ollama places 38% of it in system memory. Generation falls from
 near the full window, while prompt processing stays fast at roughly 1300 tokens
 per second. The 4B fits the card entirely at the same 64k window and generates
 at about 100 tokens per second, which is why it is worth having listed.
+
+### 2026-08-30 — Remove the loader-split knob that deadlocked synchronized loading
+
+A design run on 2026-08-29 asked for two parallel loader pods and set the
+catalog's `loading.split` field to two. That field drove the `-xnls` flag,
+which the TPC-H entry script divides the total loader-pod count by to decide
+how many pods run at once, so any value above one makes the Kubernetes loading
+job run its pods in sequential waves. The same entry script always turns on
+synchronized loading, where every loader pod waits at a barrier until all of
+them have checked in. Sequential waves plus an all-pods barrier cannot both be
+satisfied: the first wave blocks on the barrier, Kubernetes never schedules the
+later waves, and the run sits idle until the loading timeout tears it down. The
+downstream evaluation and result-upload steps then failed on the empty result
+folder and crashed the run, which the lifecycle wrapper reported only as
+"process exited before producing the report".
+
+Because synchronized loading can only ever use a split of one, the field could
+not express anything valid. It was removed from both places it appeared in the
+catalog contract, and the catalog-to-command translator no longer emits the
+`-xnls` flag. The contract version moved from 1.2.0 to 1.3.0, with
+`bexhoma.spec.CATALOG_CONTRACT_VERSION` kept in step. An experiment
+specification that still carries `loading.split` is now rejected as an unknown
+field. This is a catalog-surface removal only: the entry script's own `-xnls`
+argument and the separate self-specified-YAML path that also reads `split` are
+left as they were.

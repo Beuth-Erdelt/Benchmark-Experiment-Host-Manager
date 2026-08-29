@@ -246,7 +246,6 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
 
     _append_flag(argv, "-nlp", loading.get("pods"))
     _append_flag(argv, "-nlt", loading.get("threads"))
-    _append_flag(argv, "-xnls", loading.get("split"))
     _append_flag(argv, "--loading-timeout", loading.get("timeout_minutes"))
     if post_load.get("indexes"):
         argv.append("-xii")

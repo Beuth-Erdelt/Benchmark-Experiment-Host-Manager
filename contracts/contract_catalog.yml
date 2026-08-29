@@ -9,7 +9,7 @@
 #   when:         the condition under which a rule/field actually applies
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
 
-catalog_contract_version: "1.2.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.3.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -203,7 +203,6 @@ experiment_schema:
           support varies by DBMS loader (e.g. MySQL honors it, others ignore
           it) -- see workloads.tpch.loading.threads.support below; prefer
           pods to scale load at the current state"}
-        split: {type: int, default: 1, semantics: "number of parallel loader batches"}
         timeout_minutes:
           type: int
           min: 1
@@ -325,7 +324,7 @@ workloads:
       benchmarker:
         replicas:
           per_concurrent_stream: 1
-        per_pod_limit: {cpu: 16, memory: 128Gi}  # Local BeXhoma/cluster template values; keep them in sync.
+        per_pod_limit: {cpu: 16, memory: 16Gi}  # Local BeXhoma/cluster template values; keep them in sync.
         semantics: "one benchmarker pod per concurrent stream in the active
           round; when placement.benchmarking is set, all are pinned there"
         why: "the current BeXhoma benchmarker template fixes these limits
@@ -402,10 +401,6 @@ workloads:
         support: "only honored by some DBMS loaders (e.g. MySQL); ignored by
           others. Prefer pods over threads at the current state -- use
           threads=1 and scale via pods instead"
-      split:
-        type: int
-        default: 1
-        why: "number of parallel loader batches"
       post_load:
         # legality menu (option names + legal values) for tpch; support vs.
         # selection are documented in catalog_concepts.physical_design and

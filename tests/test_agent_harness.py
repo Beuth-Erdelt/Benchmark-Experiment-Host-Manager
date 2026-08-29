@@ -2541,6 +2541,63 @@ class PhaseTest(unittest.TestCase):
                 )
             )
 
+    def test_a_denied_directory_rename_does_not_fail_the_design_phase(self) -> None:
+        """On Windows the running Bexhoma child locks the directory; skip the label."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "contracts").mkdir()
+            (root / "contracts" / "contract_catalog.yml").write_text("version: 1\n")
+            results = root / "results"
+            results.mkdir()
+
+            def design_phase(**kwargs):
+                trajectory = kwargs["trajectory"]
+                submitted = kwargs["workspace"].run_directory / "submitted-experiment.yml"
+                submitted.write_text(_SPEC)
+                trajectory.record(
+                    "meta", phase="design", model="claude-sonnet-4-6",
+                    budgets={"followups": 1},
+                )
+                trajectory.record("task", text="question")
+                outcome = {
+                    "summary": "design account", "code": "42",
+                    "submitted_spec": str(submitted), "followups_remaining": 1,
+                }
+                trajectory.record("outcome", **outcome)
+                return outcome
+
+            argv = [
+                "agent", "--model", "claude-sonnet-4-6",
+                "--root", str(root), "--trajectories", "investigations",
+                "--results", str(results), "--environment", "", "--method", "",
+                "--status", "durable-status", "--task", "question",
+            ]
+            with (
+                mock.patch("sys.argv", argv),
+                mock.patch(
+                    "agent.harness.agent.model_client.ChatModel"
+                ) as model_class,
+                mock.patch(
+                    "agent.harness.agent.run_design", side_effect=design_phase
+                ),
+                mock.patch.object(
+                    Path, "rename",
+                    side_effect=PermissionError("[WinError 5] Zugriff verweigert"),
+                ),
+            ):
+                model_class.return_value.model = "claude-sonnet-4-6"
+                self.assertEqual(agent_main(), 0)
+
+            investigation = next((root / "investigations").iterdir())
+            self.assertNotIn("-sf", investigation.name)
+            events = [
+                json.loads(line)
+                for line in (investigation / "trajectory.jsonl").read_text().splitlines()
+            ]
+            self.assertTrue(
+                any(event["type"] == "investigation_label_skipped" for event in events)
+            )
+
     def test_a_submitted_design_without_a_summary_still_succeeds(self) -> None:
         """An empty closing message is not a phase failure once an experiment ran."""
         with tempfile.TemporaryDirectory() as directory:

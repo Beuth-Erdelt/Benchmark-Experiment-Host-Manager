@@ -1598,7 +1598,20 @@ def _label_design_investigation(
         )
         return run_directory
     previous_directory = run_directory
-    run_directory.rename(labelled_directory)
+    try:
+        run_directory.rename(labelled_directory)
+    except OSError as error:
+        # Windows refuses to rename a directory while the detached Bexhoma
+        # child still holds its inherited bexhoma.log open inside it; POSIX
+        # lets the move through. The label is cosmetic and a timestamp-only
+        # directory is a documented, resumable state, so a design phase that
+        # already submitted its experiment must not fail here.
+        trajectory.record(
+            "investigation_label_skipped",
+            reason=f"could not rename investigation directory: {error}",
+            target=str(labelled_directory),
+        )
+        return run_directory
     code = outcome.get("code")
     status_file = status_directory / f"{code}.json" if code else None
     if status_file is not None and status_file.is_file():

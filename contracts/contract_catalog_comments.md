@@ -181,6 +181,32 @@ Still `tpch`-only: `bexhoma.experiments.tpch_loader` (the *self-specified*
 YAML path, `workload: ycsb` as a bare string), which is unrelated to the
 catalog path.
 
+## `loading.split` removed from the catalog surface (2026-08-30)
+
+The `loading.split` field was removed from both `experiment_schema` and
+`workloads.tpch.loading` (`catalog_contract_version` 1.2.0 -> 1.3.0,
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep), and
+`bexhoma/experiments/tpch_catalog.py::build_tpch_argv()` no longer emits the
+`-xnls` flag it drove.
+
+Rationale: `split` set `-xnls`, which `tpch.py` divides the total loader-pod
+count by to decide how many pods run at once (`PODS_PARALLEL = pods //
+split`). Any value above 1 therefore makes the Kubernetes loading job run its
+pods in sequential waves. But `tpch.py` also hard-codes `BEXHOMA_SYNCH_LOAD=1`
+and `BEXHOMA_SYNCH_GENERATE=1`, and the synchronized loader barrier waits for
+*every* loader pod to check in before any of them proceeds. Sequential waves
+plus an all-pods barrier is a deadlock: the first wave blocks on the barrier,
+the later waves are never scheduled, and the run sits until
+`loading.timeout_minutes` expires and tears everything down. A design run hit
+exactly this on 2026-08-29 (`pods: 2, split: 2`).
+
+Since synchronized loading can only ever use `split: 1`, the field could not
+express anything valid and is gone from the contract. A spec that still
+carries `loading.split` is now rejected by `validate_experiment()` as an
+unknown field. This is a catalog-surface removal only: `tpch.py`'s `-xnls`
+argument and `bexhoma/experiments/tpch_builder.py`'s `split` handling (the
+separate self-specified-YAML path) are unchanged.
+
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
 `experiments/tpch/PgDuckDB/` exists on disk but is unused: `tpch.py` points

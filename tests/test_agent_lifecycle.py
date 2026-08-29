@@ -612,6 +612,22 @@ probe_activity() {{
         self.assertEqual(
             commands, [["bash", str(self.config.server_script), "up"]])
 
+    def test_a_powershell_switch_script_is_run_through_powershell(self) -> None:
+        """A Windows workstation has no bash, so a .ps1 switch uses powershell."""
+        commands: list[list[str]] = []
+
+        def record(command: list[str], check: bool) -> subprocess.CompletedProcess:
+            commands.append(command)
+            return subprocess.CompletedProcess(command, 0)
+
+        script = self.root / "model_server.ps1"
+        ModelServer(script, run_command=record).switch("down")
+
+        self.assertEqual(
+            commands,
+            [["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
+              "-File", str(script), "down"]])
+
     def test_followup_repeats_the_off_wait_on_cycle(self) -> None:
         design = _trajectory(
             self.trajectories / "1", "design", code="101", summary="submitted")
@@ -690,7 +706,8 @@ probe_activity() {{
             lifecycle._cleanup_failed_benchmark("101")
 
         run.assert_called_once_with(
-            [str(Path(sys.executable).with_name("bexperiments")), "stop", "-e", "101"],
+            [sys.executable, "-c", lifecycle_module._MANAGER_ENTRY,
+             "stop", "-e", "101"],
             cwd=self.root,
             check=False,
         )
