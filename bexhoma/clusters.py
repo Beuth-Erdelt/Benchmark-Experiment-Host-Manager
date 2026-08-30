@@ -1512,10 +1512,12 @@ class Kubernetes():
         """
         fullcommand = 'get pods ' + pod + ' -o jsonpath="{.spec.containers[*].name}"'
         output = self.kubectl(fullcommand)
-        containers = output.split(" ")
+        # kubectl() returns None when the Pod is already gone (e.g. diagnostics
+        # captured after the Job was deleted); treat that as "no containers".
+        containers = output.split(" ") if output else []
         fullcommand = 'get pods ' + pod + ' -o jsonpath="{.spec.initContainers[*].name}"'
         output = self.kubectl(fullcommand)
-        init_containers = output.split(" ")
+        init_containers = output.split(" ") if output else []
         self.logger.debug(f"Pod {pod} has container {containers + init_containers}")
         return containers + init_containers
 
