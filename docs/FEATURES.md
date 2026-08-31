@@ -2493,3 +2493,25 @@ specification that still carries `loading.split` is now rejected as an unknown
 field. This is a catalog-surface removal only: the entry script's own `-xnls`
 argument and the separate self-specified-YAML path that also reads `split` are
 left as they were.
+
+### 2026-08-31 — Give every TPC-H `why` a motivating second sentence
+
+Asked that each `why` field in the TPC-H workload block of the catalog contract
+carry two sentences: the first stating neutrally what the parameter does, as
+before, and a second that motivates why an experiment would use it, in the way
+constraints guarantee integrity or indexes speed up lookups at the expense of
+writes.
+
+Every `why` under `workloads.tpch` was rewritten to that shape — the workload
+description, the resource and component notes, the out-of-scope note, all ten
+`params` entries, both loading knobs, the three post-load switches, the round
+and repetition counts, and the three produced-output descriptions. The one
+field that already read this way, the resource profile rationale, was left
+unchanged. Nothing but the prose in these fields moved: no field name, type,
+default, legal value, or neighbouring `when`/`out_of_scope` text changed, and no
+code reads these strings.
+
+The contract version moved from 1.3.0 to 1.4.0 with
+`bexhoma.spec.CATALOG_CONTRACT_VERSION` kept in step, as the version-match test
+requires, and the mirrored version string in `docs/AgentCatalogContract.md` was
+updated to match.

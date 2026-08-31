@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.3.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.4.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   workloads:      {semantics: "what to run: params, loading behavior, physical-design semantics"}

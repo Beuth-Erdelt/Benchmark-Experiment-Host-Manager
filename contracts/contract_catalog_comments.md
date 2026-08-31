@@ -207,6 +207,25 @@ unknown field. This is a catalog-surface removal only: `tpch.py`'s `-xnls`
 argument and `bexhoma/experiments/tpch_builder.py`'s `split` handling (the
 separate self-specified-YAML path) are unchanged.
 
+## Two-sentence `why:` fields in the TPC-H block (2026-08-31)
+
+Every `why:` field under `workloads.tpch` was rewritten to a fixed two-part
+shape: a first sentence that neutrally states what the field or value does,
+then a second sentence that motivates when an experiment author would actually
+set it — the trade-off it buys, the rival explanation it rules out, or the cost
+it adds. For example, `post_load.constraints` now says both that it adds the
+primary- and foreign-key constraints after loading and that you enable it when
+the hypothesis depends on referential integrity or on the planner exploiting
+guaranteed key uniqueness. Only descriptive prose in `why:` fields changed; no
+field name, type, default, legal value, or `when:`/`out_of_scope:` text was
+touched, and no code path reads these strings. `resource_profile.why` already
+had this structure and was left as written.
+
+The version moved 1.3.0 -> 1.4.0 with `spec.CATALOG_CONTRACT_VERSION` kept in
+lockstep (required by `tests/test_naming_conformance.py`), even though the
+contract shape did not change, so that any agent or cache keyed on the version
+string re-reads the block.
+
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
 `experiments/tpch/PgDuckDB/` exists on disk but is unused: `tpch.py` points

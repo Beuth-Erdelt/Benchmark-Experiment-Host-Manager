@@ -9,7 +9,7 @@
 #   when:         the condition under which a rule/field actually applies
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
 
-catalog_contract_version: "1.3.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.4.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -309,7 +309,11 @@ experiment_schema:
 
 workloads:
   tpch:
-    why: "star-schema OLAP: 22 queries, multi-way joins, official TPC-H"
+    why: "the official TPC-H decision-support benchmark: 22 fixed analytical SQL
+      queries with multi-way joins and large aggregations over a star schema.
+      Choose it when the question is about analytical query performance -- scans,
+      joins, grouping and ordering over the whole dataset -- rather than
+      transactional throughput"
     resource_profile:
       cpu: high
       memory: high
@@ -327,11 +331,17 @@ workloads:
         per_pod_limit: {cpu: 16, memory: 16Gi}  # Local BeXhoma/cluster template values; keep them in sync.
         semantics: "one benchmarker pod per concurrent stream in the active
           round; when placement.benchmarking is set, all are pinned there"
-        why: "the current BeXhoma benchmarker template fixes these limits
-          independently of resources.cpu/memory, which configure only the SUT"
+        why: "every benchmarker pod gets a fixed CPU and memory limit of 16
+          cores and 16Gi, independent of resources.cpu/memory, which size only
+          the SUT. These numbers come from the shipped BeXhoma benchmarker
+          template, so peak-resource validation for a pinned benchmarking node
+          must count them rather than the SUT limits"
     out_of_scope:
       systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB]
-      why: "the full tpch workload also supports these; trimmed to prototype scope for this contract"
+      why: "the full tpch workload also supports these systems. They are trimmed
+        out here to keep this contract focused on the PostgreSQL/PgDuckDB pair
+        chosen for the prototype, so an experiment.yml naming any of them fails
+        resolution rather than silently running an unvalidated path"
     modes: [profiling, run, start, load, empty, summary]
 
     params:
@@ -339,65 +349,100 @@ workloads:
         type: int
         unit: GB
         min: 1
-        why: "TPC-H scale factor, controls database size"
+        why: "TPC-H scale factor: the raw data volume in GB, so scaling_factor 100
+          builds roughly a 100 GB dataset. Raise it to push the working set past
+          the memory limit when the hypothesis is about behaviour under memory
+          pressure, and keep it small for quick smoke tests"
       timeout:
         type: int
         unit: seconds
         default: 600
         min: 1
-        why: "per-query timeout; it also bounds the worst-case cost of every
-          sequential benchmark phase, so raise it only when the additional
+        why: "per-query timeout in seconds: a query still running at the limit is
+          cancelled and counted as an error. It also bounds the worst-case cost
+          of every sequential benchmark phase, so raise it only when the extra
           runtime can resolve a named uncertainty"
       query_repeats:
         type: int
         default: 1
         min: 1
-        why: "repeat each query N times per round; also useful for
-          statistical verification (more samples per query) and to prolong
-          a short-running round so monitoring metrics have time to warm up"
+        why: "execute each query N times within a round instead of once. Raise it
+          to get more samples per query for statistical confidence, and to
+          stretch a short round long enough that monitoring metrics have time to
+          warm up"
       measure_datatransfer:
         type: bool
         default: false
-        why: "additionally record bytes transferred per query"
+        why: "additionally record the number of bytes transferred from the SUT to
+          the benchmarker for each query. Turn it on when a latency difference
+          might be explained by result-set size or network cost rather than
+          query execution, since it is off by default to avoid the extra
+          measurement overhead"
       active_queries:
         type: list[int]
         default: all
         min: 1
         max: 22
-        why: "restrict to a query subset, e.g. [5, 7, 8, 9, 21] = multi-way joins;
-          TPC-H defines exactly 22 queries, so every entry must be in 1..22"
+        why: "restrict the run to a subset of the 22 queries, e.g. [5, 7, 8, 9, 21]
+          for the multi-way-join group; every entry must be in 1..22. Use it to
+          focus on the queries that exercise the mechanism under test and to cut
+          runtime when the other queries add nothing to the comparison"
       recreate_parameter:
         type: bool
         default: false
-        why: "regenerate random query parameters for each stream"
+        why: "regenerate the random per-query parameter values (date ranges,
+          region names, and so on) independently for each concurrent stream.
+          Enable it so parallel streams do not all run the identical query text
+          and share a cache, which would understate the true cost of a
+          concurrent workload"
       shuffle_queries:
         type: bool
         default: false
-        why: "shuffle query execution order independently per stream"
+        why: "shuffle the order in which the queries run, independently for each
+          stream. Enable it when you want to average out ordering effects such as
+          cache warm-up and one query priming another, rather than measuring the
+          fixed default sequence"
       refresh_streams:
         type: int
         default: 0
-        why: "number of RF1/RF2 refresh-stream pairs run parallel to query streams"
+        why: "number of RF1/RF2 refresh-function stream pairs (bulk insert then
+          bulk delete) run in parallel with the read-only query streams. Raise it
+          above 0 when the hypothesis is about behaviour under a concurrent
+          write load -- lock contention, vacuum pressure, plan stability -- and
+          leave it at 0 for a pure read benchmark"
       refresh_stream_offset:
         type: int
         default: 0
-        why: "starting OFFSET+1 for the refresh stream"
+        why: "the starting offset into the pre-generated refresh data set; the
+          first pair uses OFFSET+1. Set it so a follow-up run consumes fresh
+          refresh data instead of replaying the same inserts and deletes a
+          previous run already applied"
       store_explain:
         type: bool
         default: false
-        why: "run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol"
+        why: "run the configured EXPLAIN statement after the first execution of
+          each benchmark query and store the plan in the result protocol. Turn it
+          on when a latency difference needs a mechanism -- a different join
+          order, a missing index, a switch to a sequential scan -- to be
+          explained rather than just reported"
         when: "requires an 'explain' key in the DBMS connection's JDBC config"
 
     loading:
       pods:
         type: int
         min: 1
-        why: "number of parallel loader pods"
+        why: "number of loader pods that generate and ingest the data in
+          parallel, each handling a slice of the tables. Raise it to shorten
+          loading for a large scaling_factor, since this is the loader knob that
+          works for every DBMS"
         support: "works for every DBMS"
       threads:
         type: int
         min: 1
-        why: "loader threads, split across pods"
+        why: "number of loader threads within each pod, splitting that pod's
+          slice further. Leave it at 1 and scale with pods instead: only some
+          DBMS loaders (e.g. MySQL) honour this value and the others silently
+          ignore it, so it cannot be relied on to speed up loading here"
         support: "only honored by some DBMS loaders (e.g. MySQL); ignored by
           others. Prefer pods over threads at the current state -- use
           threads=1 and scale via pods instead"
@@ -411,15 +456,26 @@ workloads:
         indexes:
           type: bool
           default: false
-          why: "create indexes on all tables after loading; without this, plans fall back to sequential scans"
+          why: "create the indexes on all tables after loading; without them the
+            planner falls back to sequential scans. Enable it for a realistic
+            read workload, but expect it to slow the refresh streams, since every
+            insert and delete must also maintain the indexes"
         constraints:
           type: bool
           default: false
-          why: "add primary-key/foreign-key constraints after loading; deferred because per-row checks slow bulk COPY"
+          why: "add the primary-key and foreign-key constraints after loading;
+            this is deferred to a post-load step because enforcing them per row
+            slows the bulk COPY. Enable it when the hypothesis depends on
+            referential integrity being enforced, or when you want the planner to
+            exploit guaranteed key uniqueness in its join estimates"
         statistics:
           type: bool
           default: false
-          why: "run ANALYZE after loading; without it the planner has no cardinality estimates for round 1"
+          why: "run ANALYZE after loading so the planner has table and column
+            statistics. Without it the first round runs against a cold optimizer
+            with no cardinality estimates and can pick badly skewed join orders,
+            so enable it whenever the measurement should reflect steady-state
+            plans rather than that cold start"
         storage_format:
           type: enum
           values: [heap]
@@ -428,7 +484,10 @@ workloads:
 
     rounds:
       type: list[int]
-      why: "comma-separated parallel-client sweep; one benchmarking round per entry"
+      why: "a parallel-client sweep: each entry is a concurrent-stream count and
+        becomes one benchmarking round. Use several entries to measure how
+        throughput and latency scale with concurrency; use a single entry when
+        the hypothesis fixes the client count and only the system differs"
       rule_of_thumb: "official TPC-H sizes the number of concurrent query
         streams as floor(log(scaling_factor, 3)) + 2 -- e.g. SF=100 -> 6,
         SF=1000 -> 8; use as a starting point for the max entry in rounds,
@@ -436,7 +495,10 @@ workloads:
     repetitions:
       type: int
       default: 1
-      why: "how many times the whole round list repeats"
+      why: "how many times the whole round list is executed end to end. Repeat it
+        so run-to-run variance can be separated from a real difference between
+        systems; a single pass gives no way to tell noise from signal (see the
+        when: note below)"
       minimum_for_conclusions: 3
       when: "the default of 1 is for smoke tests only. A single repetition gives
         no way to tell a real difference between systems from run-to-run
@@ -450,16 +512,22 @@ workloads:
         metric: latency
         unit: ms
         why: "mean execution latency per query (DbmsBenchmarkerEvaluator.get_query_latencies()),
-          one row per entry in active_queries — the finest-grained breakdown available"
+          one row per entry in active_queries — the finest-grained breakdown available.
+          Read it to attribute a difference in the summary metrics to specific
+          queries rather than the workload as a whole"
       summary:
         metrics: [Power@Size, Throughput@Size, Geo Times]
         unit: [Q/h, Q/h, s]
-        why: "geo-mean-derived per-phase metrics (get_summary_benchmark_per_phase());
-          this is what a system/round/repetition comparison is actually made on"
+        why: "geometric-mean-derived per-phase metrics (get_summary_benchmark_per_phase()):
+          TPC-H's Power@Size, Throughput@Size and geometric-mean times. This is
+          the level a system, round or repetition comparison is actually made on,
+          so it is the first output to read for a verdict"
       quality:
         metric: sql_errors_warnings
-        why: "per-query error/warning counts (get_total_errors()/get_total_warnings()),
-          recorded as pass/fail tests, not a performance metric"
+        why: "per-query error and warning counts (get_total_errors()/get_total_warnings()),
+          recorded as pass/fail tests rather than a performance metric. Check it
+          before trusting any latency comparison, since a run that was fast
+          because queries errored out is not a valid result"
       out_of_scope:
         time_series: "DBMSBenchmarker reports per-query and per-phase
           aggregates only -- no running per-second signal like YCSB/Benchbase produce"
