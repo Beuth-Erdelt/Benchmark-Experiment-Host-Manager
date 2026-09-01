@@ -334,7 +334,7 @@ def main() -> int:
         "--root", str(root),
         "--model", _required_environment("AGENT_MODEL"),
         "--base-url", os.environ.get(
-            "AGENT_BASE_URL", "http://vllm-qwen38-service/v1"
+            "AGENT_BASE_URL", "http://bexhoma-agent-model/v1"
         ),
         "--results", str(results),
         "--trajectories", str(trajectories),
@@ -357,7 +357,7 @@ def main() -> int:
         command.extend(["--task", task])
 
     os.environ.setdefault(
-        "MODEL_SERVER_BASE_URL", "http://vllm-qwen38-service/v1"
+        "MODEL_SERVER_BASE_URL", "http://bexhoma-agent-model/v1"
     )
     os.execv(sys.executable, command)
     return 0

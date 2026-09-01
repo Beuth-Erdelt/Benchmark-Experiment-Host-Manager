@@ -36,8 +36,8 @@ follow up on a benchmark. The full current description and visual flow live in
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py`, `agent/trajectories/` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
 | Phase completeness decided by work done, not by closing prose: a submitted (or dry-run-validated) design succeeds even when the model returns an empty final message, with a substituted plain-sentence report | `agent/harness/agent.py` | Done and regression-tested |
-| Finish reason and per-turn generation budget recorded on every assistant turn, and a turn truncated at the token ceiling with nothing to show re-prompted for a decisive step instead of ending the phase | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
-| Model server manifest with idle GPU release | `agent/k8s/vllm-qwen38-27b.yml` | Done |
+| Finish reason and per-turn generation budget recorded on every assistant turn, and a reasoning-only turn (no tool call, no answer, work not done) re-prompted for a concrete step instead of ending the phase, up to three consecutive nudges | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
+| Model server manifest with idle GPU release, its objects named `bexhoma-agent-model*` and labelled `app: bexhoma, component: agent, role: model-server` per the BeXhoma convention | `agent/k8s/vllm-qwen38-27b.yml` | Done |
 | Durable Kubernetes lifecycle controller with in-cluster authentication and restart recovery | `agent/lifecycle_controller.py`, `agent/k8s/lifecycle-controller.yml`, `agent/Dockerfile.lifecycle` | Done and regression-tested; image publication and target-cluster values remain deployment steps |
 | Sequential isolation of agent-submitted SUT configurations | `agent/harness/submit.py`, `contracts/contract_catalog.yml` | Done and regression-tested through BeXhoma's public one-SUT option |
 | Result-contract disclosure of unverified loading and of the warnings check's real scope | `contracts/contract_result.yml`, `docs/AgentResultContract.md` | Done |
@@ -167,28 +167,54 @@ claiming at the same instant cannot both succeed. This is what makes the
 
 ## Part 2 — Request log
 
-### 2026-09-01 — Recover a turn cut off while the model was still thinking
+### 2026-09-01 — Name and label the agent's Kubernetes objects the BeXhoma way
+
+The user asked which Kubernetes objects the agent deploys, and then to make them
+follow the same convention BeXhoma uses for its own objects: the labels
+`app: bexhoma` and `component: agent`, and names beginning with `bexhoma-`. The
+autonomous in-cluster controller manifest was explicitly left out of scope for
+now because nothing runs it today; the change covers only the bundled model
+server, which is deployed in both the local and the in-cluster modes.
+
+The three objects in the model-server manifest were renamed — the Pod and the
+Service to `bexhoma-agent-model`, the weights volume to
+`bexhoma-agent-model-weights` — and all three now carry
+`app: bexhoma, component: agent, role: model-server`. The extra `role` label is
+there because once the Pod's own `app` label became `bexhoma` it no longer told
+the Service which pod to route to, and a future in-cluster controller pod would
+share the `app` and `component` pair; `role: model-server` in the Service
+selector keeps the match unambiguous, the same way BeXhoma's own manifests add
+`configuration` and `experiment` labels on top of `app` and `component`. The new
+Service name is a DNS name, so the operator switch scripts, the `.env` example,
+and the two controller default URLs were updated to match.
+
+### 2026-09-01 — Recover a turn the model spends entirely on reasoning
 
 A design phase for a pg_duckdb-versus-PostgreSQL join question ran out of turns
 having submitted nothing, and the user asked whether a timeout was to blame and
-whether more could be logged. It was not a timeout. The model's second turn was
-truncated at the token ceiling while it was still inside its hidden reasoning
-channel: it came back with no tool call, no visible text, and a reasoning trace
-that stopped mid-sentence. The conversation loop treats any turn with no tool
-calls as the model's closing answer, so a single truncated think-only turn ended
-the whole phase before any specification was written. The eight minutes between
-turns was just generation time for forty thousand reasoning tokens, well under
-the ten-minute client timeout.
+whether more could be logged. It was not a timeout. The model's second turn came
+back with no tool call, no visible text, and a hidden reasoning trace of about
+forty thousand tokens that stopped mid-sentence without ever closing the
+thinking block. The conversation loop treats any turn with no tool calls as the
+model's closing answer, so that one empty turn ended the whole phase before any
+specification was written. The eight minutes between turns was just generation
+time for those tokens, well under the ten-minute client timeout.
 
-Two things now make this visible and recoverable. The model adapter records the
-server's finish reason and the token budget the turn was actually given — the
-budget is the served context window minus the conversation size, not the
-configured ceiling, which is why raising `--max-tokens` would not have helped
-here. And the conversation loop now recognises a turn that ended for length with
-nothing to show: instead of accepting the empty turn as an answer, it tells the
-model its last turn was cut off and asks it to be decisive, then spends another
-turn. The per-phase turn ceiling still bounds the loop, so a model that truncates
-every turn still terminates rather than looping forever.
+The model adapter now records the server's finish reason and the token budget
+each turn was actually given — the budget is the served context window minus the
+conversation size, not the configured ceiling, which is why raising
+`--max-tokens` would not have helped. That logging showed what a first fix had
+assumed wrong: the server did not cut the turn off for length, it reported a
+normal stop. The model itself ended the turn still mid-thought, at exactly the
+same token count on every deterministic re-run. So the recovery does not depend
+on the finish reason. The loop now treats any turn that produced only reasoning
+— no tool call, no answer, with the phase's real work not yet done — as a stall
+rather than an answer: it tells the model to stop deliberating and take a
+concrete step, and spends another turn. Because each such turn is expensive, a
+model that ignores three of these nudges in a row is then left to end the phase
+rather than nudged around the whole turn budget. This is a mitigation, not a
+cure: a model that loops on its own deliberation for a given prompt needs a
+server- or model-side thinking limit to design that experiment well.
 
 ### 2026-08-29 — Name the hardware each configuration ran on
 
@@ -403,7 +429,7 @@ Asked how the short vLLM block in `.env` knows it belongs to the `lliu` account,
 whether another person using it would fail, and then to make the namespace fail
 loudly when it is unset, portably.
 
-The endpoint in `.env` carries no identity at all. `http://vllm-qwen38-service/v1`
+The endpoint in `.env` carries no identity at all. `http://bexhoma-agent-model/v1`
 is an unqualified Kubernetes service name, and Kubernetes resolves such a name
 against the namespace of whatever pod is looking it up, so the same three lines
 mean a different server depending on where the caller runs. The account entered

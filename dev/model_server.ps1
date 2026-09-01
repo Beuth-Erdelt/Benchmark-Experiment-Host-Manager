@@ -30,8 +30,8 @@ $ErrorActionPreference = 'Stop'
 
 $defaultManifest = (Resolve-Path (Join-Path $PSScriptRoot '..\agent\k8s\vllm-qwen38-27b.yml')).Path
 $MANIFEST        = if ($env:MODEL_SERVER_MANIFEST) { $env:MODEL_SERVER_MANIFEST } else { $defaultManifest }
-$POD            = if ($env:MODEL_SERVER_POD)      { $env:MODEL_SERVER_POD }      else { 'vllm-qwen38-server' }
-$SVC            = if ($env:MODEL_SERVER_SERVICE)  { $env:MODEL_SERVER_SERVICE }  else { 'vllm-qwen38-service' }
+$POD            = if ($env:MODEL_SERVER_POD)      { $env:MODEL_SERVER_POD }      else { 'bexhoma-agent-model' }
+$SVC            = if ($env:MODEL_SERVER_SERVICE)  { $env:MODEL_SERVER_SERVICE }  else { 'bexhoma-agent-model' }
 $PORT          = if ($env:MODEL_SERVER_PORT)     { $env:MODEL_SERVER_PORT }     else { '8001' }
 $BASE_URL      = if ($env:MODEL_SERVER_BASE_URL) { $env:MODEL_SERVER_BASE_URL } else { "http://localhost:$PORT/v1" }
 $LOGIN         = if ($env:KUBE_LOGIN_SCRIPT)     { $env:KUBE_LOGIN_SCRIPT }     else { Join-Path $HOME 'git/BIRD-Interact/scripts/kube-login.sh' }

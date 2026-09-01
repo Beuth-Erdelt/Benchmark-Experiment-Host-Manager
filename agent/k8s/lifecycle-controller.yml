@@ -114,9 +114,9 @@ spec:
             - name: AGENT_MODEL
               value: qwen3.8-27b
             - name: AGENT_BASE_URL
-              value: http://vllm-qwen38-service/v1
+              value: http://bexhoma-agent-model/v1
             - name: MODEL_SERVER_BASE_URL
-              value: http://vllm-qwen38-service/v1
+              value: http://bexhoma-agent-model/v1
             # Who owns the endpoint: bundled starts and stops the vLLM pod
             # around every phase, external leaves a hosted API alone.
             - name: AGENT_MODEL_SERVER

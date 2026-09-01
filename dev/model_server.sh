@@ -18,8 +18,8 @@
 set -euo pipefail
 
 MANIFEST="${MODEL_SERVER_MANIFEST:-$(cd "$(dirname "$0")/.." && pwd)/agent/k8s/vllm-qwen38-27b.yml}"
-POD="${MODEL_SERVER_POD:-vllm-qwen38-server}"
-SVC="${MODEL_SERVER_SERVICE:-vllm-qwen38-service}"
+POD="${MODEL_SERVER_POD:-bexhoma-agent-model}"
+SVC="${MODEL_SERVER_SERVICE:-bexhoma-agent-model}"
 PORT="${MODEL_SERVER_PORT:-8001}"
 BASE_URL="${MODEL_SERVER_BASE_URL:-http://localhost:$PORT/v1}"
 LOGIN="${KUBE_LOGIN_SCRIPT:-$HOME/git/BIRD-Interact/scripts/kube-login.sh}"

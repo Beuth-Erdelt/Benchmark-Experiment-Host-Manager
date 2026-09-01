@@ -20,7 +20,7 @@
 # into MODEL_SERVER_NAMESPACE, so this manifest is not tied to one account.
 #
 # Reach it from a laptop with:
-#   kubectl -n "$MODEL_SERVER_NAMESPACE" port-forward svc/vllm-qwen38-service 8000:80
+#   kubectl -n "$MODEL_SERVER_NAMESPACE" port-forward svc/bexhoma-agent-model 8000:80
 #
 # Authors: Leonhard Liu
 # Copyright (C) 2026 Patrick K. Erdelt
@@ -29,7 +29,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: qwen38-27b-model-pvc
+  name: bexhoma-agent-model-weights
+  labels: {app: bexhoma, component: agent, role: model-server}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -43,10 +44,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vllm-qwen38-service
+  name: bexhoma-agent-model
+  labels: {app: bexhoma, component: agent, role: model-server}
 spec:
   selector:
-    app: vllm-qwen38-server
+    app: bexhoma
+    component: agent
+    role: model-server
   ports:
     - protocol: TCP
       port: 80
@@ -55,12 +59,11 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: vllm-qwen38-server
+  name: bexhoma-agent-model
   annotations:
     # The switch replaces older immutable Pod specifications before apply.
     bexhoma.local/model-server-generation: idle-watchdog-v2
-  labels:
-    app: vllm-qwen38-server
+  labels: {app: bexhoma, component: agent, role: model-server}
 spec:
   containers:
     - name: vllm-container
@@ -301,4 +304,4 @@ spec:
         sizeLimit: 16Gi
     - name: model-storage
       persistentVolumeClaim:
-        claimName: qwen38-27b-model-pvc
+        claimName: bexhoma-agent-model-weights

@@ -422,9 +422,10 @@ workloads:
         default: false
         why: "run the configured EXPLAIN statement after the first execution of
           each benchmark query and store the plan in the result protocol. Turn it
-          on when a latency difference needs a mechanism -- a different join
-          order, a missing index, a switch to a sequential scan -- to be
-          explained rather than just reported"
+          on when a latency difference needs to be traced to the concrete
+          execution plan -- a join order, a missing index, a sequential scan --
+          rather than guessed from the timing alone"
+        support: "only PostgreSQL and PgDuckDB on the systems axis"
         when: "requires an 'explain' key in the DBMS connection's JDBC config"
 
     loading:
