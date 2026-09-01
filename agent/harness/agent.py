@@ -80,21 +80,21 @@ _EXHAUSTED_WITH_PASS_NOTICE = (
     "designed. Do not edit it further -- there is no attempt left to re-check it."
 )
 
-#: Server finish reason for a turn cut off at the token ceiling rather than
-#: ended on the model's own terms.
-_TRUNCATED_FINISH_REASON = "length"
-
-#: Given to a model whose turn hit the token ceiling before it produced a tool
-#: call or an answer: the turn was spent entirely on thinking and came back
-#: empty. Without this the empty turn would be read as the model's closing
-#: answer and end the phase on a truncation.
-_TRUNCATED_TURN_NOTICE = (
-    "Your previous turn was cut off at the token limit before you produced a "
-    "tool call or an answer -- it was spent entirely on internal reasoning. "
-    "Think less and act: take the next concrete step now, either a single tool "
-    "call or your closing answer, and keep your reasoning short enough to leave "
-    "room for it."
+#: Given to a model whose turn produced only internal reasoning: no tool call
+#: and no visible answer, whether the server cut the turn off for length or the
+#: model ended it on its own mid-thought. Without this the empty turn would be
+#: read as the model's closing answer and end the phase with nothing done.
+_STALLED_TURN_NOTICE = (
+    "Your previous turn produced only internal reasoning -- no tool call and no "
+    "answer. Stop deliberating and act now: make a single tool call, or write "
+    "your closing answer, on this turn. If a design decision is still open, pick "
+    "the reasonable default and move on rather than weighing it further."
 )
+
+#: Consecutive reasoning-only turns tolerated before the phase is left to end.
+#: One nudge is usually enough; a model that ignores several in a row is stuck,
+#: and each of its turns is expensive, so the loop stops paying for them.
+_MAX_CONSECUTIVE_STALLS = 3
 
 def _timestamp() -> str:
     """Return the current UTC time in ISO 8601 form.
@@ -381,6 +381,7 @@ def _converse(
     summary = ""
     events: list[tuple[str, dict[str, Any], dict[str, Any]]] = []
     turn = 0
+    stalls = 0
 
     while turn < max_turns:
         turn += 1
@@ -409,25 +410,33 @@ def _converse(
                           generation_budget=reply.generation_budget, **stage_field)
         messages.append(reply.message)
 
-        # A turn cut off at the token ceiling is not the model's answer: it ran
-        # out of room mid-thought, with no tool call and no closing prose.
-        # Reading that empty turn as the closing answer would end the phase on a
-        # truncation, so instead the model is told what happened and spends
-        # another turn. The turn ceiling still bounds the loop.
-        if (reply.finish_reason == _TRUNCATED_FINISH_REASON and not reply.tool_calls
-                and not finished and turn < max_turns):
+        # A turn that produced only reasoning -- no tool call, no visible answer
+        # -- is not the model's closing answer. It happens when a reasoning
+        # model loops on its own deliberation until the server cuts the turn off
+        # for length, or until the model ends the turn itself still mid-thought.
+        # Reading that empty turn as the answer would end the phase with nothing
+        # done, so instead the model is told what happened and given another
+        # turn. A model that does this several times in a row is stuck and each
+        # of its turns is costly, so after a few nudges the loop stops and lets
+        # the phase end.
+        stalled = (not reply.tool_calls and not reply.text.strip()
+                   and reply.reasoning.strip() and not finished)
+        if stalled and turn < max_turns and stalls < _MAX_CONSECUTIVE_STALLS:
+            stalls += 1
             # A replayed assistant turn with neither content nor tool calls is
-            # rejected by some servers; a truncated think-only turn has both
-            # missing, so give it an empty string to keep the exchange valid.
+            # rejected by some servers; a reasoning-only turn has both missing,
+            # so give it an empty string to keep the exchange valid.
             messages[-1].setdefault("content", "")
-            messages.append({"role": "user", "content": _TRUNCATED_TURN_NOTICE})
-            _progress("turn cut off at the token limit while thinking; asking it "
-                      "to be decisive", stage, turn)
-            trajectory.record("turn_truncated", turn=turn,
+            messages.append({"role": "user", "content": _STALLED_TURN_NOTICE})
+            _progress("turn produced only reasoning; asking it to act "
+                      f"(nudge {stalls} of {_MAX_CONSECUTIVE_STALLS})", stage, turn)
+            trajectory.record("turn_stalled", turn=turn, consecutive=stalls,
+                              finish_reason=reply.finish_reason,
                               generation_budget=reply.generation_budget,
                               completion_tokens=reply.usage.get("completion_tokens"),
                               **stage_field)
             continue
+        stalls = 0
 
         if not reply.tool_calls:
             if require_done and done_when is not None and not finished:

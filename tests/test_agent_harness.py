@@ -142,12 +142,16 @@ def _text_reply(text: str) -> Reply:
     return Reply(text, "", [], {"role": "assistant", "content": text}, {})
 
 
-def _truncated_reply() -> Reply:
-    """Return a turn cut off at the token ceiling: thinking only, no answer."""
+def _reasoning_only_reply(finish_reason: str = "stop") -> Reply:
+    """Return a turn that produced only reasoning: no tool call, no answer.
+
+    :param finish_reason: ``length`` when the server cut the turn off, ``stop``
+        when the model ended it itself still mid-thought.
+    """
     return Reply(
         "", "reasoning that never reached a conclusion", [],
         {"role": "assistant"}, {"completion_tokens": 4096},
-        finish_reason="length",
+        finish_reason=finish_reason,
     )
 
 
@@ -1858,15 +1862,16 @@ resources:
         self.assertTrue(outcome["phase_complete"])
         self.assertIsNotNone(outcome["code"])
 
-    def test_a_turn_cut_off_while_thinking_does_not_end_the_phase(self) -> None:
-        """A think-only turn truncated at the token ceiling is not an answer.
+    def test_a_reasoning_only_turn_does_not_end_the_phase(self) -> None:
+        """A turn with only reasoning -- no tool call, no answer -- is not an answer.
 
         The old loop read that empty turn as the closing answer and stopped,
         losing a phase that had done no work. Now the model is told what
-        happened and spends another turn.
+        happened and spends another turn. This holds whether the server cut the
+        turn off (``length``) or the model ended it itself mid-thought (``stop``).
         """
         model = _Model([
-            _truncated_reply(),
+            _reasoning_only_reply("stop"),
             _tool_reply(
                 ToolCall("catalog", "read_file",
                          {"path": "contracts/contract_catalog.yml"}),
@@ -1896,9 +1901,31 @@ resources:
             json.loads(line)
             for line in (self.run / "trajectory.jsonl").read_text().splitlines()
         ]
-        truncated = [event for event in events if event["type"] == "turn_truncated"]
-        self.assertEqual(len(truncated), 1)
-        self.assertEqual(truncated[0]["completion_tokens"], 4096)
+        stalled = [event for event in events if event["type"] == "turn_stalled"]
+        self.assertEqual(len(stalled), 1)
+        self.assertEqual(stalled[0]["consecutive"], 1)
+        self.assertEqual(stalled[0]["finish_reason"], "stop")
+        self.assertEqual(stalled[0]["completion_tokens"], 4096)
+
+    def test_a_model_that_only_ever_reasons_is_not_nudged_forever(self) -> None:
+        """Each stalled turn is costly; a model ignoring the nudges is let go."""
+        model = _Model([_reasoning_only_reply("stop")] * 20)
+
+        outcome = run_design(
+            task="question", workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run),
+            catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None, attempts=1,
+        )
+
+        self.assertIsNone(outcome["code"])
+        self.assertFalse(outcome["phase_complete"])
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        stalled = [event for event in events if event["type"] == "turn_stalled"]
+        self.assertEqual([event["consecutive"] for event in stalled], [1, 2, 3])
 
     def test_phase_account_does_not_cite_a_superseded_refusal(self) -> None:
         """An earlier failed attempt is not why a later, passing design stopped."""
