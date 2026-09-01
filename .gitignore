@@ -40,3 +40,4 @@ dev/catalog/refresh_environment.py
 .env
 /env
 paper/
+agent/trajectories/*

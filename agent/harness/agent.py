@@ -43,7 +43,11 @@ _DEFAULT_ENVIRONMENT = os.path.join("dev", "catalog", "environment.yml")
 #: The experiment design handbook: what makes a design sound, beside what the catalog
 #: makes legal and what the result contract makes claimable.
 _DEFAULT_METHOD = "agent/experiment_design_handbook.md"
-_DEFAULT_TRAJECTORIES = os.path.join("agent", "trajectories")
+#: Subdirectory of Bexhoma's result folder that holds investigation
+#: trajectories when ``--trajectories`` is not given. Keeping them beside the
+#: benchmark results, rather than inside this checkout, means a working tree
+#: carries no run artifacts of its own.
+_TRAJECTORY_SUBDIR = "agent"
 _DEFAULT_BASE_URL = "http://localhost:8000/v1"
 _AGENT_SUMMARY_NAME = "agent_summary.yml"
 _AGENT_SUMMARY_VERSION = "1.0.0"
@@ -1561,7 +1565,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("-R", "--results", default=os.environ.get("AGENT_RESULTS"),
                         help="bexhoma's result folder; defaults to the resultfolder "
                              "declared in cluster.config")
-    parser.add_argument("-d", "--trajectories", default=_DEFAULT_TRAJECTORIES)
+    parser.add_argument("-d", "--trajectories", default=None,
+                        help="directory holding investigation trajectories; "
+                             "defaults to the 'agent' subdirectory of the "
+                             "result folder declared in cluster.config")
     parser.add_argument("--status", default="status")
     parser.add_argument("-a", "--attempts", type=int, default=_DEFAULT_ATTEMPTS)
     parser.add_argument("-f", "--followups", type=int, default=_DEFAULT_FOLLOWUPS)
@@ -1822,7 +1829,10 @@ def main() -> int:
               "(cp k8s-cluster.config cluster.config), or pass --results / set "
               "AGENT_RESULTS", file=sys.stderr)
         return 2
-    trajectories = root / args.trajectories
+    trajectories = (
+        root / args.trajectories if args.trajectories
+        else results / _TRAJECTORY_SUBDIR
+    )
     source: Path | None = None
     if args.phase == "design":
         run_directory = trajectories / datetime.now().strftime("%Y%m%dT%H%M%S%f")

@@ -400,6 +400,9 @@ process boundaries.
 - The result root is read from Bexhoma's own `cluster.config`, so agent and
   benchmark cannot disagree about it; a checkout without that file is told to
   create one rather than defaulted to a path belonging to this cluster.
+  Investigation trajectories are written under that root's `agent/`
+  subdirectory unless `--trajectories` overrides it, so a checkout holds no run
+  artifacts of its own.
 - The harness deliberately does not perform cross-experiment synthesis or
   cross-run validity checks. `follow_up_of` preserves lineage, while each
   interpretation remains scoped to one result.

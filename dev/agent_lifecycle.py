@@ -36,6 +36,14 @@ from collections.abc import Callable, Sequence
 
 from dotenv import load_dotenv
 
+# This runs as a script (``python dev/agent_lifecycle.py``), so the repository
+# root is not already importable. Add it for the one trajectory-location helper
+# below, which the wrapper shares with the agent CLI so both agree on where an
+# investigation lands without a second setting.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from agent.harness.tools import default_result_root
+
 
 #: How often the wait for a benchmark says that it is still waiting. A run takes
 #: hours, and polling silently is indistinguishable from having died.
@@ -46,6 +54,11 @@ _REASON_CHARS = 400
 
 #: Validation calls passed to each design and follow-up authoring phase.
 _DEFAULT_ATTEMPTS = 3
+
+#: Subdirectory of Bexhoma's result folder that holds investigation
+#: trajectories when ``--trajectories`` is not given, matching the agent CLI's
+#: own default.
+_TRAJECTORY_SUBDIR = "agent"
 
 #: The only two answers to who owns the model endpoint. ``bundled`` is started
 #: and stopped by this wrapper; ``external`` is already running.
@@ -497,7 +510,10 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--results", default=os.environ.get("AGENT_RESULTS"),
                         help="bexhoma's result folder; defaults to the resultfolder "
                              "declared in cluster.config")
-    parser.add_argument("--trajectories", default="agent/trajectories")
+    parser.add_argument("--trajectories", default=None,
+                        help="directory holding investigation trajectories; "
+                             "defaults to the 'agent' subdirectory of the "
+                             "result folder declared in cluster.config")
     parser.add_argument("--status", default="status")
     parser.add_argument(
         "--server-script",
@@ -560,10 +576,22 @@ def main() -> int:
               "handbook.", file=sys.stderr)
         return 2
 
+    results = Path(args.results).resolve() if args.results else None
+    if args.trajectories:
+        trajectories = _path_from_root(root, args.trajectories)
+    else:
+        result_root = results or default_result_root(root)
+        if result_root is None:
+            print("error: no result folder. Bexhoma reads one from cluster.config "
+                  "(cp k8s-cluster.config cluster.config), or pass --results, set "
+                  "AGENT_RESULTS, or pass --trajectories", file=sys.stderr)
+            return 2
+        trajectories = result_root / _TRAJECTORY_SUBDIR
+
     config = LifecycleConfig(
         root=root,
-        trajectories=_path_from_root(root, args.trajectories),
-        results=Path(args.results).resolve() if args.results else None,
+        trajectories=trajectories,
+        results=results,
         status=_path_from_root(root, args.status),
         server_script=_path_from_root(root, args.server_script),
         poll_seconds=args.poll_seconds,

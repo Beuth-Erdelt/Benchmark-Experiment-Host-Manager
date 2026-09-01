@@ -31,7 +31,7 @@ cp .env.example .env
 .venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>" --followups 1
 
 # 6. continue an investigation whose benchmark was already submitted
-.venv/bin/python dev/agent_lifecycle.py --resume agent/trajectories/<run-id>
+.venv/bin/python dev/agent_lifecycle.py --resume <result-folder>/agent/<run-id>
 ```
 
 The run prints the investigation directory it writes to and, at the end, the
@@ -224,7 +224,7 @@ experiment without resubmitting it:
 ```sh
 AGENT_MODEL=qwen3.8-27b \
 .venv/bin/python dev/agent_lifecycle.py \
-  --resume agent/trajectories/<run-id>
+  --resume <result-folder>/agent/<run-id>
 ```
 
 `dev/agent_lifecycle.py` and `dev/model_server.sh` remain usable as local
@@ -338,7 +338,7 @@ the same investigation:
 ```sh
 .venv/bin/python -m agent.harness.agent \
   --phase interpret \
-  --run agent/trajectories/<investigation-id> \
+  --run <result-folder>/agent/<investigation-id> \
   --model "<served model>" \
   --base-url "<OpenAI-compatible endpoint>" \
   --followups 1
@@ -399,9 +399,14 @@ whether performance metrics remain usable.
 
 ## Outputs
 
-The design invocation first creates a timestamp-only working directory. After
-the design produces a valid experiment, the harness renames it to
-`agent/trajectories/<timestamp>-sf<scale>-<model>/`, with characters that are
+Investigations are written under the `agent/` subdirectory of the result folder
+`cluster.config` declares, beside the benchmark results themselves, so a
+checkout keeps no run artifacts of its own. Override the location with
+`--trajectories`.
+
+The design invocation first creates a timestamp-only working directory there.
+After the design produces a valid experiment, the harness renames it to
+`<result-folder>/agent/<timestamp>-sf<scale>-<model>/`, with characters that are
 unsafe in a directory name replaced by hyphens. For example,
 `20260827T111847490995-sf2-qwen3.8-27b` identifies the experiment scale and the
 served model without opening the trajectory. An incomplete design remains

@@ -34,7 +34,8 @@ follow up on a benchmark. The full current description and visual flow live in
 | Model adapter with single-model endpoint discovery for portable server naming | `agent/harness/model_client.py` | Done and regression-tested |
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
-| Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py`, `agent/trajectories/` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
+| Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
+| Investigation trajectories written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories` as an override | `agent/harness/agent.py`, `dev/agent_lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume |
 | Phase completeness decided by work done, not by closing prose: a submitted (or dry-run-validated) design succeeds even when the model returns an empty final message, with a substituted plain-sentence report | `agent/harness/agent.py` | Done and regression-tested |
 | Finish reason and per-turn generation budget recorded on every assistant turn, and a reasoning-only turn (no tool call, no answer, work not done) re-prompted for a concrete step instead of ending the phase, up to three consecutive nudges | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Model server manifest with idle GPU release, its objects named `bexhoma-agent-model*` and labelled `app: bexhoma, component: agent, role: model-server` per the BeXhoma convention | `agent/k8s/vllm-qwen38-27b.yml` | Done |
@@ -166,6 +167,28 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-01 — Store agent trajectories in the result folder, not the checkout
+
+The user did not want investigation trajectories written inside the working tree
+at `agent/trajectories/`, where every run was being committed. They asked for
+them to live instead under the result folder that `cluster.config` declares —
+the same folder Bexhoma writes its benchmark results into — in an `agent/`
+subdirectory there.
+
+Both local entry points changed. The agent CLI's `--trajectories` flag now
+defaults to unset; when it is unset the harness writes trajectories to the
+`agent/` subdirectory of the resolved result root, which is guaranteed to exist
+by the time that path is needed because a run without a result folder already
+stops earlier. The operator wrapper `dev/agent_lifecycle.py` resolves the same
+default so it can still watch the directory for the run it launches; because it
+runs as a script rather than a module, it adds the repository root to the import
+path to share the one result-folder helper with the harness rather than parsing
+`cluster.config` a second time. The autonomous in-cluster controller was left
+alone: it already stores each investigation on its own persistent volume and
+never writes into the checkout. The 309 trajectory files previously committed
+under `agent/trajectories/` were untracked (the path is now gitignored) but left
+on disk.
 
 ### 2026-09-01 — Name and label the agent's Kubernetes objects the BeXhoma way
 
