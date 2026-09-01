@@ -142,6 +142,15 @@ def _text_reply(text: str) -> Reply:
     return Reply(text, "", [], {"role": "assistant", "content": text}, {})
 
 
+def _truncated_reply() -> Reply:
+    """Return a turn cut off at the token ceiling: thinking only, no answer."""
+    return Reply(
+        "", "reasoning that never reached a conclusion", [],
+        {"role": "assistant"}, {"completion_tokens": 4096},
+        finish_reason="length",
+    )
+
+
 def _interpretation_text() -> str:
     """Return one result-contract-shaped answer for scripted model tests."""
     return """\
@@ -1849,6 +1858,48 @@ resources:
         self.assertTrue(outcome["phase_complete"])
         self.assertIsNotNone(outcome["code"])
 
+    def test_a_turn_cut_off_while_thinking_does_not_end_the_phase(self) -> None:
+        """A think-only turn truncated at the token ceiling is not an answer.
+
+        The old loop read that empty turn as the closing answer and stopped,
+        losing a phase that had done no work. Now the model is told what
+        happened and spends another turn.
+        """
+        model = _Model([
+            _truncated_reply(),
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _tool_reply(ToolCall("submit", "submit", {"path": self.path})),
+            _text_reply("Submitted the comparison."),
+        ])
+
+        (self.root / "results" / "999").mkdir(parents=True)
+        with (
+            mock.patch.object(
+                tools_module.subprocess, "Popen", return_value=_Process()),
+            mock.patch.object(Workspace, "_new_code", return_value="999"),
+        ):
+            outcome = run_design(
+                task="question", workspace=self.workspace, model=model,
+                trajectory=Trajectory(self.run),
+                catalog_path="contracts/contract_catalog.yml",
+                catalog_sha256="0" * 64, environment_path=None, attempts=1,
+            )
+
+        self.assertEqual(outcome["summary"], "Submitted the comparison.")
+        self.assertIsNotNone(outcome["code"])
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        truncated = [event for event in events if event["type"] == "turn_truncated"]
+        self.assertEqual(len(truncated), 1)
+        self.assertEqual(truncated[0]["completion_tokens"], 4096)
+
     def test_phase_account_does_not_cite_a_superseded_refusal(self) -> None:
         """An earlier failed attempt is not why a later, passing design stopped."""
         log = self.run / "trajectory.jsonl"
@@ -3106,7 +3157,8 @@ class ChatModelTest(unittest.TestCase):
         }
         reported = mock.Mock()
         reported.model_dump.return_value = usage or {"completion_tokens": 12}
-        response = mock.Mock(choices=[mock.Mock(message=message)], usage=reported)
+        choice = mock.Mock(message=message, finish_reason="stop")
+        response = mock.Mock(choices=[choice], usage=reported)
         model = ChatModel.__new__(ChatModel)
         model.model = "fake"
         model.base_url = "http://fake/v1"
@@ -3217,6 +3269,29 @@ class ChatModelTest(unittest.TestCase):
         self.assertNotIn("reasoning", reply.message)
         request = model._client.chat.completions.create.call_args.kwargs
         self.assertNotIn("extra_body", request)
+
+    def test_the_turn_reports_its_finish_reason_and_generation_budget(self) -> None:
+        """Both are needed to tell a truncated turn from a completed one."""
+        model = self._model(max_tokens=256)
+        model._client.chat.completions.create.return_value.choices[0].finish_reason = (
+            "length"
+        )
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.finish_reason, "length")
+        self.assertEqual(reply.generation_budget, 256)
+
+    def test_a_finish_reason_the_server_omits_is_reported_as_unknown(self) -> None:
+        """A non-string field (absent, or a test double) must not leak through."""
+        model = self._model()
+        model._client.chat.completions.create.return_value.choices[0].finish_reason = (
+            mock.Mock()
+        )
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.finish_reason, "")
 
     def test_a_turn_reserves_only_what_the_context_window_leaves(self) -> None:
         """Asking for a fixed ceiling on a full conversation is what overflows."""

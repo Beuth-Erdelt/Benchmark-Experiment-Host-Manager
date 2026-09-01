@@ -80,6 +80,22 @@ _EXHAUSTED_WITH_PASS_NOTICE = (
     "designed. Do not edit it further -- there is no attempt left to re-check it."
 )
 
+#: Server finish reason for a turn cut off at the token ceiling rather than
+#: ended on the model's own terms.
+_TRUNCATED_FINISH_REASON = "length"
+
+#: Given to a model whose turn hit the token ceiling before it produced a tool
+#: call or an answer: the turn was spent entirely on thinking and came back
+#: empty. Without this the empty turn would be read as the model's closing
+#: answer and end the phase on a truncation.
+_TRUNCATED_TURN_NOTICE = (
+    "Your previous turn was cut off at the token limit before you produced a "
+    "tool call or an answer -- it was spent entirely on internal reasoning. "
+    "Think less and act: take the next concrete step now, either a single tool "
+    "call or your closing answer, and keep your reasoning short enough to leave "
+    "room for it."
+)
+
 def _timestamp() -> str:
     """Return the current UTC time in ISO 8601 form.
 
@@ -389,8 +405,29 @@ def _converse(
         trajectory.record("assistant", turn=turn, text=reply.text,
                           reasoning=reply.reasoning,
                           tool_calls=[asdict(call) for call in reply.tool_calls],
-                          usage=reply.usage, **stage_field)
+                          usage=reply.usage, finish_reason=reply.finish_reason,
+                          generation_budget=reply.generation_budget, **stage_field)
         messages.append(reply.message)
+
+        # A turn cut off at the token ceiling is not the model's answer: it ran
+        # out of room mid-thought, with no tool call and no closing prose.
+        # Reading that empty turn as the closing answer would end the phase on a
+        # truncation, so instead the model is told what happened and spends
+        # another turn. The turn ceiling still bounds the loop.
+        if (reply.finish_reason == _TRUNCATED_FINISH_REASON and not reply.tool_calls
+                and not finished and turn < max_turns):
+            # A replayed assistant turn with neither content nor tool calls is
+            # rejected by some servers; a truncated think-only turn has both
+            # missing, so give it an empty string to keep the exchange valid.
+            messages[-1].setdefault("content", "")
+            messages.append({"role": "user", "content": _TRUNCATED_TURN_NOTICE})
+            _progress("turn cut off at the token limit while thinking; asking it "
+                      "to be decisive", stage, turn)
+            trajectory.record("turn_truncated", turn=turn,
+                              generation_budget=reply.generation_budget,
+                              completion_tokens=reply.usage.get("completion_tokens"),
+                              **stage_field)
+            continue
 
         if not reply.tool_calls:
             if require_done and done_when is not None and not finished:

@@ -36,6 +36,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py`, `agent/trajectories/` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
 | Phase completeness decided by work done, not by closing prose: a submitted (or dry-run-validated) design succeeds even when the model returns an empty final message, with a substituted plain-sentence report | `agent/harness/agent.py` | Done and regression-tested |
+| Finish reason and per-turn generation budget recorded on every assistant turn, and a turn truncated at the token ceiling with nothing to show re-prompted for a decisive step instead of ending the phase | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Model server manifest with idle GPU release | `agent/k8s/vllm-qwen38-27b.yml` | Done |
 | Durable Kubernetes lifecycle controller with in-cluster authentication and restart recovery | `agent/lifecycle_controller.py`, `agent/k8s/lifecycle-controller.yml`, `agent/Dockerfile.lifecycle` | Done and regression-tested; image publication and target-cluster values remain deployment steps |
 | Sequential isolation of agent-submitted SUT configurations | `agent/harness/submit.py`, `contracts/contract_catalog.yml` | Done and regression-tested through BeXhoma's public one-SUT option |
@@ -165,6 +166,29 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-01 — Recover a turn cut off while the model was still thinking
+
+A design phase for a pg_duckdb-versus-PostgreSQL join question ran out of turns
+having submitted nothing, and the user asked whether a timeout was to blame and
+whether more could be logged. It was not a timeout. The model's second turn was
+truncated at the token ceiling while it was still inside its hidden reasoning
+channel: it came back with no tool call, no visible text, and a reasoning trace
+that stopped mid-sentence. The conversation loop treats any turn with no tool
+calls as the model's closing answer, so a single truncated think-only turn ended
+the whole phase before any specification was written. The eight minutes between
+turns was just generation time for forty thousand reasoning tokens, well under
+the ten-minute client timeout.
+
+Two things now make this visible and recoverable. The model adapter records the
+server's finish reason and the token budget the turn was actually given — the
+budget is the served context window minus the conversation size, not the
+configured ceiling, which is why raising `--max-tokens` would not have helped
+here. And the conversation loop now recognises a turn that ended for length with
+nothing to show: instead of accepting the empty turn as an answer, it tells the
+model its last turn was cut off and asks it to be decisive, then spends another
+turn. The per-phase turn ceiling still bounds the loop, so a model that truncates
+every turn still terminates rather than looping forever.
 
 ### 2026-08-29 — Name the hardware each configuration ran on
 

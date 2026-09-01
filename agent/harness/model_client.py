@@ -109,12 +109,20 @@ class Reply:
     :ivar message: The assistant message as the server returned it, appended
         to the conversation so the next request replays this turn.
     :ivar usage: Token counts reported by the server.
+    :ivar finish_reason: Why the server stopped generating -- ``stop`` for a
+        completed turn, ``length`` when the turn was cut off at the token
+        ceiling, ``tool_calls`` when it ended on a tool call. Empty when the
+        server did not report one.
+    :ivar generation_budget: Tokens this turn was allowed to generate, after
+        the served context window narrowed the configured ceiling.
     """
     text: str
     reasoning: str
     tool_calls: list[ToolCall]
     message: dict[str, Any]
     usage: dict[str, int]
+    finish_reason: str = ""
+    generation_budget: int = 0
 
 
 class ChatModel:
@@ -290,11 +298,12 @@ class ChatModel:
         :raises ContextWindowExhausted: When the conversation leaves no room to
             answer, so the server would refuse the request.
         """
+        budget = self._generation_budget(messages)
         request: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "temperature": self.temperature,
-            "max_tokens": self._generation_budget(messages),
+            "max_tokens": budget,
         }
         if tools:
             request["tools"] = tools
@@ -304,8 +313,14 @@ class ChatModel:
             raise ModelUnreachable(
                 f"no answer from {self.base_url}: {error}"
             ) from error
-        message = response.choices[0].message
+        choice = response.choices[0]
+        message = choice.message
         replayed = message.model_dump(exclude_none=True)
+        # Only a string finish reason is meaningful; anything else (a server that
+        # omits the field, a test double) is reported as unknown.
+        finish_reason = getattr(choice, "finish_reason", None)
+        if not isinstance(finish_reason, str):
+            finish_reason = ""
         # A reasoning model returns its thinking in a separate field. Qwen's own
         # guidance is not to feed previous thinking back in, and some servers
         # reject the field on input, so it is logged but not replayed.
@@ -325,6 +340,8 @@ class ChatModel:
             tool_calls=[_parse_tool_call(call) for call in (message.tool_calls or [])],
             message=replayed,
             usage=usage,
+            finish_reason=finish_reason,
+            generation_budget=budget,
         )
 
 
