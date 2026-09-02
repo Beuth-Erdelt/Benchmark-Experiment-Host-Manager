@@ -175,6 +175,32 @@ claiming at the same instant cannot both succeed. This is what makes the
 
 ## Part 2 — Request log
 
+### 2026-09-02 — Remove the finish-biased framing from the follow-up decision
+
+The user observed that the interpretation phase never actually proposes a
+follow-up experiment, so the default single-follow-up budget is spent every run
+on nothing. The cause was in the phase prompts, not the handbook. The design
+prompt told the agent that with no follow-ups "this is your only shot and it
+should be decisive rather than exploratory", which primed it to treat the first
+experiment as final even when a budget existed. The interpretation prompt then
+allowed a follow-up "only when an important question is partial or unresolved
+and one safe, concrete experiment can materially discriminate the alternatives"
+while telling it to choose `finish` "when the result is settled" — an asymmetric
+pair that, combined with the phase's own encouragement to mark questions
+settled, almost always resolved to `finish`. The interpretation prompt was also
+never told how many follow-ups remained.
+
+The request was to make the framing neutral rather than to push toward
+follow-ups: let the model decide on the merits of the result. The design prompt
+now states the follow-up budget as a plain fact, with the "decisive rather than
+exploratory" wording kept only for the zero-budget case where it is simply
+true. The interpretation prompt now receives the remaining follow-up count and
+weighs `followup` against `finish` as two options with neither as the default,
+describing each by what it is for rather than gating one behind a stricter test
+than the other. The structured validation of the recorded decision, the
+`follow_up_of` lineage rules, and the separate authoring context are all
+unchanged. No contract or BeXhoma code changed.
+
 ### 2026-09-02 — Recover a turn a hidden-window server refuses for length
 
 The user reported that an interpretation phase still crashed with an uncaught

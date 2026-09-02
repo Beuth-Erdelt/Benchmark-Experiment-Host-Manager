@@ -1469,7 +1469,7 @@ def run_interpret(
     """
     messages = prompts.interpret_messages(
         task=task, report_path=report_path, result_contract_path=result_contract_path,
-        specification=specification, method_path=method_path)
+        specification=specification, method_path=method_path, followups=followups)
     trajectory.record("meta", phase="interpret", model=model.model,
                       harness=_harness_revision(),
                       params={"temperature": model.temperature, "max_tokens": model.max_tokens},

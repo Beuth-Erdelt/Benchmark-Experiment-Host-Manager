@@ -112,9 +112,7 @@ question like yours to the chapters worth reading.
 You may call validate at most {attempts} times. Each rejection reports the first
 problem found; fix that and validate again.
 
-After this experiment has run you will be able to propose at most {followups}
-follow-up experiment(s). Design accordingly: with none, this is your only shot
-and it should be decisive rather than exploratory.
+{followups_note}
 
 # Stopping
 
@@ -232,13 +230,16 @@ a practical recommendation does not make an unresolved causal question settled.
 For every partial or unresolved question, state what evidence is missing. A
 settled question must have an empty `missing` field and supported evidence.
 
-Choose `follow_up.action=followup` only when an important question is partial or
-unresolved and one safe, concrete experiment can materially discriminate the
-alternatives. Prefer the smallest controlled intervention. Put a focused query
-subset in `target_queries`; otherwise set `full_workload_required=true` and
-explain why the full workload is necessary. Choose `finish` when the result is
-settled or the result contract exposes no evidential route forward. For finish,
-leave the experiment fields empty, use an empty query list, and set
+{followup_budget}Weigh `follow_up.action=followup` against `finish` on the merits
+of this result; neither choice is the default. Choose `followup` when one safe,
+concrete experiment would materially improve the answer to the user's question --
+for instance by discriminating between explanations this result leaves open, or
+by settling a part of the question it left partial or unresolved. Choose `finish`
+when the result already answers the question, or when the result contract exposes
+no evidential route forward. Prefer the smallest controlled intervention. Put a
+focused query subset in `target_queries`; otherwise set
+`full_workload_required=true` and explain why the full workload is necessary. For
+finish, leave the experiment fields empty, use an empty query list, and set
 `full_workload_required=false`.
 
 After the record is accepted, answer according to the `answer_contract` you
@@ -392,10 +393,21 @@ def design_messages(
     :return: System and user messages, in OpenAI message shape.
     :rtype: list[dict[str, Any]]
     """
+    if followups > 0:
+        followups_note = (
+            f"After this experiment has run you will be able to propose up to "
+            f"{followups} follow-up experiment(s), each authored later in a "
+            f"fresh context once this result has been read."
+        )
+    else:
+        followups_note = (
+            "No follow-up experiment will be offered after this one, so this "
+            "design has to answer the question on its own."
+        )
     system = DESIGN_SYSTEM_PROMPT.format(
         inbox=inbox,
         attempts=attempts,
-        followups=followups,
+        followups_note=followups_note,
         catalog_path=catalog_path,
         environment_path=(
             _ENVIRONMENT_AVAILABLE.format(path=environment_path)
@@ -419,6 +431,7 @@ def interpret_messages(
     result_contract_path: str,
     specification: str | None,
     method_path: str | None = None,
+    followups: int = 0,
     method_sections: tuple[str, ...] = INTERPRET_METHOD_SECTIONS,
 ) -> list[dict[str, Any]]:
     """Build the opening conversation for the interpretation phase.
@@ -435,6 +448,8 @@ def interpret_messages(
     :param specification: The experiment that ran, or ``None`` if unavailable.
     :param method_path: Path to the handbook, or ``None`` when none is
         configured; without one the phase carries no reading requirement.
+    :param followups: How many follow-up experiments are still available to
+        author after this interpretation.
     :param method_sections: Chapters that must be read before recording.
     :return: System and user messages, in OpenAI message shape.
     :rtype: list[dict[str, Any]]
@@ -443,8 +458,20 @@ def interpret_messages(
         path=method_path,
         sections="\n".join(f"- `{section}`" for section in method_sections),
     )
+    if followups > 0:
+        followup_budget = (
+            f"Up to {followups} follow-up experiment(s) can be authored after "
+            f"this interpretation, each in a fresh context. "
+        )
+    else:
+        followup_budget = (
+            "No follow-up experiment can be run after this interpretation, so "
+            "`followup` would only document an unresolved question rather than "
+            "schedule one. "
+        )
     system = INTERPRET_SYSTEM_PROMPT.format(
-        result_contract_path=result_contract_path, method_requirement=requirement)
+        result_contract_path=result_contract_path, method_requirement=requirement,
+        followup_budget=followup_budget)
     user = f"The question was:\n\n{task}\n\nThe report is at {report_path}."
     if specification:
         user += f"\n\nThe experiment that ran was:\n\n{specification}"
