@@ -26,6 +26,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Catalog, shape, environment, and methodology validation | `agent/harness/validation.py`, `contracts/contract_catalog.yml` | Done |
 | Experiment design handbook: navigable chapters of methodological guidance, read from its Navigation chapter at design and follow-up authoring, hashed into provenance, with its four decidable principles enforced and cited by identifier | `agent/experiment_design_handbook.md`, `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/validation.py` | Done and regression-tested |
 | Handbook switched off in one setting, for the with/without ablation | `agent/harness/agent.py`, `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
+| Bare-model baseline phase: the question answered directly with no catalog, handbook, environment, or tools, recorded in the same trajectory-plus-`answer.md` form, run automatically by the lifecycle wrapper as its own investigation and linked from the design trajectory, toggled by `--baseline`/`--no-baseline` (`AGENT_BASELINE`) | `agent/harness/agent.py`, `agent/harness/prompts.py`, `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
 | Handbook reachable and required during interpretation: named chapters must be read before a verdict may be recorded, and a renamed chapter is dropped rather than demanded | `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/tools.py` | Done and regression-tested |
 | Cluster session renewed at submission time, after the phase that can run long | `agent/harness/submit.py`, `.env.example` | Done and regression-tested |
 | Full coverage of the parameter types the catalog declares, including YCSB's throughput sweeps | `agent/harness/validation.py` | Done and regression-tested |
@@ -2608,3 +2609,27 @@ The contract version moved from 1.3.0 to 1.4.0 with
 `bexhoma.spec.CATALOG_CONTRACT_VERSION` kept in step, as the version-match test
 requires, and the mirrored version string in `docs/AgentCatalogContract.md` was
 updated to match.
+
+### 2026-09-02 — Add a bare-model baseline for the with/without-machinery comparison
+
+Asked for a way to send the question to the language model on its own — no
+catalog, no result contract, no experiment design handbook, no tools — and ask
+it for a direct, short answer, so a run can be compared with and without the
+whole contract-driven pipeline around it.
+
+A third agent phase, `baseline`, was added beside `design` and `interpret`. It
+makes one model call (with a few extra turns held in reserve only so a reasoning
+model that spends its first turn thinking can be nudged to actually answer),
+carries a system prompt that states plainly there is no machinery and asks for a
+few plain sentences, and records everything in the same way the other phases do:
+a `meta`/`task`/`assistant`/`outcome` trajectory and an `answer.md`. It needs no
+result folder beyond the trajectory location and builds no workspace.
+
+The local lifecycle wrapper runs this phase automatically before the design
+phase, as its own separate investigation, and appends one `baseline` event to
+the design trajectory pointing at the baseline answer so the two are linked. A
+failed baseline is reported and the real run continues. The behaviour is on by
+default and switched with `--baseline` / `--no-baseline` on the wrapper, or the
+`AGENT_BASELINE` environment variable, mirroring how the handbook ablation is
+configured. The `AgentLifecycle` class itself defaults the flag off, so existing
+callers are unaffected.

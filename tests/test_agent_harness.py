@@ -2528,6 +2528,125 @@ resources:
                     and "error" in event.get("result", {})]
         self.assertEqual(len(rejected), 1)
 
+class BaselineTest(unittest.TestCase):
+    """The bare-model baseline phase: the question, one answer, no machinery."""
+
+    def _events(self, run: Path) -> list[dict[str, Any]]:
+        return [
+            json.loads(line)
+            for line in (run / "trajectory.jsonl").read_text().splitlines()
+        ]
+
+    def test_baseline_answers_the_question_with_no_contract_or_tools(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            run = Path(directory)
+            model = _Model([_text_reply("PostgreSQL is usually faster here.")])
+
+            outcome = agent_module.run_baseline(
+                task="Which system is faster?", model=model,
+                trajectory=Trajectory(run),
+            )
+
+            self.assertEqual(
+                outcome["summary"], "PostgreSQL is usually faster here."
+            )
+            self.assertTrue(outcome["phase_complete"])
+            # No tool schema is offered, and the question is the whole user turn.
+            self.assertEqual(model.tool_sets, [set()])
+            self.assertEqual(
+                model.messages[0][-1],
+                {"role": "user", "content": "Which system is faster?"},
+            )
+            events = self._events(run)
+            meta = next(event for event in events if event["type"] == "meta")
+            self.assertEqual(meta["phase"], "baseline")
+            self.assertFalse(meta["method_present"])
+            self.assertFalse(meta["environment_present"])
+            self.assertTrue(any(event["type"] == "outcome" for event in events))
+
+    def test_baseline_nudges_a_reasoning_only_turn_into_an_answer(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            run = Path(directory)
+            model = _Model([
+                _reasoning_only_reply(),
+                _text_reply("Measure it, but expect PgDuckDB to win on scans."),
+            ])
+
+            outcome = agent_module.run_baseline(
+                task="Which system is faster?", model=model,
+                trajectory=Trajectory(run),
+            )
+
+            self.assertEqual(
+                outcome["summary"],
+                "Measure it, but expect PgDuckDB to win on scans.",
+            )
+            self.assertEqual(outcome["turns"], 2)
+            self.assertTrue(
+                any(event["type"] == "turn_stalled" for event in self._events(run))
+            )
+
+    def test_baseline_that_only_ever_reasons_is_an_incomplete_phase(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            run = Path(directory)
+            model = _Model([
+                _reasoning_only_reply()
+                for _ in range(agent_module._BASELINE_MAX_TURNS)
+            ])
+
+            outcome = agent_module.run_baseline(
+                task="Which system is faster?", model=model,
+                trajectory=Trajectory(run),
+            )
+
+            self.assertEqual(outcome["summary"], "")
+            self.assertFalse(outcome["phase_complete"])
+
+    def test_baseline_phase_writes_answer_and_report_through_the_cli(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            results = root / "results"
+            results.mkdir()
+
+            def baseline_phase(**kwargs):
+                trajectory = kwargs["trajectory"]
+                trajectory.record("meta", phase="baseline", model="qwen3.5:9b",
+                                  budgets={})
+                trajectory.record("task", text="question")
+                outcome = {
+                    "summary": "A direct answer.", "turns": 1, "phase_complete": True,
+                }
+                trajectory.record("outcome", **outcome)
+                return outcome
+
+            argv = [
+                "agent", "--phase", "baseline", "--model", "qwen3.5:9b",
+                "--root", str(root), "--trajectories", "investigations",
+                "--results", str(results), "--environment", "", "--method", "",
+                "--task", "question",
+            ]
+            with (
+                mock.patch("sys.argv", argv),
+                mock.patch(
+                    "agent.harness.agent.model_client.ChatModel"
+                ) as model_class,
+                mock.patch(
+                    "agent.harness.agent.run_baseline", side_effect=baseline_phase
+                ),
+            ):
+                model_class.return_value.model = "qwen3.5:9b"
+                self.assertEqual(agent_main(), 0)
+
+                investigation = next((root / "investigations").iterdir())
+                self.assertEqual(
+                    (investigation / "answer.md").read_text().strip(),
+                    "A direct answer.",
+                )
+                self.assertTrue(
+                    (investigation / "reports" / "01-baseline.md").is_file()
+                )
+
+
 class PhaseTest(unittest.TestCase):
     def test_design_defaults_to_three_validation_attempts(self) -> None:
         """The direct agent CLI must leave room for a first check and five repairs."""

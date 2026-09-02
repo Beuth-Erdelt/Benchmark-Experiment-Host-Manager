@@ -30,6 +30,7 @@ import subprocess
 import sys
 import time
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from collections.abc import Callable, Sequence
@@ -69,6 +70,20 @@ _SERVER_OWNERS = frozenset({_BUNDLED_SERVER, "external"})
 #: ``python -c`` rather than by locating the installed wrapper, whose name and
 #: directory differ between POSIX and Windows.
 _MANAGER_ENTRY = "from bexhoma.scripts.experimentsmanager import manage; manage()"
+
+
+def _env_flag(name: str, default: bool) -> bool:
+    """Read a boolean environment variable, tolerating the usual spellings.
+
+    :param name: Environment variable to read.
+    :param default: Value when it is unset or empty.
+    :return: ``False`` for ``0``, ``false``, ``no`` or ``off``; ``True`` otherwise.
+    :rtype: bool
+    """
+    value = os.environ.get(name)
+    if value is None or not value.strip():
+        return default
+    return value.strip().lower() not in ("0", "false", "no", "off")
 
 
 class LifecycleError(RuntimeError):
@@ -153,12 +168,14 @@ class AgentLifecycle:
         server: ModelServer,
         sleep: Callable[[float], None] = time.sleep,
         interpret_model: str | None = None,
+        baseline: bool = False,
     ) -> None:
         self.config = config
         self.agent_command = list(agent_command)
         self.server = server
         self._sleep = sleep
         self.interpret_model = interpret_model
+        self.baseline = baseline
 
     def run(self, task: str | None, resume: Path | None = None) -> Path:
         """Run through the final verdict and return its investigation directory.
@@ -173,7 +190,10 @@ class AgentLifecycle:
                 if not task:
                     raise LifecycleError("a task is required when not resuming a run")
                 self._start_server()
+                baseline_run = self._run_baseline(task) if self.baseline else None
                 current = self._invoke_agent("design", task=task)
+                if baseline_run is not None:
+                    _link_baseline(current, baseline_run)
             else:
                 current = resume.resolve()
                 self._read_phase_state(current)
@@ -236,7 +256,7 @@ class AgentLifecycle:
     ) -> Path:
         before = set(self._trajectory_runs())
         command = [*self.agent_command, "--phase", phase]
-        if phase == "design":
+        if phase in ("design", "baseline"):
             command.extend(["--task", task or ""])
         else:
             if source is None:
@@ -252,11 +272,11 @@ class AgentLifecycle:
         log = source / "trajectory.jsonl" if source is not None else None
         previous_size = log.stat().st_size if log is not None and log.is_file() else None
         result = subprocess.run(command, cwd=self.config.root, check=False)
-        if phase == "design":
+        if phase in ("design", "baseline"):
             created = sorted(set(self._trajectory_runs()) - before)
             if not created:
                 raise LifecycleError(
-                    f"agent design phase created no investigation "
+                    f"agent {phase} phase created no investigation "
                     f"(exit code {result.returncode})"
                 )
             investigation = created[-1]
@@ -281,6 +301,27 @@ class AgentLifecycle:
                 f"{_failure_reason(investigation)}"
             )
         return investigation
+
+    def _run_baseline(self, task: str) -> Path | None:
+        """Answer the question from the bare model before the real design starts.
+
+        The baseline is a comparison point, not part of the deliverable, so a
+        failure here is reported and the run continues rather than being lost
+        with it. The model server is already up for the design phase, so this
+        adds one short model call and no extra server cycle.
+
+        :param task: The question, forwarded verbatim to the baseline phase.
+        :return: The baseline investigation directory, or ``None`` when it failed.
+        :rtype: Path | None
+        """
+        try:
+            baseline_run = self._invoke_agent("baseline", task=task)
+        except LifecycleError as error:
+            print(f"warning: baseline phase did not complete: {error}",
+                  file=sys.stderr, flush=True)
+            return None
+        print(f"baseline answer: {baseline_run / 'answer.md'}", flush=True)
+        return baseline_run
 
     def _trajectory_runs(self) -> list[Path]:
         if not self.config.trajectories.is_dir():
@@ -386,6 +427,26 @@ class AgentLifecycle:
                 f"status {result.returncode}",
                 file=sys.stderr,
             )
+
+
+def _link_baseline(design_run: Path, baseline_run: Path) -> None:
+    """Record in the design trajectory where the bare-model baseline answer lives.
+
+    The baseline runs as its own investigation, so this one event is what ties
+    the two together: reading the design trajectory then leads to the answer the
+    full pipeline is being compared against.
+
+    :param design_run: Investigation directory the design phase created.
+    :param baseline_run: Investigation directory the baseline phase created.
+    """
+    event = {
+        "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "type": "baseline",
+        "run": str(baseline_run),
+        "answer": str(baseline_run / "answer.md"),
+    }
+    with (design_run / "trajectory.jsonl").open("a", encoding="utf-8") as log:
+        log.write(json.dumps(event) + "\n")
 
 
 def _failure_reason(run: Path) -> str:
@@ -541,6 +602,13 @@ def _parser() -> argparse.ArgumentParser:
                              "pass an empty string, to design without one")
     parser.add_argument("--inbox", default="inbox")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--baseline", action=argparse.BooleanOptionalAction,
+        default=_env_flag("AGENT_BASELINE", default=True),
+        help="also answer the question with the bare model -- no catalog, "
+             "handbook, or tools -- as a separate investigation, for comparison "
+             "with the full pipeline (AGENT_BASELINE; on by default)",
+    )
     return parser
 
 
@@ -643,7 +711,7 @@ def main() -> int:
     bundled = owner == _BUNDLED_SERVER
     lifecycle = AgentLifecycle(
         config, agent_command, ModelServer(config.server_script, bundled),
-        interpret_model=args.interpret_model)
+        interpret_model=args.interpret_model, baseline=args.baseline)
     try:
         final_run = lifecycle.run(
             task=args.task,

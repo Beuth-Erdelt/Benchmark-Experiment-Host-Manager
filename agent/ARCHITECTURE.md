@@ -133,10 +133,13 @@ consultation measurable in the trajectory.
 | Follow-up authoring | `prompts.py::followup_author_messages`, `agent.py::_author_followup` | Fresh mutation context; receives compact ancestor summaries, rereads the design contract, and enforces the current experiment code as lineage, a material controlled change, and any approved query subset before shared validation |
 | Portable lineage summary | `agent.py::_write_agent_summary`, `contracts/contract_result.yml` | Persists one experiment code, parent, hypothesis, scientific verdict, technical validity, and unresolved question without copying ancestor reports into context |
 | Design-space gate | `agent.py::_DesignSpaceGate` | Refuses initial or follow-up authoring until that context has reread the catalog and environment |
+| Bare-model baseline | `prompts.py::baseline_messages`, `agent.py::run_baseline` | One toolless model call answering the question with no catalog, contract, or handbook; same trajectory-and-`answer.md` output; run by the lifecycle wrapper as its own investigation and linked from the design trajectory; toggled by `--baseline`/`--no-baseline` (`AGENT_BASELINE`) |
 | Local automation | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Optional vLLM switching, result polling, retry, resume, model cleanup, and exact experiment cleanup after a definitive benchmark-process failure |
 
 One reusable loop, `agent.py::_converse`, drives every model context with a
-different prompt, tool list, stopping predicate, and budget. `run_interpret`
+different prompt, tool list, stopping predicate, and budget. The baseline phase
+is the exception: it has no tools and no design space, so it runs its own short
+loop rather than that one. `run_interpret`
 uses one evidence context and, only when that context records a useful
 follow-up, one fresh authoring context. A text answer is rejected when the
 phase still requires a structured record.

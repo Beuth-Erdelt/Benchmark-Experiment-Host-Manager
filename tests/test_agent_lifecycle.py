@@ -97,7 +97,7 @@ class _Lifecycle(AgentLifecycle):
     def _invoke_agent(self, phase, task=None, source=None):
         self.invocations.append((phase, source))
         staged = self.runs.pop(0)
-        if phase == "design":
+        if phase in ("design", "baseline"):
             return staged
         if source is None:
             raise AssertionError("interpretation requires an investigation")
@@ -154,6 +154,7 @@ class AgentLifecycleTest(unittest.TestCase):
                 method="",
                 inbox="inbox",
                 dry_run=True,
+                baseline=False,
             )
             parser = mock.Mock()
             parser.parse_args.return_value = arguments
@@ -189,7 +190,7 @@ class AgentLifecycleTest(unittest.TestCase):
             server_start_attempts=1, attempts=1, followups=0, temperature=0.0,
             max_tokens=1024, catalog="contracts/contract_catalog.yml",
             environment="dev/catalog/environment.yml", method="", inbox="inbox",
-            dry_run=True,
+            dry_run=True, baseline=False,
         )
         for name, value in overrides.items():
             setattr(arguments, name, value)
@@ -558,6 +559,73 @@ probe_activity() {{
         self.assertEqual(result, design)
         self.assertEqual(self.server.actions, ["up", "down", "up", "down"])
         self.assertEqual(lifecycle.invocations, [("design", None), ("interpret", design)])
+
+    def test_baseline_phase_runs_before_design_and_is_linked_from_it(self) -> None:
+        """The bare-model answer is its own investigation, referenced by the design."""
+        baseline = _trajectory(
+            self.trajectories / "0", "baseline", code=None,
+            summary="a direct answer", phase_complete=True)
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        final = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        self._report("101")
+        lifecycle = _Lifecycle(
+            self.config, ["agent"], self.server,
+            runs=[baseline, design, final], baseline=True)
+
+        result = lifecycle.run("question")
+
+        self.assertEqual(result, design)
+        self.assertEqual(
+            lifecycle.invocations,
+            [("baseline", None), ("design", None), ("interpret", design)],
+        )
+        events = [
+            json.loads(line)
+            for line in (design / "trajectory.jsonl").read_text().splitlines()
+        ]
+        link = next(event for event in events if event["type"] == "baseline")
+        self.assertEqual(link["run"], str(baseline))
+        self.assertEqual(link["answer"], str(baseline / "answer.md"))
+
+    def test_a_failed_baseline_phase_does_not_stop_the_investigation(self) -> None:
+        """The baseline is a comparison point; losing it must not lose the run."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        final = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        self._report("101")
+
+        class _BaselineFails(_Lifecycle):
+            def _invoke_agent(self, phase, task=None, source=None):
+                if phase == "baseline":
+                    self.invocations.append((phase, source))
+                    raise LifecycleError("baseline phase failed with exit code 1")
+                return super()._invoke_agent(phase, task, source)
+
+        lifecycle = _BaselineFails(
+            self.config, ["agent"], self.server, runs=[design, final], baseline=True)
+
+        result = lifecycle.run("question")
+
+        self.assertEqual(result, design)
+        self.assertEqual(
+            lifecycle.invocations,
+            [("baseline", None), ("design", None), ("interpret", design)],
+        )
+
+    def test_baseline_defaults_on_and_can_be_switched_off(self) -> None:
+        with mock.patch.dict(os.environ, {"AGENT_BASELINE": ""}, clear=False):
+            self.assertTrue(_parser().parse_args(["--task", "q"]).baseline)
+            self.assertFalse(
+                _parser().parse_args(["--task", "q", "--no-baseline"]).baseline
+            )
+            self.assertTrue(
+                _parser().parse_args(["--task", "q", "--baseline"]).baseline
+            )
 
     def test_an_endpoint_we_do_not_host_is_chained_without_being_switched(self) -> None:
         """A hosted API or a running Ollama needs the phase chain, not a server switch."""

@@ -125,6 +125,10 @@ spec:
             # without-handbook arm of the ablation.
             - name: AGENT_METHOD
               value: agent/experiment_design_handbook.md
+            # Also answer the question with the bare model first, as a separate
+            # investigation, for comparison. Set to 0 to skip it.
+            - name: AGENT_BASELINE
+              value: "1"
             - name: MODEL_SERVER_MANIFEST
               value: /opt/bexhoma/agent/k8s/vllm-qwen38-27b.yml
             - name: POD_NAMESPACE

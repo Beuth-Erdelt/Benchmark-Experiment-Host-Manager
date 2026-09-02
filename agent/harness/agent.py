@@ -34,7 +34,7 @@ from dotenv import load_dotenv
 
 from agent.harness import model_client, prompts, tools
 
-__all__ = ["Trajectory", "run_design", "run_interpret"]
+__all__ = ["Trajectory", "run_baseline", "run_design", "run_interpret"]
 
 _DEFAULT_INBOX = "inbox"
 _DEFAULT_CATALOG = os.path.join("contracts", "contract_catalog.yml")
@@ -99,6 +99,17 @@ _STALLED_TURN_NOTICE = (
 #: One nudge is usually enough; a model that ignores several in a row is stuck,
 #: and each of its turns is expensive, so the loop stops paying for them.
 _MAX_CONSECUTIVE_STALLS = 3
+
+#: Turns a baseline answer may take. One is the norm; the slack lets a reasoning
+#: model that spent its first turn thinking be nudged into actually answering.
+_BASELINE_MAX_TURNS = _MAX_CONSECUTIVE_STALLS + 1
+
+#: Given to a baseline turn that produced only reasoning. The baseline has no
+#: tools, so unlike ``_STALLED_TURN_NOTICE`` it asks only for the answer.
+_BASELINE_STALLED_NOTICE = (
+    "Your previous turn produced only internal reasoning and no answer. Stop "
+    "deliberating and write your short, direct answer now."
+)
 
 def _timestamp() -> str:
     """Return the current UTC time in ISO 8601 form.
@@ -315,6 +326,13 @@ def _phase_account(trajectory_path: Path, phase: str, outcome: dict[str, Any]) -
                 "No specification was ever validated, so the phase ran out of turns "
                 "before it had something to submit."
             )
+    elif phase == "baseline":
+        lines = [
+            "error: the baseline phase produced no answer.",
+            "The model returned no visible text, most likely spending the whole "
+            "per-turn token budget on internal reasoning. Raise --max-tokens and "
+            "retry.",
+        ]
     else:
         lines = ["error: the interpretation recorded no complete verdict."]
         if refusal:
@@ -617,6 +635,70 @@ def _submission_owed(
         if name == "validate":
             return bool(result.get("valid"))
     return False
+
+
+def run_baseline(
+    task: str,
+    model: model_client.ChatModel,
+    trajectory: Trajectory,
+) -> dict[str, Any]:
+    """Answer the question from the bare model, with no contract, handbook, or tools.
+
+    This is the other end of the ablation the ``--method`` switch begins. The
+    full pipeline reads a catalog, consults a handbook, runs a benchmark and
+    interprets it; this asks the model the question directly and records the
+    answer in the same trajectory format, so the two answers can be compared.
+
+    :param task: The question to answer, verbatim.
+    :param model: The chat model to drive.
+    :param trajectory: Event log for this run.
+    :return: ``{"summary", "turns", "phase_complete"}``.
+    :rtype: dict[str, Any]
+    """
+    messages = prompts.baseline_messages(task)
+    trajectory.record("meta", phase="baseline", model=model.model,
+                      harness=_harness_revision(),
+                      params={"temperature": model.temperature,
+                              "max_tokens": model.max_tokens},
+                      catalog_sha256=None, environment_sha256=None,
+                      environment_present=False, method_sha256=None,
+                      method_present=False, budgets={})
+    trajectory.record("task", text=task)
+
+    answer = ""
+    turn = 0
+    stalls = 0
+    while turn < _BASELINE_MAX_TURNS:
+        turn += 1
+        _progress("waiting for the model", "baseline", turn)
+        reply = model.reply(messages, None)
+        trajectory.record("assistant", turn=turn, text=reply.text,
+                          reasoning=reply.reasoning, tool_calls=[],
+                          usage=reply.usage, finish_reason=reply.finish_reason,
+                          generation_budget=reply.generation_budget, stage="baseline")
+        messages.append(reply.message)
+        if reply.text.strip():
+            answer = reply.text
+            break
+        # An empty turn that is only hidden reasoning is not the answer; nudge
+        # the model to write one, the way the tool-calling loop does, but a few
+        # times at most because each stalled turn costs a full generation.
+        if reply.reasoning.strip() and stalls < _MAX_CONSECUTIVE_STALLS:
+            stalls += 1
+            messages[-1].setdefault("content", "")
+            messages.append({"role": "user", "content": _BASELINE_STALLED_NOTICE})
+            _progress("turn produced only reasoning; asking it to answer "
+                      f"(nudge {stalls} of {_MAX_CONSECUTIVE_STALLS})", "baseline", turn)
+            trajectory.record("turn_stalled", turn=turn, consecutive=stalls,
+                              finish_reason=reply.finish_reason,
+                              generation_budget=reply.generation_budget,
+                              completion_tokens=reply.usage.get("completion_tokens"),
+                              stage="baseline")
+            continue
+        break
+
+    return _outcome(trajectory, summary=answer, turns=turn,
+                    phase_complete=bool(answer.strip()))
 
 
 def run_design(
@@ -1541,7 +1623,8 @@ def _build_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(
         description="Design an experiment and submit it, or interpret a finished one.")
-    parser.add_argument("-p", "--phase", choices=("design", "interpret"), default="design")
+    parser.add_argument("-p", "--phase", choices=("design", "interpret", "baseline"),
+                        default="design")
     parser.add_argument("-t", "--task", help="question to answer; required for design")
     parser.add_argument(
         "--run", help="investigation directory to continue (interpret phase)"
@@ -1834,7 +1917,7 @@ def main() -> int:
         else results / _TRAJECTORY_SUBDIR
     )
     source: Path | None = None
-    if args.phase == "design":
+    if args.phase in ("design", "baseline"):
         run_directory = trajectories / datetime.now().strftime("%Y%m%dT%H%M%S%f")
     else:
         source = _resolve_investigation(root, args.run) if args.run else None
@@ -1864,14 +1947,21 @@ def main() -> int:
     # An empty value is how a run is deliberately asked to design without the
     # handbook, which is the other arm of the with/without ablation. A path that
     # names no file is a typo, and silently designing without the handbook would
-    # turn it into a different experiment than the one that was asked for.
+    # turn it into a different experiment than the one that was asked for. The
+    # baseline phase uses no handbook at all, so the path is not consulted there.
     method_path = args.method or None
-    if method_path is not None and not (root / method_path).is_file():
+    if (
+        args.phase != "baseline"
+        and method_path is not None
+        and not (root / method_path).is_file()
+    ):
         print(f"error: no experiment design handbook at {root / method_path}. "
               "Pass an existing --method, or an empty one (set AGENT_METHOD empty) "
               "to design without a handbook.", file=sys.stderr)
         return 2
-    workspace = tools.Workspace(
+    # The baseline phase has no tools and no design space, so it needs no
+    # workspace; building one would only assert a catalog it never reads.
+    workspace = None if args.phase == "baseline" else tools.Workspace(
         root=str(root), inbox=args.inbox, catalog_path=args.catalog,
         environment_path=args.environment or None, method_path=method_path,
         results_root=str(results),
@@ -1881,7 +1971,18 @@ def main() -> int:
     print(f"{args.phase} phase with {model.model} at {args.base_url}", flush=True)
     print(f"investigation: {run_directory}", flush=True)
 
-    if args.phase == "design":
+    if args.phase == "baseline":
+        if not args.task:
+            print("error: --task is required for the baseline phase", file=sys.stderr)
+            return 2
+        (run_directory / "task.txt").write_text(args.task + "\n", encoding="utf-8")
+        try:
+            outcome = run_baseline(task=args.task, model=model, trajectory=trajectory)
+        except model_client.ModelUnreachable as error:
+            return _report_unreachable(error, args.base_url, trajectory)
+        except model_client.ContextWindowExhausted as error:
+            return _report_context_exhausted(error, args.max_tokens, trajectory)
+    elif args.phase == "design":
         if not args.task:
             print("error: --task is required for the design phase", file=sys.stderr)
             return 2

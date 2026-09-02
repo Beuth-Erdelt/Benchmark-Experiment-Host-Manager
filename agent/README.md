@@ -204,6 +204,13 @@ either by leaving `AGENT_METHOD` empty in `.env` or for one run:
 AGENT_METHOD= .venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>"
 ```
 
+Before the design phase, the wrapper also answers the question with the bare
+model — no catalog, handbook, or tools — as its own investigation, so the full
+pipeline's answer can be read against what the model alone would have said. Its
+`answer.md` path is printed and referenced from the design trajectory. Skip it
+with `--no-baseline`, or set `AGENT_BASELINE=0`. The same phase is available on
+its own with `python -m agent.harness.agent --phase baseline --task "..."`.
+
 Results land wherever `cluster.config` declares its `resultfolder`, which is the
 same setting bexhoma itself reads, so the two cannot disagree. A relative value
 there resolves against the repository. Override it for one run with `--results`,

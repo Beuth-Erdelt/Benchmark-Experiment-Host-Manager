@@ -1,4 +1,4 @@
-"""Prompts for the two phases.
+"""Prompts for the phases.
 
 Each carries only what the contracts cannot state about themselves: who the
 agent is, which phase it is in, the tools and the path policy, the stopping
@@ -6,9 +6,13 @@ condition and the budgets. Domain knowledge stays in the catalog and the result
 contract, where it is versioned and visible to anyone reading an archived run --
 a hint that seems to belong here is a sign a contract is missing something.
 
-Neither prompt contains a contract. Both name the files and let the agent read
-them, which is what makes "did it consult the contract, and how much of it" a
-measured quantity rather than an assumption.
+The design and interpret prompts contain no contract. Both name the files and
+let the agent read them, which is what makes "did it consult the contract, and
+how much of it" a measured quantity rather than an assumption.
+
+The baseline prompt is the deliberate opposite: no catalog, no result contract,
+no handbook, no tools. It asks the model the question directly, so its answer is
+the bare-model comparison point for the full pipeline's answer.
 
 Authors: Leonhard Liu
 Copyright (C) 2026 Patrick K. Erdelt
@@ -24,7 +28,21 @@ __all__ = [
     "DESIGN_SYSTEM_PROMPT", "design_messages",
     "INTERPRET_SYSTEM_PROMPT", "interpret_messages",
     "FOLLOWUP_AUTHOR_SYSTEM_PROMPT", "followup_author_messages",
+    "BASELINE_SYSTEM_PROMPT", "baseline_messages",
 ]
+
+BASELINE_SYSTEM_PROMPT = """\
+You are answering a database performance question directly, from your own
+knowledge. This is a baseline: there is no catalog, no result contract, no
+experiment design handbook, no cluster to run anything on, and no tools. The
+full agent pipeline reads those contracts, runs a benchmark, and interprets it;
+your answer is what it is compared against.
+
+Give one direct, short answer -- a few plain sentences, no preamble and no
+headings. State the single best answer you can and the main reason for it. If
+the question genuinely cannot be answered without measuring it, say so plainly
+and give your best expectation anyway.
+"""
 
 DESIGN_SYSTEM_PROMPT = """\
 You are the experimenter in an automated benchmarking loop. You design database
@@ -499,3 +517,20 @@ def followup_author_messages(
     if specification:
         user += f"\n\nThe experiment that ran was:\n\n{specification}"
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
+
+
+def baseline_messages(task: str) -> list[dict[str, Any]]:
+    """Build the opening conversation for the bare-model baseline phase.
+
+    Carries the question and nothing else: no contract, no handbook, no
+    environment, no tools. The answer this produces is the comparison point for
+    the full pipeline's answer to the same question.
+
+    :param task: The question to answer, verbatim as the user asked it.
+    :return: System and user messages, in OpenAI message shape.
+    :rtype: list[dict[str, Any]]
+    """
+    return [
+        {"role": "system", "content": BASELINE_SYSTEM_PROMPT},
+        {"role": "user", "content": task},
+    ]
