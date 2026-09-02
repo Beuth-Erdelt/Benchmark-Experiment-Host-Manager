@@ -33,7 +33,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Phase-scoped tools, path policy, immutable submission, and deterministic query comparison | `agent/harness/tools.py` | Done |
 | Exact one-result selection, link-reachable evidence reads, and result-contract answer structure | `agent/harness/prompts.py`, `agent/harness/tools.py`, `contracts/contract_result.yml` | Done and regression-tested |
 | Model adapter with single-model endpoint discovery for portable server naming | `agent/harness/model_client.py` | Done and regression-tested |
-| Per-turn output sized to the served context window, with an exhausted window reported like other setup errors | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
+| Per-turn output sized to the served context window, with an exhausted window reported like other setup errors; a server that does not advertise its window but refuses an oversized turn with a 400 has that window adopted from the refusal, the turn resized and resent once, and a still-refused turn reported the same way | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
 | Investigation trajectories written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories` as an override | `agent/harness/agent.py`, `dev/agent_lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume |
@@ -174,6 +174,29 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-02 — Recover a turn a hidden-window server refuses for length
+
+The user reported that an interpretation phase still crashed with an uncaught
+400 when the conversation plus the requested output exceeded the model's
+context length. The 2026-08-26 guardrail sizes each turn to the served window,
+but only when the server advertises that window in its model list. The hosted
+OpenAI-compatible endpoint in use here does not, so the full per-turn ceiling
+was sent unchanged and the server answered with a `BadRequestError` that no
+caller caught, ending the process with a stack trace and no recorded event.
+
+The model adapter now catches that 400. When the message is the familiar
+"maximum context length is N tokens" refusal, it adopts N as the context
+window, anchors its prompt-size estimate on the input-token count the same
+message reports, recomputes the per-turn generation budget against the now-known
+window, and resends the turn once. Every later turn in the phase then sizes
+itself against that learned window as if the server had advertised it. If the
+resent turn is refused as well, or the window it names already leaves too little
+room to answer, the adapter raises the existing `ContextWindowExhausted`, so the
+phase reports the exhausted window and records an aborted event exactly as it
+does for an unreachable endpoint. A 400 about anything else propagates
+unchanged. Four regression tests cover recovery, a window with no room left, a
+non-context 400, and a retry the server still refuses.
 
 ### 2026-09-02 — Show the agent model server in `bexhoma status`
 

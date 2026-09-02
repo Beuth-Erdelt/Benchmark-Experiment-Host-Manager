@@ -28,7 +28,7 @@ from agent.harness.agent import (
     run_design,
     run_interpret,
 )
-from openai import InternalServerError, RateLimitError
+from openai import BadRequestError, InternalServerError, RateLimitError
 
 from agent.harness.model_client import (
     ChatModel, ContextWindowExhausted, ModelNotServed, ModelUnreachable, Reply,
@@ -3331,6 +3331,11 @@ class ChatModelTest(unittest.TestCase):
         response = mock.Mock(headers={})
         return RateLimitError("rate limit exceeded", response=response, body=None)
 
+    @staticmethod
+    def _bad_request(message: str) -> BadRequestError:
+        """Build the 400 a server raises, carrying ``message`` as its text."""
+        return BadRequestError(message, response=mock.Mock(headers={}), body=None)
+
     def test_a_metered_endpoint_refusing_a_turn_is_waited_out(self) -> None:
         """A per-minute quota clears on its own; losing the phase to it does not."""
         model = self._model()
@@ -3480,6 +3485,69 @@ class ChatModelTest(unittest.TestCase):
 
         reserved = model._client.chat.completions.create.call_args.kwargs["max_tokens"]
         self.assertLess(reserved, 8000 - 6000)
+
+    def test_a_server_that_hid_its_window_is_retried_within_the_one_it_names(self) -> None:
+        """A hosted endpoint often refuses with a 400 rather than advertising its window."""
+        model = self._model(max_tokens=32768)
+        answer = model._client.chat.completions.create.return_value
+        model._client.chat.completions.create.side_effect = [
+            self._bad_request(
+                "This model's maximum context length is 8000 tokens. However, you "
+                "requested 32768 output tokens and your prompt contains at least "
+                "1500 input tokens, for a total of at least 34268 tokens."
+            ),
+            answer,
+        ]
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.text, "answer")
+        self.assertEqual(model._context_window, 8000)
+        reserved = model._client.chat.completions.create.call_args.kwargs["max_tokens"]
+        self.assertLessEqual(reserved, 8000)
+
+    def test_a_named_window_with_no_room_left_is_reported_not_crashed(self) -> None:
+        """The refusal must surface as the recorded stop reason, not an uncaught 400."""
+        model = self._model(max_tokens=32768)
+        model._client.chat.completions.create.side_effect = self._bad_request(
+            "This model's maximum context length is 2000 tokens. However, you "
+            "requested 32768 output tokens and your prompt contains at least "
+            "1900 input tokens, for a total of at least 34668 tokens."
+        )
+
+        with self.assertRaises(ContextWindowExhausted):
+            model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(model._client.chat.completions.create.call_count, 1)
+
+    def test_a_bad_request_that_is_not_about_context_length_is_left_alone(self) -> None:
+        """Only a context-length refusal is recoverable; other 400s must propagate."""
+        model = self._model()
+        model._client.chat.completions.create.side_effect = self._bad_request(
+            "Unknown parameter: 'reasoning_effort'."
+        )
+
+        with self.assertRaises(BadRequestError):
+            model.reply([{"role": "user", "content": "question"}])
+
+    def test_a_retry_the_server_still_refuses_stops_the_phase(self) -> None:
+        """If the narrowed turn overruns the window too, there is nothing left to try."""
+        model = self._model(max_tokens=32768)
+        model._client.chat.completions.create.side_effect = [
+            self._bad_request(
+                "This model's maximum context length is 8000 tokens. However, you "
+                "requested 32768 output tokens and your prompt contains at least "
+                "1500 input tokens."
+            ),
+            self._bad_request(
+                "This model's maximum context length is 8000 tokens. However, you "
+                "requested 5988 output tokens and your prompt contains at least "
+                "7900 input tokens."
+            ),
+        ]
+
+        with self.assertRaises(ContextWindowExhausted):
+            model.reply([{"role": "user", "content": "question"}])
 
 
 if __name__ == "__main__":

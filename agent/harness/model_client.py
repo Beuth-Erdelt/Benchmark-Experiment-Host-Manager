@@ -17,13 +17,15 @@ See LICENSE for details.
 from __future__ import annotations
 
 import json
+import re
 import sys
 import time
 from dataclasses import dataclass, field
 from typing import Any
 
 from openai import (
-    APIConnectionError, InternalServerError, OpenAI, OpenAIError, RateLimitError,
+    APIConnectionError, BadRequestError, InternalServerError, OpenAI, OpenAIError,
+    RateLimitError,
 )
 
 __all__ = [
@@ -50,6 +52,19 @@ _RETRY_BACKOFF_CAP_SECONDS = 60.0
 
 #: Field names servers publish their context length under, in the order tried.
 _CONTEXT_WINDOW_FIELDS = ("max_model_len", "max_context_length")
+
+#: The context length a server names when it refuses a turn for overrunning its
+#: window. vLLM and the hosted OpenAI-compatible APIs phrase the 400 the same
+#: way: "This model's maximum context length is 131072 tokens."
+_CONTEXT_LIMIT_PATTERN = re.compile(
+    r"maximum context length is (\d+) tokens", re.IGNORECASE
+)
+#: The prompt size the same 400 reports, across both phrasings seen:
+#: "your prompt contains at least 31073 input tokens" (hosted) and
+#: "you requested 4096 tokens (3000 in the messages, ...)" (vLLM).
+_PROMPT_TOKENS_PATTERN = re.compile(
+    r"(\d+)\s+(?:input tokens|in the messages)", re.IGNORECASE
+)
 
 #: Characters per token for the messages appended since the last exchange.
 #: Deliberately low: overestimating the appended text shrinks the generation
@@ -282,6 +297,49 @@ class ChatModel:
                 self._sleep(delay)
                 wait = min(wait * 2, _RETRY_BACKOFF_CAP_SECONDS)
 
+    def _retry_within_named_window(
+        self,
+        request: dict[str, Any],
+        messages: list[dict[str, Any]],
+        error: BadRequestError,
+    ) -> Any:
+        """Resend a turn the server refused for overrunning its context window.
+
+        A hosted endpoint often does not advertise its context length in the
+        model list, so the per-turn ceiling is sent unchanged and the server
+        answers with a 400 that names the window. Adopt that figure, anchor the
+        prompt estimate on the token count the same message reports, recompute
+        the generation budget against the now-known window, and send the turn
+        once more. A 400 that is not about context length, or a retry that the
+        server still refuses, is not something this can recover from.
+
+        :param request: The refused request, mutated in place with the new ceiling.
+        :param messages: Full conversation the request carries.
+        :param error: The 400 the server raised.
+        :return: The server's completion for the resent turn.
+        :raises BadRequestError: When the 400 was not a context-length refusal.
+        :raises ContextWindowExhausted: When the named window leaves no room to
+            answer, or the server refuses the narrowed turn as well.
+        """
+        window = _named_context_window(error)
+        if window is None:
+            raise error
+        self._context_window = window
+        self._context_window_asked = True
+        reported_prompt = _reported_prompt_tokens(error)
+        if reported_prompt is not None:
+            self._counted_messages = len(messages)
+            self._counted_prompt_tokens = reported_prompt
+        request["max_tokens"] = self._generation_budget(messages)
+        try:
+            return self._create_with_backoff(request)
+        except BadRequestError as retry_error:
+            raise ContextWindowExhausted(
+                f"{self.base_url} refused the turn for context length even after "
+                f"narrowing generation to {request['max_tokens']} of {window} "
+                f"tokens: {retry_error}"
+            ) from retry_error
+
     def reply(
         self,
         messages: list[dict[str, Any]],
@@ -296,7 +354,8 @@ class ChatModel:
         :rtype: Reply
         :raises ModelUnreachable: When the endpoint did not answer at all.
         :raises ContextWindowExhausted: When the conversation leaves no room to
-            answer, so the server would refuse the request.
+            answer, so the server refuses the request -- whether that is caught
+            before the request or from the server's own 400.
         """
         budget = self._generation_budget(messages)
         request: dict[str, Any] = {
@@ -313,6 +372,11 @@ class ChatModel:
             raise ModelUnreachable(
                 f"no answer from {self.base_url}: {error}"
             ) from error
+        except BadRequestError as error:
+            response = self._retry_within_named_window(request, messages, error)
+        # A retry within a newly learned window resent with a narrower ceiling;
+        # report the budget the answered request actually carried.
+        budget = request["max_tokens"]
         choice = response.choices[0]
         message = choice.message
         replayed = message.model_dump(exclude_none=True)
@@ -376,6 +440,39 @@ def _published_window(entry: Any) -> int | None:
         if isinstance(length, int) and not isinstance(length, bool):
             return length
     return None
+
+
+def _named_context_window(error: BadRequestError) -> int | None:
+    """Return the context length a 400 names, when it is a context-length refusal.
+
+    :param error: The 400 the server raised.
+    :return: Tokens the server accepts per request, or ``None`` when the message
+        is about something else.
+    :rtype: int | None
+    """
+    match = _CONTEXT_LIMIT_PATTERN.search(_error_message(error))
+    return int(match.group(1)) if match else None
+
+
+def _reported_prompt_tokens(error: BadRequestError) -> int | None:
+    """Return the prompt size a context-length 400 reports, if it states one.
+
+    :param error: The 400 the server raised.
+    :return: Input tokens the server counted, or ``None`` when it named no figure.
+    :rtype: int | None
+    """
+    match = _PROMPT_TOKENS_PATTERN.search(_error_message(error))
+    return int(match.group(1)) if match else None
+
+
+def _error_message(error: OpenAIError) -> str:
+    """Return the human-readable text of a client-library error.
+
+    :param error: The error the client library raised.
+    :return: The server's message, or the string form of the error.
+    :rtype: str
+    """
+    return str(getattr(error, "message", "") or error)
 
 
 def _parse_tool_call(call: Any) -> ToolCall:
