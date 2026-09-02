@@ -22,6 +22,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Component | Location | Status |
 |---|---|---|
 | Structured validation verdict | `agent/harness/validation.py` | Done |
+| Command-line dry-run validation: `python -m agent.harness.validate EXPERIMENT --environment PATH` prints the same structured verdict the agent's `validate` tool receives, exits 0 when valid and 1 otherwise, touches no cluster, and requires `--environment` explicitly so a skipped cluster-fit check cannot pass unnoticed | `agent/harness/validate.py`, `tests/test_agent_harness.py` | Done and regression-tested |
 | Six-call default validation budget for initial designs and follow-up authoring, with every prior verdict retained in the same model conversation | `agent/harness/agent.py`, `dev/agent_lifecycle.py` | Done and regression-tested |
 | Catalog, shape, environment, and methodology validation | `agent/harness/validation.py`, `contracts/contract_catalog.yml` | Done |
 | Experiment design handbook: navigable chapters of methodological guidance, read from its Navigation chapter at design and follow-up authoring, hashed into provenance, with its four decidable principles enforced and cited by identifier | `agent/experiment_design_handbook.md`, `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/validation.py` | Done and regression-tested |
@@ -174,6 +175,28 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-02 — Add a command-line dry-run validator that prints the structured verdict
+
+Issue #768 asks for a CLI dry-run mode that checks a run request against the
+workload semantics and the cluster environment before any cluster interaction,
+and reports its findings as machine-readable error objects an agent can act on.
+The structured check itself already existed as `validate_spec` in
+`agent/harness/validation.py`, reachable only as the design agent's `validate`
+tool. The repository's other command-line validator, `validate_experiment.py`,
+runs a thinner check and prints only human prose and an exit code.
+
+The change adds one small adapter, `agent/harness/validate.py`, run as
+`python -m agent.harness.validate EXPERIMENT --environment PATH
+[--catalog PATH] [--indent N]`. It calls the existing `validate_spec` and writes
+its verdict — the `valid` flag, the list of `{stage, message}` errors, whether
+the environment was checked, and the run and timeout estimate — to standard
+output as JSON, exiting 0 when the specification is valid and 1 when it is not.
+No validation logic is added or duplicated. `--environment` is required rather
+than defaulted, because a check that silently skips the cluster-fit rules and
+still exits 0 is the confusing case the `environment_checked` field exists to
+prevent; passing an empty string skips those rules on purpose. `bexhoma/`, the
+contracts, and `validate_experiment.py` are unchanged.
 
 ### 2026-09-02 — Remove the finish-biased framing from the follow-up decision
 

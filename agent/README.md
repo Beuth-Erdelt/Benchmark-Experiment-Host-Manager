@@ -384,6 +384,22 @@ aggregated. Follow-up authoring receives only each ancestor's compact
 does not receive the earlier reports or their metrics. Use `--dry-run` to
 design and validate without submission.
 
+To validate a specification you already have, without running the design model
+at all, call the validator directly:
+
+```sh
+.venv/bin/python -m agent.harness.validate experiment.yml \
+  --environment dev/catalog/environment.yml \
+  --catalog contracts/contract_catalog.yml --indent 2
+```
+
+It prints the same structured verdict the design agent's `validate` tool
+receives — the `valid` flag, a list of `{stage, message}` errors, whether the
+environment was checked, and the run and timeout estimate — and exits 0 when the
+specification is valid and 1 otherwise. It touches no cluster. `--environment`
+is required; pass an empty string to skip the placement and resource-ceiling
+checks, which the verdict then records in its `environment_checked` field.
+
 Validation reports both the expanded benchmark-phase count and a conservative
 declared-timeout budget. The latter assumes every active query reaches its
 per-query deadline, so it is a cost ceiling for comparing designs rather than a

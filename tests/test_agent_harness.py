@@ -35,6 +35,7 @@ from agent.harness.model_client import (
     ToolCall,
 )
 from agent.harness import tools as tools_module
+from agent.harness import validate as validate_cli
 from agent.harness import validation
 from agent.harness.tools import (
     DESIGN_TOOLS,
@@ -3265,6 +3266,78 @@ class ClusterCredentialTest(unittest.TestCase):
         os.environ["AGENT_CLUSTER_LOGIN"] = "true"
 
         self.assertIsNone(self.submit.refresh_cluster_credentials())
+
+
+class ValidateCliTest(unittest.TestCase):
+    """The structured verdict is reachable from the command line, not only the tool."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name)
+        (self.root / "contracts").mkdir()
+        shutil.copyfile(
+            Path("contracts") / "contract_catalog.yml",
+            self.root / "contracts" / "contract_catalog.yml",
+        )
+        self.catalog = str(self.root / "contracts" / "contract_catalog.yml")
+        self.environment = self.root / "environment.yml"
+        self.environment.write_text(_ENVIRONMENT)
+        self.spec = self.root / "experiment.yml"
+        self.spec.write_text(_SPEC)
+
+    def _run(self, *argv: str) -> tuple[int, dict[str, Any]]:
+        """Run the CLI, returning its exit code and the parsed JSON verdict."""
+        captured = io.StringIO()
+        with contextlib.redirect_stdout(captured):
+            code = validate_cli.main(list(argv))
+        return code, json.loads(captured.getvalue())
+
+    def test_a_valid_specification_exits_zero_with_a_verdict(self) -> None:
+        code, verdict = self._run(
+            str(self.spec), "--catalog", self.catalog,
+            "--environment", str(self.environment),
+        )
+
+        self.assertEqual(code, 0)
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+        self.assertTrue(verdict["environment_checked"])
+
+    def test_a_methodology_violation_exits_one_and_names_the_principle(self) -> None:
+        self.spec.write_text(_SPEC.replace(
+            "hypothesis: one system is faster under concurrency",
+            "hypothesis: both systems perform acceptably under concurrency"))
+
+        code, verdict = self._run(
+            str(self.spec), "--catalog", self.catalog,
+            "--environment", str(self.environment),
+        )
+
+        self.assertEqual(code, 1)
+        self.assertFalse(verdict["valid"])
+        self.assertIn("M1.1", verdict["errors"][0]["message"])
+
+    def test_an_empty_environment_skips_the_cluster_fit_checks(self) -> None:
+        code, verdict = self._run(
+            str(self.spec), "--catalog", self.catalog, "--environment", "",
+        )
+
+        self.assertEqual(code, 0)
+        self.assertFalse(verdict["environment_checked"])
+
+    def test_a_missing_specification_is_reported_as_a_parse_failure(self) -> None:
+        code, verdict = self._run(
+            str(self.root / "absent.yml"), "--catalog", self.catalog,
+            "--environment", str(self.environment),
+        )
+
+        self.assertEqual(code, 1)
+        self.assertEqual(verdict["errors"][0]["stage"], "parse")
+
+    def test_the_environment_argument_is_required(self) -> None:
+        """A silent skip that still exits zero is the confusing case to prevent."""
+        with self.assertRaises(SystemExit):
+            validate_cli.main([str(self.spec), "--catalog", self.catalog])
 
 
 class HarnessRevisionTest(unittest.TestCase):
