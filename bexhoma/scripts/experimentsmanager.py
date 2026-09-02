@@ -297,16 +297,25 @@ def manage():
             print("Message Queue: {}".format(messagequeue_pods[0].status.phase))
         else:
             print("Message Queue: Not running")
+        # check agent model server (the self-hosted LLM the agent harness talks to)
+        model_server_pods = [
+            pod for pod in _filter_by_labels(all_pods, component='agent')
+            if _labels(pod).get('role') == 'model-server'
+        ]
+        if model_server_pods:
+            print("Agent Model Server: {}".format(model_server_pods[0].status.phase))
+        else:
+            print("Agent Model Server: Not running")
         # get data directory
         if _filter_by_labels(all_pvcs, component='data-source'):
-            print("Data directory: {}".format("Running"))
+            print("Data Directory: {}".format("Running"))
         else:
-            print("Data directory: {}".format("Missing"))
+            print("Data Directory: {}".format("Missing"))
         # get result directory
         if _filter_by_labels(all_pvcs, component='results'):
-            print("Result directory: {}".format("Running"))
+            print("Result Directory: {}".format("Running"))
         else:
-            print("Result directory: {}".format("Missing"))
+            print("Result Directory: {}".format("Missing"))
         # get all storage volumes
         volumes = {}
         for pvc in _filter_by_labels(all_pvcs, component='storage'):

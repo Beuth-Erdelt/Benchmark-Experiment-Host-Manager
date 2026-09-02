@@ -98,6 +98,12 @@ twenty minutes, so a server left behind by a hand-launched phase does not hold a
 Hopper node indefinitely. The operator wrapper still shuts it down immediately
 when it is in charge; the watchdog is the backstop for when it is not.
 
+`bexhoma status` reports whether this pod is present, as an
+`Agent model server: ...` line beside the `Dashboard` and `Message Queue` lines.
+It finds the pod by the `component: agent` and `role: model-server` labels the
+manifest sets, so a hand-launched server that outlived its phase is visible
+without a separate `kubectl` call.
+
 Which server the agent talks to is not fixed to that pod. The agent CLI
 (`agent/harness/agent.py`) and the local lifecycle wrapper
 (`dev/agent_lifecycle.py`) load an optional `.env` from the repository root at
@@ -167,6 +173,20 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-02 — Show the agent model server in `bexhoma status`
+
+The user asked for `bexhoma status` to report, in one line, whether the agent's
+self-hosted model server is running in the cluster, in the same style as the
+existing `Dashboard: ...` line.
+
+The status command already fetches every `app: bexhoma` pod in one call and
+groups them by label. A new check filters that list for the pod carrying
+`component: agent` and `role: model-server` — the model-server manifest's own
+labels — and prints `Agent model server: Running` (its actual pod phase) when it
+is present or `Agent model server: Not running` when it is not. The line sits
+just after the message-queue line, alongside the other cluster-level services.
+No new Kubernetes calls are made.
 
 ### 2026-09-01 — Store agent trajectories in the result folder, not the checkout
 
