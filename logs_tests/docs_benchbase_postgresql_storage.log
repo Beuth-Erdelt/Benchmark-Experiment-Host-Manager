@@ -2,12 +2,12 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1785153354
-Experiment                    : starts at 2026-07-27 13:55:54.854931 (912332.6696314)
+Experiment                    : has code 1787829826
+Experiment                    : starts at 2026-08-27 13:23:47.070092 (479971.6502938)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-Experiment uses bexhoma version 0.10.8.
+Experiment uses bexhoma version 0.10.13.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker19.
@@ -28,14 +28,9 @@ PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : found labels on pvc = []
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1785153354
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1785153354
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1787829826
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1787829826
 PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-benchbase-tpcc-16
-PostgreSQL-1                  : storage bexhoma-storage-postgresql-benchbase-tpcc-16 should be removed
-- waiting 10s -               : done
-PostgreSQL-1                  : storage bexhoma-storage-postgresql-benchbase-tpcc-16 is gone
-- waiting 30s -               : done
-PostgreSQL-1                  : is pending
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
@@ -46,7 +41,7 @@ PostgreSQL-1                  : waits for health check to succeed
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1785153354-7b58f6bb66-k75l5 to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1787829826-7dfc8bdd66-hptjz to load scripts
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-benchbase-tpcc-16
 PostgreSQL-1                  : start asynch loading scripts of type schema
@@ -72,29 +67,55 @@ PostgreSQL-1                  : is loading
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
 - waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
 PostgreSQL-1                  : showing loader times (benchbase-loader)
 PostgreSQL-1                  : generator times (start/end per pod and container) []
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1785153568, 1785153894)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1785153568, 1785153894)]
-PostgreSQL-1                  : loader timespan (first to last [s]) = 326
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1787829999, 1787830745)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1787829999, 1787830745)]
+PostgreSQL-1                  : loader timespan (first to last [s]) = 746
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-benchbase-tpcc-16
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1785153354-7b58f6bb66-k75l5 to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1787829826-7dfc8bdd66-hptjz to load scripts
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-benchbase-tpcc-16
 PostgreSQL-1                  : start asynch loading scripts of type index
 PostgreSQL-1                  : is loading
 - waiting 30s -               : done
+PostgreSQL-1                  : is loading
+- waiting 30s -               : done
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-benchbase-tpcc-16
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1785153354 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1787829826 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 1
-PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1785153354-7b58f6bb66-k75l5 and write to pvc bexhoma-storage-postgresql-benchbase-tpcc-16
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1785153354
+postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1787829826-7dfc8bdd66-hptjz and write to pvc bexhoma-storage-postgresql-benchbase-tpcc-16
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1787829826
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1785153354-1-1-1-x47fh: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1787829826-1-1-1-s7vbj: found
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -108,26 +129,21 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-- waiting 2s -                : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1785153354/PostgreSQL-1-1-1-1.config
-PostgreSQL-1-1-1-1            : showing benchmarker times
-PostgreSQL-1-1-1-1            : benchmarker timespan job from 1785153977 to 1785154291
-PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1785153980 to 1785154284
-PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 304
-PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1785153980, 1785154284)]
-PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1785153980, 1785154284)]}
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1785153354-7b58f6bb66-k75l5 and write to pvc bexhoma-storage-postgresql-benchbase-tpcc-16
+postgresql-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1787829826/postgresql-1-1-1-1.config
+postgresql-1-1-1-1            : showing benchmarker times
+postgresql-1-1-1-1            : benchmarker timespan job from 1787830855 to 1787831183
+postgresql-1-1-1-1            : benchmarker timespan pods from 1787830857 to 1787831161
+postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 304
+postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1787830857, 1787831161)]
+postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1787830857, 1787831161)]}
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1787829826-7dfc8bdd66-hptjz and write to pvc bexhoma-storage-postgresql-benchbase-tpcc-16
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1785153354-7b58f6bb66-k75l5
-PostgreSQL-1                  : still being removed
-- waiting 30s -               : done
-PostgreSQL-1                  : still being removed
-- waiting 30s -               : done
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1787829826-7dfc8bdd66-hptjz
 PostgreSQL-1                  : still being removed
 - waiting 30s -               : done
 PostgreSQL-1                  : starts again
@@ -136,30 +152,24 @@ PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-benchbase-tpcc-16']
 PostgreSQL-1                  : storage bexhoma-storage-postgresql-benchbase-tpcc-16 exists
-PostgreSQL-1                  : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '385', 'time_ingested': '326', 'time_initschema': '1', 'time_loading': '712', 'time_loading_end': '1785153946', 'time_loading_start': '1785153561', 'time_schema': '1'}
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1785153354
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1785153354
+PostgreSQL-1                  : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '828', 'time_ingested': '746', 'time_initschema': '1', 'time_loading': '1576', 'time_loading_end': '1787830821', 'time_loading_start': '1787829993', 'time_schema': '2'}
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1787829826
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1787829826
 PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-benchbase-tpcc-16
 PostgreSQL-1                  : copied label data = True
 PostgreSQL-1                  : copied label index = True
 PostgreSQL-1                  : copied label loaded = True
 PostgreSQL-1                  : copied label schema = True
 PostgreSQL-1                  : copied label time_generated = 0
-PostgreSQL-1                  : copied label time_index = 385
-PostgreSQL-1                  : copied label time_ingested = 326
+PostgreSQL-1                  : copied label time_index = 828
+PostgreSQL-1                  : copied label time_ingested = 746
 PostgreSQL-1                  : copied label time_initschema = 1
-PostgreSQL-1                  : copied label time_loading = 712
-PostgreSQL-1                  : copied label time_loading_end = 1785153946
-PostgreSQL-1                  : copied label time_loading_start = 1785153561
-PostgreSQL-1                  : copied label time_schema = 1
+PostgreSQL-1                  : copied label time_loading = 1576
+PostgreSQL-1                  : copied label time_loading_end = 1787830821
+PostgreSQL-1                  : copied label time_loading_start = 1787829993
+PostgreSQL-1                  : copied label time_schema = 2
 PostgreSQL-1                  : loading is set to finished
 - waiting 10s -               : done
-- waiting 30s -               : done
-PostgreSQL-1                  : is pending
-- waiting 30s -               : done
-PostgreSQL-1                  : is pending
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
@@ -170,13 +180,13 @@ PostgreSQL-1                  : waits for health check to succeed
 PostgreSQL-1                  : waits for health check to succeed
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PostgreSQL-1-1785153354 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PostgreSQL-1-1787829826 initialized to 1.
 PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 1
-PostgreSQL-1-2-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1785153354-5685759966-kx47g and write to pvc bexhoma-storage-postgresql-benchbase-tpcc-16
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1785153354
+postgresql-1-2-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1787829826-d4b8b785-2wh4z and write to pvc bexhoma-storage-postgresql-benchbase-tpcc-16
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1787829826
 - waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1785153354-2-1-1-5rd5l: found
+PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1787829826-2-1-1-x8h9d: found
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
@@ -194,20 +204,18 @@ PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
 - waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1-2-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1785153354/PostgreSQL-1-2-1-1.config
-PostgreSQL-1-2-1-1            : showing benchmarker times
-PostgreSQL-1-2-1-1            : benchmarker timespan job from 1785154699 to 1785155041
-PostgreSQL-1-2-1-1            : benchmarker timespan pods from 1785154703 to 1785155007
-PostgreSQL-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 304
-PostgreSQL-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1785154703, 1785155007)]
-PostgreSQL-1-2-1-1            : found and updated times {'benchmarker': [(1785154703, 1785155007)]}
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1785153354-5685759966-kx47g and write to pvc bexhoma-storage-postgresql-benchbase-tpcc-16
+postgresql-1-2-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1787829826/postgresql-1-2-1-1.config
+postgresql-1-2-1-1            : showing benchmarker times
+postgresql-1-2-1-1            : benchmarker timespan job from 1787831498 to 1787831860
+postgresql-1-2-1-1            : benchmarker timespan pods from 1787831500 to 1787831806
+postgresql-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 306
+postgresql-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1787831500, 1787831806)]
+postgresql-1-2-1-1            : found and updated times {'benchmarker': [(1787831500, 1787831806)]}
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1787829826-d4b8b785-2wh4z and write to pvc bexhoma-storage-postgresql-benchbase-tpcc-16
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1785153354-5685759966-kx47g
-Experiment                    : ends at 2026-07-27 14:24:42.088121 (914059.9024818) - 1727.23s total
+PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1787829826-d4b8b785-2wh4z
+Experiment                    : ends at 2026-08-27 13:58:18.688728 (482043.2281545) - 2071.58s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -218,13 +226,13 @@ Result workflow complete
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1728s 
-* Code: 1785153354
+* Duration: 2072s 
+* Code: 1787829826
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.10.8.
+  * Experiment uses bexhoma version 0.10.13.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker19.
@@ -241,13 +249,13 @@ Benchbase Workload tpcc SF=16
   * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1 uses docker image postgres:18.3
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:810110
+  * disk:364053
   * volume_size:50G
   * volume_used:4.3G
   * cpu_list:0-223
@@ -255,27 +263,28 @@ Benchbase Workload tpcc SF=16
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1785153354
+    * code:1787829826
     * TENANT_VOL:False
-* PostgreSQL-1-2-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-2-1-1 uses docker image postgres:18.3
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:809165
+  * disk:366886
   * volume_size:50G
-  * volume_used:4.9G
+  * volume_used:4.5G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * eval_parameters
-    * code:1785153354
+    * code:1787829826
     * TENANT_VOL:False
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1785153354-5685759966-kx47g: 0 0
+* bexhoma-sut-postgresql-1-1787829826-7dfc8bdd66-hptjz: 0 0
+* bexhoma-sut-postgresql-1-1787829826-d4b8b785-2wh4z: 0 0
 
 ### Workflow
 
@@ -295,24 +304,24 @@ Benchbase Workload tpcc SF=16
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 |   16 |      712.00 |           1.00 |            0.00 |        326.00 |          385.00 |              1 |           1 |             |                |             0 | False         |               80.90 |
-| PostgreSQL-1-2 |                2 |   16 |      712.00 |           1.00 |            0.00 |        326.00 |          385.00 |              1 |           1 |             |                |             0 | False         |               80.90 |
+| PostgreSQL-1-1 |                1 |   16 |     1576.00 |           2.00 |            0.00 |        746.00 |          828.00 |              1 |           1 |             |                |             0 | False         |               36.55 |
+| PostgreSQL-1-2 |                2 |   16 |     1576.00 |           2.00 |            0.00 |        746.00 |          828.00 |              1 |           1 |             |                |             0 | False         |               36.55 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |         160 |    16384 |        1 |               1 |       1 |           0 | 300.00 |            3 |                        1356.15 |                     1345.06 |         0.00 |                                                     483481.00 |                                             117868.00 |
-| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |         160 |    16384 |        1 |               1 |       1 |           0 | 300.00 |            1 |                        1064.05 |                     1056.38 |         0.00 |                                                     649692.00 |                                             150325.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |         160 |    16384 |        1 |               1 |       1 |           0 | 300.00 |            1 |                         576.05 |                      572.24 |         0.00 |                                                    1288914.00 |                                             276997.00 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |         160 |    16384 |        1 |               1 |       1 |           0 | 300.00 |            1 |                         409.07 |                      406.60 |         0.00 |                                                    1792752.00 |                                             390564.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |         160 |    16384 |               1 |           1 |           0 | 300.00 |            3 |                        1356.15 |                     1345.06 |         0.00 |                                                     483481.00 |                                             117868.00 |
-| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |         160 |    16384 |               1 |           1 |           0 | 300.00 |            1 |                        1064.05 |                     1056.38 |         0.00 |                                                     649692.00 |                                             150325.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |         160 |    16384 |               1 |           1 |           0 | 300.00 |            1 |                         576.05 |                      572.24 |         0.00 |                                                    1288914.00 |                                             276997.00 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |         160 |    16384 |               1 |           1 |           0 | 300.00 |            1 |                         409.07 |                      406.60 |         0.00 |                                                    1792752.00 |                                             390564.00 |
 
 ### Tests
 * TEST passed: No SUT container restarts
