@@ -425,7 +425,11 @@ whether performance metrics remain usable.
 Investigations are written under the `agent/` subdirectory of the result folder
 `cluster.config` declares, beside the benchmark results themselves, so a
 checkout keeps no run artifacts of its own. Override the location with
-`--trajectories`.
+`--trajectories`. Two more directories live there as siblings of the
+investigation directories: `inbox/`, where the design and follow-up-authoring
+agents draft specifications before they validate, and `status/`, the registry
+of `<experiment-code>.json` files behind `list_results` and the operator
+wrappers' resume logic. Override them with `--inbox` and `--status`.
 
 The design invocation first creates a timestamp-only working directory there.
 After the design produces a valid experiment, the harness renames it to
@@ -442,6 +446,8 @@ interpretation and follow-up appends to the same directory:
 - `phases/<number>-<phase>/`: immutable submitted specification, validation
   inputs, and Bexhoma log for that phase, when it submitted an experiment;
 - `reports/<number>-<phase>.md`: each phase's own account;
+- `reports/<number>-<phase>-reasoning.md`: that phase's model-authored
+  turn-by-turn reasoning trace, rendered verbatim from the trajectory;
 - `answer.md`: created only after the final interpretation and containing its
   one-result answer according to the archived result contract.
 

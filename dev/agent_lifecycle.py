@@ -97,6 +97,7 @@ class LifecycleConfig:
     root: Path
     trajectories: Path
     status: Path
+    inbox: Path
     server_script: Path
     #: Only set when an operator overrode it; otherwise each run's directory is
     #: read from the status file the agent wrote at submission.
@@ -575,7 +576,9 @@ def _parser() -> argparse.ArgumentParser:
                         help="directory holding investigation trajectories; "
                              "defaults to the 'agent' subdirectory of the "
                              "result folder declared in cluster.config")
-    parser.add_argument("--status", default="status")
+    parser.add_argument("--status", default=None,
+                        help="per-experiment status files; defaults to the "
+                             "'status' subdirectory beside the trajectories")
     parser.add_argument(
         "--server-script",
         default="dev/model_server.ps1" if sys.platform == "win32"
@@ -600,7 +603,9 @@ def _parser() -> argparse.ArgumentParser:
                             "AGENT_METHOD", "agent/experiment_design_handbook.md"),
                         help="experiment design handbook; set AGENT_METHOD empty, or "
                              "pass an empty string, to design without one")
-    parser.add_argument("--inbox", default="inbox")
+    parser.add_argument("--inbox", default=None,
+                        help="draft specifications directory; defaults to the "
+                             "'inbox' subdirectory beside the trajectories")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
         "--baseline", action=argparse.BooleanOptionalAction,
@@ -656,11 +661,17 @@ def main() -> int:
             return 2
         trajectories = result_root / _TRAJECTORY_SUBDIR
 
+    # The draft inbox and the status files are shared agent state, so they sit
+    # beside the investigation directories unless the operator overrides them.
+    status = _path_from_root(root, args.status) if args.status else trajectories / "status"
+    inbox = _path_from_root(root, args.inbox) if args.inbox else trajectories / "inbox"
+
     config = LifecycleConfig(
         root=root,
         trajectories=trajectories,
         results=results,
-        status=_path_from_root(root, args.status),
+        status=status,
+        inbox=inbox,
         server_script=_path_from_root(root, args.server_script),
         poll_seconds=args.poll_seconds,
         benchmark_timeout_seconds=args.benchmark_timeout_seconds,
@@ -687,7 +698,7 @@ def main() -> int:
         # Forwarded even when empty: an empty value is how a run is asked to
         # design without the handbook, which is what the ablation compares.
         "--method", args.method,
-        "--inbox", args.inbox,
+        "--inbox", str(config.inbox),
     ]
     # Only forwarded when the operator overrode it; otherwise the agent reads
     # the result folder from Bexhoma's own configuration.

@@ -23,6 +23,7 @@ from agent.harness.agent import (
     _fallback_summary,
     _phase_account,
     _phase_number,
+    _write_reasoning_trace,
     _write_reports,
     main as agent_main,
     run_design,
@@ -1039,6 +1040,37 @@ resources:
         self.assertTrue(verdict["valid"])
         self.assertFalse(verdict["environment_checked"])
         self.assertIn("full catalog and environment validation", result["error"])
+
+    def test_inbox_and_status_may_live_outside_the_repository_root(self) -> None:
+        """The harness points both at the result folder; nothing should need root."""
+        elsewhere = self.root / "elsewhere"
+        inbox = elsewhere / "inbox"
+        status = elsewhere / "status"
+        relocated = Workspace(
+            root=str(self.root), inbox=str(inbox),
+            catalog_path="contracts/contract_catalog.yml",
+            environment_path="environment.yml",
+            results_root=str(self.root / "results"), status_dir=str(status),
+            run_directory=self.run,
+        )
+        path = "inbox/relocated.yml"
+        relocated.write_file(path, _SPEC)
+        self.assertTrue(relocated.validate(path)["valid"])
+
+        def launch(argv, **_kwargs):
+            code = argv[argv.index("--experiment-code") + 1]
+            (self.root / "results" / code).mkdir()
+            return _Process()
+
+        with mock.patch("agent.harness.tools.subprocess.Popen", side_effect=launch):
+            submitted = relocated.call("submit", {"path": path})
+
+        self.assertTrue((inbox / "relocated.yml").is_file())
+        self.assertTrue((status / f"{submitted['code']}.json").is_file())
+        # Draft and status land only under the given (non-root) directories --
+        # not written a level up, and not defaulted back under self.root.
+        self.assertFalse((elsewhere / "relocated.yml").exists())
+        self.assertFalse((self.root / f"{submitted['code']}.json").exists())
 
     def test_repeated_system_treatments_are_rejected_before_runtime_collapse(self) -> None:
         """One experiment cannot encode two knob variants with the same DBMS name."""
@@ -2968,7 +3000,12 @@ class PhaseTest(unittest.TestCase):
             ):
                 self.assertEqual(agent_main(), 0)
 
-            investigations = list((root / "investigations").iterdir())
+            # "investigations" also holds the shared inbox/ and status/
+            # directories now, siblings of the investigation directories.
+            investigations = [
+                path for path in (root / "investigations").iterdir()
+                if (path / "trajectory.jsonl").is_file()
+            ]
             self.assertEqual(len(investigations), 1)
             investigation = investigations[0]
             self.assertFalse((investigation / "answer.md").exists())
@@ -3002,7 +3039,10 @@ class PhaseTest(unittest.TestCase):
             ):
                 self.assertEqual(agent_main(), 0)
 
-            self.assertEqual(list((root / "investigations").iterdir()), [investigation])
+            self.assertEqual([
+                path for path in (root / "investigations").iterdir()
+                if (path / "trajectory.jsonl").is_file()
+            ], [investigation])
             self.assertTrue((investigation / "reports" / "01-design.md").is_file())
             self.assertTrue((investigation / "reports" / "02-interpret.md").is_file())
             self.assertEqual(
@@ -3086,6 +3126,51 @@ class PhaseTest(unittest.TestCase):
             self.assertEqual(final_report.read_text(), "one result\n")
             self.assertEqual(final_answer, investigation / "answer.md")
             self.assertEqual(final_answer.read_text(), "one result\n")
+
+    def test_reasoning_trace_renders_this_phases_turns_only(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            investigation = Path(directory)
+            reports = investigation / "reports"
+            reports.mkdir()
+            events = [
+                {"type": "meta", "phase": "design"},
+                {"type": "task", "text": "question"},
+                {"type": "assistant", "turn": 1,
+                 "reasoning": "Read the catalog first.", "text": ""},
+                {"type": "tool_call", "turn": 1, "tool": "read_file",
+                 "args": {"path": "contracts/contract_catalog.yml"},
+                 "result": {"bytes": 100}},
+                {"type": "assistant", "turn": 2,
+                 "reasoning": "Ten gigabytes -> scaling_factor: 10.", "text": ""},
+                {"type": "tool_call", "turn": 2, "tool": "write_file",
+                 "args": {"path": "inbox/x.yml", "text": "mode: run\ntitle: x\n"},
+                 "result": {"written": "inbox/x.yml", "bytes": 20}},
+                {"type": "tool_call", "turn": 2, "tool": "validate",
+                 "args": {"path": "inbox/x.yml"}, "result": {"valid": True, "errors": []}},
+                {"type": "assistant", "turn": 3, "reasoning": "", "text": "done"},
+            ]
+            # A prior phase's turn must not leak into this phase's trace.
+            (investigation / "trajectory.jsonl").write_text(
+                json.dumps({"type": "assistant", "turn": 1, "reasoning": "earlier phase"})
+                + "\n" + "".join(json.dumps(event) + "\n" for event in events),
+                encoding="utf-8",
+            )
+
+            trace = _write_reasoning_trace(
+                investigation / "trajectory.jsonl", reports, 1, "design"
+            )
+
+            text = trace.read_text(encoding="utf-8")
+            self.assertNotIn("earlier phase", text)
+            self.assertIn("## Turn 1", text)
+            self.assertIn("Read the catalog first.", text)
+            self.assertIn("## Turn 2", text)
+            self.assertIn("Ten gigabytes -> scaling_factor: 10.", text)
+            self.assertIn("→ validate inbox/x.yml -- passed", text)
+            self.assertIn("```yaml\nmode: run\ntitle: x\n```", text)
+            self.assertIn("## Turn 3", text)
+            self.assertIn("_(no reasoning recorded for this turn)_", text)
+            self.assertEqual(trace, reports / "01-design-reasoning.md")
 
     def test_phase_number_counts_all_phases_in_one_trajectory(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

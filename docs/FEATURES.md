@@ -37,7 +37,8 @@ follow up on a benchmark. The full current description and visual flow live in
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors; a server that does not advertise its window but refuses an oversized turn with a 400 has that window adopted from the refusal, the turn resized and resent once, and a still-refused turn reported the same way | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
-| Investigation trajectories written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories` as an override | `agent/harness/agent.py`, `dev/agent_lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume |
+| Investigation trajectories, the draft inbox, and the status registry all written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories`/`--inbox`/`--status` as overrides | `agent/harness/agent.py`, `agent/harness/tools.py`, `dev/agent_lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume, `inbox/` and `status/` included |
+| Per-phase reasoning trace (`reports/NN-phase-reasoning.md`): the model's verbatim turn-by-turn deliberation for that phase, rendered from the trajectory, drafted specifications included | `agent/harness/agent.py` | Done and regression-tested |
 | Phase completeness decided by work done, not by closing prose: a submitted (or dry-run-validated) design succeeds even when the model returns an empty final message, with a substituted plain-sentence report | `agent/harness/agent.py` | Done and regression-tested |
 | Finish reason and per-turn generation budget recorded on every assistant turn, and a reasoning-only turn (no tool call, no answer, work not done) re-prompted for a concrete step instead of ending the phase, up to three consecutive nudges | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Model server manifest with idle GPU release, its objects named `bexhoma-agent-model*` and labelled `app: bexhoma, component: agent, role: model-server` per the BeXhoma convention | `agent/k8s/vllm-qwen38-27b.yml` | Done |
@@ -175,6 +176,51 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-04 — A per-phase reasoning trace, and the last of the agent's checkout-local state moved out
+
+Looking at an archived investigation
+(`D:\data\benchmarks\agent\20260903T222503925986`), the user asked whether it
+recorded the reasoning behind each design decision. It did, but only as the
+`reasoning` field on every `assistant` event in `trajectory.jsonl`, interleaved
+across every phase as JSON lines with no readable rendering. The user asked for
+that reasoning surfaced as documentation — the model's actual turn-by-turn
+deliberation, not a fresh summary written after the fact, since a summary would
+rationalize the decisions rather than record them.
+
+`_write_reports` (`agent/harness/agent.py`) now also writes
+`reports/NN-phase-reasoning.md` beside each phase's existing `NN-phase.md`, via
+a new `_write_reasoning_trace` helper. It takes the trajectory events from the
+last `meta` event onward — the current phase's own turns — and renders one
+`## Turn N` section per `assistant` event with its `reasoning` text verbatim
+(or a note that none was recorded), followed by the `tool_call` events that
+turn made as `_tool_progress` one-line summaries; a `write_file` call is
+followed by the drafted specification as a fenced block, which is otherwise
+the only place that content survives in readable form. The file carries a
+disclaimer that it is the model's own account, not a validated justification.
+Written for every phase (design, baseline, interpret) with no opt-out, the same
+way the trajectory itself is always written.
+
+Asked next whether `inbox/`, the shared scratch directory `write_file` drafts
+specifications into, could also move into the result folder like the
+trajectories already had (2026-09-01, below), and then whether anything else
+still lived in the checkout: `status/`, the shared registry of
+`<experiment-code>.json` files `Workspace.list_results` and both operator
+wrappers scan, had the same problem — bandaged with a `.gitignore` entry
+(alongside `inbox/`) rather than relocated. Both now default to the `agent/`
+subdirectory of the resolved result folder (`<result_folder>/agent/inbox/` and
+`<result_folder>/agent/status/`), siblings of the per-investigation
+directories, resolved the same way `--trajectories` already is; `--inbox` and
+`--status` remain available to override. `Workspace._resolve_path` maps a
+model-written `inbox/<name>.yml` onto the real (now non-checkout) location; a
+dry-run's `validated_path`, recorded as that same relative string, is resolved
+by a new `_resolve_spec_reference` helper shared by `_carry_forward` and
+`_label_design_investigation`. The in-cluster lifecycle controller was left
+alone: it already keeps both directories on its persistent volume, one level
+above `trajectories/`, and passes them explicitly, which also keeps its own
+resumable-investigation scan from seeing them as extra directories. The stale
+files already sitting in the checkout's `inbox/` and `status/` were left on
+disk, as the pre-2026-09-01 trajectory files were.
 
 ### 2026-09-02 — Add a command-line dry-run validator that prints the structured verdict
 

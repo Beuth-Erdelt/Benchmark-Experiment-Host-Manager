@@ -37,6 +37,7 @@ from agent.harness import model_client, prompts, tools
 __all__ = ["Trajectory", "run_baseline", "run_design", "run_interpret"]
 
 _DEFAULT_INBOX = "inbox"
+_DEFAULT_STATUS = "status"
 _DEFAULT_CATALOG = os.path.join("contracts", "contract_catalog.yml")
 _DEFAULT_RESULT_CONTRACT = os.path.join("contracts", "contract_result.yml")
 _DEFAULT_ENVIRONMENT = os.path.join("dev", "catalog", "environment.yml")
@@ -1573,6 +1574,30 @@ def run_interpret(
                     ))
 
 
+def _resolve_spec_reference(
+    reference: str, run_directory: Path, root: Path,
+) -> Path:
+    """Resolve a specification path recorded in a trajectory outcome.
+
+    A submitted run records an absolute ``submitted_spec``. A dry run records
+    only the model-facing ``validated_path``, ``inbox/<name>.yml``, which
+    resolves against the investigation directory's parent -- the ``agent/``
+    folder that also holds the shared ``inbox/`` -- rather than the checkout.
+
+    :param reference: The recorded path, absolute or ``inbox/<name>.yml``.
+    :param run_directory: The investigation directory the outcome belongs to.
+    :param root: Repository root, for any other relative reference.
+    :return: The resolved path.
+    :rtype: Path
+    """
+    path = Path(reference)
+    if path.is_absolute():
+        return path
+    if path.parts and path.parts[0] == _DEFAULT_INBOX:
+        return run_directory.parent.joinpath(*path.parts)
+    return root / path
+
+
 def _carry_forward(
     run_directory: Path, root: Path,
 ) -> tuple[str, str | None, str | None, int | None]:
@@ -1609,7 +1634,9 @@ def _carry_forward(
         )
         if phase_archives:
             archived = phase_archives[-1]
-    source = archived if archived.is_file() else (root / spec_path if spec_path else None)
+    source = archived if archived.is_file() else (
+        _resolve_spec_reference(spec_path, run_directory, root) if spec_path else None
+    )
     if source and source.is_file():
         specification = source.read_text(encoding="utf-8")
     return task, specification, code, followups
@@ -1637,7 +1664,10 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("-u", "--base-url", default=os.environ.get("AGENT_BASE_URL", _DEFAULT_BASE_URL))
     parser.add_argument("-k", "--api-key", default=os.environ.get("AGENT_API_KEY", "EMPTY"))
     parser.add_argument("-r", "--root", default=os.getcwd())
-    parser.add_argument("-i", "--inbox", default=_DEFAULT_INBOX)
+    parser.add_argument("-i", "--inbox", default=None,
+                        help="directory the agent writes draft specifications "
+                             "into; defaults to the 'agent/inbox' subdirectory "
+                             "of the result folder declared in cluster.config")
     parser.add_argument("-c", "--catalog", default=_DEFAULT_CATALOG)
     parser.add_argument("-M", "--method",
                         default=os.environ.get("AGENT_METHOD", _DEFAULT_METHOD),
@@ -1652,7 +1682,11 @@ def _build_parser() -> argparse.ArgumentParser:
                         help="directory holding investigation trajectories; "
                              "defaults to the 'agent' subdirectory of the "
                              "result folder declared in cluster.config")
-    parser.add_argument("--status", default="status")
+    parser.add_argument("--status", default=None,
+                        help="directory holding the per-experiment status "
+                             "files; defaults to the 'agent/status' "
+                             "subdirectory of the result folder declared in "
+                             "cluster.config")
     parser.add_argument("-a", "--attempts", type=int, default=_DEFAULT_ATTEMPTS)
     parser.add_argument("-f", "--followups", type=int, default=_DEFAULT_FOLLOWUPS)
     parser.add_argument("--temperature", type=float, default=0.0)
@@ -1706,9 +1740,7 @@ def _label_design_investigation(
     specification_value = outcome.get("submitted_spec") or outcome.get("validated_path")
     if not specification_value:
         return run_directory
-    specification_path = Path(str(specification_value))
-    if not specification_path.is_absolute():
-        specification_path = root / specification_path
+    specification_path = _resolve_spec_reference(str(specification_value), run_directory, root)
     try:
         specification = yaml.safe_load(specification_path.read_text(encoding="utf-8"))
     except (OSError, yaml.YAMLError):
@@ -1815,6 +1847,63 @@ def _fallback_summary(phase: str, outcome: dict[str, Any]) -> str:
     return "The model produced no closing summary of its own before the phase ended."
 
 
+def _write_reasoning_trace(
+    trajectory_path: Path, reports: Path, phase_number: int, phase: str,
+) -> Path:
+    """Render this phase's turn-by-turn reasoning from the trajectory log.
+
+    The trajectory records each turn's private reasoning next to the action it
+    took, but interleaved across every phase as JSON lines. This lifts the
+    current phase's turns into a readable Markdown trace -- what the model
+    deliberated, verbatim, and the tool call each turn made, the drafted
+    specification included, since that survives nowhere else in prose form. It
+    is the model's own account, not a validated justification.
+
+    :param trajectory_path: The investigation's ``trajectory.jsonl``.
+    :param reports: The investigation's ``reports`` directory.
+    :param phase_number: 1-based phase number, for the filename.
+    :param phase: ``design``, ``interpret`` or ``baseline``.
+    :return: The written file's path.
+    :rtype: Path
+    """
+    events = _trajectory_events(trajectory_path)
+    phase_starts = [index for index, event in enumerate(events)
+                    if event.get("type") == "meta"]
+    phase_events = events[phase_starts[-1]:] if phase_starts else events
+
+    lines = [
+        f"# {phase.capitalize()} reasoning",
+        "",
+        "_The model's own turn-by-turn deliberation for this phase, rendered "
+        "verbatim from `trajectory.jsonl`. It records what the model weighed, "
+        f"not a validated justification; the closing summary is in "
+        f"`{phase_number:02d}-{phase}.md`._",
+    ]
+    turn_number = 0
+    for event in phase_events:
+        if event.get("type") == "assistant":
+            turn_number += 1
+            heading = f"## Turn {turn_number}"
+            if event.get("stage"):
+                heading += f" — {event['stage']}"
+            reasoning = (event.get("reasoning") or "").strip()
+            lines += ["", heading, "",
+                      reasoning or "_(no reasoning recorded for this turn)_"]
+        elif event.get("type") == "tool_call":
+            arguments = event.get("args") or {}
+            line = _tool_progress(
+                event.get("tool", ""), arguments, event.get("result") or {}
+            )
+            lines += ["", f"→ {line}"]
+            if event.get("tool") == "write_file" and isinstance(
+                arguments.get("text"), str
+            ):
+                lines += ["", "```yaml", arguments["text"].rstrip(), "```"]
+    trace = reports / f"{phase_number:02d}-{phase}-reasoning.md"
+    trace.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return trace
+
+
 def _write_reports(
     run_directory: Path,
     trajectory: Trajectory,
@@ -1828,6 +1917,9 @@ def _write_reports(
     reports.mkdir(parents=True, exist_ok=True)
     phase_report = reports / f"{phase_number:02d}-{phase}.md"
     phase_report.write_text(summary + "\n", encoding="utf-8")
+    reasoning_trace = _write_reasoning_trace(
+        trajectory.path, reports, phase_number, phase
+    )
     final_report: Path | None = None
     if final:
         final_report = run_directory / "answer.md"
@@ -1835,6 +1927,7 @@ def _write_reports(
     trajectory.record(
         "artifact", phase=phase, phase_number=phase_number,
         phase_report=str(phase_report),
+        reasoning_trace=str(reasoning_trace),
         final_report=str(final_report) if final_report else None,
     )
     return phase_report, final_report
@@ -1916,6 +2009,11 @@ def main() -> int:
         root / args.trajectories if args.trajectories
         else results / _TRAJECTORY_SUBDIR
     )
+    # The draft inbox and the per-experiment status files are shared, cross-run
+    # agent state, so they sit beside the investigation directories rather than
+    # in the checkout -- the same move the trajectories themselves already made.
+    inbox = args.inbox or str(trajectories / _DEFAULT_INBOX)
+    status = args.status or str(trajectories / _DEFAULT_STATUS)
     source: Path | None = None
     if args.phase in ("design", "baseline"):
         run_directory = trajectories / datetime.now().strftime("%Y%m%dT%H%M%S%f")
@@ -1962,10 +2060,10 @@ def main() -> int:
     # The baseline phase has no tools and no design space, so it needs no
     # workspace; building one would only assert a catalog it never reads.
     workspace = None if args.phase == "baseline" else tools.Workspace(
-        root=str(root), inbox=args.inbox, catalog_path=args.catalog,
+        root=str(root), inbox=inbox, catalog_path=args.catalog,
         environment_path=args.environment or None, method_path=method_path,
         results_root=str(results),
-        status_dir=args.status, run_directory=phase_directory,
+        status_dir=status, run_directory=phase_directory,
         allow_parallel_runs=args.allow_parallel_runs)
 
     print(f"{args.phase} phase with {model.model} at {args.base_url}", flush=True)
@@ -2097,6 +2195,7 @@ def main() -> int:
     print(f"investigation: {run_directory}")
     print(f"trajectory: {trajectory.path}")
     print(f"phase report: {phase_report}")
+    print(f"reasoning trace: {phase_report.with_name(phase_report.stem + '-reasoning.md')}")
     for key in ("validated_path", "code", "files_read", "bytes_read", "characters_returned"):
         if outcome.get(key):
             print(f"  {key}: {outcome[key]}")

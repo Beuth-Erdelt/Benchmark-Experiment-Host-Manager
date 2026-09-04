@@ -524,13 +524,15 @@ probe_activity() {{
         self.trajectories = self.root / "trajectories"
         self.results = self.root / "results"
         self.status = self.root / "status"
-        for path in (self.trajectories, self.results, self.status):
+        self.inbox = self.root / "inbox"
+        for path in (self.trajectories, self.results, self.status, self.inbox):
             path.mkdir()
         self.config = LifecycleConfig(
             root=self.root,
             trajectories=self.trajectories,
             results=self.results,
             status=self.status,
+            inbox=self.inbox,
             server_script=self.root / "server.sh",
             poll_seconds=0.001,
         )

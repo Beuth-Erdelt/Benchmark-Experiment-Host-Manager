@@ -165,8 +165,10 @@ def default_result_root(
 class Workspace:
     """Filesystem scope for one agent run.
 
-    :ivar root: Directory every relative path is resolved against.
-    :ivar inbox: The only directory the agent may write into.
+    :ivar root: Directory relative paths are resolved against, except the
+        ``inbox/`` prefix which resolves under :attr:`inbox`.
+    :ivar inbox: The only directory the agent may write into; the result
+        folder's ``agent/inbox``, passed as an absolute path by the harness.
     :ivar catalog_path: Path to ``contract_catalog.yml``, used by ``validate``.
     :ivar environment_path: Path to ``environment.yml``, or ``None`` to skip the
         cluster-fit checks.
@@ -258,9 +260,20 @@ class Workspace:
         self.reset_read_context()
 
     def _resolve_path(self, path: str) -> Path:
-        """Resolve one model-visible path against the workspace root."""
+        """Resolve one model-visible path.
+
+        An absolute path is taken as given. A relative path whose first segment
+        is the inbox directory's name resolves under :attr:`inbox`, which is the
+        result folder's ``agent/inbox`` and no longer necessarily below
+        :attr:`root`; every other relative path resolves against :attr:`root`.
+        """
         source = Path(path)
-        return source.resolve() if source.is_absolute() else (self.root / source).resolve()
+        if source.is_absolute():
+            return source.resolve()
+        parts = source.parts
+        if parts and parts[0] == self.inbox.name:
+            return self.inbox.joinpath(*parts[1:]).resolve()
+        return (self.root / source).resolve()
 
     def _resolve_in_inbox(self, path: str) -> Path:
         """Resolve an agent-supplied path, refusing anything outside the inbox.
@@ -268,12 +281,12 @@ class Workspace:
         Resolution happens before the check so that ``..`` segments and symlinks
         cannot walk out of the scope.
 
-        :param path: Path as the agent wrote it, relative to :attr:`root`.
+        :param path: Path as the agent wrote it, ``inbox/<name>.yml``.
         :return: The resolved absolute path.
         :rtype: Path
         :raises ToolError: When the path leaves the inbox or is not a spec file.
         """
-        candidate = (self.root / path).resolve()
+        candidate = self._resolve_path(path)
         if candidate.parent != self.inbox:
             raise ToolError(
                 f"path {path!r} is outside the write scope; "

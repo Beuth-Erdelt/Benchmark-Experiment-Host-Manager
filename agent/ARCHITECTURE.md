@@ -224,8 +224,9 @@ whole-workload-throughput, and suspect-repetition record exactly. A suspect
 repeat is disclosed but not automatically invalidated. A settled question also
 requires evidence marked as supported. The investigation contains `task.txt`,
 immutable per-phase submission/log artifacts under `phases/`, all phase
-accounts under `reports/`, and one append-only `trajectory.jsonl` for lineage
-and audit, not model context aggregation.
+accounts and their rendered turn-by-turn reasoning traces under `reports/`, and
+one append-only `trajectory.jsonl` for lineage and audit, not model context
+aggregation.
 
 Successful interpretation writes `agent_summary.yml` beside the selected
 result. It separates the scientific hypothesis status from the report's
@@ -403,9 +404,10 @@ process boundaries.
 - The result root is read from Bexhoma's own `cluster.config`, so agent and
   benchmark cannot disagree about it; a checkout without that file is told to
   create one rather than defaulted to a path belonging to this cluster.
-  Investigation trajectories are written under that root's `agent/`
-  subdirectory unless `--trajectories` overrides it, so a checkout holds no run
-  artifacts of its own.
+  Investigation trajectories, the draft inbox, and the submission-status
+  registry are all written under that root's `agent/` subdirectory unless
+  `--trajectories`/`--inbox`/`--status` override them, so a checkout holds no
+  run artifacts of its own.
 - The harness deliberately does not perform cross-experiment synthesis or
   cross-run validity checks. `follow_up_of` preserves lineage, while each
   interpretation remains scoped to one result.
