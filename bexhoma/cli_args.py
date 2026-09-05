@@ -94,7 +94,7 @@ def make_base_parser():
     p.add_argument('-nbp', '--num-benchmarking-pods', help='comma-separated list of benchmarker pod counts', default="1")
     p.add_argument('-nbt', '--num-benchmarking-threads', help='total benchmarking threads, split evenly across pods', default="1")
     p.add_argument('-sf',  '--scaling-factor', help='scaling factor controlling dataset size', default=1)
-    p.add_argument('-t',   '--timeout', help='per-query timeout in seconds', default=600)
+    p.add_argument('-t',   '--timeout', help='per-query timeout in seconds', default=1800)
     p.add_argument('-lr',  '--limit-ram', help='RAM limit for the SUT and worker pods (e.g. 64Gi; 0 = no limit); comma-separated to sweep several settings (e.g. 32Gi,64Gi), one configuration per entry', default='0')
     p.add_argument('-lc',  '--limit-cpu', help='CPU limit for the SUT and worker pods (e.g. 4; 0 = no limit); comma-separated to sweep, must then match the length of any other swept resource list', default='0')
     p.add_argument('-rr',  '--request-ram', help='RAM request for the SUT and worker pods (e.g. 16Gi); comma-separated to sweep several settings (e.g. 32Gi,64Gi), one configuration per entry', default='16Gi')
