@@ -177,6 +177,17 @@ claiming at the same instant cannot both succeed. This is what makes the
 
 ## Part 2 — Request log
 
+### 2026-09-05 — Name scan and aggregation query subsets in the `active_queries` guidance
+
+The `why` for the TPC-H `active_queries` parameter in `contracts/contract_catalog.yml`
+already pointed at one worked example, the multi-way-join group `[5, 7, 8, 9, 21]`.
+The user asked for a couple more named subsets aimed at other workload aspects —
+one scan-specific, one aggregation-specific — without letting the `why` grow long.
+It now lists three groups drawn from the standard TPC-H query characterisations:
+`[1, 6]` for scan-dominated, nearly join-free passes over `lineitem`, `[1, 13, 18]`
+for heavy grouping and aggregation, and the existing `[5, 7, 8, 9, 21]` for
+multi-way joins. The closing sentence about cutting runtime is unchanged.
+
 ### 2026-09-04 — A per-phase reasoning trace, and the last of the agent's checkout-local state moved out
 
 Looking at an archived investigation

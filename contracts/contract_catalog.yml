@@ -383,10 +383,12 @@ workloads:
         default: all
         min: 1
         max: 22
-        why: "restrict the run to a subset of the 22 queries, e.g. [5, 7, 8, 9, 21]
-          for the multi-way-join group; every entry must be in 1..22. Use it to
-          focus on the queries that exercise the mechanism under test and to cut
-          runtime when the other queries add nothing to the comparison"
+        why: "restrict the run to a subset of the 22 queries; every entry must be
+          in 1..22. Pick the group that exercises the mechanism under test:
+          [1, 6] for scan-dominated, nearly join-free passes over lineitem,
+          [1, 13, 18] for heavy grouping and aggregation, [5, 7, 8, 9, 21] for
+          multi-way joins. It also cuts runtime when the other queries add
+          nothing to the comparison"
       recreate_parameter:
         type: bool
         default: false
