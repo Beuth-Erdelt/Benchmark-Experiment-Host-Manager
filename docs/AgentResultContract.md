@@ -55,8 +55,10 @@ provenance:                              # pre-existing files, never written or 
                                           contract_result.yml pair that governed it, or (self-specified only)
                                           any catalog:/environment: pointer files the spec named; a hand-typed
                                           python tpch.py ... invocation writes none of these",
-                 "{pod-name}.describe.log": "kubectl describe pod: scheduling/image-pull/restart/OOMKill events
-                                              for that specific Pod object",
+                 "{pod-name}.describe.log": "kubectl describe pod: scheduling/image-pull/restart/OOMKill and
+                                              node-readiness events for that specific Pod object (a NodeNotReady
+                                              on the SUT's node withdraws its service endpoint, so new
+                                              connections are refused while the process itself keeps running)",
                  "{job-name}.describe.job.log": "kubectl describe job (loading/generator jobs only; .job.log,
                                               not .describe.log, so it globs apart from per-pod describes):
                                               the Job's own Events list every Pod it ever spawned over
@@ -66,7 +68,12 @@ provenance:                              # pre-existing files, never written or 
                                               per-pod *.describe.log set above"}
   loading:      {"*-loading-*.sql.log / *-loading-*.sh.log": "rendered script SOURCE despite the .log suffix",
                  "*-loading-*.stdout.log": "stdout of that script",
-                 "*-loading-*.stderr.log": "stderr — check first on a silent loading failure"}
+                 "*-loading-*.stderr.log": "stderr — check first on a silent loading failure",
+                 "*-loading-*.datagenerator.log": "stdout of one loading pod's data-generation init container",
+                 "*-loading-*.sensor.log": "stdout of one loading pod's loading container — the per-table client
+                                            command actually issued and what it returned (a row count on success,
+                                            a client error otherwise), one file per pod; the tier-3 evidence that
+                                            exposes a partially loaded database (see Known gaps)"}
   benchmarking: {"bexhoma-benchmarker-*.log":            "raw per-pod benchmarker/driver stdout",
                  "bexhoma-benchmarker.*.all.df.pickle":  "cached parsed+aggregated DataFrame",
                  "queries.config":                        "literal SQL text — DBMSBenchmarker-family (TPC-H/TPC-DS) only"}
@@ -115,6 +122,9 @@ validity:                                # from experiment._test_results -> repo
     kind: absolute                       # one pod = one process = one connection, so at numRun=1 it compares nothing
   - id: monitoring_component_cpu_nonzero # per monitored component; SKIPPED (not failed) when phase < 1 scrape interval
     kind: absolute
+  - id: explain_captured_for_all_queries # DBMSBenchmarker-family only: every active query has an EXPLAIN captured
+    kind: absolute                       # for at least one connection; SKIPPED (not failed) when -se/--store-explain
+                                          # was not used, so nothing was captured at all
   - id: loaded_data_complete             # NOT IMPLEMENTED — see Known gaps
     kind: absolute
   - id: cross_experiment_comparison      # NOT IMPLEMENTED — see Known gaps
@@ -131,17 +141,30 @@ answer_contract:                         # how to structure the final written an
     also_copied: [contract_catalog.yml, contract_result.yml]  # frozen at run time, may differ from the repo's current copies
   steps:
     - {id: hypothesis, instruction: "restate the question, quoting experiment.yml's hypothesis verbatim when present"}
-    - {id: verdict,     instruction: "hypothesis verdict (supported/refuted/inconclusive/invalid), then pass/fail/skip counts; note any FAILED row scoping a metric below it", source: [agent_summary_contract.verdict, verdict_shape]}
+    - {id: verdict,     instruction: "hypothesis verdict (supported/refuted/inconclusive/invalid), then pass/fail/skip counts; note any FAILED row scoping a metric below it", source: [agent_summary_contract.fields.verdict, verdict_shape]}
     - {id: evidence,    instruction: "cite the specific tier-1/tier-2 file and value behind every claim", source: tiers}
     - {id: follow_up,   instruction: "if unresolved, propose a new experiment.yml with follow_up_of set to this run's experiment_code", source: "experiment.yml discriminates/follow_up_of, else known_gaps.cross_experiment_comparison"}
 
-agent_summary_contract:               # optional agent extension; not written by BeXhoma
+agent_summary_contract:               # optional agent extension; written by the agent harness, never by BeXhoma
   version: "1.0.0"
-  output_file: agent_summary.yml
-  fields: [experiment_code, follow_up_of, hypothesis, verdict,
-           technical_validity, unresolved_question]
-                                      # verdict is supported/refuted/inconclusive/invalid;
-                                      # evidence paths are relative to this result folder
+  output_file: "<result_dir>/agent_summary.yml"
+  present_when: "the optional agent harness has successfully interpreted this result"
+  absent_when:  "not interpreted by the harness — BeXhoma alone never creates this file"
+  purpose: "portable, compact lineage memory for authoring a later follow-up without loading ancestor reports or trajectories"
+  interpretation_scope: "the verdict is derived from THIS experiment alone; ancestor summaries are never evidence for interpreting it"
+  fields:
+    agent_summary_version: {type: str, const: "1.0.0"}
+    experiment_code:       {type: str, source: structure.experiment_code}
+    follow_up_of:          {type: "str|null", source: experiment.yml.follow_up_of}
+    hypothesis:            {type: "str|null", source: experiment.yml.hypothesis}
+    verdict:               {status: "enum [supported, refuted, inconclusive, invalid] — scientific disposition, distinct from verdict_shape's mechanical counts",
+                            conclusion: "str — compact finding from the one-result interpretation",
+                            evidence_paths: "list[str] — paths relative to this result directory"}
+    technical_validity:    {failed_checks: "int, source: index.md frontmatter overall_status.failed",
+                            scope: "str — which conclusions the failed checks affect; empty when none failed"}
+    unresolved_question:   {type: str, semantics: "the one question selected for a follow-up; empty when interpretation finishes"}
+  lineage_use: "follow follow_up_of through sibling result directories and read only agent_summary.yml from each
+                ancestor, oldest first; stop at a missing, malformed, mismatched, or cyclic record"
 ```
 
 ---

@@ -3,7 +3,11 @@
 ## Overview
 
 The end-to-end loop an agent follows to turn a benchmarking question into an
-evidence-backed answer. Two files are the actual input/output *contract* —
+evidence-backed answer. The repository ships a language-model implementation of
+this loop; [`AgentHarness.md`](AgentHarness.md) is the operator guide to running
+it, with a command for every step below.
+
+Two files are the actual input/output *contract* —
 [`contracts/contract_catalog.yml`](../contracts/contract_catalog.yml) (what
 can be asked for) and
 [`contracts/contract_result.yml`](../contracts/contract_result.yml) (what
@@ -39,7 +43,7 @@ become usable — it **is** the concrete catalog data. Its `systems` and
 >>> list(d['systems'])
 ['PostgreSQL', 'PgDuckDB']
 >>> list(d['workloads'])
-['tpch']
+['tpch', 'ycsb']
 ```
 
 The name `catalog.yaml` shows up elsewhere in the codebase
@@ -89,7 +93,7 @@ selection; a fourth, `follow_up_of`, is optional and names a prior run's
 `experiment_code` when this run continues it. See
 [`AgentCatalogContract.md`](AgentCatalogContract.md) for the condensed,
 agent-facing shape of everything `contract_catalog.yml` currently offers
-(the one workload and two systems in scope, their params/knobs/profiles) and
+(the workloads and systems in scope, their params/knobs/profiles) and
 [`dev/catalog/experiment.yml`](../dev/catalog/experiment.yml) for the
 maintained worked example. `experiment*.yml` is gitignored at the repo
 root — a scratch `./experiment.yml` there is a normal, disposable working
@@ -177,6 +181,9 @@ Entry point: `{resultfolder}/{code}/report/index.md` (only if `-rp` was used
   `contract_result.yml`, with worked examples.
 - [`AgentReport.md`](AgentReport.md) — design rationale for the tiered report
   read in step 6.
+- [`AgentHarness.md`](AgentHarness.md) — operator guide to the shipped
+  language-model implementation of this loop, with runnable commands for design,
+  validation, execution, and interpretation.
 - [`validate_experiment.py`](../validate_experiment.py) /
   [`experiment.py`](../experiment.py) — the two entry points used in steps 4–5.
 - [`bexhoma/environment.py`](../bexhoma/environment.py) — generates

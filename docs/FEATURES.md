@@ -21,6 +21,7 @@ follow up on a benchmark. The full current description and visual flow live in
 
 | Component | Location | Status |
 |---|---|---|
+| Published operator guide with a runnable command for every stage — install, cluster and environment setup, `.env` model-endpoint choice, the one-command lifecycle, driving `design`/`interpret`/`baseline` by hand, standalone `agent.harness.validate`, standalone `--report` interpretation, the outputs layout, the self-hosted model server, the Kubernetes lifecycle Job, and replay — adapted from `agent/README.md` and `agent/ARCHITECTURE.md` for the documentation site | `docs/AgentHarness.md`, `docs/Agent.md` | Done |
 | Structured validation verdict | `agent/harness/validation.py` | Done |
 | Command-line dry-run validation: `python -m agent.harness.validate EXPERIMENT --environment PATH` prints the same structured verdict the agent's `validate` tool receives, exits 0 when valid and 1 otherwise, touches no cluster, and requires `--environment` explicitly so a skipped cluster-fit check cannot pass unnoticed | `agent/harness/validate.py`, `tests/test_agent_harness.py` | Done and regression-tested |
 | Six-call default validation budget for initial designs and follow-up authoring, with every prior verdict retained in the same model conversation | `agent/harness/agent.py`, `dev/agent_lifecycle.py` | Done and regression-tested |
@@ -176,6 +177,69 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-10 — Resync the two agent-contract doc pages with the current contract files
+
+Asked whether `docs/AgentCatalogContract.md` and `docs/AgentResultContract.md`
+were still accurate against `contracts/contract_catalog.yml` and
+`contracts/contract_result.yml`. Both carried the right version string, `1.4.0`,
+but several field-level changes had landed on the prototype branch under that
+same version without the pages being updated, so the versions matched while the
+content had drifted.
+
+`AgentCatalogContract.md` was missing the whole `catalog_concepts.experimental_design`
+block (the guidance to sweep a resource at and below the user's ceiling when it is
+a rival explanation, and to set a scale-appropriate `loading.timeout_minutes`),
+the `loading.timeout_minutes` field itself, the `discriminates` value set now
+including `cpu`, the `workloads.tpch.component_resources` block that sizes the
+peak-resource check for a pinned benchmarking node, and the important `when:`
+note on PgDuckDB's `duckdb_force_execution` warning that leaving it off measures
+PostgreSQL against PostgreSQL. The entire `ycsb` workload was described only in
+the prose "known gaps" and absent from the structured block; its params,
+loading, and produced-output shape were added there to match `tpch`.
+
+`AgentResultContract.md` was missing the `explain_captured_for_all_queries`
+validity check, the `*-loading-*.datagenerator.log` and `*-loading-*.sensor.log`
+provenance files (the latter being the tier-3 evidence its own "known gaps"
+prose already told the reader to consult for a partially loaded database), the
+node-readiness detail on `*.describe.log`, and the expanded `agent_summary.yml`
+shape — its nested `verdict` object with a scientific `status`, `conclusion`,
+and `evidence_paths`, the `technical_validity` object, and the `lineage_use`
+rule for walking `follow_up_of`. Those were all brought in.
+
+No contract file was changed — the pages were moved to match the contracts, not
+the other way round.
+
+### 2026-09-10 — Bring the agent harness into the published documentation, with runnable examples
+
+Asked whether the `docs/Agent*.md` set was up to date against `agent/README.md`,
+and to add whatever was missing so that those pages carry enough detail to run
+the examples themselves rather than sending the reader to `agent/`.
+
+The documentation site covered only the manual contract loop — read the two
+contracts, hand-write an `experiment.yml`, dry-run `validate_experiment.py`, run
+`experiment.py`, read the report — and said nothing about the language-model
+harness that automates that loop, even though `agent/README.md` and
+`agent/ARCHITECTURE.md` describe it in full. A new page,
+`docs/AgentHarness.md`, was written as the operator guide: it adapts the two
+`agent/` documents into a task-by-task walkthrough with a command for every
+stage — installing the `agent` extra, pointing bexhoma at the cluster, taking
+the environment snapshot, choosing the model endpoint in `.env`, the
+`dev/agent_lifecycle.py` one-command run, the experiment design handbook and its
+with/without ablation, the bare-model baseline, driving `design`/`interpret`
+(including standalone `--report`) by hand, standalone `agent.harness.validate`
+for a self-written specification, what interpretation checks before it trusts a
+verdict, the full outputs layout, running two investigations at once, the
+self-hosted vLLM server, the autonomous Kubernetes lifecycle Job, and the three
+replay levels — closing with the no-cluster `pytest` verification.
+
+`docs/Agent.md` now includes the new page in its `toctree` and its rendered body,
+directly after `AgentWorkflow.md`. Two stale facts in `AgentWorkflow.md` were
+corrected in the same change: the catalog's workload list, shown there as
+`['tpch']`, is now `['tpch', 'ycsb']`, and the phrase "the one workload and two
+systems in scope" became "the workloads and systems in scope". `AgentWorkflow.md`
+also gained a pointer, in its overview and its "See also" list, to the new
+operator guide. No code and no contract changed.
 
 ### 2026-09-05 — Name scan and aggregation query subsets in the `active_queries` guidance
 
