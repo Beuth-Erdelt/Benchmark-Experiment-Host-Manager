@@ -108,7 +108,7 @@ concluded.
 
 | Side | Authoritative artifacts | Guarantee |
 |---|---|---|
-| Design | `contracts/contract_catalog.yml`, `dev/catalog/environment.yml` | Legal schema, supported workloads/systems/knobs, experimental guidance, node and storage availability, resource ceilings |
+| Design | `contracts/contract_catalog.yml`, `environment.yml` (from `bexhoma environment create`) | Legal schema, supported workloads/systems/knobs, experimental guidance, node and storage availability, resource ceilings |
 | Result | Archived `contract_result.yml`, `report/index.md`, linked evidence and raw provenance | Result layout, validity checks, metric meanings, identifiers, versions, and interpretation rules |
 
 Prompts contain role, phase, tools, budgets, and stopping conditions. Domain and

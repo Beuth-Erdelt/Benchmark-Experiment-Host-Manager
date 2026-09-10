@@ -50,8 +50,8 @@ python3 -m venv .venv && .venv/bin/pip install -e ".[agent]"
 # 2. point bexhoma at the cluster, then edit the copy
 cp k8s-cluster.config cluster.config
 
-# 3. snapshot the cluster the agent will design against
-.venv/bin/python -m bexhoma.environment --output dev/catalog/environment.yml
+# 3. generate a fresh snapshot of the cluster the agent will design against
+.venv/bin/bexhoma environment create
 
 # 4. choose the model endpoint, then edit the copy
 cp .env.example .env
@@ -96,16 +96,26 @@ The design step is grounded in a description of the cluster as it is right now �
 which nodes exist, how much CPU and memory each can still allocate, which
 storage classes are available, what the namespace resource limits are. That
 description is a file the agent reads, not a contract, and it can only be
-produced by connecting to a live cluster:
+produced by connecting to a live cluster. Generate your own:
 
 ```sh
-.venv/bin/python -m bexhoma.environment --output dev/catalog/environment.yml
+.venv/bin/bexhoma environment create
 ```
 
-Regenerate it whenever the cluster changes. It carries a `collected_at`
-timestamp and goes stale the moment capacity moves after that. The checked-in
-[`dev/catalog/environment.yml`](../dev/catalog/environment.yml) is one such
-snapshot from a fixed point in time — a starting example, not a live view.
+`environment create` writes `environment.yml` in the working directory and
+inspects the current kubectl context; pass `-cx <context>` to choose another and
+`-o <path>` to write elsewhere. The file is ignored by git (the
+`environment*.yml` rule), so each person keeps a private, current snapshot
+rather than sharing one. Regenerate it whenever the cluster changes: it carries
+a `collected_at` timestamp and goes stale the moment capacity moves after that.
+
+The agent CLI and the lifecycle wrapper both read `environment.yml` from the
+working directory by default, so the commands below need no `--environment` flag
+once step 3 has run; pass `--environment <path>` only if you keep the file
+somewhere else, or `--environment ""` to skip the placement and
+resource-ceiling checks for a dry run. The standalone validator is the one
+exception — it always requires `--environment` — and its example below passes
+the flag explicitly.
 
 ## 4 — Choose the model endpoint
 
@@ -256,6 +266,9 @@ same investigation by pointing `--run` at its directory:
   --followups 1
 ```
 
+Interpretation itself reads only the finished report, but a follow-up it authors
+is validated against the same `environment.yml`, so keep that file current.
+
 If interpretation submits a follow-up, wait for that report and run the same
 command again with the same `--run` path. Otherwise the investigation's
 top-level `answer.md` now holds the interpretation of that one result.
@@ -291,7 +304,7 @@ call the validator directly:
 
 ```sh
 .venv/bin/python -m agent.harness.validate experiment.yml \
-  --environment dev/catalog/environment.yml \
+  --environment environment.yml \
   --catalog contracts/contract_catalog.yml --indent 2
 ```
 

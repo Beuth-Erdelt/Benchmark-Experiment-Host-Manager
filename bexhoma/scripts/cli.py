@@ -153,7 +153,7 @@ def main():
             print("Usage: bexhoma environment <subcommand> [args...]")
             print("Subcommands:")
             print("  create   Inspect the live cluster and write environment.yml")
-            print("Example: bexhoma environment create -cx my-context -o dev/catalog/environment.yml")
+            print("Example: bexhoma environment create -cx my-context -o environment.yml")
             sys.exit(0)
         subcommand, subcommand_args = remaining_args[0], remaining_args[1:]
         if subcommand == "create":

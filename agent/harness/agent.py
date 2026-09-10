@@ -40,7 +40,7 @@ _DEFAULT_INBOX = "inbox"
 _DEFAULT_STATUS = "status"
 _DEFAULT_CATALOG = os.path.join("contracts", "contract_catalog.yml")
 _DEFAULT_RESULT_CONTRACT = os.path.join("contracts", "contract_result.yml")
-_DEFAULT_ENVIRONMENT = os.path.join("dev", "catalog", "environment.yml")
+_DEFAULT_ENVIRONMENT = "environment.yml"
 #: The experiment design handbook: what makes a design sound, beside what the catalog
 #: makes legal and what the result contract makes claimable.
 _DEFAULT_METHOD = "agent/experiment_design_handbook.md"
@@ -1674,7 +1674,9 @@ def _build_parser() -> argparse.ArgumentParser:
                         help="experiment design handbook; set AGENT_METHOD empty, or "
                              "pass an empty path, to design without one")
     parser.add_argument("-e", "--environment", default=_DEFAULT_ENVIRONMENT,
-                        help="pass an empty string only for a dry run")
+                        help="cluster descriptor from `bexhoma environment create`; "
+                             "defaults to environment.yml in the working directory; "
+                             "pass an empty string only for a dry run")
     parser.add_argument("-R", "--results", default=os.environ.get("AGENT_RESULTS"),
                         help="bexhoma's result folder; defaults to the resultfolder "
                              "declared in cluster.config")

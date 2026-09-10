@@ -29,7 +29,7 @@ bexhoma environment create [-h] [-cx CONTEXT] [-o OUTPUT] [-xhw]
                             [-xhwsc HARDWARE_BASELINE_STORAGE_CLASSES]
 ```
 
-Write `environment.yml` for the current kubectl context, to the default path (`dev/catalog/environment.yml`):
+Write `environment.yml` for the current kubectl context, to the default path (`environment.yml` in the current directory):
 
 ```powershell
 bexhoma environment create
@@ -38,7 +38,7 @@ bexhoma environment create
 Target a specific context and output path:
 
 ```powershell
-bexhoma environment create -cx my-context -o dev/catalog/my-cluster.yml
+bexhoma environment create -cx my-context -o config/my-cluster.yml
 ```
 
 Include the hardware baseline sweep (30s per round instead of the default 15s):

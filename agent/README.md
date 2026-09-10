@@ -21,8 +21,8 @@ python3 -m venv .venv && .venv/bin/pip install -e ".[agent]"
 # 2. point bexhoma at the cluster, then edit the copy
 cp k8s-cluster.config cluster.config
 
-# 3. describe the cluster the agent will design against
-.venv/bin/python -m bexhoma.environment --output dev/catalog/environment.yml
+# 3. describe the cluster the agent will design against (writes ./environment.yml)
+.venv/bin/bexhoma environment create
 
 # 4. choose the model endpoint, then edit the copy
 cp .env.example .env
@@ -49,7 +49,7 @@ bexhoma agent lifecycle --task "<benchmark question>" --followups 1
 bexhoma agent design    --task "<benchmark question>"
 bexhoma agent interpret --run <result-folder>/agent/<investigation-id>
 bexhoma agent baseline  --task "<benchmark question>"
-bexhoma agent validate  experiment.yml --environment dev/catalog/environment.yml
+bexhoma agent validate  experiment.yml --environment environment.yml
 ```
 
 Each subcommand forwards its remaining arguments unchanged to the module named
@@ -83,11 +83,11 @@ of this guide uses the `python -m ...` form, which is exactly equivalent.
 
 4. Generate a current descriptor of the target cluster. Run this again whenever
    the cluster changes, since it is what grounds the agent's placement and
-   sizing choices in reality:
+   sizing choices in reality. It writes `environment.yml` in the working
+   directory, which every agent command reads by default:
 
    ```sh
-   .venv/bin/python -m bexhoma.environment \
-     --output dev/catalog/environment.yml
+   .venv/bin/bexhoma environment create
    ```
 
 The active catalog is `contracts/contract_catalog.yml`. The current prototype
@@ -409,7 +409,7 @@ at all, call the validator directly:
 
 ```sh
 .venv/bin/python -m agent.harness.validate experiment.yml \
-  --environment dev/catalog/environment.yml \
+  --environment environment.yml \
   --catalog contracts/contract_catalog.yml --indent 2
 ```
 

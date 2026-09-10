@@ -180,6 +180,31 @@ claiming at the same instant cannot both succeed. This is what makes the
 
 ## Part 2 — Request log
 
+### 2026-09-10 — Default the environment descriptor to the working directory, not `dev/`
+
+The agent read its cluster descriptor from `dev/catalog/environment.yml` by
+default, a path a fresh checkout does not even contain (it is gitignored), and
+`docs/AgentHarness.md` had just been changed to tell people to generate their own
+and pass `--environment` on every command. The cleaner fix, per the user, is to
+move the default rather than thread a flag everywhere.
+
+`bexhoma environment create -o` now defaults to `environment.yml` in the current
+directory (`bexhoma/environment.py`), and the agent CLI's `-e/--environment`
+(`agent/harness/agent.py`) and the lifecycle wrapper's `--environment`
+(`agent/lifecycle.py`) default to the same. So `bexhoma environment create`
+followed by any agent command now works with no `--environment` flag at all. The
+standalone validator still requires `--environment` explicitly, by design, so its
+documented example still passes it. `docs/AgentHarness.md` was simplified back to
+flag-free commands with one short note about the default and the override;
+`docs/Environment.md`, `docs/AgentWorkflow.md`, `agent/README.md`, and
+`agent/ARCHITECTURE.md` follow the new default. The `bexhoma environment` help
+example in `bexhoma/scripts/cli.py` no longer points at `dev/catalog/`.
+
+Still on `dev/catalog/environment.yml` and left alone as top-level drivers the
+project treats as fixed: `validate_experiment.py`'s `-e` default. A user who runs
+`bexhoma environment create` and then that script will see a "not found" skip
+until its default is moved too.
+
 ### 2026-09-10 — Move the operator wrapper out of `dev/` and add a `bexhoma agent` command
 
 The local lifecycle wrapper and the model-server switch scripts lived under

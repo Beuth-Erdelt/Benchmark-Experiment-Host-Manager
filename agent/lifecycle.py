@@ -596,7 +596,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tokens", type=int, default=16384)
     parser.add_argument("--catalog", default="contracts/contract_catalog.yml")
-    parser.add_argument("--environment", default="dev/catalog/environment.yml")
+    parser.add_argument("--environment", default="environment.yml",
+                        help="cluster descriptor from `bexhoma environment create`; "
+                             "defaults to environment.yml in the working directory")
     parser.add_argument("--method",
                         default=os.environ.get(
                             "AGENT_METHOD", "agent/experiment_design_handbook.md"),
