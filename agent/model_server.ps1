@@ -1,23 +1,23 @@
 <#
-Dev-only operator helper, NOT part of the agent prototype. PowerShell port of
-dev/model_server.sh for Windows workstations; both scripts do the same thing and
-either may be used.
+Operator helper, not part of the model-facing agent. PowerShell port of
+agent/model_server.sh for Windows workstations; both scripts do the same thing
+and either may be used.
 
 The agent is stateless between phases: design submits the experiment and exits,
 and interpretation is a fresh process that only starts once results exist.
 Nothing needs the model server during the benchmark itself, so the GPU can be
 handed back to the cluster for the hours a run takes.
 
-    .\dev\model_server.ps1 down     release the GPU (the weights PVC is kept)
-    .\dev\model_server.ps1 up       start the server and wait until it answers
+    .\agent\model_server.ps1 down     release the GPU (the weights PVC is kept)
+    .\agent\model_server.ps1 up       start the server and wait until it answers
 
 `down` is still the prompt path: the pod also releases the GPU on its own after
 a long idle period, but that safety net is minutes-to-hours slower than saying
 so directly.
 
-This is the low-level server switch. It is intentionally outside agent/: the
-submitted experiment and the agent remain usable without this operator
-convenience.
+This is the low-level server switch, in agent/ beside agent/lifecycle.py. Nothing
+under agent/harness/ (the model-facing code) uses it: the submitted experiment
+and the agent remain usable without this operator convenience.
 #>
 
 [CmdletBinding()]
@@ -28,7 +28,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$defaultManifest = (Resolve-Path (Join-Path $PSScriptRoot '..\agent\k8s\vllm-qwen38-27b.yml')).Path
+$defaultManifest = (Resolve-Path (Join-Path $PSScriptRoot 'k8s\vllm-qwen38-27b.yml')).Path
 $MANIFEST        = if ($env:MODEL_SERVER_MANIFEST) { $env:MODEL_SERVER_MANIFEST } else { $defaultManifest }
 $POD            = if ($env:MODEL_SERVER_POD)      { $env:MODEL_SERVER_POD }      else { 'bexhoma-agent-model' }
 $SVC            = if ($env:MODEL_SERVER_SERVICE)  { $env:MODEL_SERVER_SERVICE }  else { 'bexhoma-agent-model' }

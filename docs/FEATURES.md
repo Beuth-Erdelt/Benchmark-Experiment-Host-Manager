@@ -24,11 +24,11 @@ follow up on a benchmark. The full current description and visual flow live in
 | Published operator guide with a runnable command for every stage — install, cluster and environment setup, `.env` model-endpoint choice, the one-command lifecycle, driving `design`/`interpret`/`baseline` by hand, standalone `agent.harness.validate`, standalone `--report` interpretation, the outputs layout, the self-hosted model server, the Kubernetes lifecycle Job, and replay — adapted from `agent/README.md` and `agent/ARCHITECTURE.md` for the documentation site | `docs/AgentHarness.md`, `docs/Agent.md` | Done |
 | Structured validation verdict | `agent/harness/validation.py` | Done |
 | Command-line dry-run validation: `python -m agent.harness.validate EXPERIMENT --environment PATH` prints the same structured verdict the agent's `validate` tool receives, exits 0 when valid and 1 otherwise, touches no cluster, and requires `--environment` explicitly so a skipped cluster-fit check cannot pass unnoticed | `agent/harness/validate.py`, `tests/test_agent_harness.py` | Done and regression-tested |
-| Six-call default validation budget for initial designs and follow-up authoring, with every prior verdict retained in the same model conversation | `agent/harness/agent.py`, `dev/agent_lifecycle.py` | Done and regression-tested |
+| Six-call default validation budget for initial designs and follow-up authoring, with every prior verdict retained in the same model conversation | `agent/harness/agent.py`, `agent/lifecycle.py` | Done and regression-tested |
 | Catalog, shape, environment, and methodology validation | `agent/harness/validation.py`, `contracts/contract_catalog.yml` | Done |
 | Experiment design handbook: navigable chapters of methodological guidance, read from its Navigation chapter at design and follow-up authoring, hashed into provenance, with its four decidable principles enforced and cited by identifier | `agent/experiment_design_handbook.md`, `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/validation.py` | Done and regression-tested |
-| Handbook switched off in one setting, for the with/without ablation | `agent/harness/agent.py`, `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
-| Bare-model baseline phase: the question answered directly with no catalog, handbook, environment, or tools, recorded in the same trajectory-plus-`answer.md` form, run automatically by the lifecycle wrapper as its own investigation and linked from the design trajectory, toggled by `--baseline`/`--no-baseline` (`AGENT_BASELINE`) | `agent/harness/agent.py`, `agent/harness/prompts.py`, `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
+| Handbook switched off in one setting, for the with/without ablation | `agent/harness/agent.py`, `agent/lifecycle.py`, `.env.example` | Done and regression-tested |
+| Bare-model baseline phase: the question answered directly with no catalog, handbook, environment, or tools, recorded in the same trajectory-plus-`answer.md` form, run automatically by the lifecycle wrapper as its own investigation and linked from the design trajectory, toggled by `--baseline`/`--no-baseline` (`AGENT_BASELINE`) | `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/lifecycle.py`, `.env.example` | Done and regression-tested |
 | Handbook reachable and required during interpretation: named chapters must be read before a verdict may be recorded, and a renamed chapter is dropped rather than demanded | `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/tools.py` | Done and regression-tested |
 | Cluster session renewed at submission time, after the phase that can run long | `agent/harness/submit.py`, `.env.example` | Done and regression-tested |
 | Full coverage of the parameter types the catalog declares, including YCSB's throughput sweeps | `agent/harness/validation.py` | Done and regression-tested |
@@ -38,7 +38,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors; a server that does not advertise its window but refuses an oversized turn with a 400 has that window adopted from the refusal, the turn resized and resent once, and a still-refused turn reported the same way | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
-| Investigation trajectories, the draft inbox, and the status registry all written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories`/`--inbox`/`--status` as overrides | `agent/harness/agent.py`, `agent/harness/tools.py`, `dev/agent_lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume, `inbox/` and `status/` included |
+| Investigation trajectories, the draft inbox, and the status registry all written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories`/`--inbox`/`--status` as overrides | `agent/harness/agent.py`, `agent/harness/tools.py`, `agent/lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume, `inbox/` and `status/` included |
 | Per-phase reasoning trace (`reports/NN-phase-reasoning.md`): the model's verbatim turn-by-turn deliberation for that phase, rendered from the trajectory, drafted specifications included | `agent/harness/agent.py` | Done and regression-tested |
 | Phase completeness decided by work done, not by closing prose: a submitted (or dry-run-validated) design succeeds even when the model returns an empty final message, with a substituted plain-sentence report | `agent/harness/agent.py` | Done and regression-tested |
 | Finish reason and per-turn generation budget recorded on every assistant turn, and a reasoning-only turn (no tool call, no answer, work not done) re-prompted for a concrete step instead of ending the phase, up to three consecutive nudges | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
@@ -65,12 +65,14 @@ follow up on a benchmark. The full current description and visual flow live in
 | Portable per-experiment hypothesis verdict and compact ancestor memory for follow-up authoring | `agent/harness/agent.py`, `agent/harness/prompts.py`, `contracts/contract_result.yml` | Done and regression-tested without changing BeXhoma |
 | Installable agent and TPC-H launcher package | `pyproject.toml` | Done and wheel-smoke-tested outside the checkout |
 | Maintained-suite test discovery | `pyproject.toml` | Done; plain `pytest` runs `tests/` |
-| Local server/benchmark lifecycle, retry, resume, signal-safe cleanup, namespace restoration, restart of a self-finished pod, and exact failed-experiment cleanup | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Local-only; unit- and cluster-checked |
-| Windows PowerShell port of the low-level model-server switch (`up`/`down`), behaviour-for-behaviour with the shell version, selected automatically by the lifecycle wrapper on Windows | `dev/model_server.ps1`, `dev/agent_lifecycle.py` | Local-only operator helper; parse-, usage-, and unit-checked |
-| Unattended phase chaining for endpoints we do not host, including hosted APIs and a local Ollama | `dev/agent_lifecycle.py`, `.env.example` | Done and regression-tested |
-| Secret-safe model credential handoff from the lifecycle wrapper to agent phases | `dev/agent_lifecycle.py`, `tests/test_agent_lifecycle.py` | Done and regression-tested; `.env` remains local and the key is absent from child command lines |
+| Operator wrapper and model-server switch live in `agent/` (run as `python -m agent.lifecycle`), beside the in-cluster controller, rather than under `dev/`, which is for development scaffolding; the packaged `agent` distribution now carries the wrapper module | `agent/lifecycle.py`, `agent/model_server.sh`, `agent/model_server.ps1`, `agent/lifecycle_controller.py` | Done and regression-tested |
+| `bexhoma agent <design\|interpret\|baseline\|validate\|lifecycle> [args...]` as a friendlier front-end that forwards to `python -m agent.harness.agent` / `.validate` / `agent.lifecycle`, checks for the `agent` extra, and prints a hint instead of a traceback when it is missing | `bexhoma/scripts/cli.py`, `tests/test_cli.py` | Done and regression-tested |
+| Local server/benchmark lifecycle, retry, resume, signal-safe cleanup, namespace restoration, restart of a self-finished pod, and exact failed-experiment cleanup | `agent/lifecycle.py`, `agent/model_server.sh` | Local-only; unit- and cluster-checked |
+| Windows PowerShell port of the low-level model-server switch (`up`/`down`), behaviour-for-behaviour with the shell version, selected automatically by the lifecycle wrapper on Windows | `agent/model_server.ps1`, `agent/lifecycle.py` | Local-only operator helper; parse-, usage-, and unit-checked |
+| Unattended phase chaining for endpoints we do not host, including hosted APIs and a local Ollama | `agent/lifecycle.py`, `.env.example` | Done and regression-tested |
+| Secret-safe model credential handoff from the lifecycle wrapper to agent phases | `agent/lifecycle.py`, `tests/test_agent_lifecycle.py` | Done and regression-tested; `.env` remains local and the key is absent from child command lines |
 | Collision-safe experiment-code allocation for parallel submissions | `agent/harness/tools.py`, `tests/test_agent_harness.py` | Done and regression-tested |
-| Configuration that rejects a typo instead of failing open | `dev/agent_lifecycle.py`, `agent/harness/agent.py`, `dev/model_server.sh` | Done; `AGENT_MODEL_SERVER` and `AGENT_METHOD` regression-tested, the account-free `MODEL_SERVER_NAMESPACE` checked against a stubbed kubectl |
+| Configuration that rejects a typo instead of failing open | `agent/lifecycle.py`, `agent/harness/agent.py`, `agent/model_server.sh` | Done; `AGENT_MODEL_SERVER` and `AGENT_METHOD` regression-tested, the account-free `MODEL_SERVER_NAMESPACE` checked against a stubbed kubectl |
 | Quick start | `agent/README.md` | Done |
 | Full pipeline, annotated visual, replay rules, and decision record | `agent/ARCHITECTURE.md` | Done; all older agent-pipeline descriptions merged here |
 | Critic as a separate invocation | — | Optional evaluation, intentionally outside the prototype |
@@ -110,7 +112,7 @@ without a separate `kubectl` call.
 
 Which server the agent talks to is not fixed to that pod. The agent CLI
 (`agent/harness/agent.py`) and the local lifecycle wrapper
-(`dev/agent_lifecycle.py`) load an optional `.env` from the repository root at
+(`agent/lifecycle.py`) load an optional `.env` from the repository root at
 startup, supplying `AGENT_MODEL`, `AGENT_BASE_URL`, and `AGENT_API_KEY` where
 the shell has not already exported them. The same file carries the two settings
 that decide how a run is conducted rather than who answers it:
@@ -178,6 +180,41 @@ claiming at the same instant cannot both succeed. This is what makes the
 
 ## Part 2 — Request log
 
+### 2026-09-10 — Move the operator wrapper out of `dev/` and add a `bexhoma agent` command
+
+The local lifecycle wrapper and the model-server switch scripts lived under
+`dev/`, which the user pointed out is meant for development scaffolding —
+notebooks, calibration scripts — and reads as throwaway for what is a supported
+operator tool with its own test file. `dev/` is also not part of the packaged
+distribution, so `pip install "bexhoma[agent]"` did not actually ship the
+one-command lifecycle the quick start leads with.
+
+`dev/agent_lifecycle.py` moved to `agent/lifecycle.py`, and `dev/model_server.sh`
+and `dev/model_server.ps1` to `agent/model_server.sh` and `agent/model_server.ps1`,
+beside the in-cluster `agent/lifecycle_controller.py` they are the local
+counterpart of. The wrapper is now run as `python -m agent.lifecycle` rather than
+as a path, which matches how `python -m agent.harness.agent` and
+`python -m agent.harness.validate` are already invoked and lets it drop the
+`sys.path` bootstrap it used to need. Nothing under `agent/harness/` — the
+model-facing code — imports either file, so the isolation that matters is
+unchanged; the "intentionally outside `agent/`" comments were rewritten to say
+so. The controller now invokes `python -m agent.lifecycle`, and the test module
+and `.env.example` follow the new locations. The pre-existing environment-only
+test failures on this Windows machine (no `bash` for the WSL relay, and
+`os.kill(SIGTERM)` semantics) are unrelated and untouched.
+
+Separately, the user asked for a `bexhoma agent` subcommand. `bexhoma/scripts/cli.py`
+gained an `agent` branch beside its existing `environment` one:
+`bexhoma agent design|interpret|baseline` forward to
+`python -m agent.harness.agent --phase ...`, `bexhoma agent validate` to
+`python -m agent.harness.validate`, and `bexhoma agent lifecycle` to
+`python -m agent.lifecycle`, each passing the caller's remaining arguments
+through unchanged. It checks that the `agent` extra's dependencies are importable
+and prints `pip install "bexhoma[agent]"` rather than a traceback when they are
+not. A new `tests/test_cli.py` covers the dispatch, the unknown-subcommand and
+missing-extra paths, and that `main` routes `agent` before falling through to
+script lookup.
+
 ### 2026-09-10 — Resync the two agent-contract doc pages with the current contract files
 
 Asked whether `docs/AgentCatalogContract.md` and `docs/AgentResultContract.md`
@@ -225,7 +262,7 @@ harness that automates that loop, even though `agent/README.md` and
 `agent/` documents into a task-by-task walkthrough with a command for every
 stage — installing the `agent` extra, pointing bexhoma at the cluster, taking
 the environment snapshot, choosing the model endpoint in `.env`, the
-`dev/agent_lifecycle.py` one-command run, the experiment design handbook and its
+`agent/lifecycle.py` one-command run, the experiment design handbook and its
 with/without ablation, the bare-model baseline, driving `design`/`interpret`
 (including standalone `--report`) by hand, standalone `agent.harness.validate`
 for a self-written specification, what interpretation checks before it trusts a
@@ -394,7 +431,7 @@ Both local entry points changed. The agent CLI's `--trajectories` flag now
 defaults to unset; when it is unset the harness writes trajectories to the
 `agent/` subdirectory of the resolved result root, which is guaranteed to exist
 by the time that path is needed because a run without a result folder already
-stops earlier. The operator wrapper `dev/agent_lifecycle.py` resolves the same
+stops earlier. The operator wrapper `agent/lifecycle.py` resolves the same
 default so it can still watch the directory for the run it launches; because it
 runs as a script rather than a module, it adds the repository root to the import
 path to share the one result-folder helper with the harness rather than parsing
@@ -515,13 +552,13 @@ changes. A unit test drives the denied-rename path.
 
 ### 2026-08-29 — Provide a PowerShell version of the model-server switch
 
-Asked for a PowerShell version of `dev/model_server.sh`, the shell helper that
+Asked for a PowerShell version of `agent/model_server.sh`, the shell helper that
 brings the self-hosted vLLM model server up or down. The shell script depends on
 tools that are not present on a Windows workstation — `setsid`, `nohup`,
 `pkill`, and a POSIX shell — so running it under Git Bash there fails partway
 through rather than cleanly.
 
-`dev/model_server.ps1` is a behaviour-for-behaviour port. It keeps the same two
+`agent/model_server.ps1` is a behaviour-for-behaviour port. It keeps the same two
 verbs, the same environment-variable overrides (`MODEL_SERVER_CONTEXT`,
 `MODEL_SERVER_NAMESPACE`, `MODEL_SERVER_PORT`, and the rest), the same login
 refresh before every operation, the same replace-if-stale rule for a pod left in
@@ -532,7 +569,7 @@ replaced with native equivalents: the detached port-forward is started with
 down by matching `kubectl` command lines through `Win32_Process` instead of
 `pkill`, and the health check uses `Invoke-WebRequest` instead of `curl`.
 
-Running `dev/agent_lifecycle.py` on Windows with `AGENT_MODEL_SERVER=bundled`
+Running `agent/lifecycle.py` on Windows with `AGENT_MODEL_SERVER=bundled`
 then failed anyway, because the wrapper always started the switch with `bash`,
 which a Windows workstation does not have. The wrapper now chooses the switch
 script by platform — the PowerShell port on Windows, the shell script
@@ -601,7 +638,7 @@ instead, which works the same way on either platform.
 
 A second, unrelated instance of the POSIX-only liveness check
 (`os.kill(pid, 0)` used as "is this PID still running") turned up in
-`Workspace.list_results` and, once pointed out, in `dev/agent_lifecycle.py`'s
+`Workspace.list_results` and, once pointed out, in `agent/lifecycle.py`'s
 own watchdog. Both now use the same cross-platform check.
 
 The rest of the folder's path handling needed no change: every path in
@@ -672,7 +709,7 @@ against the namespace of whatever pod is looking it up, so the same three lines
 mean a different server depending on where the caller runs. The account entered
 through four other places instead: the kube context, the namespace declared in
 `cluster.config`, the login command in `AGENT_CLUSTER_LOGIN`, and one default in
-`dev/model_server.sh`. The first three are gitignored or carry placeholders in
+`agent/model_server.sh`. The first three are gitignored or carry placeholders in
 their tracked templates, which left the switch's default as the only account
 name in shipped code.
 
@@ -2348,7 +2385,7 @@ interpretation is a fresh process that starts only once results exist. Nothing
 needs the model server during the hours a benchmark takes, so holding an H200
 for that window wastes shared hardware.
 
-`dev/model_server.sh` releases the server and restores it when the run's report
+`agent/model_server.sh` releases the server and restores it when the run's report
 lands, keeping the weights volume so a restart needs no re-download. It lives in
 `dev/` and is deliberately not part of the prototype: it is operator
 convenience, and a paper claim rests on the agent's phases being independent,

@@ -16,7 +16,7 @@
 # that node's CPU, memory and page cache would contaminate the measurements the
 # agent is designing.
 #
-# The objects carry no namespace of their own: dev/model_server.sh applies them
+# The objects carry no namespace of their own: agent/model_server.sh applies them
 # into MODEL_SERVER_NAMESPACE, so this manifest is not tied to one account.
 #
 # Reach it from a laptop with:

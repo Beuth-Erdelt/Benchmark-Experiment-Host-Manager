@@ -15,21 +15,21 @@ from unittest import mock
 
 import yaml
 
-from agent.lifecycle_controller import (
-    _events,
-    _latest_resumable,
-    _resume_benchmark_orchestrator,
-    _write_in_cluster_kubeconfig,
-    _write_runtime_cluster_config,
-)
-from dev import agent_lifecycle as lifecycle_module
-from dev.agent_lifecycle import (
+from agent import lifecycle as lifecycle_module
+from agent.lifecycle import (
     AgentLifecycle,
     LifecycleConfig,
     LifecycleError,
     ModelServer,
     _install_signal_handlers,
     _parser,
+)
+from agent.lifecycle_controller import (
+    _events,
+    _latest_resumable,
+    _resume_benchmark_orchestrator,
+    _write_in_cluster_kubeconfig,
+    _write_runtime_cluster_config,
 )
 
 __all__: list[str] = []
@@ -140,7 +140,7 @@ class AgentLifecycleTest(unittest.TestCase):
                 results=None,
                 trajectories="trajectories",
                 status="status",
-                server_script="dev/model_server.sh",
+                server_script="agent/model_server.sh",
                 poll_seconds=1.0,
                 benchmark_timeout_seconds=0.0,
                 server_retry_seconds=1.0,
@@ -185,7 +185,7 @@ class AgentLifecycleTest(unittest.TestCase):
             interpret_model=None,
             base_url="https://model.example/v1", api_key="key", root=str(root),
             results=None, trajectories="trajectories", status="status",
-            server_script="dev/model_server.sh", poll_seconds=1.0,
+            server_script="agent/model_server.sh", poll_seconds=1.0,
             benchmark_timeout_seconds=0.0, server_retry_seconds=1.0,
             server_start_attempts=1, attempts=1, followups=0, temperature=0.0,
             max_tokens=1024, catalog="contracts/contract_catalog.yml",
@@ -640,7 +640,7 @@ probe_activity() {{
         server = ModelServer(self.config.server_script, bundled=False)
         lifecycle = _Lifecycle(self.config, ["agent"], server, runs=[design, final])
 
-        with mock.patch("dev.agent_lifecycle.subprocess.run") as run_command:
+        with mock.patch("agent.lifecycle.subprocess.run") as run_command:
             result = lifecycle.run("question")
 
         self.assertEqual(result, design)
@@ -770,7 +770,7 @@ probe_activity() {{
         lifecycle = AgentLifecycle(self.config, ["agent"], self.server)
 
         with mock.patch(
-            "dev.agent_lifecycle.subprocess.run",
+            "agent.lifecycle.subprocess.run",
             return_value=mock.Mock(returncode=0),
         ) as run:
             lifecycle._cleanup_failed_benchmark("101")
@@ -846,7 +846,7 @@ probe_activity() {{
                 }) + "\n")
             return mock.Mock(returncode=1)
 
-        with mock.patch("dev.agent_lifecycle.subprocess.run", side_effect=refuse):
+        with mock.patch("agent.lifecycle.subprocess.run", side_effect=refuse):
             with self.assertRaises(LifecycleError) as failure:
                 lifecycle._invoke_agent("interpret", source=investigation)
 
@@ -869,7 +869,7 @@ probe_activity() {{
                 }) + "\n")
             return mock.Mock(returncode=0)
 
-        with mock.patch("dev.agent_lifecycle.subprocess.run", side_effect=append_phase):
+        with mock.patch("agent.lifecycle.subprocess.run", side_effect=append_phase):
             result = lifecycle._invoke_agent("interpret", source=investigation)
 
         self.assertEqual(result, investigation)
@@ -900,7 +900,7 @@ probe_activity() {{
                 }) + "\n")
             return mock.Mock(returncode=0)
 
-        with mock.patch("dev.agent_lifecycle.subprocess.run", side_effect=record):
+        with mock.patch("agent.lifecycle.subprocess.run", side_effect=record):
             lifecycle._invoke_agent("interpret", source=investigation)
 
         # argparse keeps the last --model, so the override must come after the
@@ -929,7 +929,7 @@ probe_activity() {{
                 }) + "\n")
             return mock.Mock(returncode=0)
 
-        with mock.patch("dev.agent_lifecycle.subprocess.run", side_effect=record):
+        with mock.patch("agent.lifecycle.subprocess.run", side_effect=record):
             lifecycle._invoke_agent("interpret", source=investigation)
 
         self.assertEqual(commands[0].count("--model"), 1)

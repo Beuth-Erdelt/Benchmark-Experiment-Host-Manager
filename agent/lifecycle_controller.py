@@ -329,8 +329,7 @@ def main() -> int:
     _refresh_environment(root, environment)
 
     command = [
-        sys.executable,
-        str(root / "dev" / "agent_lifecycle.py"),
+        sys.executable, "-m", "agent.lifecycle",
         "--root", str(root),
         "--model", _required_environment("AGENT_MODEL"),
         "--base-url", os.environ.get(

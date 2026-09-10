@@ -26,8 +26,16 @@ The pieces you will invoke:
 |---|---|
 | `python -m agent.harness.agent` | One phase — `design`, `interpret`, or `baseline` — of one investigation. This is the model-facing agent itself. |
 | `python -m agent.harness.validate` | Dry-run validation of a hand-written `experiment.yml`, no model and no cluster. |
-| `python dev/agent_lifecycle.py` | The local wrapper that chains the phases end to end, starting and stopping a self-hosted model server around each one. |
+| `python -m agent.lifecycle` | The local wrapper that chains the phases end to end, starting and stopping a self-hosted model server around each one. |
 | `agent/k8s/lifecycle-controller.yml` | The same chained loop as an unattended Kubernetes Job with in-cluster credentials. |
+
+All four of the runnable ones are also reachable through the `bexhoma` CLI:
+`bexhoma agent design`, `bexhoma agent interpret`, `bexhoma agent baseline`,
+`bexhoma agent validate`, and `bexhoma agent lifecycle` each forward their
+remaining arguments unchanged to the module above, so the two forms are
+interchangeable and this page uses the `python -m ...` spelling throughout. The
+`bexhoma agent` command needs the same `agent` install extra and reports plainly
+when it is missing.
 
 ## Six commands, start to finish
 
@@ -49,10 +57,10 @@ cp k8s-cluster.config cluster.config
 cp .env.example .env
 
 # 5. answer a question end to end: design, benchmark, interpretation, follow-up
-.venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>" --followups 1
+.venv/bin/python -m agent.lifecycle --task "<benchmark question>" --followups 1
 
 # 6. continue an investigation whose benchmark was already submitted
-.venv/bin/python dev/agent_lifecycle.py --resume <result-folder>/agent/<run-id>
+.venv/bin/python -m agent.lifecycle --resume <result-folder>/agent/<run-id>
 ```
 
 The run prints the investigation directory it writes to and, at the end, the
@@ -106,7 +114,7 @@ the server serves the model under, `AGENT_BASE_URL` is its OpenAI-compatible
 endpoint, and `AGENT_API_KEY` is the credential — the placeholder `EMPTY` for a
 server that checks none. Copy [`.env.example`](../.env.example) to `.env` in the
 repository root and edit it; both `python -m agent.harness.agent` and
-`dev/agent_lifecycle.py` read that file at startup. It is ignored by git, so
+`agent/lifecycle.py` read that file at startup. It is ignored by git, so
 real keys stay out of the history.
 
 An exported shell variable overrides the file, and a command-line flag
@@ -137,7 +145,7 @@ either case.
 
 ## 5 — The one-command lifecycle
 
-[`dev/agent_lifecycle.py`](../dev/agent_lifecycle.py) chains every phase of one
+[`agent/lifecycle.py`](../agent/lifecycle.py) chains every phase of one
 investigation. With `AGENT_MODEL_SERVER=bundled` it also starts the vLLM server
 for the model phases, stops it while the benchmark runs so the GPU is free,
 waits for the exact report, repeats the cycle for an approved follow-up, and
@@ -145,7 +153,7 @@ leaves the server down after the final answer:
 
 ```sh
 AGENT_MODEL=qwen3.8-27b \
-.venv/bin/python dev/agent_lifecycle.py \
+.venv/bin/python -m agent.lifecycle \
   --task "Is PgDuckDB faster than PostgreSQL on join-heavy TPC-H queries at SF10, and does that hold as concurrency rises?" \
   --followups 1
 ```
@@ -155,7 +163,7 @@ API or a local Ollama end to end, with no server started or stopped along the
 way:
 
 ```sh
-.venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>"
+.venv/bin/python -m agent.lifecycle --task "<benchmark question>"
 ```
 
 `--followups N` is the budget for follow-up experiments: after interpreting a
@@ -184,7 +192,7 @@ experiment without submitting it again:
 
 ```sh
 AGENT_MODEL=qwen3.8-27b \
-.venv/bin/python dev/agent_lifecycle.py --resume <result-folder>/agent/<run-id>
+.venv/bin/python -m agent.lifecycle --resume <result-folder>/agent/<run-id>
 ```
 
 ### The experiment design handbook and the ablation
@@ -200,7 +208,7 @@ The other arm of the with/without comparison designs with no handbook at all.
 Switch it off by leaving `AGENT_METHOD` empty in `.env`, or for one run:
 
 ```sh
-AGENT_METHOD= .venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>"
+AGENT_METHOD= .venv/bin/python -m agent.lifecycle --task "<benchmark question>"
 ```
 
 `--method PATH` on either the agent CLI or the wrapper overrides the file for a
@@ -374,7 +382,7 @@ numbers will describe the interference rather than the systems.
 ## Self-hosted model server
 
 [`agent/k8s/vllm-qwen38-27b.yml`](../agent/k8s/vllm-qwen38-27b.yml) and
-[`dev/model_server.sh`](../dev/model_server.sh) run a vLLM server on the cluster.
+[`agent/model_server.sh`](../agent/model_server.sh) run a vLLM server on the cluster.
 They are a convenience, not part of the pipeline — any OpenAI-compatible
 endpoint works. If you use them, four values are specific to the cluster they
 were written for and must be set for yours: the kubeconfig context and namespace
@@ -390,7 +398,7 @@ it stalls.
 The pod carries its own idle watchdog: it releases the GPU once twenty minutes
 pass with no request, so a phase run by hand does not strand a GPU node. Set
 `IDLE_SHUTDOWN_SECONDS` in the manifest to change that window, or `0` to keep
-the server up until something deletes it. `dev/model_server.sh down` hands the
+the server up until something deletes it. `agent/model_server.sh down` hands the
 GPU back immediately.
 
 ## Autonomous Kubernetes lifecycle

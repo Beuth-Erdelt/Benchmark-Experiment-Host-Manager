@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Dev-only operator helper, NOT part of the agent prototype.
+# Operator helper, not part of the model-facing agent.
 #
 # The agent is stateless between phases: design submits the experiment and
 # exits, and interpretation is a fresh process that only starts once results
@@ -12,12 +12,13 @@
 # `down` is still the prompt path: the pod also releases the GPU on its own
 # after a long idle period, but that safety net is minutes-to-hours slower than
 # saying so directly.
-# This is the low-level server switch used by dev/agent_lifecycle.py.  It is
-# intentionally outside agent/: the submitted experiment and the agent remain
-# usable without this operator convenience.
+# This is the low-level server switch used by `agent/lifecycle.py`. It sits in
+# agent/ beside that wrapper, but nothing under agent/harness/ (the model-facing
+# code) uses it: the submitted experiment and the agent remain usable without
+# this operator convenience.
 set -euo pipefail
 
-MANIFEST="${MODEL_SERVER_MANIFEST:-$(cd "$(dirname "$0")/.." && pwd)/agent/k8s/vllm-qwen38-27b.yml}"
+MANIFEST="${MODEL_SERVER_MANIFEST:-$(cd "$(dirname "$0")" && pwd)/k8s/vllm-qwen38-27b.yml}"
 POD="${MODEL_SERVER_POD:-bexhoma-agent-model}"
 SVC="${MODEL_SERVER_SERVICE:-bexhoma-agent-model}"
 PORT="${MODEL_SERVER_PORT:-8001}"
@@ -43,9 +44,9 @@ ensure_login() {
 error: MODEL_SERVER_NAMESPACE is unset and has no default; it names the
        namespace the model server is created in and deleted from.
 
-  dev/model_server.sh directly : export MODEL_SERVER_NAMESPACE=<namespace>
-  dev/agent_lifecycle.py       : MODEL_SERVER_NAMESPACE=<namespace> in .env
-  in-cluster lifecycle Job     : set automatically from the Job's namespace
+  agent/model_server.sh directly : export MODEL_SERVER_NAMESPACE=<namespace>
+  agent/lifecycle.py             : MODEL_SERVER_NAMESPACE=<namespace> in .env
+  in-cluster lifecycle Job       : set automatically from the Job's namespace
 
 It must equal credentials.k8s.context.<context>.namespace in cluster.config,
 or bexhoma will place the benchmark somewhere else than the model server.

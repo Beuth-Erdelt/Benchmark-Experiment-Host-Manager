@@ -28,15 +28,35 @@ cp k8s-cluster.config cluster.config
 cp .env.example .env
 
 # 5. answer a question end to end: design, benchmark, interpretation, follow-up
-.venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>" --followups 1
+.venv/bin/python -m agent.lifecycle --task "<benchmark question>" --followups 1
 
 # 6. continue an investigation whose benchmark was already submitted
-.venv/bin/python dev/agent_lifecycle.py --resume <result-folder>/agent/<run-id>
+.venv/bin/python -m agent.lifecycle --resume <result-folder>/agent/<run-id>
 ```
 
 The run prints the investigation directory it writes to and, at the end, the
 path of the final verdict. To check the installation without a cluster, run the
 test suite in [Verification](#verification).
+
+## The `bexhoma agent` command
+
+Every agent entry point is also reachable through the `bexhoma` CLI, which is
+often shorter to type and consistent with `bexhoma tpch run` and
+`bexhoma environment create`:
+
+```sh
+bexhoma agent lifecycle --task "<benchmark question>" --followups 1
+bexhoma agent design    --task "<benchmark question>"
+bexhoma agent interpret --run <result-folder>/agent/<investigation-id>
+bexhoma agent baseline  --task "<benchmark question>"
+bexhoma agent validate  experiment.yml --environment dev/catalog/environment.yml
+```
+
+Each subcommand forwards its remaining arguments unchanged to the module named
+below (`bexhoma agent design` is `python -m agent.harness.agent --phase design`,
+and so on), so every flag documented for the direct form works here too. The
+command needs the `agent` extra and says so plainly if it is missing. The rest
+of this guide uses the `python -m ...` form, which is exactly equivalent.
 
 ## Prerequisites
 
@@ -129,7 +149,7 @@ itself never starts a server in either case.
 
 ## Self-hosted model server
 
-`agent/k8s/vllm-qwen38-27b.yml` and `dev/model_server.sh` run a vLLM server on
+`agent/k8s/vllm-qwen38-27b.yml` and `agent/model_server.sh` run a vLLM server on
 the cluster. They are a convenience, not part of the pipeline: any
 OpenAI-compatible endpoint does. If you use them, four values are specific to
 the cluster they were written for.
@@ -143,12 +163,12 @@ export MODEL_SERVER_NAMESPACE="<writable namespace>"
 ```
 
 The context defaults to the one on this development machine. The namespace has
-no default and `dev/model_server.sh` refuses to run without it, because the
+no default and `agent/model_server.sh` refuses to run without it, because the
 switch writes it into the kube context as well, where every later
 namespace-less `kubectl` call inherits it; a default would quietly place both
 the model server and the benchmark in whichever account that default named.
 Export it for a direct call, or put `MODEL_SERVER_NAMESPACE` in `.env` when
-`dev/agent_lifecycle.py` is driving the switch. The in-cluster lifecycle Job
+`agent/lifecycle.py` is driving the switch. The in-cluster lifecycle Job
 needs neither: it reads its own namespace and passes that down.
 
 Bexhoma must use the same namespace: set
@@ -183,7 +203,7 @@ a follow-up, and leaves the server down after the final answer:
 
 ```sh
 AGENT_MODEL=qwen3.8-27b \
-.venv/bin/python dev/agent_lifecycle.py \
+.venv/bin/python -m agent.lifecycle \
   --task "<benchmark question>" \
   --followups 1
 ```
@@ -194,14 +214,14 @@ approved follow-up run without anyone starting a phase by hand, and no server is
 started or stopped along the way.
 
 ```sh
-.venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>"
+.venv/bin/python -m agent.lifecycle --task "<benchmark question>"
 ```
 
 The ablation's other arm is the same command with the handbook switched off,
 either by leaving `AGENT_METHOD` empty in `.env` or for one run:
 
 ```sh
-AGENT_METHOD= .venv/bin/python dev/agent_lifecycle.py --task "<benchmark question>"
+AGENT_METHOD= .venv/bin/python -m agent.lifecycle --task "<benchmark question>"
 ```
 
 Before the design phase, the wrapper also answers the question with the bare
@@ -230,11 +250,11 @@ experiment without resubmitting it:
 
 ```sh
 AGENT_MODEL=qwen3.8-27b \
-.venv/bin/python dev/agent_lifecycle.py \
+.venv/bin/python -m agent.lifecycle \
   --resume <result-folder>/agent/<run-id>
 ```
 
-`dev/agent_lifecycle.py` and `dev/model_server.sh` remain usable as local
+`agent/lifecycle.py` and `agent/model_server.sh` remain usable as local
 operator commands. The autonomous Job described below packages the same tested
 phase loop and server switch behind in-cluster credentials; neither path changes
 the model-facing agent interface.
@@ -243,7 +263,7 @@ If you run phases by hand instead of through the wrapper, nothing shuts the
 model server down at the end. The pod covers that case itself: it releases the
 GPU once twenty minutes pass without a request. Set `IDLE_SHUTDOWN_SECONDS` in
 the manifest to change that window, or to `0` to keep the server up until
-something deletes it. Running `dev/model_server.sh down` is still the quickest
+something deletes it. Running `agent/model_server.sh down` is still the quickest
 way to hand the GPU back.
 
 ## Running two investigations at once

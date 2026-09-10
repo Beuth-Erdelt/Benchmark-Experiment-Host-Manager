@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Run the prototype agent while lending its GPU back during benchmarks.
 
-This is an operator-side wrapper, not part of :mod:`agent`.  It invokes the
-agent's public CLI as a child process and observes only the durable investigation
-trajectory and result files -- including the status file in which the agent
-records where each submitted run landed, which is how the two stay agreed on
-that without a second setting. Neither the agent nor a submitted experiment
-imports it, so both continue to work unchanged when this module is absent.
+This is an operator-side wrapper. It lives in :mod:`agent` beside
+:mod:`agent.lifecycle_controller`, its in-cluster counterpart, but it is not
+part of the model-facing harness: nothing under :mod:`agent.harness` imports it,
+and a submitted experiment does not need it. It invokes the agent's public CLI
+as a child process and observes only the durable investigation trajectory and
+result files -- including the status file in which the agent records where each
+submitted run landed, which is how the two stay agreed on that without a second
+setting. Both the agent and a submitted experiment continue to work unchanged
+when this module is absent.
 
 Lifecycle:
 
@@ -37,13 +40,9 @@ from collections.abc import Callable, Sequence
 
 from dotenv import load_dotenv
 
-# This runs as a script (``python dev/agent_lifecycle.py``), so the repository
-# root is not already importable. Add it for the one trajectory-location helper
-# below, which the wrapper shares with the agent CLI so both agree on where an
-# investigation lands without a second setting.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from agent.harness.tools import default_result_root
+
+__all__ = ["AgentLifecycle", "LifecycleConfig", "LifecycleError", "ModelServer", "main"]
 
 
 #: How often the wait for a benchmark says that it is still waiting. A run takes
@@ -112,8 +111,8 @@ class ModelServer:
     """Small adapter around the independently usable server switch.
 
     ``bundled`` says who owns the endpoint. The vLLM server in
-    :file:`dev/model_server.sh`, or its PowerShell port
-    :file:`dev/model_server.ps1` on Windows, is this wrapper's to start and
+    :file:`agent/model_server.sh`, or its PowerShell port
+    :file:`agent/model_server.ps1` on Windows, is this wrapper's to start and
     stop; a hosted API or an Ollama that is already running answers on its
     own, so switching it does nothing and the phase chain is all that is left
     to do.
@@ -581,8 +580,8 @@ def _parser() -> argparse.ArgumentParser:
                              "'status' subdirectory beside the trajectories")
     parser.add_argument(
         "--server-script",
-        default="dev/model_server.ps1" if sys.platform == "win32"
-        else "dev/model_server.sh",
+        default="agent/model_server.ps1" if sys.platform == "win32"
+        else "agent/model_server.sh",
     )
     parser.add_argument("--poll-seconds", type=float, default=30.0)
     parser.add_argument("--benchmark-timeout-seconds", type=float, default=0.0,

@@ -24,7 +24,7 @@ flowchart TB
 
     Q([Research question]):::human
 
-    subgraph L[Optional local test lifecycle · dev/agent_lifecycle.py]
+    subgraph L[Optional local test lifecycle · agent/lifecycle.py]
         direction TB
         L0[Start or resume one investigation]:::local
         LU[Ensure vLLM is UP<br/>retry until H100 or H200 is available]:::local
@@ -134,7 +134,7 @@ consultation measurable in the trajectory.
 | Portable lineage summary | `agent.py::_write_agent_summary`, `contracts/contract_result.yml` | Persists one experiment code, parent, hypothesis, scientific verdict, technical validity, and unresolved question without copying ancestor reports into context |
 | Design-space gate | `agent.py::_DesignSpaceGate` | Refuses initial or follow-up authoring until that context has reread the catalog and environment |
 | Bare-model baseline | `prompts.py::baseline_messages`, `agent.py::run_baseline` | One toolless model call answering the question with no catalog, contract, or handbook; same trajectory-and-`answer.md` output; run by the lifecycle wrapper as its own investigation and linked from the design trajectory; toggled by `--baseline`/`--no-baseline` (`AGENT_BASELINE`) |
-| Local automation | `dev/agent_lifecycle.py`, `dev/model_server.sh` | Optional vLLM switching, result polling, retry, resume, model cleanup, and exact experiment cleanup after a definitive benchmark-process failure |
+| Local automation | `agent/lifecycle.py`, `agent/model_server.sh` | Optional vLLM switching, result polling, retry, resume, model cleanup, and exact experiment cleanup after a definitive benchmark-process failure |
 
 One reusable loop, `agent.py::_converse`, drives every model context with a
 different prompt, tool list, stopping predicate, and budget. The baseline phase
@@ -238,7 +238,7 @@ avoid returning to a settled hypothesis.
 
 ## Local lifecycle wrapper
 
-`dev/agent_lifecycle.py` implements the phase re-entry loop for this cluster's
+`agent/lifecycle.py` implements the phase re-entry loop for this cluster's
 testing only. It calls the public agent CLI and reads only trajectories, status
 files, and reports. Neither the agent nor Bexhoma imports it.
 
