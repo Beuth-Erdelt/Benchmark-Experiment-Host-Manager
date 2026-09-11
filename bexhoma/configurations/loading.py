@@ -579,9 +579,10 @@ class LoadingCoordinator:
     def check(self) -> None:
         """Check loading status, update timing attributes, and clean up finished jobs.
 
-        If a loading job has succeeded: reads timing labels from the SUT pod,
-        deletes the job and its pods, triggers index loading if configured.
-        Also reads pod labels to update ``loading_started`` / ``loading_finished``.
+        Failed or succeeded pod diagnostics are stored as soon as they become
+        available. If a loading job has succeeded, this also reads timing labels
+        from the SUT pod, deletes the job and its pods, and triggers index loading
+        if configured. Pod labels update ``loading_started`` / ``loading_finished``.
         """
         cfg = self._config
         if cfg.loading_deactivated:
@@ -614,7 +615,7 @@ class LoadingCoordinator:
                     status = cfg.experiment.cluster.get_pod_status(pod)
                     cfg.experiment.cluster.logger.debug(
                         "Pod {} has status {}".format(pod, status))
-                    if status == "Succeeded":
+                    if status in ("Succeeded", "Failed"):
                         containers = cfg.experiment.cluster.get_pod_containers(pod)
                         for container in containers:
                             if len(container) > 0:

@@ -639,7 +639,7 @@ def main(argv: Optional[list[str]] = None) -> None:
 
     cli_parser = argparse.ArgumentParser(prog="bexhoma environment create", description=__doc__)
     cli_parser.add_argument("-cx", "--context", help="kubectl context to use (default: current context)", default=None)
-    cli_parser.add_argument("-o", "--output", help="output path for environment.yml", default="dev/catalog/environment.yml")
+    cli_parser.add_argument("-o", "--output", help="output path (default: environment.yml in the current directory)", default="environment.yml")
     cli_parser.add_argument(
         "-xhw", "--xhardware-baseline",
         help="also run a short-lived hardware baseline sweep (sysbench CPU/RAM, fio against "

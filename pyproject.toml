@@ -27,13 +27,29 @@ Repository = "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager"
 bexhoma      = "bexhoma.scripts.cli:main"
 bexperiments = "bexhoma.scripts.experimentsmanager:manage"
 
+# ---- Optional extras ----
+# The benchmark agent prototype under agent/ speaks to a self-hosted,
+# OpenAI-compatible server through this client, and reads the endpoint it points
+# at from an optional .env file. Both are an extra rather than a requirement so
+# that ordinary bexhoma users do not install them.
+#   pip install -e ".[agent]"
+[project.optional-dependencies]
+agent = ["openai>=1.0", "python-dotenv>=1.0"]
+
 # ---- setuptools configuration ----
 [tool.setuptools]
 include-package-data = true
+py-modules = ["tpch"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["bexhoma*"]
+include = ["bexhoma*", "agent*"]
+
+# Keep executable benchmark scripts at the repository root out of collection.
+# Maintained automated tests live under tests/; the root scripts are invoked
+# directly and some deliberately exit after completing cluster work.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 # ---- Dynamic metadata sources ----
 [tool.setuptools.dynamic]

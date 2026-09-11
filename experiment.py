@@ -134,13 +134,18 @@ def entry_module_for_workload(workload_name: str):
     return __import__(module_name)
 
 
-def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
+def run_experiment_yaml(
+    path: str,
+    catalog_path: str = None,
+    experiment_code: str = None,
+) -> None:
     """
     Load an experiment YAML file and run it, dispatching on its schema.
 
     :param path: Path to the experiment YAML file.
     :param catalog_path: Path to ``catalog.yaml``; only used for catalog-driven
         files. Defaults to ``catalog.yaml`` alongside ``path``.
+    :param experiment_code: Optional code assigned before a catalog-driven run.
     """
     with open(path, 'r', encoding='utf-8') as experiment_file:
         raw_spec = yaml.safe_load(experiment_file)
@@ -151,6 +156,8 @@ def run_experiment_yaml(path: str, catalog_path: str = None) -> None:
         resolved_catalog_path = catalog_path or default_catalog_path(path)
         catalog = catalog_spec.load_catalog(resolved_catalog_path)
         argv = catalog_spec.build_argv(catalog, raw_spec)
+        if experiment_code:
+            argv.extend(['-e', experiment_code])
         argv.append('-rp')  # YAML-driven runs always get the tiered Markdown report
         parsed_args = entry_module.build_parser().parse_args(argv)
         if workload_name == 'tpch':
@@ -182,6 +189,8 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--catalog', default=None,
                          help="path to catalog.yaml, for a catalog-driven experiment file "
                               "(bexhoma.spec's schema); default: catalog.yaml alongside the experiment file")
+    parser.add_argument('--experiment-code', default=None,
+                        help='assign a new catalog-driven run its result-folder code')
     args = parser.parse_args()
-    run_experiment_yaml(args.file, args.catalog)
+    run_experiment_yaml(args.file, args.catalog, args.experiment_code)
     exit()

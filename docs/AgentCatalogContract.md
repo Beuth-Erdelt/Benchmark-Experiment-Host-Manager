@@ -12,9 +12,22 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.1.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.4.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
+  experimental_design:
+    semantics: "turn the user's constraints into controls or factors according to the hypothesis"
+    bounded_resources: "a user-given maximum is a hard ceiling, not necessarily the only useful
+                         treatment. If resource pressure is a plausible rival explanation for a
+                         system or concurrency effect, sweep two values at or below the ceiling --
+                         normally half the ceiling and the ceiling -- and name that resource in
+                         discriminates. Keep one fixed value when the resource cannot help
+                         distinguish the hypotheses or the added run cost is unjustified"
+    bounded_loading:   "for a run that loads data, set loading.timeout_minutes to a
+                         scale-appropriate deadline. There is no universal value -- larger
+                         scaling factors need longer -- but leaving it unset can strand loader
+                         and SUT objects indefinitely if a loader hangs; expiry captures
+                         diagnostics before removing the experiment"
   workloads:      {semantics: "what to run: params, loading behavior, physical-design semantics"}
   systems:        {semantics: "what to run it on: server knobs, physical-design support, profiles"}
   physical_design: {semantics: "a system's CAPABILITY only (indexes/constraints/statistics/storage_format) --
@@ -60,14 +73,20 @@ experiment_schema:
     mode:       {type: enum, values: [run, profiling, start, load, empty, summary], default: run}
     title:      {type: str, required: true}
     hypothesis: {type: str, required: true}
-    discriminates: {type: "list[str]", required: true, example: "[system, concurrency, memory]"}
+    discriminates: {type: "list[str]", required: true, values: [system, concurrency, cpu, memory],
+                    example: "[system, concurrency, memory]"}
     follow_up_of: {type: str, required: false}
     max_sut:            {type: int, default: 1, semantics: "max SUTs running at once CLUSTER-WIDE (-ms);
                           1 = one system at a time, 0 = no limit, N>1 = up to N -- see catalog_concepts.sut_isolation"}
     max_sut_experiment: {type: int, default: 1, semantics: "same, scoped to this experiment only (-mse);
                           independent of max_sut, both enforced together; 0 = no limit"}
     workload:   {type: object, fields: [name, params, rounds, repetitions]}
-    loading:    {type: object, fields: [pods, threads, split, post_load],
+    loading:    {type: object, fields: [pods, threads, timeout_minutes, post_load],
+                 timeout_minutes: {type: int, min: 1, required: false,
+                   semantics: "max wall-clock loading time per resolved system configuration,
+                               from when that config starts loading; on expiry Bexhoma captures
+                               loader and SUT diagnostics, then removes the experiment; unset =
+                               no load-only deadline -- see catalog_concepts.experimental_design.bounded_loading"},
                  pitfall: "must be a TOP-LEVEL sibling of workload:, NOT nested under it -- a
                            workload.loading block silently resolves to {} instead of erroring"}
     systems:    {type: list, item_fields: [name, profile, override, post_load],
@@ -81,41 +100,90 @@ experiment_schema:
                              to sweep every systems: entry against every list entry (one resolved
                              config per system*cell pair); cpu and memory sweep lists must share one length"}
   quantity_format:
-    memory_and_storage: {binary: [Ki, Mi, Gi, Ti], decimal: [K, M, G, T], out_of_scope: [KB, MB, GB, TB], examples: ["32Gi", "512Mi"]}
+    memory_and_storage: {binary: [Ki, Mi, Gi, Ti], decimal: [K, M, G, T], out_of_scope: [KB, MB, GB, TB], examples: ["32G", "32Gi", "512Mi"]}
     cpu: {semantics: "cores, or millicores with trailing m", examples: ["8", "0.5", "500m"]}
 
 workloads:
   tpch:
     supports: [PostgreSQL, PgDuckDB]
+    out_of_scope: {systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB],
+                   why: "the full tpch workload also supports these; trimmed to the prototype pair,
+                         so an experiment.yml naming any of them fails resolution"}
     modes: [profiling, run, start, load, empty, summary]
     resource_profile: {cpu: high, memory: high, why: "multi-way hash joins + aggregation are CPU/RAM-bound; storage bandwidth matters less"}
+    component_resources:               # sizes the peak-resource check for a pinned benchmarking node
+      benchmarker: {replicas: "1 per concurrent stream in the active round",
+                    per_pod_limit: {cpu: 16, memory: 16Gi},
+                    why: "every benchmarker pod has a fixed 16-core / 16Gi limit from the shipped
+                          Bexhoma template, independent of resources.cpu/memory (which size only the
+                          SUT); placement.benchmarking validation must count these, not the SUT limits"}
     params:            # workload.params keys
-      scaling_factor:      {type: int, unit: GB}
-      timeout:              {type: int, unit: seconds}
+      scaling_factor:      {type: int, unit: GB, min: 1}
+      timeout:              {type: int, unit: seconds, default: 600, min: 1, semantics: "per-query; a query still running at the limit is cancelled and counted as an error"}
       query_repeats:        {type: int, default: 1, min: 1}
       measure_datatransfer: {type: bool, default: false}
-      active_queries:       {type: "list[int]", default: all, example: "[5,7,8,9,21] = multi-way joins"}
+      active_queries:       {type: "list[int]", default: all, min: 1, max: 22,
+                             example: "[1,6] scan-dominated; [1,13,18] grouping/aggregation; [5,7,8,9,21] multi-way joins"}
       recreate_parameter:   {type: bool, default: false}
       shuffle_queries:      {type: bool, default: false}
       refresh_streams:      {type: int, default: 0}
       refresh_stream_offset: {type: int, default: 0}
-      store_explain:        {type: bool, default: false, when: "requires an 'explain' key in the DBMS connection's JDBC config"}
+      store_explain:        {type: bool, default: false, support: "PostgreSQL and PgDuckDB only",
+                             when: "requires an 'explain' key in the DBMS connection's JDBC config"}
     loading:
       pods:   {type: int, min: 1, support: "works for every DBMS"}
       threads: {type: int, min: 1, support: "only honored by some loaders (e.g. MySQL); prefer pods"}
-      split:  {type: int, default: 1}
       post_load:   # indexes/constraints/statistics are mutually independent -- all 8 combinations legal per system
         indexes:    {type: bool, default: false}
         constraints: {type: bool, default: false}
         statistics: {type: bool, default: false}
         storage_format: {type: enum, values: [heap], default: heap}
     rounds: {type: "list[int]", rule_of_thumb: "official sizing: floor(log(scaling_factor, 3)) + 2, e.g. SF=100 -> 6"}
-    repetitions: {type: int, default: 1}
+    repetitions: {type: int, default: 1, minimum_for_conclusions: 3,
+                  when: "default 1 is smoke-test only; any hypothesis comparing systems or claiming
+                         an effect must set >= 3 (behavioural rule, issue #764).
+                         total runs = systems x resource_cells x len(rounds) x repetitions"}
     produces:
       per_query: {metric: latency, unit: ms}
       summary:   {metrics: [Power@Size, Throughput@Size, Geo Times], unit: [Q/h, Q/h, s]}
       quality:   {metric: sql_errors_warnings}
       out_of_scope: {time_series: "no per-second signal like YCSB/Benchbase -- per-query/per-phase aggregates only"}
+
+  ycsb:
+    why: "key-value / simple-schema OLTP: one usertable, single-row primary-key reads and writes,
+          6 fixed access-pattern mixes (YCSB workloads a-f)"
+    supports: [PostgreSQL]
+    out_of_scope:
+      systems: [MySQL, MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService, PGBouncer, Redis, Citus, CedarDB, Dragonfly]
+      resource_sweep: "resources.cpu / resources.memory must each be a single {request, limit} dict -- a list is rejected"
+      post_load: "YCSB creates and manages its own schema, so there is no indexes/constraints/statistics/storage_format selection"
+    modes: [run, start, load, summary]
+    resource_profile: {cpu: medium, memory: medium, why: "each op is a single-row primary-key read or write;
+                       throughput is bound by client concurrency, connection handling and storage IO latency, not compute"}
+    params:            # workload.params keys
+      workload:        {type: enum, values: [a, b, c, d, e, f], required: true,
+                        why: "a=read/update 50/50, b=read-mostly 95/5, c=read-only, d=read-latest, e=short scans, f=read-modify-write"}
+      scaling_factor:  {type: int, unit: GB, why: "rows = scaling_factor * 1_000_000 (each row ~1 KB); also the default total op count"}
+      operations_scale: {type: int, unit: millions, default: null, why: "total benchmarking-phase op count; overrides the scaling_factor default; split across all benchmarker pods"}
+      timeout:         {type: int, unit: seconds, why: "per-connection benchmark timeout"}
+      target_base:     {type: int, default: 16384, why: "base ops/sec target per benchmarker pod, multiplied by the *_target_factors below; effective 0 = unthrottled"}
+      loading_target_factors:      {type: "list[float]", default: [1], why: "multipliers on target_base for loading; one loader sweep cell per entry"}
+      benchmarking_target_factors: {type: "list[float]", default: [1], why: "multipliers on target_base for benchmarking; one sweep cell per entry"}
+      batchsize:       {type: int, default: null, why: "JDBC insert batch size during loading; unset = one row per INSERT"}
+      logging_interval: {type: int, unit: seconds, default: 10, why: "status-line interval; also the time_series resolution"}
+      insert_order:    {type: enum, values: [hashed, ordered], default: hashed, why: "hashed = uniform key distribution; ordered = append-heavy hot index end"}
+      max_execution_time: {type: int, unit: seconds, default: 0, why: "wall-clock cap on the benchmarking phase only; loading always runs to completion"}
+    loading:
+      pods:    {type: int, min: 1, support: "works for every DBMS; total row count split across pods"}
+      threads: {type: int, min: 1, support: "honored by YCSB's JDBC loader -- unlike tpch, raise threads and pods together"}
+    rounds:      {type: "list[int]", why: "parallel-client sweep; each entry is a concurrent benchmarker-pod count; total ops split across pods (constant total work)"}
+    repetitions: {type: int, default: 1}
+    produces:
+      per_operation: {metrics: [throughput, latency_avg, latency_p95, latency_p99], unit: [ops/s, us, us, us],
+                      why: "one row per op type (READ/UPDATE/INSERT/SCAN/READ-MODIFY-WRITE/CLEANUP)"}
+      summary:       {metrics: [throughput, latency_avg], unit: [ops/s, us], why: "whole-workload aggregate per phase; comparison is made on this"}
+      time_series:   {metric: current_ops_per_sec, unit: ops/s, why: "per-interval throughput (resolution = logging_interval), both phases"}
+      out_of_scope:  {per_query: "YCSB has no query concept -- only operation-type buckets"}
 
 systems:
   PostgreSQL:
@@ -146,7 +214,12 @@ systems:
                        out_of_scope: "columnar (native `USING duckdb` tables) blocked upstream, github.com/duckdb/pg_duckdb#385"}
     knobs_own:
       shared_preload_libraries: {default: pg_duckdb, fixed: true}
-      duckdb_force_execution:   {type: bool, default: false, arg_style: env-var, env_var: DUCKDB_FORCE_EXECUTION}
+      duckdb_force_execution:   {type: bool, default: false, arg_style: env-var, env_var: DUCKDB_FORCE_EXECUTION,
+                                 when: "set true whenever the hypothesis compares PgDuckDB's execution engine
+                                        against another system. Left at its default on heap tables, pg_duckdb's
+                                        cost-based routing keeps queries in PostgreSQL's own executor, so the
+                                        extension is loaded but idle and the run measures PostgreSQL against
+                                        PostgreSQL. Leave it false only when the routing behaviour itself is under test"}
     profiles:
       analytical-ssd: {ref: "PostgreSQL.profiles.analytical-ssd"}   # identical knob values from the same memory/cpu limits
 ```

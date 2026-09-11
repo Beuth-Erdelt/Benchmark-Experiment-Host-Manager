@@ -181,6 +181,51 @@ Still `tpch`-only: `bexhoma.experiments.tpch_loader` (the *self-specified*
 YAML path, `workload: ycsb` as a bare string), which is unrelated to the
 catalog path.
 
+## `loading.split` removed from the catalog surface (2026-08-30)
+
+The `loading.split` field was removed from both `experiment_schema` and
+`workloads.tpch.loading` (`catalog_contract_version` 1.2.0 -> 1.3.0,
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep), and
+`bexhoma/experiments/tpch_catalog.py::build_tpch_argv()` no longer emits the
+`-xnls` flag it drove.
+
+Rationale: `split` set `-xnls`, which `tpch.py` divides the total loader-pod
+count by to decide how many pods run at once (`PODS_PARALLEL = pods //
+split`). Any value above 1 therefore makes the Kubernetes loading job run its
+pods in sequential waves. But `tpch.py` also hard-codes `BEXHOMA_SYNCH_LOAD=1`
+and `BEXHOMA_SYNCH_GENERATE=1`, and the synchronized loader barrier waits for
+*every* loader pod to check in before any of them proceeds. Sequential waves
+plus an all-pods barrier is a deadlock: the first wave blocks on the barrier,
+the later waves are never scheduled, and the run sits until
+`loading.timeout_minutes` expires and tears everything down. A design run hit
+exactly this on 2026-08-29 (`pods: 2, split: 2`).
+
+Since synchronized loading can only ever use `split: 1`, the field could not
+express anything valid and is gone from the contract. A spec that still
+carries `loading.split` is now rejected by `validate_experiment()` as an
+unknown field. This is a catalog-surface removal only: `tpch.py`'s `-xnls`
+argument and `bexhoma/experiments/tpch_builder.py`'s `split` handling (the
+separate self-specified-YAML path) are unchanged.
+
+## Two-sentence `why:` fields in the TPC-H block (2026-08-31)
+
+Every `why:` field under `workloads.tpch` was rewritten to a fixed two-part
+shape: a first sentence that neutrally states what the field or value does,
+then a second sentence that motivates when an experiment author would actually
+set it — the trade-off it buys, the rival explanation it rules out, or the cost
+it adds. For example, `post_load.constraints` now says both that it adds the
+primary- and foreign-key constraints after loading and that you enable it when
+the hypothesis depends on referential integrity or on the planner exploiting
+guaranteed key uniqueness. Only descriptive prose in `why:` fields changed; no
+field name, type, default, legal value, or `when:`/`out_of_scope:` text was
+touched, and no code path reads these strings. `resource_profile.why` already
+had this structure and was left as written.
+
+The version moved 1.3.0 -> 1.4.0 with `spec.CATALOG_CONTRACT_VERSION` kept in
+lockstep (required by `tests/test_naming_conformance.py`), even though the
+contract shape did not change, so that any agent or cache keyed on the version
+string re-reads the block.
+
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
 `experiments/tpch/PgDuckDB/` exists on disk but is unused: `tpch.py` points

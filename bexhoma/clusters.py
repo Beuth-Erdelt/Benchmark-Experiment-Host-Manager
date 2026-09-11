@@ -1512,10 +1512,12 @@ class Kubernetes():
         """
         fullcommand = 'get pods ' + pod + ' -o jsonpath="{.spec.containers[*].name}"'
         output = self.kubectl(fullcommand)
-        containers = output.split(" ")
+        # kubectl() returns None when the Pod is already gone (e.g. diagnostics
+        # captured after the Job was deleted); treat that as "no containers".
+        containers = output.split(" ") if output else []
         fullcommand = 'get pods ' + pod + ' -o jsonpath="{.spec.initContainers[*].name}"'
         output = self.kubectl(fullcommand)
-        init_containers = output.split(" ")
+        init_containers = output.split(" ") if output else []
         self.logger.debug(f"Pod {pod} has container {containers + init_containers}")
         return containers + init_containers
 
@@ -1670,6 +1672,35 @@ class Kubernetes():
                 )
             else:
                 return 0
+
+    def get_job_failed(self, jobname: str) -> bool:
+        """Return whether a Job has reached Kubernetes' terminal Failed condition.
+
+        :param jobname: Name of the Job to inspect.
+        :return: ``True`` only for a terminal ``Failed=True`` condition.
+        :rtype: bool
+        """
+        try:
+            response = self.v1batches.read_namespaced_job_status(
+                jobname, self.namespace
+            )
+            conditions = getattr(response.status, 'conditions', None) or []
+            return any(
+                condition.type == 'Failed'
+                and condition.status in (True, 'True')
+                for condition in conditions
+            )
+        except ApiException as error:
+            print(
+                "Exception when calling BatchV1Api->read_namespaced_job_status "
+                f"for get_job_failed: {error}\n"
+            )
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            if error.status != 404:
+                return self.get_job_failed(jobname)
+            return False
 
     def delete_job(self, jobname='', app='', component='', experiment='', configuration='', client=''):
         """

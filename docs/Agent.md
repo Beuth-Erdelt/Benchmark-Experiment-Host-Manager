@@ -4,12 +4,17 @@
 :hidden:
 
 AgentWorkflow
+AgentHarness
 AgentCatalogContract
 AgentResultContract
 AgentReport
 ```
 
 ```{include} AgentWorkflow.md
+:heading-offset: 1
+```
+
+```{include} AgentHarness.md
 :heading-offset: 1
 ```
 

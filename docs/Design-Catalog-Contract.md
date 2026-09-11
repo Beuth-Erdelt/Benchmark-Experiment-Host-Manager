@@ -363,7 +363,8 @@ workloads:
     loading:
       pods:    {type: int, min: 1, why: "number of parallel loader pods"}
       threads: {type: int, min: 1, why: "loader threads, split across pods"}
-      split:   {type: int, default: 1, why: "number of parallel loader batches"}
+      # split: removed 2026-08-30 (catalog_contract_version 1.3.0) — any value
+      # above 1 deadlocks synchronized loading; see contract_catalog_comments.md
       post_load:
         indexes:        {type: bool, default: false, why: "create indexes on all tables after loading"}
         constraints:    {type: bool, default: false, why: "add PK/FK constraints after loading"}
@@ -398,7 +399,8 @@ workloads:
     loading:
       pods: {type: int}
       threads: {type: int}
-      split: {type: int, default: 1}
+      # split: removed 2026-08-30 (catalog_contract_version 1.3.0) — deadlocks
+      # synchronized loading; see contract_catalog_comments.md
       post_load:
         indexes: {type: bool, default: false}
         constraints: {type: bool, default: false}
