@@ -1147,6 +1147,19 @@ resources:
         self.assertIn("below the declared minimum",
                       self._rejection(_SPEC + "loading:\n  pods: 0\n"))
 
+    def test_ycsb_benchmarking_pods_and_threads_are_accepted(self) -> None:
+        """The pod-count `rounds` sweep and the thread-count knob can be set together."""
+        self.workspace.write_file(
+            self.path, _YCSB_SPEC + "benchmarking:\n  pods: 4\n  threads: 128\n")
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+
+    def test_workload_bounds_apply_to_the_benchmarking_block(self) -> None:
+        self.assertIn("below the declared minimum",
+                      self._rejection(_YCSB_SPEC + "benchmarking:\n  threads: 0\n"))
+
     def test_a_restructured_catalog_yields_a_verdict_not_a_crash(self) -> None:
         catalog = self.root / "contracts" / "contract_catalog.yml"
         broken = yaml.safe_load(catalog.read_text())

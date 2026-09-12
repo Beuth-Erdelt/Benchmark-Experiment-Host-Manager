@@ -56,6 +56,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Stable upstream BeXhoma integration | repository history, `bexhoma/experiments/tpch_catalog.py` | v0.10.10 merged; local agent and loading safeguards preserved and regression-tested |
 | Environment-checked submission gate and recoverable slow-start state | `agent/harness/tools.py` | Done and regression-tested |
 | Agent-exposed per-configuration loading timeout and automatic failure diagnostics | `contracts/contract_catalog.yml`, `bexhoma/spec.py`, `bexhoma/experiments/base.py`, `bexhoma/configurations/lifecycle.py` | Done and regression-tested |
+| YCSB benchmarking-phase pod/thread split (`benchmarking.pods`/`benchmarking.threads`), independent of the pod-count `rounds` sweep, so a thread-level concurrency target does not have to be reached by spawning one single-threaded pod per client | `contracts/contract_catalog.yml`, `bexhoma/experiments/ycsb_catalog.py`, `agent/harness/validation.py` | Done and regression-tested |
 | Enforced initial catalog/environment consultation | `agent/harness/agent.py` | Done and regression-tested |
 | Validity-first evidence gate, read-path citations, and result-contract-driven answer | `agent/harness/agent.py`, `agent/harness/tools.py` | Done and regression-tested |
 | Deterministic query coverage, throughput comparability, and repetition-anomaly disclosure | `agent/harness/tools.py`, `agent/harness/agent.py`, `agent/harness/prompts.py` | Done and regression-tested without changing BeXhoma |
@@ -179,6 +180,56 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-12 — Give YCSB benchmarking a thread knob separate from its pod-count sweep
+
+A design run from 2026-09-11 (`20260911T152052502925`) swept `rounds: [64, 128]`
+for a YCSB workload-C concurrency experiment, with both rounds pinned to a
+single worker node. The user asked why the run was stalling; inspecting its
+`bexhoma.log` showed loading finish cleanly, then a benchmarking round hang
+long enough to run into an unrelated OIDC access-token expiry mid-poll, and
+finally a manual kill. The root cause was that `rounds` in this catalog means
+one Kubernetes pod per entry, each running the YCSB client with exactly one
+thread — the catalog had no equivalent of `loading.pods`/`loading.threads` on
+the benchmarking side — so "128 concurrent clients" meant 128 separate
+single-threaded pods asked to schedule onto one node, comfortably past
+Kubernetes' default 110-pods-per-node kubelet cap. The user confirmed this
+diagnosis and asked for a proper thread knob: "if I want 128 clients, I would
+use the threads knob."
+
+`workloads.ycsb` in `contracts/contract_catalog.yml` gained a `benchmarking:`
+block with `pods` and `threads` fields (`catalog_contract_version` 1.4.0 ->
+1.5.0, `spec.CATALOG_CONTRACT_VERSION` kept in lockstep), and
+`bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()` now emits `-nbp`/`-nbt`
+from them. Both CLI flags already existed on `ycsb.py` (via the shared
+`bexhoma/cli_args.py` base parser also used by benchbase/hammerdb/tpch/tpcds)
+and were already read by `ycsb.py`'s own run loop, so no entry script or
+top-level driver needed to change — only the catalog contract and its
+translator, which are the parts this project's `CLAUDE.md` scope notes says
+may be changed once explicitly asked. An experiment can now write
+`rounds: [1]` with `benchmarking: {pods: 4, threads: 128}` to get 4 pods at 32
+threads each — 128 total clients — instead of 128 individual pods. The two
+mechanisms compose by multiplication rather than one replacing the other, so
+the contract's `why:` text and `docs/AgentCatalogContract.md` spell out that a
+`rounds` sweep of more than one entry combined with a non-default
+`benchmarking.threads` compounds concurrency rather than cancelling out.
+`contracts/contract_catalog_comments.md` records the full rationale, and
+`tests/test_ycsb_catalog.py` gained coverage for the new flags defaulting to
+`ycsb.py`'s own values when absent and mapping through when set.
+
+The new top-level `benchmarking:` block also needed declaring in
+`experiment_schema.fields` and wiring into `agent/harness/validation.py`'s
+own stricter shape checker (`_check_contract_shape`/`_check_workload_shape`),
+which enumerates every legal top-level key independently of
+`bexhoma/spec.py::validate_experiment()` — without that, an experiment.yml
+using the new field would have been rejected by the agent's own "unknown
+field" check before ever reaching Bexhoma. `tests/test_agent_harness.py`
+gained coverage for both the accepted shape and the workload-declared
+`min: 1` bound rejecting `threads: 0`.
+
+Separately requested and still open: reviewing the rest of the YCSB catalog
+surface for other knobs `ycsb.py` supports but the contract does not yet
+expose, to be reported (not implemented) as a follow-up list.
 
 ### 2026-09-10 — Default the environment descriptor to the working directory, not `dev/`
 

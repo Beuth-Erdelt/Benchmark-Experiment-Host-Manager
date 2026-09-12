@@ -100,6 +100,7 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     workload_spec = experiment["workload"]
     params = workload_spec.get("params", {})
     loading = experiment.get("loading", {})
+    benchmarking = experiment.get("benchmarking", {})
     resources = experiment.get("resources", {})
     observe = experiment.get("observe", {})
     placement = experiment.get("placement", {})
@@ -129,6 +130,8 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
 
     _append_flag(argv, "-nlp", loading.get("pods"))
     _append_flag(argv, "-nlt", loading.get("threads"))
+    _append_flag(argv, "-nbp", benchmarking.get("pods"))
+    _append_flag(argv, "-nbt", benchmarking.get("threads"))
 
     rounds = workload_spec.get("rounds")
     if rounds:

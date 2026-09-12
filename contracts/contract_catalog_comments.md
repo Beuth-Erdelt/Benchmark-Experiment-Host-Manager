@@ -226,6 +226,43 @@ lockstep (required by `tests/test_naming_conformance.py`), even though the
 contract shape did not change, so that any agent or cache keyed on the version
 string re-reads the block.
 
+## YCSB benchmarking-phase pods/threads split added (2026-09-12)
+
+`workloads.ycsb` gained a `benchmarking:` block (`catalog_contract_version`
+1.4.0 -> 1.5.0, `spec.CATALOG_CONTRACT_VERSION` kept in lockstep), mirroring
+the pre-existing `loading:` block's `pods`/`threads` pair but for the
+benchmarking phase, and `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()`
+now emits `-nbp`/`-nbt` from it.
+
+Rationale: before this change, the only lever the catalog exposed for
+benchmarking-phase concurrency was `rounds`, and each entry in that list
+becomes one Kubernetes pod running the YCSB benchmarker with exactly one
+thread (`ycsb.py`'s own `-nbp`/`-nbt` default to `1`, and neither was ever
+wired into the catalog translator). An agent designing a concurrency sweep
+had no way to ask for "128 concurrent clients" except `rounds: [128]`, i.e.
+128 separate single-threaded pods. A design run on 2026-09-11 did exactly
+that (`rounds: [64, 128]`, both pinned to one node via `placement.benchmarking`)
+and stalled: Kubernetes nodes default to a 110-pod kubelet cap, so a chunk of
+the 128 pods most likely sat `Pending` indefinitely, and the run had to be
+killed by hand after an OIDC access-token refresh mid-poll (a known,
+unrelated failure mode, see this repository's `CLAUDE.md` "Cluster access"
+section) made the stall visible in the log.
+
+`benchmarking.pods`/`benchmarking.threads` let an experiment reach a given
+thread-level concurrency without multiplying pod count: `rounds: [1]` with
+`benchmarking: {pods: 4, threads: 128}` runs 4 pods at 32 threads each, 128
+total clients, instead of 128 pods. The two mechanisms are independent and
+compose by multiplication rather than one replacing the other — `rounds`
+still multiplies pod count on top of `benchmarking.pods`, and
+`benchmarking.threads` splits only across `benchmarking.pods`, not across the
+`rounds` multiplier — so a `rounds` sweep of more than one entry combined
+with a non-default `benchmarking.threads` compounds concurrency; both
+`contract_catalog.yml`'s `why:` text and `docs/AgentCatalogContract.md`
+spell this out to head off that combination being set by accident. This is
+purely a catalog-and-translator addition: `-nbp`/`-nbt` already existed on
+`ycsb.py`'s CLI (via the shared `bexhoma/cli_args.py` base parser) and were
+already read by `ycsb.py`'s own run loop; neither file needed a change.
+
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
 `experiments/tpch/PgDuckDB/` exists on disk but is unused: `tpch.py` points

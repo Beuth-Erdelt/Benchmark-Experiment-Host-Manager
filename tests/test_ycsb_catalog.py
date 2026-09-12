@@ -84,6 +84,17 @@ class BuildYcsbArgvTest(unittest.TestCase):
         self.assertEqual(args.num_loading_pods, '1')
         self.assertEqual(args.num_loading_threads, '8')
 
+    def test_benchmarking_pods_and_threads_are_optional(self):
+        args = ycsb.build_parser().parse_args(self._argv())
+        self.assertEqual(args.num_benchmarking_pods, '1')
+        self.assertEqual(args.num_benchmarking_threads, '1')
+
+    def test_benchmarking_pods_and_threads_map_to_nbp_nbt(self):
+        argv = self._argv(benchmarking={'pods': 4, 'threads': 128})
+        args = ycsb.build_parser().parse_args(argv)
+        self.assertEqual(args.num_benchmarking_pods, '4')
+        self.assertEqual(args.num_benchmarking_threads, '128')
+
     def test_observe_and_placement_and_resources(self):
         argv = self._argv()
         self.assertIn('-m', argv)

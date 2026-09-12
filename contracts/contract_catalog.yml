@@ -9,7 +9,7 @@
 #   when:         the condition under which a rule/field actually applies
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
 
-catalog_contract_version: "1.4.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.5.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -218,6 +218,19 @@ experiment_schema:
             below, unless a system sets its own post_load"
           when: "legal option names/values are workload-specific -- see
             workloads.<name>.loading.post_load below"
+    benchmarking:
+      type: object
+      required: false
+      semantics: "workload-specific: legal keys/types/defaults, when a
+        workload declares any at all, are workloads.<name>.benchmarking
+        below -- see workloads.ycsb.benchmarking for the one workload that
+        does today"
+      fields:
+        pods: {type: int, semantics: "number of benchmarker pods per round,
+          before the workload.rounds sweep multiplies it further"}
+        threads: {type: int, semantics: "total client threads for the round,
+          split across pods -- support/interaction with rounds is
+          workload-specific, see workloads.<name>.benchmarking.threads"}
     systems:
       type: list
       semantics: "one resolved configuration per entry (crossed with any
@@ -640,12 +653,43 @@ workloads:
         there is no indexes/constraints/statistics/storage_format selection to
         make -- physical_design does not apply to this workload"
 
+    benchmarking:
+      pods:
+        type: int
+        min: 1
+        default: 1
+        why: "number of benchmarker pods per round, before the `rounds` sweep
+          multiplies it further -- the effective pod count for a given round
+          is that round's `rounds` entry times this value. Leave at the
+          default of 1 to make `rounds` the sole pod-count sweep, exactly as
+          when this field is left unset."
+        support: "works for every DBMS"
+      threads:
+        type: int
+        min: 1
+        default: 1
+        why: "total YCSB client threads for the round, split evenly across
+          `pods` (sets YCSB_THREADCOUNT per benchmarker pod). This split is
+          against `pods` only, not against the `rounds` multiplier, so
+          raising `threads` while also sweeping several `rounds` entries
+          compounds concurrency rather than replacing it -- effective total
+          client threads for a round is that round's `rounds` entry times
+          `threads`. To reach a specific thread-level concurrency (e.g. 128
+          concurrent clients) without spawning one pod per client, keep
+          `rounds` to a single entry and set `pods`/`threads` directly here:
+          `rounds: [1]` with `pods: 4` and `threads: 128` gives 4 pods at 32
+          threads each, 128 total clients, instead of 128 single-threaded
+          pods."
+
     rounds:
       type: list[int]
       why: "parallel-client sweep; one benchmarking round per entry, each entry
-        being the number of concurrent benchmarker pods. Total operation count
-        is split across the pods (constant total work), so more pods raises
-        concurrency at the same total ops."
+        being the number of concurrent benchmarker pods (further multiplied by
+        benchmarking.pods, if set). Total operation count is split across the
+        resulting pods (constant total work), so more pods raises concurrency
+        at the same total ops. For a pure thread-based concurrency sweep that
+        does not multiply pod count, use benchmarking.threads instead and keep
+        this list to a single entry."
     repetitions:
       type: int
       default: 1

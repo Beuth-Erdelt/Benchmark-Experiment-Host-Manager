@@ -206,6 +206,7 @@ def _schema_locations(
         walk(loading, "loading")
         if isinstance(loading, dict):
             walk(loading.get("post_load"), "loading.post_load")
+        walk(contract.get("benchmarking"), "benchmarking")
 
     return {field: sorted(paths) for field, paths in found.items()}
 
@@ -342,9 +343,20 @@ def _check_workload_shape(
     loading_fields = {**schema["loading"]["fields"], **contract.get("loading", {})}
     if error := _check_fields(loading, loading_fields, "loading", locations):
         return error
-    return _check_fields(loading.get("post_load", {}),
-                         contract.get("loading", {}).get("post_load", {}),
-                         "loading.post_load", locations)
+    if error := _check_fields(loading.get("post_load", {}),
+                              contract.get("loading", {}).get("post_load", {}),
+                              "loading.post_load", locations):
+        return error
+
+    # benchmarking: is optional and, today, only ycsb declares bounds for it;
+    # a workload with no benchmarking contract still accepts the schema's
+    # bare pods/threads shape, exactly like loading before any workload
+    # declared post_load options for it.
+    benchmarking = experiment.get("benchmarking", {})
+    benchmarking_fields = {
+        **schema["benchmarking"]["fields"], **contract.get("benchmarking", {}),
+    }
+    return _check_fields(benchmarking, benchmarking_fields, "benchmarking", locations)
 
 
 def _check_systems_shape(

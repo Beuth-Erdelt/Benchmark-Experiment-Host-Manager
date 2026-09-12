@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.4.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.5.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   experimental_design:
@@ -176,7 +176,12 @@ workloads:
     loading:
       pods:    {type: int, min: 1, support: "works for every DBMS; total row count split across pods"}
       threads: {type: int, min: 1, support: "honored by YCSB's JDBC loader -- unlike tpch, raise threads and pods together"}
-    rounds:      {type: "list[int]", why: "parallel-client sweep; each entry is a concurrent benchmarker-pod count; total ops split across pods (constant total work)"}
+    benchmarking:
+      pods:    {type: int, min: 1, default: 1, why: "benchmarker pods per round, before `rounds` multiplies further; effective pod count = rounds entry * this"}
+      threads: {type: int, min: 1, default: 1, why: "total client threads for the round, split across `pods` only (not against `rounds`); for a thread-based
+                concurrency target (e.g. 128 clients) without one pod per client, keep rounds to a single entry and set pods/threads directly here"}
+    rounds:      {type: "list[int]", why: "parallel-client sweep; each entry is a concurrent benchmarker-pod count (further multiplied by benchmarking.pods);
+                  total ops split across the resulting pods (constant total work). Use benchmarking.threads instead for a pure thread-based sweep"}
     repetitions: {type: int, default: 1}
     produces:
       per_operation: {metrics: [throughput, latency_avg, latency_p95, latency_p99], unit: [ops/s, us, us, us],
