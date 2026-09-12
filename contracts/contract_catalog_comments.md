@@ -263,6 +263,53 @@ purely a catalog-and-translator addition: `-nbp`/`-nbt` already existed on
 `ycsb.py`'s CLI (via the shared `bexhoma/cli_args.py` base parser) and were
 already read by `ycsb.py`'s own run loop; neither file needed a change.
 
+## Three YCSB knobs that validated but silently did nothing, corrected (2026-09-12)
+
+Reading `ycsb.py` end to end while investigating the incident above turned up
+three places where `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()`
+either never translated a field the schema already accepted, or never gave
+the workload a way to reach a real `ycsb.py` behavior at all. All three are
+fixed in the same change as the `benchmarking:` block above.
+
+- **`loading.timeout_minutes` reached the validator's timeout budget but not
+  `ycsb.py`.** This field is generic (`experiment_schema.fields.loading`),
+  and `agent/harness/validation.py`'s cost estimate already accounts for it
+  for every workload. `bexhoma/experiments/tpch_catalog.py` translates it
+  into `--loading-timeout`; `ycsb_catalog.py` never did, so a YCSB
+  experiment declaring this field got a clean validation and a timeout
+  figure in its budget that was never actually enforced against a stuck
+  load. `build_ycsb_argv()` now emits `--loading-timeout` from it, exactly
+  like the TPC-H builder.
+- **The PostgreSQL reset script never ran.** `ycsb.py`'s PostgreSQL branch
+  unconditionally calls `config.set_benchmark_resetscript(['reset-ycsb.sql'])`
+  with a comment saying it runs CHECKPOINT + VACUUM ANALYZE before each
+  benchmarking round "to produce a consistent, cold-cache starting state" —
+  but that script only actually executes when `ycsb.py`'s shared `-ar`/
+  `--activate-reset` flag is set (`bexhoma/experiments/base.py`'s
+  `resetscript_active = args.activate_reset`), and no catalog path ever set
+  it. Every catalog-driven YCSB run therefore skipped the reset regardless
+  of what an experiment.yml said, letting table bloat and buffer-cache state
+  carry over from one round or repetition into the next — a real confound
+  for a workload whose entire point is comparing rounds. Unlike the other
+  two fixes, this one is not exposed as a new `experiment.yml` field:
+  `build_ycsb_argv()` now emits `-ar` unconditionally, because skipping the
+  reset is never a valid experimental treatment, only a bug.
+- **`-tr`/`--test-result` had no YCSB-side path to turn it on.** The
+  underlying mechanism is workload-agnostic (`bexhoma/experiments/base.py`
+  reads `self.args.test_result` directly), and `bexhoma/evaluators/ycsb.py`
+  already implements `record_tests()` — non-zero loading/benchmarking
+  throughput, the planned workflow actually ran, no `FAILED` operation
+  column — so turning it on is meaningful, not a no-op. `tpch_catalog.py`
+  gates its own `-tr` emission on a `params.verify_result` value, but that
+  param was never added to `contract_catalog.yml`'s `workloads.tpch.params`,
+  making it unreachable from the documented contract for TPC-H too (a
+  pre-existing issue, left alone since fixing it wasn't asked for). YCSB
+  gets its own, properly documented `params.verify_result` (`type: bool`,
+  default `false`), and `build_ycsb_argv()` emits `-tr` when it is set.
+
+No version bump beyond the 1.4.0 -> 1.5.0 move above: these three fixes and
+the `benchmarking:` addition land together as one catalog-contract change.
+
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 
 `experiments/tpch/PgDuckDB/` exists on disk but is unused: `tpch.py` points

@@ -95,6 +95,31 @@ class BuildYcsbArgvTest(unittest.TestCase):
         self.assertEqual(args.num_benchmarking_pods, '4')
         self.assertEqual(args.num_benchmarking_threads, '128')
 
+    def test_reset_between_rounds_is_always_activated(self):
+        """Skipping the CHECKPOINT/VACUUM ANALYZE reset is never a valid choice."""
+        args = ycsb.build_parser().parse_args(self._argv())
+        self.assertTrue(args.activate_reset)
+
+    def test_loading_timeout_is_translated(self):
+        argv = self._argv(loading={'pods': 1, 'threads': 8, 'timeout_minutes': 15})
+        args = ycsb.build_parser().parse_args(argv)
+        self.assertEqual(args.loading_timeout, 15)
+
+    def test_loading_timeout_is_optional(self):
+        args = ycsb.build_parser().parse_args(self._argv())
+        self.assertIsNone(args.loading_timeout)
+
+    def test_verify_result_is_off_by_default(self):
+        args = ycsb.build_parser().parse_args(self._argv())
+        self.assertFalse(args.test_result)
+
+    def test_verify_result_maps_to_tr(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['workload']['params']['verify_result'] = True
+        argv = catalog_spec.build_argv(self.catalog, spec)
+        args = ycsb.build_parser().parse_args(argv)
+        self.assertTrue(args.test_result)
+
     def test_observe_and_placement_and_resources(self):
         argv = self._argv()
         self.assertIn('-m', argv)

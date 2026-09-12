@@ -173,13 +173,18 @@ workloads:
       logging_interval: {type: int, unit: seconds, default: 10, why: "status-line interval; also the time_series resolution"}
       insert_order:    {type: enum, values: [hashed, ordered], default: hashed, why: "hashed = uniform key distribution; ordered = append-heavy hot index end"}
       max_execution_time: {type: int, unit: seconds, default: 0, why: "wall-clock cap on the benchmarking phase only; loading always runs to completion"}
+      verify_result:   {type: bool, default: false, why: "record pass/fail checks (non-zero throughput, planned workflow ran, no FAILED operation column)
+                        alongside the summary; turn on when validity depends on ruling out a silently broken or partial run"}
     loading:
       pods:    {type: int, min: 1, support: "works for every DBMS; total row count split across pods"}
       threads: {type: int, min: 1, support: "honored by YCSB's JDBC loader -- unlike tpch, raise threads and pods together"}
+      timeout_minutes: {type: int, min: 1, required: false, semantics: "generic field (experiment_schema.loading.timeout_minutes); now wired for ycsb too"}
     benchmarking:
       pods:    {type: int, min: 1, default: 1, why: "benchmarker pods per round, before `rounds` multiplies further; effective pod count = rounds entry * this"}
       threads: {type: int, min: 1, default: 1, why: "total client threads for the round, split across `pods` only (not against `rounds`); for a thread-based
                 concurrency target (e.g. 128 clients) without one pod per client, keep rounds to a single entry and set pods/threads directly here"}
+      why: "PostgreSQL always runs CHECKPOINT + VACUUM ANALYZE before every benchmarking round, regardless of these settings -- there is no knob to
+            disable it, since skipping it would only introduce a round-to-round confound"
     rounds:      {type: "list[int]", why: "parallel-client sweep; each entry is a concurrent benchmarker-pod count (further multiplied by benchmarking.pods);
                   total ops split across the resulting pods (constant total work). Use benchmarking.threads instead for a pure thread-based sweep"}
     repetitions: {type: int, default: 1}

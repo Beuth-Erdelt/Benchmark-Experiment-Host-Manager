@@ -127,11 +127,22 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-xli", params.get("logging_interval"))
     _append_flag(argv, "-xio", params.get("insert_order"))
     _append_flag(argv, "-xmet", params.get("max_execution_time"))
+    if params.get("verify_result"):
+        argv.append("-tr")
 
     _append_flag(argv, "-nlp", loading.get("pods"))
     _append_flag(argv, "-nlt", loading.get("threads"))
+    _append_flag(argv, "--loading-timeout", loading.get("timeout_minutes"))
     _append_flag(argv, "-nbp", benchmarking.get("pods"))
     _append_flag(argv, "-nbt", benchmarking.get("threads"))
+
+    # The PostgreSQL configuration below always attaches a CHECKPOINT +
+    # VACUUM ANALYZE resetscript so every benchmarking round starts from the
+    # same state, but ycsb.py only actually runs it when -ar is passed --
+    # there is no experiment.yml knob for this because skipping the reset
+    # would only ever introduce a round-to-round confound, never a valid
+    # treatment choice.
+    argv.append("-ar")
 
     rounds = workload_spec.get("rounds")
     if rounds:

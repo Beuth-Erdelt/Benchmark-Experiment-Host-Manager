@@ -57,6 +57,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Environment-checked submission gate and recoverable slow-start state | `agent/harness/tools.py` | Done and regression-tested |
 | Agent-exposed per-configuration loading timeout and automatic failure diagnostics | `contracts/contract_catalog.yml`, `bexhoma/spec.py`, `bexhoma/experiments/base.py`, `bexhoma/configurations/lifecycle.py` | Done and regression-tested |
 | YCSB benchmarking-phase pod/thread split (`benchmarking.pods`/`benchmarking.threads`), independent of the pod-count `rounds` sweep, so a thread-level concurrency target does not have to be reached by spawning one single-threaded pod per client | `contracts/contract_catalog.yml`, `bexhoma/experiments/ycsb_catalog.py`, `agent/harness/validation.py` | Done and regression-tested |
+| YCSB `loading.timeout_minutes` actually enforced, the round-to-round CHECKPOINT/VACUUM ANALYZE reset always run, and an opt-in `verify_result` correctness check reachable, none of which the catalog translator previously wired through even though the first validated and the third had a working TPC-H equivalent | `contracts/contract_catalog.yml`, `bexhoma/experiments/ycsb_catalog.py` | Done and regression-tested |
 | Enforced initial catalog/environment consultation | `agent/harness/agent.py` | Done and regression-tested |
 | Validity-first evidence gate, read-path citations, and result-contract-driven answer | `agent/harness/agent.py`, `agent/harness/tools.py` | Done and regression-tested |
 | Deterministic query coverage, throughput comparability, and repetition-anomaly disclosure | `agent/harness/tools.py`, `agent/harness/agent.py`, `agent/harness/prompts.py` | Done and regression-tested without changing BeXhoma |
@@ -227,9 +228,39 @@ field" check before ever reaching Bexhoma. `tests/test_agent_harness.py`
 gained coverage for both the accepted shape and the workload-declared
 `min: 1` bound rejecting `threads: 0`.
 
-Separately requested and still open: reviewing the rest of the YCSB catalog
-surface for other knobs `ycsb.py` supports but the contract does not yet
-expose, to be reported (not implemented) as a follow-up list.
+Separately requested: reviewing the rest of the YCSB catalog surface for
+other knobs `ycsb.py` supports but the contract does not yet expose, to be
+reported rather than implemented in that pass. Three were found and reported
+directly in chat, not in this file, since nothing was implemented yet: see
+the next entry for what came of them.
+
+### 2026-09-12 — Correct three YCSB knobs that validated but silently did nothing
+
+The knob review above turned up three specific gaps, and the user asked to
+correct all three. `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()`
+now: translates `loading.timeout_minutes` into `--loading-timeout`, exactly
+like `tpch_catalog.py` already does, so the timeout the agent's own cost
+estimate already budgeted for is actually enforced; unconditionally emits
+`-ar`/`--activate-reset`, because `ycsb.py`'s PostgreSQL configuration
+unconditionally attaches a CHECKPOINT + VACUUM ANALYZE reset script that
+flag was needed to activate, and skipping that reset between benchmarking
+rounds is never a valid experimental choice, only a bug that let cache state
+and table bloat carry over between rounds; and emits `-tr`/`--test-result`
+when a new `workload.params.verify_result` field is set, mirroring how
+`tpch_catalog.py` gates the same flag on its own `verify_result` param
+(itself never actually added to `contract_catalog.yml`'s
+`workloads.tpch.params` — a pre-existing gap for TPC-H, left alone since
+fixing it wasn't asked for).
+
+`contracts/contract_catalog.yml` gained the documented `verify_result`
+param under `workloads.ycsb.params` and a `why:` note on the new
+`benchmarking:` block explaining the always-on reset; both land inside the
+same 1.4.0 -> 1.5.0 version move as the `benchmarking:` addition itself,
+since none of this had shipped in a release yet. `docs/AgentCatalogContract.md`
+and `contracts/contract_catalog_comments.md` follow. `tests/test_ycsb_catalog.py`
+and `tests/test_agent_harness.py` gained coverage for all three: the timeout
+flag translating and defaulting to unset, `-ar` always present, and
+`verify_result` defaulting off and mapping through when set.
 
 ### 2026-09-10 — Default the environment descriptor to the working directory, not `dev/`
 

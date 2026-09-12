@@ -1156,6 +1156,17 @@ resources:
 
         self.assertTrue(verdict["valid"], verdict.get("errors"))
 
+    def test_ycsb_verify_result_is_accepted(self) -> None:
+        self.workspace.write_file(
+            self.path, _YCSB_SPEC.replace(
+                "loading_target_factors: [1], benchmarking_target_factors: [1]}",
+                "loading_target_factors: [1], benchmarking_target_factors: [1],\n"
+                "    verify_result: true}"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+
     def test_workload_bounds_apply_to_the_benchmarking_block(self) -> None:
         self.assertIn("below the declared minimum",
                       self._rejection(_YCSB_SPEC + "benchmarking:\n  threads: 0\n"))

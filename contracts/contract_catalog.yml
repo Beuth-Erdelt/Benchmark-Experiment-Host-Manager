@@ -634,6 +634,15 @@ workloads:
         default: 0
         why: "wall-clock cap on the benchmarking phase only (0 = run every
           operation); loading always runs to completion"
+      verify_result:
+        type: bool
+        default: false
+        why: "record basic pass/fail correctness checks alongside the usual
+          summary: present, non-zero loading and benchmarking throughput,
+          the planned workflow actually ran, and no FAILED operation column
+          in the results. Turn it on when the hypothesis's validity depends
+          on ruling out a silently broken or partial run, since it is off by
+          default to avoid the extra evaluation pass."
 
     loading:
       pods:
@@ -680,6 +689,11 @@ workloads:
           `rounds: [1]` with `pods: 4` and `threads: 128` gives 4 pods at 32
           threads each, 128 total clients, instead of 128 single-threaded
           pods."
+      why: "PostgreSQL runs CHECKPOINT + VACUUM ANALYZE before every
+        benchmarking round regardless of these settings, so cache state and
+        table bloat never carry over from one round or repetition into the
+        next -- there is no knob to disable this, since skipping it would
+        only introduce a round-to-round confound."
 
     rounds:
       type: list[int]
