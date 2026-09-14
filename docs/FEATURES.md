@@ -35,6 +35,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Phase-scoped tools, path policy, immutable submission, and deterministic query comparison | `agent/harness/tools.py` | Done |
 | Exact one-result selection, link-reachable evidence reads, and result-contract answer structure | `agent/harness/prompts.py`, `agent/harness/tools.py`, `contracts/contract_result.yml` | Done and regression-tested |
 | Model adapter with single-model endpoint discovery for portable server naming | `agent/harness/model_client.py` | Done and regression-tested |
+| Trajectory `meta` event identifies the exact model endpoint: resolved served-model identifier, sampling parameters, and the endpoint's `base_url` so two same-named deployments are not conflated | `agent/harness/agent.py` | Done and regression-tested |
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors; a server that does not advertise its window but refuses an oversized turn with a 400 has that window adopted from the refusal, the turn resized and resent once, and a still-refused turn reported the same way | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
@@ -181,6 +182,22 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-14 — Record the exact model endpoint in every trajectory
+
+The user asked that a trajectory (the JSON-lines log of one agent phase) note
+the exact model used, including all versions and parameters. Each phase
+already recorded the served model identifier — resolved against the
+endpoint's own model list rather than trusting the configured alias — plus
+its sampling parameters (temperature, max output tokens per turn) in the
+`meta` event that opens the log. The one identifying fact missing was which
+endpoint answered: the same model name can be served by different
+deployments (a different quantization or build behind the same alias), and
+only the endpoint URL disambiguates them. `run_baseline`, `run_design`, and
+`run_interpret` in `agent/harness/agent.py` now include the model client's
+`base_url` alongside `temperature` and `max_tokens` in that `meta` event's
+`params`, so a trajectory alone identifies exactly which server, and
+therefore which build of the model, produced it.
 
 ### 2026-09-12 — Give YCSB benchmarking a thread knob separate from its pod-count sweep
 

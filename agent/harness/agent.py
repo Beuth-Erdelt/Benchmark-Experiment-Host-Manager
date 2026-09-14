@@ -659,7 +659,8 @@ def run_baseline(
     messages = prompts.baseline_messages(task)
     trajectory.record("meta", phase="baseline", model=model.model,
                       harness=_harness_revision(),
-                      params={"temperature": model.temperature,
+                      params={"base_url": model.base_url,
+                              "temperature": model.temperature,
                               "max_tokens": model.max_tokens},
                       catalog_sha256=None, environment_sha256=None,
                       environment_present=False, method_sha256=None,
@@ -738,7 +739,9 @@ def run_design(
         followups=followups)
     trajectory.record("meta", phase="design", model=model.model,
                       harness=_harness_revision(),
-                      params={"temperature": model.temperature, "max_tokens": model.max_tokens},
+                      params={"base_url": model.base_url,
+                              "temperature": model.temperature,
+                              "max_tokens": model.max_tokens},
                       catalog_sha256=catalog_sha256,
                       environment_sha256=_file_sha256(environment_path),
                       environment_present=environment_path is not None,
@@ -1473,7 +1476,9 @@ def run_interpret(
         specification=specification, method_path=method_path, followups=followups)
     trajectory.record("meta", phase="interpret", model=model.model,
                       harness=_harness_revision(),
-                      params={"temperature": model.temperature, "max_tokens": model.max_tokens},
+                      params={"base_url": model.base_url,
+                              "temperature": model.temperature,
+                              "max_tokens": model.max_tokens},
                       report=report_path,
                       catalog_sha256=_file_sha256(catalog_path),
                       environment_sha256=_file_sha256(environment_path),

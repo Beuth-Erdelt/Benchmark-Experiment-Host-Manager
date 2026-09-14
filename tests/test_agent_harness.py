@@ -122,6 +122,7 @@ class _Process:
 
 class _Model:
     model = "fake"
+    base_url = "http://fake/v1"
     temperature = 0.0
     max_tokens = 1000
 
