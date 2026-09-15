@@ -430,7 +430,8 @@ def _converse(
                           reasoning=reply.reasoning,
                           tool_calls=[asdict(call) for call in reply.tool_calls],
                           usage=reply.usage, finish_reason=reply.finish_reason,
-                          generation_budget=reply.generation_budget, **stage_field)
+                          generation_budget=reply.generation_budget,
+                          response_model=reply.response_model, **stage_field)
         messages.append(reply.message)
 
         # A turn that produced only reasoning -- no tool call, no visible answer
@@ -677,7 +678,8 @@ def run_baseline(
         trajectory.record("assistant", turn=turn, text=reply.text,
                           reasoning=reply.reasoning, tool_calls=[],
                           usage=reply.usage, finish_reason=reply.finish_reason,
-                          generation_budget=reply.generation_budget, stage="baseline")
+                          generation_budget=reply.generation_budget,
+                          response_model=reply.response_model, stage="baseline")
         messages.append(reply.message)
         if reply.text.strip():
             answer = reply.text

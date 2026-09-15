@@ -455,8 +455,9 @@ The design invocation first creates a timestamp-only working directory there.
 After the design produces a valid experiment, the harness renames it to
 `<result-folder>/agent/<timestamp>-sf<scale>-<model>/`, with characters that are
 unsafe in a directory name replaced by hyphens. For example,
-`20260827T111847490995-sf2-qwen3.8-27b` identifies the experiment scale and the
-served model without opening the trajectory. An incomplete design remains
+`20260827T111847490995-sf2-Qwen-Qwen3.8-27B-FP8-a1b2c3d4e5f6` identifies the
+experiment scale and the exact served model, commit included, without opening
+the trajectory. An incomplete design remains
 timestamp-only because it has no trustworthy scale factor. Every
 interpretation and follow-up appends to the same directory:
 

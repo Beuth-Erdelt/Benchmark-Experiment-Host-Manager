@@ -130,6 +130,12 @@ class Reply:
         server did not report one.
     :ivar generation_budget: Tokens this turn was allowed to generate, after
         the served context window narrowed the configured ceiling.
+    :ivar response_model: The model identifier this completion itself
+        reported, as opposed to the one requested. A hosted API is commonly
+        asked for a floating alias -- ``gpt-4o``, ``mistral-large-latest`` --
+        and answers naming the dated snapshot that alias currently resolves
+        to, which is the only place that resolution is recorded anywhere.
+        Empty when the server did not report one.
     """
     text: str
     reasoning: str
@@ -138,6 +144,7 @@ class Reply:
     usage: dict[str, int]
     finish_reason: str = ""
     generation_budget: int = 0
+    response_model: str = ""
 
 
 class ChatModel:
@@ -385,6 +392,9 @@ class ChatModel:
         finish_reason = getattr(choice, "finish_reason", None)
         if not isinstance(finish_reason, str):
             finish_reason = ""
+        response_model = getattr(response, "model", None)
+        if not isinstance(response_model, str):
+            response_model = ""
         # A reasoning model returns its thinking in a separate field. Qwen's own
         # guidance is not to feed previous thinking back in, and some servers
         # reject the field on input, so it is logged but not replayed.
@@ -406,6 +416,7 @@ class ChatModel:
             usage=usage,
             finish_reason=finish_reason,
             generation_budget=budget,
+            response_model=response_model,
         )
 
 

@@ -122,6 +122,10 @@ spec:
           set -euo pipefail
           MODEL_REPO="Qwen/Qwen3.8-27B-FP8"
           LOCAL_DIR="/models/qwen3.8-27b-fp8"
+          # Which exact upstream commit was downloaded, so a served alias built
+          # from it (below) tells a trajectory which weights answered, not just
+          # which repo they came from -- "main" moves, this file does not.
+          REVISION_FILE="$LOCAL_DIR/.hf-revision"
           # Zero disables the watchdog and restores a server that runs until
           # something deletes it.
           IDLE_SHUTDOWN_SECONDS="${IDLE_SHUTDOWN_SECONDS:-1200}"
@@ -133,17 +137,37 @@ spec:
           if [ -f "$LOCAL_DIR/config.json" ]; then
               echo "Model already present at $LOCAL_DIR"
           else
-              echo "Downloading $MODEL_REPO ..."
+              echo "Resolving the current commit of $MODEL_REPO ..."
+              # Pinned explicitly rather than left as the default "main", so a
+              # PVC wiped and recreated later downloads this same commit instead
+              # of whatever upstream has since pushed to the branch.
+              RESOLVED_REVISION="$(python3 -c "
+          from huggingface_hub import HfApi
+          print(HfApi().model_info('$MODEL_REPO').sha)
+          ")"
+              echo "Downloading $MODEL_REPO @ $RESOLVED_REVISION ..."
               # `hf`, not `huggingface-cli`: the old entry point still exists in
               # this image but prints a deprecation notice and exits 0 without
               # downloading anything, which looks like success and then leaves
               # vLLM crash-looping on an empty directory.
-              hf download "$MODEL_REPO" --local-dir "$LOCAL_DIR"
+              hf download "$MODEL_REPO" --revision "$RESOLVED_REVISION" --local-dir "$LOCAL_DIR"
+              echo "$RESOLVED_REVISION" > "$REVISION_FILE"
           fi
 
           if [ ! -f "$LOCAL_DIR/config.json" ]; then
               echo "ERROR: no config.json under $LOCAL_DIR after download"
               exit 1
+          fi
+
+          # The trajectory records whatever alias the server answers to (see
+          # ChatModel.resolve_served_model in agent/harness/model_client.py), so
+          # folding the resolved commit into it is what lets a trajectory alone
+          # identify the exact weights, not just the repo, that produced it. A
+          # directory left over from before this revision file existed still
+          # serves, just without that suffix.
+          SERVED_MODEL_NAME="$MODEL_REPO"
+          if [ -f "$REVISION_FILE" ]; then
+              SERVED_MODEL_NAME="${MODEL_REPO}@$(cut -c1-12 "$REVISION_FILE")"
           fi
 
           # Flags follow the published vLLM recipe for Qwen3.8-27B. The two
@@ -167,7 +191,7 @@ spec:
           # by hand.
           python3 -m vllm.entrypoints.openai.api_server \
             --model "$LOCAL_DIR" \
-            --served-model-name qwen3.8-27b \
+            --served-model-name "$SERVED_MODEL_NAME" \
             --tensor-parallel-size 1 \
             --max-model-len 131072 \
             --max-num-seqs 512 \

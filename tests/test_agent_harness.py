@@ -3627,6 +3627,24 @@ class ChatModelTest(unittest.TestCase):
 
         self.assertEqual(reply.finish_reason, "")
 
+    def test_a_floating_alias_reports_the_snapshot_it_resolved_to(self) -> None:
+        """A hosted API answering ``gpt-4o`` with a dated snapshot must be kept."""
+        model = self._model()
+        model._client.chat.completions.create.return_value.model = "gpt-4o-2024-08-06"
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.response_model, "gpt-4o-2024-08-06")
+
+    def test_a_response_model_the_server_omits_is_reported_as_unknown(self) -> None:
+        """A non-string field (absent, or a test double) must not leak through."""
+        model = self._model()
+        del model._client.chat.completions.create.return_value.model
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.response_model, "")
+
     def test_a_turn_reserves_only_what_the_context_window_leaves(self) -> None:
         """Asking for a fixed ceiling on a full conversation is what overflows."""
         model = self._model(max_tokens=32768, window=2000)

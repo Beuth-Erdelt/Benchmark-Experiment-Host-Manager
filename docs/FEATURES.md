@@ -36,6 +36,8 @@ follow up on a benchmark. The full current description and visual flow live in
 | Exact one-result selection, link-reachable evidence reads, and result-contract answer structure | `agent/harness/prompts.py`, `agent/harness/tools.py`, `contracts/contract_result.yml` | Done and regression-tested |
 | Model adapter with single-model endpoint discovery for portable server naming | `agent/harness/model_client.py` | Done and regression-tested |
 | Trajectory `meta` event identifies the exact model endpoint: resolved served-model identifier, sampling parameters, and the endpoint's `base_url` so two same-named deployments are not conflated | `agent/harness/agent.py` | Done and regression-tested |
+| Self-hosted Qwen server pins and publishes the exact upstream commit it downloaded, as `Qwen/Qwen3.8-27B-FP8@<commit>` in `--served-model-name`, so it (and not just the endpoint) flows into every trajectory's recorded model identifier | `agent/k8s/vllm-qwen38-27b.yml` | Done; takes effect on the next first-start download, applies only to the self-hosted vLLM server, not the local Ollama or hosted-API model choices in `.env.example` |
+| Per-turn `response_model`: the concrete snapshot a hosted API actually answered a floating model alias with (`gpt-4o` -> `gpt-4o-2024-08-06`), read from the completion response and recorded on every assistant trajectory turn, alongside `meta`'s configured/resolved identifier | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested; a no-op for self-hosted vLLM and Ollama, which echo back only what was requested |
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors; a server that does not advertise its window but refuses an oversized turn with a 400 has that window adopted from the refusal, the turn resized and resent once, and a still-refused turn reported the same way | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
@@ -182,6 +184,59 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-15 — Record the resolved snapshot a hosted API answers a floating alias with
+
+The user asked whether the previous two fixes (recording `base_url`, then
+pinning the self-hosted vLLM server's exact commit) also covered the other
+ways this project can reach a model: a local Ollama, and the hosted OpenAI,
+Mistral, and (were it configured) Claude-family APIs listed in `.env.example`.
+The `base_url`/configured-model recording already applied to all of them
+equally, since `agent/harness/model_client.py` speaks only the OpenAI-
+compatible protocol and treats every endpoint alike. The commit-pinning fix
+did not and could not: it edits infrastructure this project owns
+(`agent/k8s/vllm-qwen38-27b.yml`), and a third-party API's servers are not
+this project's to pin. What generalizes is the underlying idea: a hosted API
+is routinely asked for a floating alias -- `gpt-4o`, `mistral-large-latest` --
+that the provider is free to repoint at a newer snapshot without notice, and
+the completion response itself commonly names the concrete snapshot that
+alias resolved to for that call (`response.model`, e.g.
+`gpt-4o-2024-08-06`), which the harness previously read and discarded.
+``Reply`` in `agent/harness/model_client.py` gained a `response_model` field
+carrying that value, and every per-turn `assistant` trajectory event in
+`agent/harness/agent.py` now records it alongside `finish_reason` and
+`generation_budget`. Self-hosted vLLM and Ollama typically only echo back
+whatever was requested here, so this adds nothing beyond the `meta` event for
+them, but costs nothing either; it is the hosted-API case, and any future
+provider that resolves aliases the same way, that it is for.
+
+### 2026-09-15 — Fold the served weights' exact commit into the model name itself
+
+After the `base_url` fix below, the user pointed out the gap it left open: the
+trajectory now names the endpoint (`http://localhost:8001/v1`), but still not
+"which version of qwen etc it is". The reason was upstream of the harness —
+`agent/k8s/vllm-qwen38-27b.yml` downloaded `Qwen/Qwen3.8-27B-FP8` from its
+default `main` branch reference with no `--revision` pin, so a PVC wiped and
+recreated later could silently serve different weights under the exact same
+alias, and separately, the manifest published that endpoint's model as the
+shortened `qwen3.8-27b` rather than the upstream repository identifier —
+already dropping the one detail (`Qwen/…-FP8`) that was on hand.
+
+The manifest now resolves the upstream commit once via `HfApi().model_info(...)`
+before the first download, pins `hf download` to that exact commit, and
+persists it beside the weights (`$LOCAL_DIR/.hf-revision`) so a restart that
+finds the weights already present still recovers it. `--served-model-name` is
+now built from that file as `Qwen/Qwen3.8-27B-FP8@<commit[:12]>` instead of the
+shorthand `qwen3.8-27b`. Nothing in `agent/harness/model_client.py` or
+`agent/harness/agent.py` needed to change: `ChatModel.resolve_served_model()`
+already adopts whatever single model name a dedicated endpoint answers with
+(`agent/harness/model_client.py`), so this alias flows straight into the
+`meta` event's `model` field and into completed-investigation directory names
+(`agent/harness/agent.py`'s `_name_component` already strips `/` and `@`), with
+no code change required — only `agent/README.md`'s worked example was updated
+to show the longer resulting name. Takes effect on the next first-start
+download; an already-downloaded, already-running server keeps its current
+unpinned commit and its shorter alias until its weights directory is cleared.
 
 ### 2026-09-14 — Record the exact model endpoint in every trajectory
 
