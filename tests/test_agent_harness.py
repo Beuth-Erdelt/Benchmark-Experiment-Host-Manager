@@ -792,8 +792,8 @@ resources:
         estimate = self.workspace.validate(self.path)["estimate"]
 
         self.assertEqual(estimate["runs"], 12)
-        self.assertEqual(estimate["query_timeout_budget_min"], 120.0)
-        self.assertEqual(estimate["declared_timeout_budget_min"], 120.0)
+        self.assertEqual(estimate["query_timeout_budget_min"], 360.0)
+        self.assertEqual(estimate["declared_timeout_budget_min"], 360.0)
         self.assertIn("not a runtime prediction", estimate["basis"])
 
     def test_file_reads_have_a_cumulative_context_limit(self) -> None:

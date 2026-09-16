@@ -119,7 +119,7 @@ workloads:
                           SUT); placement.benchmarking validation must count these, not the SUT limits"}
     params:            # workload.params keys
       scaling_factor:      {type: int, unit: GB, min: 1}
-      timeout:              {type: int, unit: seconds, default: 600, min: 1, semantics: "per-query; a query still running at the limit is cancelled and counted as an error"}
+      timeout:              {type: int, unit: seconds, default: 1800, min: 1, semantics: "per-query; a query still running at the limit is cancelled and counted as an error"}
       query_repeats:        {type: int, default: 1, min: 1}
       measure_datatransfer: {type: bool, default: false}
       active_queries:       {type: "list[int]", default: all, min: 1, max: 22,

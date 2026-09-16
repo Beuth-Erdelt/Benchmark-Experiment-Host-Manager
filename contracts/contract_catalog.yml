@@ -369,7 +369,7 @@ workloads:
       timeout:
         type: int
         unit: seconds
-        default: 600
+        default: 1800
         min: 1
         why: "per-query timeout in seconds: a query still running at the limit is
           cancelled and counted as an error. It also bounds the worst-case cost
