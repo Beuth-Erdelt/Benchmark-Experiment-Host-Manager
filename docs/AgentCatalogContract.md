@@ -225,11 +225,12 @@ systems:
     knobs_own:
       shared_preload_libraries: {default: pg_duckdb, fixed: true}
       duckdb_force_execution:   {type: bool, default: false, arg_style: env-var, env_var: DUCKDB_FORCE_EXECUTION,
-                                 when: "set true whenever the hypothesis compares PgDuckDB's execution engine
-                                        against another system. Left at its default on heap tables, pg_duckdb's
-                                        cost-based routing keeps queries in PostgreSQL's own executor, so the
-                                        extension is loaded but idle and the run measures PostgreSQL against
-                                        PostgreSQL. Leave it false only when the routing behaviour itself is under test"}
+                                 when: "enable whenever the hypothesis needs to guarantee that DuckDB's execution
+                                        engine is what ran, rather than trusting pg_duckdb's own per-query cost-based
+                                        routing to pick it. Left at its default (false), pg_duckdb still decides for
+                                        itself, query by query, whether to route through DuckDB or PostgreSQL's own
+                                        executor -- so false does not mean 'PostgreSQL only', only that the
+                                        extension's own routing logic stays in control"}
     profiles:
       analytical-ssd: {ref: "PostgreSQL.profiles.analytical-ssd"}   # identical knob values from the same memory/cpu limits
 ```

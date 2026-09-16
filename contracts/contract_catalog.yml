@@ -811,12 +811,15 @@ systems:
         arg_style: env-var
         env_var: DUCKDB_FORCE_EXECUTION
         why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"
-        when: "set this to true whenever the hypothesis compares PgDuckDB's
-          execution engine against another system. Left at its default on
-          heap-stored tables, pg_duckdb's cost-based routing normally keeps
-          queries in PostgreSQL's own executor, so the extension is loaded but
-          idle and the experiment measures PostgreSQL against PostgreSQL. Leave
-          it false only when the routing behaviour itself is what's under test."
+        when: "enable this whenever the hypothesis needs to guarantee that
+          DuckDB's execution engine is what ran, rather than trusting
+          pg_duckdb's own per-query cost-based routing to pick it. Left at
+          its default (false), pg_duckdb still decides for itself, query by
+          query, whether to route through DuckDB or PostgreSQL's own
+          executor -- so false does not mean 'PostgreSQL only', only that
+          the extension's own routing logic stays in control. Set it true
+          when the experiment needs certainty that DuckDB's engine executed
+          the query, not just that it was eligible to."
 
     physical_design:
       # explicitly re-declared, not inherited via extends -- see
