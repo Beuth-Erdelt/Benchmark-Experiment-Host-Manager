@@ -816,10 +816,8 @@ systems:
           pg_duckdb's own per-query cost-based routing to pick it. Left at
           its default (false), pg_duckdb still decides for itself, query by
           query, whether to route through DuckDB or PostgreSQL's own
-          executor -- so false does not mean 'PostgreSQL only', only that
-          the extension's own routing logic stays in control. Set it true
-          when the experiment needs certainty that DuckDB's engine executed
-          the query, not just that it was eligible to."
+          executor. Set it true when the experiment needs certainty that
+          DuckDB's engine executed the query, not just that it was eligible to."
 
     physical_design:
       # explicitly re-declared, not inherited via extends -- see
