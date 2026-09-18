@@ -189,6 +189,13 @@ spec:
           # nobody is talking to is a stranded GPU, and the operator wrapper
           # that normally shuts it down is absent whenever a phase was launched
           # by hand.
+          #
+          # --enable-log-requests logs each request's resolved SamplingParams at
+          # INFO (already the level set above), which is how to confirm the
+          # temperature model_client.py sends is the one actually used -- the
+          # model's generation_config.json only supplies temperature/top_k/top_p
+          # for requests that omit them, but that is easy to doubt from the
+          # WARNING vLLM prints about it at startup.
           python3 -m vllm.entrypoints.openai.api_server \
             --model "$LOCAL_DIR" \
             --served-model-name "$SERVED_MODEL_NAME" \
@@ -201,6 +208,7 @@ spec:
             --enable-auto-tool-choice \
             --tool-call-parser qwen3_coder \
             --trust-remote-code \
+            --enable-log-requests \
             --host 0.0.0.0 \
             --port 8000 &
           VLLM_PID=$!
