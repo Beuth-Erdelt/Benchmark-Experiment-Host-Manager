@@ -271,11 +271,11 @@ class ChatModel:
     def _create_with_backoff(self, request: dict[str, Any]) -> Any:
         """Send one request, waiting out a refusal the endpoint will recover from.
 
-        Two refusals are temporary and worth waiting for rather than losing an
-        investigation to: a metered API's per-minute quota, which clears on its
-        own, and a hosted endpoint that is momentarily out of capacity. A
-        self-hosted server queues instead of refusing, so this only engages
-        against a hosted API.
+        Three refusals are temporary and worth waiting for rather than losing
+        an investigation to: a metered API's per-minute quota, which clears on
+        its own; a hosted endpoint that is momentarily out of capacity; and a
+        self-hosted server that refuses the connection outright because it is
+        still starting up or has been restarted mid-run.
 
         :param request: Keyword arguments for the chat-completions call.
         :return: The server's completion.
@@ -285,11 +285,13 @@ class ChatModel:
         for attempt in range(1, _RETRY_ATTEMPTS + 1):
             try:
                 return self._client.chat.completions.create(**request)
-            except (RateLimitError, InternalServerError) as error:
-                refusal = (
-                    "rate limiting" if isinstance(error, RateLimitError)
-                    else "a server-side failure"
-                )
+            except (RateLimitError, InternalServerError, APIConnectionError) as error:
+                if isinstance(error, RateLimitError):
+                    refusal = "rate limiting"
+                elif isinstance(error, InternalServerError):
+                    refusal = "a server-side failure"
+                else:
+                    refusal = "a connection failure"
                 if attempt == _RETRY_ATTEMPTS:
                     raise ModelUnreachable(
                         f"{self.base_url} refused {_RETRY_ATTEMPTS} attempts for "
@@ -375,10 +377,6 @@ class ChatModel:
             request["tools"] = tools
         try:
             response = self._create_with_backoff(request)
-        except APIConnectionError as error:
-            raise ModelUnreachable(
-                f"no answer from {self.base_url}: {error}"
-            ) from error
         except BadRequestError as error:
             response = self._retry_within_named_window(request, messages, error)
         # A retry within a newly learned window resent with a narrower ceiling;

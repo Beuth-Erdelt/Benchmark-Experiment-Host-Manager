@@ -29,7 +29,9 @@ from agent.harness.agent import (
     run_design,
     run_interpret,
 )
-from openai import BadRequestError, InternalServerError, RateLimitError
+from openai import (
+    APIConnectionError, BadRequestError, InternalServerError, RateLimitError,
+)
 
 from agent.harness.model_client import (
     ChatModel, ContextWindowExhausted, ModelNotServed, ModelUnreachable, Reply,
@@ -3547,6 +3549,18 @@ class ChatModelTest(unittest.TestCase):
         self.assertEqual(reply.text, "answer")
         self.assertEqual(model._sleep.call_count, 1)
 
+    def test_a_self_hosted_server_that_dropped_the_connection_is_waited_out(self) -> None:
+        """A restart of the local server should not lose the investigation either."""
+        model = self._model()
+        answer = model._client.chat.completions.create.return_value
+        failure = APIConnectionError(message="Connection error.", request=mock.Mock())
+        model._client.chat.completions.create.side_effect = [failure, answer]
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.text, "answer")
+        self.assertEqual(model._sleep.call_count, 1)
+
     def test_single_served_model_replaces_a_stale_configured_alias(self) -> None:
         """A dedicated endpoint makes its sole advertised identifier unambiguous."""
         model = self._model()
@@ -3579,6 +3593,15 @@ class ChatModelTest(unittest.TestCase):
         """Waiting forever would hide a quota that is exhausted, not merely busy."""
         model = self._model()
         model._client.chat.completions.create.side_effect = self._rate_limited()
+
+        with self.assertRaises(ModelUnreachable):
+            model.reply([{"role": "user", "content": "question"}])
+
+    def test_a_server_that_never_comes_back_is_reported_as_unreachable(self) -> None:
+        """A wrong --base-url must not hang the phase waiting for an answer."""
+        model = self._model()
+        model._client.chat.completions.create.side_effect = APIConnectionError(
+            message="Connection error.", request=mock.Mock())
 
         with self.assertRaises(ModelUnreachable):
             model.reply([{"role": "user", "content": "question"}])
