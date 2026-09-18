@@ -1188,6 +1188,13 @@ resources:
         catalog.write_text(yaml.safe_dump(broken))
         self.assertIn("unrecognised type", self._rejection(_SPEC))
 
+    def test_a_passing_validation_is_archived_even_without_a_submit(self) -> None:
+        """A --dry-run design must leave the specification behind, not just its name."""
+        self._validate()
+
+        self.assertEqual(
+            (self.run / "validated-experiment.yml").read_text(), _SPEC)
+
     def test_submit_preassigns_code_and_archives_provenance(self) -> None:
         self._validate()
 

@@ -61,6 +61,10 @@ _SPEC_SUFFIXES = (".yml", ".yaml")
 _CODE_WAIT_SECONDS = 120
 _RUN_LOCK = ".bexhoma-agent.lock"
 _SUBMITTED_SPEC = "submitted-experiment.yml"
+#: Archived beside the phase's own trajectory whenever validation fully
+#: passes, so a dry run still leaves the design behind even though it is
+#: never handed to :meth:`Workspace.submit`.
+_VALIDATED_SPEC = "validated-experiment.yml"
 _STAGED_CATALOG = "submitted-contract_catalog.yml"
 _STAGED_RESULT_CONTRACT = "submitted-contract_result.yml"
 _STAGED_ENVIRONMENT = "submitted-environment.yml"
@@ -513,6 +517,11 @@ class Workspace:
         result = validation.validate_spec(str(target), self.catalog_path, self.environment_path)
         if result.get("valid") and result.get("environment_checked"):
             self._validated[target] = self._fingerprint(target)
+            # Archived even when the phase never submits (--dry-run, or a
+            # submission the model never gets to): otherwise a passing design
+            # would leave nothing behind but its name in the inbox.
+            if self.run_directory is not None:
+                (self.run_directory / _VALIDATED_SPEC).write_bytes(target.read_bytes())
         else:
             self._validated.pop(target, None)
         return result
