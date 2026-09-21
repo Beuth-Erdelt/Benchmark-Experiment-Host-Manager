@@ -3737,6 +3737,82 @@ class ChatModelTest(unittest.TestCase):
         reserved = model._client.chat.completions.create.call_args.kwargs["max_tokens"]
         self.assertLessEqual(reserved, 8000)
 
+    def test_a_turn_with_no_tool_call_drops_an_empty_tool_calls_list(self) -> None:
+        """A stray "tool_calls": [] must not survive into the replayed message.
+
+        Some servers serialize a plain text turn with an explicit empty list
+        rather than omitting the field, which exclude_none does not catch.
+        Replayed unchanged, at least one vLLM chat template (llama3_json)
+        rejects any history message whose tool_calls length is not exactly
+        1 -- a text-only turn included -- with a 400 that has nothing to do
+        with the request that then fails.
+        """
+        model = self._model()
+        message = model._client.chat.completions.create.return_value.choices[0].message
+        message.model_dump.return_value = {
+            "role": "assistant", "content": "answer", "tool_calls": [],
+        }
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertNotIn("tool_calls", reply.message)
+
+    def test_more_than_one_tool_call_is_trimmed_to_the_first(self) -> None:
+        """A message with several tool calls cannot be replayed by every
+        chat template -- vLLM's llama3_json accepts exactly one -- so only
+        the first survives into both the parsed reply and the message sent
+        back into history, even though the model returned two.
+        """
+        model = self._model()
+        first_call = mock.Mock(id="call_1")
+        first_call.function.name = "read_file"
+        first_call.function.arguments = '{"path": "a"}'
+        second_call = mock.Mock(id="call_2")
+        second_call.function.name = "write_file"
+        second_call.function.arguments = '{"path": "b"}'
+        message = model._client.chat.completions.create.return_value.choices[0].message
+        message.tool_calls = [first_call, second_call]
+        message.model_dump.return_value = {
+            "role": "assistant",
+            "tool_calls": [
+                {"id": "call_1", "type": "function",
+                 "function": {"name": "read_file", "arguments": '{"path": "a"}'}},
+                {"id": "call_2", "type": "function",
+                 "function": {"name": "write_file", "arguments": '{"path": "b"}'}},
+            ],
+        }
+
+        reply = model.reply(
+            [{"role": "user", "content": "question"}],
+            tools=[{"type": "function", "function": {"name": "read_file"}}],
+        )
+
+        self.assertEqual([call.id for call in reply.tool_calls], ["call_1"])
+        self.assertEqual(len(reply.message["tool_calls"]), 1)
+        self.assertEqual(reply.message["tool_calls"][0]["id"], "call_1")
+
+    def test_parallel_tool_calls_is_sent_false_whenever_tools_are_offered(self) -> None:
+        """A best-effort hint some servers honour at generation time; harmless
+        either way since the reply is trimmed to one call regardless."""
+        model = self._model()
+
+        model.reply(
+            [{"role": "user", "content": "question"}],
+            tools=[{"type": "function", "function": {"name": "tool"}}],
+        )
+
+        request = model._client.chat.completions.create.call_args.kwargs
+        self.assertIs(request["parallel_tool_calls"], False)
+
+    def test_parallel_tool_calls_is_not_sent_without_tools(self) -> None:
+        """Meaningless on a turn that offers no tools at all."""
+        model = self._model()
+
+        model.reply([{"role": "user", "content": "question"}])
+
+        request = model._client.chat.completions.create.call_args.kwargs
+        self.assertNotIn("parallel_tool_calls", request)
+
     def test_a_named_window_with_no_room_left_is_reported_not_crashed(self) -> None:
         """The refusal must surface as the recorded stop reason, not an uncaught 400."""
         model = self._model(max_tokens=32768)

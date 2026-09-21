@@ -39,6 +39,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Self-hosted Qwen server pins and publishes the exact upstream commit it downloaded, as `Qwen/Qwen3.8-27B-FP8@<commit>` in `--served-model-name`, so it (and not just the endpoint) flows into every trajectory's recorded model identifier | `agent/k8s/vllm-qwen38-27b.yml` | Done; takes effect on the next first-start download, applies only to the self-hosted vLLM server, not the local Ollama or hosted-API model choices in `.env.example` |
 | Per-turn `response_model`: the concrete snapshot a hosted API actually answered a floating model alias with (`gpt-4o` -> `gpt-4o-2024-08-06`), read from the completion response and recorded on every assistant trajectory turn, alongside `meta`'s configured/resolved identifier | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested; a no-op for self-hosted vLLM and Ollama, which echo back only what was requested |
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors; a server that does not advertise its window but refuses an oversized turn with a 400 has that window adopted from the refusal, the turn resized and resent once, and a still-refused turn reported the same way | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
+| Every reply is trimmed to at most one tool call, for every backend: a stray empty `tool_calls: []` from a text-only turn never survives into replayed history, and a completion that returned several tool calls at once keeps only the first, both because at least one vLLM chat template (`llama3_json`, used for Llama 3) can only represent exactly one call when a turn is replayed. `parallel_tool_calls: false` is also sent as a best-effort generation-time hint | `agent/harness/model_client.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
 | Investigation trajectories, the draft inbox, and the status registry all written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories`/`--inbox`/`--status` as overrides | `agent/harness/agent.py`, `agent/harness/tools.py`, `agent/lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume, `inbox/` and `status/` included |
@@ -47,7 +48,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Finish reason and per-turn generation budget recorded on every assistant turn, and a reasoning-only turn (no tool call, no answer, work not done) re-prompted for a concrete step instead of ending the phase, up to three consecutive nudges | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Model server manifest with idle GPU release, its objects named `bexhoma-agent-model*` and labelled `app: bexhoma, component: agent, role: model-server` per the BeXhoma convention | `agent/k8s/vllm-qwen38-27b.yml` | Done |
 | Alternative self-hosted manifest serving GLM-4.5-Air at GPTQ INT4 (`QuantTrio/GLM-4.5-Air-GPTQ-Int4-Int8Mix`), selected in place of the Qwen3.8 manifest via `--model-server-manifest` (or `MODEL_SERVER_MANIFEST`), with its own PVC and generation annotation so it coexists with the Qwen manifest without weight re-downloads or pod-replace collisions | `agent/k8s/vllm-glm45-air-int4.yml`, `agent/lifecycle.py` | Done; not yet run against a live cluster. Quantizes the full, un-pruned GLM-4.5-Air (106B/12B active, ~67GB), not the smaller REAP-82B-pruned checkpoint originally targeted, because the only INT4 builds of that pruned checkpoint return 401 Unauthorized from both outside the cluster and from the pod's own download step. Pinned to the cluster's H200 node specifically, since 67GB of weights leaves too little of an 80GB H100 for useful KV cache. Switching between manifests needs `down` before `up`, since Kubernetes will not change a running pod's container command in place |
-| Second alternative self-hosted manifest serving Llama-3.3-70B at GPTQ INT4 (`shuyuej/Llama-3.3-70B-Instruct-GPTQ`, confirmed public and ungated, unlike Meta's own repo), same selection mechanism as the GLM manifest, with a startup step that fetches vLLM's recommended `llama3_json` tool-calling chat template pinned to the running vLLM's own version tag | `agent/k8s/vllm-llama33-70b-int4.yml`, `agent/lifecycle.py` | Done; not yet run against a live cluster. 42GB of weights fits either Hopper node with headroom, unlike the GLM manifest. `llama3_json` supports only one tool call per assistant turn; the harness's existing loop over `reply.tool_calls` already tolerates that, so it costs extra turns per phase at most |
+| Second alternative self-hosted manifest serving Llama-3.3-70B at GPTQ INT4 (`shuyuej/Llama-3.3-70B-Instruct-GPTQ`, confirmed public and ungated, unlike Meta's own repo), same selection mechanism as the GLM manifest, with a startup step that fetches vLLM's recommended `llama3_json` tool-calling chat template pinned to the running vLLM's own version tag | `agent/k8s/vllm-llama33-70b-int4.yml`, `agent/lifecycle.py` | Done; not yet run against a live cluster. 42GB of weights fits either Hopper node with headroom, unlike the GLM manifest. `llama3_json` can only represent one tool call per message when history is replayed, which drove the reply-trimming fix below |
 | Durable Kubernetes lifecycle controller with in-cluster authentication and restart recovery | `agent/lifecycle_controller.py`, `agent/k8s/lifecycle-controller.yml`, `agent/Dockerfile.lifecycle` | Done and regression-tested; image publication and target-cluster values remain deployment steps |
 | Sequential isolation of agent-submitted SUT configurations | `agent/harness/submit.py`, `contracts/contract_catalog.yml` | Done and regression-tested through BeXhoma's public one-SUT option |
 | Result-contract disclosure of unverified loading and of the warnings check's real scope | `contracts/contract_result.yml`, `docs/AgentResultContract.md` | Done |
@@ -186,6 +187,68 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-20 — Fix a second trigger of the same "single tool-calls at once" crash
+
+The empty-`tool_calls`-list fix below did not fully resolve the crash: the
+user pasted a fresh trajectory log showing turn 1 of a Llama design phase
+calling `read_file`, `write_file`, `validate`, and `submit` -- four tool
+calls in one completion, not zero -- and turn 2 crashing with the identical
+400 replaying that history. Reading vLLM's actual `llama3_json` Jinja
+template settled why: `{%- if not message.tool_calls|length == 1 %}` rejects
+a length of 2+ exactly as readily as 0, so this was a second, independent
+trigger of the same error, not evidence the first fix was wrong. It also
+meant the earlier conclusion that `parallel_tool_calls` "does nothing" was
+too hasty -- that was only ever tested by resending an *already-generated*
+four-call turn, which nothing could fix after the fact regardless of whether
+the flag does anything for generation. Since the two possible fixes traded
+off differently across all three self-hosted models (send the hint and trust
+future vLLM versions to honour it at generation time, preserving Qwen and
+GLM's ability to batch calls if they ever do; or cap every reply to one tool
+call unconditionally, guaranteed correct regardless of server version, at
+the cost of that batching ability everywhere), this was asked rather than
+guessed a third time. The user chose the universal cap. `ChatModel.reply` in
+`agent/harness/model_client.py` now keeps at most the first tool call from
+every completion -- for the parsed `Reply.tool_calls` the harness acts on
+and for the message replayed into history -- regardless of backend, and
+sends `parallel_tool_calls: false` proactively on every tools-eligible
+request as a harmless best-effort hint besides. `agent/k8s/
+vllm-llama33-70b-int4.yml` and `agent/README.md`'s description of the
+capability gap were corrected to describe the real mechanism (a chat
+template's replay limitation, not merely fewer batched calls) rather than
+the original, incomplete framing. Regression-tested with three new tests
+covering the truncation and the request-side hint.
+
+### 2026-09-20 — Fix the Llama manifest's "single tool-calls at once" crash
+
+The user brought back a traceback from the Llama-3.3 manifest added earlier
+the same day: turn 2 of a design phase crashed with
+`openai.BadRequestError: ... 'This model only supports single tool-calls at
+once!'`. First diagnosis was wrong: a GitHub issue about `parallel_tool_calls`
+in an unrelated project suggested vLLM's `llama3_json` chat template refuses
+a request that leaves that field at its default, so `agent/harness/
+model_client.py` gained a retry that resent the turn with `parallel_tool_calls:
+false` once learned. The user then pasted a second, freshly captured
+traceback showing the retried request failed with the identical message,
+proving that theory wrong. Reading the actual Jinja source
+(`vllm-project/vllm`'s `examples/tool_chat_template_llama3.1_json.jinja`) 
+settled it: the template checks, for every message already in the
+conversation history, `message.tool_calls|length == 1`, with no
+`parallel_tool_calls` field involved at all -- it rejects a length of 0 just
+as much as 2+. A turn with no tool call is exactly what turn 1 of a fresh
+design almost always is (the model narrates before it calls anything), and
+`Reply.message` -- built via `message.model_dump(exclude_none=True)` --
+keeps an explicit `"tool_calls": []` some servers send instead of omitting
+the field, since `exclude_none` only drops `None`. That empty list survived
+into turn 2's replayed history and tripped the check immediately. The
+`parallel_tool_calls` retry was removed (`_retry_after_refusal` reverted back
+to `_retry_within_named_window`, its original scope) since it demonstrably
+does not apply to this refusal and has no evidence of applying to any other
+server this project talks to; `reply()` now drops an empty `tool_calls` key
+from the replayed message unconditionally, which is a strictly more correct
+message shape regardless of backend, not a Llama-specific special case.
+Regression-tested; the two tests for the reverted mechanism were replaced
+with one exercising the actual fix.
 
 ### 2026-09-20 — Add Llama-3.3-70B (GPTQ INT4) as a third self-hosted model option
 

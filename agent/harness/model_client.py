@@ -120,9 +120,11 @@ class Reply:
 
     :ivar text: The visible message, empty when the model only called tools.
     :ivar reasoning: Thinking the server separated out, logged but not replayed.
-    :ivar tool_calls: Tool invocations requested this turn.
-    :ivar message: The assistant message as the server returned it, appended
-        to the conversation so the next request replays this turn.
+    :ivar tool_calls: Tool invocations requested this turn, at most one even
+        if the model returned several; see :meth:`ChatModel.reply`.
+    :ivar message: The assistant message as the server returned it, trimmed to
+        the same at-most-one tool call, appended to the conversation so the
+        next request replays this turn.
     :ivar usage: Token counts reported by the server.
     :ivar finish_reason: Why the server stopped generating -- ``stop`` for a
         completed turn, ``length`` when the turn was cut off at the token
@@ -359,7 +361,9 @@ class ChatModel:
         :param messages: Full conversation so far, in OpenAI message shape.
         :param tools: Tool schemas the model may call; ``None`` withdraws them,
             which forces a text-only turn.
-        :return: The parsed assistant turn.
+        :return: The parsed assistant turn, carrying at most one tool call
+            even when the model returned several; not every chat template
+            can represent more than one when that turn is later replayed.
         :rtype: Reply
         :raises ModelUnreachable: When the endpoint did not answer at all.
         :raises ContextWindowExhausted: When the conversation leaves no room to
@@ -375,6 +379,12 @@ class ChatModel:
         }
         if tools:
             request["tools"] = tools
+            # A hint, not a guarantee: some servers filter a completion down to
+            # one tool call when this is explicitly false, others ignore it
+            # entirely and leave the decision to the model. Either way it is
+            # harmless to send, and the truncation below guarantees the actual
+            # invariant regardless of whether this was honoured.
+            request["parallel_tool_calls"] = False
         try:
             response = self._create_with_backoff(request)
         except BadRequestError as error:
@@ -385,6 +395,28 @@ class ChatModel:
         choice = response.choices[0]
         message = choice.message
         replayed = message.model_dump(exclude_none=True)
+        # Kept to at most one call, unconditionally, for every server: a turn
+        # with no tool call still gets an explicit "tool_calls": [] from some
+        # servers rather than the field being left out (exclude_none above
+        # only drops None, not an empty list), and a turn with several is not
+        # something every chat template can represent when that message is
+        # replayed as history later -- vLLM's llama3_json accepts nothing but
+        # exactly one, in either direction. Dropping the extra calls here
+        # costs a model that really can batch several in one turn a few more
+        # turns in the rare case it tries to, in exchange for this staying
+        # correct regardless of which server answered.
+        raw_tool_calls = list(message.tool_calls or [])
+        kept_tool_calls = raw_tool_calls[:1]
+        if len(raw_tool_calls) > 1:
+            print(
+                f"the model returned {len(raw_tool_calls)} tool calls in one "
+                "turn; keeping only the first and dropping the rest",
+                file=sys.stderr, flush=True,
+            )
+        if kept_tool_calls:
+            replayed["tool_calls"] = (replayed.get("tool_calls") or [])[:1]
+        else:
+            replayed.pop("tool_calls", None)
         # Only a string finish reason is meaningful; anything else (a server that
         # omits the field, a test double) is reported as unknown.
         finish_reason = getattr(choice, "finish_reason", None)
@@ -409,7 +441,7 @@ class ChatModel:
         return Reply(
             text=message.content or "",
             reasoning=reasoning or "",
-            tool_calls=[_parse_tool_call(call) for call in (message.tool_calls or [])],
+            tool_calls=[_parse_tool_call(call) for call in kept_tool_calls],
             message=replayed,
             usage=usage,
             finish_reason=finish_reason,
