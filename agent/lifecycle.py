@@ -604,6 +604,14 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--followups", type=int, default=1)
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tokens", type=int, default=16384)
+    parser.add_argument(
+        "--enable-thinking", action="store_true",
+        default=_env_flag("AGENT_ENABLE_THINKING", default=False),
+        help="ask the chat template for thinking mode on every turn via "
+             "chat_template_kwargs (AGENT_ENABLE_THINKING); vLLM's switch for "
+             "a hybrid reasoning model such as GLM-4.5-Air or Qwen3; forwarded "
+             "to every phase's agent.harness.agent invocation",
+    )
     parser.add_argument("--catalog", default="contracts/contract_catalog.yml")
     parser.add_argument("--environment", default="environment.yml",
                         help="cluster descriptor from `bexhoma environment create`; "
@@ -721,6 +729,8 @@ def main() -> int:
         agent_command.extend(["--results", str(config.results)])
     if args.dry_run:
         agent_command.append("--dry-run")
+    if args.enable_thinking:
+        agent_command.append("--enable-thinking")
 
     # .env says who owns the endpoint: bundled means the vLLM server is started
     # and stopped here, external means it is already running and is left alone.

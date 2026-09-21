@@ -155,6 +155,7 @@ class AgentLifecycleTest(unittest.TestCase):
                 method="",
                 inbox="inbox",
                 dry_run=True,
+                enable_thinking=False,
                 baseline=False,
             )
             parser = mock.Mock()
@@ -179,6 +180,30 @@ class AgentLifecycleTest(unittest.TestCase):
             self.assertNotIn("--api-key", child_command)
             self.assertNotIn("cli-secret-value", child_command)
 
+    def test_enable_thinking_forwards_to_the_child_only_when_set(self) -> None:
+        """Off by default, matching the direct agent CLI's own default."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "run").mkdir()
+            for enabled, expected in ((False, False), (True, True)):
+                arguments = self._wrapper_arguments(root, enable_thinking=enabled)
+                parser = mock.Mock()
+                parser.parse_args.return_value = arguments
+                lifecycle = mock.Mock()
+                lifecycle.run.return_value = root / "run"
+                with (
+                    mock.patch.object(lifecycle_module, "load_dotenv"),
+                    mock.patch.object(lifecycle_module, "_install_signal_handlers"),
+                    mock.patch.object(lifecycle_module, "_parser", return_value=parser),
+                    mock.patch.object(lifecycle_module, "ModelServer"),
+                    mock.patch.object(
+                        lifecycle_module, "AgentLifecycle", return_value=lifecycle,
+                    ) as lifecycle_class,
+                ):
+                    self.assertEqual(lifecycle_module.main(), 0)
+                    child_command = lifecycle_class.call_args.args[1]
+                self.assertEqual("--enable-thinking" in child_command, expected)
+
     def _wrapper_arguments(self, root: Path, **overrides) -> argparse.Namespace:
         """Build a complete wrapper argument set, so a test states only its point."""
         arguments = argparse.Namespace(
@@ -192,7 +217,7 @@ class AgentLifecycleTest(unittest.TestCase):
             server_start_attempts=1, attempts=1, followups=0, temperature=0.0,
             max_tokens=1024, catalog="contracts/contract_catalog.yml",
             environment="dev/catalog/environment.yml", method="", inbox="inbox",
-            dry_run=True, baseline=False,
+            dry_run=True, enable_thinking=False, baseline=False,
         )
         for name, value in overrides.items():
             setattr(arguments, name, value)
@@ -411,6 +436,16 @@ class AgentLifecycleTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"AGENT_METHOD": ""}):
             from_environment = _parser().parse_args(["--task", "q"])
         self.assertEqual(from_environment.method, "")
+
+    def test_enable_thinking_defaults_off_and_follows_its_env_var(self) -> None:
+        """The wrapper must accept the same flag the direct agent CLI takes."""
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("AGENT_ENABLE_THINKING", None)
+            self.assertFalse(_parser().parse_args(["--task", "q"]).enable_thinking)
+
+        with mock.patch.dict(os.environ, {"AGENT_ENABLE_THINKING": "true"}):
+            arguments = _parser().parse_args(["--task", "q"])
+        self.assertTrue(arguments.enable_thinking)
 
     def test_the_wrapper_defaults_to_three_validation_attempts(self) -> None:
         """The wrapper must pass the direct agent CLI's retry budget unchanged."""
