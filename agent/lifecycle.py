@@ -583,6 +583,15 @@ def _parser() -> argparse.ArgumentParser:
         default="agent/model_server.ps1" if sys.platform == "win32"
         else "agent/model_server.sh",
     )
+    parser.add_argument(
+        "--model-server-manifest",
+        default=os.environ.get("MODEL_SERVER_MANIFEST"),
+        help="k8s manifest the server switch applies, e.g. "
+             "agent/k8s/vllm-glm45-air-int4.yml to deploy GLM-4.5-Air "
+             "instead of the default Qwen3.8 manifest; defaults to "
+             "MODEL_SERVER_MANIFEST, and in turn to the server script's own "
+             "default when neither is set",
+    )
     parser.add_argument("--poll-seconds", type=float, default=30.0)
     parser.add_argument("--benchmark-timeout-seconds", type=float, default=0.0,
                         help="zero waits indefinitely")
@@ -683,6 +692,11 @@ def main() -> int:
     # as ps expose them. The agent already reads this inherited environment
     # variable, including when --api-key supplied the wrapper's override.
     os.environ["AGENT_API_KEY"] = args.api_key
+    # agent/model_server.sh and its PowerShell port read MODEL_SERVER_MANIFEST
+    # from the environment, not from an argument, so this is how --model-server-
+    # manifest reaches the switch invoked below.
+    if args.model_server_manifest:
+        os.environ["MODEL_SERVER_MANIFEST"] = args.model_server_manifest
     agent_command = [
         sys.executable, "-m", "agent.harness.agent",
         "--model", args.model,

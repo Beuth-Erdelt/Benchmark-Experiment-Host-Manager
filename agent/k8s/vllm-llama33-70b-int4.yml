@@ -1,0 +1,419 @@
+# Self-hosted model server for the agent harness.
+#
+# Serves shuyuej/Llama-3.3-70B-Instruct-GPTQ through vLLM's OpenAI-compatible
+# API, which is what agent/harness/llm.py speaks. Alternative to
+# agent/k8s/vllm-qwen38-27b.yml and agent/k8s/vllm-glm45-air-int4.yml; select
+# it with MODEL_SERVER_MANIFEST or `agent/lifecycle.py --model-server-manifest`.
+# Follows the same shape as the other vLLM servers in this cluster: one Pod
+# that downloads the weights into a PVC on first start and serves them from
+# there afterwards.
+#
+# This is a GPTQ INT4 requantization of meta-llama/Llama-3.3-70B-Instruct
+# published by a third party, not by Meta: the official repo is gated behind
+# a Meta license acceptance this deployment cannot complete without a Hugging
+# Face account (the same friction that made the GLM manifest fall back to a
+# different repo), while this one is confirmed public
+# (huggingface.co/shuyuej/Llama-3.3-70B-Instruct-GPTQ, tags report
+# license:apache-2.0, gated: false). At 42GB of weights it fits either Hopper
+# node with real headroom, unlike the GLM manifest -- 80 dense transformer
+# layers (no hybrid linear-attention shortcut, unlike Qwen3.8, and no
+# mixture-of-experts sparsity, unlike GLM-4.5-Air) means its KV cache per
+# token is the most expensive of the three self-hosted manifests, so context
+# length is still capped below this checkpoint's native 131072 positions.
+#
+# vLLM's chat template for the Llama 3 family (llama3_json) can only represent
+# a message with exactly one tool call when that turn is later replayed as
+# history -- not zero, not two or more -- and rejects the whole request with a
+# 400 otherwise, regardless of what the new turn itself asks for. The model
+# can and does sometimes return several tool calls in one completion despite
+# the parser's own "no parallel calls" documentation, so ChatModel.reply in
+# agent/harness/model_client.py keeps at most one tool call from every reply
+# unconditionally, for every backend, and sends parallel_tool_calls: false as
+# a best-effort hint besides. This is not Llama-specific in the code -- it
+# costs a model that really can batch calls a few more turns in the rare case
+# it tries to -- but this manifest is the reason it exists.
+#
+# The pod is self-cleaning: an idle watchdog beside the server releases the GPU
+# once nothing has sent a request for IDLE_SHUTDOWN_SECONDS, so a forgotten
+# server does not hold a Hopper node indefinitely. This is independent of the
+# operator wrapper, which shuts the server down promptly when it is in charge.
+#
+# Placement note: this accepts either Hopper node (H100 or H200), whichever the
+# scheduler can place first, and deliberately excludes cl-worker36. cl-worker36
+# is where bexhoma puts the system under test, and a model server competing for
+# that node's CPU, memory and page cache would contaminate the measurements the
+# agent is designing.
+#
+# The objects carry no namespace of their own: agent/model_server.sh applies them
+# into MODEL_SERVER_NAMESPACE, so this manifest is not tied to one account.
+#
+# Reach it from a laptop with:
+#   kubectl -n "$MODEL_SERVER_NAMESPACE" port-forward svc/bexhoma-agent-model 8000:80
+#
+# Copyright (C) 2026 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bexhoma-agent-model-weights-llama33
+  labels: {app: bexhoma, component: agent, role: model-server}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  # Per-cluster: name a storage class your account can claim 100Gi from.
+  storageClassName: cephcsi
+  resources:
+    requests:
+      # Confirmed 42GB of weights (summed from the repo's file listing),
+      # doubled for room for a second revision, plus a margin above the exact
+      # 2x figure. A separate PVC from the Qwen and GLM manifests', so
+      # switching between all three never re-downloads any of their weights.
+      storage: 100Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bexhoma-agent-model
+  labels: {app: bexhoma, component: agent, role: model-server}
+spec:
+  selector:
+    app: bexhoma
+    component: agent
+    role: model-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bexhoma-agent-model
+  annotations:
+    # The switch replaces older immutable Pod specifications before apply.
+    # Must differ from the Qwen and GLM manifests' values: the three share the
+    # same pod name, and this is the only signal that tells the switch a live
+    # pod is serving the wrong model and must be replaced rather than left
+    # alone. See agent/README.md for why `down` before `up` is still the
+    # reliable way to switch between them regardless.
+    bexhoma.local/model-server-generation: idle-watchdog-v2-llama33-70b-int4
+  labels: {app: bexhoma, component: agent, role: model-server}
+spec:
+  containers:
+    - name: vllm-container
+      # Same digest as the other two manifests, for the image-pinning reason
+      # given there: an unrelated upstream "latest" update should not silently
+      # change model-loading behaviour. It was verified against Qwen3.8, not
+      # against this checkpoint's GPTQ kernels or the llama3_json tool-call
+      # parser; if the pod crash-loops on startup, check the vLLM version this
+      # image carries against what the quantizer's model card documents as
+      # tested, and re-pin a compatible digest if they differ.
+      image: vllm/vllm-openai@sha256:0a51ea5b4ae2dc5d81890e5173f54203d2a3ae0cfffe51b8fd2afd4391bfd967
+      imagePullPolicy: IfNotPresent
+      env:
+        - name: VLLM_LOGGING_LEVEL
+          value: "INFO"
+        - name: NCCL_IGNORE_CPU_AFFINITY
+          value: "1"
+        # Comfortably longer than any gap between the agent's own calls within
+        # one phase, and far shorter than the hours a benchmark takes.
+        - name: IDLE_SHUTDOWN_SECONDS
+          value: "1200"
+        - name: IDLE_POLL_SECONDS
+          value: "60"
+      resources:
+        limits:
+          nvidia.com/gpu: "1"
+          memory: 112Gi
+        requests:
+          nvidia.com/gpu: "1"
+          memory: 56Gi
+          cpu: "8"
+      ports:
+        - containerPort: 8000
+          name: http
+          protocol: TCP
+      # Without these, the pod reports Ready the moment the shell starts, which
+      # is long before the weights are downloaded and the engine is loaded --
+      # "Running" would then mean nothing to anyone waiting to send a request.
+      # The startup probe carries the first-start download, roughly 42 GB.
+      startupProbe:
+        httpGet:
+          path: /health
+          port: 8000
+        periodSeconds: 20
+        failureThreshold: 140
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: 8000
+        periodSeconds: 15
+        failureThreshold: 3
+      volumeMounts:
+        - name: dshm
+          mountPath: /dev/shm
+        - name: model-storage
+          mountPath: /models
+      command: ["/bin/bash", "-c"]
+      args:
+        - |
+          set -euo pipefail
+          MODEL_REPO="shuyuej/Llama-3.3-70B-Instruct-GPTQ"
+          LOCAL_DIR="/models/llama-3.3-70b-instruct-gptq"
+          # vLLM's llama3_json tool-call parser is documented as needing this
+          # "tweaked" chat template rather than the checkpoint's own, or tool
+          # calls can come back malformed (e.g. an array serialized as a
+          # string). Fetched by version tag so it matches whatever vLLM this
+          # image actually runs, with a fall back to the latest template on
+          # GitHub's main branch if that exact tag was never cut upstream.
+          CHAT_TEMPLATE="$LOCAL_DIR/tool_chat_template_llama3.1_json.jinja"
+          # Which exact upstream commit was downloaded, so a served alias built
+          # from it (below) tells a trajectory which weights answered, not just
+          # which repo they came from -- "main" moves, this file does not.
+          REVISION_FILE="$LOCAL_DIR/.hf-revision"
+          # Zero disables the watchdog and restores a server that runs until
+          # something deletes it.
+          IDLE_SHUTDOWN_SECONDS="${IDLE_SHUTDOWN_SECONDS:-1200}"
+          IDLE_POLL_SECONDS="${IDLE_POLL_SECONDS:-60}"
+          SHUTDOWN_GRACE_SECONDS=30
+
+          python3 -c "import vllm, transformers; print('vllm', vllm.__version__, '| transformers', transformers.__version__)"
+
+          if [ -f "$LOCAL_DIR/config.json" ]; then
+              echo "Model already present at $LOCAL_DIR"
+          else
+              echo "Resolving the current commit of $MODEL_REPO ..."
+              # Pinned explicitly rather than left as the default "main", so a
+              # PVC wiped and recreated later downloads this same commit instead
+              # of whatever upstream has since pushed to the branch.
+              RESOLVED_REVISION="$(python3 -c "
+          from huggingface_hub import HfApi
+          print(HfApi().model_info('$MODEL_REPO').sha)
+          ")"
+              echo "Downloading $MODEL_REPO @ $RESOLVED_REVISION ..."
+              # `hf`, not `huggingface-cli`: the old entry point still exists in
+              # this image but prints a deprecation notice and exits 0 without
+              # downloading anything, which looks like success and then leaves
+              # vLLM crash-looping on an empty directory.
+              hf download "$MODEL_REPO" --revision "$RESOLVED_REVISION" --local-dir "$LOCAL_DIR"
+              echo "$RESOLVED_REVISION" > "$REVISION_FILE"
+          fi
+
+          if [ ! -f "$LOCAL_DIR/config.json" ]; then
+              echo "ERROR: no config.json under $LOCAL_DIR after download"
+              exit 1
+          fi
+
+          if [ ! -f "$CHAT_TEMPLATE" ]; then
+              echo "Fetching the vLLM-recommended Llama 3.1/3.3 tool-calling chat template ..."
+              python3 -c "
+          import sys
+          import urllib.error
+          import urllib.request
+
+          import vllm
+
+          local_path = '$CHAT_TEMPLATE'
+          filename = 'examples/tool_chat_template_llama3.1_json.jinja'
+          candidates = [
+              f'https://raw.githubusercontent.com/vllm-project/vllm/v{vllm.__version__}/{filename}',
+              f'https://raw.githubusercontent.com/vllm-project/vllm/main/{filename}',
+          ]
+          for url in candidates:
+              try:
+                  with urllib.request.urlopen(url, timeout=15) as response:
+                      data = response.read()
+              except (urllib.error.HTTPError, urllib.error.URLError) as error:
+                  print(f'{url}: {error}', file=sys.stderr)
+                  continue
+              with open(local_path, 'wb') as handle:
+                  handle.write(data)
+              print(f'chat template fetched from {url}')
+              sys.exit(0)
+          sys.exit('could not fetch the Llama tool-calling chat template from any candidate URL')
+          "
+          fi
+
+          # The trajectory records whatever alias the server answers to (see
+          # ChatModel.resolve_served_model in agent/harness/model_client.py), so
+          # folding the resolved commit into it is what lets a trajectory alone
+          # identify the exact weights, not just the repo, that produced it. A
+          # directory left over from before this revision file existed still
+          # serves, just without that suffix.
+          SERVED_MODEL_NAME="$MODEL_REPO"
+          if [ -f "$REVISION_FILE" ]; then
+              SERVED_MODEL_NAME="${MODEL_REPO}@$(cut -c1-12 "$REVISION_FILE")"
+          fi
+
+          # No --reasoning-parser: unlike Qwen3.8 and GLM-4.5-Air, Llama 3.3 is
+          # a plain instruct model with no distinct thinking/answer split, so
+          # reply.reasoning is simply empty for every turn here. --quantization
+          # is left unset: vLLM auto-detects GPTQ from the checkpoint's own
+          # quantization_config, the same convention the other two manifests
+          # follow for their checkpoints.
+          #
+          # 65536 rather than this checkpoint's native 131072: every one of its
+          # 80 layers does full attention (no hybrid linear-attention layers
+          # like Qwen3.8, no mixture-of-experts sparsity like GLM-4.5-Air), so
+          # KV cache per token is the largest of the three manifests -- with
+          # --kv-cache-dtype fp8, a single full-length 64k request costs on the
+          # order of 10GB, against roughly 30GB of headroom left after weights
+          # on an 80GB H100. Raise it only after confirming actual memory
+          # headroom on this pod with `nvidia-smi` or vLLM's own startup log,
+          # which reports the KV cache blocks it allocated.
+          #
+          # Started in the background rather than exec'd, because the shell
+          # stays alive as the idle watchdog below. That is what makes the pod
+          # self-cleaning: the agent is stateless between phases, so a server
+          # nobody is talking to is a stranded GPU, and the operator wrapper
+          # that normally shuts it down is absent whenever a phase was launched
+          # by hand.
+          #
+          # --enable-log-requests logs each request's resolved SamplingParams at
+          # INFO (already the level set above), which is how to confirm the
+          # temperature model_client.py sends is the one actually used -- the
+          # model's generation_config.json only supplies temperature/top_k/top_p
+          # for requests that omit them, but that is easy to doubt from the
+          # WARNING vLLM prints about it at startup.
+          python3 -m vllm.entrypoints.openai.api_server \
+            --model "$LOCAL_DIR" \
+            --served-model-name "$SERVED_MODEL_NAME" \
+            --tensor-parallel-size 1 \
+            --max-model-len 65536 \
+            --max-num-seqs 512 \
+            --kv-cache-dtype fp8 \
+            --gpu-memory-utilization 0.90 \
+            --enable-auto-tool-choice \
+            --tool-call-parser llama3_json \
+            --chat-template "$CHAT_TEMPLATE" \
+            --trust-remote-code \
+            --enable-log-requests \
+            --host 0.0.0.0 \
+            --port 8000 &
+          VLLM_PID=$!
+
+          if [ "$IDLE_SHUTDOWN_SECONDS" -le 0 ]; then
+              wait "$VLLM_PID"
+              exit $?
+          fi
+
+          # Two independent signals of use, because either alone is wrong. The
+          # gauges catch a single long request that spans several polls; the
+          # monotonic counters catch short requests that start and finish
+          # entirely between two polls and would otherwise be invisible.
+          probe_activity() {
+              python3 - <<'PY'
+          import sys
+          import urllib.request
+
+          IN_FLIGHT = ("vllm:num_requests_running", "vllm:num_requests_waiting")
+          COMPLETED = ("vllm:request_success_total", "vllm:prompt_tokens_total",
+                       "vllm:generation_tokens_total")
+          in_flight = 0.0
+          completed = 0.0
+          saw_in_flight = False
+          saw_completed = False
+          try:
+              with urllib.request.urlopen(
+                      "http://127.0.0.1:8000/metrics", timeout=10) as response:
+                  body = response.read().decode("utf-8", "replace")
+          except OSError as error:
+              print(f"metrics unreadable: {error}", file=sys.stderr)
+              sys.exit(1)
+          for line in body.splitlines():
+              if line.startswith("#"):
+                  continue
+              name, _, value = line.rpartition(" ")
+              name = name.split("{", 1)[0].strip()
+              try:
+                  value = float(value)
+              except ValueError:
+                  continue
+              if name in IN_FLIGHT:
+                  in_flight += value
+                  saw_in_flight = True
+              elif name in COMPLETED:
+                  completed += value
+                  saw_completed = True
+          # Never report idleness from metric names this vLLM build does not
+          # publish. Both classes are required: gauges protect long requests,
+          # while counters reveal short requests completed between two polls.
+          if not saw_in_flight or not saw_completed:
+              print("incomplete vLLM request metrics in /metrics", file=sys.stderr)
+              sys.exit(1)
+          print(f"{in_flight:.0f} {completed:.3f}")
+          PY
+          }
+
+          idle_seconds=0
+          last_completed=""
+          while true; do
+              sleep "$IDLE_POLL_SECONDS"
+
+              # A server that died on its own must exit non-zero so that
+              # restartPolicy OnFailure brings it back; only the idle path
+              # below is allowed to end the pod successfully.
+              if ! kill -0 "$VLLM_PID" 2>/dev/null; then
+                  vllm_status=0
+                  wait "$VLLM_PID" || vllm_status=$?
+                  echo "vLLM exited with status ${vllm_status}; restarting"
+                  # Non-zero even when vLLM exited cleanly: only the idle path
+                  # may end this pod successfully, or a server that quietly
+                  # stopped would drop the GPU mid-investigation.
+                  exit $(( vllm_status == 0 ? 1 : vllm_status ))
+              fi
+
+              if ! reading=$(probe_activity); then
+                  idle_seconds=0
+                  continue
+              fi
+              in_flight="${reading%% *}"
+              completed="${reading##* }"
+              if [ "$in_flight" != "0" ] || [ "$completed" != "$last_completed" ]; then
+                  idle_seconds=0
+                  last_completed="$completed"
+                  continue
+              fi
+
+              idle_seconds=$((idle_seconds + IDLE_POLL_SECONDS))
+              if [ "$idle_seconds" -ge "$IDLE_SHUTDOWN_SECONDS" ]; then
+                  echo "no requests for ${idle_seconds}s; releasing the GPU"
+                  kill -TERM "$VLLM_PID" 2>/dev/null || true
+                  remaining_grace_seconds="$SHUTDOWN_GRACE_SECONDS"
+                  while kill -0 "$VLLM_PID" 2>/dev/null \
+                      && [ "$remaining_grace_seconds" -gt 0 ]; do
+                      sleep 1
+                      remaining_grace_seconds=$((remaining_grace_seconds - 1))
+                  done
+                  if kill -0 "$VLLM_PID" 2>/dev/null; then
+                      echo "vLLM did not stop within ${SHUTDOWN_GRACE_SECONDS}s; forcing shutdown"
+                      kill -KILL "$VLLM_PID" 2>/dev/null || true
+                  fi
+                  wait "$VLLM_PID" 2>/dev/null || true
+                  exit 0
+              fi
+          done
+  # OnFailure, not the default Always: it lets a crashed server come back while
+  # allowing the idle watchdog's clean exit to actually end the pod. Under
+  # Always the pod would restart itself immediately and take the GPU again.
+  restartPolicy: OnFailure
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          # Per-cluster: this is how nodes are labelled here. A cluster that
+          # labels its GPUs differently leaves the pod Pending indefinitely,
+          # which the wrapper waits through rather than reporting.
+          - matchExpressions:
+              - key: gpu
+                operator: In
+                values: [h100, h200, b200]
+  volumes:
+    - name: dshm
+      emptyDir:
+        medium: Memory
+        sizeLimit: 16Gi
+    - name: model-storage
+      persistentVolumeClaim:
+        claimName: bexhoma-agent-model-weights-llama33

@@ -46,6 +46,8 @@ follow up on a benchmark. The full current description and visual flow live in
 | Phase completeness decided by work done, not by closing prose: a submitted (or dry-run-validated) design succeeds even when the model returns an empty final message, with a substituted plain-sentence report | `agent/harness/agent.py` | Done and regression-tested |
 | Finish reason and per-turn generation budget recorded on every assistant turn, and a reasoning-only turn (no tool call, no answer, work not done) re-prompted for a concrete step instead of ending the phase, up to three consecutive nudges | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Model server manifest with idle GPU release, its objects named `bexhoma-agent-model*` and labelled `app: bexhoma, component: agent, role: model-server` per the BeXhoma convention | `agent/k8s/vllm-qwen38-27b.yml` | Done |
+| Alternative self-hosted manifest serving GLM-4.5-Air at GPTQ INT4 (`QuantTrio/GLM-4.5-Air-GPTQ-Int4-Int8Mix`), selected in place of the Qwen3.8 manifest via `--model-server-manifest` (or `MODEL_SERVER_MANIFEST`), with its own PVC and generation annotation so it coexists with the Qwen manifest without weight re-downloads or pod-replace collisions | `agent/k8s/vllm-glm45-air-int4.yml`, `agent/lifecycle.py` | Done; not yet run against a live cluster. Quantizes the full, un-pruned GLM-4.5-Air (106B/12B active, ~67GB), not the smaller REAP-82B-pruned checkpoint originally targeted, because the only INT4 builds of that pruned checkpoint return 401 Unauthorized from both outside the cluster and from the pod's own download step. Pinned to the cluster's H200 node specifically, since 67GB of weights leaves too little of an 80GB H100 for useful KV cache. Switching between manifests needs `down` before `up`, since Kubernetes will not change a running pod's container command in place |
+| Second alternative self-hosted manifest serving Llama-3.3-70B at GPTQ INT4 (`shuyuej/Llama-3.3-70B-Instruct-GPTQ`, confirmed public and ungated, unlike Meta's own repo), same selection mechanism as the GLM manifest, with a startup step that fetches vLLM's recommended `llama3_json` tool-calling chat template pinned to the running vLLM's own version tag | `agent/k8s/vllm-llama33-70b-int4.yml`, `agent/lifecycle.py` | Done; not yet run against a live cluster. 42GB of weights fits either Hopper node with headroom, unlike the GLM manifest. `llama3_json` supports only one tool call per assistant turn; the harness's existing loop over `reply.tool_calls` already tolerates that, so it costs extra turns per phase at most |
 | Durable Kubernetes lifecycle controller with in-cluster authentication and restart recovery | `agent/lifecycle_controller.py`, `agent/k8s/lifecycle-controller.yml`, `agent/Dockerfile.lifecycle` | Done and regression-tested; image publication and target-cluster values remain deployment steps |
 | Sequential isolation of agent-submitted SUT configurations | `agent/harness/submit.py`, `contracts/contract_catalog.yml` | Done and regression-tested through BeXhoma's public one-SUT option |
 | Result-contract disclosure of unverified loading and of the warnings check's real scope | `contracts/contract_result.yml`, `docs/AgentResultContract.md` | Done |
@@ -184,6 +186,109 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-20 — Add Llama-3.3-70B (GPTQ INT4) as a third self-hosted model option
+
+The user asked whether a publicly available Llama-3.3-70B-Instruct existed
+that could be deployed alongside the Qwen and GLM manifests. Meta's own
+`meta-llama/Llama-3.3-70B-Instruct` is gated behind a license acceptance --
+the same friction that ruled out MidnightPhreaker's GLM repos earlier in the
+day, since this deployment has no Hugging Face account to accept it with --
+but `shuyuej/Llama-3.3-70B-Instruct-GPTQ`, a 4-bit GPTQ requantization,
+checked out as genuinely public (verified against Hugging Face's model API
+directly this time, not just a search result, after the earlier GLM repos
+turned out to read as public in search summaries while actually returning
+401). At 42GB of weights and with 80 dense attention layers (confirmed from
+its `config.json`), it fits either Hopper node with real headroom, unlike the
+GLM manifest's tight H200-only fit. `agent/k8s/vllm-llama33-70b-int4.yml`
+follows the same shape as the other two manifests, with its own PVC and
+`bexhoma.local/model-server-generation` value, and adds one step neither of
+the others needed: vLLM's documented recipe for Llama 3's `llama3_json`
+tool-call parser calls for a "tweaked" chat template shipped in vLLM's own
+`examples/` directory rather than the checkpoint's default one, so the
+startup script fetches it from GitHub at the exact tag matching the pod's
+installed `vllm.__version__`, falling back to the `main` branch if that tag
+was never cut upstream. That parser also does not support parallel tool
+calls, unlike Qwen3.8 and GLM-4.5-Air's parsers; checked the harness's
+tool-call handling (`agent/harness/agent.py`, the loop over
+`reply.tool_calls`) and confirmed it already tolerates replies with any
+number of tool calls including exactly one, so this is a possible increase in
+turns per phase, not a correctness gap. `agent/README.md`, `.env.example`,
+and the Part 1 entry below were updated alongside it. Not yet run against a
+live cluster.
+
+### 2026-09-20 — Switch the GLM manifest to a reachable repo after a live 401
+
+The user brought back `kubectl logs` from the pod created by the entry below:
+the download step failed with `401 Unauthorized` / `RepositoryNotFoundError`
+resolving `MidnightPhreaker/GLM-4.5-Air-REAP-82B-A12B-GPTQ-INT4-gs32`, from
+inside the cluster, not just from an unauthenticated outside lookup. Checking
+the AWQ alternative from the same publisher turned up the identical failure,
+and no other public INT4 quantization of the REAP-82B-pruned checkpoint could
+be found. Asked how to proceed, the user did not have a Hugging Face account
+to check whether the repo was gated (fixable with a token) or private (not
+fixable), so creating one to investigate was off the table. A candidate that
+fit their stated constraint -- public, same model family, fits one H100 at
+64k context -- existed only as a GGUF quantization needing vLLM's out-of-tree
+GGUF plugin (not present in the pinned image, and unverified against this
+architecture's MoE and tool-calling path); offered that tradeoff explicitly,
+the user chose to relax the H100 constraint instead and use
+`QuantTrio/GLM-4.5-Air-GPTQ-Int4-Int8Mix`, a confirmed-public GPTQ INT4
+quantization -- of the full, un-pruned GLM-4.5-Air (106B total / 12B active,
+~67GB of weights) rather than the smaller REAP-82B checkpoint, since no public
+INT4 build of that pruned checkpoint exists. The manifest was renamed from
+`agent/k8s/vllm-glm45-air-reap-82b-int4.yml` to `agent/k8s/vllm-glm45-air-int4.yml`
+to stop naming a checkpoint it no longer serves, its PVC and memory requests
+grown to match the larger confirmed weight size, its node affinity narrowed
+from either Hopper node to the H200 specifically (67GB of weights leaves too
+little of an 80GB H100 for useful KV cache at the requested 64k context), and
+every reference to the old filename updated across `agent/README.md`,
+`.env.example`, `agent/lifecycle.py`'s `--model-server-manifest` help text, and
+this file. Still not run against a live cluster.
+
+### 2026-09-20 — Whether switching to the GLM manifest needs the weights PVC deleted
+
+Following the entry below, the user asked whether using the new GLM manifest
+requires deleting the PVC holding the Qwen weights. It does not -- each
+manifest owns a separate PVC and `agent/model_server.sh down` never deletes
+either one, by the same design that lets a restart skip re-downloading. The
+question surfaced a real gap, though: the new manifest's Pod carried the same
+`bexhoma.local/model-server-generation` annotation as Qwen's
+(`idle-watchdog-v2`), so the switch script's own safety net -- which is
+supposed to replace a live pod automatically when the applied manifest
+changes -- could not tell the two apart, and `up` against one manifest while
+the other's pod was still running would have failed on Kubernetes' refusal to
+change a running pod's container command in place. Gave the GLM manifest its
+own generation value (`idle-watchdog-v2-glm45-air-reap-int4`) so the two are
+distinguishable, though that alone only fixes automatic replacement in the
+GLM-to-Qwen direction, since `MODEL_SERVER_GENERATION` defaults to Qwen's
+value; `agent/README.md` now instructs `down` before switching either way
+rather than relying on operators to also set that variable correctly.
+
+### 2026-09-20 — CLI option to deploy GLM-4.5-Air-REAP-82B (INT4) instead of Qwen3.8
+
+The user asked for a way to deploy and use GLM-4.5-Air-REAP-82B, INT4 as an
+alternative to the bundled Qwen3.8-27B-FP8 self-hosted server. Neither
+Cerebras (who publish the REAP-pruned base model this is derived from) nor
+Z.ai publish an INT4 build of it; only third-party requantizations exist.
+Asked to choose between two, the user picked the GPTQ INT4 (group_size=32)
+build published by MidnightPhreaker over the AWQ alternative, since vLLM's
+GPTQ MoE kernels are the more mature path. A second question followed once
+the quantizer's own model card turned up: its documented deployment command
+uses `--tensor-parallel-size 4` with `--enable-expert-parallel`, not the
+single GPU the rest of this cluster's model pods use; the user chose to keep
+it to one GPU anyway, as a best-effort configuration rather than the tested
+topology. `agent/k8s/vllm-glm45-air-reap-82b-int4.yml` mirrors the shape of
+`agent/k8s/vllm-qwen38-27b.yml` (idle-watchdog pod, self-downloading PVC,
+pinned revision folded into `--served-model-name`) with its own PVC so
+switching between the two manifests never re-downloads either model, the
+`glm45` reasoning/tool-call parser pair vLLM documents for the GLM-4.5
+family, and a reduced context window and sequence budget to leave room for
+KV cache under the untested single-GPU topology. `agent/lifecycle.py` gained
+`--model-server-manifest`, a CLI counterpart to the `MODEL_SERVER_MANIFEST`
+environment variable `agent/model_server.sh`/`.ps1` already read, so the
+manifest can be chosen per invocation instead of only per shell. Not yet run
+against the live cluster.
 
 ### 2026-09-15 — Record the resolved snapshot a hosted API answers a floating alias with
 

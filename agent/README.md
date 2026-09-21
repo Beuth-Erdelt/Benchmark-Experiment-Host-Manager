@@ -154,6 +154,58 @@ the cluster. They are a convenience, not part of the pipeline: any
 OpenAI-compatible endpoint does. If you use them, four values are specific to
 the cluster they were written for.
 
+`agent/k8s/vllm-glm45-air-int4.yml` is an alternative manifest that deploys
+GLM-4.5-Air at INT4 instead of Qwen3.8, using
+`QuantTrio/GLM-4.5-Air-GPTQ-Int4-Int8Mix`. The INT4 requantizations of the
+smaller REAP-82B-pruned checkpoint (MidnightPhreaker's GPTQ-INT4-gs32 and
+AWQ-4bit repos) return 401 Unauthorized both from outside the cluster and from
+this pod's own download step -- gated or private, and unreachable without a
+Hugging Face account this deployment does not have -- so this manifest quantizes
+the full, un-pruned GLM-4.5-Air instead (106B total / 12B active parameters,
+~67GB of weights), and is pinned to the cluster's H200 node rather than
+accepting either Hopper node, since 67GB leaves too little of an 80GB H100 for
+useful KV cache. Select it with
+`MODEL_SERVER_MANIFEST=agent/k8s/vllm-glm45-air-int4.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-glm45-air-int4.yml`;
+either overrides the script's own default. See the comments at the top of that
+file before relying on it.
+
+`agent/k8s/vllm-llama33-70b-int4.yml` is a third alternative, deploying
+Llama-3.3-70B at INT4 (`shuyuej/Llama-3.3-70B-Instruct-GPTQ`) instead of
+Qwen3.8. Meta's own `meta-llama/Llama-3.3-70B-Instruct` repo is gated behind a
+license acceptance this deployment cannot complete without a Hugging Face
+account, the same friction the GLM manifest above hit; this community
+requantization is confirmed public. At 42GB of weights it fits either Hopper
+node with headroom to spare, unlike the GLM manifest. One capability gap
+drove a harness change: vLLM's `llama3_json` chat template for the Llama 3
+family can only represent a message with exactly one tool call once that turn
+is replayed as history, and the model does sometimes return several in one
+completion regardless of the parser's own documentation, so
+`ChatModel.reply` in `agent/harness/model_client.py` now keeps at most one
+tool call per reply unconditionally, for every backend, not just Llama's. A
+model that really can batch several calls in one turn loses that ability;
+this shows up as more turns per phase at most, not a failure. Select it with
+`MODEL_SERVER_MANIFEST=agent/k8s/vllm-llama33-70b-int4.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-llama33-70b-int4.yml`.
+
+All three manifests use the same pod and service names, so only one can be up
+at a time, and each keeps its own weights PVC, so switching between them never
+re-downloads any of their weights and none needs deleting. Kubernetes cannot
+change a running pod's container command or image in place, though, so
+switching which manifest is deployed needs the pod brought down first:
+
+```sh
+agent/model_server.sh down   # or agent/model_server.ps1 down
+MODEL_SERVER_MANIFEST=agent/k8s/vllm-glm45-air-int4.yml agent/model_server.sh up
+```
+
+The switch does carry a same-shape safety net -- it replaces a live pod
+automatically when its `bexhoma.local/model-server-generation` annotation
+does not match `MODEL_SERVER_GENERATION` -- but that variable defaults to
+Qwen's generation value, so it only fires unprompted when switching from GLM
+or Llama back to Qwen with default settings, not the other direction. `down`
+first is the instruction that works between any of the three.
+
 **Context and namespace** are environment variables, and the manifest itself
 pins neither, so these decide where the server objects are created.
 
