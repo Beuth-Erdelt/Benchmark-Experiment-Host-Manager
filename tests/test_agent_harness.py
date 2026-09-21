@@ -1821,6 +1821,39 @@ resources:
         self.assertIn(
             "submit", {tool["function"]["name"] for tool in FOLLOWUP_AUTHOR_TOOLS})
 
+    def test_design_dry_run_refuses_a_submit_call_the_model_was_not_offered(self) -> None:
+        """A model that calls submit anyway must not reach the cluster.
+
+        Withholding ``submit`` from the tool schema is only a hint to the
+        server; nothing stops a model from emitting the call regardless, so
+        the dispatcher itself must refuse it.
+        """
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _tool_reply(ToolCall("submit", "submit", {"path": self.path})),
+            _text_reply("The design validates."),
+        ])
+
+        outcome = run_design(
+            task="question", workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run), catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None, attempts=1, dry_run=True,
+        )
+
+        self.assertIsNone(outcome["code"])
+        self.assertEqual(outcome["validated_path"], self.path)
+        submit_result = next(
+            json.loads(event)
+            for event in (self.run / "trajectory.jsonl").read_text().splitlines()
+            if json.loads(event).get("tool") == "submit"
+        )["result"]
+        self.assertIn("not offered", submit_result["error"])
+
     def test_initial_design_reads_the_catalog_before_writing(self) -> None:
         """Initial authoring must enforce the same contract boundary as a follow-up."""
         model = _Model([

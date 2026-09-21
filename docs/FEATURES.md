@@ -185,9 +185,46 @@ Windows) only brackets the read-check-write around that PID, so two runs
 claiming at the same instant cannot both succeed. This is what makes the
 `agent/` harness runnable from a Windows workstation as well as Linux.
 
+### Withheld-tool enforcement
+
+Withholding a tool (`submit`, on a `--dry-run`) by leaving it out of the JSON
+schema list sent to the model is only a hint to the server: most vLLM
+tool-call parsers pattern-match a name and arguments out of the raw
+completion without checking it against that list, so a model can still emit
+a call to a tool it was never offered. `agent.harness.agent._converse` now
+checks every tool call's name against the schema list actually passed for
+that phase before dispatching it, and returns an error result instead of
+executing it when the name was withheld — closing the gap through which a
+`--dry-run` design phase could otherwise still submit a real benchmark to
+the cluster.
+
+| Component | Location | Status |
+|---|---|---|
+| Tool-call name checked against the offered schema before dispatch, independent of what the server's parser allows through | `agent/harness/agent.py` | Done and regression-tested |
+
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-21 — Why a `--dry-run` lifecycle still reached the cluster
+
+The user ran `bexhoma agent lifecycle ... --dry-run` and asked why it still
+started a real benchmark. Investigation traced `--dry-run` through
+`run_design` (`agent/harness/agent.py`): it withholds `submit` only from the
+JSON tool schema handed to the model in the request, via `tools.without_submit`
+(`agent/harness/tools.py`). Nothing at the dispatch site — `Workspace.call`,
+or the `handler` closures wrapping it for each phase — checked whether a tool
+call's name was among the schemas actually offered that turn before running
+it, and the request to the model (`ChatModel.reply`,
+`agent/harness/model_client.py`) sets no `tool_choice` restriction or guided
+decoding tied to that list. Most vLLM tool-call parsers only pattern-match a
+name out of the raw completion, so a model — particularly a reasoning model
+recalling "submit" from the task description or its own deliberation — could
+emit that call anyway and have it executed for real. Fixed by checking each
+tool call's name against the schemas passed to that phase's `_converse` loop
+before dispatch, returning an error result for any name that was withheld
+instead of running it. Regression-tested with a new case in which the mocked
+model calls `submit` during a dry run and the phase still reports no code.
 
 ### 2026-09-21 — Opt-in switch to ask GLM/Qwen for thinking mode explicitly
 

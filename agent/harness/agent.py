@@ -402,6 +402,12 @@ def _converse(
     finished = False
     notified = False
     summary = ""
+    # A server's tool-call parser typically only pattern-matches a name out of
+    # the completion; it does not itself refuse a name the ``tools`` field
+    # never offered. Checked here so a withheld tool -- ``submit`` on a
+    # ``--dry-run``, in particular -- cannot be reached even if the model
+    # emits it anyway.
+    offered_tool_names = {schema["function"]["name"] for schema in tool_schemas}
     events: list[tuple[str, dict[str, Any], dict[str, Any]]] = []
     turn = 0
     stalls = 0
@@ -491,6 +497,8 @@ def _converse(
                 result = {"error": "the phase is already complete; no further tools were run"}
             elif call.name == limited_tool and remaining <= 0:
                 result = {"error": f"{limited_tool} budget of {limit} call(s) is exhausted"}
+            elif call.name not in offered_tool_names:
+                result = {"error": f"tool {call.name!r} is not offered in this phase"}
             else:
                 result = (tool_handler or workspace.call)(call.name, call.arguments)
                 if call.name == limited_tool:
