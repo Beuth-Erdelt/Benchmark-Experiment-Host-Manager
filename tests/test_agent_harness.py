@@ -2721,6 +2721,15 @@ class PhaseTest(unittest.TestCase):
 
         self.assertEqual(arguments.attempts, 3)
 
+    def test_enable_thinking_defaults_off_and_follows_its_env_var(self) -> None:
+        """Off by default so an unrelated OpenAI-compatible server is never sent
+        an extra field it might reject; opt in only via env or --enable-thinking."""
+        self.assertFalse(agent_module._build_parser().parse_args([]).enable_thinking)
+
+        with mock.patch.dict(os.environ, {"AGENT_ENABLE_THINKING": "true"}):
+            arguments = agent_module._build_parser().parse_args([])
+        self.assertTrue(arguments.enable_thinking)
+
     def test_completed_design_labels_investigation_with_scale_and_model(self) -> None:
         """A validated design gains readable metadata without breaking resume."""
         with tempfile.TemporaryDirectory() as directory:
@@ -3502,6 +3511,7 @@ class ChatModelTest(unittest.TestCase):
         model.base_url = "http://fake/v1"
         model.temperature = 0.0
         model.max_tokens = max_tokens
+        model.enable_thinking = False
         model._context_window = None
         model._context_window_asked = False
         model._counted_messages = 0
@@ -3812,6 +3822,28 @@ class ChatModelTest(unittest.TestCase):
 
         request = model._client.chat.completions.create.call_args.kwargs
         self.assertNotIn("parallel_tool_calls", request)
+
+    def test_enable_thinking_is_not_sent_by_default(self) -> None:
+        """Left off so a strict OpenAI-compatible server is not sent a field it
+        does not recognise; opt-in only, see the --enable-thinking CLI flag."""
+        model = self._model()
+
+        model.reply([{"role": "user", "content": "question"}])
+
+        request = model._client.chat.completions.create.call_args.kwargs
+        self.assertNotIn("extra_body", request)
+
+    def test_enable_thinking_true_asks_the_chat_template_for_reasoning(self) -> None:
+        """vLLM's documented switch for a hybrid reasoning model (glm45, qwen3)."""
+        model = self._model()
+        model.enable_thinking = True
+
+        model.reply([{"role": "user", "content": "question"}])
+
+        request = model._client.chat.completions.create.call_args.kwargs
+        self.assertEqual(
+            request["extra_body"], {"chat_template_kwargs": {"enable_thinking": True}}
+        )
 
     def test_a_named_window_with_no_room_left_is_reported_not_crashed(self) -> None:
         """The refusal must surface as the recorded stop reason, not an uncaught 400."""

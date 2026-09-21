@@ -40,6 +40,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Per-turn `response_model`: the concrete snapshot a hosted API actually answered a floating model alias with (`gpt-4o` -> `gpt-4o-2024-08-06`), read from the completion response and recorded on every assistant trajectory turn, alongside `meta`'s configured/resolved identifier | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested; a no-op for self-hosted vLLM and Ollama, which echo back only what was requested |
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors; a server that does not advertise its window but refuses an oversized turn with a 400 has that window adopted from the refusal, the turn resized and resent once, and a still-refused turn reported the same way | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Every reply is trimmed to at most one tool call, for every backend: a stray empty `tool_calls: []` from a text-only turn never survives into replayed history, and a completion that returned several tool calls at once keeps only the first, both because at least one vLLM chat template (`llama3_json`, used for Llama 3) can only represent exactly one call when a turn is replayed. `parallel_tool_calls: false` is also sent as a best-effort generation-time hint | `agent/harness/model_client.py` | Done and regression-tested |
+| Opt-in `enable_thinking` switch: `--enable-thinking` (or `AGENT_ENABLE_THINKING`), off by default, sends `chat_template_kwargs: {enable_thinking: true}` on every turn -- vLLM's documented switch for a hybrid reasoning model's chat template (`glm45`, `qwen3`); pins the template's thinking mode on rather than relying on the server's own default, but cannot force a hybrid model to emit non-empty reasoning on a turn it judges trivial | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
 | Investigation trajectories, the draft inbox, and the status registry all written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories`/`--inbox`/`--status` as overrides | `agent/harness/agent.py`, `agent/harness/tools.py`, `agent/lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume, `inbox/` and `status/` included |
@@ -187,6 +188,31 @@ claiming at the same instant cannot both succeed. This is what makes the
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-21 — Opt-in switch to ask GLM/Qwen for thinking mode explicitly
+
+The user noticed GLM-4.5-Air trajectories consistently showed
+"(no reasoning recorded for this turn)" and asked whether GLM never returns
+reasoning. Research (the vLLM blog post on serving GLM-4.5, and open vLLM
+issues on its `glm45` reasoning parser) established that thinking mode is on
+by default for GLM-4.5/4.5-Air and Qwen3 chat templates under vLLM, but that
+default can be overridden away from the request, and there are known parser
+bugs that leak `<think>` text into the wrong field; separately, a hybrid
+reasoning model is allowed to emit an empty think block on a turn it judges
+straightforward, with or without a bug. Asked whether to pin
+`enable_thinking=true` unconditionally on every request or behind an opt-in,
+given `ChatModel` in `agent/harness/model_client.py` is generic to any
+OpenAI-compatible endpoint (not only this project's own vLLM servers) and a
+stricter hosted API could reject an unrecognised field, the user chose the
+opt-in. `ChatModel` gained an `enable_thinking` constructor flag that, when
+set, sends `extra_body={"chat_template_kwargs": {"enable_thinking": True}}`
+on every turn; `agent/harness/agent.py` gained a matching `--enable-thinking`
+CLI flag defaulting from `$AGENT_ENABLE_THINKING` (off unless set), mirroring
+the existing `_env_flag` convention in `agent/lifecycle.py`. This does not
+force non-empty reasoning on every turn -- that remains the model's own
+choice -- it only pins the template's thinking switch on rather than leaving
+it to the server's own default. Regression-tested with new `ChatModel` and
+CLI-default tests.
 
 ### 2026-09-20 — Fix a second trigger of the same "single tool-calls at once" crash
 

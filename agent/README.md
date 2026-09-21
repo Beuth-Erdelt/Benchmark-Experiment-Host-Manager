@@ -138,6 +138,15 @@ loses that safety margin. And a metered API refuses turns once a per-minute
 quota is reached, where a self-hosted server would simply queue them, so a
 refused turn is retried with a widening wait before the phase gives up.
 
+`AGENT_ENABLE_THINKING` (or `--enable-thinking`), off by default, pins the
+served chat template's thinking mode on via `chat_template_kwargs` — vLLM's
+documented switch for a hybrid reasoning model such as GLM-4.5-Air or
+Qwen3 — rather than leaving it to the server's own default. It cannot force
+non-empty reasoning on every turn: a hybrid model may still answer a
+straightforward turn with none. It is off unless set because `ChatModel` is
+generic to any OpenAI-compatible endpoint, and a stricter one (the OpenAI or
+Mistral blocks in `.env.example`) could reject an unrecognised field.
+
 One more setting decides who owns the endpoint. `AGENT_MODEL_SERVER=bundled`,
 the default, means the lifecycle wrapper below starts and stops the vLLM server
 around every phase. `AGENT_MODEL_SERVER=external` means the endpoint is already

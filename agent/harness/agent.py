@@ -1649,6 +1649,20 @@ def _carry_forward(
     return task, specification, code, followups
 
 
+def _env_flag(name: str) -> bool:
+    """Read a boolean environment variable, tolerating the usual spellings.
+
+    :param name: Environment variable to read.
+    :return: ``False`` when unset, empty, ``0``, ``false``, ``no`` or ``off``;
+        ``True`` otherwise.
+    :rtype: bool
+    """
+    value = os.environ.get(name)
+    if value is None or not value.strip():
+        return False
+    return value.strip().lower() not in ("0", "false", "no", "off")
+
+
 def _build_parser() -> argparse.ArgumentParser:
     """Build the command-line parser.
 
@@ -1699,6 +1713,15 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("-a", "--attempts", type=int, default=_DEFAULT_ATTEMPTS)
     parser.add_argument("-f", "--followups", type=int, default=_DEFAULT_FOLLOWUPS)
     parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument(
+        "--enable-thinking", action="store_true",
+        default=_env_flag("AGENT_ENABLE_THINKING"),
+        help="ask the chat template for thinking mode on every turn via "
+             "chat_template_kwargs (default: $AGENT_ENABLE_THINKING); vLLM's "
+             "documented switch for a hybrid reasoning model (glm45, qwen3); "
+             "off by default since a strict OpenAI-compatible server could "
+             "reject the extra field"
+    )
     parser.add_argument("--max-tokens", type=int, default=_DEFAULT_MAX_TOKENS,
                         help="ceiling on tokens generated per turn, thinking included")
     parser.add_argument("--allow-parallel-runs", action="store_true",
@@ -2044,7 +2067,8 @@ def main() -> int:
     trajectory = Trajectory(run_directory)
     model = model_client.ChatModel(model=args.model, base_url=args.base_url,
                                    api_key=args.api_key, temperature=args.temperature,
-                                   max_tokens=args.max_tokens)
+                                   max_tokens=args.max_tokens,
+                                   enable_thinking=args.enable_thinking)
     try:
         model.resolve_served_model()
     except model_client.ModelNotServed as error:

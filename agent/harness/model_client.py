@@ -156,6 +156,8 @@ class ChatModel:
     :ivar temperature: Sampling temperature; zero for the archival runs, so a
         trajectory replays the same way.
     :ivar max_tokens: Ceiling on tokens generated per turn.
+    :ivar enable_thinking: Whether every request asks the chat template for
+        thinking mode via ``chat_template_kwargs``.
     """
 
     def __init__(
@@ -166,11 +168,13 @@ class ChatModel:
         temperature: float = 0.0,
         max_tokens: int = 16384,
         timeout: float = 600.0,
+        enable_thinking: bool = False,
     ) -> None:
         self.model = model
         self.base_url = base_url
         self.temperature = temperature
         self.max_tokens = max_tokens
+        self.enable_thinking = enable_thinking
         self._client = OpenAI(base_url=base_url, api_key=api_key, timeout=timeout)
         self._context_window: int | None = None
         self._context_window_asked = False
@@ -377,6 +381,13 @@ class ChatModel:
             "temperature": self.temperature,
             "max_tokens": budget,
         }
+        if self.enable_thinking:
+            # vLLM's documented switch for a hybrid reasoning model's chat
+            # template (glm45, qwen3, ...); a template that does not read the
+            # kwarg ignores it. Pinned explicitly rather than left to the
+            # server's own default so it cannot be silently toggled off by
+            # something upstream of this request.
+            request["extra_body"] = {"chat_template_kwargs": {"enable_thinking": True}}
         if tools:
             request["tools"] = tools
             # A hint, not a guarantee: some servers filter a completion down to
