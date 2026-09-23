@@ -43,3 +43,4 @@ paper/
 agent/trajectories/*
 .DS_Store
 **/.DS_Store
+docs/FEATURES.md
