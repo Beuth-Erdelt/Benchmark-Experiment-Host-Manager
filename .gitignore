@@ -41,3 +41,5 @@ dev/catalog/refresh_environment.py
 /env
 paper/
 agent/trajectories/*
+.DS_Store
+**/.DS_Store
