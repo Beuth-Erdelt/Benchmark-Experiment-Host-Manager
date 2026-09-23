@@ -232,6 +232,27 @@ the cluster.
 
 ## Part 2 — Request log
 
+### 2026-09-23 — Document how to start a run with Glimmer or Gemma by hand
+
+Asked how to start the two models manually, whether that is what
+`--model-server-manifest` is for, and to write it down briefly.
+
+`agent/README.md` gains the two missing manifest paragraphs and a "Starting a
+run by hand" section: bring the server up with the chosen manifest, then run
+the lifecycle wrapper with the same manifest, a readable model name and the
+question. It notes that the `up` step is optional, since the wrapper starts and
+stops the server itself, and that a self-hosted endpoint serving one model lets
+the harness adopt whatever identifier it finds. The second half documents the
+same run through OpenRouter with no manifest and no GPU, where the identifier
+must match the broker exactly and the providers have to be pinned. Every flag
+was checked against the wrapper's own help first, which corrected three
+mistakes in the draft: there is no subcommand, an external endpoint is chosen
+with `AGENT_MODEL_SERVER=external` rather than a flag, and the wrapper has no
+`--extra-body`, passing `AGENT_EXTRA_BODY` to the phase agent instead. The
+count in the sentence about the shared pod name moved from three manifests to
+five.
+
+
 ### 2026-09-22 — Add the minimal follow-up procedure to the handbook
 
 Asked to apply the minimal handbook addition after the three-model replay and

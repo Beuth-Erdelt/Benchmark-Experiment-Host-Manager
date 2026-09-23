@@ -205,7 +205,69 @@ this shows up as more turns per phase at most, not a failure. Select it with
 `MODEL_SERVER_MANIFEST=agent/k8s/vllm-llama33-70b-int4.yml`, or per run with
 `agent/lifecycle.py --model-server-manifest agent/k8s/vllm-llama33-70b-int4.yml`.
 
-All three manifests use the same pod and service names, so only one can be up
+`agent/k8s/vllm-muse-glimmer-30b.yml` deploys Meta's Muse Glimmer 30B
+(`meta-models/Muse-Glimmer-30B`) on Meta's own vLLM image, with the
+`muse_glimmer` tool and reasoning parsers and the model's native 131072-token
+context, on either the H200 or the B200. Select it with
+`MODEL_SERVER_MANIFEST=agent/k8s/vllm-muse-glimmer-30b.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-muse-glimmer-30b.yml`.
+Its first start downloads roughly 60GB and loads it from Ceph, which took
+45 minutes on 2026-09-21; the startup probe allows 66.
+
+`agent/k8s/vllm-gemma4-31b.yml` deploys Google's Gemma 4 31B
+(`google/gemma-4-31B-it`) on the released vLLM v0.29.0 image, with the `gemma4`
+tool and reasoning parsers, vLLM's own Gemma 4 tool chat template, image and
+audio inputs switched off, and a 131072-token context to match the other
+models. It prefers the H200, leaving the benchmark's B200 free. Select it with
+`MODEL_SERVER_MANIFEST=agent/k8s/vllm-gemma4-31b.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-gemma4-31b.yml`.
+This manifest has not yet been served.
+
+### Starting a run by hand
+
+Bring the server up with the manifest you want, then start the investigation.
+The server publishes its model under the repository name plus the downloaded
+revision, but a self-hosted endpoint serves exactly one model, so the harness
+adopts whatever it finds and the `--model` you pass only has to be readable:
+
+```sh
+export MODEL_SERVER_NAMESPACE="<writable namespace>"
+MODEL_SERVER_MANIFEST=agent/k8s/vllm-muse-glimmer-30b.yml agent/model_server.sh up
+python agent/lifecycle.py \
+  --model-server-manifest agent/k8s/vllm-muse-glimmer-30b.yml \
+  --model meta-models/Muse-Glimmer-30B \
+  --task "<the question to investigate>"
+```
+
+The wrapper starts and stops the server itself, so the `up` above is optional;
+run it first when you want the weights loaded before the clock starts. Swap
+both manifest paths and the model name for `agent/k8s/vllm-gemma4-31b.yml` and
+`google/gemma-4-31B-it` to run Gemma instead. `--followups N` allows follow-up
+experiments, and the bare-model baseline runs by default -- pass
+`--no-baseline` to skip it.
+
+Either model also runs without any manifest through OpenRouter, which needs no
+GPU. Point the harness at the broker, name the model exactly as OpenRouter
+does, and pin the providers, since routing decides precision and whether tool
+calls work at all:
+
+```sh
+export AGENT_MODEL_SERVER=external
+export AGENT_EXTRA_BODY='{"provider": {"order": ["deepinfra"], "allow_fallbacks": false}, "reasoning": {"enabled": true}}'
+python agent/lifecycle.py \
+  --model meta/muse-glimmer-30b \
+  --base-url https://openrouter.ai/api/v1 \
+  --task "<the question to investigate>"
+```
+
+The wrapper has no `--extra-body` of its own; it passes `AGENT_EXTRA_BODY` to
+the phase agent, which does (`agent/harness/agent.py --extra-body`).
+
+`AGENT_API_KEY` carries the broker key; keep it in the gitignored `.env` or a
+Kubernetes secret, never in a manifest. Gemma's identifier is
+`google/gemma-4-31b-it`, and its full-precision provider is `crusoe`.
+
+All five manifests use the same pod and service names, so only one can be up
 at a time, and each keeps its own weights PVC, so switching between them never
 re-downloads any of their weights and none needs deleting. Kubernetes cannot
 change a running pod's container command or image in place, though, so
@@ -219,9 +281,9 @@ MODEL_SERVER_MANIFEST=agent/k8s/vllm-glm45-air-int4.yml agent/model_server.sh up
 The switch does carry a same-shape safety net -- it replaces a live pod
 automatically when its `bexhoma.local/model-server-generation` annotation
 does not match `MODEL_SERVER_GENERATION` -- but that variable defaults to
-Qwen's generation value, so it only fires unprompted when switching from GLM
-or Llama back to Qwen with default settings, not the other direction. `down`
-first is the instruction that works between any of the three.
+Qwen's generation value, so it only fires unprompted when switching from one of
+the four alternatives back to Qwen with default settings, not the other
+direction. `down` first is the instruction that works between any of the five.
 
 **Context and namespace** are environment variables, and the manifest itself
 pins neither, so these decide where the server objects are created.
