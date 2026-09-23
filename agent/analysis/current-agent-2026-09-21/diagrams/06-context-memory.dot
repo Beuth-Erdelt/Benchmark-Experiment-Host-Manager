@@ -1,0 +1,31 @@
+digraph G {
+graph [bgcolor="transparent", pad="0.25", nodesep="0.38", ranksep="0.48", fontname="Helvetica", fontsize=13, compound=true];
+node [shape=box, style="rounded,filled", fillcolor="#F2F6FD", color="#8196B4", fontcolor="#172B49", fontname="Helvetica", fontsize=12, margin="0.16,0.11", penwidth=1.1];
+edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, arrowsize=0.7];
+
+    rankdir=TB;
+    task [label="Original question", fillcolor="#E6EEFF"];
+    design [label="CONTEXT A\nInitial design\nDrafts + feedback stay here", fillcolor="#DEF3F4"];
+    executed [label="Executed specification\nExact experiment code", shape=folder];
+    evidence [label="CONTEXT B\nOne-result evidence interpretation", fillcolor="#DEF3F4"];
+    author [label="CONTEXT C\nFollow-up authoring", fillcolor="#DEF3F4"];
+    next [label="NEXT INVOCATION\nFresh interpretation for new code", fillcolor="#DEF3F4"];
+    docs [label="Catalog + environment\nHandbook guidance", shape=folder];
+    result [label="Selected report + contract\nLink-reachable local evidence", shape=folder];
+    compact [label="Ancestor agent_summary.yml records\nOldest first; no ancestor metrics", shape=folder];
+    log [label="Trajectory audit history\nRetained on disk, not replayed wholesale", shape=folder];
+    old [label="Other result directories\nInside configured result root", fillcolor="#FBE6E4"];
+    task -> design; task -> evidence; task -> author;
+    docs -> design [label="must read before write"];
+    design -> executed [label="accepted submission"];
+    executed -> evidence;
+    result -> evidence [label="read whitelist"];
+    evidence -> author [label="interpretation + decision + parent spec"];
+    compact -> author [label="compact history"];
+    docs -> author [label="reread"];
+    author -> next [label="new submitted experiment"];
+    design -> log [style=dashed]; evidence -> log [style=dashed]; author -> log [style=dashed];
+    old -> design [label="current code permits reads", style=dashed, color="#BD473F", fontcolor="#BD473F"];
+    old -> author [label="restored design scope", style=dashed, color="#BD473F", fontcolor="#BD473F"];
+    
+}

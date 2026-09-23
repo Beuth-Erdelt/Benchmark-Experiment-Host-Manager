@@ -1,0 +1,32 @@
+digraph G {
+graph [bgcolor="transparent", pad="0.25", nodesep="0.38", ranksep="0.48", fontname="Helvetica", fontsize=13, compound=true];
+node [shape=box, style="rounded,filled", fillcolor="#F2F6FD", color="#8196B4", fontcolor="#172B49", fontname="Helvetica", fontsize=12, margin="0.16,0.11", penwidth=1.1];
+edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, arrowsize=0.7];
+
+    rankdir=TB;
+    person [label="Operator / researcher\nQuestion and configuration", fillcolor="#E6EEFF"];
+    subgraph cluster_agent { label="Model-facing agent harness"; color="#ACC4E9";
+      prompt [label="Phase prompts\nTask + file pointers + budget"];
+      model [label="Language model\nProposes designs and conclusions", fillcolor="#DEF3F4"];
+      loop [label="Python conversation loop\nDispatch, counters, events"];
+      gate [label="Deterministic gates\nValidation and evidence checks", fillcolor="#FFF0D4"];
+      workspace [label="Workspace\nRead / write / submit scopes"];
+      prompt -> model; model -> loop [label="text and tool calls"];
+      loop -> gate; gate -> workspace; workspace -> model [label="tool results"];
+    }
+    contracts [label="Catalog + environment\nHandbook + result contract", shape=folder];
+    lifecycle [label="Optional lifecycle\nStart / stop / wait / resume", fillcolor="#EEE7FA"];
+    backend [label="BeXhoma execution\nDatabases, loaders, benchmarkers", fillcolor="#E1F1E6"];
+    cluster [label="Kubernetes cluster\nCompute, storage, monitoring", shape=component];
+    artifacts [label="Results and investigation files\nEvidence, events, summaries, answer", shape=folder];
+    person -> prompt; person -> lifecycle;
+    lifecycle -> loop [label="invoke phase"];
+    lifecycle -> model [label="manage bundled server", style=dashed];
+    contracts -> workspace [label="bounded reads"];
+    workspace -> backend [label="validated specification"];
+    backend -> cluster; cluster -> artifacts [label="measurements"];
+    backend -> artifacts [label="reports"];
+    loop -> artifacts [label="trajectory + answer"];
+    artifacts -> workspace [label="selected result"];
+    
+}

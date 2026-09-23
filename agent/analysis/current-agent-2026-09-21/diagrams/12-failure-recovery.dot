@@ -1,0 +1,30 @@
+digraph G {
+graph [bgcolor="transparent", pad="0.25", nodesep="0.38", ranksep="0.48", fontname="Helvetica", fontsize=13, compound=true];
+node [shape=box, style="rounded,filled", fillcolor="#F2F6FD", color="#8196B4", fontcolor="#172B49", fontname="Helvetica", fontsize=12, margin="0.16,0.11", penwidth=1.1];
+edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, arrowsize=0.7];
+
+    rankdir=LR;
+    fail [label="Failure or interruption", shape=oval, fillcolor="#FBE6E4"];
+    model [label="Model exchange"];
+    validation [label="Draft / structured record rejected"];
+    launch [label="Execution / lifecycle"];
+    crash [label="Process or controller crash"];
+    retry [label="Rate limit / server failure\nUp to 6 outer attempts + backoff"];
+    context [label="Context overflow\nResize once if limit is known\nOtherwise abort phase"];
+    stall [label="Reasoning-only reply\nBounded action nudges"];
+    repair [label="Feedback to model\nAttempt / turn ceiling"];
+    start [label="Slow start, child alive\nKeep durable code; state starting"];
+    dead [label="Dead child / failed status\nStop exact benchmark resources"];
+    timeout [label="Configured wait timeout\nRaise; benchmark not necessarily stopped"];
+    resume [label="Recover durable submission\nRelaunch orchestration from snapshots"];
+    gap [label="Gaps\nPartial log tail; newest follow-up reconciliation\nPID identity across hosts/Pods", fillcolor="#FBE6E4"];
+    cleanup [label="Lifecycle finally\nAttempt bundled model shutdown", fillcolor="#EEE7FA"];
+    fail -> model; fail -> validation; fail -> launch; fail -> crash;
+    model -> retry; model -> context; model -> stall;
+    validation -> repair;
+    launch -> start; launch -> dead; launch -> timeout;
+    crash -> resume; crash -> gap;
+    context -> cleanup; dead -> cleanup; timeout -> cleanup;
+    repair -> cleanup [label="cannot complete"];
+    
+}

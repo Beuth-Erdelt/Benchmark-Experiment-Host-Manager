@@ -1,0 +1,26 @@
+digraph G {
+graph [bgcolor="transparent", pad="0.25", nodesep="0.38", ranksep="0.48", fontname="Helvetica", fontsize=13, compound=true];
+node [shape=box, style="rounded,filled", fillcolor="#F2F6FD", color="#8196B4", fontcolor="#172B49", fontname="Helvetica", fontsize=12, margin="0.16,0.11", penwidth=1.1];
+edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, arrowsize=0.7];
+
+    spec [label="Draft YAML + catalog"];
+    parse [label="Read and parse", fillcolor="#FFF0D4"];
+    shape [label="Schema and nested shape\nAllowed fields and factor declarations", fillcolor="#FFF0D4"];
+    resolver [label="Shared catalog resolution\nBuild executable arguments", fillcolor="#FFF0D4"];
+    method [label="Method checks\nHypothesis heuristic; fixed envelope\nAttribution; repetition minimum", fillcolor="#FFF0D4"];
+    exists [label="Environment exists?", shape=diamond];
+    fit [label="Storage + resources + placement\nPinned benchmarker peak limits", fillcolor="#FFF0D4"];
+    weak [label="valid = true\nenvironment_checked = false\nNo submission approval", fillcolor="#FBE6E4"];
+    strong [label="valid = true\nenvironment_checked = true", fillcolor="#E1F1E6"];
+    hash [label="Store draft + catalog + environment hashes\nRecheck at submit"];
+    errors [label="Structured errors\nParse / catalog / method / environment\nReturn to model for bounded repair", fillcolor="#FBE6E4"];
+    estimates [label="Estimates\nSystems × resource cells × rounds × repetitions\nDeclared timeout budget; not runtime forecast", shape=note];
+    spec -> parse -> shape -> resolver -> method -> exists;
+    parse -> errors [label="bad YAML"]; shape -> errors [label="invalid structure"];
+    resolver -> errors [label="unsupported / invalid"];
+    method -> errors [label="method defects"];
+    exists -> weak [label="no"]; exists -> fit [label="yes"];
+    fit -> errors [label="does not fit"]; fit -> strong [label="fits"];
+    strong -> hash; resolver -> estimates [style=dashed]; estimates -> strong [style=dashed];
+    
+}

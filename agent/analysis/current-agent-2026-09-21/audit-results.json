@@ -1,0 +1,17 @@
+{
+  "design_can_read_existing_result": true,
+  "dry_run_dispatched_submit_with_mocked_process": true,
+  "submit_was_absent_from_advertised_tools": true,
+  "submission_without_contract_reads": true,
+  "initial_launch_uses_live_catalog": true,
+  "initial_launch_catalog_is_staged_snapshot": false,
+  "interpretation_dispatched_unadvertised_write": true,
+  "write_was_absent_from_interpretation_tools": true,
+  "unsupported_numeric_conclusion_recorded": true,
+  "contradictory_closing_prose_accepted": true,
+  "carry_forward_rejects_partial_tail": true,
+  "token_estimate_reuses_old_context_anchor": {
+    "inherited_estimate": 5000,
+    "fresh_estimate": 29
+  }
+}

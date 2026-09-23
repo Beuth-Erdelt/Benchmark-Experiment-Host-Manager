@@ -21,6 +21,12 @@ follow up on a benchmark. The full current description and visual flow live in
 
 | Component | Location | Status |
 |---|---|---|
+| Handbook 0.6.1 follow-up procedure: explicit competing explanations, predicted outcomes, justified experiment scope, diagnosis versus comparison under revised settings, and cost | `agent/experiment_design_handbook.md`, `agent/analysis/handbook-improvement-plan-2026-09-22.md` | Added with NIST source links and M7 routing; documentation only; model evaluation pending |
+| Review of the Glimmer and Gemma archived investigations; compact per-query evidence with actual failure phases; handbook 0.6.0 verdict procedure and corrected resource-utilization guidance | `agent/analysis/model-run-review-2026-09-22.md`, `agent/harness/tools.py`, `agent/harness/prompts.py`, `agent/experiment_design_handbook.md`, `tests/test_agent_query_evidence.py` | Implemented and checked on archived evidence; model-level effectiveness awaits controlled replay |
+| Cited handbook improvement proposal for models with approximately 20–30 billion parameters, including evidence limits, prerequisite corrections, six proposed interventions, integration points, and a controlled evaluation plan | `agent/analysis/handbook-improvement-plan-2026-09-22.md` | Recorded for later implementation and testing; handbook and runtime unchanged by this proposal |
+| Literature audit of handbook 0.5.0, covering all 50 guidelines, unnumbered claims, source locations, qualifications, and citation gaps | `agent/analysis/handbook-literature-audit-2026-09-22.md` | Review complete; corrections proposed, not applied to the handbook |
+| Source-linked review of the v0.10.13 agent with a comprehensive workflow description, 13 rendered diagrams, reproducible offline weakness probes, Qwen specialization assessment, and verification record | `agent/analysis/current-agent-2026-09-21/report.html`, `report.md`, `verification.md` | Done; runtime code unchanged; focused test limitations recorded |
+| Prioritized repair backlog containing only the five weaknesses that can compromise cluster safety, benchmark validity, provenance, or crash recovery | `agent/WEAKNESSES.md` | Recorded for later work; no fixes included |
 | Published operator guide with a runnable command for every stage — install, cluster and environment setup, `.env` model-endpoint choice, the one-command lifecycle, driving `design`/`interpret`/`baseline` by hand, standalone `agent.harness.validate`, standalone `--report` interpretation, the outputs layout, the self-hosted model server, the Kubernetes lifecycle Job, and replay — adapted from `agent/README.md` and `agent/ARCHITECTURE.md` for the documentation site | `docs/AgentHarness.md`, `docs/Agent.md` | Done |
 | Structured validation verdict | `agent/harness/validation.py` | Done |
 | Command-line dry-run validation: `python -m agent.harness.validate EXPERIMENT --environment PATH` prints the same structured verdict the agent's `validate` tool receives, exits 0 when valid and 1 otherwise, touches no cluster, and requires `--environment` explicitly so a skipped cluster-fit check cannot pass unnoticed | `agent/harness/validate.py`, `tests/test_agent_harness.py` | Done and regression-tested |
@@ -30,6 +36,7 @@ follow up on a benchmark. The full current description and visual flow live in
 | Handbook switched off in one setting, for the with/without ablation | `agent/harness/agent.py`, `agent/lifecycle.py`, `.env.example` | Done and regression-tested |
 | Bare-model baseline phase: the question answered directly with no catalog, handbook, environment, or tools, recorded in the same trajectory-plus-`answer.md` form, run automatically by the lifecycle wrapper as its own investigation and linked from the design trajectory, toggled by `--baseline`/`--no-baseline` (`AGENT_BASELINE`) | `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/lifecycle.py`, `.env.example` | Done and regression-tested |
 | Handbook reachable and required during interpretation: named chapters must be read before a verdict may be recorded, and a renamed chapter is dropped rather than demanded | `agent/harness/agent.py`, `agent/harness/prompts.py`, `agent/harness/tools.py` | Done and regression-tested |
+| Handbook principle M2.9 and pitfall *the unreachable level*: the original resource-reachability guidance in handbook 0.5.0 | `agent/experiment_design_handbook.md` | Replaced in 0.6.0 by scoped resource-effect guidance: low utilization alone does not establish that the allocation change was never tested, and coupled tuning measures a joint effect |
 | Cluster session renewed at submission time, after the phase that can run long | `agent/harness/submit.py`, `.env.example` | Done and regression-tested |
 | Full coverage of the parameter types the catalog declares, including YCSB's throughput sweeps | `agent/harness/validation.py` | Done and regression-tested |
 | Phase-scoped tools, path policy, immutable submission, and deterministic query comparison | `agent/harness/tools.py` | Done |
@@ -41,6 +48,10 @@ follow up on a benchmark. The full current description and visual flow live in
 | Per-turn output sized to the served context window, with an exhausted window reported like other setup errors; a server that does not advertise its window but refuses an oversized turn with a 400 has that window adopted from the refusal, the turn resized and resent once, and a still-refused turn reported the same way | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
 | Every reply is trimmed to at most one tool call, for every backend: a stray empty `tool_calls: []` from a text-only turn never survives into replayed history, and a completion that returned several tool calls at once keeps only the first, both because at least one vLLM chat template (`llama3_json`, used for Llama 3) can only represent exactly one call when a turn is replayed. `parallel_tool_calls: false` is also sent as a best-effort generation-time hint | `agent/harness/model_client.py` | Done and regression-tested |
 | Opt-in `enable_thinking` switch: `--enable-thinking` (or `AGENT_ENABLE_THINKING`), off by default, sends `chat_template_kwargs: {enable_thinking: true}` on every turn -- vLLM's documented switch for a hybrid reasoning model's chat template (`glm45`, `qwen3`); pins the template's thinking mode on rather than relying on the server's own default, but cannot force a hybrid model to emit non-empty reasoning on a turn it judges trivial | `agent/harness/model_client.py`, `agent/harness/agent.py` | Done and regression-tested |
+| Extra request fields: `--extra-body` (or `AGENT_EXTRA_BODY`), a JSON object added to every request body beside the thinking switch and recorded in each phase's `meta` event; used for OpenRouter's provider routing and reasoning switch | `agent/harness/model_client.py`, `agent/harness/agent.py`, `agent/README.md`, `.env.example` | Done and regression-tested (two tests; suite 345 pass, the same 11 known failures) |
+| Tool-call arguments that are not valid JSON never poison the replayed history: several argument objects glued into one string keep the first (as several separate calls already did), and an undecodable call is replayed with an empty object while its tool result still reports the decode error | `agent/harness/model_client.py` | Done and regression-tested (two tests; suite 347 pass, the same 11 known failures) |
+| Run lock survives a controller restart: a lock whose recorded PID is stale (a new container's PID namespace can reuse it) is claimed once the status files, refreshed from the result folders, show no unfinished experiment | `agent/harness/tools.py` | Done and regression-tested (suite 348 pass, the same 11 known failures) |
+| An interpretation that validated a follow-up but could not submit it is repeated, twice at most, instead of ending the investigation without a verdict | `agent/lifecycle.py` | Done and regression-tested (two tests; suite 351 pass, 10 known failures) |
 | Design, one-result interpretation, bounded follow-up authoring, durable lineage, phase reports, standalone `--report` operation, and CLI | `agent/harness/agent.py` | Done and regression-tested |
 | Human-readable completed-investigation names containing scale factor and served model | `agent/harness/agent.py` | Done and regression-tested; incomplete designs remain timestamp-only, and so does a completed design on Windows when the running Bexhoma child locks the directory against rename |
 | Investigation trajectories, the draft inbox, and the status registry all written under the result folder's `agent/` subdirectory, not inside the checkout, with `--trajectories`/`--inbox`/`--status` as overrides | `agent/harness/agent.py`, `agent/harness/tools.py`, `agent/lifecycle.py` | Done and regression-tested; the in-cluster controller keeps its own per-investigation volume, `inbox/` and `status/` included |
@@ -50,6 +61,11 @@ follow up on a benchmark. The full current description and visual flow live in
 | Model server manifest with idle GPU release, its objects named `bexhoma-agent-model*` and labelled `app: bexhoma, component: agent, role: model-server` per the BeXhoma convention | `agent/k8s/vllm-qwen38-27b.yml` | Done |
 | Alternative self-hosted manifest serving GLM-4.5-Air at GPTQ INT4 (`QuantTrio/GLM-4.5-Air-GPTQ-Int4-Int8Mix`), selected in place of the Qwen3.8 manifest via `--model-server-manifest` (or `MODEL_SERVER_MANIFEST`), with its own PVC and generation annotation so it coexists with the Qwen manifest without weight re-downloads or pod-replace collisions | `agent/k8s/vllm-glm45-air-int4.yml`, `agent/lifecycle.py` | Done; not yet run against a live cluster. Quantizes the full, un-pruned GLM-4.5-Air (106B/12B active, ~67GB), not the smaller REAP-82B-pruned checkpoint originally targeted, because the only INT4 builds of that pruned checkpoint return 401 Unauthorized from both outside the cluster and from the pod's own download step. Pinned to the cluster's H200 node specifically, since 67GB of weights leaves too little of an 80GB H100 for useful KV cache. Switching between manifests needs `down` before `up`, since Kubernetes will not change a running pod's container command in place |
 | Second alternative self-hosted manifest serving Llama-3.3-70B at GPTQ INT4 (`shuyuej/Llama-3.3-70B-Instruct-GPTQ`, confirmed public and ungated, unlike Meta's own repo), same selection mechanism as the GLM manifest, with a startup step that fetches vLLM's recommended `llama3_json` tool-calling chat template pinned to the running vLLM's own version tag | `agent/k8s/vllm-llama33-70b-int4.yml`, `agent/lifecycle.py` | Done; not yet run against a live cluster. 42GB of weights fits either Hopper node with headroom, unlike the GLM manifest. `llama3_json` can only represent one tool call per message when history is replayed, which drove the reply-trimming fix below |
+| Meta Muse Glimmer 30B model-server manifest using Meta's dedicated vLLM image, native 131072-token context, `muse_glimmer` tool and reasoning parsers, published generation configuration, H200 or B200 placement, persistent weights, and the same idle GPU release; aligned with the Qwen/GLM/Llama manifests on `dev`: pinned download revision folded into the served model name, per-request sampling logs, `idle-watchdog-v2-muse-glimmer-30b` generation, and a 66-minute startup window for the slow Ceph cold load | `agent/k8s/vllm-muse-glimmer-30b.yml` | Done; the aligned version served on the B200 on 2026-09-21 after a 45-minute cold load, inside the 66-minute window. The served name carries no revision suffix yet, because these weights were downloaded before pinning existed |
+| Google Gemma 4 31B (dense, instruction-tuned) model-server manifest on the released vLLM v0.29.0 image, `gemma4` tool and reasoning parsers, vLLM's own Gemma 4 tool chat template (which honours the thinking switch), text-only (image and audio inputs off), 131072-token context to match the other agent models, pinned download revision in the served name, a download counted finished only once its revision file exists, a two-hour startup window for first-start download plus Ceph load, and H200 preferred over the benchmark's B200 node | `agent/k8s/vllm-gemma4-31b.yml` | Written 2026-09-22; not yet served |
+| Lifecycle controller image installs IPython, which `bexhoma/collectors/base.py` imports but the package does not declare | `agent/Dockerfile.lifecycle` | Done; found by the first in-cluster submission on 2026-09-21. The underlying missing dependency belongs in bexhoma's packaging and is reported, not changed |
+| In-cluster controller forwards the validation-attempt and per-reply token limits (`AGENT_ATTEMPTS`, `AGENT_MAX_TOKENS`) from the Job's environment when set, leaving the defaults to `agent/lifecycle.py` otherwise | `agent/lifecycle_controller.py`, `tests/test_agent_lifecycle.py` | Done and regression-tested; first live in-cluster run started 2026-09-21 |
+| Model-server switch starts its port-forward without `setsid` when the system has none (macOS), instead of never starting it and timing out on a healthy server | `agent/model_server.sh` | Done; exercised on 2026-09-21 by a full `up` on macOS, whose port-forward kept running after the script exited |
 | Durable Kubernetes lifecycle controller with in-cluster authentication and restart recovery | `agent/lifecycle_controller.py`, `agent/k8s/lifecycle-controller.yml`, `agent/Dockerfile.lifecycle` | Done and regression-tested; image publication and target-cluster values remain deployment steps |
 | Sequential isolation of agent-submitted SUT configurations | `agent/harness/submit.py`, `contracts/contract_catalog.yml` | Done and regression-tested through BeXhoma's public one-SUT option |
 | Result-contract disclosure of unverified loading and of the warnings check's real scope | `contracts/contract_result.yml`, `docs/AgentResultContract.md` | Done |
@@ -108,6 +124,15 @@ afterwards. It is deliberately not placed on the node bexhoma uses for the
 system under test, because a model server competing for that node's resources
 would contaminate the measurements the agent is designing.
 
+`agent/k8s/vllm-muse-glimmer-30b.yml` is the alternative manifest for
+`meta-models/Muse-Glimmer-30B`. It uses the model's dedicated vLLM image and
+the `muse_glimmer` tool-call and reasoning parsers. Like the other manifests,
+it serves the model under its repository name, suffixed with the downloaded
+commit when the weights were fetched with a pinned revision, and the pod
+exposes the checkpoint's 131072-token context.
+Muse Glimmer's template reasons by default; the reasoning parser places that
+text in the separate field the harness records in each phase reasoning trace.
+
 The pod releases its GPU on its own once nothing has sent it a request for
 twenty minutes, so a server left behind by a hand-launched phase does not hold a
 Hopper node indefinitely. The operator wrapper still shuts it down immediately
@@ -135,8 +160,9 @@ and one key, so the override selects a different model from the same provider. A
 variable overrides the file, and the corresponding command-line flag overrides
 both. `.env.example`
 documents a block per backend — the bundled vLLM server through a port forward,
-the same server by its in-cluster service name, a local Ollama, OpenAI, and
-Mistral — and `.env` itself is gitignored so keys stay out of the history. The
+the same server by its in-cluster service name, a local Ollama, OpenAI,
+Mistral, and the university's BHT LLM API with its three tier aliases — and
+`.env` itself is gitignored so keys stay out of the history. The
 loader is `python-dotenv`, added to the `agent` extra alongside the OpenAI
 client.
 
@@ -205,6 +231,545 @@ the cluster.
 ---
 
 ## Part 2 — Request log
+
+### 2026-09-22 — Add the minimal follow-up procedure to the handbook
+
+Asked to apply the minimal handbook addition after the three-model replay and
+confirm whether it was already covered by the saved improvement plan.
+
+Handbook 0.6.1 adds five steps in M8 and a pointer from the existing M7 verdict
+procedure. It asks for the unresolved question, competing explanations,
+predicted outcomes, justified scope, and cost, and distinguishes diagnosing a
+failure from comparing performance after changing settings. NIST references
+support objective-driven experimental design; the procedure is explicitly
+identified as a local adaptation. The improvement plan now records that this
+implements its earlier follow-up proposal and clarifies the distinction added
+after the pilot. Markdown section delivery and links were checked. No prompt,
+tool, runtime or test changes were made in this increment.
+
+### 2026-09-22 — Replay the interpretation with Gemma 4, Qwen 3.8 and Glimmer
+
+Asked to rerun the investigation from the interpretation phase only, with
+Gemma 4 31B and Qwen 3.8 27B, both served through OpenRouter, now that the
+handbook and the interpretation prompt have changed.
+
+No new benchmark was run. Both replays interpret the archived result folder
+1790080023 on the local copy under `~/benchmarks`, through the harness's
+existing `--report` entry point, which interprets a finished result folder
+without any prior investigation state. Each replay uses the repository's
+current handbook 0.6.0 with its verdict procedure, the revised prompt, the
+original question as the task, the investigation's own environment descriptor,
+temperature 0, a 65536-token reply ceiling, ten validation attempts and three
+nominal follow-ups under `--dry-run`, so a chosen follow-up is authored and
+validated but never submitted and the cluster is not touched. Provider routing
+pins full precision first and one 8-bit fallback for each model: Crusoe then
+Parasail for Gemma, DeepInfra then Parasail for Qwen. The broker key is read
+from the gitignored environment file at launch and never written to a file in
+the repository.
+
+This is the first arm of the controlled comparison the entry below asks for. It
+grades interpretation only, holding the evidence, the handbook, the prompt and
+the sampling settings fixed, so the models are the only thing that differs. It
+is still one sample per model; the earlier Gemma investigation produced two
+opposite verdicts on identical evidence, so repeated replays are needed before
+any ranking is claimed.
+
+Glimmer was added to the same comparison on request, also through the broker.
+Its only full-precision endpoint caps replies at 16384 tokens, so that run used
+that ceiling instead of 65536; the other settings are identical.
+
+Outcome, all three replays completed on 2026-09-22 between 22:08 and 22:50
+CEST. All three reached the same verdict, inconclusive, against the afternoon's
+published verdict of supported on the same evidence. All three found the
+per-query reversal the aggregate had hidden: pg_duckdb wins Q13 at every level
+while PostgreSQL wins Q1 at 32 cores. All three located the 48 failures at
+PostgreSQL's concurrency-8 phases rather than across all configurations, and
+all three recorded empty typed result claims, because the assessor withholds
+them once a planned query has failed, and then respected that limit in prose.
+The new per-query evidence block is quoted almost verbatim by each of them, so
+the improvement is attributable to the harness and handbook change rather than
+to any model.
+
+They differ in the follow-up. Qwen proposes the smallest discriminating
+experiment: Q18 alone at concurrency 8 on both core counts, a memory-safe
+configuration applied identically to both systems, 12 runs, with a falsification
+criterion fixed in advance. Gemma diagnoses the same memory arithmetic but
+expands to the full 22-query workload. Glimmer does not diagnose the cause and
+re-runs the parent design with node pinning, which would not prevent the same
+memory kill. Qwen also separates a proposed mechanism from a measured one
+explicitly, and was the only model whose interpretation was refused twice for
+citing unread evidence before it corrected itself. Its one factual error is the
+parent's size, given as 108 phases where the report has 36. It cost about four
+times the tokens and four times the wall time of the other two: roughly one
+million prompt and 69 thousand completion tokens against Gemma's 531 thousand
+and 15 thousand and Glimmer's 454 thousand and 11 thousand. All three replays
+together cost well under one dollar.
+
+Audit of the shared starting point, since all three interpretations rest on it.
+The conduct of experiment 1790080023 is clean: all 156 connections ran on one
+node, `cl-worker36`, so the core sweep carries no hardware confound; the twelve
+loads took 277 to 287 seconds with matched ingest and post-load steps; both
+systems received identical parallelism overrides, CPU, memory and repetitions;
+and DuckDB execution was forced. The reporting layer is where the problem is.
+Q18 failed only for PostgreSQL at eight clients, but `num_of_queries` is the row
+count of the experiment-wide aggregated latency statistics, so the failure drops
+Q18 from every cell of the summary, including the cells where both systems
+completed it. `Geo Times` is therefore a two-query geometric mean everywhere,
+confirmed arithmetically: the square root of 9.256 times 2.612 is the 4.92
+reported for the first pg_duckdb phase. `Throughput@Size` multiplies that count
+of two by 3600, the pod count and the scale factor, and divides by a wall time
+that includes all three queries, confirmed exactly for the same phase as
+2 × 3600 × 10 / 23 = 3130.43. Absolute throughput is thus understated by about a
+third; the system-to-system ratio survives, since both sides carry the same
+count.
+
+The excluded query's timings do exist in the per-pod benchmarker logs, and it is
+where pg_duckdb wins widest. Means over the repetitions, pg_duckdb against
+PostgreSQL: 10.90 against 30.42 seconds at 8 cores with one client, 16.60
+against 77.78 at 8 cores with four clients, 11.80 against 30.49 at 32 cores with
+one client, and 11.75 against 44.33 at 32 cores with four clients, a factor of
+2.6 to 4.7. Only PostgreSQL's eight-client cells are missing. The shared
+conclusion of all three models, that there is no consistent advantage because
+PostgreSQL wins Q1, is therefore an artifact of the exclusion: of the three
+planned queries, two favour pg_duckdb strongly and one favours PostgreSQL. The
+models read the report faithfully; the report does not represent the run
+faithfully. This also corrects an earlier claim in this session that Q18 had
+produced no timings for either system: it completed for pg_duckdb at every level
+and for PostgreSQL at one and four clients.
+
+Reported, not changed, since the evaluator belongs to the bexhoma package. Two
+proposals for its owner: state the experiment-wide query exclusion in the report
+rather than letting a clean cell appear complete, and make the throughput
+numerator and denominator cover the same set of queries. On the agent side, the
+per-query evidence block could name the queries that were dropped from the
+aggregate, so an interpretation knows to look at the raw per-pod logs.
+
+### 2026-09-22 — Prioritize and start improvements from the two model runs
+
+Asked to inspect the two models' results under `~/benchmarks`, reconsider the
+handbook improvement priorities, and implement the most likely or urgent change.
+
+Reviewed Glimmer result 1790026202 and Gemma result 1790080023, their submitted
+designs, trajectories, conclusions and underlying tables. Gemma missed a
+query-specific ranking reversal and generalized Q18 failures beyond the affected
+concurrency; Glimmer treated a descriptive flat resource comparison as settling
+the broader CPU-dependence question. The runs differ in design, settings and
+harness versions and do not establish a controlled model ranking.
+
+The first increment adds compact per-query timings, repetition ranges and
+localized failures to the existing assessment tool. Handbook 0.6.0 adds a cited
+verdict procedure in M7 and replaces M2.9's unsupported utilization inference
+with scoped resource guidance. The interpretation prompt describes the evidence
+fields and clarifies that a rejected structured claim is not justified merely
+by moving it into prose. The review records the evidence, remaining limits and
+next controlled evaluation. No live model or cluster experiment was launched.
+The five new tests and five parameterized subtests pass. The combined harness
+check reports 163 passing tests, 23 passing subtests and seven failures, all
+already present in the pre-change run; one additional pre-existing failure did
+not recur. The actual archived reports were also replayed through the assessor.
+
+### 2026-09-22 — Preserve cited handbook improvement findings for later work
+
+Asked to save the findings on further guidance for models with approximately
+20–30 billion parameters in a Markdown file, with enough background to implement
+and test the ideas later.
+
+`agent/analysis/handbook-improvement-plan-2026-09-22.md` preserves six proposed
+interventions, seven primary research references, the limits of their applicability,
+an illustrative decision procedure, integration suggestions, and an evaluation
+plan that separates scientific quality from structural validity. It links the
+earlier literature audit and identifies corrections required before strengthening
+guidance or enforcement. This change records the proposal; it does not implement
+the interventions, change the handbook, or run model or cluster experiments.
+
+### 2026-09-22 — Check handbook claims against their stated literature
+
+Asked to verify whether the handbook's claims and guidelines follow from its
+listed sources and to identify unsupported or invented material.
+
+The audit in `agent/analysis/handbook-literature-audit-2026-09-22.md` covers all
+50 numbered guidelines, the surrounding substantive prose and pitfalls, and
+the bibliography. It records inspected source passages, access limitations,
+counterexamples, and proposed corrections. The guideline assessments are 18
+supported, 20 requiring qualification, 10 deductions or local policies without
+a verified direct source rule, and 2 containing unsupported substantive
+assertions. No evidence of fabricated named works was found, but full support
+for the handbook as written could not be established. The handbook and agent
+behaviour were not changed by this review.
+
+### 2026-09-22 — Run the Gemma 4 investigation through OpenRouter instead
+
+Asked to restart the Gemma 4 run with the model served by OpenRouter, because
+every B200 was taken, and to run it on the cluster as a Job; Gemma is simply an
+alternative model, so the setup was kept lean. The self-hosted manifest from the
+entry below stays in the repository but was not used.
+
+OpenRouter routes one model to many providers at different precisions, and the
+cheapest provider for this model cannot call tools. The harness had no way to
+send OpenRouter's routing field, so `--extra-body` / `AGENT_EXTRA_BODY` now adds
+any JSON object to every request, beside the vLLM thinking switch, and each
+phase's `meta` event records it. Two new tests in `tests/test_agent_harness.py`
+cover the merge and the parsing. A live probe settled the settings. Requiring
+every parameter left no provider, because none lists the one-tool-call hint the
+harness always sends. Restricting to BF16 leaves Crusoe and Novita, which both
+call tools and accept the 65536-token reply ceiling. OpenRouter's own
+`reasoning` switch returns thinking, while `chat_template_kwargs` is ignored.
+Both providers briefly answered 429 from a shared upstream pool; the harness's
+retries and the Job's restart cover that.
+
+The first two launches failed within minutes, for two unrelated reasons. At
+temperature 0, Gemma's first design turn always asks to read several files at
+once. The provider ignores the one-call hint and glues the argument objects into
+one string. The harness refused that call correctly, but it replayed the
+malformed arguments in the history, and the provider then rejected every later
+request as invalid JSON. `agent/harness/model_client.py` now keeps the first
+object, as it already did for several separate calls, and replays an undecodable
+call with an empty object. The tool result still reports the decode error. Two
+new tests cover both cases, the first of them reproduced and failing before the
+fix. In the second launch, Crusoe was rate-limited and OpenRouter fell back to
+Novita. Novita refused an 18k-token prompt as too long even with a 32768-token
+reply ceiling, whatever its listing claims. The Job therefore pins Crusoe alone
+(`order: [crusoe]`, `allow_fallbacks: false`, BF16). The failed attempts are
+kept as `gemma4-openrouter-20260922` and `...22b` on the state volume, and the
+working run is `gemma4-openrouter-20260922c`. Its design passed validation on the
+first attempt and was submitted as experiment `1790080023`. Following handbook
+M2.9, it raises PostgreSQL's parallelism limits with the core count and compares
+8 with 32 cores. With the factor reachable, cores matter: at four and eight
+clients, 32 cores are two to three times faster than 8 for both systems, while
+at one client they make no difference. The raised limits also cost PostgreSQL
+its 8-client runs, where each of the six SUT pods was killed for exceeding the
+64Gi memory limit on Q18 -- more parallel workers means more working memory per
+query -- so those PostgreSQL figures are not comparable.
+
+Two more faults surfaced after the benchmark. Crusoe's shared pool refused the
+whole interpretation three times over, so Parasail (an 8-bit copy, with tool
+calls, thinking and the 65536 ceiling verified) is now allowed as the single
+fallback; the fourth attempt then recorded an interpretation, after the harness
+had refused one that called a question settled while listing missing evidence.
+Gemma then authored and validated a follow-up that fixes the Q18 failures, but
+every submission was refused as "another agent-started experiment is still
+running", and the Job died at its backoff limit. The run lock was the cause: it
+stores the PID that started a benchmark, the lock file outlives the container,
+and a restarted controller runs in a fresh PID namespace where that number can
+belong to an unrelated live process. `agent/harness/tools.py` now treats such a
+lock as stale when the status files, refreshed from the result folders, show no
+unfinished experiment, and claims it. Two tests cover both cases, one of them
+reproduced and failing before the fix. The Job was relaunched with the fix and a
+backoff limit of 20.
+
+That exposed a third fault in the same chain. The investigation's last recorded
+phase said "follow-up validated, nothing submitted", and the lifecycle treated
+that as a dead end: it raised "neither a submitted benchmark nor a complete final
+verdict" before calling the model at all, so the run could not recover even with
+the lock fixed. A refused submission is a cluster failure, not a model one, so
+`agent/lifecycle.py` now repeats such an interpretation, at most twice, and gives
+up afterwards rather than looping. Two tests cover the retry and the bound.
+
+The Job `agent-lifecycle-gemma4-or-20260922` runs the Glimmer Job's settings
+with OpenRouter as the endpoint: the same question, ten validation attempts,
+three follow-ups, the baseline, temperature 0 and a 65536-token ceiling. It uses
+a new working-tree snapshot at `/state/src-20260922`, which carries handbook
+0.5.0. Last night's snapshot is left untouched. The API key lives in the
+Secret `agent-openrouter`. The run's files are in
+`agent/incluster-gemma4-openrouter-20260922/` in the result folder. macOS tar
+adds a `._` metadata file beside every file, which was deleted on the volume.
+Setting `COPYFILE_DISABLE=1` avoids it next time.
+
+Outcome, read on 2026-09-22 at 20:49 CEST: the Job completed after fourteen
+minutes, and the investigation ended with a final verdict on the first
+benchmark. The relaunched controller entered the retry the lifecycle fix adds,
+ran the interpretation once more, and this time Gemma finished instead of
+authoring a follow-up, so none of the three follow-ups was ever run. The verdict
+calls the hypothesis supported: pg_duckdb was faster than PostgreSQL at every
+core count and client count, and its lead grew with cores, from about 1.3 times
+at 8 cores to about 1.8 times at 32 cores with eight clients. It names both
+mechanical failures, the restarted PostgreSQL pods and the 48 failed Q18
+executions, and still calls the comparison valid for the queries that ran. That
+is the weak point of the verdict, because the failing side is the slower one and
+its times are missing the most expensive query. The two interpretations also
+disagreed on identical evidence: the attempt before called the same run
+inconclusive. The stale-lock fix was never exercised in the cluster, because the
+attempts that were refused ran under the old code, and the attempt that ran with
+the fix never submitted anything. The status file of experiment `1790080023`
+still reads "running" on the volume for the same reason: nothing listed the
+results after they appeared, and listing is what refreshes the file. The
+investigation and the result folder were copied to
+`agent/incluster-gemma4-openrouter-20260922/out/` in the result folder. The
+whole run cost about 1.5 million prompt tokens and 25 thousand completion
+tokens, so well under a dollar, far below the estimate, because no follow-up
+benchmark ran.
+
+### 2026-09-22 — Handbook: a varied factor has to be reachable
+
+Asked to update the handbook after the Glimmer run compared 32 with 64 cores
+while the database never used more than about 13, and asked whether the
+database or the benchmark caused that ceiling. It was mainly the database's
+configuration. The `analytical-ssd` profile Glimmer chose fixes PostgreSQL's
+parallelism at two helper processes per query, four in total and six
+background processes, whatever core limit the container gets. Its memory
+settings are derived from the memory limit, but nothing is derived from the
+CPU limit. pg_duckdb reads the PostgreSQL tables through its own scan limits,
+two workers and two threads per scan by default, drawn from the same pool.
+The measured CPU matches this: about three cores with one client and eight to
+thirteen with eight. The benchmark added a second ceiling, because eight
+clients at three cores each could not reach 32 even without the total cap.
+The design could have overridden the three PostgreSQL limits per system, but
+the catalog does not expose pg_duckdb's scan settings.
+
+`agent/experiment_design_handbook.md` now carries principle M2.9 and the
+pitfall *the unreachable level*, and a question in M2's opening list. Before a
+run, the agent must find what caps use of a varied resource, and then either
+raise those limits with the factor, declaring the coupling, or choose levels on
+both sides of where the resource could run short. After the run, it must
+compare measured use with the levels, and report a factor that was never
+reached as untested rather than as having no effect. The Navigation chapter's
+reading guidance says the same, and the handbook is now version 0.5.0. M2 is
+among the chapters interpretation must read, so the rule applies to verdicts
+too. The rule stays general, as the handbook requires, and names no system or
+setting.
+
+Proposed, not applied, because `contracts/` is off limits: the catalog profile
+should derive its parallelism settings from the CPU limit the way it derives
+memory settings from the memory limit, and the catalog should expose pg_duckdb's
+`duckdb.max_workers_per_postgres_scan`, `duckdb.threads_for_postgres_scan` and
+`duckdb.threads`.
+
+### 2026-09-22 — Run the same investigation with Gemma 4 31B
+
+Asked to start a new experiment with the dense Gemma 4 31B model. The
+university API's medium tier is this model, but its 32768-token window and
+daily quota of 100,000 tokens cannot carry a full investigation, so it is
+self-hosted instead. `agent/k8s/vllm-gemma4-31b.yml` follows vLLM's published
+Gemma 4 recipe for tool calling with thinking and is otherwise a copy of the
+Muse Glimmer manifest. It differs in three places. It treats a download as
+finished only once the revision file exists, because the Glimmer check on
+`config.json` would serve partial weights after a restart mid-download. Its
+startup window is two hours, because the first start downloads and loads about
+63 GB. It also prefers the H200 node, so the kept-up server does not share the
+B200 node with the system under test, as Glimmer's did.
+
+The run repeats the 2026-09-21 Glimmer Job with only the Job name, lifecycle id
+and model changed: the same question, code snapshot, ten validation attempts,
+three follow-ups, the bare-model baseline, temperature 0 and thinking on. Two
+things changed around it, both in `agent/incluster-gemma4-20260922/` in the
+result folder. The Job waits up to three hours for the model server before
+starting, so everything can be launched at once. The keepalive pod ends when
+the Job completes or fails rather than at a fixed hour, after which the
+server's idle watchdog releases the GPU.
+
+### 2026-09-22 — Rebuild the local environment, parse the BHT refusal, try the extra BHT models
+
+Asked for three things. First, the repository's `.venv` was rebuilt, because
+its interpreter pointed at a Homebrew Python 3.14 that had since been removed.
+The new environment runs Python 3.13 and installs the package in editable mode
+with the `agent` extra, plus IPython, pytest and Sphinx. The old environment
+had held a frozen copy of the package instead. With it, 343 tests pass and ten
+fail, and the same ten fail with `.env` moved aside, so none of them comes from
+this change. Five compare a `/var/...` path against its `/private/var/...`
+equivalent, which are the same folder on macOS. Two expect the validator to
+reject a design whose resource limits exceed its node, and it accepts them. One
+expects the model manifest to admit only H100 and H200 nodes, although it now
+admits B200 too. One expects a timeout of 600 where 1800 is found. The last
+looks for the trajectory in the investigations folder's `inbox` entry rather
+than in the renamed investigation. An eleventh test,
+`test_a_submitted_design_without_a_summary_still_succeeds`, passes or fails
+depending on the time of day. It takes whichever entry the file system lists
+first in the investigations folder, and the renamed investigation's name
+carries a timestamp that changes that order.
+
+Second, `agent/harness/model_client.py` now also learns the context window from
+the BHT API's second refusal wording,
+"max_tokens=65536cannot be greater than max_model_len=max_total_tokens=32768",
+and retries within it. A new test in `tests/test_agent_harness.py` reproduces
+that wording and failed before the change. This corrects the entry below. That
+wording appears only when the reply ceiling alone exceeds the whole window. When
+a long prompt and the ceiling together overrun it, the large tier answers with
+the standard "maximum context length is 196000 tokens" wording, which the agent
+already handled. The medium tier's version of that case could not be observed,
+for the quota reason that follows. The windows recorded for the three tiers are
+BHT's serving limits, not the models' own: Gemma 4 31B's configuration on
+Hugging Face allows 262,144 tokens, while BHT serves it with 32,768, a figure
+its server restated when asked again.
+
+The probes revealed a daily token budget. The gateway allows each key 100,000
+tokens per tier in a window of 86,400 seconds, counting prompt and reply
+together, and reports the balance in `x-ratelimit-*` response headers. A refused
+over-length request costs nothing. On the day of testing the medium tier was
+already exhausted and the large tier about 37,000 tokens down, more than this
+session's own requests account for. The past Glimmer runs recorded in the
+result folder used about 280,000 and 640,000 tokens for a design phase and
+about 1,050,000 for an interpretation, so without a raised quota the API cannot
+carry a full investigation. `.env.example`, `.env` and `docs/AgentHarness.md`
+now say so.
+
+Third, the two extra models the endpoint lists,
+`mistralai/Mistral-Medium-3.5-128B` and `deepseek-ai/DeepSeek-V4-Flash-0731`,
+both answered 404 with "No matching route found": the gateway advertises them
+but routes no request to a server behind them. `.env.example` records this
+with the date.
+
+### 2026-09-22 — Use the university's BHT LLM API instead of a cluster model server
+
+Asked to wire the new BHT LLM API (Sophia) into `.env` and to say where its
+settings belong. The key had been stored under names the agent does not read,
+so `.env` now carries it as `AGENT_API_KEY`, alongside `AGENT_BASE_URL`,
+`AGENT_MODEL_SERVER=external` and one active `AGENT_MODEL`. The secret stays
+in the gitignored `.env`. The endpoint and the tier catalogue are not secret,
+so they went into `.env.example` as a new block beside the OpenAI and Mistral
+ones, and `docs/AgentHarness.md` now lists the BHT API among the backends.
+
+Probing the endpoint showed that the three tiers are served under the aliases
+`bht/small` (Qwen3-14B), `bht/medium` (Gemma 4 31B) and `bht/large`
+(MiniMax-M2.7, AWQ 4-bit). The endpoint also lists DeepSeek-V4-Flash and
+Mistral-Medium-3.5, which were not tried. All three tiers answered a tool-call
+request with a proper tool call. Their context windows are 65536, 32768 and
+196000 tokens respectively, and none of them is published in the model list.
+Only the small tier words its over-length refusal the way the agent parses to
+learn the window. The medium tier's window is too small for a full run, which
+peaks near 26k prompt tokens on top of the 16384-token reply ceiling, and its
+refusal would therefore end the phase instead of being recovered. The large
+tier returns its thinking inline as a `<think>` block in the reply text. It
+was set as the active model because it is the strongest of the three and its
+window leaves ample room.
+
+### 2026-09-21 — Run the full Glimmer pipeline inside the cluster
+
+Asked that the whole pipeline keep running when the laptop is closed, with the
+B200 model server kept up overnight instead of restarted around each phase.
+The existing lifecycle controller now runs as a Job in `lliu`. It needed no new
+permissions, because every service account in that namespace is already bound
+to the standard namespace role and may list nodes and storage classes. Two
+gaps were closed in `agent/lifecycle_controller.py`: it did not forward the
+validation-attempt limit or the per-reply token limit. It now passes on
+`AGENT_ATTEMPTS` and `AGENT_MAX_TOKENS` when the Job sets them, and a new test
+in `tests/test_agent_lifecycle.py` covers both the set and unset cases.
+
+The image from `agent/Dockerfile.lifecycle` could not be published that night:
+Docker was not running, and no registry login allowed a push. The Job instead
+runs a stock `python:3.12-slim` image and installs a snapshot of the working
+tree from its state volume. The snapshot includes only files git tracks or
+would track, and records the base commit and the local changes. The uploaded
+`cluster.config` is built from the public `k8s-cluster.config` template with
+only the namespace, cluster name and storage classes filled in. The model
+server is external to the Job. A small keepalive pod sends it a one-token
+request every ten minutes until 13:00 the next day, after which the server's
+own idle watchdog releases the GPU. The run-specific manifests, task and
+snapshot live under `agent/incluster-glimmer-20260921/` in the result folder.
+
+The first launch reached a validated design, but every submission died at
+import time. `bexhoma/collectors/base.py` imports IPython, which the package
+does not declare. The Job was replaced by one that also installs IPython, and
+`agent/Dockerfile.lifecycle` now installs it too. The replacement controller
+found the last submission already recorded on the state volume and resumed
+that experiment (code `1790026202`), rather than starting a new design. This
+was the first live exercise of its restart recovery. The investigation
+therefore continues from the first launch's baseline and design, whose
+trajectory also records the failed submissions. That design pins no node, so
+the scheduler placed the system under test on `cl-worker36` beside the idle,
+kept-alive model server. This co-location is a known confound of the
+keep-the-GPU choice.
+
+Outcome, read on 2026-09-22: the Job completed at 02:23 CEST. The first
+interpretation attempt spent 26 turns without ever recording a structured
+interpretation, so the phase failed and the controller exited. Kubernetes
+restarted the container, and the restarted controller resumed from the state
+volume and interpreted again, this time successfully in 22 turns. The retry
+therefore came from the Job's restart policy, not from the harness. The benchmark passed all eleven of its checks, with
+two skipped. Glimmer concluded that pg_duckdb is about twice as fast as
+PostgreSQL at every tested concurrency (one, four and eight clients) and that
+going from 32 to 64 cores changes nothing, and it declined all three
+follow-ups. The second half of that verdict is weak: the database never used
+more than about 13 cores, so neither core limit was ever reached, and the
+interpretation reported that peak without drawing the conclusion. Its labels
+are consistent with the result contract: the hypothesis it had written itself
+(that the gap depends on cores) is "refuted", while "supported" on each
+sub-question means the answer is backed by evidence. The model server disappeared around 06:20,
+after the run was over. The keepalive pod was still running afterwards,
+pinging nothing. The investigation and the benchmark results (694 files) were
+copied from the state volume to `state/` in the run's local folder. The
+design phase has no readable report there, because the first Job was deleted
+during its failed submissions, before that report was written. Its full
+transcript is still in the trajectory log.
+
+### 2026-09-21 — Full Muse Glimmer run through the lifecycle
+
+Asked to run the Glimmer investigation for real after the dry run: the same
+pg_duckdb aggregation question, up to 10 validation attempts, up to three
+follow-up experiments, and the bare-model baseline for comparison. It runs
+through `agent/lifecycle.py` at temperature 0 with `--enable-thinking`, so the
+model server is released while each benchmark runs. `AGENT_CLUSTER_LOGIN` is
+set to the OIDC login script followed by restoring the `lliu` namespace, so
+each submission starts with a fresh cluster session. The wrapper runs detached
+under `caffeinate`, because the submitted benchmark is a local process that
+must outlive both the terminal session and an idle-sleeping laptop. Before
+the model server was ready, this local run was stopped and replaced by the
+in-cluster run described in the next entry, so that closing the laptop cannot
+break the pipeline.
+
+### 2026-09-21 — Align Muse Glimmer testing with Patrick's workflow
+
+Asked to rerun the Muse Glimmer dry-run design at temperature 0, to bring the
+code in line with Patrick's, and to review `agent/WEAKNESSES.md` against his
+supervisor's report that Qwen submitted an experiment during a dry run. The
+Codex-launched lifecycle run had been killed when its session closed. That run
+had used `master`, temperature 1.0 and the full lifecycle, including the
+bare-model baseline.
+
+The working tree moved to `dev`, which already contains Patrick's fixes: the
+refusal of tools the model was not offered, the connection retry, one tool
+call per turn and `--enable-thinking`. The Glimmer manifest adopted the
+conventions of his manifests: pinned revision in the served name, request
+logging and a per-model generation annotation. It now accepts H200 and B200
+and allows 66 minutes to start, because a cold load from Ceph measured about
+20 MB/s and outran the old 40-minute window. `agent/model_server.sh` falls
+back to plain `nohup` where `setsid` is missing, which on macOS had left the
+port-forward unstarted. Weakness 1 in `agent/WEAKNESSES.md` now records the
+observed incident, the dispatch half Patrick fixed, and the still-open
+workspace-level dry-run refusal. The run itself follows Patrick's pattern:
+the already-loading server is reused, and `bexhoma agent design` runs alone
+with `--dry-run`.
+
+The first server went idle and shut itself down during a VPN outage, so a
+fresh one was started from the aligned manifest. The design then ran at
+temperature 0, which the server's request log confirms. It completed in 13
+turns: the catalog, the environment and every handbook section were read, and
+one design was written and passed validation on the first attempt. The
+model never tried to call `submit`. The investigation is
+`20260921T214159809848-sf10-meta-models-Muse-Glimmer-30B` under the result
+folder's `agent/` directory. The server was taken down afterwards.
+
+### 2026-09-21 — Record material weaknesses and design with Muse Glimmer
+
+Asked to retain only the weaknesses that materially affect the current agent,
+leave their repairs for later, and start a new dry-run design using Meta Muse
+Glimmer for the PostgreSQL-versus-pg_duckdb aggregation question. The requested
+run allows ten validator attempts, three later follow-ups, 65536 generated
+tokens per turn, and recorded reasoning; dry-run mode ends after a validated
+design and does not execute the benchmark.
+
+The five-item backlog is `agent/WEAKNESSES.md`. A Muse-specific server manifest
+was added at `agent/k8s/vllm-muse-glimmer-30b.yml`. Muse Glimmer always uses its
+thinking channel; the server's reasoning parser exposes that channel to the
+existing trajectory and reasoning-trace writer. The launch outcome and final
+investigation path are recorded with the resulting run artifacts rather than
+predicted here.
+
+### 2026-09-21 — Explain the current agent and assess weaknesses and Qwen dependence
+
+Requested a comprehensive artifact describing how the current agent works,
+followed by event, entity relationship, and other useful functionality graphs,
+then an assessment of weaknesses and whether the system was fine-tuned toward
+Qwen. Delivered an offline HTML report, editable Markdown and diagram sources,
+13 rendered SVG diagrams, safe audit probes, and an explicit verification
+record under `agent/analysis/current-agent-2026-09-21/`.
+
+The review distinguishes implemented behavior from intended boundaries,
+reproduces several enforcement and recovery gaps without live model or cluster
+calls, and finds no project-specific weight-training pipeline in the reviewed
+implementation. Qwen serving specialization and adaptations made during other
+models' runs are described separately. The focused maintained tests did not
+all pass; the verification record reports the counts and fixture issues.
+No agent runtime changes or benchmark launches were part of this request.
 
 ### 2026-09-21 — Why a `--dry-run` lifecycle still reached the cluster
 

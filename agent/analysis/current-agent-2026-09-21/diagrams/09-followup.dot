@@ -1,0 +1,29 @@
+digraph G {
+graph [bgcolor="transparent", pad="0.25", nodesep="0.38", ranksep="0.48", fontname="Helvetica", fontsize=13, compound=true];
+node [shape=box, style="rounded,filled", fillcolor="#F2F6FD", color="#8196B4", fontcolor="#172B49", fontname="Helvetica", fontsize=12, margin="0.16,0.11", penwidth=1.1];
+edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, arrowsize=0.7];
+
+    decision [label="Accepted follow_up decision"];
+    action [label="action = followup?", shape=diamond];
+    budget [label="Remaining budget > 0?", shape=diamond];
+    finish [label="Finish current result\nUnexecuted proposal may be described", shape=oval, fillcolor="#E1F1E6"];
+    context [label="Fresh authoring\nTask + interpretation + decision\nParent spec + ancestor summaries", fillcolor="#DEF3F4"];
+    docs [label="Reread design inputs\nWrite new draft"];
+    lineage [label="Exact parent code?\nExecution settings changed?\nApproved query subset matched?", shape=diamond, fillcolor="#FFF0D4"];
+    valid [label="Shared validation passes?", shape=diamond, fillcolor="#FFF0D4"];
+    repair [label="Return errors and repair\nWithin authoring attempts"];
+    submit [label="Submit new experiment\nDecrease budget by successful submissions", fillcolor="#E1F1E6"];
+    incomplete [label="No successful follow-up\nIncomplete authoring phase", fillcolor="#FBE6E4"];
+    next [label="Wait and interpret new experiment\nSame investigation, new result evidence"];
+    decision -> action;
+    action -> finish [label="no"]; action -> budget [label="yes"];
+    budget -> finish [label="no"]; budget -> context [label="yes"];
+    context -> docs -> lineage;
+    lineage -> repair [label="no"]; lineage -> valid [label="yes"];
+    valid -> repair [label="no"]; repair -> docs [label="budget remains"];
+    repair -> incomplete [label="spent"];
+    valid -> submit [label="yes, live mode"];
+    valid -> finish [label="yes, dry run"];
+    submit -> next -> decision;
+    
+}

@@ -1,0 +1,28 @@
+digraph G {
+graph [bgcolor="transparent", pad="0.25", nodesep="0.38", ranksep="0.48", fontname="Helvetica", fontsize=13, compound=true];
+node [shape=box, style="rounded,filled", fillcolor="#F2F6FD", color="#8196B4", fontcolor="#172B49", fontname="Helvetica", fontsize=12, margin="0.16,0.11", penwidth=1.1];
+edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, arrowsize=0.7];
+
+    rankdir=TB;
+    laptop [label="Local operator\nLifecycle + local subprocesses", fillcolor="#E6EEFF"];
+    controller [label="Alternative: Kubernetes controller Job\nService account + durable state\nTemplate image/namespace require deployment values", fillcolor="#EEE7FA"];
+    harness [label="Harness phase CLI\nDesign / interpret / baseline"];
+    switch [label="Bundled server switch\nModel ON for reasoning\nModel OFF while waiting for benchmark", fillcolor="#EEE7FA"];
+    external [label="External model endpoint\nAlready running; no switching", fillcolor="#DEF3F4"];
+    service [label="bexhoma-agent-model Service\nShared name within namespace"];
+    gpu [label="Qwen vLLM Pod\n1 H100/H200-compatible GPU\nExcludes benchmark node", fillcolor="#DEF3F4"];
+    weights [label="150 GiB persistent weights volume\nRetained across shutdown", shape=cylinder];
+    watchdog [label="Idle watchdog\n60 s polls; 1200 s idle threshold"];
+    executor [label="Detached BeXhoma process", fillcolor="#E1F1E6"];
+    sut [label="Kubernetes workloads\nSUT + loader + benchmarker\nDashboard, queue, monitoring", fillcolor="#E1F1E6"];
+    state [label="Persistent investigation state\nStatus, snapshots, events, results", shape=cylinder];
+    laptop -> harness; controller -> harness;
+    laptop -> switch; controller -> switch;
+    harness -> service [label="bundled API"]; harness -> external [label="external API"];
+    switch -> gpu [label="create/delete"]; service -> gpu;
+    weights -> gpu [label="load checkpoint"]; watchdog -> gpu [label="stop on idle"];
+    harness -> executor [label="submit"]; executor -> sut;
+    sut -> state [label="evidence / report"]; harness -> state [label="events / snapshots"];
+    state -> controller [label="restart reconciliation", style=dashed];
+    
+}
