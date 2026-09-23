@@ -145,6 +145,7 @@ quoting any number, not after:
 |---|---|---|
 | `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
+| `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured — dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
 | `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
 | `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `benchmarking.md`'s Per Phase table |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
