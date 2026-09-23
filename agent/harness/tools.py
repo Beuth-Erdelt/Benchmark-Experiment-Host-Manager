@@ -60,6 +60,8 @@ _SPEC_SUFFIXES = (".yml", ".yaml")
 #: The run itself continues long after this.
 _CODE_WAIT_SECONDS = 120
 _RUN_LOCK = ".bexhoma-agent.lock"
+#: Status-file states of an experiment that has not reached a terminal one.
+_UNFINISHED_STATES = ("reserved", "starting", "running")
 _SUBMITTED_SPEC = "submitted-experiment.yml"
 #: Archived beside the phase's own trajectory whenever validation fully
 #: passes, so a dry run still leaves the design behind even though it is
@@ -559,7 +561,20 @@ class Workspace:
         lock_path = self.results_root / _RUN_LOCK
         parallel = not _runlock.try_claim(lock_path, os.getpid())
         if parallel and not self.allow_parallel_runs:
-            raise ToolError("submit refused: another agent-started experiment is still running")
+            # The lock file outlives the process that wrote it. A controller
+            # restarted into a new container gets a fresh PID namespace, where
+            # the recorded PID may belong to an unrelated live process, and the
+            # lock would then never look free again. The status files, refreshed
+            # from the result folders, say whether an agent-started experiment
+            # is genuinely unfinished; with none, the lock is stale.
+            if self._unfinished_experiments():
+                raise ToolError(
+                    "submit refused: another agent-started experiment is still running")
+            _runlock.release(lock_path)
+            if not _runlock.try_claim(lock_path, os.getpid()):
+                raise ToolError(
+                    "submit refused: another agent-started experiment is still running")
+            parallel = False
         # The operator asked for this run to go ahead anyway. The lock stays
         # with its current holder; this run simply does not wait for it, and
         # says so in its result so the trajectory records the choice.
@@ -758,6 +773,16 @@ class Workspace:
             "log": log,
             "provenance": provenance,
         }, indent=2), encoding="utf-8")
+
+    def _unfinished_experiments(self) -> list[dict[str, Any]]:
+        """Return submitted experiments that have not reached a terminal state.
+
+        :return: Status entries still reserved, starting or running, as
+            :meth:`list_results` derives them from the result folders.
+        :rtype: list[dict[str, Any]]
+        """
+        return [entry for entry in self.list_results()["experiments"]
+                if entry.get("state") in _UNFINISHED_STATES]
 
     def list_results(self) -> dict[str, Any]:
         """List experiments submitted from this workspace, newest first.
@@ -1013,6 +1038,118 @@ def _error_coverage(text: str) -> tuple[set[int], dict[str, set[int]], int]:
                 errors.setdefault(configuration, set()).add(query_number)
                 total += count
     return set(query_columns.values()), errors, total
+
+
+def _query_evidence(text: str) -> dict[str, Any]:
+    """Summarize complete query rows by configuration and actual concurrency."""
+    evidence: dict[str, Any] = {
+        "source_section": "### Latency of Timer Execution [ms]",
+        "queries": [], "omitted_queries": [],
+        "latency_by_context": [], "failures": [],
+        "reason": "Per-query evidence is unavailable without complete phase and latency tables.",
+        "aggregation": (
+            "Arithmetic mean of connection timings within each phase, then equal-weight "
+            "mean across repetitions at the same configuration and concurrency. "
+            "Min/max describe phase means, not confidence intervals. These execution "
+            "timings are not the report's aggregate Geo Times."
+        ),
+        "scope": (
+            "Only the listed queries and observed settings are summarized. Check "
+            "query-specific reversals before generalizing an aggregate ranking. "
+            "Successful timings do not establish that restarts were harmless or "
+            "that missing queries would have the same ranking."
+        ),
+    }
+    phase_table = _markdown_table(text, "#### Per Phase")
+    if phase_table is None or not {"phase", "pod_count"}.issubset(phase_table[0]):
+        return evidence
+    headers, rows = phase_table
+    phases = {}
+    for row in rows:
+        phase = _plain_markdown_cell(row[headers.index("phase")])
+        try:
+            concurrency = int(row[headers.index("pod_count")])
+        except ValueError:
+            return evidence
+        if concurrency <= 0 or len(phase.rsplit("-", 2)) != 3:
+            return evidence
+        phases[phase] = (phase.rsplit("-", 2)[0], concurrency)
+
+    # Keep failures localized; configuration-wide coverage cannot say which load failed.
+    error_headers, error_rows = _markdown_table(text, "### Errors (failed queries)") or ([], [])
+    failures: dict[tuple[str, int], float] = {}
+    for row in error_rows:
+        phase = _plain_markdown_cell(row[0]).rsplit("-", 2)[0]
+        for header, cell in zip(error_headers[1:], row[1:]):
+            query = _query_number(header)
+            if query is None:
+                continue
+            try:
+                count = float(cell)
+            except ValueError:
+                continue
+            if math.isfinite(count) and count > 0:
+                key = (phase, query)
+                failures[key] = failures.get(key, 0) + count
+    evidence["failures"] = [
+        {"phase": phase, "configuration": phases.get(phase, (None, None))[0],
+         "concurrency": phases.get(phase, (None, None))[1],
+         "query": query, "errors": count}
+        for (phase, query), count in sorted(failures.items())
+    ]
+
+    latency_table = _markdown_table(text, evidence["source_section"])
+    if latency_table is None:
+        return evidence
+    headers, rows = latency_table
+    columns: dict[str, list[int]] = {}
+    for position, header in enumerate(headers[1:], 1):
+        phase = _plain_markdown_cell(header).rsplit("-", 2)[0]
+        if phase not in phases:
+            return evidence
+        columns.setdefault(phase, []).append(position)
+    if set(columns) != set(phases) or any(
+        len(columns[phase]) != context[1] for phase, context in phases.items()
+    ):
+        return evidence
+
+    contexts: dict[tuple[str, int], dict[str, Any]] = {}
+    failed_queries = {query for _, query in failures}
+    for row in rows:
+        query = _query_number(row[0])
+        if query is None:
+            continue
+        try:
+            values = [float(cell) for cell in row[1:]]
+        except ValueError:
+            values = []
+        if query in failed_queries or not values or any(
+            not math.isfinite(value) or value <= 0 for value in values
+        ):
+            evidence["omitted_queries"].append(query)
+            continue
+        evidence["queries"].append(query)
+        repetitions: dict[tuple[str, int], list[float]] = {}
+        for phase, positions in columns.items():
+            repetitions.setdefault(phases[phase], []).append(
+                statistics.mean(values[position - 1] for position in positions)
+            )
+        for context, means in repetitions.items():
+            contexts.setdefault(context, {})[str(query)] = {
+                "mean_ms": round(statistics.mean(means), 2),
+                "min_ms": round(min(means), 2), "max_ms": round(max(means), 2),
+                "repetitions": len(means),
+            }
+    evidence["latency_by_context"] = [
+        {"configuration": configuration, "concurrency": concurrency, "queries": queries}
+        for (configuration, concurrency), queries in sorted(contexts.items())
+    ]
+    evidence["reason"] = (
+        "Each summarized query has positive finite timings for every reported connection "
+        "and no recorded query error. Omitted rows are not evidence of success. "
+        "Failure locations come from the Errors table; other validity checks still apply."
+    )
+    return evidence
 
 
 def _numeric_quantity(value: Any, factor: str) -> float | None:
@@ -1590,8 +1727,11 @@ def _assess_comparison_quality(
             set(characterization["unsupported_factors"]) | invalid_factors
         )
         characterization["unusable_reason"] = (
-            "planned queries failed, so aggregate throughput does not represent "
-            "the same completed work across factor levels"
+            "Planned queries failed; aggregate factor claims are withheld. Inspect "
+            "query_evidence for the successful subset and the actual failure phases. "
+            "Do not infer full-workload performance from subset timings or assume "
+            "that every phase failed. Empty typed claims do not license the same "
+            "unsupported claims in prose."
         )
     has_query_comparison = bool(planned_queries or configurations)
     if (
@@ -1633,7 +1773,13 @@ def _assess_comparison_quality(
         "common_successful_queries": sorted(common_queries),
         "unresolved_queries": sorted({query for values in errors.values() for query in values}),
         "systems": coverage,
+        "coverage_scope": (
+            "Configuration coverage marks a query incomplete if any recorded execution "
+            "failed. It does not mean that query failed at every concurrency or "
+            "repetition. See query_evidence.failures for the observed locations."
+        ),
         "error_count": error_count,
+        "query_evidence": _query_evidence(text),
         "whole_workload_throughput": throughput_status,
         "whole_workload_throughput_reason": (
             "At least one planned query errored, so wall time and completed-query "

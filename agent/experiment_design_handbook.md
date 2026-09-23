@@ -1,6 +1,6 @@
 # Experiment Design Handbook
 
-    handbook_version: "0.4.0"
+    handbook_version: "0.6.1"
 
 Guidance on how to turn a research question into a sound benchmark experiment.
 Read the `## Navigation` section first; it explains what this document is and
@@ -61,14 +61,16 @@ of the question.
 | M8. Feasibility | every design with a time or resource budget — that is, every design |
 
 When a run has finished and a verdict is being written, a different set carries
-the weight. **M2** governs which factor the numbers may be attributed to, and
-how far a conclusion may reach beyond the levels that were actually run. **M3**
+the weight. **M2** governs which factor the numbers may be attributed to, how
+far a conclusion may reach beyond the levels that were actually run, and which
+explanations of a flat result remain unresolved. **M3**
 governs what a throughput or latency figure means given how load was offered,
 and what has to be stated alongside it for the figure to be interpretable.
 **M5** governs whether a difference between conditions is larger than the
 variation between repetitions of the same one. **M7** governs which quantity is
 quoted, at what scope, and whether combining several numbers into one preserves
-the property being claimed.
+the property being claimed. Its verdict procedure applies these principles to
+the available evidence before a conclusion is written.
 
 A rejection from the validator may cite one of these identifiers as its reason.
 When it does, the chapter it comes from is the one worth re-reading.
@@ -133,7 +135,9 @@ cause, or sweeps a parameter across levels.
 **Questions to answer.** If the result comes out as expected, what else could
 have produced it? Which levels have to be present for the conclusion I want to
 be licensed by the data? Is anything varying between the arms that I have not
-declared — a version, an image, a storage class, an allocation?
+declared — a version, an image, a storage class, an allocation? Can the system
+actually use every level of each factor I vary, or does a setting or the load
+cap its demand below them?
 
 **Related chapters.** M5, because an effect is only visible against its noise;
 M6, because the environment is a factor until it is controlled; M4, because
@@ -174,6 +178,18 @@ differences in data and cached state are the easiest confound to miss.
   might do harm, not only where it should help. An evaluation that can only
   produce good news is selective by construction, and running a subset of a
   standard workload needs a stated reason.
+- **M2.9** Check whether other settings or the offered load could limit the
+  benefit of a resource increase. Before the run, inspect parallelism, pools and
+  concurrent demand. Decide whether the question concerns changing allocation
+  with settings fixed or changing allocation and tuning together. Changing both
+  measures their joint effect unless the design can separate their effects.
+  Afterward, a flat result supports a narrow statement about the tested workload,
+  levels and settings. Low average utilization alone neither proves the resource
+  change was never tested nor explains the result: bursts, individual cores and
+  other limits may matter. State which explanation remains unresolved and choose
+  a follow-up only if distinguishing it would answer the question. This is an
+  application of experimental control and interactions, not a universal
+  utilization threshold; see Jain's [experimental-design chapter](https://www.cse.wustl.edu/~jain/iucee/ftp/k_16ied.pdf).
 
 **Common pitfalls**
 
@@ -188,6 +204,9 @@ differences in data and cached state are the easiest confound to miss.
   nowhere.
 - *The design that cannot lose*, covering only the conditions where the expected
   answer is the likely one.
+- *The unexplained flat result*: a resource sweep reported as general resource
+  independence, or dismissed as never tested, without distinguishing what was
+  observed from the mechanism that might explain it.
 
 ## M3. The load model
 
@@ -456,6 +475,48 @@ mean anything; M5, because a summary without a spread is not a result.
 - *The undefined metric*, most often a throughput figure whose unit of work is
   never stated.
 
+### Procedure before writing a verdict
+
+This procedure is a local application of M2.7, M2.9, M5 and M7.1–M7.5. It is
+proposed guidance for the agent, not a separately validated scientific method.
+Heiser's [discussion of benchmark subsets and missing component results](https://gernot-heiser.org/benchmarking-crimes.html)
+supports limiting subset claims and inspecting the breakdown. Hoefler and
+Belli's [rules on reporting experimental conditions and uncertainty](https://htor.inf.ethz.ch/publications/img/hoefler-scientific-benchmarking.pdf)
+support stating the comparison's conditions and variability. Neither source
+establishes that this particular procedure improves a language model.
+
+1. Restate the original question and the hypothesis that was actually tested.
+   Do not silently strengthen a question about whether an effect changes into a
+   claim that it always increases.
+2. Identify the metric, its unit, the queries it covers and the matched settings.
+   A phase aggregate and an individual query timer are different measurements.
+   If an aggregate's membership is unknown, do not assume that it represents
+   either the full workload or the common successful subset.
+3. Inspect each available query's measurements before generalizing an aggregate
+   ranking. Preserve reversals between queries or settings. State the observed
+   repetition count and spread; streams within one repetition do not create
+   additional independent repetitions.
+4. Locate failures at their observed query, configuration and load. State
+   completion and speed separately. A common successful subset may support a
+   limited comparison, subject to other validity checks. It cannot settle the
+   missing queries, and successful timings alone do not show that a restart was
+   harmless. Missing data do not automatically strengthen the preferred result.
+5. Bound each conclusion by the tested levels and available uncertainty. A
+   descriptive flat series does not establish equivalence, meaning that any
+   difference is smaller than a predeclared practically important margin.
+   Distinguish a measured resource effect from a proposed explanation of it.
+6. Write the verdict and the answer to each question at that same scope. Keep
+   unresolved evidence visible. Choose a discriminating follow-up when useful,
+   or finish with a limited conclusion. An automatic check that declines a
+   comparison is not permission to assert that comparison in prose.
+   Use M8's follow-up procedure before proposing another experiment.
+
+For example, suppose two queries have timings for both systems and a third
+fails at the highest concurrency. The first system's better aggregate does not
+establish that it wins both successful queries. Compare those queries
+separately, report where the third failed, and leave its speed comparison
+unresolved. Do not describe the failure as occurring at every concurrency.
+
 ## M8. Feasibility
 
 **Purpose.** Decide whether this design can actually be run, and where to spend
@@ -495,6 +556,29 @@ cut; M2, because levels are usually the first.
   a single claim.
 - *Budget spent on preparation* rather than on measurement.
 - *Exploration where only one attempt was available.*
+
+### Procedure for a follow-up
+
+This is a local application of M1, M2 and M8. The NIST/SEMATECH handbook
+supports [setting explicit objectives](https://www.itl.nist.gov/div898/handbook/pri/section3/pri31.htm)
+and [selecting a design for those objectives and available resources](https://www.itl.nist.gov/div898/handbook/pri/section3/pri33.htm).
+The procedure below is our adaptation, not a demonstrated language-model result.
+
+1. Name the unresolved question and the competing explanations the follow-up
+   could distinguish. Keep a suspected mechanism separate from a measured one.
+2. State in advance which observations would support or contradict each
+   explanation, and which outcome would leave the question unresolved.
+3. Choose the smallest workload and set of conditions that can answer that
+   question. Justify each added query, factor level and repetition; retain enough
+   repetitions to assess variability. Explain any expansion to the full workload.
+4. State whether the goal is diagnosing the original failure or comparing
+   performance under revised settings. Applying a change equally to both
+   systems supports a comparison under those settings; it does not by itself
+   isolate the original cause. For diagnosis, identify which intervention and
+   measurements distinguish the explanations.
+5. Explain why the proposed change addresses the suspected constraint, estimate
+   its cost, and state what decision the result could change. If it cannot
+   resolve useful uncertainty within the budget, finish with a limited conclusion.
 
 ## Sources
 

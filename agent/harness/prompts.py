@@ -172,7 +172,9 @@ rather than inferring or approximating the count.
   than the workload name: it describes ordered concurrency, CPU, and memory
   sweeps and ranks categorical system comparisons wherever the summary table
   exposes enough structure, once for every throughput and latency metric the
-  table carries.
+  table carries. Its `query_evidence` supplies compact per-query execution timings
+  by configuration and actual concurrency, repetition ranges, and failure
+  locations. Configuration resource allocations are in `systems`.
 - record_interpretation(hypothesis_verdict, validity, comparison_quality,
   result_claims, questions, follow_up) records the scientific verdict separately from the
   mechanical validity checks, whether every explicit part of the user's
@@ -222,6 +224,8 @@ The harness rejects a changed shape, turning level or ranking and returns both
 the computed and the claimed conclusion. Treat factors the assessor lists as
 unsupported as free-prose limitations; do not invent a typed conclusion for
 evidence the report does not expose.
+Removing a rejected typed claim does not make that claim supportable in the
+verdict, question answers, or final prose.
 
 Split the original request into all of its explicit questions. Set each
 question's evidence validity to `supported`, `limited`, or `invalid`. "Partial"

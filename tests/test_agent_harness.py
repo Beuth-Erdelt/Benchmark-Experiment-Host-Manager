@@ -130,6 +130,7 @@ class _Model:
 
     def __init__(self, replies: list[Reply]) -> None:
         self.replies = replies
+        self.extra_body: dict[str, Any] = {}
         self.tool_sets: list[set[str]] = []
         self.messages: list[list[dict[str, Any]]] = []
 
@@ -1357,13 +1358,50 @@ resources:
         self.assertEqual(listing[0]["state"], "finished")
         self.assertEqual(json.loads(status.read_text())["state"], "finished")
 
+    def _hold_run_lock(self, code: str, finished: bool) -> None:
+        """Leave a held run lock behind an experiment, finished or not.
+
+        This test process's own pid is guaranteed to be alive, standing in for
+        the process recorded as holding the lock.
+        """
+        (self.root / "results" / ".bexhoma-agent.lock").write_text(str(os.getpid()))
+        results = self.root / "results" / code
+        results.mkdir(parents=True, exist_ok=True)
+        if finished:
+            (results / "report").mkdir()
+            (results / "report" / "index.md").write_text("finished\n")
+        (self.workspace.status_dir / f"{code}.json").write_text(json.dumps({
+            "code": code, "state": "running", "results": str(results),
+            "pid": os.getpid(),
+        }))
+
     def test_submit_refuses_while_run_lock_is_held(self) -> None:
         self._validate()
-        # This test process's own pid is guaranteed to be alive, standing in
-        # for another agent-started experiment holding the run lock.
-        (self.root / "results" / ".bexhoma-agent.lock").write_text(str(os.getpid()))
+        self._hold_run_lock("41", finished=False)
+
         result = self.workspace.call("submit", {"path": self.path})
+
         self.assertIn("still running", result["error"])
+
+    def test_submit_claims_a_run_lock_whose_experiments_all_finished(self) -> None:
+        """A lock file outlives the container that wrote it, and a restarted
+        controller gets a fresh pid namespace where the recorded pid can match
+        an unrelated live process. A follow-up could then never be submitted,
+        although nothing was running. The result folders decide, not the pid.
+        """
+        self._validate()
+        self._hold_run_lock("41", finished=True)
+        (self.root / "results" / "999").mkdir(parents=True)
+
+        with (
+            mock.patch("agent.harness.tools.subprocess.Popen") as popen,
+            mock.patch.object(Workspace, "_new_code", return_value="999"),
+        ):
+            popen.return_value = mock.Mock(pid=4321, returncode=None)
+            result = self.workspace.call("submit", {"path": self.path})
+
+        self.assertNotIn("error", result)
+        self.assertFalse(result["parallel_with_running_experiment"])
 
     def test_submit_may_be_allowed_alongside_a_running_experiment(self) -> None:
         """Serial is the default; sharing the cluster is a deliberate choice."""
@@ -2763,6 +2801,24 @@ class PhaseTest(unittest.TestCase):
             arguments = agent_module._build_parser().parse_args([])
         self.assertTrue(arguments.enable_thinking)
 
+    def test_extra_body_follows_its_env_var_and_must_be_an_object(self) -> None:
+        """Unset means no extra fields; anything but a JSON object is refused
+        rather than sent to an endpoint in a shape it cannot mean."""
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("AGENT_EXTRA_BODY", None)
+            arguments = agent_module._build_parser().parse_args([])
+        self.assertEqual(agent_module._parse_extra_body(arguments.extra_body), {})
+
+        routing = '{"provider": {"order": ["crusoe"]}}'
+        with mock.patch.dict(os.environ, {"AGENT_EXTRA_BODY": routing}):
+            arguments = agent_module._build_parser().parse_args([])
+        self.assertEqual(agent_module._parse_extra_body(arguments.extra_body),
+                         {"provider": {"order": ["crusoe"]}})
+
+        for text in ('["crusoe"]', "provider=crusoe"):
+            with self.assertRaises(ValueError):
+                agent_module._parse_extra_body(text)
+
     def test_completed_design_labels_investigation_with_scale_and_model(self) -> None:
         """A validated design gains readable metadata without breaking resume."""
         with tempfile.TemporaryDirectory() as directory:
@@ -3545,6 +3601,7 @@ class ChatModelTest(unittest.TestCase):
         model.temperature = 0.0
         model.max_tokens = max_tokens
         model.enable_thinking = False
+        model.extra_body = {}
         model._context_window = None
         model._context_window_asked = False
         model._counted_messages = 0
@@ -3780,6 +3837,30 @@ class ChatModelTest(unittest.TestCase):
         reserved = model._client.chat.completions.create.call_args.kwargs["max_tokens"]
         self.assertLessEqual(reserved, 8000)
 
+    def test_a_reply_ceiling_above_the_whole_window_is_retried_within_it(self) -> None:
+        """A ceiling larger than the window alone is refused in a second phrasing.
+
+        The wording is the BHT LLM API's, which names the window through
+        ``max_model_len`` instead of "maximum context length".
+        """
+        model = self._model(max_tokens=65536)
+        answer = model._client.chat.completions.create.return_value
+        model._client.chat.completions.create.side_effect = [
+            self._bad_request(
+                "max_tokens=65536cannot be greater than "
+                "max_model_len=max_total_tokens=32768. Please request fewer "
+                "output tokens. (parameter=max_tokens, value=65536)"
+            ),
+            answer,
+        ]
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.text, "answer")
+        self.assertEqual(model._context_window, 32768)
+        reserved = model._client.chat.completions.create.call_args.kwargs["max_tokens"]
+        self.assertLessEqual(reserved, 32768)
+
     def test_a_turn_with_no_tool_call_drops_an_empty_tool_calls_list(self) -> None:
         """A stray "tool_calls": [] must not survive into the replayed message.
 
@@ -3834,6 +3915,44 @@ class ChatModelTest(unittest.TestCase):
         self.assertEqual(len(reply.message["tool_calls"]), 1)
         self.assertEqual(reply.message["tool_calls"][0]["id"], "call_1")
 
+    def _reply_with_arguments(self, arguments: str) -> Reply:
+        """Answer one turn with a single read_file call carrying ``arguments``."""
+        model = self._model()
+        call = mock.Mock(id="call_1")
+        call.function.name = "read_file"
+        call.function.arguments = arguments
+        message = model._client.chat.completions.create.return_value.choices[0].message
+        message.tool_calls = [call]
+        message.model_dump.return_value = {
+            "role": "assistant",
+            "tool_calls": [{"id": "call_1", "type": "function",
+                            "function": {"name": "read_file", "arguments": arguments}}],
+        }
+        return model.reply(
+            [{"role": "user", "content": "question"}],
+            tools=[{"type": "function", "function": {"name": "read_file"}}],
+        )
+
+    def test_glued_argument_objects_keep_only_the_first(self) -> None:
+        """Gemma 4 behind OpenRouter glued its parallel calls into one argument
+        string, and replaying it verbatim made the provider refuse every later
+        request ("function.arguments must be valid JSON"). The first object is
+        kept, as the first of several separate calls would be."""
+        reply = self._reply_with_arguments('{"path": "a"}{"path": "b"}')
+
+        self.assertIsNone(reply.tool_calls[0].decode_error)
+        self.assertEqual(reply.tool_calls[0].arguments, {"path": "a"})
+        self.assertEqual(reply.message["tool_calls"][0]["function"]["arguments"],
+                         '{"path": "a"}')
+
+    def test_undecodable_arguments_are_replayed_as_an_empty_object(self) -> None:
+        """The model is told its call failed, and the history it is replayed in
+        stays valid JSON so the next request is not refused as a whole."""
+        reply = self._reply_with_arguments('{"path": ')
+
+        self.assertIsNotNone(reply.tool_calls[0].decode_error)
+        self.assertEqual(reply.message["tool_calls"][0]["function"]["arguments"], "{}")
+
     def test_parallel_tool_calls_is_sent_false_whenever_tools_are_offered(self) -> None:
         """A best-effort hint some servers honour at generation time; harmless
         either way since the reply is trimmed to one call regardless."""
@@ -3877,6 +3996,22 @@ class ChatModelTest(unittest.TestCase):
         self.assertEqual(
             request["extra_body"], {"chat_template_kwargs": {"enable_thinking": True}}
         )
+
+    def test_extra_body_reaches_every_request_beside_the_thinking_switch(self) -> None:
+        """OpenRouter's provider routing travels in the body, and turning on
+        thinking must neither drop it nor be stored back into it."""
+        model = self._model()
+        model.extra_body = {"provider": {"quantizations": ["bf16"]}}
+        model.enable_thinking = True
+
+        model.reply([{"role": "user", "content": "question"}])
+
+        request = model._client.chat.completions.create.call_args.kwargs
+        self.assertEqual(request["extra_body"], {
+            "provider": {"quantizations": ["bf16"]},
+            "chat_template_kwargs": {"enable_thinking": True},
+        })
+        self.assertEqual(model.extra_body, {"provider": {"quantizations": ["bf16"]}})
 
     def test_a_named_window_with_no_room_left_is_reported_not_crashed(self) -> None:
         """The refusal must surface as the recorded stop reason, not an uncaught 400."""
