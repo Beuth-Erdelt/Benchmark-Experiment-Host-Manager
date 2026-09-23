@@ -147,6 +147,14 @@ straightforward turn with none. It is off unless set because `ChatModel` is
 generic to any OpenAI-compatible endpoint, and a stricter one (the OpenAI or
 Mistral blocks in `.env.example`) could reject an unrecognised field.
 
+`AGENT_EXTRA_BODY` (or `--extra-body`) is a JSON object added to every request
+body, for fields an endpoint defines beyond the OpenAI API. OpenRouter is the
+case it was added for: its `provider` field pins which provider and precision
+serve a request (the Gemma 4 block in `.env.example` pins one BF16 provider),
+and its `reasoning` field turns on thinking, which OpenRouter honours where it
+ignores `chat_template_kwargs`. The object is recorded in each phase's `meta` event, so
+a trajectory shows which routing produced it.
+
 One more setting decides who owns the endpoint. `AGENT_MODEL_SERVER=bundled`,
 the default, means the lifecycle wrapper below starts and stops the vLLM server
 around every phase. `AGENT_MODEL_SERVER=external` means the endpoint is already

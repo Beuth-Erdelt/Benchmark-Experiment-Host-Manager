@@ -133,9 +133,16 @@ different server without editing anything.
 
 `.env.example` carries a ready block for each backend in use: the bundled vLLM
 server reached through a local port forward, the same server reached by its
-in-cluster service name, a local Ollama, OpenAI, and Mistral. Ollama and Mistral
-serve the same protocol under a `/v1` path, so nothing but these three values
-changes.
+in-cluster service name, a local Ollama, OpenAI, Mistral, and the university's
+BHT LLM API. Ollama, Mistral and the BHT API serve the same protocol under a
+`/v1` path, so nothing but these three values changes. The BHT API needs no
+cluster at all. It serves three tiers under the aliases `bht/small`,
+`bht/medium` and `bht/large`, and the alias is what goes into `AGENT_MODEL`. Its
+block notes each tier's context window, because the medium tier's leaves little
+room for a reply late in a run. Each tier also allows a key only 100,000 tokens
+a day, prompt and reply counted together, while a single design phase has used
+between 280,000 and 640,000. Without a raised quota the BHT API is therefore
+suited to short tests rather than a full investigation.
 
 Two behaviours differ once you leave the self-hosted server. First, the agent
 resolves the configured model name against the endpoint's model list: an
@@ -455,7 +462,9 @@ The controller authenticates as its own service account, so it does not depend
 on a workstation's expiring login, and its write authority is limited to the one
 namespace. The Job's environment block is where an in-cluster run picks its
 model server (`AGENT_MODEL_SERVER`) and its handbook (`AGENT_METHOD`), exactly as
-`.env` does locally. The language model still receives only the catalog,
+`.env` does locally. `AGENT_FOLLOWUPS`, `AGENT_ATTEMPTS` and `AGENT_MAX_TOKENS`
+set the follow-up budget, the validation attempts per design and the per-reply
+token ceiling; the last two keep the lifecycle's own defaults when left unset. The language model still receives only the catalog,
 environment, result contract, and phase tools — never Kubernetes or terminal
 access.
 

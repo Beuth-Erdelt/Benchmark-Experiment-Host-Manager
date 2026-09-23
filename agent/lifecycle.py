@@ -55,6 +55,10 @@ _REASON_CHARS = 400
 #: Validation calls passed to each design and follow-up authoring phase.
 _DEFAULT_ATTEMPTS = 3
 
+#: Times an interpretation whose follow-up was validated but not submitted is
+#: repeated before the investigation is given up as unsubmittable.
+_FOLLOWUP_SUBMIT_ATTEMPTS = 2
+
 #: Subdirectory of Bexhoma's result folder that holds investigation
 #: trajectories when ``--trajectories`` is not given, matching the agent CLI's
 #: own default.
@@ -198,6 +202,7 @@ class AgentLifecycle:
                 current = resume.resolve()
                 self._read_phase_state(current)
 
+            refused_followups = 0
             while True:
                 phase, outcome = self._read_phase_state(current)
                 code = outcome.get("code")
@@ -208,11 +213,31 @@ class AgentLifecycle:
                     report = self._wait_for_report(str(code))
                     print(f"benchmark {code} finished: {report}", flush=True)
                     self._start_server()
+                    refused_followups = 0
                     current = self._invoke_agent("interpret", source=current)
                     continue
 
                 if self._is_final(phase, outcome):
                     return current
+                # An interpretation that validated a follow-up but could not
+                # submit it met a cluster that refused the submission, not a
+                # model that failed to do its work. Repeating the phase is what
+                # gets the experiment submitted; the count bounds it, so a
+                # submission refused every time ends the run rather than looping.
+                if (
+                    phase == "interpret"
+                    and outcome.get("validated_path")
+                    and refused_followups < _FOLLOWUP_SUBMIT_ATTEMPTS
+                ):
+                    refused_followups += 1
+                    print(
+                        f"the interpretation authored a follow-up it could not "
+                        f"submit; retrying that phase "
+                        f"({refused_followups} of {_FOLLOWUP_SUBMIT_ATTEMPTS})",
+                        flush=True,
+                    )
+                    current = self._invoke_agent("interpret", source=current)
+                    continue
                 raise LifecycleError(
                     f"agent {phase} phase produced neither a submitted benchmark "
                     "nor a complete final verdict"

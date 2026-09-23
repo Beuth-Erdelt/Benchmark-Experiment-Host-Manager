@@ -103,7 +103,13 @@ up() {
     if [[ "$BASE_URL" == http://localhost:* ]] \
         && ! curl -sf --max-time 3 "$BASE_URL/models" >/dev/null; then
         pkill -f "port-forward (pod/$POD|svc/$SVC)" 2>/dev/null || true
-        setsid nohup kubectl --context "$CONTEXT" --namespace "$NAMESPACE" port-forward \
+        # macOS ships no setsid. Without this fallback the forward never
+        # starts there, and the wait below times out on a server that is up.
+        detach=""
+        if command -v setsid >/dev/null 2>&1; then
+            detach="setsid"
+        fi
+        $detach nohup kubectl --context "$CONTEXT" --namespace "$NAMESPACE" port-forward \
             "svc/$SVC" "$PORT:80" >/tmp/vllm-portforward.log 2>&1 &
     fi
     deadline=$((SECONDS + START_TIMEOUT))

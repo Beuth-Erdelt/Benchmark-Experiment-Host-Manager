@@ -24,6 +24,7 @@ from agent.lifecycle import (
     _install_signal_handlers,
     _parser,
 )
+from agent import lifecycle_controller as controller_module
 from agent.lifecycle_controller import (
     _events,
     _latest_resumable,
@@ -318,6 +319,35 @@ class AgentLifecycleTest(unittest.TestCase):
                 configuration["users"][0]["user"]["tokenFile"],
                 str(account / "token"),
             )
+
+    def test_controller_forwards_attempts_and_max_tokens_only_when_set(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "input").mkdir()
+            (root / "input" / "task.txt").write_text("question\n", encoding="utf-8")
+            base_environment = {
+                "AGENT_ROOT": str(root), "AGENT_STATE_ROOT": str(root / "state"),
+                "AGENT_INPUT_DIRECTORY": str(root / "input"),
+                "AGENT_LIFECYCLE_ID": "run", "POD_NAMESPACE": "research",
+                "KUBERNETES_SERVICE_HOST": "10.0.0.1", "AGENT_MODEL": "model",
+            }
+
+            def command_for(extra: dict[str, str]) -> list[str]:
+                with mock.patch.dict(os.environ, {**base_environment, **extra}, clear=True), \
+                        mock.patch.object(controller_module, "_write_in_cluster_kubeconfig"), \
+                        mock.patch.object(controller_module, "_write_runtime_cluster_config"), \
+                        mock.patch.object(controller_module, "_refresh_environment"), \
+                        mock.patch.object(controller_module.os, "execv") as execv:
+                    controller_module.main()
+                return execv.call_args.args[1]
+
+            configured = command_for({"AGENT_ATTEMPTS": "10", "AGENT_MAX_TOKENS": "65536"})
+            self.assertEqual(configured[configured.index("--attempts") + 1], "10")
+            self.assertEqual(configured[configured.index("--max-tokens") + 1], "65536")
+
+            defaulted = command_for({})
+            self.assertNotIn("--attempts", defaulted)
+            self.assertNotIn("--max-tokens", defaulted)
 
     def test_controller_injects_namespace_context_and_result_root(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -754,6 +784,48 @@ probe_activity() {{
         self.assertEqual(
             self.server.actions, ["up", "down", "up", "down", "up", "down"])
         self.assertEqual(lifecycle.invocations[-1], ("interpret", design))
+
+    def test_an_authored_followup_that_was_not_submitted_is_retried(self) -> None:
+        """A validated follow-up whose submission the cluster refused -- a stale
+        run lock did exactly this on 2026-09-22 -- must be attempted again
+        rather than ending the investigation with no verdict."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        refused = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            validated_path="inbox/followup.yml", summary="could not submit")
+        submitted = _trajectory(
+            self.trajectories / "3", "interpret", code="102",
+            summary="follow-up submitted", phase_complete=True)
+        final = _trajectory(
+            self.trajectories / "4", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        self._report("101")
+        self._report("102")
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server,
+                               runs=[design, refused, submitted, final])
+
+        lifecycle.run("question")
+
+        self.assertEqual([phase for phase, _ in lifecycle.invocations],
+                         ["design", "interpret", "interpret", "interpret"])
+
+    def test_a_followup_refused_again_and_again_ends_the_run(self) -> None:
+        """The retry is bounded, so a permanently refused follow-up reports a
+        failure instead of looping."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        refusals = [
+            _trajectory(self.trajectories / str(index), "interpret", code=None,
+                        validated_path="inbox/followup.yml", summary="could not submit")
+            for index in range(2, 6)
+        ]
+        self._report("101")
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server,
+                               runs=[design, *refusals])
+
+        with self.assertRaises(lifecycle_module.LifecycleError):
+            lifecycle.run("question")
 
     def test_resume_does_not_start_model_before_waiting_for_active_benchmark(self) -> None:
         design = _trajectory(

@@ -34,6 +34,11 @@ _DEFAULT_ROOT = Path("/opt/bexhoma")
 _DEFAULT_STATE_ROOT = Path("/state")
 _DEFAULT_INPUT_DIRECTORY = Path("/input")
 _RUN_LOCK = ".agent-run.lock"
+#: Lifecycle flags a Job may set through its environment block.
+_OPTIONAL_LIFECYCLE_FLAGS = (
+    ("--attempts", "AGENT_ATTEMPTS"),
+    ("--max-tokens", "AGENT_MAX_TOKENS"),
+)
 
 
 class ControllerError(RuntimeError):
@@ -342,6 +347,11 @@ def main() -> int:
         "--environment", str(environment),
         "--followups", os.environ.get("AGENT_FOLLOWUPS", "1"),
     ]
+    # Forwarded only when the Job sets them, so the defaults stay owned by
+    # agent.lifecycle instead of being duplicated here.
+    for flag, variable in _OPTIONAL_LIFECYCLE_FLAGS:
+        if os.environ.get(variable, "").strip():
+            command.extend([flag, os.environ[variable].strip()])
     resumable = _latest_resumable(trajectories, statuses)
     if resumable is not None:
         _resume_benchmark_orchestrator(resumable, statuses, results, root)

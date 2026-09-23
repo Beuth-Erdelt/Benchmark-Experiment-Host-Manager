@@ -670,7 +670,8 @@ def run_baseline(
                       harness=_harness_revision(),
                       params={"base_url": model.base_url,
                               "temperature": model.temperature,
-                              "max_tokens": model.max_tokens},
+                              "max_tokens": model.max_tokens,
+                              "extra_body": model.extra_body},
                       catalog_sha256=None, environment_sha256=None,
                       environment_present=False, method_sha256=None,
                       method_present=False, budgets={})
@@ -751,7 +752,8 @@ def run_design(
                       harness=_harness_revision(),
                       params={"base_url": model.base_url,
                               "temperature": model.temperature,
-                              "max_tokens": model.max_tokens},
+                              "max_tokens": model.max_tokens,
+                              "extra_body": model.extra_body},
                       catalog_sha256=catalog_sha256,
                       environment_sha256=_file_sha256(environment_path),
                       environment_present=environment_path is not None,
@@ -1488,7 +1490,8 @@ def run_interpret(
                       harness=_harness_revision(),
                       params={"base_url": model.base_url,
                               "temperature": model.temperature,
-                              "max_tokens": model.max_tokens},
+                              "max_tokens": model.max_tokens,
+                              "extra_body": model.extra_body},
                       report=report_path,
                       catalog_sha256=_file_sha256(catalog_path),
                       environment_sha256=_file_sha256(environment_path),
@@ -1671,6 +1674,22 @@ def _env_flag(name: str) -> bool:
     return value.strip().lower() not in ("0", "false", "no", "off")
 
 
+def _parse_extra_body(text: str) -> dict[str, Any]:
+    """Parse the extra request fields given on the command line.
+
+    :param text: A JSON object, or an empty string for none.
+    :return: The fields to add to every request body.
+    :rtype: dict[str, Any]
+    :raises ValueError: When the text is not a JSON object.
+    """
+    if not text.strip():
+        return {}
+    fields = json.loads(text)
+    if not isinstance(fields, dict):
+        raise ValueError(f"--extra-body must be a JSON object, not {type(fields).__name__}")
+    return fields
+
+
 def _build_parser() -> argparse.ArgumentParser:
     """Build the command-line parser.
 
@@ -1729,6 +1748,12 @@ def _build_parser() -> argparse.ArgumentParser:
              "documented switch for a hybrid reasoning model (glm45, qwen3); "
              "off by default since a strict OpenAI-compatible server could "
              "reject the extra field"
+    )
+    parser.add_argument(
+        "--extra-body", default=os.environ.get("AGENT_EXTRA_BODY", ""),
+        help="JSON object added to every request body (default: "
+             "$AGENT_EXTRA_BODY), for fields an endpoint defines beyond the "
+             "OpenAI API, such as OpenRouter's provider routing"
     )
     parser.add_argument("--max-tokens", type=int, default=_DEFAULT_MAX_TOKENS,
                         help="ceiling on tokens generated per turn, thinking included")
@@ -2027,6 +2052,11 @@ def main() -> int:
     if not args.model:
         print("error: no model given; pass --model or set AGENT_MODEL", file=sys.stderr)
         return 2
+    try:
+        extra_body = _parse_extra_body(args.extra_body)
+    except ValueError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
 
     root = Path(args.root).resolve()
     explicit_report = (
@@ -2076,7 +2106,8 @@ def main() -> int:
     model = model_client.ChatModel(model=args.model, base_url=args.base_url,
                                    api_key=args.api_key, temperature=args.temperature,
                                    max_tokens=args.max_tokens,
-                                   enable_thinking=args.enable_thinking)
+                                   enable_thinking=args.enable_thinking,
+                                   extra_body=extra_body)
     try:
         model.resolve_served_model()
     except model_client.ModelNotServed as error:

@@ -55,9 +55,12 @@ _CONTEXT_WINDOW_FIELDS = ("max_model_len", "max_context_length")
 
 #: The context length a server names when it refuses a turn for overrunning its
 #: window. vLLM and the hosted OpenAI-compatible APIs phrase the 400 the same
-#: way: "This model's maximum context length is 131072 tokens."
+#: way: "This model's maximum context length is 131072 tokens." The BHT LLM API
+#: phrases it differently when the reply ceiling alone exceeds the window:
+#: "max_tokens=65536cannot be greater than max_model_len=max_total_tokens=32768."
 _CONTEXT_LIMIT_PATTERN = re.compile(
-    r"maximum context length is (\d+) tokens", re.IGNORECASE
+    r"maximum context length is (\d+) tokens|max_model_len=(?:[a-z_]+=)*(\d+)",
+    re.IGNORECASE,
 )
 #: The prompt size the same 400 reports, across both phrasings seen:
 #: "your prompt contains at least 31073 input tokens" (hosted) and
@@ -158,6 +161,8 @@ class ChatModel:
     :ivar max_tokens: Ceiling on tokens generated per turn.
     :ivar enable_thinking: Whether every request asks the chat template for
         thinking mode via ``chat_template_kwargs``.
+    :ivar extra_body: Fields an endpoint defines beyond the OpenAI API, such as
+        OpenRouter's provider routing, added to every request body.
     """
 
     def __init__(
@@ -169,12 +174,14 @@ class ChatModel:
         max_tokens: int = 16384,
         timeout: float = 600.0,
         enable_thinking: bool = False,
+        extra_body: dict[str, Any] | None = None,
     ) -> None:
         self.model = model
         self.base_url = base_url
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.enable_thinking = enable_thinking
+        self.extra_body = dict(extra_body or {})
         self._client = OpenAI(base_url=base_url, api_key=api_key, timeout=timeout)
         self._context_window: int | None = None
         self._context_window_asked = False
@@ -381,13 +388,19 @@ class ChatModel:
             "temperature": self.temperature,
             "max_tokens": budget,
         }
+        # The OpenAI client forwards fields outside its own API only through
+        # extra_body; a copy, so the thinking switch never leaks into the
+        # configured set.
+        extra_body = dict(self.extra_body)
         if self.enable_thinking:
             # vLLM's documented switch for a hybrid reasoning model's chat
             # template (glm45, qwen3, ...); a template that does not read the
             # kwarg ignores it. Pinned explicitly rather than left to the
             # server's own default so it cannot be silently toggled off by
             # something upstream of this request.
-            request["extra_body"] = {"chat_template_kwargs": {"enable_thinking": True}}
+            extra_body["chat_template_kwargs"] = {"enable_thinking": True}
+        if extra_body:
+            request["extra_body"] = extra_body
         if tools:
             request["tools"] = tools
             # A hint, not a guarantee: some servers filter a completion down to
@@ -424,8 +437,25 @@ class ChatModel:
                 "turn; keeping only the first and dropping the rest",
                 file=sys.stderr, flush=True,
             )
+        parsed_tool_calls = [_parse_tool_call(call) for call in kept_tool_calls]
         if kept_tool_calls:
             replayed["tool_calls"] = (replayed.get("tool_calls") or [])[:1]
+            # A strict server refuses the whole next request when a replayed
+            # call's arguments are not valid JSON, so the history carries what
+            # was actually acted on: the first of several glued objects, or an
+            # empty object for a call that could not be decoded at all. That
+            # call's tool result still carries the decode error, which is what
+            # the model needs to correct itself.
+            raw_arguments = kept_tool_calls[0].function.arguments or "{}"
+            replay_arguments = _replayable_arguments(raw_arguments, parsed_tool_calls[0])
+            if replay_arguments != raw_arguments and replayed["tool_calls"]:
+                if parsed_tool_calls[0].decode_error is None:
+                    print(
+                        "the model's tool call carried several argument objects; "
+                        "keeping only the first",
+                        file=sys.stderr, flush=True,
+                    )
+                replayed["tool_calls"][0]["function"]["arguments"] = replay_arguments
         else:
             replayed.pop("tool_calls", None)
         # Only a string finish reason is meaningful; anything else (a server that
@@ -452,7 +482,7 @@ class ChatModel:
         return Reply(
             text=message.content or "",
             reasoning=reasoning or "",
-            tool_calls=[_parse_tool_call(call) for call in kept_tool_calls],
+            tool_calls=parsed_tool_calls,
             message=replayed,
             usage=usage,
             finish_reason=finish_reason,
@@ -503,7 +533,7 @@ def _named_context_window(error: BadRequestError) -> int | None:
     :rtype: int | None
     """
     match = _CONTEXT_LIMIT_PATTERN.search(_error_message(error))
-    return int(match.group(1)) if match else None
+    return int(match.group(1) or match.group(2)) if match else None
 
 
 def _reported_prompt_tokens(error: BadRequestError) -> int | None:
@@ -527,6 +557,24 @@ def _error_message(error: OpenAIError) -> str:
     return str(getattr(error, "message", "") or error)
 
 
+def _replayable_arguments(raw: str, call: ToolCall) -> str:
+    """Return argument text a strict server accepts when the call is replayed.
+
+    :param raw: The argument string the model produced.
+    :param call: That call as decoded by :func:`_parse_tool_call`.
+    :return: ``raw`` when it is valid JSON, the kept first object when several
+        were glued together, or an empty object when nothing could be decoded.
+    :rtype: str
+    """
+    if call.decode_error is not None:
+        return "{}"
+    try:
+        json.loads(raw)
+    except json.JSONDecodeError:
+        return json.dumps(call.arguments)
+    return raw
+
+
 def _parse_tool_call(call: Any) -> ToolCall:
     """Decode one tool call, keeping a JSON failure as data rather than raising.
 
@@ -537,10 +585,19 @@ def _parse_tool_call(call: Any) -> ToolCall:
     :return: The decoded call.
     :rtype: ToolCall
     """
+    text = call.function.arguments or "{}"
     try:
-        arguments = json.loads(call.function.arguments or "{}")
+        arguments = json.loads(text)
     except json.JSONDecodeError as error:
-        return ToolCall(id=call.id, name=call.function.name, decode_error=str(error))
+        # A server that ignores parallel_tool_calls may glue several calls'
+        # argument objects into one string (Gemma 4 behind OpenRouter did, on
+        # every first design turn). Keep the first object, as reply() keeps
+        # only the first of several separate calls; anything that does not
+        # even start with valid JSON stays a decode error.
+        try:
+            arguments, _ = json.JSONDecoder().raw_decode(text.lstrip())
+        except json.JSONDecodeError:
+            return ToolCall(id=call.id, name=call.function.name, decode_error=str(error))
     if not isinstance(arguments, dict):
         return ToolCall(
             id=call.id,
