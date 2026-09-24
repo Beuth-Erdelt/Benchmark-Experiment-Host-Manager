@@ -824,6 +824,51 @@ def _maximum_sut_limit(
     return max(limits)
 
 
+def _check_placement_free_capacity(
+    environment: dict[str, Any],
+    experiment: dict[str, Any],
+) -> dict[str, str] | None:
+    """Refuse a node pin when the environment records no free capacity for it.
+
+    A descriptor collected without permission to list Pods cluster-wide leaves
+    every node's ``free`` empty, and the remaining figures describe how large a
+    machine is rather than how much of it another tenant has already taken.
+    Pinning against those figures passes validation and then waits for a Pod
+    that the scheduler will never place, so a pin is only accepted where the
+    free capacity behind it is actually known.
+
+    :param environment: Loaded ``environment.yml``.
+    :param experiment: Loaded experiment specification.
+    :return: An environment-stage error, or ``None`` when no pin lacks data.
+    :rtype: dict[str, str] | None
+    """
+    placement = experiment.get("placement") or {}
+    pinned = {
+        component: node for component, node in placement.items()
+        if isinstance(node, str) and node
+    }
+    if not pinned:
+        return None
+
+    nodes = {node["name"]: node for node in environment.get("nodes", [])}
+    blind = sorted(
+        f"placement.{component}='{node}'" for component, node in pinned.items()
+        # An absent node is the shared environment validator's error to report.
+        if node in nodes and not (nodes[node].get("free") or {})
+    )
+    if not blind:
+        return None
+    return _error(
+        f"{', '.join(blind)} pins work to a named node, but environment.yml "
+        "records no free capacity for it, only its total size. Whether the "
+        "node has room right now is therefore unknown, and a pin that does "
+        "not fit waits forever instead of failing. Remove the pin and let the "
+        "scheduler place the work, or supply an environment descriptor whose "
+        "nodes carry free capacity",
+        ENVIRONMENT_STAGE,
+    )
+
+
 def _check_component_placement(
     catalog: dict[str, Any],
     environment: dict[str, Any],
@@ -1071,6 +1116,8 @@ def validate_spec(
         except spec.SpecError as error:
             environment_errors.append(
                 {"stage": ENVIRONMENT_STAGE, "message": str(error)})
+    if blind_pin_error := _check_placement_free_capacity(environment, experiment):
+        environment_errors.append(blind_pin_error)
     if component_error := _check_component_placement(catalog, environment, experiment):
         environment_errors.append(component_error)
 

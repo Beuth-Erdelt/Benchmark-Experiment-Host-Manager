@@ -367,7 +367,11 @@ _ENVIRONMENT_AVAILABLE = (
     "{path} -- the cluster you actually have: which nodes exist, what capacity "
     "each has, and which storage classes are available. Placement and resource "
     "requests must fit it. Nodes that cannot be used are listed separately, with "
-    "a reason, and naming one will be rejected."
+    "a reason, and naming one will be rejected. Leave placement out unless the "
+    "question itself requires a particular node: the cluster is shared, a node "
+    "large enough on paper may already be full, and a pin that does not fit "
+    "waits instead of failing. Pinning is only accepted where the descriptor "
+    "records that node's free capacity."
 )
 
 #: Shown instead when none has been generated yet, so the agent knows placement

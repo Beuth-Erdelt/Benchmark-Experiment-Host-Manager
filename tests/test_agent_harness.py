@@ -690,6 +690,81 @@ resources:
             [value["level"] for value in claim["values"]], [0.5, 2.0]
         )
 
+    def test_rounds_that_measured_nothing_are_left_out_of_the_sweep(self) -> None:
+        """A repetition that did no work must not flatten the levels it joins."""
+        report = self.root / "results" / "dead-run" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 0 |
+| postgresql-1-1-2 | 1 | 2 | 0 |
+| postgresql-1-1-3 | 1 | 4 | nan |
+| postgresql-1-2-1 | 2 | 1 | 100 |
+| postgresql-1-2-2 | 2 | 2 | 200 |
+| postgresql-1-2-3 | 2 | 4 | 120 |
+| postgresql-1-3-1 | 3 | 1 | 104 |
+| postgresql-1-3-2 | 3 | 2 | 210 |
+| postgresql-1-3-3 | 3 | 4 | 110 |
+""")
+        specification = """\
+discriminates: [concurrency]
+workload: {name: any-benchmarker, rounds: [1, 2, 4]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        result = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]
+
+        claim = result["ordered_sweeps"][0]
+        self.assertEqual(
+            (claim["shape"], claim["turning_level"]), ("reverses_beyond_level", 2.0)
+        )
+        self.assertEqual(
+            [value["mean"] for value in claim["values"]], [102.0, 205.0, 115.0]
+        )
+        self.assertEqual(
+            result["excluded_phases"],
+            ["postgresql-1-1-1", "postgresql-1-1-2", "postgresql-1-1-3"],
+        )
+
+    def test_concurrency_levels_count_client_threads_not_pods(self) -> None:
+        """A YCSB pod runs several clients, so its sweep is labelled in clients."""
+        report = self.root / "results" / "threads" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | threads | pod_count | [OVERALL].Throughput(ops/sec) |
+|:--|--:|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 16 | 1 | 1000 |
+| postgresql-1-1-2 | 1 | 32 | 2 | 2000 |
+""")
+        specification = """\
+discriminates: [concurrency]
+workload: {name: ycsb, rounds: [1, 2]}
+benchmarking: {pods: 1, threads: 16}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        claim = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]["ordered_sweeps"][0]
+
+        self.assertEqual(claim["factor_unit"], "clients")
+        self.assertEqual(
+            [value["level"] for value in claim["values"]], [16.0, 32.0]
+        )
+
     def test_assessor_labels_each_configuration_with_its_hardware(self) -> None:
         """Coverage entries name the CPU and memory their configuration ran with."""
         report = self.root / "results" / "labels" / "report" / "benchmarking.md"
@@ -973,10 +1048,12 @@ resources:
                 {
                     "name": "database-node",
                     "allocatable": {"cpu": 64, "memory": "64Gi"},
+                    "free": {"cpu": 64, "memory": "64Gi"},
                 },
                 {
                     "name": "benchmark-node",
                     "allocatable": {"cpu": 128, "memory": "384Gi"},
+                    "free": {"cpu": 128, "memory": "384Gi"},
                 },
             ],
         }
@@ -996,6 +1073,52 @@ resources:
         self.assertIn("4 benchmarker pod(s)", oversized["errors"][0]["message"])
         self.assertIn("512Gi", oversized["errors"][0]["message"])
 
+    def test_a_pin_is_refused_when_the_node_has_no_free_capacity_recorded(self) -> None:
+        """A descriptor that cannot see free capacity must not license a pin."""
+        experiment = yaml.safe_load(_SPEC)
+        experiment["placement"] = {"sut": "database-node"}
+        environment = {
+            "nodes": [
+                {
+                    "name": "database-node",
+                    "allocatable": {"cpu": 64, "memory": "64Gi"},
+                    "free": {},
+                },
+            ],
+        }
+        (self.root / "environment.yml").write_text(yaml.safe_dump(environment))
+        self.workspace.write_file(self.path, yaml.safe_dump(experiment))
+
+        blind = self.workspace.validate(self.path)
+
+        self.assertFalse(blind["valid"])
+        self.assertEqual(blind["errors"][0]["stage"], "environment")
+        self.assertIn("placement.sut='database-node'", blind["errors"][0]["message"])
+        self.assertIn("no free capacity", blind["errors"][0]["message"])
+
+        # The same design without the pin is the way out the error points to.
+        del experiment["placement"]
+        self.workspace.write_file(self.path, yaml.safe_dump(experiment))
+        self.assertTrue(self.workspace.validate(self.path)["valid"])
+
+    def test_a_pin_is_accepted_once_free_capacity_is_known(self) -> None:
+        """Known free capacity is what makes a pin checkable at all."""
+        experiment = yaml.safe_load(_SPEC)
+        experiment["placement"] = {"sut": "database-node"}
+        environment = {
+            "nodes": [
+                {
+                    "name": "database-node",
+                    "allocatable": {"cpu": 64, "memory": "64Gi"},
+                    "free": {"cpu": 32, "memory": "32Gi"},
+                },
+            ],
+        }
+        (self.root / "environment.yml").write_text(yaml.safe_dump(environment))
+        self.workspace.write_file(self.path, yaml.safe_dump(experiment))
+
+        self.assertTrue(self.workspace.validate(self.path)["valid"])
+
     def test_co_located_sut_limits_are_added_to_benchmarker_limits(self) -> None:
         """A shared node must fit resident databases as well as benchmarkers."""
         experiment = yaml.safe_load(_SPEC)
@@ -1008,10 +1131,12 @@ resources:
                 {
                     "name": "shared-node",
                     "allocatable": {"cpu": 128, "memory": "64Gi"},
+                    "free": {"cpu": 128, "memory": "64Gi"},
                 },
                 {
                     "name": "benchmark-node",
                     "allocatable": {"cpu": 128, "memory": "256Gi"},
+                    "free": {"cpu": 128, "memory": "256Gi"},
                 },
             ],
         }

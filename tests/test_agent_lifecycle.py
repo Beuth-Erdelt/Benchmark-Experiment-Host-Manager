@@ -1044,5 +1044,132 @@ probe_activity() {{
         self.assertEqual(commands[0].count("--model"), 1)
 
 
+class UnschedulableBenchmarkTest(unittest.TestCase):
+    """The wait gives up on a benchmark whose Pods the scheduler refuses."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+        self.trajectories = self.root / "trajectories"
+        self.results = self.root / "results"
+        self.status = self.root / "status"
+        self.inbox = self.root / "inbox"
+        for path in (self.trajectories, self.results, self.status, self.inbox):
+            path.mkdir()
+        self.config = LifecycleConfig(
+            root=self.root,
+            trajectories=self.trajectories,
+            results=self.results,
+            status=self.status,
+            inbox=self.inbox,
+            server_script=self.root / "server.sh",
+            poll_seconds=0.001,
+        )
+        self.server = _Server()
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def _waiting_lifecycle(self, refusals: list[list[str] | None]) -> _Lifecycle:
+        """Build a lifecycle whose scheduling checks return `refusals` in turn."""
+        (self.status / "101.json").write_text(
+            json.dumps({"state": "running"}), encoding="utf-8")
+        return _Lifecycle(
+            self.config, ["agent"], self.server, runs=[],
+            sleep=lambda _: None,
+            refused_pods=lambda _code: refusals.pop(0) if refusals else [],
+        )
+
+    def test_a_pod_refused_past_the_grace_period_fails_the_benchmark(self) -> None:
+        refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
+        lifecycle = self._waiting_lifecycle([refusal] * 40)
+
+        with (
+            mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()),
+            self.assertRaisesRegex(LifecycleError, "unschedulable"),
+        ):
+            lifecycle._wait_for_report("101")
+
+        self.assertEqual(lifecycle.cleaned_codes, ["101"])
+
+    def test_a_pod_that_schedules_within_the_grace_period_is_not_failed(self) -> None:
+        report = self.results / "101" / "report" / "index.md"
+        refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
+        # Refused twice, then placed; the report appears on the next poll.
+        lifecycle = self._waiting_lifecycle([refusal, refusal, [], []])
+        polls = []
+
+        def sleep(_seconds: float) -> None:
+            polls.append(1)
+            if len(polls) == 5:
+                report.parent.mkdir(parents=True, exist_ok=True)
+                report.write_text("done", encoding="utf-8")
+
+        lifecycle._sleep = sleep
+        with mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()):
+            self.assertEqual(lifecycle._wait_for_report("101"), report)
+
+        self.assertEqual(lifecycle.cleaned_codes, [])
+
+    def test_an_unreachable_cluster_never_counts_as_a_refusal(self) -> None:
+        report = self.results / "101" / "report" / "index.md"
+        lifecycle = self._waiting_lifecycle([None] * 40)
+        polls = []
+
+        def sleep(_seconds: float) -> None:
+            polls.append(1)
+            if len(polls) == 30:
+                report.parent.mkdir(parents=True, exist_ok=True)
+                report.write_text("done", encoding="utf-8")
+
+        lifecycle._sleep = sleep
+        with mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()):
+            self.assertEqual(lifecycle._wait_for_report("101"), report)
+
+        self.assertEqual(lifecycle.cleaned_codes, [])
+
+    def test_only_this_benchmark_s_refused_pods_are_read(self) -> None:
+        pods = {"items": [
+            {"metadata": {"name": "bexhoma-sut-postgresql-1-101-abc"},
+             "status": {"phase": "Pending", "conditions": [
+                 {"type": "PodScheduled", "status": "False",
+                  "message": "0/28 nodes are available"}]}},
+            {"metadata": {"name": "bexhoma-sut-postgresql-1-999-xyz"},
+             "status": {"phase": "Pending", "conditions": [
+                 {"type": "PodScheduled", "status": "False",
+                  "message": "someone else's problem"}]}},
+            {"metadata": {"name": "bexhoma-sut-postgresql-1-101-run"},
+             "status": {"phase": "Running", "conditions": [
+                 {"type": "PodScheduled", "status": "True"}]}},
+        ]}
+
+        with mock.patch(
+            "agent.lifecycle.subprocess.run",
+            return_value=mock.Mock(returncode=0, stdout=json.dumps(pods)),
+        ):
+            refused = lifecycle_module._refused_pods("101")
+
+        self.assertEqual(len(refused), 1)
+        self.assertIn("101-abc", refused[0])
+
+    def test_a_failing_kubectl_is_reported_as_unknown_not_as_refused(self) -> None:
+        with mock.patch(
+            "agent.lifecycle.subprocess.run",
+            return_value=mock.Mock(returncode=1, stdout=""),
+        ):
+            self.assertIsNone(lifecycle_module._refused_pods("101"))
+
+        with mock.patch("agent.lifecycle.subprocess.run", side_effect=OSError):
+            self.assertIsNone(lifecycle_module._refused_pods("101"))
+
+
+def _clock(step: float = 60.0):
+    """Yield a monotonic clock advancing `step` seconds per reading."""
+    current = 0.0
+    while True:
+        yield current
+        current += step
+
+
 if __name__ == "__main__":
     unittest.main()
