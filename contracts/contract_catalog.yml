@@ -8,8 +8,14 @@
 #   why:          the rationale behind a design choice
 #   when:         the condition under which a rule/field actually applies
 #   out_of_scope: what's explicitly excluded, unsupported, or not covered
+#
+# systems.<name>.engine is purely informative: it describes how that system
+# executes queries and lays out data, to help reason about results. It is
+# not an option -- nothing in it can be selected or overridden, the resolver
+# never reads it, and an experiment.yml systems[] entry that sets engine: is
+# rejected as an unknown field.
 
-catalog_contract_version: "1.5.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.6.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -259,15 +265,32 @@ experiment_schema:
             SutConfiguration.set_experiment(indexing=...) -- not through argv"
     observe:
       type: object
-      why: "monitoring metrics only become reliable after a few scrape
-        intervals have accumulated -- a phase shorter than roughly 2-5
-        minutes can show 0/NaN readings rather than a real signal; keep
-        rounds/query_repeats long enough for the phase to clear this warm-up
-        window if monitoring results matter"
+      when: "only relevant when the hypothesis needs hardware metrics (CPU
+        and memory use, and GPU use where present) or database-internal
+        statistics -- leave all three off otherwise. Readings only become
+        reliable after a few scrape intervals have accumulated: a phase
+        shorter than roughly 2-5 minutes can show 0/NaN readings rather than
+        a real signal, so keep rounds/query_repeats long enough for the phase
+        to clear this warm-up window if monitoring results matter"
       fields:
-        monitoring_sut: {type: bool, semantics: "scrape the system-under-test's own metrics"}
-        monitoring_cluster: {type: bool, semantics: "scrape cluster-wide metrics"}
-        monitoring_app: {type: bool, semantics: "scrape benchmarker/loader app metrics"}
+        monitoring_sut: {type: bool, semantics: "collect hardware metrics of
+          the system under test for this experiment"}
+        monitoring_cluster:
+          type: bool
+          semantics: "collect the same hardware metrics from a monitoring
+            installation that covers every node of the cluster; it is shared
+            by all experiments and reused if it is already running"
+          when: "use it instead of monitoring_sut when load outside the SUT
+            matters, e.g. on the benchmarker's node; turning on both is the
+            same as turning on monitoring_cluster alone"
+        monitoring_app:
+          type: bool
+          semantics: "attach the database's own metrics exporter to the SUT
+            and collect its internal statistics, such as connections, buffer
+            cache hits and lock waits"
+          when: "only takes effect together with monitoring_sut or
+            monitoring_cluster, and only for systems that define an exporter
+            (PostgreSQL and PgDuckDB in this catalog)"
     placement:
       type: object
       semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"
@@ -462,6 +485,15 @@ workloads:
         support: "only honored by some DBMS loaders (e.g. MySQL); ignored by
           others. Prefer pods over threads at the current state -- use
           threads=1 and scale via pods instead"
+      timeout_minutes:
+        type: int
+        min: 1
+        required: false
+        why: "deadline for loading one system configuration, after which Bexhoma
+          captures diagnostics and removes the experiment (see
+          experiment_schema.fields.loading.timeout_minutes). Set it to 10 minutes
+          per unit of scaling_factor -- e.g. 10 for SF 1, 1000 for SF 100 -- so a
+          hung loader is stopped while a healthy load of that size still finishes"
       post_load:
         # legality menu (option names + legal values) for tpch; support vs.
         # selection are documented in catalog_concepts.physical_design and
@@ -738,6 +770,10 @@ systems:
     image: postgres:18.3
     arg_style: pg-guc
 
+    engine:
+      execution:   "row-based executor; uses PostgreSQL indexes when selective"
+      data_layout: "heap tables (row store)"
+
     knobs:
       # see catalog_concepts.knob_status for what status: reference-only means
       max_connections:                     {type: int, default: 640}
@@ -798,6 +834,10 @@ systems:
     deployment: bexhoma-deployment-pg-duck
     image: pgduckdb/pgduckdb:18-v1.1.1
     arg_style: pg-guc
+
+    engine:
+      execution:   "vectorized executor; scans heap directly, does not use PostgreSQL indexes"
+      data_layout: "reads the same PostgreSQL heap tables by default"
 
     knobs:
       shared_preload_libraries:

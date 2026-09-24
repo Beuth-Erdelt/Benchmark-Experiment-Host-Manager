@@ -58,6 +58,68 @@ per-experiment *selection* choice made via `loading.post_load` /
 fully capable of all three, and an experiment can still choose not to apply
 them there.
 
+## `observe:` — what is measured, and when it is worth it (2026-09-24)
+
+The three monitoring switches used to carry a one-line `semantics:` each and
+no `when:`, which hid three facts. First, the whole block only matters when
+the hypothesis needs hardware metrics (CPU, memory, GPU) or database-internal
+statistics, so that is now the block's `when:`, together with the warm-up
+note that used to be labelled `why:` although it describes when readings can
+be trusted. Second, `monitoring_app` was described as benchmarker/loader
+metrics, but bexhoma actually attaches the database's own metrics exporter to
+the SUT; and it only takes effect when `monitoring_sut` or
+`monitoring_cluster` is also on, because bexhoma sets up no monitoring at all
+otherwise. Third, `monitoring_cluster` replaces rather than adds to the
+per-experiment collection, so turning on both equals cluster monitoring
+alone.
+
+The new wording deliberately says what is measured, not how it is collected.
+An earlier draft described SUT monitoring as sidecar containers, which is no
+longer how bexhoma collects it; naming the mechanism is what makes such text
+go stale. "Hardware metrics" deliberately omits disk and network, because
+the metric collector bexhoma deploys is configured to skip both.
+
+The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
+fields corrected and conditions added; nothing that validated before is
+rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
+
+## TPC-H loading timeout recommendation (2026-09-24)
+
+`catalog_concepts.experimental_design.bounded_loading` tells an agent to set
+`loading.timeout_minutes` but deliberately gives no universal value, and until
+now nothing said what value suits TPC-H. `workloads.tpch.loading.timeout_minutes`
+now recommends 10 minutes per unit of scaling factor. The rule is a
+maintainer's rule of thumb and is advisory only: validation does not compare
+the timeout against the scaling factor. The entry repeats the schema field's
+`type: int`, `min: 1` and `required: false`, because the agent validator
+merges the workload's loading block over the schema's and lets the workload
+entry win. Without those keys the TPC-H entry would silently switch off the
+integer and minimum checks.
+
+Together with the `engine:` description below, this moved the version
+1.5.0 -> 1.5.1, with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep. Neither
+change alters what validates, but a new version makes any agent or cache keyed
+on the version string re-read the catalog.
+
+## `engine:` — description, not option (2026-09-24)
+
+Each system may carry an `engine:` block (`execution`, `data_layout`) that
+describes in plain words how it runs queries and stores data — for
+example, that PgDuckDB executes vectorized and ignores PostgreSQL indexes
+while still reading the same heap tables. It exists so that whoever
+interprets a result can explain a difference between systems, not so that
+an experiment can choose anything. Unlike `physical_design:`, which states a
+capability that `post_load` then selects from, `engine:` has no selection
+counterpart at all.
+
+Consequently it plays no part in validation or resolution. `bexhoma/spec.py`
+never reads it, and it does not reach the generated command line. On the
+`experiment.yml` side, the `systems[]` item fields are only `name`,
+`profile`, `override` and `post_load`, so an entry that sets `engine:` is
+rejected as an unknown field by the agent's validator. Because `engine:` is
+not one of the keys `extends:` merges, a system that extends another falls
+back to the base's description unless it declares its own — PgDuckDB does.
+
 ## Storage class mechanics (implementation detail)
 
 `resources.storage_class` maps, underneath bexhoma, to

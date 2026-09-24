@@ -849,6 +849,18 @@ resources:
         self.assertFalse(result["valid"])
         self.assertIn("unknown field", result["errors"][0]["message"])
 
+    def test_catalog_engine_description_is_not_an_experiment_option(self) -> None:
+        self.workspace.write_file(self.path, _SPEC)
+        self.assertTrue(self.workspace.validate(self.path)["valid"])
+        with_engine = _SPEC.replace(
+            "{name: PgDuckDB, profile: analytical-ssd}",
+            "{name: PgDuckDB, profile: analytical-ssd, engine: {execution: vectorized}}",
+        )
+        self.workspace.write_file(self.path, with_engine)
+        result = self.workspace.validate(self.path)
+        self.assertFalse(result["valid"])
+        self.assertIn("unknown field 'engine'", result["errors"][0]["message"])
+
     def test_resource_sweep_must_be_declared_as_a_factor(self) -> None:
         sweep = _SPEC.replace(
             "memory: {request: 8Gi, limit: 8Gi}",
