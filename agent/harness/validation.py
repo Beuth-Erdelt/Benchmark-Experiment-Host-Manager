@@ -766,7 +766,8 @@ def _check_repetitions(
     source = (
         f"'{workload.get('name')}' declares minimum_for_conclusions={minimum}"
         if minimum else
-        f"the handbook admits no comparison below {_SPREAD_FLOOR} repetitions"
+        f"this agent's policy requires at least {_SPREAD_FLOOR} repetitions, "
+        "the fewest from which any spread can be estimated"
     )
     minimum = minimum or _SPREAD_FLOOR
 

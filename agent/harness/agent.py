@@ -85,6 +85,15 @@ _EXHAUSTED_WITH_PASS_NOTICE = (
     "designed. Do not edit it further -- there is no attempt left to re-check it."
 )
 
+#: Shown on a dry run whose last attempt passed. Nothing can be handed over, but
+#: nothing failed either; the notice for a failed attempt asks what was left
+#: unresolved, which leads a model to report a passing design as unconfirmed.
+_EXHAUSTED_DRY_RUN_PASS_NOTICE = (
+    "Your {tool} budget is used up, and the last file you validated passed. "
+    "This run ends at validation, so nothing further is needed: reply with a "
+    "short account, in plain sentences, of what you designed."
+)
+
 #: Given to a model whose turn produced only internal reasoning: no tool call
 #: and no visible answer, whether the server cut the turn off for length or the
 #: model ended it on its own mid-thought. Without this the empty turn would be
@@ -345,6 +354,28 @@ def _phase_account(trajectory_path: Path, phase: str, outcome: dict[str, Any]) -
     return lines
 
 
+def _spent_budget_warning(trajectory_path: Path) -> str | None:
+    """Return a warning when the current phase used up its tool budget.
+
+    A phase can still succeed after spending it -- a dry run whose design
+    passed, for instance -- and nothing else on the console would then say that
+    the model kept re-checking until no attempt was left.
+
+    :param trajectory_path: The run's trajectory log.
+    :return: The warning line, or ``None`` when the budget was not spent.
+    :rtype: str | None
+    """
+    events = _trajectory_events(trajectory_path)
+    phase_starts = [index for index, event in enumerate(events)
+                    if event.get("type") == "meta"]
+    phase_events = events[phase_starts[-1]:] if phase_starts else events
+    for event in phase_events:
+        if event.get("type") == "budget_exhausted":
+            return (f"warning: the {event.get('tool')} budget was used up in this "
+                    "phase; the reasoning trace shows how the attempts were spent.")
+    return None
+
+
 def _trajectory_events(path: Path) -> list[dict[str, Any]]:
     """Read a trajectory log, skipping a line a killed process left half-written."""
     events: list[dict[str, Any]] = []
@@ -373,6 +404,7 @@ def _converse(
     closing_validator: Callable[[str], str | None] | None = None,
     stage: str | None = None,
     require_done: bool = False,
+    ended_on_pass: Callable[[list[tuple[str, dict[str, Any], dict[str, Any]]]], bool] | None = None,
 ) -> tuple[str, int, list[tuple[str, dict[str, Any], dict[str, Any]]]]:
     """Drive the model until it stops calling tools, the phase is done, or turns run out.
 
@@ -395,6 +427,10 @@ def _converse(
     :param closing_validator: Return an error message for an invalid closing answer.
     :param stage: Optional stage label written on assistant and tool events.
     :param require_done: Reject a text-only answer until ``done_when`` has fired.
+    :param ended_on_pass: Called with the events so far once the budget is
+        spent where no handover follows; ``True`` means the last attempt
+        passed, so the closing notice says so instead of asking what was left
+        unresolved.
     :return: The closing text, the turns used, and every tool call made.
     :rtype: tuple[str, int, list[tuple[str, dict, dict]]]
     """
@@ -421,10 +457,13 @@ def _converse(
         pending = bool(spent and not finished and handover_pending
                        and handover_pending(events))
         if spent and not finished and not notified:
-            notice = (
-                _EXHAUSTED_WITH_PASS_NOTICE if pending else _EXHAUSTED_NOTICE
-            ).format(tool=limited_tool)
-            messages.append({"role": "user", "content": notice})
+            if pending:
+                notice = _EXHAUSTED_WITH_PASS_NOTICE
+            elif ended_on_pass is not None and ended_on_pass(events):
+                notice = _EXHAUSTED_DRY_RUN_PASS_NOTICE
+            else:
+                notice = _EXHAUSTED_NOTICE
+            messages.append({"role": "user", "content": notice.format(tool=limited_tool)})
             trajectory.record("budget_exhausted", turn=turn, tool=limited_tool,
                               handover_pending=pending)
             notified = True
@@ -747,7 +786,7 @@ def run_design(
     messages = prompts.design_messages(
         task=task, catalog_path=catalog_path, environment_path=environment_path,
         method_path=method_path, inbox=workspace.inbox.name, attempts=attempts,
-        followups=followups)
+        followups=followups, dry_run=dry_run)
     trajectory.record("meta", phase="design", model=model.model,
                       harness=_harness_revision(),
                       params={"base_url": model.base_url,
@@ -783,6 +822,9 @@ def run_design(
         limited_tool="validate", limit=attempts,
         done_when=lambda name, result: name == "submit" and "code" in result,
         handover_pending=None if dry_run else _submission_owed,
+        # A dry run never submits, so a submission still owed is simply a last
+        # validation that passed.
+        ended_on_pass=_submission_owed if dry_run else None,
         tool_handler=handler)
 
     validated = [args["path"] for name, args, result in events
@@ -2271,6 +2313,8 @@ def main() -> int:
     for key in ("validated_path", "code", "files_read", "bytes_read", "characters_returned"):
         if outcome.get(key):
             print(f"  {key}: {outcome[key]}")
+    if complete and (warning := _spent_budget_warning(trajectory.path)):
+        print(warning, file=sys.stderr)
     if not complete:
         for line in _phase_account(trajectory.path, args.phase, outcome):
             print(line, file=sys.stderr)

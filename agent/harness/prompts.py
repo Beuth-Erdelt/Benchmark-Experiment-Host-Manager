@@ -92,8 +92,9 @@ file outside the ones named above.
 
 The specification states a hypothesis and names the factors it isolates. An
 experiment that validates but cannot answer the question is a failure: the
-factor under test must be the only thing that varies, and everything else must
-be held equal across the systems being compared. Check the run estimate too -- a
+effect of each factor under test must be separable from the others, and anything
+else that differs between the configurations being compared has to be
+controlled or deliberately accounted for. Check the run estimate too -- a
 design nobody has time to run does not answer anything either -- and read back
 the configurations the specification resolved to. The cpu and memory lists are
 paired by position rather than crossed, so a design that means to vary them
@@ -103,9 +104,10 @@ The experiment design handbook is methodological guidance rather than a
 contract: the catalog says which experiments are legal and the result contract
 says which claims are supportable, while the handbook carries the reasoning that
 separates an experiment answering its question from one that merely runs. It
-gives no values to copy, only the reasons, so that you decide what this
-particular question needs. Read its Navigation chapter first; it routes a
-question like yours to the chapters worth reading.
+gives no values to copy. Its principles state when they apply, cite their
+sources, and are marked where they are our own application or a local policy,
+so that you decide what this particular question needs. Read its Navigation
+chapter first; it routes a question like yours to the chapters worth reading.
 
 # Budgets
 
@@ -299,15 +301,18 @@ that exact file. Then report the experiment code and what the run will settle.
 _METHOD_AVAILABLE = (
     "{path} -- the experiment design handbook: guidance on what makes a "
     "specification a sound experiment rather than merely a legal one. It is "
-    "organised into chapters -- how a claim has to be stated to be testable, "
-    "what a comparison has to hold equal, what the load model decides, which "
-    "regime the data size puts you in, how much repetition tells an effect from "
-    "noise, what the environment contributes, how measurements may be combined, "
-    "and what fits the budget. It is too long for one read: request the section "
-    "`## Navigation` first, which says which chapters a question like yours "
-    "needs, then request those chapters by their exact headings. Each principle "
-    "carries an identifier such as M2.3, and a rejection that cites one is "
-    "pointing at the chapter worth re-reading."
+    "organised into chapters -- how to define the question and what would "
+    "answer it, which effects a design can separate, how work arrives and what "
+    "demand a measurement represents, what data and state the system is "
+    "measured in, how much variation there is and how precise the answer must "
+    "be, what the execution environment contributes, how measurements are "
+    "defined and combined, and how to spend the budget. It is too long for one "
+    "read: request the section `## Navigation` first, which says which chapters "
+    "a question like yours needs, then request those chapters by their exact "
+    "headings. Each principle carries an identifier such as M2.3. A rejection "
+    "that cites one is enforcing a local check, which the Navigation chapter's "
+    "subsection on this agent's interface describes; the cited chapter explains "
+    "the principle behind it."
 )
 
 #: Handbook chapters an interpretation must have read before it may record a
@@ -342,8 +347,9 @@ this order:
 {sections}
 
 Recording is refused until you have read them. Apply what they say to how you
-state the verdict. Where a principle does not hold for the result in front of
-you, the reason it gives is what governs, not the sentence.
+state the verdict. A principle applies under the conditions it states, not
+unconditionally, so judge whether those conditions hold for the result in front
+of you.
 """
 
 #: Shown instead when the deployment configures none, so the agent knows the
@@ -382,6 +388,7 @@ def design_messages(
     inbox: str,
     attempts: int,
     followups: int,
+    dry_run: bool = False,
 ) -> list[dict[str, Any]]:
     """Build the opening conversation for the design phase.
 
@@ -394,6 +401,7 @@ def design_messages(
     :param inbox: Directory name the agent may write into.
     :param attempts: How many times the agent may call validate.
     :param followups: How many follow-up experiments it will be offered later.
+    :param dry_run: Whether submission is withheld after successful validation.
     :return: System and user messages, in OpenAI message shape.
     :rtype: list[dict[str, Any]]
     """
@@ -423,6 +431,18 @@ def design_messages(
             if method_path else _METHOD_MISSING
         ),
     )
+    # A prompt that demands a tool the model was not offered makes it keep
+    # calling that tool instead of stopping once the design validates.
+    if dry_run:
+        system = system.replace(
+            "- submit(path) launches the exact file that most recently passed "
+            "validate.\n", ""
+        ).replace(
+            "call submit once on that same file. It\nreturns the experiment "
+            "code the results will be filed under. Then reply with a\n",
+            "the design is finished: this run ends at validation\nand nothing "
+            "is launched on the cluster. Reply with a\n",
+        )
     return [
         {"role": "system", "content": system},
         {"role": "user", "content": task},

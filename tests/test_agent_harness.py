@@ -1859,6 +1859,82 @@ resources:
         self.assertIn(
             "submit", {tool["function"]["name"] for tool in FOLLOWUP_AUTHOR_TOOLS})
 
+    def test_design_dry_run_prompt_does_not_ask_for_the_withheld_submit(self) -> None:
+        """A prompt demanding a tool the model was not offered invites the call.
+
+        Models that trust the prompt over the tool list keep calling submit and
+        reasoning about why it was refused instead of stopping after validation.
+        """
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _text_reply("The design validates."),
+        ])
+
+        run_design(
+            task="question", workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run), catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None, attempts=1, dry_run=True,
+        )
+
+        dry_run_prompt = model.messages[0][0]["content"]
+        self.assertNotIn("submit", dry_run_prompt)
+        self.assertIn('Once validate returns "valid": true', dry_run_prompt)
+        real_prompt = prompts.design_messages(
+            task="question", catalog_path="contracts/contract_catalog.yml",
+            environment_path=None, method_path=None, inbox="inbox",
+            attempts=1, followups=0,
+        )[0]["content"]
+        self.assertIn("call submit once on that same file", real_prompt)
+        self.assertIn("- submit(path)", real_prompt)
+
+    def test_a_dry_run_that_spends_its_budget_on_a_passing_design_is_told_so(self) -> None:
+        """The closing notice must not suggest that a passing design failed.
+
+        Nothing can be handed over in a dry run, and the notice for a failed
+        attempt asks what was left unresolved, which led a model to report a
+        design that had passed ten times as unconfirmed.
+        """
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _text_reply("The design validates."),
+        ])
+
+        run_design(
+            task="question", workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run), catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None, attempts=1, dry_run=True,
+        )
+
+        notice = model.messages[1][-1]["content"]
+        self.assertIn("the last file you validated passed", notice)
+        self.assertNotIn("unresolved", notice)
+        self.assertNotIn("Submit", notice)
+        self.assertEqual(model.tool_sets[1], set())
+
+    def test_a_spent_budget_is_reported_even_when_the_phase_succeeded(self) -> None:
+        """Only the current phase's budget counts, not an earlier phase's."""
+        trajectory = Trajectory(self.run)
+        trajectory.record("meta", phase="design")
+        trajectory.record("budget_exhausted", turn=3, tool="validate",
+                          handover_pending=False)
+
+        warning = agent_module._spent_budget_warning(trajectory.path)
+
+        self.assertIsNotNone(warning)
+        self.assertIn("validate budget was used up", warning)
+        trajectory.record("meta", phase="interpret")
+        self.assertIsNone(agent_module._spent_budget_warning(trajectory.path))
+
     def test_design_dry_run_refuses_a_submit_call_the_model_was_not_offered(self) -> None:
         """A model that calls submit anyway must not reach the cluster.
 
