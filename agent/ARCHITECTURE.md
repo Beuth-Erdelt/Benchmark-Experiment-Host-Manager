@@ -66,7 +66,7 @@ flowchart TB
         direction TB
         F0{Follow-up recorded<br/>and budget remaining?}:::guard
         F1[Authoring context<br/>reread catalog + environment]:::model
-        F2{Exact follow_up_of<br/>and controlled change?}:::guard
+        F2{Exact follow_up_of and<br/>controlled change or approved repeat?}:::guard
         F3[Write → validate → submit]:::model
         F0 -- yes --> F1 --> F2 --> F3
     end
@@ -130,7 +130,7 @@ consultation measurable in the trajectory.
 | State recovery | `agent.py::_carry_forward` | Rebuilds the question, exact current specification, code, and budget from trajectory data without carrying an earlier result into interpretation |
 | Evidence interpretation | `prompts.py::interpret_messages`, `agent.py::_InterpretationGate` | Selects one exact report; requires its Tests evidence and result contract; verifies failed-check count, affected phase scope, cited read paths, typed result claims, and one finish/follow-up decision |
 | Deterministic comparison | `tools.py::assess_comparison_quality` | Reports query coverage where applicable, throughput comparability, repetition-anomaly warnings, and checkable factor results without relying on model arithmetic or workload names |
-| Follow-up authoring | `prompts.py::followup_author_messages`, `agent.py::_author_followup` | Fresh mutation context; receives compact ancestor summaries, rereads the design contract, and enforces the current experiment code as lineage, a material controlled change, and any approved query subset before shared validation |
+| Follow-up authoring | `prompts.py::followup_author_messages`, `agent.py::_author_followup` | Fresh mutation context; receives compact ancestor summaries, rereads the design contract, and enforces the current experiment code as lineage, a material controlled change (or, for an approved independent repeat, unchanged execution settings), and any approved query subset before shared validation |
 | Portable lineage summary | `agent.py::_write_agent_summary`, `contracts/contract_result.yml` | Persists one experiment code, parent, hypothesis, scientific verdict, technical validity, and unresolved question without copying ancestor reports into context |
 | Design-space gate | `agent.py::_DesignSpaceGate` | Refuses initial or follow-up authoring until that context has reread the catalog and environment |
 | Bare-model baseline | `prompts.py::baseline_messages`, `agent.py::run_baseline` | One toolless model call answering the question with no catalog, contract, or handbook; same trajectory-and-`answer.md` output; run by the lifecycle wrapper as its own investigation and linked from the design trajectory; toggled by `--baseline`/`--no-baseline` (`AGENT_BASELINE`) |
@@ -147,7 +147,13 @@ phase still requires a structured record.
 The interpretation assessor reads the archived `discriminates` declaration as
 the authoritative factor list. Concurrency, CPU, and memory become ordered
 series, split so every other declared factor stays fixed; system becomes a
-categorical ranking at each fixed context. The record must reproduce every
+categorical ranking at each fixed context. Concurrency is counted in client
+threads where the report totals them (YCSB) and in benchmarker pods otherwise.
+Rounds that report zero or NaN for a characterized metric measured nothing, so
+they are left out and listed. A step between two levels counts only when it
+exceeds the sum of both levels' standard errors, each taken from the repetitions'
+standard deviation or a 5% per-measurement floor, whichever is larger, so
+agreeing repetitions resolve smaller steps than a single run. The record must reproduce every
 computed shape or ranking and its factor-level means exactly. A report shape
 that cannot expose one of its declared factors reports that limitation without
 inventing a comparison. Failed monitoring checks are similarly traced to their

@@ -97,9 +97,10 @@ _READ_CONTEXT_CHARACTER_LIMIT = 110_000
 #: factor from the median of the other repetitions at the same concurrency.
 #: The result remains usable; this is a disclosure gate, not an invalidation.
 _REPETITION_ANOMALY_RATIO = 3.0
-#: Relative noise assumed at a level even when its repetitions agree exactly.
-#: One repetition, or repetitions that happen to land on the same value, would
-#: otherwise claim perfect precision and make every step look resolvable.
+#: Relative noise assumed for a single measurement even when its repetitions
+#: agree exactly. One repetition, or repetitions that happen to land on the
+#: same value, would otherwise claim perfect precision and make every step look
+#: resolvable. Like observed scatter it shrinks with the number of repetitions.
 _SHAPE_NOISE_FLOOR = 0.05
 
 #: Factors the catalog lets an experiment isolate. Everything the contract can
@@ -1282,15 +1283,20 @@ def _configuration_resources(
 
 
 def _level_noise(values: list[float], mean: float) -> float:
-    """Estimate one level's measurement noise from its own repetitions.
+    """Estimate how precisely one level's mean is known from its repetitions.
+
+    A single measurement scatters by the repetitions' standard deviation, or by
+    the noise floor when that is larger. The mean of ``n`` independent
+    repetitions is ``sqrt(n)`` times more precise than one of them (its standard
+    error), so repetitions that agree resolve smaller steps than one run can.
 
     :param values: Every measurement taken at this factor level.
     :param mean: Mean of those measurements.
     :return: Half-width below which a difference is not resolvable here.
     :rtype: float
     """
-    half_range = (max(values) - min(values)) / 2 if len(values) > 1 else 0.0
-    return max(half_range, _SHAPE_NOISE_FLOOR * abs(mean))
+    scatter = statistics.stdev(values) if len(values) > 1 else 0.0
+    return max(scatter, _SHAPE_NOISE_FLOOR * abs(mean)) / math.sqrt(len(values))
 
 
 def _step_direction(
@@ -1394,8 +1400,14 @@ def _expected_levels(
         return {cell[factor] for cell in resource_cells}
     workload = experiment.get("workload")
     declared = workload.get("rounds") if isinstance(workload, dict) else None
+    # A round runs its rounds entry times the declared client threads; only
+    # workloads with a benchmarking block (YCSB) declare more than one.
+    benchmarking = experiment.get("benchmarking")
+    threads = benchmarking.get("threads") if isinstance(benchmarking, dict) else None
+    if not isinstance(threads, int) or isinstance(threads, bool):
+        threads = 1
     return {
-        float(level) for level in declared or []
+        float(level * threads) for level in declared or []
         if isinstance(level, (int, float)) and not isinstance(level, bool)
     }
 
@@ -1406,11 +1418,20 @@ def _decode_observations(
     rows: list[list[str]],
     metrics: list[tuple[str, str]],
     resource_cells: list[dict[str, float]],
-) -> list[tuple[dict[str, str | float], dict[str, float]]]:
-    """Decode each report row into its factor coordinates and metric values."""
-    positions = {name: headers.index(name) for name in ("phase", "pod_count")}
+) -> tuple[list[tuple[dict[str, str | float], dict[str, float]]], list[str]]:
+    """Decode each report row into its factor coordinates and metric values.
+
+    :return: The observations, and the phases left out because they measured nothing.
+    :rtype: tuple[list[tuple[dict[str, str | float], dict[str, float]]], list[str]]
+    """
+    # A YCSB pod runs several client threads and its report totals them per
+    # round; a TPC-H pod is a single stream, so there the pod count is the
+    # client count.
+    clients = "threads" if "threads" in headers else "pod_count"
+    positions = {name: headers.index(name) for name in ("phase", clients)}
     positions.update({metric: headers.index(metric) for metric, _ in metrics})
     observations = []
+    excluded = []
     for row in rows:
         phase = _plain_markdown_cell(row[positions["phase"]])
         dimensions = _configuration_dimensions(
@@ -1419,12 +1440,18 @@ def _decode_observations(
         if dimensions is None:
             continue
         try:
-            dimensions["concurrency"] = float(row[positions["pod_count"]])
+            dimensions["concurrency"] = float(row[positions[clients]])
             values = {metric: float(row[positions[metric]]) for metric, _ in metrics}
         except ValueError:
             continue
+        # None of these metrics can be zero in a round that ran, so a zero or NaN
+        # means it measured nothing (the report's "contains 0 or NaN" checks
+        # fail on it). Averaged in, it would drown the real level differences.
+        if any(not math.isfinite(value) or value <= 0 for value in values.values()):
+            excluded.append(phase)
+            continue
         observations.append((dimensions, values))
-    return observations
+    return observations, excluded
 
 
 def _group_by_context(
@@ -1605,7 +1632,7 @@ def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
     metrics = _characterized_metrics(headers)
     if not metrics or not {"phase", "pod_count"}.issubset(headers):
         return _unsupported(discriminates)
-    observations = _decode_observations(
+    observations, excluded = _decode_observations(
         experiment, headers, rows, metrics, resource_cells
     )
 
@@ -1625,11 +1652,19 @@ def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
         )
         if not categorical:
             unsupported.append("system")
-    return {
+    characterization = {
         "ordered_sweeps": ordered_sweeps,
         "categorical_comparisons": categorical,
         "unsupported_factors": unsupported,
+        "excluded_phases": excluded,
     }
+    if excluded:
+        characterization["exclusion_reason"] = (
+            "These rounds reported zero or NaN for a characterised metric, so they "
+            "measured nothing and are left out of every shape and ranking here. "
+            "Disclose them; only the remaining rounds count as repetitions."
+        )
+    return characterization
 
 
 def _validity_scope(
@@ -2099,6 +2134,7 @@ _RECORD_INTERPRETATION = {
                         },
                         "full_workload_required": {"type": "boolean"},
                         "cost_rationale": {"type": "string"},
+                        "independent_repeat": {"type": "boolean"},
                     },
                     "required": [
                         "action", "rationale", "unresolved_question",

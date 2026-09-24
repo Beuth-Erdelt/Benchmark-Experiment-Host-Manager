@@ -246,7 +246,10 @@ no evidential route forward. Prefer the smallest controlled intervention. Put a
 focused query subset in `target_queries`; otherwise set
 `full_workload_required=true` and explain why the full workload is necessary. For
 finish, leave the experiment fields empty, use an empty query list, and set
-`full_workload_required=false`.
+`full_workload_required=false`. When the open question is whether this result
+reproduces, set `independent_repeat=true`: the follow-up then reruns this
+experiment's execution settings unchanged as a new, independent experiment, so
+its query list stays empty. Leave it false for every other follow-up.
 
 After the record is accepted, answer according to the `answer_contract` you
 read. Discuss only this experiment. A reader must not need an earlier result,
@@ -276,6 +279,9 @@ full workload, preserve it and explain the cost in the closing account.
 Set `follow_up_of` to exactly `{experiment_code}`. The follow-up must change at
 least one execution-relevant field from its parent; changing only its title,
 hypothesis, discriminates, or lineage is rejected as a repeated experiment.
+The exception is an approved decision with `independent_repeat=true`, which asks
+for exactly that: keep every execution-relevant field identical to the parent's
+and change only those descriptive fields.
 The compact summaries of earlier ancestors are supplied below when available.
 Do not repeat a hypothesis that an ancestor already settled unless the approved
 follow-up explicitly explains why that conclusion must be challenged. Target

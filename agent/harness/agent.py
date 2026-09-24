@@ -1258,6 +1258,16 @@ class _InterpretationGate:
             return {"error": "follow_up.full_workload_required must be true or false"}
         if not isinstance(follow_up.get("cost_rationale"), str):
             return {"error": "follow_up.cost_rationale must be text"}
+        independent_repeat = follow_up.get("independent_repeat", False)
+        if not isinstance(independent_repeat, bool):
+            return {"error": "follow_up.independent_repeat must be true or false"}
+        if independent_repeat and (action != "followup" or target_queries):
+            return {
+                "error": (
+                    "an independent repeat reruns its parent unchanged, so it needs "
+                    "action=followup and an empty target_queries list"
+                )
+            }
         if action == "followup" and (
             not follow_up.get("unresolved_question")
             or not follow_up.get("experiment_goal")
@@ -1447,7 +1457,15 @@ def _author_followup(
                 followup_execution = {
                     key: value for key, value in experiment.items() if key not in ignored
                 }
-                if followup_execution == parent_execution:
+                repeat = decision.get("independent_repeat") is True
+                if repeat and followup_execution != parent_execution:
+                    return methodology_error(
+                        "the approved follow-up is an independent repeat, so it must "
+                        "keep every execution setting of its parent; change only its "
+                        "title, hypothesis, discriminates or follow_up_of",
+                        arguments["path"],
+                    )
+                if not repeat and followup_execution == parent_execution:
                     return methodology_error(
                         "the follow-up repeats its parent's execution settings; "
                         "change at least one controlled treatment",

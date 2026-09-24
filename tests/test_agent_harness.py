@@ -600,6 +600,19 @@ resources:
         tight = [(1, 100.0, 1.0), (2, 120.0, 1.0)]
         self.assertEqual(tools_module._classify_shape(tight), ("rises_throughout", None))
 
+    def test_agreeing_repetitions_resolve_a_step_one_run_cannot(self) -> None:
+        """The noise floor is per measurement, so repetitions narrow it like any noise."""
+        def levels(repetitions: int) -> list[tuple[float, float, float]]:
+            return [
+                (level, value, tools_module._level_noise([value] * repetitions, value))
+                for level, value in ((1, 100.0), (2, 108.0))
+            ]
+
+        self.assertEqual(tools_module._classify_shape(levels(1)), ("flat", None))
+        self.assertEqual(
+            tools_module._classify_shape(levels(10)), ("rises_throughout", None)
+        )
+
     def test_latency_columns_are_characterized_alongside_throughput(self) -> None:
         """The question asked about response time, so latency needs a typed claim too."""
         metrics = tools_module._characterized_metrics([
@@ -1956,6 +1969,79 @@ resources:
         self.assertIn("follow_up_of must equal", validations[0]["errors"][0]["message"])
         self.assertIn("repeats its parent", validations[1]["errors"][0]["message"])
         self.assertTrue(validations[2]["valid"])
+
+    def test_an_approved_independent_repeat_keeps_its_parents_settings(self) -> None:
+        """Checking that a result reproduces is a follow-up, but only if nothing changes."""
+        assessment = {
+            "question": "does the slowdown reproduce?", "status": "partial",
+            "conclusion": "one experiment shows it", "evidence": "latency rises",
+            "missing": "an independent rerun",
+        }
+        decision = {
+            "action": "followup",
+            "rationale": "one experiment cannot show that its result repeats",
+            "unresolved_question": "does the slowdown reproduce?",
+            "experiment_goal": "rerun the parent unchanged as a new experiment",
+            "target_queries": [], "full_workload_required": True,
+            "cost_rationale": "Only the complete original run is a repeat of it.",
+            "independent_repeat": True,
+        }
+        subset = {**decision, "target_queries": [5], "full_workload_required": False}
+        repeated = _SPEC.replace(
+            "discriminates: [system, concurrency]",
+            'discriminates: [system, concurrency]\nfollow_up_of: "old"',
+        )
+        model = _Model([
+            _evidence_record_reply(
+                "subset", _record_arguments([assessment], follow_up=subset)
+            ),
+            _tool_reply(ToolCall(
+                "record", "record_interpretation",
+                _record_arguments([assessment], follow_up=decision),
+            )),
+            _text_reply("Whether the slowdown reproduces is still open."),
+            _tool_reply(
+                ToolCall("catalog", "read_file", {
+                    "path": "contracts/contract_catalog.yml",
+                }),
+                ToolCall("write-changed", "write_file", {
+                    "path": self.path, "text": _followup_spec(),
+                }),
+                ToolCall("validate-changed", "validate", {"path": self.path}),
+            ),
+            _tool_reply(
+                ToolCall("write-repeat", "write_file", {
+                    "path": self.path, "text": repeated,
+                }),
+                ToolCall("validate-repeat", "validate", {"path": self.path}),
+            ),
+            _text_reply("The independent repeat validates."),
+        ])
+
+        outcome = run_interpret(
+            task="question", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=1,
+            environment_path=None, attempts=2, dry_run=True,
+        )
+
+        self.assertEqual(outcome["validated_path"], self.path)
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        rejected_records = [
+            event for event in events
+            if event.get("tool") == "record_interpretation"
+            and "error" in event.get("result", {})
+        ]
+        self.assertEqual(len(rejected_records), 1)
+        self.assertIn("independent repeat", rejected_records[0]["result"]["error"])
+        validations = [
+            event["result"] for event in events if event.get("tool") == "validate"
+        ]
+        self.assertIn("independent repeat", validations[0]["errors"][0]["message"])
+        self.assertTrue(validations[1]["valid"])
 
     def test_design_dry_run_withholds_submit_without_disarming_later_runs(self) -> None:
         """The withheld tool must be scoped to this run, not to the imported module."""
