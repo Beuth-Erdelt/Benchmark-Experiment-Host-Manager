@@ -1,6 +1,6 @@
 # Experiment Design Handbook
 
-    handbook_version: "0.6.1"
+    handbook_version: "0.7.0"
 
 Guidance on how to turn a research question into a sound benchmark experiment.
 Read the `## Navigation` section first; it explains what this document is and
@@ -36,6 +36,12 @@ stop applying once the run is over.
 
 It names no workload, system or setting, because anything specific enough to
 copy would be a rule to follow rather than a reason to think with.
+
+**Scope.** This handbook is pitched at cloud and cluster benchmarking. Its rules
+name no system or benchmark, but some vocabulary (storage class, node, image,
+allocation, network path) and M2.3 in particular assume a shared,
+allocation-based substrate. On bare metal those specifics may not apply, though
+the reasons behind them still do.
 
 Principles carry identifiers such as `M1.1` or `M4.3` so that a design decision,
 a review comment or a rejection can point at one precisely.
@@ -170,10 +176,12 @@ differences in data and cached state are the easiest confound to miss.
 - **M2.6** The factors declared as isolated and the factors the specification
   actually varies must be the same set. An undeclared varying value is a
   confound; a declared but constant one is a false statement about the design.
-- **M2.7** Include the levels you intend to conclude about. A conclusion holds
-  at the levels that were run, so if the claim is meant to cover a scale, a
+- **M2.7** Include the levels you intend to conclude about. A direct conclusion
+  holds at the levels that were run, so if the claim is meant to cover a scale, a
   concurrency or a configuration, that value has to appear in the design — or the
-  claim has to be narrowed to what did appear.
+  claim has to be narrowed to what did appear. Interpolation or an explicit model
+  may reach past the tested levels, but only when the prediction is declared as a
+  model rather than presented as a measured observation.
 - **M2.8** Cover the part of the evaluation space where the change under test
   might do harm, not only where it should help. An evaluation that can only
   produce good news is selective by construction, and running a subset of a
@@ -239,22 +247,25 @@ generator exposes.
   per unit time the system absorbs — or about *responsiveness* — how long a
   request takes at a given demand. The load model follows from that, not from
   what is convenient to configure.
-- **M3.2** Never report a quantity that one of your own settings has fixed. If
-  the client is capped at a rate the system could exceed, the measured
-  throughput is the cap: a property of the harness, not of the system.
+- **M3.2** Do not present a quantity one of your own settings has fixed as a
+  property of the system. If the client is capped at a rate the system could
+  exceed, the measured throughput is the cap; report it as achieved throughput
+  at that offered demand, not as the system's capacity. A constant-rate run is a
+  legitimate measurement that simply does not establish a maximum.
 - **M3.3** A maximum-sustainable-throughput claim requires that saturation be
   demonstrated rather than assumed. Load is raised until throughput stops rising
   and latency turns upward; if it was never raised that far, the figure is a
   lower bound and has to be reported as one.
 - **M3.4** Match the load model to the population the question describes. A
   closed model represents a fixed population that waits, and latency measured
-  under it is correct *for that population*. It misleads when it is used to
-  describe demand that arrives independently: as the system slows, a closed
-  generator — or an open one whose schedule has slipped — stops issuing
-  requests, so the requests that would have met the stall are never sent and
-  never counted, and the omission is coordinated with the very stall it should
-  be measuring. Where the question is about independent arrivals, measure each
-  request from its intended arrival time, or say that the tail understates.
+  under it is correct *for that population*. It misleads when used to describe
+  demand that arrives independently: because a closed generator's offered load
+  is a function of the system's own speed (Schroeder, Wierman and
+  Harchol-Balter), a stall makes it issue fewer requests, so the requests that
+  would have met the stall are never sent and never counted — coordinated
+  omission (Tene) — which understates the tail. Where the question is about independent arrivals, drive an open
+  model at a fixed rate and measure each request against its intended arrival
+  time, or state that a closed-loop tail understates.
 - **M3.5** Report the concurrency and think time behind every latency figure. In
   a closed system latency is largely a function of how many requests are in
   flight, so the number means little without them.
@@ -263,14 +274,17 @@ generator exposes.
 
 **Common pitfalls**
 
-- *Throughput from a throttled run*, the most common way to measure your own
-  configuration file.
-- *An open-arrival claim from closed-loop measurements*, where the tail is wrong
-  by orders of magnitude rather than percentages.
+- *Throughput from a throttled run*, reported as capacity: a measurement of your
+  own configuration file rather than of the system.
+- *An open-arrival claim from closed-loop measurements*, where the tail can be
+  wrong by large factors, depending on the workload and where the stalls fall.
 - *Latencies compared at different achieved throughputs*, where the two sides
   were doing different amounts of work.
-- *Concurrency used as a proxy for load*, which moves the offered demand and the
-  queueing regime together and so violates M2.1.
+- *Concurrency confused with offered load*: treating a change in a closed client
+  population as if it were an independently imposed arrival rate. Varying
+  concurrency is legitimate when it is the declared factor and its effects on
+  throughput and waiting are read as consequences; the error is reporting those
+  consequences as though demand had been held fixed.
 
 ## M4. Data and state
 
@@ -295,8 +309,10 @@ preparation competes with measurement for the budget.
   memory. A design that lands in a regime by accident answers a question nobody
   asked.
 - **M4.2** Match the data volume to the question. A dataset that fits entirely
-  in cache cannot test a claim about storage behaviour, and it systematically
-  favours whichever side's advantage lies in avoiding input and output.
+  in cache does not exercise storage reads, so it cannot test a read-path storage
+  claim and favours whichever side's advantage lies in avoiding that input and
+  output. Durable writes still reach the device regardless of cache, so what
+  matters is showing that the storage path the claim is about is actually used.
 - **M4.3** Declare the cache state each measurement is taken in — cold with
   caches flushed, warm after prior activity, or hot and steady. All three are
   legitimate; mixing them within one comparison is not, and measuring one side's
@@ -350,19 +366,25 @@ summarize what repetition produces.
   without a spread is uninterpretable, and this is the single most common defect
   found in surveys of published systems work.
 - **M5.3** State whether the measurements are deterministic. For
-  non-deterministic data give confidence intervals, and compare using
-  non-overlapping intervals or a test rather than by eye.
-- **M5.4** Do not assume the measurements are normally distributed. Performance
-  distributions are usually skewed with a long tail, so quantile-based summaries
-  describe them more honestly than a mean and a standard deviation.
+  non-deterministic data give confidence intervals and compare using a test
+  rather than by eye. Non-overlapping intervals indicate a difference, but
+  overlapping ones do not prove equality; where the comparison is the point,
+  prefer an interval on the effect itself, such as the ratio of the means.
+- **M5.4** Do not assume the measurements are normally distributed; performance
+  distributions are usually skewed with a long tail, so check before summarizing.
+  A quantile and a mean answer different questions — the tail versus the expected
+  cost — so choose the summary the question asks for rather than treating either
+  as inherently more honest.
 - **M5.5** Repeat at the level where the variation you fear actually lives.
   Consecutive iterations inside one process share caches and warm state and are
   not independent samples of a deployment; if placement is the suspected source,
   the deployment is what has to be repeated.
-- **M5.6** On shared infrastructure, expect variation between allocations to
-  exceed variation within one. Multi-tenancy dominates performance variation in
-  public cloud studies, and the placement an arm happens to draw can persist for
-  its whole lifetime.
+- **M5.6** On shared infrastructure, measure both within-allocation and
+  between-allocation variation and allocate repetitions accordingly. Multi-tenancy
+  dominated the variation in the public-cloud providers Leitner and Cito studied,
+  and the placement an arm draws can persist for its whole lifetime; treat that
+  dominance as a provider-specific finding to check, not a law to assume on a
+  given cluster.
 - **M5.7** Interleave or randomize the order in which alternatives are measured.
   If all of one runs before all of the other, drift in the environment over time
   is indistinguishable from the treatment.
@@ -407,10 +429,12 @@ factor; M5, because what cannot be controlled has to be repeated instead.
   configuration values, storage class and network path. This is not bookkeeping.
   It is the condition under which anyone — including a later run of this same
   agent — can reproduce or contest the result.
-- **M6.4** Instrument the resource you may later want to blame. Utilization data
-  is what lets an effect be attributed to a cause rather than merely observed,
-  and an explanation naming a mechanism that nothing measured is a story, not a
-  finding.
+- **M6.4** Instrument the resource you may later want to blame. An explanation
+  naming a mechanism that nothing measured is a story, not a finding. But
+  utilization data lets a proposed mechanism be tested for plausibility, not
+  confirmed as the cause: a utilization rise and a slowdown can share a third
+  cause, so attribution needs a discriminating intervention or another
+  identification method, not utilization correlation by itself.
 - **M6.5** Where isolation from other tenants cannot be guaranteed, treat that
   as a declared source of variation under M5.6 rather than an inconvenience to
   leave unmentioned.
@@ -446,9 +470,10 @@ mean anything; M5, because a summary without a spread is not a result.
   only the per-observation figures survive, the mean has to match how the
   observations were taken — the harmonic mean recovers the overall rate when each
   observation covers the same amount of work, the arithmetic mean when each
-  covers the same span of time — so state which. Avoid summarizing ratios at all,
-  and fall back to the geometric mean only when the underlying values are
-  genuinely unavailable.
+  covers the same span of time — so state which. Prefer not to summarize
+  ratios directly; where only normalized scores survive, the geometric mean is
+  the accepted summary, but state the quantity it estimates rather than read it
+  as an elapsed-time speedup.
 - **M7.3** Never report a ratio without the absolute values behind it. A speedup
   without a baseline time cannot be sanity-checked and hides whether the
   quantities involved matter at all.
@@ -458,9 +483,10 @@ mean anything; M5, because a summary without a spread is not a result.
 - **M7.5** Report per-component results and not only an aggregate. An aggregate
   that improves while one component regresses badly is an important outcome, and
   only the breakdown shows it.
-- **M7.6** Do not promote a microbenchmark to a system claim. A probe of one
-  component measures that component under conditions the whole system never
-  reproduces.
+- **M7.6** Do not promote a microbenchmark to a system claim without evidence
+  linking the two. A probe of one component measures it under conditions the
+  whole system may not reproduce; a system-level conclusion needs evidence that
+  the component's behaviour carries over, not the probe alone.
 - **M7.7** Compute overheads against the baseline, and keep percentages and
   percentage points distinct. A throughput reduction is not the same quantity as
   an overhead, and treating them as interchangeable understates the cost
@@ -468,11 +494,12 @@ mean anything; M5, because a summary without a spread is not a result.
 
 **Common pitfalls**
 
-- *Averaged ratios*, including the arithmetic mean of normalized scores, which
-  has no meaning.
+- *Averaged ratios*, such as the arithmetic mean of normalized scores, which
+  depends on the baseline and rarely estimates the quantity intended; name the
+  quantity wanted and the mean that recovers it.
 - *Relative numbers only*, leaving no way to sanity-check the result.
 - *The aggregate that hides a regression.*
-- *The undefined metric*, most often a throughput figure whose unit of work is
+- *The undefined metric*, such as a throughput figure whose unit of work is
   never stated.
 
 ### Procedure before writing a verdict
@@ -582,7 +609,11 @@ The procedure below is our adaptation, not a demonstrated language-model result.
 
 ## Sources
 
-This handbook distills existing literature; the method is not original to it.
+This handbook draws on the literature below for most of its rules; where the
+literature is silent it adds methodological deductions and local operating policy
+(see the revision note). The entries below also differ in evidential role:
+peer-reviewed papers and a textbook, alongside standards, slides, expert
+commentary (Heiser) and the author's own infrastructure papers (Erdelt).
 
 Database benchmarking and benchmark construction:
 
@@ -599,8 +630,10 @@ Database benchmarking and benchmark construction:
   Benchmarking Considered Difficult: Common Pitfalls in Database Performance
   Testing*, DBTest 2018, with its fair-benchmark checklist —
   <https://hannes.muehleisen.org/publications/DBTEST2018-performance-testing.pdf>
-- TPC benchmark specifications, for steady state, the measurement interval and
-  the full-disclosure requirement — <https://www.tpc.org/>
+- TPC BENCHMARK C Standard Specification, Revision 5.11, for steady state
+  (§§5.5.1-5.5.2), maximum qualified throughput (§5.2.5), durability
+  (§§3.5, 5.5.2.2) and full disclosure (Clause 8) —
+  <https://www.tpc.org/tpc_documents_current_versions/pdf/tpc-c_v5.11.0.pdf>
 
 Systems performance evaluation, experimental design and reporting:
 
@@ -623,7 +656,7 @@ Load models, latency and noise:
   Cautionary Tale*, NSDI 2006 —
   <https://www.usenix.org/legacy/event/nsdi06/tech/full_papers/schroeder/schroeder.pdf>
 - Gil Tene, *How NOT to Measure Latency*, and the HdrHistogram project — the
-  original statement of coordinated omission behind M3.4.
+  statement of coordinated omission behind M3.4.
 - Todd Mytkowicz, Amer Diwan, Matthias Hauswirth and Peter F. Sweeney,
   *Producing Wrong Data Without Doing Anything Obviously Wrong!*, ASPLOS 2009 —
   measurement bias.
