@@ -1,0 +1,60 @@
+digraph AgentOverview {
+graph [bgcolor="transparent", pad="0.25", nodesep="0.40", ranksep="0.46", fontname="Helvetica", fontsize=13, compound=true];
+node [shape=box, style="rounded,filled", fillcolor="#F2F6FD", color="#8196B4", fontcolor="#172B49", fontname="Helvetica", fontsize=12, margin="0.16,0.11", penwidth=1.1];
+edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, arrowsize=0.7];
+
+    rankdir=TB;
+    labelloc="t";
+    label="What the agent does: one question, one experiment at a time\nBlue = language model decides · Amber = ordinary code checks · Green = real execution\n";
+    fontsize=14;
+    fontcolor="#172B49";
+
+    question [label="Research question\nplus a follow-up budget", shape=oval, fillcolor="#E6EEFF"];
+
+    // The model only ever sees a phase's own window; code carries state between them.
+    subgraph cluster_loop {
+      label="One investigation — this cycle repeats while the budget lasts";
+      color="#ACC4E9"; fontsize=12;
+
+      design [label="DESIGN\nFresh model window reads the catalog,\nthe environment and the handbook,\nthen writes one experiment specification", fillcolor="#DEF3F4"];
+      validate [label="VALIDATOR (code)\nSchema, supported options, method rules,\nand whether the cluster can actually fit it", fillcolor="#FFF0D4"];
+      submit [label="SUBMIT (code)\nRe-checks the approved fingerprint,\nreserves a code, launches detached", fillcolor="#FFF0D4"];
+      execute [label="BeXhoma on Kubernetes\nLoads the data, runs the benchmark,\nwrites raw evidence and a report", fillcolor="#E1F1E6"];
+      assess [label="ASSESSOR (code)\nPer-query timings by configuration,\nspread across repetitions, where it failed", fillcolor="#FFF0D4"];
+      interpret [label="INTERPRET\nFresh model window reads that one report\nand records a verdict with evidence paths", fillcolor="#DEF3F4"];
+      gate [label="EVIDENCE GATE (code)\nRequired files opened? Citations reachable?\nNumbers present in the evidence?", fillcolor="#FFF0D4"];
+      decide [label="Follow-up asked for,\nand budget left?", shape=diamond, fillcolor="#FFF0D4"];
+      author [label="FOLLOW-UP AUTHORING\nFresh model window writes the next\nexperiment, tied to its parent", fillcolor="#DEF3F4"];
+
+      design -> validate;
+      validate -> design [label="rejected: repair, bounded attempts", style=dashed];
+      validate -> submit [label="accepted"];
+      submit -> execute;
+      execute -> assess;
+      assess -> interpret;
+      interpret -> gate;
+      gate -> interpret [label="rejected: revise the record", style=dashed];
+      gate -> decide [label="accepted"];
+      decide -> author [label="yes"];
+      author -> validate [label="same checks apply"];
+    }
+
+    answer [label="Answer, with the evidence it rests on", shape=oval, fillcolor="#E1F1E6"];
+    firewall [label="TOOL FIREWALL (code)\nEvery tool call is checked against the list\nthat phase was offered; anything else is refused", fillcolor="#FFF0D4"];
+    endpoint [label="Model endpoint\nSelf-hosted in the cluster, or a hosted broker;\nswitched off while a benchmark runs", fillcolor="#EEE7FA"];
+    record [label="Append-only trajectory and phase reports\nEvery reply, tool call and verdict, kept for audit", shape=folder];
+
+    question -> design;
+    decide -> answer [label="no"];
+
+    firewall -> design [style=dashed, label="guards every model window"];
+    firewall -> interpret [style=dashed];
+    firewall -> author [style=dashed];
+    endpoint -> design [style=dashed, label="serves the model"];
+    design -> record [style=dashed];
+    interpret -> record [style=dashed];
+    answer -> record [style=dashed];
+
+    note [label="The model never runs anything itself. It proposes and concludes;\ncode decides what may run and what may be claimed.", shape=note, fillcolor="#F8FAFC"];
+    answer -> note [style=dashed, color="#8196B4"];
+}
