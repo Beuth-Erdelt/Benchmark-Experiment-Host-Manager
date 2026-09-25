@@ -1021,13 +1021,15 @@ had to duplicate the ~45 shared-flag defaults `bexhoma/cli_args.py`'s
    flags the spec actually sets** — e.g. `-sf`, `-t`, `-ne`, `-nc`, `-m`,
    `-rc`/`-lc`/`-rr`/`-lr`/`-rss`, `-rst` (derived from the resolved
    profile's `storage_class`) — falling back to `tpch.py`'s own argparse
-   defaults for everything else. One deliberate exception: the concurrent-SUT
-   caps `-ms`/`-mse` are **always** emitted, from `experiment.get(field, 1)`,
-   because `tpch.py`'s own default for them is "no limit" and the contract's
-   default is `1` (one SUT at a time — `catalog_concepts.sut_isolation`); so
-   an experiment that omits `max_sut`/`max_sut_experiment` still gets
-   `-ms 1 -mse 1` on the command, and `max_sut: 0` drops the flag to inherit
-   `tpch.py`'s no-limit behavior. Before any
+   defaults for everything else. One deliberate exception: the per-experiment
+   SUT cap `-mse` is **always** emitted, from
+   `experiment.get("max_sut_experiment", 1)`, because `tpch.py`'s own default
+   for it is "no limit" and the contract's default is `1` (one SUT at a time —
+   `catalog_concepts.sut_isolation`); so an experiment that omits
+   `max_sut_experiment` still gets `-mse 1` on the command, and a value of 0
+   drops the flag to inherit `tpch.py`'s no-limit behavior. The cluster-wide
+   `-ms` has no contract default and is emitted only when `max_sut` is set
+   (catalog 1.7.0; before that it was also always emitted as `-ms 1`). Before any
    of that, it computes every named
    system's effective post_load: `-xii`/`-xic`/`-xis`/`-xcol` are global CLI
    switches with no per-system scope in `tpch.py`, so when every system

@@ -83,7 +83,7 @@ The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
 fields corrected and conditions added; nothing that validated before is
 rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
 
-## Pinning the SUT is recommended (2026-09-25)
+## Pinning the SUT is recommended; max_sut has no default (2026-09-25)
 
 `placement.sut` now carries a `when:` recommending it. `placement:` is
 experiment-wide, so a pinned SUT node is shared by every configuration, which
@@ -92,15 +92,23 @@ Unpinned, the scheduler may put different systems on different machines, and
 the measured difference then mixes the node with the `discriminates` factor.
 Comparing nodes takes one experiment per node, linked by `follow_up_of`.
 
-The same change fixed `catalog_concepts.sut_isolation` and
-`experiment_schema.fields.max_sut`, which suggested running parallel SUTs
-"each pinned to a different node via placement:". One experiment.yml cannot
-do that, because `placement.sut` names a single node; both now say so, and
-`max_sut` says to stay at 1 when the SUT is pinned.
+The same change split the two concurrent-SUT caps by purpose. Keeping one
+experiment's configurations apart is experimental design, so the
+one-at-a-time reasoning and the default of 1 now live on
+`max_sut_experiment` alone, which also says to stay at 1 when the SUT is
+pinned. The cluster-wide `max_sut` is cluster etiquette: with a default of
+1 it made an experiment wait for every other bexhoma experiment on the
+cluster, even on other nodes. It now has no default, and the argv builders
+emit `-ms` only when it is set. The tradeoff is that another experiment's
+SUT may now land on the pinned node; an experiment that needs the node to
+itself sets `max_sut: 1`. The old wording also suggested running parallel
+SUTs "each pinned to a different node via placement:", which one
+experiment.yml cannot do, since `placement.sut` names a single node; that
+suggestion is gone.
 
-This moved the version 1.6.1 -> 1.6.2 (patch: guidance only; nothing that
-validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept
-in lockstep.
+This moved the version 1.6.1 -> 1.7.0 (minor: a default changed; nothing
+that validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION`
+kept in lockstep.
 
 ## Pinning loader and benchmarker pods is uncommon (2026-09-25)
 

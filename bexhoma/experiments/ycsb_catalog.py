@@ -149,12 +149,13 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
         argv.extend(["-ne", ",".join(str(clients) for clients in rounds)])
     _append_flag(argv, "-nc", workload_spec.get("repetitions"))
 
-    # Concurrent-SUT caps. The contract default is 1 -- one system at a time,
-    # see catalog_concepts.sut_isolation -- so an absent field emits an
-    # explicit "-ms 1"/"-mse 1" (ycsb.py's own CLI default is "no limit").
-    # A field set to 0 means "no limit": the flag is simply omitted.
-    for field_name, flag in (("max_sut", "-ms"), ("max_sut_experiment", "-mse")):
-        cap = experiment.get(field_name, 1)
+    # Concurrent-SUT caps. max_sut_experiment defaults to 1 -- one system at a
+    # time, see catalog_concepts.sut_isolation -- so an absent field emits an
+    # explicit "-mse 1" (ycsb.py's own CLI default is "no limit"). max_sut
+    # has no default. A field that is absent or 0 means "no limit": the flag
+    # is simply omitted.
+    for field_name, flag, default in (("max_sut", "-ms", None), ("max_sut_experiment", "-mse", 1)):
+        cap = experiment.get(field_name, default)
         if cap:
             _append_flag(argv, flag, cap)
 

@@ -8,7 +8,7 @@ which turns it into a ``ycsb.py`` argument vector. These tests check that:
 * the emitted argv parses back cleanly through ``ycsb.build_parser()``;
 * catalog params/loading/rounds/observe/placement/resources map to the right
   ``ycsb.py`` flags;
-* the contract's default-1 SUT isolation is applied (``-ms``/``-mse``), same
+* the contract's default-1 SUT isolation is applied (``-mse``), same
   as the tpch builder;
 * a profile's resolved knobs become ``--set`` deployment patches;
 * an unsupported system and a resources: sweep are rejected.
@@ -129,9 +129,9 @@ class BuildYcsbArgvTest(unittest.TestCase):
         self.assertEqual(_flag_value(argv, '-lr'), '32Gi')
         self.assertEqual(_flag_value(argv, '-rss'), '50Gi')
 
-    def test_default_sut_isolation_caps_emitted(self):
+    def test_default_sut_isolation_cap_emitted(self):
         argv = self._argv()
-        self.assertEqual(_flag_value(argv, '-ms'), '1')
+        self.assertNotIn('-ms', argv)
         self.assertEqual(_flag_value(argv, '-mse'), '1')
 
     def test_zero_cap_drops_the_flag(self):
