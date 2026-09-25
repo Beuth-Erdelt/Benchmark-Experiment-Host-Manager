@@ -27,6 +27,8 @@ from pprint import pprint
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from urllib3.util.retry import Retry
+
 from dbmsbenchmarker import *
 from .__version__ import __version__
 
@@ -39,14 +41,96 @@ import platform
 #: instead of failing outright. See https://github.com/kubernetes/kubectl/issues/1425.
 KUBECTL_CP_INTERNAL_RETRIES = 20
 
+#: How long a single cluster call keeps retrying while the cluster cannot be
+#: reached. The API server is only reachable over a VPN that can drop for a
+#: minute or more; pods inside the cluster keep running meanwhile, so the host
+#: can safely wait for the connection to come back.
+CLUSTER_OUTAGE_BUDGET_SECONDS = 300
+
+#: Pause between two kubectl attempts while the cluster cannot be reached.
+CLUSTER_OUTAGE_RETRY_SECONDS = 10
+
+#: Retries of the Kubernetes Python client on connection errors. urllib3 waits
+#: 0, 2, 4, 8, 16 and then 30 seconds between attempts, so 14 retries wait
+#: about :data:`CLUSTER_OUTAGE_BUDGET_SECONDS` in total. Read errors are only
+#: retried for idempotent HTTP methods, so no request is ever applied twice.
+CLUSTER_API_RETRIES = 14
+CLUSTER_API_BACKOFF_FACTOR = 1
+CLUSTER_API_BACKOFF_MAX_SECONDS = 30
+
+#: kubectl messages meaning the request was never carried out, so any command
+#: can be repeated. They are matched at the start of a line because the
+#: operating system's (localized) explanation follows them. ``Forbidden``
+#: belongs here because a flaky VPN makes the API server reject requests the
+#: account is actually allowed to make, and a rejection happens before the
+#: command runs. It is also what a context without its namespace produces,
+#: which then fails only after the budget instead of at once.
+CLUSTER_UNREACHABLE_MESSAGES = (
+    'Unable to connect to the server',
+    'The connection to the server',
+    'Error from server: error dialing backend',
+    'Error from server (Forbidden)',
+)
+
+#: Fragments of a kubectl ``error:`` line meaning the connection broke while
+#: the command may already have been running, so only commands that are safe
+#: to repeat may be retried.
+CLUSTER_INTERRUPTED_MESSAGES = (
+    'context deadline exceeded',
+    'client connection lost',
+    'connection reset by peer',
+    'use of closed network connection',
+    'i/o timeout',
+    'unexpected EOF',
+)
+
 #: Attempts at filling a chunk-assignment queue before giving up. Each attempt
-#: clears and refills the queue, so a retry is always safe; it only bridges a
-#: transient loss of the cluster connection (e.g. a VPN hiccup).
+#: clears and refills the queue, so a retry is always safe; it covers a push
+#: whose reply was lost, which leaves the queue one entry short or long.
 MESSAGEQUEUE_FILL_MAX_ATTEMPTS = 3
 
 #: Seconds to wait between queue-fill attempts, matching the pause
 #: :meth:`Kubernetes.upload_file` uses between its retries.
 MESSAGEQUEUE_FILL_RETRY_SECONDS = 10
+
+
+def is_cluster_connection_error(output: str, include_interrupted: bool = True) -> bool:
+    """
+    Return whether kubectl output reports a lost connection to the cluster.
+
+    :param output: Combined or stderr output of a kubectl command.
+    :param include_interrupted: Also count a connection that broke while the
+        command may already have been running (see
+        :data:`CLUSTER_INTERRUPTED_MESSAGES`).
+    :return: ``True`` if retrying once the cluster is reachable again makes sense.
+    :rtype: bool
+    """
+    for line in output.splitlines():
+        line = line.strip()
+        if line.startswith(CLUSTER_UNREACHABLE_MESSAGES):
+            return True
+        if (include_interrupted and line.startswith('error:')
+                and any(message in line for message in CLUSTER_INTERRUPTED_MESSAGES)):
+            return True
+    return False
+
+
+def wait_for_cluster(deadline: float) -> bool:
+    """
+    Pause before retrying an unreachable cluster, unless the budget is spent.
+
+    :param deadline: ``time.monotonic()`` value after which to give up.
+    :return: ``True`` after pausing, ``False`` if the deadline has passed.
+    :rtype: bool
+    """
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        print("Cluster still unreachable, giving up")
+        return False
+    print(f"Cluster unreachable, retrying in {CLUSTER_OUTAGE_RETRY_SECONDS}s "
+          f"(giving up in {int(remaining)}s) ...")
+    time.sleep(CLUSTER_OUTAGE_RETRY_SECONDS)
+    return True
 
 
 def to_unc(path: str) -> str:
@@ -214,17 +298,28 @@ class Kubernetes():
         self.logger.debug(f'Kubernetes.cluster_access({self.context})')
         try:
             kubernetes_config.load_kube_config(context=self.context)
-            self.v1core = kubernetes_client.CoreV1Api(
-                api_client=kubernetes_config.new_client_from_config(context=self.context)
-            )
-            self.v1apps = kubernetes_client.AppsV1Api(
-                api_client=kubernetes_config.new_client_from_config(context=self.context)
-            )
-            self.v1batches = kubernetes_client.BatchV1Api(
-                api_client=kubernetes_config.new_client_from_config(context=self.context)
-            )
+            self.v1core = kubernetes_client.CoreV1Api(api_client=self._new_api_client())
+            self.v1apps = kubernetes_client.AppsV1Api(api_client=self._new_api_client())
+            self.v1batches = kubernetes_client.BatchV1Api(api_client=self._new_api_client())
         except Exception:
             print("WARN: Could not connect to Kubernetes")
+
+    def _new_api_client(self) -> kubernetes_client.ApiClient:
+        """Create an API client for the context that retries connection errors.
+
+        Equivalent to ``kubernetes_config.new_client_from_config()``, except
+        that the retry policy must be set before the client builds its
+        connection pool. Without it, an unreachable API server raises a
+        urllib3 error that none of the ``ApiException`` handlers catch.
+        """
+        configuration = kubernetes_client.Configuration()
+        kubernetes_config.load_kube_config(context=self.context, client_configuration=configuration)
+        configuration.retries = Retry(
+            total=CLUSTER_API_RETRIES,
+            backoff_factor=CLUSTER_API_BACKOFF_FACTOR,
+            backoff_max=CLUSTER_API_BACKOFF_MAX_SECONDS,
+        )
+        return kubernetes_client.ApiClient(configuration=configuration)
 
     def get_available_storage_types(self) -> list:
         """
@@ -1234,12 +1329,19 @@ class Kubernetes():
 
         Decodes output using UTF-8, Latin-1, or CP-1252 (in that order).
         On an ``Unauthorized`` response the access token is refreshed and the
-        command is retried once.
+        command is retried once. While the cluster cannot be reached, the
+        command is retried for up to :data:`CLUSTER_OUTAGE_BUDGET_SECONDS`.
+        Every command sent through here is safe to repeat (``get``, ``label
+        --overwrite``, ``delete``, ``cp``, ``create`` of fixed-name objects);
+        a ``create`` whose first attempt went through before its reply was
+        lost reports ``AlreadyExists`` on the retry, which counts as success.
 
         :param command: kubectl subcommand string (without ``kubectl --context ...`` prefix).
         :return: Decoded stdout string, or ``None`` on failure.
         """
-        def run_with_fallback(fullcommand):
+        deadline = time.monotonic() + CLUSTER_OUTAGE_BUDGET_SECONDS
+
+        def run_with_fallback(fullcommand, retried=False):
             encodings = ["utf-8", "latin1", "cp1252"]
             try:
                 raw = subprocess.check_output(fullcommand, shell=True, stderr=subprocess.STDOUT)
@@ -1260,7 +1362,12 @@ class Kubernetes():
                         print("Create new access token")
                         self.cluster_access()
                         self.wait(2)
-                        return run_with_fallback(fullcommand)
+                        return run_with_fallback(fullcommand, retried)
+                    output_text = e.output.decode('utf-8', errors='replace')
+                    if retried and 'AlreadyExists' in output_text:
+                        return output_text
+                    if is_cluster_connection_error(output_text) and wait_for_cluster(deadline):
+                        return run_with_fallback(fullcommand, retried=True)
                 return None
             except Exception as e:
                 print("Unexpected error while running subprocess!")
@@ -1281,16 +1388,22 @@ class Kubernetes():
         self.logger.debug(f'Kubernetes.kubectl({fullcommand})')
         return run_with_fallback(fullcommand)
 
-    def execute_command_in_pod(self, command, pod='', container='', params=''):
+    def execute_command_in_pod(self, command, pod='', container='', params='',
+                               retry_interrupted: bool = True):
         """
         Execute a shell command inside a container of a running Pod.
 
-        Retries automatically on transient ``error dialing backend`` failures.
+        While the cluster cannot be reached, the command is retried for up to
+        :data:`CLUSTER_OUTAGE_BUDGET_SECONDS`. A connection that breaks while
+        the command may already be running is retried too, unless
+        ``retry_interrupted`` is ``False``; callers running a command that is
+        not safe to repeat (e.g. a long SQL script) must pass ``False``.
 
         :param command: Shell command string.
         :param pod: Name of the target Pod.
         :param container: Container name within the Pod (optional for single-container pods).
         :param params: Unused; reserved for future use.
+        :param retry_interrupted: Whether to retry after a connection broke mid-command.
         :return: Tuple ``("", stdout_str, stderr_str)``.
         """
         if not pod:
@@ -1308,41 +1421,24 @@ class Kubernetes():
                 f'kubectl --context {self.context} exec {pod} -- sh -c "{command_clean}"'
             )
         self.logger.debug(f'Kubernetes.execute_command_in_pod({fullcommand})')
-        proc = subprocess.Popen(
-            fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, shell=True
-        )
-        stdout, stderr = proc.communicate()
-        try:
-            str_stdout = stdout.decode('utf-8')
-            str_stderr = stderr.decode('utf-8')
-            if (
-                'Error from server: error dialing backend' in str_stdout
-                or 'Error from server: error dialing backend' in str_stderr
-            ):
-                print("Connection error found")
-                self.wait(5)
-                return self.execute_command_in_pod(
-                    command=command, pod=pod, container=container, params=params
-                )
-            else:
-                return "", str_stdout, str_stderr
-        except Exception as e:
-            print(e)
-            print(stdout, stderr)
-            str_stdout = stdout.decode('utf-8')
-            str_stderr = stderr.decode('utf-8')
-            if (
-                'Error from server: error dialing backend' in str_stdout
-                or 'Error from server: error dialing backend' in str_stderr
-            ):
-                print("Connection error found")
-                self.wait(5)
-                return self.execute_command_in_pod(
-                    command=command, pod=pod, container=container, params=params
-                )
-            else:
+        deadline = time.monotonic() + CLUSTER_OUTAGE_BUDGET_SECONDS
+        while True:
+            proc = subprocess.Popen(
+                fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, shell=True
+            )
+            stdout, stderr = proc.communicate()
+            try:
+                str_stdout = stdout.decode('utf-8')
+                str_stderr = stderr.decode('utf-8')
+            except UnicodeDecodeError as e:
+                print(e)
+                print(stdout, stderr)
                 return "", stdout, stderr
+            if (is_cluster_connection_error(str_stderr, include_interrupted=retry_interrupted)
+                    and wait_for_cluster(deadline)):
+                continue
+            return "", str_stdout, str_stderr
 
     def upload_file(self, filename_remote, filename_local, pod, container="dashboard",
                     max_retries: int = 3) -> str:

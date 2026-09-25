@@ -919,6 +919,7 @@ class SutConfiguration:
         pod: str = '',
         container: str = '',
         params: str = '',
+        retry_interrupted: bool = True,
     ):
         """Run a shell command inside the SUT container.
 
@@ -928,6 +929,9 @@ class SutConfiguration:
         :param pod: Pod name; defaults to :attr:`pod_sut`.
         :param container: Container name; defaults to :attr:`sut_container_name`.
         :param params: Optional additional parameters (currently unused).
+        :param retry_interrupted: Whether to rerun the command after the
+            cluster connection broke mid-command; ``False`` for commands that
+            are not safe to repeat.
         :return: stdout of the shell command.
         """
         if len(pod) == 0:
@@ -937,7 +941,8 @@ class SutConfiguration:
         if self.pod_sut == '':
             self.check_sut()
         return self.experiment.cluster.execute_command_in_pod(
-            command=command, pod=pod, container=container, params=params)
+            command=command, pod=pod, container=container, params=params,
+            retry_interrupted=retry_interrupted)
 
     def upload_experiment_file(self, filename: str):
         """Upload a file to the experiment's result storage.
