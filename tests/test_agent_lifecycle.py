@@ -489,7 +489,7 @@ class AgentLifecycleTest(unittest.TestCase):
         ]["nodeSelectorTerms"][0]["matchExpressions"]
 
         self.assertIn(
-            {"key": "gpu", "operator": "In", "values": ["h100", "h200"]},
+            {"key": "gpu", "operator": "In", "values": ["h100", "h200", "b200"]},
             expressions,
         )
 
@@ -587,7 +587,7 @@ probe_activity() {{
 
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         self.trajectories = self.root / "trajectories"
         self.results = self.root / "results"
         self.status = self.root / "status"
@@ -874,6 +874,68 @@ probe_activity() {{
 
         self.assertEqual(self.server.actions, ["down", "down"])
         self.assertEqual(lifecycle.cleaned_codes, ["101"])
+
+    def test_a_finished_benchmark_is_recorded_as_finished(self) -> None:
+        """Nothing else in a sequential run corrects the state written at submission."""
+        status_file = self.status / "101.json"
+        status = {"code": "101", "state": "running", "results": str(self.results / "101")}
+        status_file.write_text(json.dumps(status), encoding="utf-8")
+        self._report("101")
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=[])
+
+        lifecycle._wait_for_report("101")
+
+        self.assertEqual(
+            json.loads(status_file.read_text(encoding="utf-8")),
+            {**status, "state": "finished"},
+        )
+
+    def test_a_benchmark_whose_process_exited_is_recorded_as_failed(self) -> None:
+        status_file = self.status / "101.json"
+        status_file.write_text(
+            json.dumps({"code": "101", "state": "running", "pid": 4242}),
+            encoding="utf-8")
+        lifecycle = _Lifecycle(
+            self.config, ["agent"], self.server, runs=[], sleep=lambda _: None,
+            refused_pods=lambda _code: [])
+
+        with (
+            mock.patch("agent.lifecycle._pid_alive", return_value=False),
+            self.assertRaisesRegex(LifecycleError, "exited before producing"),
+        ):
+            lifecycle._wait_for_report("101")
+
+        self.assertEqual(
+            json.loads(status_file.read_text(encoding="utf-8"))["state"], "failed")
+
+    def test_a_benchmark_whose_process_may_still_run_keeps_its_state(self) -> None:
+        """While bexhoma may still run, the harness must count the cluster as busy."""
+        status_file = self.status / "101.json"
+        refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
+        cases = {
+            "given up as unschedulable": (self.config, refusal, "unschedulable"),
+            "no longer waited for": (
+                LifecycleConfig(
+                    **{**self.config.__dict__, "benchmark_timeout_seconds": 1.0}),
+                [], "timed out"),
+        }
+        for case, (config, refused, message) in cases.items():
+            with self.subTest(case):
+                status_file.write_text(
+                    json.dumps({"code": "101", "state": "running"}), encoding="utf-8")
+                lifecycle = _Lifecycle(
+                    config, ["agent"], self.server, runs=[], sleep=lambda _: None,
+                    refused_pods=lambda _code, refused=refused: refused)
+
+                with (
+                    mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()),
+                    self.assertRaisesRegex(LifecycleError, message),
+                ):
+                    lifecycle._wait_for_report("101")
+
+                self.assertEqual(
+                    json.loads(status_file.read_text(encoding="utf-8"))["state"],
+                    "running")
 
     def test_failed_benchmark_cleanup_uses_the_exact_experiment_code(self) -> None:
         lifecycle = AgentLifecycle(self.config, ["agent"], self.server)

@@ -177,23 +177,23 @@ rather than inferring or approximating the count.
   table carries. Its `query_evidence` supplies compact per-query execution timings
   by configuration and actual concurrency, repetition ranges, and failure
   locations. Configuration resource allocations are in `systems`.
-- record_interpretation(hypothesis_verdict, validity, comparison_quality,
-  result_claims, questions, follow_up) records the scientific verdict separately from the
-  mechanical validity checks, whether every explicit part of the user's
-  question is settled, and the smallest useful follow-up when one is warranted.
+- record_interpretation(hypothesis_verdict, validity, questions, follow_up,
+  disputes) records the scientific verdict separately from the mechanical
+  validity checks, whether every explicit part of the user's question is
+  settled, and the smallest useful follow-up when one is warranted. What the
+  assessor computed is filed with your record by the harness; you are not asked
+  to copy it back.
 
 Those are the only tools. You have no shell and no network.
 
 # Stopping
 
-When you have read enough, call record_interpretation exactly once. Its
-`validity.failed_checks` must equal the report frontmatter. When that number is
-nonzero, `validity.scope` must explain which metrics or conclusions are affected.
-Copy `validity.affected_phases` and `validity.performance_metrics_affected`
-from the assessor's deterministic scope. A monitoring-only failure does not
-invalidate throughput or latency; state how many benchmark phases it touches.
-Every validity and question `evidence_paths` entry must be a path successfully
-opened with read_file in this context.
+When you have read enough, call record_interpretation exactly once, with the
+whole record as a single object. When the report records a failed check,
+`validity.scope` must explain which metrics or conclusions are affected. A
+monitoring-only failure does not invalidate throughput or latency; state how
+many benchmark phases it touches. Every validity and question `evidence_paths`
+entry must be a path successfully opened with read_file in this context.
 
 Record one `hypothesis_verdict` for the hypothesis in the archived
 experiment.yml. Its status is `supported`, `refuted`, `inconclusive`, or
@@ -201,33 +201,30 @@ experiment.yml. Its status is `supported`, `refuted`, `inconclusive`, or
 pass/fail/skip counts. Give a concise conclusion and cite only evidence paths
 inside the current result folder that you opened in this context.
 
-Record `comparison_quality` exactly as the deterministic assessment reports it:
-query coverage, whole-workload throughput comparability, and the phase names of
-all suspect repetitions. A suspect repetition is a warning that must be
-disclosed, not evidence you may silently discard. When coverage is partial,
-separate speed on the common successful queries from completion of the planned
-workload. Do not use whole-workload throughput to rank systems when the
-assessment marks it non-comparable.
-
-Record `result_claims` exactly as the assessor reports its checkable
-projection: one entry per factor, metric and fixed context it characterised.
-Report the conclusion only -- the shape and its turning level for an ordered
-sweep, the ranking for a system comparison. Do not copy the measurements; the
-harness files those with the record itself.
+The assessment is the evidence your verdict is formed against, and it is filed
+with your record whether or not you agree with it. A suspect repetition is a
+warning that must be disclosed, not evidence you may silently discard. When
+coverage is partial, separate speed on the common successful queries from
+completion of the planned workload. Do not use whole-workload throughput to
+rank systems when the assessment marks it non-comparable. Likewise, when it
+lists `withheld_claims`, do not draw the withheld shape or ranking from the same
+figures in prose; `rate_aggregation` explains why, and the harness adds that
+qualification to your answer.
 
 Shapes describe the series, not whether it is good news. A latency metric that
 rises throughout is getting worse, and the assessor names each metric's
 `direction` so you can say which. A step smaller than the repetitions at that
 level can resolve counts as no movement, which is why a sweep whose spread
 swamps its differences is reported as saturating or non-monotone rather than
-as a trend: say so in prose instead of asserting the trend anyway.
+as a trend.
 
-The harness rejects a changed shape, turning level or ranking and returns both
-the computed and the claimed conclusion. Treat factors the assessor lists as
-unsupported as free-prose limitations; do not invent a typed conclusion for
-evidence the report does not expose.
-Removing a rejected typed claim does not make that claim supportable in the
-verdict, question answers, or final prose.
+Where you think a computed claim is wrong or misleading for this question, say
+so in `disputes`, naming the claim and the reason, and explain it in your prose
+as well. A dispute is filed beside the claim it contests; it does not change
+what the harness measured. Disagreeing on the record is the honest move, and it
+is the only one available -- restating a conclusion you do not hold is not.
+Treat factors the assessor lists as unsupported as free-prose limitations; do
+not invent a conclusion for evidence the report does not expose.
 
 Split the original request into all of its explicit questions. Set each
 question's evidence validity to `supported`, `limited`, or `invalid`. "Partial"

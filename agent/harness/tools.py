@@ -118,6 +118,21 @@ _METRIC_SUBSTRINGS = (
     ("throughput", "higher_is_better"), ("latency", "lower_is_better"),
 )
 
+#: A phase rate the report forms by adding up its pods' own rates (YCSB), and the
+#: per-pod duration each of those rates was measured over.
+_SUMMED_RATE = "[OVERALL].Throughput(ops/sec)"
+_POD_DURATION_MS = "[OVERALL].RunTime(ms)"
+_MILLISECONDS_PER_SECOND = 1000.0
+
+#: Policy, not a scientific boundary: how far a summed rate may exceed its
+#: common-duration approximation before no shape or ranking is built on it. It
+#: is set to catch large distortions, such as the doubled rates of 2026-09-24.
+_RATE_DISCREPANCY_LIMIT = 0.20
+
+#: Relative slack for a phase rate to count as the sum of its pods' rates, which
+#: the report rounds to two decimals each.
+_RATE_ROUNDING_TOLERANCE = 1e-3
+
 #: Unit each ordered factor is swept in, for the assessor's own prose.
 _FACTOR_UNITS = {"concurrency": "clients", "cpu": "cores", "memory": "GiB"}
 
@@ -1412,17 +1427,171 @@ def _expected_levels(
     }
 
 
+def _common_duration_rate(
+    rates: list[float], durations: list[float],
+) -> tuple[float, float, float]:
+    """Compare a sum of rates with the rate over the longest contributing duration.
+
+    A rate times its duration approximately recovers the work behind it. Spread
+    over the longest duration, that work gives the rate a group sustained if all
+    of its members started together. Adding the rates instead counts a member
+    that finished early as if it had kept going. The approximation ignores
+    staggered starts and report rounding, so it is a check on the sum, not a
+    corrected throughput.
+
+    :param rates: Each member's own rate.
+    :param durations: The duration each rate was measured over, in any one unit.
+    :return: The summed rate, the common-duration approximation, and the relative
+        excess of the first over the second.
+    :rtype: tuple[float, float, float]
+    """
+    summed = sum(rates)
+    approximation = sum(
+        rate * duration for rate, duration in zip(rates, durations)
+    ) / max(durations)
+    return summed, approximation, summed / approximation - 1
+
+
+def _rate_aggregation(text: str) -> dict[str, Any]:
+    """Check that every summed phase rate adds up pods measured over comparable durations.
+
+    :param text: The report's ``benchmarking.md`` page.
+    :return: The status, the measurements of every multi-pod phase, the phases
+        that could not be checked, and the phases whose summed rate carries no
+        shape or ranking.
+    :rtype: dict[str, Any]
+    """
+    not_applicable = {
+        "status": "not_applicable", "metric": _SUMMED_RATE, "withheld_phases": [],
+    }
+    phase_table = _markdown_table(text, "#### Per Phase")
+    if phase_table is None or not {"phase", "pod_count", _SUMMED_RATE}.issubset(
+        phase_table[0]
+    ):
+        return not_applicable
+    headers, rows = phase_table
+    phases: dict[str, tuple[int, float]] = {}
+    unchecked: dict[str, str] = {}
+    for row in rows:
+        phase = _plain_markdown_cell(row[headers.index("phase")])
+        try:
+            pods = int(row[headers.index("pod_count")])
+            reported = float(row[headers.index(_SUMMED_RATE)])
+        except ValueError:
+            unchecked[phase] = "the phase row has no usable pod count or rate"
+            continue
+        if phase in phases:
+            unchecked[phase] = "the phase appears in more than one row"
+        elif pods > 1:
+            phases[phase] = (pods, reported)
+    if not phases and not unchecked:
+        return not_applicable
+
+    # Each pod's rate and duration cells by phase, or None without a usable table.
+    connection_table = _markdown_table(text, "#### Per Connection")
+    pod_rows: dict[str, list[tuple[str, str]]] | None = None
+    if connection_table is not None and {
+        "phase", _SUMMED_RATE, _POD_DURATION_MS,
+    }.issubset(connection_table[0]):
+        connection_headers, connection_rows = connection_table
+        pod_rows = {}
+        for row in connection_rows:
+            phase = _plain_markdown_cell(row[connection_headers.index("phase")])
+            pod_rows.setdefault(phase, []).append((
+                row[connection_headers.index(_SUMMED_RATE)],
+                row[connection_headers.index(_POD_DURATION_MS)],
+            ))
+
+    measured = []
+    for phase, (pods, reported) in sorted(phases.items()):
+        if phase in unchecked:
+            continue
+        if pod_rows is None:
+            unchecked[phase] = "the report has no per-pod rates and durations"
+            continue
+        if len(pod_rows.get(phase, [])) != pods:
+            unchecked[phase] = (
+                f"{len(pod_rows.get(phase, []))} pod rows for {pods} pods"
+            )
+            continue
+        try:
+            rates = [float(rate) for rate, _ in pod_rows[phase]]
+            durations = [
+                float(duration) / _MILLISECONDS_PER_SECOND
+                for _, duration in pod_rows[phase]
+            ]
+        except ValueError:
+            unchecked[phase] = "a pod rate or duration is not a number"
+            continue
+        if any(
+            not math.isfinite(value) or value <= 0 for value in rates + durations
+        ):
+            unchecked[phase] = "a pod rate or duration is zero or not finite"
+            continue
+        summed, approximation, excess = _common_duration_rate(rates, durations)
+        if abs(summed - reported) > _RATE_ROUNDING_TOLERANCE * abs(reported):
+            unchecked[phase] = "the phase rate is not the sum of its pods' rates"
+            continue
+        measured.append({
+            "phase": phase,
+            "pods": pods,
+            "summed_rate": round(summed, 2),
+            "common_duration_rate_approximation": round(approximation, 2),
+            "shortest_pod_seconds": round(min(durations), 3),
+            "longest_pod_seconds": round(max(durations), 3),
+            "excess": round(excess, 3),
+            "material_discrepancy": excess > _RATE_DISCREPANCY_LIMIT,
+        })
+
+    discrepant = [entry["phase"] for entry in measured if entry["material_discrepancy"]]
+    if discrepant:
+        status = "material_discrepancy"
+    elif unchecked:
+        status = "unchecked"
+    else:
+        status = "no_material_discrepancy_detected"
+    return {
+        "status": status,
+        "metric": _SUMMED_RATE,
+        "limit": _RATE_DISCREPANCY_LIMIT,
+        "phases": measured,
+        "unchecked_phases": [
+            {"phase": phase, "reason": reason} for phase, reason in sorted(unchecked.items())
+        ],
+        "withheld_phases": sorted(set(discrepant) | set(unchecked)),
+        "explanation": (
+            f"Each phase's {_SUMMED_RATE} adds up its pods' own rates, which equals "
+            "the rate over the whole round only when every pod ran for the same "
+            "time. The common-duration approximation spreads each pod's work "
+            "(rate times duration) over the longest pod duration; it ignores "
+            "staggered starts and is a check on the sum, not a corrected "
+            "throughput or capacity. A phase whose sum exceeds it by more than "
+            f"{_RATE_DISCREPANCY_LIMIT:.0%}, or that could not be checked, carries "
+            "no shape or ranking for this metric. 'No material discrepancy "
+            "detected' does not establish steady operation or synchronized starts."
+        ),
+    }
+
+
 def _decode_observations(
     experiment: dict[str, Any],
     headers: list[str],
     rows: list[list[str]],
     metrics: list[tuple[str, str]],
     resource_cells: list[dict[str, float]],
-) -> tuple[list[tuple[dict[str, str | float], dict[str, float]]], list[str]]:
+    withheld_phases: frozenset[str] = frozenset(),
+) -> tuple[
+    list[tuple[dict[str, str | float], dict[str, float]]],
+    dict[str, dict[str, str | float]],
+]:
     """Decode each report row into its factor coordinates and metric values.
 
-    :return: The observations, and the phases left out because they measured nothing.
-    :rtype: tuple[list[tuple[dict[str, str | float], dict[str, float]]], list[str]]
+    :param withheld_phases: Phases whose summed rate failed its aggregation
+        check; that metric is marked NaN so no claim is built on it.
+    :return: The observations, and the phases left out because they measured
+        nothing, each with its factor coordinates.
+    :rtype: tuple[list[tuple[dict[str, str | float], dict[str, float]]],
+        dict[str, dict[str, str | float]]]
     """
     # A YCSB pod runs several client threads and its report totals them per
     # round; a TPC-H pod is a single stream, so there the pod count is the
@@ -1431,7 +1600,7 @@ def _decode_observations(
     positions = {name: headers.index(name) for name in ("phase", clients)}
     positions.update({metric: headers.index(metric) for metric, _ in metrics})
     observations = []
-    excluded = []
+    excluded = {}
     for row in rows:
         phase = _plain_markdown_cell(row[positions["phase"]])
         dimensions = _configuration_dimensions(
@@ -1448,8 +1617,12 @@ def _decode_observations(
         # means it measured nothing (the report's "contains 0 or NaN" checks
         # fail on it). Averaged in, it would drown the real level differences.
         if any(not math.isfinite(value) or value <= 0 for value in values.values()):
-            excluded.append(phase)
+            excluded[phase] = dimensions
             continue
+        # Marked rather than dropped: leaving the phase out would let the
+        # remaining levels form a different, equally unsupported curve.
+        if phase in withheld_phases and _SUMMED_RATE in values:
+            values[_SUMMED_RATE] = math.nan
         observations.append((dimensions, values))
     return observations, excluded
 
@@ -1496,6 +1669,12 @@ def _ordered_sweep_claims(
                 level: [values[metric] for values in repetitions]
                 for level, repetitions in levels.items()
             }
+            if any(math.isnan(value) for values in per_level.values() for value in values):
+                claims.append({
+                    "factor": factor, "context": dict(context), "metric": metric,
+                    "withheld": True,
+                })
+                continue
             summary = sorted(
                 (level, statistics.mean(values), _level_noise(values, statistics.mean(values)))
                 for level, values in per_level.items()
@@ -1561,6 +1740,15 @@ def _categorical_claims(
         if len(measurements) < 2 or set(measurements) != expected_systems:
             continue
         for metric, direction in metrics:
+            if any(
+                math.isnan(values[metric])
+                for repetitions in measurements.values() for values in repetitions
+            ):
+                claims.append({
+                    "factor": "system", "context": dict(context), "metric": metric,
+                    "withheld": True,
+                })
+                continue
             means = {
                 str(system): round(
                     statistics.mean(values[metric] for values in repetitions), 2
@@ -1604,13 +1792,21 @@ def _unsupported(reason: str) -> dict[str, Any]:
     }
 
 
-def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
+def _shape_claims(
+    text: str,
+    specification: str | None,
+    withheld_phases: frozenset[str] = frozenset(),
+    discrepant_phases: frozenset[str] = frozenset(),
+) -> dict[str, Any]:
     """Build typed claims from the factors the archived specification varied.
 
     :param text: The report's ``benchmarking.md`` page.
     :param specification: The archived ``experiment.yml``, when it is available.
-    :return: Ordered sweeps, categorical comparisons, and the factors that could
-        not be characterised.
+    :param withheld_phases: Phases whose summed rate failed its aggregation check.
+    :param discrepant_phases: Those of them whose pods were measured running for
+        materially different times.
+    :return: Ordered sweeps, categorical comparisons, the claims withheld because
+        they rest on such a rate, and the factors that could not be characterised.
     :rtype: dict[str, Any]
     """
     if not specification:
@@ -1633,7 +1829,7 @@ def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
     if not metrics or not {"phase", "pod_count"}.issubset(headers):
         return _unsupported(discriminates)
     observations, excluded = _decode_observations(
-        experiment, headers, rows, metrics, resource_cells
+        experiment, headers, rows, metrics, resource_cells, withheld_phases
     )
 
     unsupported = []
@@ -1652,12 +1848,41 @@ def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
         )
         if not categorical:
             unsupported.append("system")
+    # A round dropped because it measured nothing leaves no rate to mark, but a
+    # pod-duration skew measured in it still speaks against the comparison it
+    # belonged to; without this, the remaining rounds would form the very curve
+    # the check withheld.
+    dropped_skews = [
+        dimensions for phase, dimensions in excluded.items()
+        if phase in discrepant_phases
+    ]
+    for claim in ordered_sweeps + categorical:
+        if claim["metric"] == _SUMMED_RATE and any(
+            all(dimensions.get(peer) == level for peer, level in claim["context"].items())
+            for dimensions in dropped_skews
+        ):
+            claim["withheld"] = True
+    withheld = [
+        {key: claim[key] for key in ("factor", "context", "metric")}
+        for claim in ordered_sweeps + categorical if claim.get("withheld")
+    ]
     characterization = {
-        "ordered_sweeps": ordered_sweeps,
-        "categorical_comparisons": categorical,
+        "ordered_sweeps": [claim for claim in ordered_sweeps if not claim.get("withheld")],
+        "categorical_comparisons": [
+            claim for claim in categorical if not claim.get("withheld")
+        ],
         "unsupported_factors": unsupported,
-        "excluded_phases": excluded,
+        "excluded_phases": list(excluded),
     }
+    if withheld:
+        characterization["withheld_claims"] = withheld
+        characterization["withheld_reason"] = (
+            "These claims rest on a summed rate that failed its aggregation check "
+            "(see rate_aggregation) in at least one of their rounds, even where "
+            "that round is excluded for another reason, so the report's figures "
+            "cannot support their shape or ranking. Other metrics are unaffected. "
+            "Do not rebuild these claims in prose from the same figures."
+        )
     if excluded:
         characterization["exclusion_reason"] = (
             "These rounds reported zero or NaN for a characterised metric, so they "
@@ -1747,7 +1972,14 @@ def _assess_comparison_quality(
     planned_queries, errors, error_count = _error_coverage(text)
     planned_queries.update(common_queries)
     configurations.update(errors)
-    characterization = _shape_claims(text, specification)
+    aggregation = _rate_aggregation(text)
+    characterization = _shape_claims(
+        text, specification, frozenset(aggregation["withheld_phases"]),
+        frozenset(
+            entry["phase"] for entry in aggregation.get("phases", [])
+            if entry["material_discrepancy"]
+        ),
+    )
     if error_count:
         invalid_factors = {
             claim["factor"] for claim in characterization["ordered_sweeps"]
@@ -1831,6 +2063,7 @@ def _assess_comparison_quality(
             "invalidate it automatically."
         ),
         "result_characterization": characterization,
+        "rate_aggregation": aggregation,
         "validity_scope": _validity_scope(report_text, text, monitoring_text),
     }
 
@@ -2020,106 +2253,40 @@ _RECORD_INTERPRETATION = {
                 "validity": {
                     "type": "object",
                     "properties": {
-                        "failed_checks": {"type": "integer", "minimum": 0},
                         "scope": {"type": "string"},
-                        "affected_phases": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "performance_metrics_affected": {"type": "boolean"},
                         "evidence_paths": {
                             "type": "array",
                             "items": {"type": "string"},
                             "minItems": 1,
                         },
                     },
-                    "required": [
-                        "failed_checks", "scope", "affected_phases",
-                        "performance_metrics_affected", "evidence_paths",
-                    ],
+                    "required": ["scope", "evidence_paths"],
                 },
-                "comparison_quality": {
-                    "type": "object",
-                    "properties": {
-                        "query_coverage": {
-                            "type": "string",
-                            "enum": ["complete", "partial", "not_applicable"],
-                        },
-                        "whole_workload_throughput": {
-                            "type": "string",
-                            "enum": ["comparable", "not_comparable", "not_applicable"],
-                        },
-                        "suspect_repetitions": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                    },
-                    "required": [
-                        "query_coverage", "whole_workload_throughput",
-                        "suspect_repetitions",
-                    ],
-                },
-                "result_claims": {
-                    "type": "object",
-                    "properties": {
-                        "ordered_sweeps": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "factor": {
-                                        "type": "string",
-                                        "enum": sorted(
-                                            _DISCRIMINATING_FACTORS - {"system"}
-                                        ),
-                                    },
-                                    "context": {
-                                        "type": "object",
-                                        "additionalProperties": {
-                                            "type": ["string", "number"],
-                                        },
-                                    },
-                                    "metric": {"type": "string"},
-                                    "shape": {
-                                        "type": "string",
-                                        "enum": sorted(_SHAPE_VALUES),
-                                    },
-                                    "turning_level": {
-                                        "type": ["number", "null"],
-                                    },
-                                },
-                                "required": [
-                                    "factor", "context", "metric", "shape",
-                                    "turning_level",
-                                ],
+                "disputes": {
+                    "type": "array",
+                    "description": (
+                        "Optional. Where the deterministic characterization is "
+                        "wrong or misleading for this question, say which claim "
+                        "and why. Disputes are filed with the record and change "
+                        "nothing the harness computed; they are how you "
+                        "disagree, instead of restating a claim you do not hold."
+                    ),
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "claim": {
+                                "type": "string",
+                                "description": (
+                                    "Which assessor claim this disputes, in your "
+                                    "own words, naming its factor, fixed context "
+                                    "and metric, e.g. '<factor> sweep at "
+                                    "<context>, <metric>'."
+                                ),
                             },
+                            "reason": {"type": "string"},
                         },
-                        "categorical_comparisons": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "factor": {"type": "string", "enum": ["system"]},
-                                    "context": {
-                                        "type": "object",
-                                        "additionalProperties": {
-                                            "type": ["string", "number"],
-                                        },
-                                    },
-                                    "metric": {"type": "string"},
-                                    "ranking": {
-                                        "type": "array",
-                                        "items": {"type": "string"},
-                                        "minItems": 2,
-                                    },
-                                },
-                                "required": [
-                                    "factor", "context", "metric", "ranking",
-                                ],
-                            },
-                        },
+                        "required": ["claim", "reason"],
                     },
-                    "required": ["ordered_sweeps", "categorical_comparisons"],
                 },
                 "follow_up": {
                     "type": "object",
@@ -2144,8 +2311,7 @@ _RECORD_INTERPRETATION = {
                 },
             },
             "required": [
-                "hypothesis_verdict", "validity", "comparison_quality", "result_claims",
-                "questions", "follow_up",
+                "hypothesis_verdict", "validity", "questions", "follow_up",
             ],
         },
     },

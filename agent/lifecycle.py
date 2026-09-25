@@ -485,6 +485,10 @@ class AgentLifecycle:
                         print(f"benchmark {code} has Pods the scheduler is "
                               f"refusing:\n  " + "\n  ".join(refused), flush=True)
                     elif time.monotonic() - refused_since >= _UNSCHEDULABLE_GRACE_SECONDS:
+                        # No state is recorded: the cleanup does not stop
+                        # bexhoma's process, and while it may still run the
+                        # harness must count this benchmark as occupying the
+                        # cluster.
                         self._cleanup_failed_benchmark(code)
                         raise LifecycleError(
                             f"benchmark {code} was unschedulable for "
@@ -500,6 +504,7 @@ class AgentLifecycle:
                     raise LifecycleError(f"benchmark {code} is marked failed")
                 pid = status.get("pid")
                 if isinstance(pid, int) and pid > 0 and not _pid_alive(pid):
+                    _record_benchmark_state(status_file, "failed")
                     self._cleanup_failed_benchmark(code)
                     raise LifecycleError(
                         f"benchmark {code} process {pid} exited before producing {report}"
@@ -507,6 +512,7 @@ class AgentLifecycle:
             if deadline is not None and time.monotonic() >= deadline:
                 raise LifecycleError(f"timed out waiting for benchmark {code}: {report}")
             self._sleep(self.config.poll_seconds)
+        _record_benchmark_state(status_file, "finished")
         return report
 
     def _cleanup_failed_benchmark(self, code: str) -> None:
@@ -523,6 +529,29 @@ class AgentLifecycle:
                 f"status {result.returncode}",
                 file=sys.stderr,
             )
+
+
+def _record_benchmark_state(status_file: Path, state: str) -> None:
+    """Persist a benchmark state the lifecycle has just observed.
+
+    The harness writes ``running`` at submission and derives later states only
+    when it lists results, which a sequential investigation never does, so
+    without this the file keeps saying ``running`` after the benchmark ended.
+    Only states the harness would derive itself are written -- a report means
+    finished, an exited process without one means failed -- so the file and
+    the harness's check against two runs sharing the cluster never disagree.
+
+    :param status_file: The benchmark's status file; nothing is written when
+        the harness recorded none.
+    :type status_file: Path
+    :param state: ``finished`` or ``failed``.
+    :type state: str
+    """
+    if not status_file.is_file():
+        return
+    status = json.loads(status_file.read_text(encoding="utf-8"))
+    status["state"] = state
+    status_file.write_text(json.dumps(status, indent=2), encoding="utf-8")
 
 
 def _link_baseline(design_run: Path, baseline_run: Path) -> None:

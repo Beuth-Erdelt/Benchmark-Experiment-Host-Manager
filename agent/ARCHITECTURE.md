@@ -11,6 +11,14 @@ PgDuckDB, and YCSB with PostgreSQL. Bexhoma executes experiments through its
 normal entry point; agent
 policy remains in `agent/`.
 
+The current interface requires at least two treatments and limits the declared
+factors to system, concurrency, CPU, and memory. It can answer comparisons and
+resource or concurrency sweeps within that catalog. A single-configuration
+measurement, a dataset-size sweep, or a joint CPU-and-memory change without
+separate effects is outside its accepted design space. These are implementation
+limits, not requirements of sound benchmarking. The handbook's broader method
+does not make those designs executable through the current interface.
+
 ## Annotated end-to-end flow
 
 ```mermaid
@@ -128,7 +136,7 @@ consultation measurable in the trajectory.
 | Submission | `tools.py::submit`, `submit.py` | Full catalog-and-environment fingerprint check, immutable provenance snapshot, code allocation, result-root lock, agent-side catalog launch adapter, and result-folder archive |
 | Execution | Bexhoma workload and lifecycle modules | Workload execution, optional per-configuration loading deadline, diagnostics-before-teardown, raw files, validity results, and tiered report |
 | State recovery | `agent.py::_carry_forward` | Rebuilds the question, exact current specification, code, and budget from trajectory data without carrying an earlier result into interpretation |
-| Evidence interpretation | `prompts.py::interpret_messages`, `agent.py::_InterpretationGate` | Selects one exact report; requires its Tests evidence and result contract; verifies failed-check count, affected phase scope, cited read paths, typed result claims, and one finish/follow-up decision |
+| Evidence interpretation | `prompts.py::interpret_messages`, `agent.py::_InterpretationGate` | Selects one exact report; requires its Tests evidence, result contract and comparison-quality assessment; verifies cited read paths and one finish/follow-up decision; files the harness's own failed-check count, phase scope and result claims beside the model's verdict and disputes; after four refusals accepts a record incomplete, leaving out failing parts but never waiving the reads or the verdict's evidence |
 | Deterministic comparison | `tools.py::assess_comparison_quality` | Reports query coverage where applicable, throughput comparability, repetition-anomaly warnings, and checkable factor results without relying on model arithmetic or workload names |
 | Follow-up authoring | `prompts.py::followup_author_messages`, `agent.py::_author_followup` | Fresh mutation context; receives compact ancestor summaries, rereads the design contract, and enforces the current experiment code as lineage, a material controlled change (or, for an approved independent repeat, unchanged execution settings), and any approved query subset before shared validation |
 | Portable lineage summary | `agent.py::_write_agent_summary`, `contracts/contract_result.yml` | Persists one experiment code, parent, hypothesis, scientific verdict, technical validity, and unresolved question without copying ancestor reports into context |
@@ -150,11 +158,27 @@ series, split so every other declared factor stays fixed; system becomes a
 categorical ranking at each fixed context. Concurrency is counted in client
 threads where the report totals them (YCSB) and in benchmarker pods otherwise.
 Rounds that report zero or NaN for a characterized metric measured nothing, so
-they are left out and listed. A step between two levels counts only when it
+they are left out and listed. A phase rate that adds up several pods' own rates
+(YCSB's overall throughput) is first compared with the pods' work spread over
+the longest pod duration. When the sum exceeds that by more than 20%, or the
+per-pod rows needed to check it are missing or unusable, no shape or ranking is
+built on that metric in any comparison the phase belongs to. A measured excess
+keeps its comparison withheld even when the round is also left out for reporting
+zero or NaN, whereas a left-out round that merely could not be checked restricts
+nothing further. The claim is listed as withheld and other metrics keep their
+claims. Whenever the check finds a sum it cannot vouch for, the harness appends
+a qualification to the answer, even if no comparison could be built at all, and
+files the same qualification in `agent_summary.yml` and in the follow-up
+author's context, because the model's verdict may still rest on that sum. The
+approximation is a check on the sum, not a
+corrected throughput. The validator separately warns, without refusing, when a
+YCSB round runs several pods without an execution-time cap. A step between two levels counts only when it
 exceeds the sum of both levels' standard errors, each taken from the repetitions'
 standard deviation or a 5% per-measurement floor, whichever is larger, so
-agreeing repetitions resolve smaller steps than a single run. The record must reproduce every
-computed shape or ranking and its factor-level means exactly. A report shape
+agreeing repetitions resolve smaller steps than a single run. The harness files
+the computed claims beside the model's verdict; the model can dispute them with
+a reason. These shape and ranking rules are descriptive checks, not statistical
+significance tests. A report shape
 that cannot expose one of its declared factors reports that limitation without
 inventing a comparison. Failed monitoring checks are similarly traced to their
 zero or non-finite phase rows, so a monitoring-only defect cannot silently
@@ -222,13 +246,27 @@ follow-up when needed. The harness does not synthesize earlier reports or force
 a larger multi-experiment report template.
 
 Before accepting the structured record, the harness requires the exact report
-index and result contract to have been read, verifies the recorded
-failed-check count against report frontmatter, and rejects evidence paths that
-were not read in that context. For a TPC-H report with benchmarking evidence,
-the model must also reproduce the deterministic query-coverage,
-whole-workload-throughput, and suspect-repetition record exactly. A suspect
-repeat is disclosed but not automatically invalidated. A settled question also
-requires evidence marked as supported. The investigation contains `task.txt`,
+index, its Tests section and the result contract to have been read, and the
+deterministic comparison-quality assessment to have been run when benchmarking
+evidence exists. It rejects evidence paths that were not read in that context.
+The failed-check count, the affected phases, the comparison-quality summary and
+the typed result claims are the harness's own values, filed beside the model's
+verdict rather than retyped by it; a model that thinks a computed claim is
+wrong says so in `disputes`. A suspect repeat is disclosed but not
+automatically invalidated. A settled question also requires evidence marked as
+supported.
+
+After four consecutive refusals the harness accepts the record incomplete
+instead of losing the interpretation, but only the parts beside the verdict can
+be waived: the disputes, the validity account, the question assessments and the
+follow-up decision. Each of those that still fails is left out rather than
+filed unchecked. The required reads, the assessment and the verdict's own
+evidence, which must have been read and lie inside the current result folder,
+are never waived. These checks establish that the cited files were read, not
+that their contents support the conclusion; that judgment remains the model's.
+An incomplete record names its omitted parts and their
+refusals in the outcome, in `agent_summary.yml` and at the end of the answer,
+and it starts no follow-up. The investigation contains `task.txt`,
 immutable per-phase submission/log artifacts under `phases/`, all phase
 accounts and their rendered turn-by-turn reasoning traces under `reports/`, and
 one append-only `trajectory.jsonl` for lineage and audit, not model context
@@ -237,8 +275,12 @@ aggregation.
 Successful interpretation writes `agent_summary.yml` beside the selected
 result. It separates the scientific hypothesis status from the report's
 mechanical pass/fail/skip counts and rewrites cited evidence as paths relative
-to that result directory. A follow-up walks `follow_up_of` and loads only valid
-summary records, oldest first. The current report remains the sole evidence for
+to that result directory. A record accepted incomplete adds an
+`incomplete_record` entry with the refusal count and each omitted part, so a
+later follow-up does not read it as settled history. A result whose summed
+throughput the assessor could not vouch for adds a `measurement_restriction`
+entry beside the model's verdict, for the same reason. A follow-up walks
+`follow_up_of` and loads only valid summary records, oldest first. The current report remains the sole evidence for
 the current interpretation; history is supplied only to authoring so it can
 avoid returning to a settled hypothesis.
 

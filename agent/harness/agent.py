@@ -578,6 +578,8 @@ def _write_agent_summary(
     validity: dict[str, Any],
     follow_up: dict[str, Any],
     root: Path,
+    incomplete: dict[str, Any] | None = None,
+    restriction: str = "",
 ) -> tuple[Path, dict[str, Any]]:
     """Persist one compact, portable interpretation beside its result.
 
@@ -587,6 +589,10 @@ def _write_agent_summary(
     :param validity: Recorded mechanical validity assessment.
     :param follow_up: Recorded finish-or-follow-up decision.
     :param root: Workspace root used to resolve model-visible evidence paths.
+    :param incomplete: Refusal count and omitted parts of a record accepted
+        incomplete, or ``None`` for a complete record.
+    :param restriction: The harness's qualification of a measurement in this
+        result, or an empty string when there is none.
     :return: Written path and summary object.
     :rtype: tuple[Path, dict[str, Any]]
     """
@@ -618,10 +624,20 @@ def _write_agent_summary(
         },
         "technical_validity": {
             "failed_checks": validity["failed_checks"],
-            "scope": validity["scope"],
+            # Absent when an incomplete record left the model's validity account out.
+            "scope": validity.get("scope"),
         },
         "unresolved_question": follow_up["unresolved_question"],
     }
+    # A later follow-up reads this file as settled history, so a record the
+    # harness accepted incomplete has to say so here and not only in the trajectory.
+    if incomplete:
+        summary["incomplete_record"] = incomplete
+    # The verdict is the model's and may rest on a measurement the harness could
+    # not vouch for; the harness files its restriction beside it rather than
+    # overruling the verdict.
+    if restriction:
+        summary["measurement_restriction"] = restriction
     target = result_directory / _AGENT_SUMMARY_NAME
     temporary = result_directory / f".{_AGENT_SUMMARY_NAME}.tmp"
     temporary.write_text(
@@ -630,6 +646,27 @@ def _write_agent_summary(
     )
     temporary.replace(target)
     return target, summary
+
+
+def _incomplete_record_notice(incomplete: dict[str, Any]) -> str:
+    """Tell the reader of the final answer which parts of its record are missing.
+
+    :param incomplete: Refusal count and omitted parts, each with its refusal.
+    :type incomplete: dict[str, Any]
+    :return: One Markdown paragraph for the end of the answer.
+    :rtype: str
+    """
+    omitted = "; ".join(
+        f"`{field}` ({reason})" for field, reason in incomplete["omitted"].items()
+    )
+    return (
+        "**Incomplete record.** The harness accepted this interpretation after "
+        f"{incomplete['rounds']} refused attempts and left out the parts that "
+        f"still failed its checks: {omitted}. The verdict cites only evidence "
+        "the model read from this result; the harness checks that, not whether "
+        "the evidence supports the conclusion. No follow-up was started on the "
+        "basis of this record."
+    )
 
 
 def _load_ancestor_summaries(
@@ -971,7 +1008,67 @@ def _checkable_result_claims(characterization: dict[str, Any]) -> dict[str, Any]
         }
         for result in characterization.get("categorical_comparisons", [])
     ]
-    return {"ordered_sweeps": ordered, "categorical_comparisons": categorical}
+    claims: dict[str, Any] = {
+        "ordered_sweeps": ordered, "categorical_comparisons": categorical,
+    }
+    if characterization.get("withheld_claims"):
+        claims["withheld_claims"] = characterization["withheld_claims"]
+    return claims
+
+
+def _withheld_rate_notice(assessment: dict[str, Any] | None) -> str:
+    """Qualify the answer whenever the assessor cannot vouch for a summed rate.
+
+    Written by the harness rather than the model, so it stands even when the
+    model's record was accepted incomplete or its prose repeats the sum. It
+    follows the aggregation check itself rather than the claims withheld on it,
+    because a comparison too incomplete to build is still one the model can
+    rebuild in prose from the same sums.
+
+    :param assessment: The full comparison-quality assessment, if one ran.
+    :type assessment: dict[str, Any] | None
+    :return: One Markdown paragraph, or an empty string when every summed rate
+        passed its check.
+    :rtype: str
+    """
+    if not assessment:
+        return ""
+    aggregation = assessment.get("rate_aggregation", {})
+    discrepant = [
+        entry for entry in aggregation.get("phases", []) if entry["material_discrepancy"]
+    ]
+    # An excluded round's sum enters no comparison, and a round that could not be
+    # checked is no evidence against the others; it is disclosed as excluded.
+    excluded = set(
+        assessment.get("result_characterization", {}).get("excluded_phases", []))
+    unchecked = [
+        entry for entry in aggregation.get("unchecked_phases", [])
+        if entry["phase"] not in excluded
+    ]
+    if not discrepant and not unchecked:
+        return ""
+    reasons = []
+    if discrepant:
+        largest = max(discrepant, key=lambda entry: entry["excess"])
+        reasons.append(
+            f"in {len(discrepant)} phase(s) the pods ran for different lengths of "
+            f"time, and the summed rate exceeds its common-duration approximation "
+            f"by up to {largest['excess']:.0%} ({largest['phase']}: "
+            f"{largest['summed_rate']:,.0f} summed against about "
+            f"{largest['common_duration_rate_approximation']:,.0f})"
+        )
+    if unchecked:
+        reasons.append(f"{len(unchecked)} phase(s) could not be checked")
+    return (
+        "**Throughput claims withheld by the harness.** Each phase's "
+        f"`{aggregation['metric']}` adds up its pods' own rates, which is the rate "
+        "over the whole round only when every pod ran for the same time. Here "
+        f"{'; '.join(reasons)}. The "
+        "reported sums therefore cannot support the requested throughput shape or "
+        "comparison, and the approximation is a check, not a corrected figure. "
+        "This does not mean the experiment failed; its other measurements are "
+        "unaffected."
+    )
 
 
 class _InterpretationGate:
@@ -994,6 +1091,8 @@ class _InterpretationGate:
         self._read_paths: set[Path] = set()
         self._validity_read = False
         self.comparison_quality: dict[str, Any] | None = None
+        self._failed_repairs = 0
+        self.accepted_after_failed_repairs: dict[str, Any] | None = None
         self.result_claims: dict[str, Any] | None = None
         self.validity_scope: dict[str, Any] | None = None
         self._specification = specification
@@ -1071,8 +1170,31 @@ class _InterpretationGate:
             return {**_QUALITY_NOT_APPLICABLE, "reason": result["error"]}
         return result
 
-    def validate_record(self, arguments: dict[str, Any]) -> dict[str, Any]:
-        """Validate one structured interpretation record."""
+    def _evidence_error(self, arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Refuse a record whose verdict does not cite read evidence from this result.
+
+        These rules are never waived. The reads, the assessment and the verdict's
+        own cited evidence are what make the record a verdict about this result
+        at all; everything else in it can be left out, but not these. They
+        establish that the cited files were read, not that their contents
+        support the conclusion.
+
+        :param arguments: The record the model offered.
+        :type arguments: dict[str, Any]
+        :return: The refusal, or ``None`` when the verdict cites only evidence
+            read from this result.
+        :rtype: dict[str, Any] | None
+        """
+        # A call that carries nothing is a transport or generation failure, not a
+        # disagreement about content. Saying which field is missing would send the
+        # model hunting for a mistake it did not make, so name the real problem.
+        if not arguments:
+            return {
+                "error": (
+                    "record_interpretation arrived with no arguments; send the "
+                    "whole record as one object in a single call"
+                )
+            }
         missing_reads = []
         if self.report not in self._read_paths:
             missing_reads.append(str(self.report))
@@ -1095,41 +1217,13 @@ class _InterpretationGate:
         if self.failed_checks is None:
             return {"error": "report frontmatter has no valid overall_status.failed count"}
 
-        recorded_quality = arguments.get("comparison_quality")
-        if self.benchmarking.is_file():
-            if self.comparison_quality is None:
-                return {
-                    "error": "run assess_comparison_quality on benchmarking.md first",
-                    "missing": [str(self.benchmarking)],
-                }
-            expected_quality = {
-                "query_coverage": self.comparison_quality["query_coverage"],
-                "whole_workload_throughput": self.comparison_quality[
-                    "whole_workload_throughput"
-                ],
-                "suspect_repetitions": [
-                    item["phase"]
-                    for item in self.comparison_quality["suspect_repetitions"]
-                ],
-            }
-        else:
-            expected_quality = dict(_QUALITY_NOT_APPLICABLE)
-        if recorded_quality != expected_quality:
+        # The assessment still has to have been run -- the verdict is meant to be
+        # formed against it -- but the model is no longer asked to retype what it
+        # said. The harness holds those values and files them with the record.
+        if self.benchmarking.is_file() and self.comparison_quality is None:
             return {
-                "error": "comparison_quality must match the deterministic assessment",
-                "expected": expected_quality,
-            }
-
-        recorded_claims = arguments.get("result_claims")
-        expected_claims = self.result_claims or dict(_EMPTY_RESULT_CLAIMS)
-        if recorded_claims != expected_claims:
-            return {
-                "error": (
-                    "result_claims must match the deterministic characterization; "
-                    "the shape, turning level and ranking are checked fields"
-                ),
-                "expected": expected_claims,
-                "claimed": recorded_claims,
+                "error": "run assess_comparison_quality on benchmarking.md first",
+                "missing": [str(self.benchmarking)],
             }
 
         hypothesis_verdict = arguments.get("hypothesis_verdict")
@@ -1163,43 +1257,39 @@ class _InterpretationGate:
                 "error": "hypothesis_verdict evidence must be inside this result folder",
                 "outside": outside_result,
             }
+        return None
 
+    @staticmethod
+    def _disputes_error(arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Check the optional disputes of computed claims."""
+        disputes = arguments.get("disputes", [])
+        if not isinstance(disputes, list):
+            return {"error": "disputes must be a list of {claim, reason} objects"}
+        for dispute in disputes:
+            if (
+                not isinstance(dispute, dict)
+                or not isinstance(dispute.get("claim"), str)
+                or not dispute["claim"].strip()
+                or not isinstance(dispute.get("reason"), str)
+                or not dispute["reason"].strip()
+            ):
+                return {
+                    "error": "every dispute needs a non-empty claim and reason",
+                }
+        return None
+
+    def _validity_error(self, arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Check the model's account of what the failed validity checks affect."""
         validity = arguments.get("validity")
         if not isinstance(validity, dict):
             return {"error": "validity must be an object"}
-        failed_checks = validity.get("failed_checks")
-        if failed_checks != self.failed_checks or isinstance(failed_checks, bool):
-            return {
-                "error": (
-                    "validity.failed_checks must match report frontmatter: "
-                    f"expected {self.failed_checks}"
-                )
-            }
+        # How many checks failed, which phases they scope and whether they touch
+        # the performance metrics are all read off the report by the harness; the
+        # scope sentence is the model's own account of what that means here.
         if not isinstance(validity.get("scope"), str):
             return {"error": "validity.scope must be text"}
         if self.failed_checks > 0 and not validity["scope"].strip():
             return {"error": "failed validity checks require a scope explanation"}
-        expected_affected_phases = (
-            self.validity_scope.get("affected_phases", [])
-            if self.validity_scope else []
-        )
-        expected_performance_scope = (
-            self.validity_scope.get("performance_metrics_affected", False)
-            if self.validity_scope else self.failed_checks > 0
-        )
-        if validity.get("affected_phases") != expected_affected_phases:
-            return {
-                "error": "validity.affected_phases must match the deterministic scope",
-                "expected": expected_affected_phases,
-            }
-        if validity.get("performance_metrics_affected") is not expected_performance_scope:
-            return {
-                "error": (
-                    "validity.performance_metrics_affected must match the "
-                    "deterministic scope"
-                ),
-                "expected": expected_performance_scope,
-            }
         unread_validity = self._unread(validity.get("evidence_paths"))
         if unread_validity is None:
             return {"error": "validity.evidence_paths must be a non-empty path list"}
@@ -1209,7 +1299,10 @@ class _InterpretationGate:
             self._resolve(path) for path in validity["evidence_paths"]
         }:
             return {"error": "validity evidence must cite the report index"}
+        return None
 
+    def _questions_error(self, arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Check the assessment of each explicit question in the request."""
         questions = arguments.get("questions")
         if not isinstance(questions, list) or not questions:
             return {"error": "questions must be a non-empty list"}
@@ -1236,7 +1329,11 @@ class _InterpretationGate:
                 return {"error": "a settled question requires supported evidence"}
             if question["status"] != "settled" and not question["missing"].strip():
                 return {"error": "a partial or unresolved question must name missing evidence"}
+        return None
 
+    @staticmethod
+    def _follow_up_error(arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Check the finish-or-follow-up decision for internal consistency."""
         follow_up = arguments.get("follow_up")
         if not isinstance(follow_up, dict):
             return {"error": "follow_up must be an object"}
@@ -1298,8 +1395,95 @@ class _InterpretationGate:
                     "target_queries empty, with full_workload_required=false"
                 )
             }
+        return None
 
-        return {"recorded": True, "questions": len(questions)}
+    def _section_errors(self, arguments: dict[str, Any]) -> dict[str, dict[str, Any]]:
+        """Check each part the model writes beside its verdict, independently.
+
+        :param arguments: The record the model offered.
+        :type arguments: dict[str, Any]
+        :return: The refusal of every part that fails, keyed by its record field
+            in the order the parts are checked; empty when all of them pass.
+        :rtype: dict[str, dict[str, Any]]
+        """
+        checks = {
+            "disputes": self._disputes_error,
+            "validity": self._validity_error,
+            "questions": self._questions_error,
+            "follow_up": self._follow_up_error,
+        }
+        return {
+            field: error for field, check in checks.items()
+            if (error := check(arguments)) is not None
+        }
+
+    def _validate_record(self, arguments: dict[str, Any]) -> dict[str, Any]:
+        """Check one structured interpretation record, refusing what is unusable."""
+        if (error := self._evidence_error(arguments)) is not None:
+            return error
+        if errors := self._section_errors(arguments):
+            return next(iter(errors.values()))
+        return {"recorded": True, "questions": len(arguments["questions"])}
+
+    #: Consecutive refusals of one record before the harness stops refusing. A
+    #: model that cannot satisfy a structural rule after this many tries is not
+    #: going to, and a phase that dies here throws away a finished benchmark.
+    MAX_REPAIR_ROUNDS = 4
+
+    def validate_record(self, arguments: dict[str, Any]) -> dict[str, Any]:
+        """Validate a record, and accept it incomplete once repair has stalled.
+
+        Only the parts beside the verdict can be waived, and a waived part is
+        left out of the record rather than filed unchecked. A record whose
+        verdict does not cite read evidence from this result is refused however
+        long repair has run.
+
+        :param arguments: The record the model offered.
+        :type arguments: dict[str, Any]
+        :return: The acceptance, or the refusal to hand back to the model.
+        :rtype: dict[str, Any]
+        """
+        result = self._validate_record(arguments)
+        if result.get("recorded"):
+            self._failed_repairs = 0
+            return result
+        self._failed_repairs += 1
+        if (
+            self._failed_repairs < self.MAX_REPAIR_ROUNDS
+            or self._evidence_error(arguments) is not None
+        ):
+            return result
+        # Accepted incomplete: the verdict cites only evidence the model read from
+        # this result, some part beside it does not pass, and the alternative is
+        # losing the interpretation altogether. The failing parts are left out
+        # rather than filed unchecked, and the record names each one with its
+        # refusal.
+        self.accepted_after_failed_repairs = {
+            "rounds": self._failed_repairs,
+            "omitted": {
+                field: error["error"]
+                for field, error in self._section_errors(arguments).items()
+            },
+        }
+        return {
+            "recorded": True,
+            "accepted_after_failed_repairs": self.accepted_after_failed_repairs,
+        }
+
+    def harness_validity_scope(self) -> dict[str, Any]:
+        """Give the validity figures the harness reads off the report itself.
+
+        :return: Failed-check count, affected phases, and whether the failures
+            reach the performance metrics.
+        :rtype: dict[str, Any]
+        """
+        scope = self.validity_scope or {}
+        return {
+            "failed_checks": self.failed_checks,
+            "affected_phases": scope.get("affected_phases", []),
+            "performance_metrics_affected": scope.get(
+                "performance_metrics_affected", bool(self.failed_checks)),
+        }
 
 
 class InterpretationIncomplete(RuntimeError):
@@ -1318,6 +1502,7 @@ def _interpret_evidence(
 ) -> tuple[
     str, dict[str, Any], list[dict[str, Any]], dict[str, Any],
     dict[str, Any], dict[str, Any], dict[str, Any], list[Any], int,
+    dict[str, Any] | None,
 ]:
     """Read the finished result folder and record how far it answers the question.
 
@@ -1329,9 +1514,11 @@ def _interpret_evidence(
     :param result_contract_path: Exact result contract governing the report.
     :return: Report, scientific verdict, question assessments, validity
         assessment, comparison quality, checkable result claims, follow-up plan,
-        events, and turns used.
+        events, turns used, and -- when the record was accepted incomplete --
+        the refusal count and the parts left out, otherwise ``None``.
     :rtype: tuple[str, dict[str, Any], list[dict[str, Any]], dict[str, Any],
-        dict[str, Any], dict[str, Any], dict[str, Any], list, int]
+        dict[str, Any], dict[str, Any], dict[str, Any], list, int,
+        dict[str, Any] | None]
     """
     hypothesis_verdict: dict[str, Any] = {}
     question_assessments: list[dict[str, Any]] = []
@@ -1352,12 +1539,41 @@ def _interpret_evidence(
             return workspace.call(name, arguments)
         result = gate.validate_record(arguments)
         if result.get("recorded"):
+            incomplete = gate.accepted_after_failed_repairs
+            omitted = incomplete["omitted"] if incomplete else {}
             hypothesis_verdict.update(arguments["hypothesis_verdict"])
-            question_assessments[:] = arguments["questions"]
-            validity_assessment.update(arguments["validity"])
-            comparison_quality.update(arguments["comparison_quality"])
-            result_claims.update(arguments["result_claims"])
-            follow_up.update(arguments["follow_up"])
+            if "questions" not in omitted:
+                question_assessments[:] = arguments["questions"]
+            if "validity" not in omitted:
+                validity_assessment.update(arguments["validity"])
+            # The claims and the quality summary come from the assessor, not from
+            # the model: they are what the harness measured, and asking for them
+            # back only ever tested transcription.
+            comparison_quality.update(
+                gate.comparison_quality or dict(_QUALITY_NOT_APPLICABLE))
+            result_claims.update(gate.result_claims or dict(_EMPTY_RESULT_CLAIMS))
+            validity_assessment.update(gate.harness_validity_scope())
+            if arguments.get("disputes") and "disputes" not in omitted:
+                result_claims["disputes"] = arguments["disputes"]
+            if incomplete:
+                # Cluster time is not spent on an interpretation the harness could
+                # not fully check. The open question survives when the model's own
+                # decision passed, so a person can still take it up by hand.
+                proposed = {} if "follow_up" in omitted else arguments["follow_up"]
+                follow_up.update({
+                    "action": "finish",
+                    "rationale": (
+                        "The harness accepted this interpretation incomplete, so "
+                        "it starts no follow-up on its basis."
+                    ),
+                    "unresolved_question": proposed.get("unresolved_question") or "",
+                    "experiment_goal": "",
+                    "target_queries": [],
+                    "full_workload_required": False,
+                    "cost_rationale": "",
+                })
+            else:
+                follow_up.update(arguments["follow_up"])
         return result
 
     trajectory.record("stage", name="evidence_interpretation", context_reset=True)
@@ -1373,6 +1589,7 @@ def _interpret_evidence(
     return (
         interpretation, hypothesis_verdict, question_assessments, validity_assessment,
         comparison_quality, result_claims, follow_up, events, turns,
+        gate.accepted_after_failed_repairs,
     )
 
 
@@ -1570,6 +1787,7 @@ def run_interpret(
         decision,
         all_events,
         total_turns,
+        record_incomplete,
     ) = _interpret_evidence(
         messages, workspace, model, trajectory, report_path, result_contract_path,
         method_path, specification
@@ -1593,10 +1811,12 @@ def run_interpret(
     )
     result_directory = report.parent.parent
     experiment_code = result_directory.name
+    rate_notice = _withheld_rate_notice(comparison_quality.get("details"))
     agent_summary_path, agent_summary = _write_agent_summary(
         report_path=report_path, specification=specification,
         hypothesis_verdict=hypothesis_verdict, validity=validity_assessment,
-        follow_up=decision, root=workspace.root,
+        follow_up=decision, root=workspace.root, incomplete=record_incomplete,
+        restriction=rate_notice,
     )
     trajectory.record("artifact", phase="interpret",
                       agent_summary=str(agent_summary_path))
@@ -1605,8 +1825,12 @@ def run_interpret(
     )
 
     if decision.get("action") == "followup" and followups > 0:
+        # The author designs on the interpretation it is handed, so it gets the
+        # harness's qualification too, not only the model's own prose.
         author_summary, author_events, author_turns = _author_followup(
-            task=task, specification=specification, interpretation=interpretation,
+            task=task, specification=specification,
+            interpretation="\n\n".join(
+                part for part in (interpretation, rate_notice) if part),
             decision=decision, ancestor_summaries=ancestor_summaries,
             experiment_code=experiment_code,
             workspace=workspace, model=model,
@@ -1617,6 +1841,9 @@ def run_interpret(
         total_turns += author_turns
 
     summary_parts = [interpretation] if interpretation else []
+    summary_parts.append(rate_notice)
+    if record_incomplete:
+        summary_parts.append(_incomplete_record_notice(record_incomplete))
     if decision.get("action") == "followup" and followups > 0:
         summary_parts.append(author_summary or (
             "A follow-up was selected but was not submitted: " + decision.get("rationale", "")
@@ -1641,6 +1868,7 @@ def run_interpret(
                     validity_assessment=validity_assessment,
                     comparison_quality=comparison_quality,
                     result_claims=result_claims,
+                    incomplete_record=record_incomplete,
                     followup_decision=decision or None,
                     agent_summary_path=str(agent_summary_path),
                     ancestor_summaries_loaded=len(ancestor_summaries),

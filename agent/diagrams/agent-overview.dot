@@ -22,7 +22,7 @@ edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, a
       execute [label="BeXhoma on Kubernetes\nLoads the data, runs the benchmark,\nwrites raw evidence and a report", fillcolor="#E1F1E6"];
       assess [label="ASSESSOR (code)\nPer-query timings by configuration,\nspread across repetitions, where it failed", fillcolor="#FFF0D4"];
       interpret [label="INTERPRET\nFresh model window reads that one report\nand records a verdict with evidence paths", fillcolor="#DEF3F4"];
-      gate [label="EVIDENCE GATE (code)\nRequired files opened? Citations reachable?\nNumbers present in the evidence?", fillcolor="#FFF0D4"];
+      gate [label="EVIDENCE GATE (code)\nRequired files opened? Verdict cites this result?\nIncomplete records stop follow-ups", fillcolor="#FFF0D4"];
       decide [label="Follow-up asked for,\nand budget left?", shape=diamond, fillcolor="#FFF0D4"];
       author [label="FOLLOW-UP AUTHORING\nFresh model window writes the next\nexperiment, tied to its parent", fillcolor="#DEF3F4"];
 
@@ -55,6 +55,6 @@ edge [color="#647A99", fontcolor="#415674", fontname="Helvetica", fontsize=10, a
     interpret -> record [style=dashed];
     answer -> record [style=dashed];
 
-    note [label="The model never runs anything itself. It proposes and concludes;\ncode decides what may run and what may be claimed.", shape=note, fillcolor="#F8FAFC"];
+    note [label="The model proposes and concludes; code controls execution and evidence access.\nComputed claims and any model disputes are recorded together.", shape=note, fillcolor="#F8FAFC"];
     answer -> note [style=dashed, color="#8196B4"];
 }

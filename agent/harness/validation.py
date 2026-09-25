@@ -88,6 +88,11 @@ _DEFAULT_ROUNDS = [1]
 _DEFAULT_REPETITIONS = 1
 _GIBIBYTE_BYTES = 1024 ** 3
 
+#: The workload whose benchmarking phase splits a finite operation count across
+#: its pods and reports the sum of their rates as the phase rate.
+_SPLIT_WORK_WORKLOAD = "ycsb"
+_DEFAULT_BENCHMARKING_PODS = 1
+
 
 def _error(message: str, stage: str = CATALOG_STAGE) -> dict[str, str]:
     """Build one verdict error entry."""
@@ -962,6 +967,45 @@ def _check_component_placement(
     return None
 
 
+def _design_warnings(experiment: dict[str, Any]) -> list[dict[str, str]]:
+    """Name design risks that leave a specification valid.
+
+    :param experiment: A loaded experiment.yml.
+    :type experiment: dict[str, Any]
+    :return: Warnings in the shape of errors; empty when none apply.
+    :rtype: list[dict[str, str]]
+    """
+    workload = experiment.get("workload")
+    if not isinstance(workload, dict) or workload.get("name") != _SPLIT_WORK_WORKLOAD:
+        return []
+    params = workload.get("params")
+    if isinstance(params, dict) and params.get("max_execution_time"):
+        return []
+    benchmarking = experiment.get("benchmarking")
+    pods = (benchmarking.get("pods", _DEFAULT_BENCHMARKING_PODS)
+            if isinstance(benchmarking, dict) else _DEFAULT_BENCHMARKING_PODS)
+    rounds = [
+        entry for entry in workload.get("rounds") or _DEFAULT_ROUNDS
+        if isinstance(entry, int) and not isinstance(entry, bool)
+    ]
+    if not isinstance(pods, int) or not rounds or pods * max(rounds) <= 1:
+        return []
+    return [{
+        "stage": METHODOLOGY_STAGE,
+        "message": (
+            f"a round reaches {pods * max(rounds)} benchmarker pods and "
+            "workload.params.max_execution_time is unset, so each pod receives a "
+            "finite share of the operations and may finish at a different time. "
+            "Summed pod rates may therefore misrepresent whole-round throughput, "
+            "and the interpretation withholds throughput claims where pod "
+            "durations differ materially. "
+            "For sustained-throughput measurements, use max_execution_time with "
+            "enough operations (operations_scale) to keep every pod active. This "
+            "is a warning; the specification remains valid."
+        ),
+    }]
+
+
 def _verdict(
     errors: list[dict[str, str]],
     environment_checked: bool,
@@ -991,7 +1035,7 @@ def _verdict(
     }
     if isinstance(experiment, dict) and isinstance(catalog, dict):
         estimate.update(_timeout_budget(catalog, experiment))
-    return {
+    verdict = {
         "valid": not errors,
         "errors": errors,
         # An unchecked environment means placement and resource ceilings were
@@ -1000,6 +1044,9 @@ def _verdict(
         "environment_checked": environment_checked,
         "estimate": estimate,
     }
+    if warnings := (_design_warnings(experiment) if isinstance(experiment, dict) else []):
+        verdict["warnings"] = warnings
+    return verdict
 
 
 def _check_storage_class(

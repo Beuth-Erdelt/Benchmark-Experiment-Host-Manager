@@ -1,6 +1,6 @@
 # Experiment Design Handbook
 
-    handbook_version: "0.7.1"
+    handbook_version: "0.7.2"
 
 Guidance for designing and interpreting computer-system performance experiments.
 Read `## Navigation` first, then the chapters relevant to the question.
@@ -65,6 +65,19 @@ for a valid experiment, and a minimum repetition count does not guarantee useful
 precision. A joint resource change can answer a joint-effect question even
 where the current interface rejects it. If the interface cannot express a
 scientifically appropriate design, record that limitation.
+
+For YCSB, the catalog's `max_execution_time` caps the benchmarking phase and
+`operations_scale` sets the total operation count, which is split across the
+pods. Without a cap each pod receives a fixed share and may finish at a
+different time, while the report's phase throughput adds up the pods' separate
+rates (M7.2). A capped pod still stops early once its share of operations is
+exhausted, so a cap needs enough operations to keep every pod busy. Neither
+control excludes warm-up (M4.5). **Policy:** the validator warns, without
+refusing, when a YCSB round runs several pods without a cap. The interpretation
+assessor withholds a throughput shape or ranking when a phase's summed rate
+exceeds its pods' work spread over the longest pod duration by more than 20%, or
+when that cannot be checked. The threshold targets large distortions; it is not
+a scientific boundary.
 
 Before a verdict can be recorded, the harness requires this Navigation chapter
 and M2, M3, M5 and M7 to have been read. The verdict procedure also draws on
@@ -362,7 +375,10 @@ Which differences would a summary conceal?
   rates and ratios are combined. **Application:** Overall completed work per
   common elapsed interval differs from an average of normalized scores. A
   geometric mean summarizes multiplicative ratios; it is not generally the
-  speedup in total elapsed time. [Hoefler and Belli, §3.1.1, Rules 3–4][scientific]
+  speedup in total elapsed time. Adding rates measured over different durations
+  does not give the rate over their common interval, and similar durations alone
+  do not show that the measurements overlapped or reached steady operation.
+  [Hoefler and Belli, §3.1.1, Rules 3–4][scientific]
 - **M7.3** Provide absolute measurements and the baseline behind relative
   comparisons. [Hoefler and Belli, Rule 1][scientific]
 - **M7.4** For questions about slow outcomes, report relevant named percentiles
