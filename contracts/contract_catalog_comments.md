@@ -83,6 +83,25 @@ The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
 fields corrected and conditions added; nothing that validated before is
 rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
 
+## Pinning the SUT is recommended (2026-09-25)
+
+`placement.sut` now carries a `when:` recommending it. `placement:` is
+experiment-wide, so a pinned SUT node is shared by every configuration, which
+keeps the hardware constant across the comparison on a heterogeneous cluster.
+Unpinned, the scheduler may put different systems on different machines, and
+the measured difference then mixes the node with the `discriminates` factor.
+Comparing nodes takes one experiment per node, linked by `follow_up_of`.
+
+The same change fixed `catalog_concepts.sut_isolation` and
+`experiment_schema.fields.max_sut`, which suggested running parallel SUTs
+"each pinned to a different node via placement:". One experiment.yml cannot
+do that, because `placement.sut` names a single node; both now say so, and
+`max_sut` says to stay at 1 when the SUT is pinned.
+
+This moved the version 1.6.1 -> 1.6.2 (patch: guidance only; nothing that
+validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept
+in lockstep.
+
 ## Pinning loader and benchmarker pods is uncommon (2026-09-25)
 
 `placement.loading` and `placement.benchmarking` used to carry only a
