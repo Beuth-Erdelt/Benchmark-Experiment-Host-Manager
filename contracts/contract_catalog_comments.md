@@ -83,6 +83,23 @@ The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
 fields corrected and conditions added; nothing that validated before is
 rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
 
+## Pinning loader and benchmarker pods is uncommon (2026-09-25)
+
+`placement.loading` and `placement.benchmarking` used to carry only a
+one-line `semantics:`, so nothing told an agent whether pinning them was
+normal. Design runs pinned them routinely, which adds a node choice to every
+experiment without a reason in the hypothesis and can crowd many client pods
+onto one node (see the YCSB `benchmarking:` section below for a run that
+stalled that way). Both fields now carry a `when:` saying that pinning is
+uncommon and only recommended when the network path between the client pods
+and the SUT might play a role, in which case the network belongs in
+`discriminates`. `placement.sut` is unchanged, because the node the SUT runs
+on is a genuine factor on a heterogeneous cluster.
+
+This moved the version 1.6.0 -> 1.6.1 (patch: guidance only; nothing that
+validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept
+in lockstep.
+
 ## TPC-H loading timeout recommendation (2026-09-24)
 
 `catalog_concepts.experimental_design.bounded_loading` tells an agent to set

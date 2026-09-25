@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.6.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.6.1"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   experimental_design:
@@ -94,7 +94,9 @@ experiment_schema:
                              never concurrently -- see catalog_concepts.sut_isolation"}
     observe:    {type: object, fields: [monitoring_sut, monitoring_cluster, monitoring_app]}
     placement:  {type: object, fields: [sut, loading, benchmarking],
-                 semantics: "each node named must exist, and not be tainted out, in environment.yml's nodes:"}
+                 semantics: "each node named must exist, and not be tainted out, in environment.yml's nodes:",
+                 when: "pinning loading/benchmarking is uncommon -- only when the network path to the
+                        SUT might play a role in the hypothesis"}
     resources:  {type: object, fields: [cpu, memory, storage, storage_class],
                  semantics: "cpu/memory: a single {request,limit} dict shared by every system, OR a list
                              to sweep every systems: entry against every list entry (one resolved

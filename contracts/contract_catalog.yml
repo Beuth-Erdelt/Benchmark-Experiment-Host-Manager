@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.6.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.6.1"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -296,8 +296,24 @@ experiment_schema:
       semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"
       fields:
         sut: {type: str, required: false, semantics: "Kubernetes node name to pin the system-under-test to"}
-        loading: {type: str, required: false, semantics: "node name for loader pods"}
-        benchmarking: {type: str, required: false, semantics: "node name for benchmarker pods"}
+        loading:
+          type: str
+          required: false
+          semantics: "node name for loader pods"
+          when: "uncommon -- normally leave unset and let the scheduler place
+            loader pods. Pin them only when the network path between loader
+            and SUT might play a role in the hypothesis, e.g. same node versus
+            different node, or a specific network link; then name the network
+            in discriminates"
+        benchmarking:
+          type: str
+          required: false
+          semantics: "node name for benchmarker pods"
+          when: "uncommon -- normally leave unset and let the scheduler place
+            benchmarker pods. Pin them only when the network path between
+            benchmarker and SUT might play a role in the hypothesis, e.g. same
+            node versus different node, or a specific network link; then name
+            the network in discriminates"
     resources:
       type: object
       fields:
