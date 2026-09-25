@@ -317,23 +317,12 @@ class LoadingCoordinator:
             redisQueue = '{}-{}-{}-{}-{}{}'.format(
                 app, component, cfg.configuration, cfg.code, experiment_run, suffix)
             # Clear any leftover entries before repopulating, then verify the
-            # queue ends up at exactly entry_parallelism items. add_to_messagequeue
-            # only retries on a literal "error dialing backend"; any other
-            # transient kubectl-exec failure would otherwise be swallowed
-            # silently, leaving fewer than entry_parallelism items in the queue
-            # and causing one pod's lpop to come back empty further down the
-            # line (its generator.sh then fails loudly instead of silently
-            # colliding with another pod's chunk index).
-            cfg.experiment.cluster.delete_messagequeue_key(queue=redisQueue)
-            pushed_length = None
-            for i in range(1, entry_parallelism + 1):
-                pushed_length = cfg.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-            if pushed_length != entry_parallelism:
-                raise RuntimeError(
-                    "Chunk-assignment queue {} has length {} after pushing {} "
-                    "entries; refusing to start the loading job, as its pods "
-                    "would race on a corrupted chunk assignment.".format(
-                        redisQueue, pushed_length, entry_parallelism))
+            # queue ends up at exactly entry_parallelism items (retrying on a
+            # transient kubectl-exec failure). A short queue would make one
+            # pod's lpop come back empty further down the line (its
+            # generator.sh then fails loudly instead of silently colliding
+            # with another pod's chunk index).
+            cfg.experiment.cluster.fill_messagequeue(queue=redisQueue, length=entry_parallelism)
             if 'parameters' in loader_entry:
                 cfg._push_pod_configs(
                     queue_key=redisQueue,

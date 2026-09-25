@@ -325,12 +325,18 @@ Unlike the podcount counters above, this queue is populated with `RPUSH` (append
 The key **must** include `EXPERIMENT_RUN`, unlike the round/job counters, because loading is
 redone from scratch for every `experiment_run` in a repeat-run sweep (a fresh SUT pod is
 deployed per run — the counters' "loading has exactly one round per (CONFIGURATION,
-EXPERIMENT)" assumption above does not hold across runs). Before repopulating,
-`start_pod()` calls `delete_messagequeue_key()` to clear any leftover entries, then verifies
-`add_to_messagequeue()`'s returned list length matches `entry_parallelism` exactly, raising
-`RuntimeError` otherwise — a silently-swallowed `kubectl exec` failure (anything other than
-the literal `"error dialing backend"`, which is retried) would otherwise leave the queue short
-by one entry, and the unlucky pod's `LPOP` would come back empty. `generator.sh` treats that
+EXPERIMENT)" assumption above does not hold across runs). `start_pod()` fills the queue via
+`Kubernetes.fill_messagequeue()`, which clears any leftover entries with
+`delete_messagequeue_key()`, pushes 1..`entry_parallelism`, and verifies
+`add_to_messagequeue()`'s returned list length matches exactly. A wrong length is retried
+from a cleared queue (`MESSAGEQUEUE_FILL_MAX_ATTEMPTS` attempts,
+`MESSAGEQUEUE_FILL_RETRY_SECONDS` apart) before raising `RuntimeError` — a
+silently-swallowed `kubectl exec` failure (anything other than the literal
+`"error dialing backend"`, which `add_to_messagequeue()` itself retries), e.g. from a brief
+VPN drop, would otherwise leave the queue short by one entry, and the unlucky pod's `LPOP`
+would come back empty. The benchmarker queue
+(`bexhoma-benchmarker-{CONNECTION}-{EXPERIMENT}`, filled by `BenchmarkRunner.run_pod()`)
+goes through the same method. `generator.sh` treats that
 as fatal (`exit 1`) rather than defaulting `BEXHOMA_CHILD` to a fixed value, which used to
 silently duplicate another pod's chunk (and leave some other chunk never loaded at all).
 

@@ -171,6 +171,65 @@ class LoadingFailureTest(unittest.TestCase):
             pod_name="failed-pod"
         )
 
+    @staticmethod
+    def _loading_config(cluster: mock.Mock) -> mock.Mock:
+        """Build a configuration with one two-pod loader entry on ``cluster``."""
+        config = mock.Mock()
+        config.appname = "bexhoma"
+        config.code = "42"
+        config.configuration = "PgDuckDB-3"
+        config.num_experiment_to_apply_done = 0
+        config.experiment_dict = {"loader": [{"parallelism": 2, "num_pods": 2}]}
+        config.experiment.cluster = cluster
+        config.manifest.create_manifest_loading.return_value = "loading-job.yml"
+        return config
+
+    @staticmethod
+    def _queue_cluster() -> Kubernetes:
+        """Build a cluster whose message-queue commands are mocked."""
+        cluster = Kubernetes.__new__(Kubernetes)
+        cluster.delete_messagequeue_key = mock.Mock()
+        cluster.add_to_messagequeue = mock.Mock()
+        cluster.wait = mock.Mock()
+        return cluster
+
+    def test_chunk_queue_is_refilled_after_a_transient_push_failure(self) -> None:
+        """A lost push reply must be retried from a cleared queue."""
+        cluster = self._queue_cluster()
+        # First attempt: the second push gets no reply (dropped connection).
+        cluster.add_to_messagequeue.side_effect = [1, None, 1, 2]
+
+        cluster.fill_messagequeue(queue="chunks", length=2)
+
+        self.assertEqual(cluster.delete_messagequeue_key.call_count, 2)
+        cluster.wait.assert_called_once_with(10)
+
+    def test_chunk_queue_gives_up_after_every_attempt_fails(self) -> None:
+        """A queue that never reaches its length must raise after all attempts."""
+        cluster = self._queue_cluster()
+        cluster.add_to_messagequeue.return_value = None
+
+        with self.assertRaisesRegex(RuntimeError, "in 3 attempts"):
+            cluster.fill_messagequeue(queue="chunks", length=2)
+
+        self.assertEqual(cluster.delete_messagequeue_key.call_count, 3)
+        self.assertEqual(cluster.wait.call_count, 2)
+
+    def test_loading_job_is_not_started_when_its_chunk_queue_fails(self) -> None:
+        """The loading job must be sized by its entry and depend on a filled queue."""
+        cluster = mock.Mock()
+        config = self._loading_config(cluster)
+
+        LoadingCoordinator(config).start_pod()
+        cluster.fill_messagequeue.assert_called_once_with(
+            queue="bexhoma-loading-PgDuckDB-3-42-1-1", length=2)
+        cluster.create_object_from_file.assert_called_once_with("loading-job.yml")
+
+        cluster.reset_mock()
+        cluster.fill_messagequeue.side_effect = RuntimeError("queue short")
+        with self.assertRaises(RuntimeError):
+            LoadingCoordinator(config).start_pod()
+        cluster.create_object_from_file.assert_not_called()
 
 if __name__ == "__main__":
     unittest.main()

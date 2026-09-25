@@ -39,6 +39,15 @@ import platform
 #: instead of failing outright. See https://github.com/kubernetes/kubectl/issues/1425.
 KUBECTL_CP_INTERNAL_RETRIES = 20
 
+#: Attempts at filling a chunk-assignment queue before giving up. Each attempt
+#: clears and refills the queue, so a retry is always safe; it only bridges a
+#: transient loss of the cluster connection (e.g. a VPN hiccup).
+MESSAGEQUEUE_FILL_MAX_ATTEMPTS = 3
+
+#: Seconds to wait between queue-fill attempts, matching the pause
+#: :meth:`Kubernetes.upload_file` uses between its retries.
+MESSAGEQUEUE_FILL_RETRY_SECONDS = 10
+
 
 def to_unc(path: str) -> str:
     """
@@ -2264,6 +2273,42 @@ class Kubernetes():
         self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
         redis_command = f'redis-cli del {queue} '
         self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+
+    def fill_messagequeue(self, queue: str, length: int) -> None:
+        """
+        Replace a message queue's contents with the chunk numbers ``1..length``.
+
+        Each parallel job pod pops one number to learn which chunk it owns, so
+        the queue must hold exactly ``length`` items. ``add_to_messagequeue``
+        swallows a failed ``kubectl exec`` and reports ``None``, so a dropped
+        cluster connection would otherwise leave the queue short and one pod
+        without a chunk. A wrong final length is therefore retried from a
+        cleared queue, up to :data:`MESSAGEQUEUE_FILL_MAX_ATTEMPTS` times.
+
+        :param queue: Redis key (queue name).
+        :param length: Number of chunk numbers to push.
+        :raises RuntimeError: If the queue never reaches ``length`` items.
+        """
+        pushed_length = None
+        for attempt in range(1, MESSAGEQUEUE_FILL_MAX_ATTEMPTS + 1):
+            self.delete_messagequeue_key(queue=queue)
+            pushed_length = None
+            for i in range(1, length + 1):
+                pushed_length = self.add_to_messagequeue(queue=queue, data=i)
+            if pushed_length == length:
+                return
+            if attempt < MESSAGEQUEUE_FILL_MAX_ATTEMPTS:
+                print(f"fill_messagequeue: queue {queue} has length {pushed_length} "
+                      f"after pushing {length} entries (attempt "
+                      f"{attempt}/{MESSAGEQUEUE_FILL_MAX_ATTEMPTS}), retrying in "
+                      f"{MESSAGEQUEUE_FILL_RETRY_SECONDS}s ...")
+                self.wait(MESSAGEQUEUE_FILL_RETRY_SECONDS)
+        raise RuntimeError(
+            f"Chunk-assignment queue {queue} has length {pushed_length} after "
+            f"pushing {length} entries in {MESSAGEQUEUE_FILL_MAX_ATTEMPTS} attempts; "
+            f"refusing to start its job, as its pods would race on a corrupted "
+            f"chunk assignment."
+        )
 
     def set_pod_counter(self, queue, value=0):
         """
