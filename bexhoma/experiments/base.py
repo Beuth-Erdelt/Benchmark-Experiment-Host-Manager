@@ -81,6 +81,13 @@ MIN_MONITORING_SAMPLES = 2
 #: Divisor to convert the ``--experiment-timeout`` CLI value (minutes) to seconds.
 SECONDS_PER_MINUTE = 60
 
+#: Minutes a benchmark round may take from submission until all of its pods
+#: have passed the synchronised start (the round pod counter reaching 0).
+#: Rounds normally start within seconds; a pod that cannot be scheduled
+#: would otherwise leave the others waiting for it forever. The benchmark
+#: itself, once started, has no limit.
+BENCHMARK_START_TIMEOUT_MINUTES = 15
+
 def parse_set_arg(s: str) -> Tuple[dict, str]:
     """
     Parse a single ``--set`` argument of the form ``<selector>=<value>``.
@@ -229,6 +236,7 @@ class ExperimentBase():
         self.evaluators: dict = {}                                        # benchmark.name → evaluator instance
         self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary
         self._runtime_test_results: list[tuple[bool, str]] = []          # failures detected before show_summary rebuilds its test list
+        self._benchmark_rounds_starting: dict[str, tuple[str, datetime]] = {}  # configuration → (round counter key, submission time) until all round pods started
         self.set_eval_parameters(code = self.code)
     def process(self) -> None:
         """
@@ -1502,6 +1510,75 @@ class ExperimentBase():
         self.remove_experiment()
         return True
 
+    def _benchmark_start_abort_reason(
+        self,
+        config: "SutConfiguration",
+        now: datetime,
+    ) -> Optional[str]:
+        """Return why a starting benchmark round must be skipped, or ``None`` while it may continue."""
+        starting = self._benchmark_rounds_starting.get(config.configuration)
+        if starting is None:
+            return None
+        round_counter_key, submitted_at = starting
+        pods_missing = self.cluster.get_pod_counter(round_counter_key)
+        # An unreadable counter is no evidence of a stuck round, so it never
+        # triggers the skip; the round is then simply waited for as before.
+        if pods_missing is None:
+            return None
+        if pods_missing <= 0:
+            del self._benchmark_rounds_starting[config.configuration]
+            return None
+        elapsed_seconds = (now - submitted_at).total_seconds()
+        if elapsed_seconds < BENCHMARK_START_TIMEOUT_MINUTES * SECONDS_PER_MINUTE:
+            return None
+        return (
+            f"Benchmark round of {config.configuration} did not start within "
+            f"{BENCHMARK_START_TIMEOUT_MINUTES} minutes ({pods_missing} pods still missing)"
+        )
+
+    def _skip_benchmark_round_if_not_started(
+        self,
+        config: "SutConfiguration",
+        jobs: list[str],
+        now: datetime,
+    ) -> bool:
+        """Capture diagnostics and delete a benchmark round whose pods did not all start in time.
+
+        The configuration then proceeds with its next round, so the other
+        rounds and systems are still measured.
+
+        :param config: Configuration whose round is checked.
+        :param jobs: Benchmarker jobs of that configuration still present.
+        :param now: Current time (UTC).
+        :return: ``True`` if the round was skipped.
+        :rtype: bool
+        """
+        reason = self._benchmark_start_abort_reason(config, now)
+        if reason is None:
+            return False
+        print(f"{config.configuration:30s}: {reason}; capturing diagnostics and skipping the round")
+        self._runtime_test_results.append((False, reason))
+        pods = self.cluster.get_job_pods(
+            app=self.cluster.appname, component='benchmarker',
+            experiment=self.code, configuration=config.configuration)
+        # Descriptions of pending pods name the scheduler's reason, and the
+        # job's own description lists pods it could not create.
+        for job in jobs:
+            self.cluster.store_job_description(job)
+        for pod in pods:
+            self.cluster.store_pod_description(pod_name=pod)
+            if self.cluster.get_pod_status(pod) in ('Running', 'Succeeded', 'Failed'):
+                for container in self.cluster.get_pod_containers(pod):
+                    if container:
+                        self.cluster.store_pod_log(pod, container)
+        # The job goes first so that it cannot replace the pods deleted next.
+        for job in jobs:
+            self.cluster.delete_job(job)
+        for pod in pods:
+            self.cluster.delete_job_pods(jobname=pod)
+        del self._benchmark_rounds_starting[config.configuration]
+        return True
+
     def work_benchmark_list(self, intervals: int = 30, stop_after_starting: bool = False, stop_after_loading: bool = False, stop_after_benchmarking: bool = False) -> None:
         """
         Run typical workflow:
@@ -1774,6 +1851,8 @@ class ExperimentBase():
                     _active_jobs = self.cluster.get_jobs(app, component, self.code, configuration=config.configuration)
                     if _active_jobs:
                         if any(not self.cluster.get_job_status(j) for j in _active_jobs):
+                            if self._skip_benchmark_round_if_not_started(config, _active_jobs, datetime.utcnow()):
+                                continue
                             print("{:30s}: has running benchmarks".format(config.configuration))
                         continue
                     if _use_experiment_dict and config.client <= len(config.experiment_dict["benchmarker"]):
@@ -1834,6 +1913,9 @@ class ExperimentBase():
                                 template_override=bench_entry.get("template", ""),
                                 reset_seconds=reset_seconds,
                             )
+                        # Timed from here, not from the counter, so that reset
+                        # scripts run before submission do not count.
+                        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
                         _benchmark_just_submitted = True
                     elif not _use_experiment_dict and len(config.benchmark_list) > 0:
                         # legacy benchmark_list path
@@ -1867,6 +1949,7 @@ class ExperimentBase():
                         connection = (config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client).lower()
                         print("{:30s}: start benchmarking".format(connection))
                         config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds)
+                        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
                         _benchmark_just_submitted = True
                     else:
                         # no list element left

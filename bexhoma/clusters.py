@@ -2422,6 +2422,28 @@ class Kubernetes():
         redis_command = f'redis-cli set {queue} {value} '
         self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
 
+    def get_pod_counter(self, queue: str) -> int | None:
+        """
+        Read a pod-count synchronisation counter from Redis.
+
+        :param queue: Redis key to read.
+        :return: Current counter value, or ``None`` if the key is missing or
+            the reply could not be read.
+        :rtype: int or None
+        """
+        pods_messagequeue = self.get_pods(component='messagequeue')
+        if pods_messagequeue:
+            pod_messagequeue = pods_messagequeue[0]
+        else:
+            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
+        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
+        redis_command = f'redis-cli get {queue} '
+        _, stdout, _ = self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+        try:
+            return int(stdout.strip())
+        except (TypeError, ValueError, AttributeError):
+            return None
+
     def set_pod_config(self, key: str, config: dict) -> None:
         """
         Store per-pod configuration as a JSON string in Redis.

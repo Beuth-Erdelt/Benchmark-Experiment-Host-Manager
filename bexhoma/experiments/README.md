@@ -129,6 +129,19 @@ The round counter ensures that all jobs in a client round (e.g., the query
 stream and the refresh stream) start their actual workload at the same wall-clock
 moment.
 
+**Start limit.** The pods poll without a limit, so a single pod that is never
+created or scheduled would keep the others waiting forever. The host therefore
+records each submitted round (`ExperimentBase._benchmark_rounds_starting`) and,
+on every pass of `work_benchmark_list()`, reads the round counter via
+`Kubernetes.get_pod_counter()`. Once it is `<= 0` the round has started and is
+no longer checked, however long the benchmark then runs. If it is still above 0
+`BENCHMARK_START_TIMEOUT_MINUTES` (15) after submission,
+`_skip_benchmark_round_if_not_started()` saves the job description and every
+pod's description (plus logs of pods that ran), deletes the job and then its
+pods, records a failed test, and lets the configuration continue with its next
+round. An unreadable counter never triggers the skip. Not covered: the
+cross-configuration experiment counter of container tenancy.
+
 ---
 
 ## 4. Log retrieval: `clusters.py::store_pod_log()`
