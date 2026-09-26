@@ -36,6 +36,7 @@ import os
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -342,10 +343,17 @@ class AgentLifecycle:
     def _invoke_agent(
         self, phase: str, task: str | None = None, source: Path | None = None,
     ) -> Path:
-        before = set(self._trajectory_runs())
         command = [*self.agent_command, "--phase", phase]
+        record: Path | None = None
         if phase in ("design", "baseline"):
             command.extend(["--task", task or ""])
+            # The child names its own investigation directory in this file.
+            # Looking for the newest directory instead would hand every
+            # lifecycle running side by side the same, latest one.
+            descriptor, name = tempfile.mkstemp(prefix="agent-run-", suffix=".txt")
+            os.close(descriptor)
+            record = Path(name)
+            command.extend(["--run-record", str(record)])
         else:
             if source is None:
                 raise LifecycleError("interpretation needs the current investigation")
@@ -359,15 +367,20 @@ class AgentLifecycle:
         print(f"starting the {phase} phase", flush=True)
         log = source / "trajectory.jsonl" if source is not None else None
         previous_size = log.stat().st_size if log is not None and log.is_file() else None
-        result = subprocess.run(command, cwd=self.config.root, check=False)
+        try:
+            result = subprocess.run(command, cwd=self.config.root, check=False)
+            recorded = record.read_text(encoding="utf-8").strip() if record else ""
+        finally:
+            if record is not None:
+                record.unlink(missing_ok=True)
         if phase in ("design", "baseline"):
-            created = sorted(set(self._trajectory_runs()) - before)
-            if not created:
+            investigation = Path(recorded) if recorded else None
+            if investigation is None or not (investigation / "trajectory.jsonl").is_file():
                 raise LifecycleError(
                     f"agent {phase} phase created no investigation "
                     f"(exit code {result.returncode})"
                 )
-            investigation = created[-1]
+            investigation = investigation.resolve()
         else:
             if source is None:
                 raise LifecycleError("interpretation needs an investigation")
@@ -410,14 +423,6 @@ class AgentLifecycle:
             return None
         print(f"baseline answer: {baseline_run / 'answer.md'}", flush=True)
         return baseline_run
-
-    def _trajectory_runs(self) -> list[Path]:
-        if not self.config.trajectories.is_dir():
-            return []
-        return [
-            path.resolve() for path in self.config.trajectories.iterdir()
-            if path.is_dir() and (path / "trajectory.jsonl").is_file()
-        ]
 
     def _read_phase_state(self, run: Path) -> tuple[str, dict[str, Any]]:
         log = run / "trajectory.jsonl"

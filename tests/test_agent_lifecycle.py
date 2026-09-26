@@ -1102,6 +1102,25 @@ probe_activity() {{
         self.assertIn("resources.cpu is a sweep list", message)
         self.assertIn("the catalog forbids the comparison this question needs", message)
 
+    def test_a_concurrent_agent_does_not_take_over_the_investigation(self) -> None:
+        """Several lifecycles share one trajectory folder; each keeps its own run."""
+        lifecycle = AgentLifecycle(self.config, ["agent"], self.server)
+
+        def design(command, *args, **kwargs):
+            own = _trajectory(self.trajectories / "20260926T100000000000",
+                              "design", code="101", summary="submitted")
+            # Another lifecycle's design phase finishes meanwhile, with a newer name.
+            _trajectory(self.trajectories / "20260926T100000000001",
+                        "design", code="102", summary="submitted")
+            record = Path(command[command.index("--run-record") + 1])
+            record.write_text(str(own), encoding="utf-8")
+            return mock.Mock(returncode=0)
+
+        with mock.patch("agent.lifecycle.subprocess.run", side_effect=design):
+            result = lifecycle._invoke_agent("design", task="question")
+
+        self.assertEqual(result, (self.trajectories / "20260926T100000000000").resolve())
+
     def test_real_invoker_appends_interpretation_to_same_investigation(self) -> None:
         investigation = _trajectory(
             self.trajectories / "one", "design", code="101", summary="submitted"

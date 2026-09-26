@@ -2052,7 +2052,24 @@ def _build_parser() -> argparse.ArgumentParser:
                              "two then share the cluster")
     parser.add_argument("--dry-run", action="store_true",
                         help="design and validate only; do not submit to the cluster")
+    parser.add_argument("--run-record", default=None,
+                        help="file this phase writes its investigation directory "
+                             "into, so a wrapper running several agents side by "
+                             "side learns which directory is its own")
     return parser
+
+
+def _record_run_directory(record: str | None, run_directory: Path) -> None:
+    """Tell a wrapper which investigation directory this phase is writing.
+
+    Scanning the trajectory folder for the newest directory cannot tell
+    concurrent agents apart, so the wrapper names a file and reads it back.
+
+    :param record: The ``--run-record`` path, or ``None`` when no wrapper asked.
+    :param run_directory: The investigation directory, after any relocation.
+    """
+    if record:
+        Path(record).write_text(str(run_directory.resolve()), encoding="utf-8")
 
 
 def _phase_number(run_directory: Path) -> int:
@@ -2391,6 +2408,7 @@ def main() -> int:
     phase_number = _phase_number(run_directory)
     phase_directory = run_directory / "phases" / f"{phase_number:02d}-{args.phase}"
     phase_directory.mkdir(parents=True, exist_ok=True)
+    _record_run_directory(args.run_record, run_directory)
     trajectory = Trajectory(run_directory)
     model = model_client.ChatModel(model=args.model, base_url=args.base_url,
                                    api_key=args.api_key, temperature=args.temperature,
@@ -2556,6 +2574,7 @@ def main() -> int:
                 previous_directory
             )
             workspace.run_directory = phase_directory
+            _record_run_directory(args.run_record, run_directory)
     phase_report, _ = _write_reports(
         run_directory, trajectory, phase_number, args.phase, summary_text, final,
     )
