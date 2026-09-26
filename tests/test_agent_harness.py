@@ -388,6 +388,24 @@ class WorkspaceTest(unittest.TestCase):
 
         self.assertIn("M1.1", workspace.read_file("agent/handbook/handbook.md")["text"])
 
+    def test_the_handbook_appendix_beside_it_is_readable(self) -> None:
+        method = self.root / "agent" / "handbook" / "handbook.md"
+        method.parent.mkdir(parents=True, exist_ok=True)
+        method.write_text("# Method contract\n")
+        (method.parent / "handbook_appendix.md").write_text("# Appendix\n\n## Sources\n")
+        (method.parent / "handbook_source_map.md").write_text("# Not for the agent\n")
+        workspace = Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            method_path="agent/handbook/handbook.md",
+            results_root=str(self.root / "results"), run_directory=self.run,
+        )
+
+        result = workspace.read_file("agent/handbook/handbook_appendix.md", "## Sources")
+        self.assertIn("## Sources", result["text"])
+        with self.assertRaises(ToolError):
+            workspace.peek_text("agent/handbook/handbook_source_map.md")
+
     def test_a_claim_no_measurement_could_refute_is_rejected(self) -> None:
         """M1.1: adequacy language means every possible run confirms the hypothesis."""
         self.workspace.write_file(self.path, _SPEC.replace(
@@ -1205,14 +1223,17 @@ resources:
     def test_file_reads_have_a_cumulative_context_limit(self) -> None:
         allowance = tools_module._READ_CONTEXT_CHARACTER_LIMIT
         chunk = tools_module._READ_CHARACTER_LIMIT
-        path = self.root / "results" / "big.log"
-        path.write_text("x" * (chunk * 2))
         whole_reads, remainder = divmod(allowance, chunk)
-        for _ in range(whole_reads):
-            self.assertIn("text", self.workspace.read_file(str(path)))
-        last = self.workspace.read_file(str(path))
+        paths = []
+        for number in range(whole_reads + 2):
+            path = self.root / "results" / f"big{number}.log"
+            path.write_text("x" * (chunk * 2))
+            paths.append(str(path))
+        for path in paths[:whole_reads]:
+            self.assertIn("text", self.workspace.read_file(path))
+        last = self.workspace.read_file(paths[whole_reads])
         self.assertEqual(last["returned_characters"], remainder)
-        self.assertIn("budget is exhausted", self.workspace.read_file(str(path))["error"])
+        self.assertIn("budget is exhausted", self.workspace.read_file(paths[-1])["error"])
 
     def test_a_fresh_model_context_resets_only_the_read_allowance(self) -> None:
         allowance = tools_module._READ_CONTEXT_CHARACTER_LIMIT
@@ -1260,6 +1281,39 @@ resources:
         result = self.workspace.read_file("handbook.md", "## Filler")
         self.assertNotIn("error", result)
         self.assertIn("next_offset", result)
+
+    def test_an_unchanged_repeat_read_is_not_charged_again(self) -> None:
+        first = self.workspace.read_file("contracts/contract_catalog.yml")
+        repeat = self.workspace.read_file("contracts/contract_catalog.yml")
+        self.assertNotIn("text", repeat)
+        self.assertIn("unchanged", repeat)
+        self.assertEqual(
+            repeat["context_characters_remaining"], first["context_characters_remaining"])
+
+        self.workspace.write_file(self.path, "first: 1\n")
+        self.workspace.read_file(self.path)
+        self.workspace.write_file(self.path, "second: 2\n")
+        self.assertEqual(self.workspace.read_file(self.path)["text"], "second: 2\n")
+
+        self.workspace.reset_read_context()
+        self.assertIn("text", self.workspace.read_file("contracts/contract_catalog.yml"))
+
+    def test_peek_text_leaves_the_read_budget_untouched(self) -> None:
+        self.workspace.write_file(self.path, "first: 1\n")
+        self.assertEqual(self.workspace.peek_text(self.path), "first: 1\n")
+        self.assertIn("text", self.workspace.read_file(self.path))
+        self.assertEqual(self.workspace._returned_read_characters, len("first: 1\n"))
+
+    def test_read_budget_scales_with_the_prompt_room(self) -> None:
+        budget = tools_module.read_budget_for_window
+        self.assertEqual(budget(None, 16_384), 110_000)
+        self.assertEqual(budget(131_072, 16_384), int(114_688 * 0.6 * 3.5))
+        self.assertEqual(budget(131_072, 65_536), int(65_536 * 0.6 * 3.5))
+        self.assertEqual(budget(32_768, 65_536), 0)
+
+        self.workspace.set_read_budget(10)
+        result = self.workspace.read_file("contracts/contract_catalog.yml")
+        self.assertIn("does not fit", result["error"])
 
     def _other_run(self) -> Workspace:
         """Return a second workspace sharing this one's inbox, as a parallel run would."""

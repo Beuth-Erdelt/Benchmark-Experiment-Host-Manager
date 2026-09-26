@@ -219,7 +219,17 @@ handbook* — a document of methodological guidance on what makes a benchmark
 sound rather than merely legal. Its digest is recorded in the run's trajectory,
 and the few principles a machine can decide are enforced by the validator, which
 cites them by identifier. The shipped handbook is `agent/handbook/handbook.md`, and `AGENT_METHOD`
-in `.env` names it.
+in `.env` names it. Its appendix — the local agent interface and the full source
+list — lives beside it in `handbook_appendix.md`. The agent may read that file,
+but unlike the handbook's Navigation section it is not required reading.
+
+Each model conversation may receive a limited amount of file text. The harness
+sizes that allowance from the served context window minus `--max-tokens`: file
+text may fill 60% of the rest, at about 3.5 characters per token. A model with a
+131,072-token window gets about 240,000 characters at the default
+`--max-tokens 16384`, and about 137,000 at `--max-tokens 65536`. When the server
+does not publish its window, the allowance is 110,000 characters. Re-reading
+unchanged text already returned in the same conversation costs nothing.
 
 The other arm of the with/without comparison designs with no handbook at all.
 Switch it off by leaving `AGENT_METHOD` empty in `.env`, or for one run:

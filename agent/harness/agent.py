@@ -1652,11 +1652,12 @@ def _author_followup(
             return {"error": "read every contract you were pointed at before authoring",
                     "missing": missing}
         if name == "validate":
-            draft = workspace.call("read_file", {"path": arguments.get("path", "")})
-            if "text" not in draft:
-                return draft
             try:
-                experiment = yaml.safe_load(draft["text"])
+                draft = workspace.peek_text(arguments.get("path", ""))
+            except (tools.ToolError, OSError) as error:
+                return {"error": str(error)}
+            try:
+                experiment = yaml.safe_load(draft)
             except yaml.YAMLError:
                 experiment = None
             if not isinstance(experiment, dict):
@@ -2425,6 +2426,13 @@ def main() -> int:
         results_root=str(results),
         status_dir=status, run_directory=phase_directory,
         allow_parallel_runs=args.allow_parallel_runs)
+    if workspace is not None:
+        window = model.context_window()
+        if not isinstance(window, int):
+            window = None
+        workspace.set_read_budget(tools.read_budget_for_window(window, args.max_tokens))
+        trajectory.record("read_budget", context_window=window,
+                          max_tokens=args.max_tokens, characters=workspace.read_budget)
 
     print(f"{args.phase} phase with {model.model} at {args.base_url}", flush=True)
     print(f"investigation: {run_directory}", flush=True)

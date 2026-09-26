@@ -93,11 +93,35 @@ _AUTHORITATIVE_FILENAMES = {
     "contract_catalog.yml", "contract_result.yml", "handbook.md",
     "environment.yml", "experiment.yml", "submitted-experiment.yml",
 }
-#: Hard ceiling on file text returned during one agent invocation. This bounds
-#: prompt growth even when the model keeps opening large evidence pages. It
-#: allows for all three contracts plus the cluster descriptor in one design
-#: context, with room left for a draft to be read back.
+#: Ceiling on file text returned during one model conversation when the served
+#: context window is unknown. This bounds prompt growth even when the model
+#: keeps opening large evidence pages.
 _READ_CONTEXT_CHARACTER_LIMIT = 110_000
+#: Share of the prompt room (context window minus the per-turn output ceiling)
+#: that file text may occupy. The rest holds the system prompt, the task, tool
+#: calls and the model's own earlier turns.
+_READ_SHARE_OF_PROMPT_ROOM = 0.6
+#: Characters per token when sizing the read budget. Contract YAML and English
+#: prose tokenize at roughly 3.5 to 4 characters per token; 3.5 errs low.
+_READ_CHARACTERS_PER_TOKEN = 3.5
+
+
+def read_budget_for_window(context_window: int | None, max_tokens: int) -> int:
+    """Size one conversation's file-reading allowance from the model's window.
+
+    Every turn reserves ``max_tokens`` for the answer, so only the rest of the
+    window can hold the prompt. File text gets a fixed share of that rest.
+
+    :param context_window: Tokens the server accepts per request, or ``None``
+        when it does not publish the figure.
+    :param max_tokens: The per-turn output ceiling.
+    :return: Cumulative characters of file text one conversation may receive.
+    :rtype: int
+    """
+    if context_window is None:
+        return _READ_CONTEXT_CHARACTER_LIMIT
+    prompt_room = max(context_window - max_tokens, 0)
+    return int(prompt_room * _READ_SHARE_OF_PROMPT_ROOM * _READ_CHARACTERS_PER_TOKEN)
 
 #: A phase is suspicious when its aggregate latency differs by at least this
 #: factor from the median of the other repetitions at the same concurrency.
@@ -231,7 +255,8 @@ class Workspace:
         self.allow_parallel_runs = allow_parallel_runs
         self._validated: dict[Path, tuple[str, ...]] = {}
         self._written_drafts: set[Path] = set()
-        self._returned_read_characters = 0
+        self.read_budget = _READ_CONTEXT_CHARACTER_LIMIT
+        self.reset_read_context()
         self._result_directory: Path | None = None
         self._reachable_result_files: set[Path] | None = None
         self.inbox.mkdir(parents=True, exist_ok=True)
@@ -246,6 +271,24 @@ class Workspace:
             self._readable_files.add(self.environment_path)
         if self.method_path:
             self._readable_files.add(self.method_path)
+        # The handbook's appendix (local interface notes and the source list)
+        # sits beside it. It is readable but not required, so it costs the
+        # read budget only when the agent asks for it.
+        self.method_appendix_path: str | None = None
+        if self.method_path:
+            method = Path(self.method_path)
+            appendix = method.with_name(f"{method.stem}_appendix.md")
+            if appendix.is_file():
+                self.method_appendix_path = str(appendix)
+                self._readable_files.add(self.method_appendix_path)
+
+    def set_read_budget(self, characters: int) -> None:
+        """Set how much file text one model conversation may receive.
+
+        :param characters: Cumulative characters per conversation, usually
+            from :func:`read_budget_for_window`.
+        """
+        self.read_budget = characters
 
     def reset_read_context(self) -> None:
         """Start a fresh model context with a fresh cumulative read allowance.
@@ -255,6 +298,7 @@ class Workspace:
         to the first must not consume the second conversation's allowance.
         """
         self._returned_read_characters = 0
+        self._returned_reads: dict[tuple[Path, str | None, int], tuple[str, int]] = {}
 
     def restrict_to_result(self, report_path: str, result_contract_path: str) -> None:
         """Restrict reads to one result and files reachable from its report.
@@ -280,6 +324,8 @@ class Workspace:
         # result soundly needs the same principles that designing one does.
         if self.method_path:
             self._reachable_result_files.add(Path(self.method_path))
+        if self.method_appendix_path:
+            self._reachable_result_files.add(Path(self.method_appendix_path))
         self.reset_read_context()
 
     def restore_design_reads(self) -> None:
@@ -348,6 +394,19 @@ class Workspace:
             f"path {path!r} is outside the read scope; you may read the contract "
             "files you were pointed at and your own drafts, and nothing else"
         )
+
+    def peek_text(self, path: str) -> str:
+        """Return a readable file's text for the harness's own checks.
+
+        Unlike :meth:`read_file`, nothing reaches the model, so the read budget
+        is neither charged nor consulted.
+
+        :param path: Path as the agent wrote it, relative to :attr:`root`.
+        :return: The file's full text.
+        :rtype: str
+        :raises ToolError: When the path is not inside the read scope.
+        """
+        return self._resolve_readable(path).read_text(encoding="utf-8")
 
     def read_file(
         self, path: str, section: str | None = None, offset: int = 0,
@@ -430,7 +489,25 @@ class Workspace:
         elif whole_authoritative:
             limit = len(text)
 
-        remaining = _READ_CONTEXT_CHARACTER_LIMIT - self._returned_read_characters
+        # The conversation keeps every tool result, so unchanged text that was
+        # already returned is still in front of the model. Sending it again
+        # would only spend the budget on a duplicate.
+        read_key = (source, section, offset)
+        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        previous = self._returned_reads.get(read_key)
+        if previous is not None and previous[0] == digest:
+            payload["unchanged"] = (
+                "this exact content was already returned earlier in this "
+                "conversation and has not changed since; use that copy"
+            )
+            if section is not None and previous[1] < len(text):
+                payload["next_offset"] = offset + previous[1]
+            payload["context_characters_remaining"] = (
+                self.read_budget - self._returned_read_characters
+            )
+            return payload
+
+        remaining = self.read_budget - self._returned_read_characters
         if remaining <= 0:
             return {
                 "error": "file-reading context budget is exhausted; answer from the evidence already read",
@@ -460,9 +537,10 @@ class Workspace:
             text = text[:shown]
         payload["text"] = text
         payload["returned_characters"] = len(text)
+        self._returned_reads[read_key] = (digest, len(text))
         self._returned_read_characters += len(text)
         payload["context_characters_remaining"] = (
-            _READ_CONTEXT_CHARACTER_LIMIT - self._returned_read_characters
+            self.read_budget - self._returned_read_characters
         )
         self._discover_result_links(source)
         return payload

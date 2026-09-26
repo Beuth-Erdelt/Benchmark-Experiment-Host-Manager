@@ -224,6 +224,14 @@ class ChatModel:
         self._context_window_asked = False
         return self.model
 
+    def context_window(self) -> int | None:
+        """Return the served context length, or ``None`` when it is unpublished.
+
+        :return: Tokens the server accepts per request.
+        :rtype: int | None
+        """
+        return self._window()
+
     def _window(self) -> int | None:
         """Return the served context length, asking the server once.
 
