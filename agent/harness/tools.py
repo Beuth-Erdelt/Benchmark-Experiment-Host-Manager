@@ -390,7 +390,10 @@ class Workspace:
                 "available_sections": headings[:40],
                 "more_sections": max(0, len(headings) - 40),
             }
-        if authoritative and len(text) > _AUTHORITATIVE_CHARACTER_LIMIT:
+        # A section read is explicitly partial and paginated via next_offset,
+        # so the whole-or-nothing rule only governs whole-file reads.
+        whole_authoritative = authoritative and section is None
+        if whole_authoritative and len(text) > _AUTHORITATIVE_CHARACTER_LIMIT:
             return {
                 "error": (
                     f"authoritative file has {len(text)} characters, above the "
@@ -424,7 +427,7 @@ class Workspace:
             payload["offset"] = offset
             payload["selected_characters"] = len(text)
             text = text[offset:]
-        elif authoritative:
+        elif whole_authoritative:
             limit = len(text)
 
         remaining = _READ_CONTEXT_CHARACTER_LIMIT - self._returned_read_characters
@@ -433,7 +436,7 @@ class Workspace:
                 "error": "file-reading context budget is exhausted; answer from the evidence already read",
                 "path": path,
             }
-        if authoritative and len(text) > remaining:
+        if whole_authoritative and len(text) > remaining:
             return {
                 "error": (
                     "authoritative file does not fit the remaining file-reading context budget; "

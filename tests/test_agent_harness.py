@@ -1234,15 +1234,32 @@ resources:
 
     def test_authoritative_files_are_whole_or_error(self) -> None:
         catalog = self.root / "contracts" / "contract_catalog.yml"
-        catalog.write_text(catalog.read_text() + "\n# growth\n" + "x" * 2_000)
+        catalog.write_text(
+            catalog.read_text(encoding="utf-8") + "\n# growth\n" + "x" * 2_000,
+            encoding="utf-8",
+        )
         result = self.workspace.read_file("contracts/contract_catalog.yml")
-        self.assertEqual(len(result["text"]), len(catalog.read_text()))
+        self.assertEqual(len(result["text"]), len(catalog.read_text(encoding="utf-8")))
         self.assertNotIn("truncated", result)
 
         catalog.write_text("x" * 49_000)
         result = self.workspace.read_file("contracts/contract_catalog.yml")
         self.assertIn("whole-file limit", result["error"])
         self.assertNotIn("text", result)
+
+    def test_large_authoritative_markdown_allows_section_reads(self) -> None:
+        handbook = self.root / "handbook.md"
+        handbook.write_text(
+            "# Handbook\n\n## Navigation\nstart here\n\n## Filler\n" + "x" * 60_000 + "\n"
+        )
+        self.workspace._readable_files.add(str(handbook))
+        result = self.workspace.read_file("handbook.md", "## Navigation")
+        self.assertNotIn("error", result)
+        self.assertIn("start here", result["text"])
+
+        result = self.workspace.read_file("handbook.md", "## Filler")
+        self.assertNotIn("error", result)
+        self.assertIn("next_offset", result)
 
     def _other_run(self) -> Workspace:
         """Return a second workspace sharing this one's inbox, as a parallel run would."""
