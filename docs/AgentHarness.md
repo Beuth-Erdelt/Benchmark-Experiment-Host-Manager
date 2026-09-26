@@ -243,11 +243,11 @@ single run; any path that is not a file means no handbook.
 
 ### The bare-model baseline
 
-Before the design phase, the wrapper also answers the question with the bare
+With `--baseline` (or `AGENT_BASELINE=1`), before the design phase the wrapper also answers the question with the bare
 model — no catalog, no handbook, no tools — as its own separate investigation,
 so the full pipeline's answer can be read against what the model alone would
 have said. The baseline `answer.md` path is printed and linked from the design
-trajectory. Skip it with `--no-baseline`, or `AGENT_BASELINE=0`. The same phase
+trajectory. It is off by default. The same phase
 runs on its own:
 
 ```sh

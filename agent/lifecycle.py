@@ -770,10 +770,10 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--baseline", action=argparse.BooleanOptionalAction,
-        default=_env_flag("AGENT_BASELINE", default=True),
+        default=_env_flag("AGENT_BASELINE", default=False),
         help="also answer the question with the bare model -- no catalog, "
              "handbook, or tools -- as a separate investigation, for comparison "
-             "with the full pipeline (AGENT_BASELINE; on by default)",
+             "with the full pipeline (AGENT_BASELINE; off by default)",
     )
     return parser
 

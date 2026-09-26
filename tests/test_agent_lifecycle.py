@@ -741,9 +741,9 @@ probe_activity() {{
             [("baseline", None), ("design", None), ("interpret", design)],
         )
 
-    def test_baseline_defaults_on_and_can_be_switched_off(self) -> None:
+    def test_baseline_defaults_off_and_can_be_switched_on(self) -> None:
         with mock.patch.dict(os.environ, {"AGENT_BASELINE": ""}, clear=False):
-            self.assertTrue(_parser().parse_args(["--task", "q"]).baseline)
+            self.assertFalse(_parser().parse_args(["--task", "q"]).baseline)
             self.assertFalse(
                 _parser().parse_args(["--task", "q", "--no-baseline"]).baseline
             )

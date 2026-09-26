@@ -247,8 +247,8 @@ The wrapper starts and stops the server itself, so the `up` above is optional;
 run it first when you want the weights loaded before the clock starts. Swap
 both manifest paths and the model name for `agent/k8s/vllm-gemma4-31b.yml` and
 `google/gemma-4-31B-it` to run Gemma instead. `--followups N` allows follow-up
-experiments, and the bare-model baseline runs by default -- pass
-`--no-baseline` to skip it.
+experiments, and `--baseline` also answers the question with the bare model
+for comparison (off by default).
 
 Either model also runs without any manifest through OpenRouter, which needs no
 GPU. Point the harness at the broker, name the model exactly as OpenRouter
@@ -359,11 +359,11 @@ either by leaving `AGENT_METHOD` empty in `.env` or for one run:
 AGENT_METHOD= .venv/bin/python -m agent.lifecycle --task "<benchmark question>"
 ```
 
-Before the design phase, the wrapper also answers the question with the bare
+With `--baseline` (or `AGENT_BASELINE=1`), before the design phase the wrapper also answers the question with the bare
 model — no catalog, handbook, or tools — as its own investigation, so the full
 pipeline's answer can be read against what the model alone would have said. Its
-`answer.md` path is printed and referenced from the design trajectory. Skip it
-with `--no-baseline`, or set `AGENT_BASELINE=0`. The same phase is available on
+`answer.md` path is printed and referenced from the design trajectory. It is
+off by default. The same phase is available on
 its own with `python -m agent.harness.agent --phase baseline --task "..."`.
 
 Results land wherever `cluster.config` declares its `resultfolder`, which is the
