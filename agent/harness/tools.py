@@ -84,7 +84,7 @@ _SECTION_CHARACTER_LIMIT = 12_000
 #: reject them, never silently remove their tail.
 _AUTHORITATIVE_CHARACTER_LIMIT = 48_000
 _AUTHORITATIVE_FILENAMES = {
-    "contract_catalog.yml", "contract_result.yml", "experiment_design_handbook.md",
+    "contract_catalog.yml", "contract_result.yml", "handbook.md",
     "environment.yml", "experiment.yml", "submitted-experiment.yml",
 }
 #: Hard ceiling on file text returned during one agent invocation. This bounds

@@ -375,18 +375,18 @@ class WorkspaceTest(unittest.TestCase):
 
     def test_the_method_contract_is_readable_and_hashed_into_provenance(self) -> None:
         """The third contract has to reach the model and the trajectory alike."""
-        method = self.root / "agent" / "experiment_design_handbook.md"
+        method = self.root / "agent" / "handbook" / "handbook.md"
         method.parent.mkdir(parents=True, exist_ok=True)
         method.write_text("# Method contract\n\n- M1.1 state a refutable claim\n")
         workspace = Workspace(
             root=str(self.root), inbox="inbox",
             catalog_path="contracts/contract_catalog.yml",
             environment_path="environment.yml",
-            method_path="agent/experiment_design_handbook.md",
+            method_path="agent/handbook/handbook.md",
             results_root=str(self.root / "results"), run_directory=self.run,
         )
 
-        self.assertIn("M1.1", workspace.read_file("agent/experiment_design_handbook.md")["text"])
+        self.assertIn("M1.1", workspace.read_file("agent/handbook/handbook.md")["text"])
 
     def test_a_claim_no_measurement_could_refute_is_rejected(self) -> None:
         """M1.1: adequacy language means every possible run confirms the hypothesis."""
@@ -2740,13 +2740,13 @@ resources:
 
     def test_design_reads_the_method_contract_before_writing(self) -> None:
         """The handbook is a required read, not an optional reference."""
-        method = self.root / "agent" / "experiment_design_handbook.md"
+        method = self.root / "agent" / "handbook" / "handbook.md"
         method.parent.mkdir(parents=True, exist_ok=True)
         method.write_text("# Method contract\n\n- M1.1 state a refutable claim\n")
         workspace = Workspace(
             root=str(self.root), inbox="inbox",
             catalog_path="contracts/contract_catalog.yml",
-            environment_path=None, method_path="agent/experiment_design_handbook.md",
+            environment_path=None, method_path="agent/handbook/handbook.md",
             results_root=str(self.root / "results"), run_directory=self.run,
         )
         model = _Model([
@@ -2757,7 +2757,7 @@ resources:
             ),
             _tool_reply(
                 ToolCall("method", "read_file",
-                         {"path": "agent/experiment_design_handbook.md"}),
+                         {"path": "agent/handbook/handbook.md"}),
                 ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
                 ToolCall("validate", "validate", {"path": self.path}),
             ),
@@ -2769,7 +2769,7 @@ resources:
             trajectory=Trajectory(self.run),
             catalog_path="contracts/contract_catalog.yml",
             catalog_sha256="0" * 64, environment_path=None,
-            method_path="agent/experiment_design_handbook.md", attempts=1, dry_run=True,
+            method_path="agent/handbook/handbook.md", attempts=1, dry_run=True,
         )
 
         self.assertEqual(outcome["validated_path"], self.path)
@@ -2783,14 +2783,14 @@ resources:
             and "error" in event.get("result", {})
         ]
         self.assertEqual(len(refused), 1)
-        self.assertIn("experiment_design_handbook.md", str(refused[0]["result"]["missing"]))
+        self.assertIn("handbook.md", str(refused[0]["result"]["missing"]))
         meta = next(event for event in events if event.get("type") == "meta")
         self.assertTrue(meta["method_present"])
         self.assertEqual(len(meta["method_sha256"]), 64)
 
     def test_one_handbook_chapter_does_not_stand_in_for_navigation(self) -> None:
         """A chapter read leaves the gate closed; the routing chapter opens it."""
-        method = self.root / "agent" / "experiment_design_handbook.md"
+        method = self.root / "agent" / "handbook" / "handbook.md"
         method.parent.mkdir(parents=True, exist_ok=True)
         method.write_text(
             "# Experiment Design Handbook\n\n"
@@ -2801,7 +2801,7 @@ resources:
             root=str(self.root), inbox="inbox",
             catalog_path="contracts/contract_catalog.yml",
             environment_path=None,
-            method_path="agent/experiment_design_handbook.md",
+            method_path="agent/handbook/handbook.md",
             results_root=str(self.root / "results"), run_directory=self.run,
         )
         model = _Model([
@@ -2809,13 +2809,13 @@ resources:
                 ToolCall("catalog", "read_file",
                          {"path": "contracts/contract_catalog.yml"}),
                 ToolCall("chapter", "read_file",
-                         {"path": "agent/experiment_design_handbook.md",
+                         {"path": "agent/handbook/handbook.md",
                           "section": "## M1. The claim"}),
                 ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
             ),
             _tool_reply(
                 ToolCall("navigation", "read_file",
-                         {"path": "agent/experiment_design_handbook.md",
+                         {"path": "agent/handbook/handbook.md",
                           "section": "## Navigation"}),
                 ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
                 ToolCall("validate", "validate", {"path": self.path}),
@@ -2828,7 +2828,7 @@ resources:
             trajectory=Trajectory(self.run),
             catalog_path="contracts/contract_catalog.yml",
             catalog_sha256="0" * 64, environment_path=None,
-            method_path="agent/experiment_design_handbook.md", attempts=1,
+            method_path="agent/handbook/handbook.md", attempts=1,
             dry_run=True,
         )
 
@@ -2844,7 +2844,7 @@ resources:
         ]
         self.assertEqual(len(refused), 1)
         missing = str(refused[0]["result"]["missing"])
-        self.assertIn("experiment_design_handbook.md", missing)
+        self.assertIn("handbook.md", missing)
         self.assertIn("Navigation", missing)
 
     def test_interpretation_cannot_finish_without_question_coverage(self) -> None:
@@ -3441,7 +3441,7 @@ resources:
 
     def _handbook_workspace(self, headings: tuple[str, ...]) -> Workspace:
         """Build a workspace whose handbook carries exactly these chapters."""
-        method = self.root / "agent" / "experiment_design_handbook.md"
+        method = self.root / "agent" / "handbook" / "handbook.md"
         method.parent.mkdir(parents=True, exist_ok=True)
         method.write_text("# Experiment Design Handbook\n\n" + "\n\n".join(
             f"{heading}\n\nWhat this chapter says about method.\n"
@@ -3451,7 +3451,7 @@ resources:
             root=str(self.root), inbox="inbox",
             catalog_path="contracts/contract_catalog.yml",
             environment_path="environment.yml",
-            method_path="agent/experiment_design_handbook.md",
+            method_path="agent/handbook/handbook.md",
             results_root=str(self.root / "results"), run_directory=self.run,
         )
 
@@ -3466,7 +3466,7 @@ resources:
         }])
         chapter_reads = [
             ToolCall(section, "read_file", {
-                "path": "agent/experiment_design_handbook.md", "section": section,
+                "path": "agent/handbook/handbook.md", "section": section,
             })
             for section in prompts.INTERPRET_METHOD_SECTIONS
         ]
@@ -3486,7 +3486,7 @@ resources:
             workspace=workspace, model=model, trajectory=Trajectory(self.run),
             result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
             environment_path=None, attempts=1,
-            method_path="agent/experiment_design_handbook.md",
+            method_path="agent/handbook/handbook.md",
         )
 
         self.assertTrue(outcome["phase_complete"])
@@ -3520,7 +3520,7 @@ resources:
                 ToolCall("contract", "read_file", {"path": _RESULT_CONTRACT_PATH}),
                 *[
                     ToolCall(section, "read_file", {
-                        "path": "agent/experiment_design_handbook.md",
+                        "path": "agent/handbook/handbook.md",
                         "section": section,
                     })
                     for section in present
@@ -3535,7 +3535,7 @@ resources:
             workspace=workspace, model=model, trajectory=Trajectory(self.run),
             result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
             environment_path=None, attempts=1,
-            method_path="agent/experiment_design_handbook.md",
+            method_path="agent/handbook/handbook.md",
         )
 
         self.assertTrue(outcome["phase_complete"])
@@ -4346,7 +4346,7 @@ class PhaseTest(unittest.TestCase):
         messages = prompts.design_messages(
             task=question, catalog_path="contracts/contract_catalog.yml",
             environment_path="environment.yml",
-            method_path="agent/experiment_design_handbook.md", inbox="inbox",
+            method_path="agent/handbook/handbook.md", inbox="inbox",
             attempts=3, followups=1,
         )
 
@@ -4438,11 +4438,11 @@ class PhaseTest(unittest.TestCase):
             report_path="results/42/report/index.md",
             result_contract_path="results/42/contract_result.yml",
             specification=_SPEC,
-            method_path="agent/experiment_design_handbook.md",
+            method_path="agent/handbook/handbook.md",
         )
 
         system = messages[0]["content"]
-        self.assertIn("agent/experiment_design_handbook.md", system)
+        self.assertIn("agent/handbook/handbook.md", system)
         for section in prompts.INTERPRET_METHOD_SECTIONS:
             self.assertIn(section, system)
         for lesson in ("aggregate", "per-client", "latency alongside", "bound the"):

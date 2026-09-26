@@ -743,7 +743,7 @@ def _parser() -> argparse.ArgumentParser:
                              "defaults to environment.yml in the working directory")
     parser.add_argument("--method",
                         default=os.environ.get(
-                            "AGENT_METHOD", "agent/experiment_design_handbook.md"),
+                            "AGENT_METHOD", "agent/handbook/handbook.md"),
                         help="experiment design handbook; set AGENT_METHOD empty, or "
                              "pass an empty string, to design without one")
     parser.add_argument("--inbox", default=None,

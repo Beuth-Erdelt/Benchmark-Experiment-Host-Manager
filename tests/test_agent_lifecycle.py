@@ -458,7 +458,7 @@ class AgentLifecycleTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {}, clear=False):
             os.environ.pop("AGENT_METHOD", None)
             default = _parser().parse_args(["--task", "q"])
-        self.assertEqual(default.method, "agent/experiment_design_handbook.md")
+        self.assertEqual(default.method, "agent/handbook/handbook.md")
 
         without = _parser().parse_args(["--task", "q", "--method", ""])
         self.assertEqual(without.method, "")

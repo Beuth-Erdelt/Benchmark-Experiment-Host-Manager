@@ -43,7 +43,7 @@ _DEFAULT_RESULT_CONTRACT = os.path.join("contracts", "contract_result.yml")
 _DEFAULT_ENVIRONMENT = "environment.yml"
 #: The experiment design handbook: what makes a design sound, beside what the catalog
 #: makes legal and what the result contract makes claimable.
-_DEFAULT_METHOD = "agent/experiment_design_handbook.md"
+_DEFAULT_METHOD = "agent/handbook/handbook.md"
 #: Subdirectory of Bexhoma's result folder that holds investigation
 #: trajectories when ``--trajectories`` is not given. Keeping them beside the
 #: benchmark results, rather than inside this checkout, means a working tree

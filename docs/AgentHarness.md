@@ -218,7 +218,7 @@ Before every design and every follow-up the agent reads an *experiment design
 handbook* — a document of methodological guidance on what makes a benchmark
 sound rather than merely legal. Its digest is recorded in the run's trajectory,
 and the few principles a machine can decide are enforced by the validator, which
-cites them by identifier. The shipped handbook is `agent/experiment_design_handbook.md`, and `AGENT_METHOD`
+cites them by identifier. The shipped handbook is `agent/handbook/handbook.md`, and `AGENT_METHOD`
 in `.env` names it.
 
 The other arm of the with/without comparison designs with no handbook at all.

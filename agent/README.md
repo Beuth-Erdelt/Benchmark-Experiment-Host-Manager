@@ -95,7 +95,7 @@ supports TPC-H with PostgreSQL and PgDuckDB, and YCSB with PostgreSQL.
 
 Three documents govern a run. The catalog says what an experiment may express.
 The result contract, `contracts/contract_result.yml`, says what may be claimed
-from a finished result. The experiment design handbook, `agent/experiment_design_handbook.md`, says
+from a finished result. The experiment design handbook, `agent/handbook/handbook.md`, says
 what makes a design sound rather than merely legal: it is read before every
 design and every follow-up, its digest is recorded in the trajectory, and the
 few principles a machine can decide are enforced by the validator, which cites
