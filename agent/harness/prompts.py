@@ -92,8 +92,9 @@ file outside the ones named above.
 
 The specification states a hypothesis and names the factors it isolates. An
 experiment that validates but cannot answer the question is a failure: the
-factor under test must be the only thing that varies, and everything else must
-be held equal across the systems being compared. Check the run estimate too -- a
+effect of each factor under test must be separable from the others, and anything
+else that differs between the configurations being compared has to be
+controlled or deliberately accounted for. Check the run estimate too -- a
 design nobody has time to run does not answer anything either -- and read back
 the configurations the specification resolved to. The cpu and memory lists are
 paired by position rather than crossed, so a design that means to vary them
@@ -103,9 +104,10 @@ The experiment design handbook is methodological guidance rather than a
 contract: the catalog says which experiments are legal and the result contract
 says which claims are supportable, while the handbook carries the reasoning that
 separates an experiment answering its question from one that merely runs. It
-gives no values to copy, only the reasons, so that you decide what this
-particular question needs. Read its Navigation chapter first; it routes a
-question like yours to the chapters worth reading.
+gives no values to copy. Its principles state when they apply, cite their
+sources, and are marked where they are our own application or a local policy,
+so that you decide what this particular question needs. Read its Navigation
+chapter first; it routes a question like yours to the chapters worth reading.
 
 # Budgets
 
@@ -175,23 +177,23 @@ rather than inferring or approximating the count.
   table carries. Its `query_evidence` supplies compact per-query execution timings
   by configuration and actual concurrency, repetition ranges, and failure
   locations. Configuration resource allocations are in `systems`.
-- record_interpretation(hypothesis_verdict, validity, comparison_quality,
-  result_claims, questions, follow_up) records the scientific verdict separately from the
-  mechanical validity checks, whether every explicit part of the user's
-  question is settled, and the smallest useful follow-up when one is warranted.
+- record_interpretation(hypothesis_verdict, validity, questions, follow_up,
+  disputes) records the scientific verdict separately from the mechanical
+  validity checks, whether every explicit part of the user's question is
+  settled, and the smallest useful follow-up when one is warranted. What the
+  assessor computed is filed with your record by the harness; you are not asked
+  to copy it back.
 
 Those are the only tools. You have no shell and no network.
 
 # Stopping
 
-When you have read enough, call record_interpretation exactly once. Its
-`validity.failed_checks` must equal the report frontmatter. When that number is
-nonzero, `validity.scope` must explain which metrics or conclusions are affected.
-Copy `validity.affected_phases` and `validity.performance_metrics_affected`
-from the assessor's deterministic scope. A monitoring-only failure does not
-invalidate throughput or latency; state how many benchmark phases it touches.
-Every validity and question `evidence_paths` entry must be a path successfully
-opened with read_file in this context.
+When you have read enough, call record_interpretation exactly once, with the
+whole record as a single object. When the report records a failed check,
+`validity.scope` must explain which metrics or conclusions are affected. A
+monitoring-only failure does not invalidate throughput or latency; state how
+many benchmark phases it touches. Every validity and question `evidence_paths`
+entry must be a path successfully opened with read_file in this context.
 
 Record one `hypothesis_verdict` for the hypothesis in the archived
 experiment.yml. Its status is `supported`, `refuted`, `inconclusive`, or
@@ -199,33 +201,30 @@ experiment.yml. Its status is `supported`, `refuted`, `inconclusive`, or
 pass/fail/skip counts. Give a concise conclusion and cite only evidence paths
 inside the current result folder that you opened in this context.
 
-Record `comparison_quality` exactly as the deterministic assessment reports it:
-query coverage, whole-workload throughput comparability, and the phase names of
-all suspect repetitions. A suspect repetition is a warning that must be
-disclosed, not evidence you may silently discard. When coverage is partial,
-separate speed on the common successful queries from completion of the planned
-workload. Do not use whole-workload throughput to rank systems when the
-assessment marks it non-comparable.
-
-Record `result_claims` exactly as the assessor reports its checkable
-projection: one entry per factor, metric and fixed context it characterised.
-Report the conclusion only -- the shape and its turning level for an ordered
-sweep, the ranking for a system comparison. Do not copy the measurements; the
-harness files those with the record itself.
+The assessment is the evidence your verdict is formed against, and it is filed
+with your record whether or not you agree with it. A suspect repetition is a
+warning that must be disclosed, not evidence you may silently discard. When
+coverage is partial, separate speed on the common successful queries from
+completion of the planned workload. Do not use whole-workload throughput to
+rank systems when the assessment marks it non-comparable. Likewise, when it
+lists `withheld_claims`, do not draw the withheld shape or ranking from the same
+figures in prose; `rate_aggregation` explains why, and the harness adds that
+qualification to your answer.
 
 Shapes describe the series, not whether it is good news. A latency metric that
 rises throughout is getting worse, and the assessor names each metric's
 `direction` so you can say which. A step smaller than the repetitions at that
 level can resolve counts as no movement, which is why a sweep whose spread
 swamps its differences is reported as saturating or non-monotone rather than
-as a trend: say so in prose instead of asserting the trend anyway.
+as a trend.
 
-The harness rejects a changed shape, turning level or ranking and returns both
-the computed and the claimed conclusion. Treat factors the assessor lists as
-unsupported as free-prose limitations; do not invent a typed conclusion for
-evidence the report does not expose.
-Removing a rejected typed claim does not make that claim supportable in the
-verdict, question answers, or final prose.
+Where you think a computed claim is wrong or misleading for this question, say
+so in `disputes`, naming the claim and the reason, and explain it in your prose
+as well. A dispute is filed beside the claim it contests; it does not change
+what the harness measured. Disagreeing on the record is the honest move, and it
+is the only one available -- restating a conclusion you do not hold is not.
+Treat factors the assessor lists as unsupported as free-prose limitations; do
+not invent a conclusion for evidence the report does not expose.
 
 Split the original request into all of its explicit questions. Set each
 question's evidence validity to `supported`, `limited`, or `invalid`. "Partial"
@@ -244,7 +243,10 @@ no evidential route forward. Prefer the smallest controlled intervention. Put a
 focused query subset in `target_queries`; otherwise set
 `full_workload_required=true` and explain why the full workload is necessary. For
 finish, leave the experiment fields empty, use an empty query list, and set
-`full_workload_required=false`.
+`full_workload_required=false`. When the open question is whether this result
+reproduces, set `independent_repeat=true`: the follow-up then reruns this
+experiment's execution settings unchanged as a new, independent experiment, so
+its query list stays empty. Leave it false for every other follow-up.
 
 After the record is accepted, answer according to the `answer_contract` you
 read. Discuss only this experiment. A reader must not need an earlier result,
@@ -274,6 +276,9 @@ full workload, preserve it and explain the cost in the closing account.
 Set `follow_up_of` to exactly `{experiment_code}`. The follow-up must change at
 least one execution-relevant field from its parent; changing only its title,
 hypothesis, discriminates, or lineage is rejected as a repeated experiment.
+The exception is an approved decision with `independent_repeat=true`, which asks
+for exactly that: keep every execution-relevant field identical to the parent's
+and change only those descriptive fields.
 The compact summaries of earlier ancestors are supplied below when available.
 Do not repeat a hypothesis that an ancestor already settled unless the approved
 follow-up explicitly explains why that conclusion must be challenged. Target
@@ -299,15 +304,18 @@ that exact file. Then report the experiment code and what the run will settle.
 _METHOD_AVAILABLE = (
     "{path} -- the experiment design handbook: guidance on what makes a "
     "specification a sound experiment rather than merely a legal one. It is "
-    "organised into chapters -- how a claim has to be stated to be testable, "
-    "what a comparison has to hold equal, what the load model decides, which "
-    "regime the data size puts you in, how much repetition tells an effect from "
-    "noise, what the environment contributes, how measurements may be combined, "
-    "and what fits the budget. It is too long for one read: request the section "
-    "`## Navigation` first, which says which chapters a question like yours "
-    "needs, then request those chapters by their exact headings. Each principle "
-    "carries an identifier such as M2.3, and a rejection that cites one is "
-    "pointing at the chapter worth re-reading."
+    "organised into chapters -- how to define the question and what would "
+    "answer it, which effects a design can separate, how work arrives and what "
+    "demand a measurement represents, what data and state the system is "
+    "measured in, how much variation there is and how precise the answer must "
+    "be, what the execution environment contributes, how measurements are "
+    "defined and combined, and how to spend the budget. It is too long for one "
+    "read: request the section `## Navigation` first, which says which chapters "
+    "a question like yours needs, then request those chapters by their exact "
+    "headings. Each principle carries an identifier such as M2.3. A rejection "
+    "that cites one is enforcing a local check, which the Navigation chapter's "
+    "subsection on this agent's interface describes; the cited chapter explains "
+    "the principle behind it."
 )
 
 #: Handbook chapters an interpretation must have read before it may record a
@@ -342,8 +350,9 @@ this order:
 {sections}
 
 Recording is refused until you have read them. Apply what they say to how you
-state the verdict. Where a principle does not hold for the result in front of
-you, the reason it gives is what governs, not the sentence.
+state the verdict. A principle applies under the conditions it states, not
+unconditionally, so judge whether those conditions hold for the result in front
+of you.
 """
 
 #: Shown instead when the deployment configures none, so the agent knows the
@@ -361,7 +370,11 @@ _ENVIRONMENT_AVAILABLE = (
     "{path} -- the cluster you actually have: which nodes exist, what capacity "
     "each has, and which storage classes are available. Placement and resource "
     "requests must fit it. Nodes that cannot be used are listed separately, with "
-    "a reason, and naming one will be rejected."
+    "a reason, and naming one will be rejected. Leave placement out unless the "
+    "question itself requires a particular node: the cluster is shared, a node "
+    "large enough on paper may already be full, and a pin that does not fit "
+    "waits instead of failing. Pinning is only accepted where the descriptor "
+    "records that node's free capacity."
 )
 
 #: Shown instead when none has been generated yet, so the agent knows placement
@@ -382,6 +395,7 @@ def design_messages(
     inbox: str,
     attempts: int,
     followups: int,
+    dry_run: bool = False,
 ) -> list[dict[str, Any]]:
     """Build the opening conversation for the design phase.
 
@@ -394,6 +408,7 @@ def design_messages(
     :param inbox: Directory name the agent may write into.
     :param attempts: How many times the agent may call validate.
     :param followups: How many follow-up experiments it will be offered later.
+    :param dry_run: Whether submission is withheld after successful validation.
     :return: System and user messages, in OpenAI message shape.
     :rtype: list[dict[str, Any]]
     """
@@ -423,6 +438,18 @@ def design_messages(
             if method_path else _METHOD_MISSING
         ),
     )
+    # A prompt that demands a tool the model was not offered makes it keep
+    # calling that tool instead of stopping once the design validates.
+    if dry_run:
+        system = system.replace(
+            "- submit(path) launches the exact file that most recently passed "
+            "validate.\n", ""
+        ).replace(
+            "call submit once on that same file. It\nreturns the experiment "
+            "code the results will be filed under. Then reply with a\n",
+            "the design is finished: this run ends at validation\nand nothing "
+            "is launched on the cluster. Reply with a\n",
+        )
     return [
         {"role": "system", "content": system},
         {"role": "user", "content": task},

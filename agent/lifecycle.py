@@ -49,6 +49,16 @@ __all__ = ["AgentLifecycle", "LifecycleConfig", "LifecycleError", "ModelServer",
 #: hours, and polling silently is indistinguishable from having died.
 _WAIT_NOTICE_SECONDS = 600.0
 
+#: How often the wait asks Kubernetes whether this benchmark's Pods are being
+#: refused. Scheduling decisions change slowly, so this stays well above the
+#: poll interval.
+_SCHEDULING_CHECK_SECONDS = 120.0
+
+#: How long every Pod of a benchmark may stay unschedulable before the run is
+#: given up. A Pod waiting for a node another tenant is using can be placed
+#: minutes later, but one refused for a quarter of an hour is not merely slow.
+_UNSCHEDULABLE_GRACE_SECONDS = 900.0
+
 #: How much of a refusal, or of the agent's own account, a failure message keeps.
 _REASON_CHARS = 400
 
@@ -87,6 +97,46 @@ def _env_flag(name: str, default: bool) -> bool:
     if value is None or not value.strip():
         return default
     return value.strip().lower() not in ("0", "false", "no", "off")
+
+
+def _refused_pods(code: str) -> list[str] | None:
+    """Return this benchmark's Pods that Kubernetes is refusing to schedule.
+
+    Scheduling is the one failure the status file cannot express: the launching
+    process stays healthy and the experiment stays ``running`` while no Pod ever
+    starts. Kubernetes states the refusal plainly, so it is read directly.
+
+    :param code: Experiment code, which every Pod of the run carries in its name.
+    :return: One ``name: reason`` line per refused Pod, or ``None`` when
+        Kubernetes could not be asked, which is never treated as a refusal.
+    :rtype: list[str] | None
+    """
+    try:
+        query = subprocess.run(
+            ["kubectl", "get", "pods", "-o", "json"],
+            capture_output=True, text=True, check=False, timeout=60,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if query.returncode:
+        return None
+    try:
+        pods = json.loads(query.stdout).get("items", [])
+    except json.JSONDecodeError:
+        return None
+
+    refused = []
+    for pod in pods:
+        name = pod.get("metadata", {}).get("name", "")
+        if code not in name or pod.get("status", {}).get("phase") != "Pending":
+            continue
+        for condition in pod.get("status", {}).get("conditions", []):
+            if (condition.get("type") == "PodScheduled"
+                    and condition.get("status") == "False"):
+                reason = condition.get("message") or condition.get("reason") or ""
+                refused.append(f"{name}: {reason[:_REASON_CHARS]}")
+                break
+    return refused
 
 
 class LifecycleError(RuntimeError):
@@ -173,11 +223,13 @@ class AgentLifecycle:
         sleep: Callable[[float], None] = time.sleep,
         interpret_model: str | None = None,
         baseline: bool = False,
+        refused_pods: Callable[[str], list[str] | None] = _refused_pods,
     ) -> None:
         self.config = config
         self.agent_command = list(agent_command)
         self.server = server
         self._sleep = sleep
+        self._refused_pods = refused_pods
         self.interpret_model = interpret_model
         self.baseline = baseline
 
@@ -416,12 +468,35 @@ class AgentLifecycle:
         print(f"waiting for benchmark {code}", flush=True)
         started = time.monotonic()
         next_notice = started + _WAIT_NOTICE_SECONDS
+        next_scheduling_check = started + _SCHEDULING_CHECK_SECONDS
+        refused_since: float | None = None
         while not report.is_file():
             if time.monotonic() >= next_notice:
                 minutes = (time.monotonic() - started) / 60
                 print(f"benchmark {code} still running after {minutes:.0f} min",
                       flush=True)
                 next_notice += _WAIT_NOTICE_SECONDS
+            if time.monotonic() >= next_scheduling_check:
+                next_scheduling_check += _SCHEDULING_CHECK_SECONDS
+                refused = self._refused_pods(code)
+                if refused:
+                    if refused_since is None:
+                        refused_since = time.monotonic()
+                        print(f"benchmark {code} has Pods the scheduler is "
+                              f"refusing:\n  " + "\n  ".join(refused), flush=True)
+                    elif time.monotonic() - refused_since >= _UNSCHEDULABLE_GRACE_SECONDS:
+                        # No state is recorded: the cleanup does not stop
+                        # bexhoma's process, and while it may still run the
+                        # harness must count this benchmark as occupying the
+                        # cluster.
+                        self._cleanup_failed_benchmark(code)
+                        raise LifecycleError(
+                            f"benchmark {code} was unschedulable for "
+                            f"{_UNSCHEDULABLE_GRACE_SECONDS / 60:.0f} min and was "
+                            f"given up:\n  " + "\n  ".join(refused)
+                        )
+                elif refused == []:
+                    refused_since = None
             if status_file.is_file():
                 status = json.loads(status_file.read_text(encoding="utf-8"))
                 if status.get("state") == "failed":
@@ -429,6 +504,7 @@ class AgentLifecycle:
                     raise LifecycleError(f"benchmark {code} is marked failed")
                 pid = status.get("pid")
                 if isinstance(pid, int) and pid > 0 and not _pid_alive(pid):
+                    _record_benchmark_state(status_file, "failed")
                     self._cleanup_failed_benchmark(code)
                     raise LifecycleError(
                         f"benchmark {code} process {pid} exited before producing {report}"
@@ -436,6 +512,7 @@ class AgentLifecycle:
             if deadline is not None and time.monotonic() >= deadline:
                 raise LifecycleError(f"timed out waiting for benchmark {code}: {report}")
             self._sleep(self.config.poll_seconds)
+        _record_benchmark_state(status_file, "finished")
         return report
 
     def _cleanup_failed_benchmark(self, code: str) -> None:
@@ -452,6 +529,29 @@ class AgentLifecycle:
                 f"status {result.returncode}",
                 file=sys.stderr,
             )
+
+
+def _record_benchmark_state(status_file: Path, state: str) -> None:
+    """Persist a benchmark state the lifecycle has just observed.
+
+    The harness writes ``running`` at submission and derives later states only
+    when it lists results, which a sequential investigation never does, so
+    without this the file keeps saying ``running`` after the benchmark ended.
+    Only states the harness would derive itself are written -- a report means
+    finished, an exited process without one means failed -- so the file and
+    the harness's check against two runs sharing the cluster never disagree.
+
+    :param status_file: The benchmark's status file; nothing is written when
+        the harness recorded none.
+    :type status_file: Path
+    :param state: ``finished`` or ``failed``.
+    :type state: str
+    """
+    if not status_file.is_file():
+        return
+    status = json.loads(status_file.read_text(encoding="utf-8"))
+    status["state"] = state
+    status_file.write_text(json.dumps(status, indent=2), encoding="utf-8")
 
 
 def _link_baseline(design_run: Path, baseline_run: Path) -> None:

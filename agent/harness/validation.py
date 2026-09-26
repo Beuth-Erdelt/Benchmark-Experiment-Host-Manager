@@ -88,6 +88,11 @@ _DEFAULT_ROUNDS = [1]
 _DEFAULT_REPETITIONS = 1
 _GIBIBYTE_BYTES = 1024 ** 3
 
+#: The workload whose benchmarking phase splits a finite operation count across
+#: its pods and reports the sum of their rates as the phase rate.
+_SPLIT_WORK_WORKLOAD = "ycsb"
+_DEFAULT_BENCHMARKING_PODS = 1
+
 
 def _error(message: str, stage: str = CATALOG_STAGE) -> dict[str, str]:
     """Build one verdict error entry."""
@@ -766,7 +771,8 @@ def _check_repetitions(
     source = (
         f"'{workload.get('name')}' declares minimum_for_conclusions={minimum}"
         if minimum else
-        f"the handbook admits no comparison below {_SPREAD_FLOOR} repetitions"
+        f"this agent's policy requires at least {_SPREAD_FLOOR} repetitions, "
+        "the fewest from which any spread can be estimated"
     )
     minimum = minimum or _SPREAD_FLOOR
 
@@ -821,6 +827,51 @@ def _maximum_sut_limit(
     if not limits:
         return 0
     return max(limits)
+
+
+def _check_placement_free_capacity(
+    environment: dict[str, Any],
+    experiment: dict[str, Any],
+) -> dict[str, str] | None:
+    """Refuse a node pin when the environment records no free capacity for it.
+
+    A descriptor collected without permission to list Pods cluster-wide leaves
+    every node's ``free`` empty, and the remaining figures describe how large a
+    machine is rather than how much of it another tenant has already taken.
+    Pinning against those figures passes validation and then waits for a Pod
+    that the scheduler will never place, so a pin is only accepted where the
+    free capacity behind it is actually known.
+
+    :param environment: Loaded ``environment.yml``.
+    :param experiment: Loaded experiment specification.
+    :return: An environment-stage error, or ``None`` when no pin lacks data.
+    :rtype: dict[str, str] | None
+    """
+    placement = experiment.get("placement") or {}
+    pinned = {
+        component: node for component, node in placement.items()
+        if isinstance(node, str) and node
+    }
+    if not pinned:
+        return None
+
+    nodes = {node["name"]: node for node in environment.get("nodes", [])}
+    blind = sorted(
+        f"placement.{component}='{node}'" for component, node in pinned.items()
+        # An absent node is the shared environment validator's error to report.
+        if node in nodes and not (nodes[node].get("free") or {})
+    )
+    if not blind:
+        return None
+    return _error(
+        f"{', '.join(blind)} pins work to a named node, but environment.yml "
+        "records no free capacity for it, only its total size. Whether the "
+        "node has room right now is therefore unknown, and a pin that does "
+        "not fit waits forever instead of failing. Remove the pin and let the "
+        "scheduler place the work, or supply an environment descriptor whose "
+        "nodes carry free capacity",
+        ENVIRONMENT_STAGE,
+    )
 
 
 def _check_component_placement(
@@ -916,6 +967,45 @@ def _check_component_placement(
     return None
 
 
+def _design_warnings(experiment: dict[str, Any]) -> list[dict[str, str]]:
+    """Name design risks that leave a specification valid.
+
+    :param experiment: A loaded experiment.yml.
+    :type experiment: dict[str, Any]
+    :return: Warnings in the shape of errors; empty when none apply.
+    :rtype: list[dict[str, str]]
+    """
+    workload = experiment.get("workload")
+    if not isinstance(workload, dict) or workload.get("name") != _SPLIT_WORK_WORKLOAD:
+        return []
+    params = workload.get("params")
+    if isinstance(params, dict) and params.get("max_execution_time"):
+        return []
+    benchmarking = experiment.get("benchmarking")
+    pods = (benchmarking.get("pods", _DEFAULT_BENCHMARKING_PODS)
+            if isinstance(benchmarking, dict) else _DEFAULT_BENCHMARKING_PODS)
+    rounds = [
+        entry for entry in workload.get("rounds") or _DEFAULT_ROUNDS
+        if isinstance(entry, int) and not isinstance(entry, bool)
+    ]
+    if not isinstance(pods, int) or not rounds or pods * max(rounds) <= 1:
+        return []
+    return [{
+        "stage": METHODOLOGY_STAGE,
+        "message": (
+            f"a round reaches {pods * max(rounds)} benchmarker pods and "
+            "workload.params.max_execution_time is unset, so each pod receives a "
+            "finite share of the operations and may finish at a different time. "
+            "Summed pod rates may therefore misrepresent whole-round throughput, "
+            "and the interpretation withholds throughput claims where pod "
+            "durations differ materially. "
+            "For sustained-throughput measurements, use max_execution_time with "
+            "enough operations (operations_scale) to keep every pod active. This "
+            "is a warning; the specification remains valid."
+        ),
+    }]
+
+
 def _verdict(
     errors: list[dict[str, str]],
     environment_checked: bool,
@@ -945,7 +1035,7 @@ def _verdict(
     }
     if isinstance(experiment, dict) and isinstance(catalog, dict):
         estimate.update(_timeout_budget(catalog, experiment))
-    return {
+    verdict = {
         "valid": not errors,
         "errors": errors,
         # An unchecked environment means placement and resource ceilings were
@@ -954,6 +1044,9 @@ def _verdict(
         "environment_checked": environment_checked,
         "estimate": estimate,
     }
+    if warnings := (_design_warnings(experiment) if isinstance(experiment, dict) else []):
+        verdict["warnings"] = warnings
+    return verdict
 
 
 def _check_storage_class(
@@ -1070,6 +1163,8 @@ def validate_spec(
         except spec.SpecError as error:
             environment_errors.append(
                 {"stage": ENVIRONMENT_STAGE, "message": str(error)})
+    if blind_pin_error := _check_placement_free_capacity(environment, experiment):
+        environment_errors.append(blind_pin_error)
     if component_error := _check_component_placement(catalog, environment, experiment):
         environment_errors.append(component_error)
 

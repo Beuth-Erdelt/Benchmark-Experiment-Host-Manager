@@ -346,10 +346,11 @@ planned query errored, and flags unusually different repetitions as warnings.
 Independently of the workload name, it reads the archived `discriminates`
 factors — the axes the experiment set out to vary — and computes the ordered
 concurrency, CPU, and memory shapes and the categorical system rankings itself.
-The structured interpretation must reproduce those shapes, rankings, and
-factor-level means exactly: it cannot call a measured rise a plateau or quote a
-different number. Failed monitoring checks carry the exact affected phases and
-whether the performance metrics remain usable.
+The harness files those computed claims beside the model's verdict. The model
+can dispute a claim with a reason; it does not have to copy the computed values
+back. Evidence checks establish that the cited files were read from this result,
+not that their contents support the conclusion. Failed monitoring checks carry
+the exact affected phases and whether the performance metrics remain usable.
 
 ## What a run writes
 
@@ -360,6 +361,11 @@ checkout keeps no run artifacts of its own. Override the location with
 `inbox/`, where the design and follow-up agents draft specifications before
 validating them, and `status/`, the registry of `<experiment-code>.json` files
 behind the resume logic. Override them with `--inbox` and `--status`.
+A status file says `running` from submission until the lifecycle sees the
+report, when it becomes `finished`, or sees the benchmark's process exit
+without one, when it becomes `failed`. A benchmark the lifecycle gives up on
+or stops waiting for keeps `running`, because its bexhoma process may still
+be using the cluster.
 
 The design step first creates a timestamp-only working directory. Once it
 produces a valid experiment, the harness renames the directory to
@@ -386,8 +392,13 @@ result contract, and environment descriptor used to validate it. After a
 successful interpretation it gains `agent_summary.yml`: the experiment code, its
 `follow_up_of` parent, the hypothesis, the scientific verdict, the technical
 validity, and the unresolved next question, with evidence paths relative to that
-folder so the lineage stays portable. Follow-up authoring receives only these
-compact summaries of its ancestors, never their full reports or metrics.
+folder so the lineage stays portable. An interpretation the harness accepted
+incomplete, after repeated refusals of its record, also carries
+`incomplete_record`, naming the parts that were left out. A result whose summed
+throughput the harness could not vouch for also carries
+`measurement_restriction`, the qualification it appended to the answer.
+Follow-up authoring receives only these compact summaries of its ancestors,
+never their full reports or metrics.
 
 ## Running two investigations at once
 

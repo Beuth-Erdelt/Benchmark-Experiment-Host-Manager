@@ -198,6 +198,58 @@ def _followup_spec(query: int = 5, code: str = "old") -> str:
     )
 
 
+def _per_connection(pods: list[tuple[str, float, float]]) -> str:
+    """Render a per-pod report table from ``(phase, rate, duration_ms)`` rows."""
+    lines = [
+        "#### Per Connection", "",
+        "| | phase | [OVERALL].Throughput(ops/sec) | [OVERALL].RunTime(ms) |",
+        "|:--|:--|--:|--:|",
+    ]
+    lines += [
+        f"| {phase}-1-{index} | {phase} | {rate} | {duration} |"
+        for index, (phase, rate, duration) in enumerate(pods, 1)
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def _equal_pods(
+    phase: str, total: float, pods: int, duration_ms: float = 10000.0,
+) -> list[tuple[str, float, float]]:
+    """Split one phase's rate evenly across pods that all ran equally long."""
+    return [(phase, total / pods, duration_ms)] * pods
+
+
+_FALSE_PEAK_SPEC = _YCSB_SPEC.replace("rounds: [1, 2]", "rounds: [1, 2, 4]")
+
+_FALSE_PEAK_PHASES = """\
+#### Per Phase
+
+| phase | experiment_run | pod_count | [OVERALL].Throughput(ops/sec) | [READ].99thPercentileLatency(us) |
+|:--|--:|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 1000 | 300 |
+| postgresql-1-1-2 | 1 | 2 | 3000 | 400 |
+| postgresql-1-1-3 | 1 | 4 | 2000 | 800 |
+| postgresql-1-2-1 | 2 | 1 | 1000 | 310 |
+| postgresql-1-2-2 | 2 | 2 | 3000 | 410 |
+| postgresql-1-2-3 | 2 | 4 | 2000 | 820 |
+
+"""
+
+
+def _false_peak_report(level_two_pods: list[tuple[float, float]]) -> str:
+    """Return a YCSB page whose summed rates peak at two pods.
+
+    :param level_two_pods: ``(rate, duration_ms)`` of the two pods in each
+        two-pod phase; the four-pod phases always ran equally long.
+    """
+    pods = []
+    for run in (1, 2):
+        pods += [(f"postgresql-1-{run}-2", rate, duration)
+                 for rate, duration in level_two_pods]
+        pods += _equal_pods(f"postgresql-1-{run}-3", 2000, 4, 4000.0)
+    return _FALSE_PEAK_PHASES + _per_connection(pods)
+
+
 def _record_arguments(
     questions: list[dict[str, Any]], failed_checks: int = 0, scope: str = "",
     comparison_quality: dict[str, Any] | None = None,
@@ -248,6 +300,21 @@ def _record_arguments(
     }
 
 
+def _only_investigation(trajectories: Path) -> Path:
+    """Return the one investigation directory under a trajectories folder.
+
+    The folder also holds the shared ``inbox/`` and ``status/`` directories, and
+    the order a directory lists its entries in is not defined, so the
+    investigation is the entry that carries a trajectory.
+    """
+    investigations = [
+        path for path in trajectories.iterdir()
+        if (path / "trajectory.jsonl").is_file()
+    ]
+    assert len(investigations) == 1, investigations
+    return investigations[0]
+
+
 def _evidence_record_reply(identifier: str, arguments: dict) -> Reply:
     """Read the required evidence and submit one interpretation record."""
     return _tool_reply(
@@ -262,7 +329,7 @@ def _evidence_record_reply(identifier: str, arguments: dict) -> Reply:
 class WorkspaceTest(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         (self.root / "contracts").mkdir()
         (self.root / "results").mkdir()
         (self.root / "environment.yml").write_text(_ENVIRONMENT)
@@ -600,6 +667,19 @@ resources:
         tight = [(1, 100.0, 1.0), (2, 120.0, 1.0)]
         self.assertEqual(tools_module._classify_shape(tight), ("rises_throughout", None))
 
+    def test_agreeing_repetitions_resolve_a_step_one_run_cannot(self) -> None:
+        """The noise floor is per measurement, so repetitions narrow it like any noise."""
+        def levels(repetitions: int) -> list[tuple[float, float, float]]:
+            return [
+                (level, value, tools_module._level_noise([value] * repetitions, value))
+                for level, value in ((1, 100.0), (2, 108.0))
+            ]
+
+        self.assertEqual(tools_module._classify_shape(levels(1)), ("flat", None))
+        self.assertEqual(
+            tools_module._classify_shape(levels(10)), ("rises_throughout", None)
+        )
+
     def test_latency_columns_are_characterized_alongside_throughput(self) -> None:
         """The question asked about response time, so latency needs a typed claim too."""
         metrics = tools_module._characterized_metrics([
@@ -689,6 +769,329 @@ resources:
         self.assertEqual(
             [value["level"] for value in claim["values"]], [0.5, 2.0]
         )
+
+    def test_rounds_that_measured_nothing_are_left_out_of_the_sweep(self) -> None:
+        """A repetition that did no work must not flatten the levels it joins."""
+        report = self.root / "results" / "dead-run" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 0 |
+| postgresql-1-1-2 | 1 | 2 | 0 |
+| postgresql-1-1-3 | 1 | 4 | nan |
+| postgresql-1-2-1 | 2 | 1 | 100 |
+| postgresql-1-2-2 | 2 | 2 | 200 |
+| postgresql-1-2-3 | 2 | 4 | 120 |
+| postgresql-1-3-1 | 3 | 1 | 104 |
+| postgresql-1-3-2 | 3 | 2 | 210 |
+| postgresql-1-3-3 | 3 | 4 | 110 |
+""")
+        specification = """\
+discriminates: [concurrency]
+workload: {name: any-benchmarker, rounds: [1, 2, 4]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        result = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]
+
+        claim = result["ordered_sweeps"][0]
+        self.assertEqual(
+            (claim["shape"], claim["turning_level"]), ("reverses_beyond_level", 2.0)
+        )
+        self.assertEqual(
+            [value["mean"] for value in claim["values"]], [102.0, 205.0, 115.0]
+        )
+        self.assertEqual(
+            result["excluded_phases"],
+            ["postgresql-1-1-1", "postgresql-1-1-2", "postgresql-1-1-3"],
+        )
+
+    def test_concurrency_levels_count_client_threads_not_pods(self) -> None:
+        """A YCSB pod runs several clients, so its sweep is labelled in clients."""
+        report = self.root / "results" / "threads" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | threads | pod_count | [OVERALL].Throughput(ops/sec) |
+|:--|--:|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 16 | 1 | 1000 |
+| postgresql-1-1-2 | 1 | 32 | 2 | 2000 |
+
+""" + _per_connection(_equal_pods("postgresql-1-1-2", 2000, 2)))
+        specification = """\
+discriminates: [concurrency]
+workload: {name: ycsb, rounds: [1, 2]}
+benchmarking: {pods: 1, threads: 16}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        claim = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]["ordered_sweeps"][0]
+
+        self.assertEqual(claim["factor_unit"], "clients")
+        self.assertEqual(
+            [value["level"] for value in claim["values"]], [16.0, 32.0]
+        )
+
+    def test_rates_over_equal_durations_add_up_without_discrepancy(self) -> None:
+        """Pods that ran equally long make the summed rate the whole-round rate."""
+        self.assertEqual(
+            tools_module._common_duration_rate([100.0, 50.0], [2.0, 2.0]),
+            (150.0, 150.0, 0.0),
+        )
+
+    def test_rates_over_unequal_durations_are_measured_against_the_longest(self) -> None:
+        """Two workers of 100/s for 1 s and 50/s for 2 s delivered 100/s, not 150/s."""
+        self.assertEqual(
+            tools_module._common_duration_rate([100.0, 50.0], [1.0, 2.0]),
+            (150.0, 100.0, 0.5),
+        )
+
+    def test_a_false_throughput_peak_from_unequal_pod_durations_is_withheld(self) -> None:
+        """The 2026-09-24 incident: a summed-rate peak must not become a typed shape."""
+        report = self.root / "results" / "peak" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        throughput = "[OVERALL].Throughput(ops/sec)"
+
+        report.write_text(_false_peak_report([(1500.0, 2000.0), (1500.0, 2000.0)]))
+        honest = self.workspace.assess_comparison_quality(str(report), _FALSE_PEAK_SPEC)
+        report.write_text(_false_peak_report([(2000.0, 1000.0), (1000.0, 2000.0)]))
+        distorted = self.workspace.assess_comparison_quality(
+            str(report), _FALSE_PEAK_SPEC)
+
+        # The same phase figures form a reversal when the pods ran equally long...
+        self.assertEqual(
+            honest["rate_aggregation"]["status"], "no_material_discrepancy_detected")
+        self.assertEqual(
+            [(claim["shape"], claim["turning_level"])
+             for claim in honest["result_characterization"]["ordered_sweeps"]
+             if claim["metric"] == throughput],
+            [("reverses_beyond_level", 2.0)],
+        )
+        self.assertEqual(agent_module._withheld_rate_notice(honest), "")
+        # ...and no throughput shape at all when they did not.
+        aggregation = distorted["rate_aggregation"]
+        self.assertEqual(aggregation["status"], "material_discrepancy")
+        self.assertEqual(
+            aggregation["withheld_phases"], ["postgresql-1-1-2", "postgresql-1-2-2"])
+        entry = aggregation["phases"][0]
+        self.assertEqual(
+            (entry["summed_rate"], entry["common_duration_rate_approximation"],
+             entry["excess"]),
+            (3000.0, 2000.0, 0.5),
+        )
+        characterization = distorted["result_characterization"]
+        self.assertNotIn(
+            throughput,
+            [claim["metric"] for claim in characterization["ordered_sweeps"]],
+        )
+        self.assertEqual(
+            characterization["withheld_claims"],
+            [{"factor": "concurrency", "context": {}, "metric": throughput}],
+        )
+        self.assertIn("50%", agent_module._withheld_rate_notice(distorted))
+
+    def test_withholding_a_summed_rate_keeps_the_other_metrics(self) -> None:
+        """A throughput aggregation failure says nothing against the latency series."""
+        report = self.root / "results" / "peak" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text(_false_peak_report([(2000.0, 1000.0), (1000.0, 2000.0)]))
+
+        sweeps = self.workspace.assess_comparison_quality(
+            str(report), _FALSE_PEAK_SPEC)["result_characterization"]["ordered_sweeps"]
+
+        self.assertEqual(
+            [(claim["metric"], claim["shape"]) for claim in sweeps],
+            [("[READ].99thPercentileLatency(us)", "rises_throughout")],
+        )
+
+    def test_a_summed_rate_that_cannot_be_checked_is_withheld(self) -> None:
+        """Missing or unusable pod rows leave the sum unverified, not trusted."""
+        report = self.root / "results" / "peak" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        complete = [(1500.0, 2000.0), (1500.0, 2000.0)]
+        cases = {
+            "no per-pod table": _FALSE_PEAK_PHASES,
+            "a missing pod row": _false_peak_report(complete[:1]),
+            "a zero duration": _false_peak_report([(1500.0, 0.0), (1500.0, 2000.0)]),
+            "a non-numeric rate": _false_peak_report([("n/a", 2000.0), (1500.0, 2000.0)]),
+        }
+        for case, page in cases.items():
+            with self.subTest(case):
+                report.write_text(page)
+
+                result = self.workspace.assess_comparison_quality(
+                    str(report), _FALSE_PEAK_SPEC)
+
+                self.assertEqual(result["rate_aggregation"]["status"], "unchecked")
+                self.assertIn(
+                    "postgresql-1-1-2",
+                    [entry["phase"]
+                     for entry in result["rate_aggregation"]["unchecked_phases"]],
+                )
+                self.assertEqual(
+                    [claim["metric"] for claim
+                     in result["result_characterization"]["withheld_claims"]],
+                    ["[OVERALL].Throughput(ops/sec)"],
+                )
+                self.assertIn(
+                    "could not be checked",
+                    agent_module._withheld_rate_notice(result),
+                )
+
+    def test_a_discrepancy_in_a_dropped_round_still_withholds_its_comparison(
+        self,
+    ) -> None:
+        """Dropping a skewed round for another reason must not restore the curve."""
+        report = self.root / "results" / "peak" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        throughput = "[OVERALL].Throughput(ops/sec)"
+        # Run 1's two-pod round ran its pods for unequal times and also reports
+        # no latency, so it is dropped as failed; run 2's two-pod round was even.
+        phases = _FALSE_PEAK_PHASES.replace(
+            "| postgresql-1-1-2 | 1 | 2 | 3000 | 400 |",
+            "| postgresql-1-1-2 | 1 | 2 | 3000 | 0 |",
+        )
+        pods = (
+            [("postgresql-1-1-2", 2000.0, 1000.0), ("postgresql-1-1-2", 1000.0, 2000.0)]
+            + _equal_pods("postgresql-1-1-3", 2000, 4, 4000.0)
+            + _equal_pods("postgresql-1-2-2", 3000, 2, 2000.0)
+            + _equal_pods("postgresql-1-2-3", 2000, 4, 4000.0)
+        )
+        report.write_text(phases + _per_connection(pods))
+
+        result = self.workspace.assess_comparison_quality(str(report), _FALSE_PEAK_SPEC)
+
+        characterization = result["result_characterization"]
+        self.assertEqual(characterization["excluded_phases"], ["postgresql-1-1-2"])
+        self.assertEqual(
+            characterization["withheld_claims"],
+            [{"factor": "concurrency", "context": {}, "metric": throughput}],
+        )
+        # The latency series still comes from the rounds that remain.
+        self.assertEqual(
+            [(claim["metric"], claim["shape"])
+             for claim in characterization["ordered_sweeps"]],
+            [("[READ].99thPercentileLatency(us)", "rises_throughout")],
+        )
+        self.assertIn("50%", agent_module._withheld_rate_notice(result))
+
+    def test_a_round_that_measured_nothing_restricts_no_other_round(self) -> None:
+        """A failed round is already dropped; being uncheckable adds no restriction."""
+        report = self.root / "results" / "peak" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        throughput = "[OVERALL].Throughput(ops/sec)"
+        phases = _FALSE_PEAK_PHASES.replace(
+            "| postgresql-1-1-2 | 1 | 2 | 3000 | 400 |",
+            "| postgresql-1-1-2 | 1 | 2 | 0 | 0 |",
+        )
+        pods = (
+            [("postgresql-1-1-2", 0.0, 2000.0)] * 2
+            + _equal_pods("postgresql-1-1-3", 2000, 4, 4000.0)
+            + _equal_pods("postgresql-1-2-2", 3000, 2, 2000.0)
+            + _equal_pods("postgresql-1-2-3", 2000, 4, 4000.0)
+        )
+        report.write_text(phases + _per_connection(pods))
+
+        result = self.workspace.assess_comparison_quality(str(report), _FALSE_PEAK_SPEC)
+
+        characterization = result["result_characterization"]
+        self.assertEqual(characterization["excluded_phases"], ["postgresql-1-1-2"])
+        self.assertNotIn("withheld_claims", characterization)
+        self.assertEqual(
+            [(claim["shape"], claim["turning_level"])
+             for claim in characterization["ordered_sweeps"]
+             if claim["metric"] == throughput],
+            [("reverses_beyond_level", 2.0)],
+        )
+        self.assertEqual(agent_module._withheld_rate_notice(result), "")
+
+    def test_a_rate_discrepancy_is_reported_without_a_complete_comparison(self) -> None:
+        """The qualification follows the aggregation check, not a curve that was built."""
+        report = self.root / "results" / "peak" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        # The four-client level never reached the report, so no curve forms.
+        phases = "\n".join(
+            line for line in _FALSE_PEAK_PHASES.splitlines()
+            if not line.startswith(("| postgresql-1-1-3", "| postgresql-1-2-3"))
+        ) + "\n\n"
+        pods = [
+            (f"postgresql-1-{run}-2", rate, duration)
+            for run in (1, 2)
+            for rate, duration in [(2000.0, 1000.0), (1000.0, 2000.0)]
+        ]
+        report.write_text(phases + _per_connection(pods))
+
+        result = self.workspace.assess_comparison_quality(str(report), _FALSE_PEAK_SPEC)
+
+        self.assertEqual(result["rate_aggregation"]["status"], "material_discrepancy")
+        self.assertEqual(result["result_characterization"]["ordered_sweeps"], [])
+        self.assertNotIn("withheld_claims", result["result_characterization"])
+        self.assertIn("50%", agent_module._withheld_rate_notice(result))
+
+    def test_rates_that_are_not_summed_across_pods_need_no_check(self) -> None:
+        """Single-pod rounds and reports without a summed rate keep their claims."""
+        report = self.root / "results" / "single" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        pages = {
+            "single pods": ("""\
+discriminates: [cpu]
+workload: {name: ycsb, rounds: [1]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu:
+    - {request: 2, limit: 2}
+    - {request: 4, limit: 4}
+  memory: {request: 4Gi, limit: 4Gi}
+""", """\
+#### Per Phase
+
+| phase | experiment_run | pod_count | [OVERALL].Throughput(ops/sec) |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 1000 |
+| postgresql-1-2-1 | 2 | 1 | 1010 |
+| postgresql-2-1-1 | 1 | 1 | 2000 |
+| postgresql-2-2-1 | 2 | 1 | 2020 |
+"""),
+            "no summed rate": (_SPEC.replace("[system, concurrency]", "[concurrency]")
+                               .replace("  - {name: PgDuckDB, profile: analytical-ssd}\n", ""), """\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput@Size |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 1000 |
+| postgresql-1-1-2 | 1 | 2 | 2000 |
+| postgresql-1-2-1 | 2 | 1 | 1010 |
+| postgresql-1-2-2 | 2 | 2 | 2020 |
+"""),
+        }
+        for case, (specification, page) in pages.items():
+            with self.subTest(case):
+                report.write_text(page)
+
+                result = self.workspace.assess_comparison_quality(
+                    str(report), specification)
+
+                self.assertEqual(result["rate_aggregation"]["status"], "not_applicable")
+                self.assertNotIn("withheld_claims", result["result_characterization"])
+                self.assertEqual(
+                    [claim["shape"]
+                     for claim in result["result_characterization"]["ordered_sweeps"]],
+                    ["rises_throughout"],
+                )
 
     def test_assessor_labels_each_configuration_with_its_hardware(self) -> None:
         """Coverage entries name the CPU and memory their configuration ran with."""
@@ -985,10 +1388,12 @@ resources:
                 {
                     "name": "database-node",
                     "allocatable": {"cpu": 64, "memory": "64Gi"},
+                    "free": {"cpu": 64, "memory": "64Gi"},
                 },
                 {
                     "name": "benchmark-node",
-                    "allocatable": {"cpu": 128, "memory": "384Gi"},
+                    "allocatable": {"cpu": 128, "memory": "48Gi"},
+                    "free": {"cpu": 128, "memory": "48Gi"},
                 },
             ],
         }
@@ -1006,7 +1411,53 @@ resources:
         self.assertFalse(oversized["valid"])
         self.assertEqual(oversized["errors"][0]["stage"], "environment")
         self.assertIn("4 benchmarker pod(s)", oversized["errors"][0]["message"])
-        self.assertIn("512Gi", oversized["errors"][0]["message"])
+        self.assertIn("64Gi", oversized["errors"][0]["message"])
+
+    def test_a_pin_is_refused_when_the_node_has_no_free_capacity_recorded(self) -> None:
+        """A descriptor that cannot see free capacity must not license a pin."""
+        experiment = yaml.safe_load(_SPEC)
+        experiment["placement"] = {"sut": "database-node"}
+        environment = {
+            "nodes": [
+                {
+                    "name": "database-node",
+                    "allocatable": {"cpu": 64, "memory": "64Gi"},
+                    "free": {},
+                },
+            ],
+        }
+        (self.root / "environment.yml").write_text(yaml.safe_dump(environment))
+        self.workspace.write_file(self.path, yaml.safe_dump(experiment))
+
+        blind = self.workspace.validate(self.path)
+
+        self.assertFalse(blind["valid"])
+        self.assertEqual(blind["errors"][0]["stage"], "environment")
+        self.assertIn("placement.sut='database-node'", blind["errors"][0]["message"])
+        self.assertIn("no free capacity", blind["errors"][0]["message"])
+
+        # The same design without the pin is the way out the error points to.
+        del experiment["placement"]
+        self.workspace.write_file(self.path, yaml.safe_dump(experiment))
+        self.assertTrue(self.workspace.validate(self.path)["valid"])
+
+    def test_a_pin_is_accepted_once_free_capacity_is_known(self) -> None:
+        """Known free capacity is what makes a pin checkable at all."""
+        experiment = yaml.safe_load(_SPEC)
+        experiment["placement"] = {"sut": "database-node"}
+        environment = {
+            "nodes": [
+                {
+                    "name": "database-node",
+                    "allocatable": {"cpu": 64, "memory": "64Gi"},
+                    "free": {"cpu": 32, "memory": "32Gi"},
+                },
+            ],
+        }
+        (self.root / "environment.yml").write_text(yaml.safe_dump(environment))
+        self.workspace.write_file(self.path, yaml.safe_dump(experiment))
+
+        self.assertTrue(self.workspace.validate(self.path)["valid"])
 
     def test_co_located_sut_limits_are_added_to_benchmarker_limits(self) -> None:
         """A shared node must fit resident databases as well as benchmarkers."""
@@ -1020,10 +1471,12 @@ resources:
                 {
                     "name": "shared-node",
                     "allocatable": {"cpu": 128, "memory": "64Gi"},
+                    "free": {"cpu": 128, "memory": "64Gi"},
                 },
                 {
                     "name": "benchmark-node",
-                    "allocatable": {"cpu": 128, "memory": "256Gi"},
+                    "allocatable": {"cpu": 128, "memory": "36Gi"},
+                    "free": {"cpu": 128, "memory": "36Gi"},
                 },
             ],
         }
@@ -1038,7 +1491,7 @@ resources:
         self.assertFalse(co_located["valid"])
         message = co_located["errors"][0]["message"]
         self.assertIn("one active SUT pod and 2 benchmarker pod(s)", message)
-        self.assertIn("264Gi", message)
+        self.assertIn("40Gi", message)
 
     def test_submit_requires_environment_checked_validation(self) -> None:
         """Catalog-only validation is useful for dry runs but cannot reach Kubernetes."""
@@ -1171,6 +1624,43 @@ resources:
         verdict = self.workspace.validate(self.path)
 
         self.assertTrue(verdict["valid"], verdict.get("errors"))
+
+    def test_a_multi_pod_ycsb_design_without_a_time_cap_is_warned_not_refused(self) -> None:
+        """Fixed-work rounds stay legal; the risk to summed rates is named."""
+        self.workspace.write_file(self.path, _YCSB_SPEC)
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+        self.assertEqual(len(verdict["warnings"]), 1)
+        self.assertIn("2 benchmarker pods", verdict["warnings"][0]["message"])
+        self.assertIn("max_execution_time", verdict["warnings"][0]["message"])
+
+    def test_a_ycsb_design_with_a_time_cap_needs_no_warning(self) -> None:
+        self.workspace.write_file(self.path, _YCSB_SPEC.replace(
+            "target_base: 1000,", "target_base: 1000, max_execution_time: 60,"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+        self.assertNotIn("warnings", verdict)
+
+    def test_a_single_pod_ycsb_round_needs_no_warning(self) -> None:
+        """Nothing is summed across pods when every round runs one."""
+        experiment = yaml.safe_load(
+            _YCSB_SPEC.replace("  rounds: [1, 2]", "  rounds: [1]"))
+
+        self.assertEqual(validation._design_warnings(experiment), [])
+
+    def test_ycsb_pods_per_round_count_toward_the_time_cap_warning(self) -> None:
+        """The effective pod count is the round entry times the pods per round."""
+        self.workspace.write_file(
+            self.path, _YCSB_SPEC + "benchmarking:\n  pods: 4\n")
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertTrue(verdict["valid"], verdict.get("errors"))
+        self.assertIn("8 benchmarker pods", verdict["warnings"][0]["message"])
 
     def test_ycsb_verify_result_is_accepted(self) -> None:
         self.workspace.write_file(
@@ -1844,6 +2334,79 @@ resources:
         self.assertIn("repeats its parent", validations[1]["errors"][0]["message"])
         self.assertTrue(validations[2]["valid"])
 
+    def test_an_approved_independent_repeat_keeps_its_parents_settings(self) -> None:
+        """Checking that a result reproduces is a follow-up, but only if nothing changes."""
+        assessment = {
+            "question": "does the slowdown reproduce?", "status": "partial",
+            "conclusion": "one experiment shows it", "evidence": "latency rises",
+            "missing": "an independent rerun",
+        }
+        decision = {
+            "action": "followup",
+            "rationale": "one experiment cannot show that its result repeats",
+            "unresolved_question": "does the slowdown reproduce?",
+            "experiment_goal": "rerun the parent unchanged as a new experiment",
+            "target_queries": [], "full_workload_required": True,
+            "cost_rationale": "Only the complete original run is a repeat of it.",
+            "independent_repeat": True,
+        }
+        subset = {**decision, "target_queries": [5], "full_workload_required": False}
+        repeated = _SPEC.replace(
+            "discriminates: [system, concurrency]",
+            'discriminates: [system, concurrency]\nfollow_up_of: "old"',
+        )
+        model = _Model([
+            _evidence_record_reply(
+                "subset", _record_arguments([assessment], follow_up=subset)
+            ),
+            _tool_reply(ToolCall(
+                "record", "record_interpretation",
+                _record_arguments([assessment], follow_up=decision),
+            )),
+            _text_reply("Whether the slowdown reproduces is still open."),
+            _tool_reply(
+                ToolCall("catalog", "read_file", {
+                    "path": "contracts/contract_catalog.yml",
+                }),
+                ToolCall("write-changed", "write_file", {
+                    "path": self.path, "text": _followup_spec(),
+                }),
+                ToolCall("validate-changed", "validate", {"path": self.path}),
+            ),
+            _tool_reply(
+                ToolCall("write-repeat", "write_file", {
+                    "path": self.path, "text": repeated,
+                }),
+                ToolCall("validate-repeat", "validate", {"path": self.path}),
+            ),
+            _text_reply("The independent repeat validates."),
+        ])
+
+        outcome = run_interpret(
+            task="question", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=1,
+            environment_path=None, attempts=2, dry_run=True,
+        )
+
+        self.assertEqual(outcome["validated_path"], self.path)
+        events = [
+            json.loads(line)
+            for line in (self.run / "trajectory.jsonl").read_text().splitlines()
+        ]
+        rejected_records = [
+            event for event in events
+            if event.get("tool") == "record_interpretation"
+            and "error" in event.get("result", {})
+        ]
+        self.assertEqual(len(rejected_records), 1)
+        self.assertIn("independent repeat", rejected_records[0]["result"]["error"])
+        validations = [
+            event["result"] for event in events if event.get("tool") == "validate"
+        ]
+        self.assertIn("independent repeat", validations[0]["errors"][0]["message"])
+        self.assertTrue(validations[1]["valid"])
+
     def test_design_dry_run_withholds_submit_without_disarming_later_runs(self) -> None:
         """The withheld tool must be scoped to this run, not to the imported module."""
         model = _Model([
@@ -1870,6 +2433,82 @@ resources:
             "submit", {tool["function"]["name"] for tool in DESIGN_TOOLS})
         self.assertIn(
             "submit", {tool["function"]["name"] for tool in FOLLOWUP_AUTHOR_TOOLS})
+
+    def test_design_dry_run_prompt_does_not_ask_for_the_withheld_submit(self) -> None:
+        """A prompt demanding a tool the model was not offered invites the call.
+
+        Models that trust the prompt over the tool list keep calling submit and
+        reasoning about why it was refused instead of stopping after validation.
+        """
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _text_reply("The design validates."),
+        ])
+
+        run_design(
+            task="question", workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run), catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None, attempts=1, dry_run=True,
+        )
+
+        dry_run_prompt = model.messages[0][0]["content"]
+        self.assertNotIn("submit", dry_run_prompt)
+        self.assertIn('Once validate returns "valid": true', dry_run_prompt)
+        real_prompt = prompts.design_messages(
+            task="question", catalog_path="contracts/contract_catalog.yml",
+            environment_path=None, method_path=None, inbox="inbox",
+            attempts=1, followups=0,
+        )[0]["content"]
+        self.assertIn("call submit once on that same file", real_prompt)
+        self.assertIn("- submit(path)", real_prompt)
+
+    def test_a_dry_run_that_spends_its_budget_on_a_passing_design_is_told_so(self) -> None:
+        """The closing notice must not suggest that a passing design failed.
+
+        Nothing can be handed over in a dry run, and the notice for a failed
+        attempt asks what was left unresolved, which led a model to report a
+        design that had passed ten times as unconfirmed.
+        """
+        model = _Model([
+            _tool_reply(
+                ToolCall("catalog", "read_file",
+                         {"path": "contracts/contract_catalog.yml"}),
+                ToolCall("write", "write_file", {"path": self.path, "text": _SPEC}),
+                ToolCall("validate", "validate", {"path": self.path}),
+            ),
+            _text_reply("The design validates."),
+        ])
+
+        run_design(
+            task="question", workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run), catalog_path="contracts/contract_catalog.yml",
+            catalog_sha256="0" * 64, environment_path=None, attempts=1, dry_run=True,
+        )
+
+        notice = model.messages[1][-1]["content"]
+        self.assertIn("the last file you validated passed", notice)
+        self.assertNotIn("unresolved", notice)
+        self.assertNotIn("Submit", notice)
+        self.assertEqual(model.tool_sets[1], set())
+
+    def test_a_spent_budget_is_reported_even_when_the_phase_succeeded(self) -> None:
+        """Only the current phase's budget counts, not an earlier phase's."""
+        trajectory = Trajectory(self.run)
+        trajectory.record("meta", phase="design")
+        trajectory.record("budget_exhausted", turn=3, tool="validate",
+                          handover_pending=False)
+
+        warning = agent_module._spent_budget_warning(trajectory.path)
+
+        self.assertIsNotNone(warning)
+        self.assertIn("validate budget was used up", warning)
+        trajectory.record("meta", phase="interpret")
+        self.assertIsNone(agent_module._spent_budget_warning(trajectory.path))
 
     def test_design_dry_run_refuses_a_submit_call_the_model_was_not_offered(self) -> None:
         """A model that calls submit anyway must not reach the cluster.
@@ -2340,8 +2979,8 @@ resources:
         self.assertEqual(
             outcome["comparison_quality"]["query_coverage"], "not_applicable")
 
-    def test_interpretation_rejects_a_shape_that_contradicts_measured_means(self) -> None:
-        """The incident's false plateau must fail before a follow-up can be selected."""
+    def test_a_false_plateau_from_the_model_never_reaches_the_record(self) -> None:
+        """The incident's false plateau must not survive into the filed claims."""
         benchmarking = self.root / "results" / "old" / "report" / "benchmarking.md"
         benchmarking.write_text("""\
 #### Per Phase
@@ -2354,7 +2993,15 @@ resources:
 | postgresql-1-1-2 | 1 | 32 | 52000 |
 | postgresql-1-2-2 | 2 | 32 | 54000 |
 | postgresql-1-3-2 | 3 | 32 | 56000 |
-""")
+
+""" + _per_connection(
+            _equal_pods("postgresql-1-1-1", 25000, 16)
+            + _equal_pods("postgresql-1-2-1", 27000, 16)
+            + _equal_pods("postgresql-1-3-1", 26000, 16)
+            + _equal_pods("postgresql-1-1-2", 52000, 32)
+            + _equal_pods("postgresql-1-2-2", 54000, 32)
+            + _equal_pods("postgresql-1-3-2", 56000, 32)
+        ))
         assessment = {
             "question": "did throughput saturate?", "status": "settled",
             "conclusion": "no", "evidence": "the mean more than doubled",
@@ -2384,13 +3031,13 @@ resources:
         accepted = _record_arguments(
             [assessment], comparison_quality=quality, result_claims=correct_claims
         )
+        self.assertNotEqual(wrong, accepted)
         model = _Model([
             _evidence_record_reply("too-early", wrong),
             _tool_reply(ToolCall(
                 "characterize", "assess_comparison_quality", {"path": str(benchmarking)}
             )),
             _tool_reply(ToolCall("wrong", "record_interpretation", wrong)),
-            _tool_reply(ToolCall("correct", "record_interpretation", accepted)),
             _text_reply(_interpretation_text()),
         ])
 
@@ -2402,23 +3049,333 @@ resources:
             environment_path=None,
         )
 
+        # The model asserted a plateau; what gets filed is what was measured.
         self.assertEqual(
             outcome["result_claims"]["ordered_sweeps"][0]["shape"],
             "rises_throughout",
         )
+        self.assertIsNone(
+            outcome["result_claims"]["ordered_sweeps"][0]["turning_level"])
+
+    def test_an_empty_record_call_is_named_as_such(self) -> None:
+        """A call that carries nothing must not be reported as a field mismatch."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        model = _Model([
+            _evidence_record_reply("empty", {}),
+            _tool_reply(ToolCall("empty", "record_interpretation", {})),
+            _tool_reply(ToolCall(
+                "full", "record_interpretation", _record_arguments([assessment])
+            )),
+            _text_reply(_interpretation_text()),
+        ])
+
+        run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
         events = [
             json.loads(line)
             for line in (self.run / "trajectory.jsonl").read_text().splitlines()
         ]
-        rejection = next(
-            event for event in events
+        refusals = [
+            event["result"]["error"] for event in events
             if event.get("tool") == "record_interpretation"
-            and event.get("result", {}).get("claimed") == wrong_claims
+            and "error" in event.get("result", {})
+        ]
+        self.assertTrue(refusals)
+        self.assertIn("no arguments", refusals[0])
+
+    def test_a_disputed_claim_is_filed_beside_the_measured_one(self) -> None:
+        """Disagreement belongs on the record, not in a refusal loop."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        disputes = [{
+            "claim": "concurrency sweep, throughput",
+            "reason": "one repetition did no work, so the level means are pooled zeros",
+        }]
+        arguments = {**_record_arguments([assessment]), "disputes": disputes}
+        model = _Model([
+            _evidence_record_reply("record", arguments),
+            _tool_reply(ToolCall("record", "record_interpretation", arguments)),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
         )
+
+        self.assertEqual(outcome["result_claims"]["disputes"], disputes)
+
+    def test_a_stalled_repair_stops_costing_the_whole_interpretation(self) -> None:
+        """A usable verdict must survive a structural rule the model cannot satisfy."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        # Structurally wrong in a way the model never repairs: a finish that also
+        # names a follow-up goal.
+        broken = _record_arguments([assessment], follow_up={
+            "action": "finish",
+            "rationale": "the current result is sufficient",
+            "unresolved_question": "whether it holds at 64 clients",
+            "experiment_goal": "extend the sweep",
+            "target_queries": [],
+            "full_workload_required": False,
+            "cost_rationale": "One more round.",
+        })
+        replies = [_evidence_record_reply("first", broken)]
+        for index in range(agent_module._InterpretationGate.MAX_REPAIR_ROUNDS):
+            replies.append(
+                _tool_reply(ToolCall(f"try-{index}", "record_interpretation", broken)))
+        replies.append(_text_reply(_interpretation_text()))
+        model = _Model(replies)
+
+        outcome = run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
         self.assertEqual(
-            rejection["result"]["expected"]["ordered_sweeps"][0]["shape"],
-            "rises_throughout",
+            outcome["hypothesis_verdict"]["status"], "inconclusive")
+        stalled = outcome["incomplete_record"]
+        self.assertEqual(stalled["rounds"],
+                         agent_module._InterpretationGate.MAX_REPAIR_ROUNDS)
+        self.assertEqual(list(stalled["omitted"]), ["follow_up"])
+        self.assertIn("finish", stalled["omitted"]["follow_up"])
+        # The parts that passed are filed; the one that failed is left out.
+        self.assertEqual(len(outcome["question_assessments"]), 1)
+        self.assertEqual(outcome["followup_decision"]["experiment_goal"], "")
+        self.assertIn("Incomplete record", outcome["summary"])
+        summary = yaml.safe_load(
+            (self.root / "results" / "old" / agent_module._AGENT_SUMMARY_NAME)
+            .read_text())
+        self.assertEqual(summary["incomplete_record"], stalled)
+
+    def test_a_stalled_repair_never_waives_the_evidence_reads(self) -> None:
+        """Refusing long enough must not turn an unread verdict into a recorded one."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        record = _record_arguments([assessment])
+        model = _Model([
+            _tool_reply(ToolCall(f"try-{index}", "record_interpretation", record))
+            for index in range(agent_module._InterpretationGate.MAX_REPAIR_ROUNDS + 1)
+        ] + [_text_reply("I could not record this.")] * 30)
+
+        with self.assertRaises(agent_module.InterpretationIncomplete):
+            run_interpret(
+                task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+                workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+                result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+                environment_path=None,
+            )
+
+    def test_a_stalled_repair_never_waives_the_verdict_evidence(self) -> None:
+        """A verdict without read evidence from its own result stays refused."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        unread = "results/old/report/execution.md"
+        (self.root / unread).write_text("### Per Phase\n\nMeasured evidence.\n")
+        outside = "results/other/report/index.md"
+        (self.root / outside).parent.mkdir(parents=True)
+        (self.root / outside).write_text(_REPORT)
+        verdicts = {
+            "no evidence cited": {"status": "supported", "conclusion": "faster"},
+            "evidence never read": {
+                "status": "supported", "conclusion": "faster",
+                "evidence_paths": [unread],
+            },
+            "evidence from another result": {
+                "status": "supported", "conclusion": "faster",
+                "evidence_paths": [outside],
+            },
+        }
+        for case, verdict in verdicts.items():
+            with self.subTest(case):
+                record = _record_arguments([assessment], hypothesis_verdict=verdict)
+                model = _Model(
+                    [_evidence_record_reply("first", record)] + [
+                        _tool_reply(ToolCall(
+                            f"try-{index}", "record_interpretation", record))
+                        for index in range(
+                            agent_module._InterpretationGate.MAX_REPAIR_ROUNDS)
+                    ] + [_text_reply("I could not record this.")] * 30)
+
+                with self.assertRaises(agent_module.InterpretationIncomplete):
+                    run_interpret(
+                        task="is it faster?", report_path=_REPORT_PATH,
+                        specification=_SPEC, workspace=self.workspace, model=model,
+                        trajectory=Trajectory(self.run),
+                        result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+                        environment_path=None,
+                    )
+
+    def test_an_incomplete_record_never_starts_a_follow_up(self) -> None:
+        """Cluster time is not spent on a record the harness could not fully check."""
+        # Structurally wrong in a way the model never repairs: a settled question
+        # that still lists missing evidence.
+        broken = _record_arguments([{
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "a larger scale",
+        }], follow_up={
+            "action": "followup", "rationale": "the catalog exposes a CPU sweep",
+            "unresolved_question": "what causes degradation?",
+            "experiment_goal": "vary CPU at fixed memory",
+            "target_queries": [], "full_workload_required": True,
+            "cost_rationale": "The mechanism requires the complete workload.",
+        })
+        # No follow-up authoring turns are scripted: starting one would run out
+        # of replies rather than pass silently.
+        model = _Model([_evidence_record_reply("first", broken)] + [
+            _tool_reply(ToolCall(f"try-{index}", "record_interpretation", broken))
+            for index in range(agent_module._InterpretationGate.MAX_REPAIR_ROUNDS - 1)
+        ] + [_text_reply(_interpretation_text())])
+
+        outcome = run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=1,
+            environment_path=None,
         )
+
+        self.assertEqual(list(outcome["incomplete_record"]["omitted"]), ["questions"])
+        self.assertEqual(outcome["question_assessments"], [])
+        self.assertEqual(outcome["followup_decision"]["action"], "finish")
+        self.assertIsNone(outcome["code"])
+        self.assertTrue(outcome["phase_complete"])
+        summary = yaml.safe_load(
+            (self.root / "results" / "old" / agent_module._AGENT_SUMMARY_NAME)
+            .read_text())
+        self.assertEqual(summary["unresolved_question"], "what causes degradation?")
+
+    def test_the_withheld_throughput_notice_survives_an_incomplete_record(self) -> None:
+        """The harness's qualification does not depend on the model's record passing."""
+        benchmarking = self.root / "results" / "old" / "report" / "benchmarking.md"
+        benchmarking.write_text(
+            _false_peak_report([(2000.0, 1000.0), (1000.0, 2000.0)]))
+        broken = _record_arguments([{
+            "question": "what is the throughput?", "status": "settled",
+            "conclusion": "it peaks at two clients", "evidence": "the summed rates",
+            "missing": "a larger sweep",
+        }])
+        model = _Model([_tool_reply(
+            ToolCall("report", "read_file", {"path": _REPORT_PATH}),
+            ToolCall("contract", "read_file", {"path": _RESULT_CONTRACT_PATH}),
+            ToolCall("assess", "assess_comparison_quality", {"path": str(benchmarking)}),
+            ToolCall("first", "record_interpretation", broken),
+        )] + [
+            _tool_reply(ToolCall(f"try-{index}", "record_interpretation", broken))
+            for index in range(agent_module._InterpretationGate.MAX_REPAIR_ROUNDS - 1)
+        ] + [_text_reply(_interpretation_text())])
+
+        outcome = run_interpret(
+            task="what is the throughput?", report_path=_REPORT_PATH,
+            specification=_FALSE_PEAK_SPEC, workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run), result_contract_path=_RESULT_CONTRACT_PATH,
+            followups=0, environment_path=None,
+        )
+
+        self.assertEqual(list(outcome["incomplete_record"]["omitted"]), ["questions"])
+        self.assertIn("Throughput claims withheld by the harness", outcome["summary"])
+        self.assertIn("Incomplete record", outcome["summary"])
+        self.assertEqual(
+            [claim["metric"] for claim in outcome["result_claims"]["withheld_claims"]],
+            ["[OVERALL].Throughput(ops/sec)"],
+        )
+
+    def test_the_withheld_throughput_restriction_is_handed_on(self) -> None:
+        """A 'supported' verdict on a withheld peak reaches later phases qualified."""
+        benchmarking = self.root / "results" / "old" / "report" / "benchmarking.md"
+        benchmarking.write_text(
+            _false_peak_report([(2000.0, 1000.0), (1000.0, 2000.0)]))
+        record = _record_arguments([{
+            "question": "where does throughput peak?", "status": "partial",
+            "conclusion": "it peaks at two clients", "evidence": "the summed rates",
+            "missing": "a wider client sweep",
+        }], hypothesis_verdict={
+            "status": "supported", "conclusion": "throughput peaks at two clients",
+            "evidence_paths": [_REPORT_PATH],
+        }, follow_up={
+            "action": "followup", "rationale": "the peak should be located precisely",
+            "unresolved_question": "where exactly does throughput peak?",
+            "experiment_goal": "sweep clients more finely around two",
+            "target_queries": [], "full_workload_required": True,
+            "cost_rationale": "The complete workload exposes the peak.",
+        })
+        model = _Model([
+            _tool_reply(
+                ToolCall("report", "read_file", {"path": _REPORT_PATH}),
+                ToolCall("contract", "read_file", {"path": _RESULT_CONTRACT_PATH}),
+                ToolCall(
+                    "assess", "assess_comparison_quality", {"path": str(benchmarking)}),
+                ToolCall("record", "record_interpretation", record),
+            ),
+            _text_reply(_interpretation_text()),
+            _text_reply("No follow-up was written."),
+        ])
+
+        run_interpret(
+            task="where does throughput peak?", report_path=_REPORT_PATH,
+            specification=_FALSE_PEAK_SPEC, workspace=self.workspace, model=model,
+            trajectory=Trajectory(self.run), result_contract_path=_RESULT_CONTRACT_PATH,
+            followups=1, environment_path=None, attempts=1, dry_run=True,
+        )
+
+        # The harness does not overrule the model's verdict; it files the
+        # restriction beside it for the next experiment in the lineage...
+        summary = yaml.safe_load(
+            (self.root / "results" / "old" / agent_module._AGENT_SUMMARY_NAME)
+            .read_text())
+        self.assertEqual(summary["verdict"]["status"], "supported")
+        self.assertIn("50%", summary["measurement_restriction"])
+        # ...and the follow-up author of this very run reads it too.
+        author_prompt = "\n".join(
+            str(message.get("content", ""))
+            for exchange in model.messages
+            for message in exchange
+            if "Approved follow-up decision" in str(message.get("content", ""))
+        )
+        self.assertIn("Throughput claims withheld by the harness", author_prompt)
+
+    def test_empty_calls_count_once_toward_the_repair_limit(self) -> None:
+        """Two empty calls must not bring the next faulty record within one refusal."""
+        broken = _record_arguments([{
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "a larger scale",
+        }])
+        model = _Model([
+            _evidence_record_reply("empty", {}),
+            _tool_reply(ToolCall("empty-again", "record_interpretation", {})),
+            _tool_reply(ToolCall("broken", "record_interpretation", broken)),
+            _tool_reply(ToolCall("broken-again", "record_interpretation", broken)),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
+        self.assertEqual(outcome["incomplete_record"]["rounds"],
+                         agent_module._InterpretationGate.MAX_REPAIR_ROUNDS)
 
     def test_an_interpretation_that_never_records_fails_readably(self) -> None:
         """Running out of turns must report the phase, not break on a missing field."""
@@ -2637,6 +3594,44 @@ resources:
         ]
         self.assertEqual(len(rejected), 3)
 
+    def test_the_harness_supplies_the_validity_figures_it_reads_off_the_report(
+            self) -> None:
+        """A record that leaves out the computed figures is complete, not faulty."""
+        (self.root / _REPORT_PATH).write_text(_REPORT.replace("failed: 0", "failed: 1"))
+        assessment = {
+            "question": "is latency usable?", "status": "settled",
+            "conclusion": "yes", "evidence": "latency is present", "missing": "",
+        }
+        record = _record_arguments(
+            [assessment],
+            scope="Monitoring failed; the latency check passed and is unaffected.",
+        )
+        record["validity"] = {
+            key: record["validity"][key] for key in ("scope", "evidence_paths")
+        }
+        model = _Model([
+            _evidence_record_reply("record", record),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="question", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
+        self.assertIsNone(outcome["incomplete_record"])
+        self.assertEqual(outcome["validity_assessment"]["failed_checks"], 1)
+        self.assertEqual(outcome["validity_assessment"]["affected_phases"], [])
+        self.assertTrue(
+            outcome["validity_assessment"]["performance_metrics_affected"])
+        record_tool = next(
+            schema["function"] for schema in tools_module.INTERPRET_TOOLS
+            if schema["function"]["name"] == "record_interpretation")
+        validity_schema = record_tool["parameters"]["properties"]["validity"]
+        self.assertEqual(validity_schema["required"], ["scope", "evidence_paths"])
+
     def test_settled_interpretation_cannot_list_missing_evidence(self) -> None:
         invalid = {
             "question": "what causes degradation?", "status": "settled",
@@ -2787,7 +3782,7 @@ class BaselineTest(unittest.TestCase):
                 model_class.return_value.model = "qwen3.5:9b"
                 self.assertEqual(agent_main(), 0)
 
-                investigation = next((root / "investigations").iterdir())
+                investigation = _only_investigation(root / "investigations")
                 self.assertEqual(
                     (investigation / "answer.md").read_text().strip(),
                     "A direct answer.",
@@ -2834,7 +3829,7 @@ class PhaseTest(unittest.TestCase):
     def test_completed_design_labels_investigation_with_scale_and_model(self) -> None:
         """A validated design gains readable metadata without breaking resume."""
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             (root / "contracts").mkdir()
             (root / "contracts" / "contract_catalog.yml").write_text("version: 1\n")
             results = root / "results"
@@ -2886,7 +3881,7 @@ class PhaseTest(unittest.TestCase):
                 model_class.return_value.model = "Qwen/Qwen3.8-27B-FP8"
                 self.assertEqual(agent_main(), 0)
 
-            investigation = next((root / "investigations").iterdir())
+            investigation = _only_investigation(root / "investigations")
             self.assertTrue(
                 investigation.name.endswith("-sf1-Qwen-Qwen3.8-27B-FP8")
             )
@@ -2962,7 +3957,7 @@ class PhaseTest(unittest.TestCase):
                 model_class.return_value.model = "claude-sonnet-4-6"
                 self.assertEqual(agent_main(), 0)
 
-            investigation = next((root / "investigations").iterdir())
+            investigation = _only_investigation(root / "investigations")
             self.assertNotIn("-sf", investigation.name)
             events = [
                 json.loads(line)
@@ -3018,7 +4013,7 @@ class PhaseTest(unittest.TestCase):
 
             self.assertIn("no closing answer", stderr.getvalue())
             self.assertNotIn("submitted no experiment", stderr.getvalue())
-            investigation = next((root / "investigations").iterdir())
+            investigation = _only_investigation(root / "investigations")
             self.assertTrue(investigation.name.endswith("-sf1-qwen3.5-9b"))
             phase_report = (
                 investigation / "reports" / "01-design.md"
@@ -3203,7 +4198,7 @@ class PhaseTest(unittest.TestCase):
     def test_cli_interprets_an_exact_report_without_local_run_state(self) -> None:
         """The portable path needs only one result folder and model endpoint."""
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             contracts = root / "contracts"
             contracts.mkdir()
             shutil.copyfile(
@@ -3247,7 +4242,7 @@ class PhaseTest(unittest.TestCase):
             ):
                 self.assertEqual(agent_main(), 0)
 
-            investigation = next((root / "investigations").iterdir())
+            investigation = _only_investigation(root / "investigations")
             self.assertEqual(
                 (investigation / "answer.md").read_text(), "One-result answer\n"
             )
