@@ -1244,6 +1244,46 @@ resources:
         self.assertIn("whole-file limit", result["error"])
         self.assertNotIn("text", result)
 
+    def _other_run(self) -> Workspace:
+        """Return a second workspace sharing this one's inbox, as a parallel run would."""
+        return Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            environment_path="environment.yml",
+            results_root=str(self.root / "results"), run_directory=self.run,
+        )
+
+    def test_own_draft_is_rewritten_in_place(self) -> None:
+        self.workspace.write_file(self.path, "first: 1\n")
+        result = self.workspace.write_file(self.path, "second: 2\n")
+        self.assertEqual(result["written"], self.path)
+        self.assertNotIn("note", result)
+        self.assertEqual((self.root / self.path).read_text(), "second: 2\n")
+
+    def test_name_held_by_another_run_gets_a_counter(self) -> None:
+        self.workspace.write_file(self.path, "mine: 1\n")
+        other = self._other_run()
+        result = other.write_file(self.path, "theirs: 1\n")
+        self.assertEqual(result["written"], "inbox/followup_01.yml")
+        self.assertIn("inbox/followup_01.yml", result["note"])
+        self.assertEqual((self.root / self.path).read_text(), "mine: 1\n")
+        # The numbered draft is now that run's own and is rewritten in place.
+        again = other.write_file("inbox/followup_01.yml", "theirs: 2\n")
+        self.assertEqual(again["written"], "inbox/followup_01.yml")
+
+    def test_counter_continues_instead_of_stacking(self) -> None:
+        self.workspace.write_file(self.path, "a: 1\n")
+        self._other_run().write_file(self.path, "b: 1\n")
+        # A third run asking for the numbered name continues the sequence.
+        result = self._other_run().write_file("inbox/followup_01.yml", "c: 1\n")
+        self.assertEqual(result["written"], "inbox/followup_02.yml")
+
+    def test_a_name_that_merely_ends_in_digits_keeps_them(self) -> None:
+        path = "inbox/tpch_sf_10.yml"
+        self.workspace.write_file(path, "a: 1\n")
+        result = self._other_run().write_file(path, "b: 1\n")
+        self.assertEqual(result["written"], "inbox/tpch_sf_10_01.yml")
+
     def test_invalid_shapes_return_verdicts(self) -> None:
         self.workspace.write_file(self.path, "hello\n")
         self.assertFalse(self.workspace.validate(self.path)["valid"])

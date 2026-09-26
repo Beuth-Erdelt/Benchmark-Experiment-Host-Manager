@@ -56,6 +56,12 @@ _CLUSTER_CONFIG = "cluster.config"
 #: silently accepted and then rejected by the YAML loader.
 _SPEC_SUFFIXES = (".yml", ".yaml")
 
+#: The inbox is shared by agent runs started side by side, and the model picks
+#: its draft's name, usually from the task. A name another run already holds is
+#: therefore given a two-digit counter instead of being overwritten.
+_DRAFT_COUNTER = re.compile(r"^(?P<base>.+)_(?P<number>\d{2})$")
+_DRAFT_COUNTER_LIMIT = 99
+
 #: How long submit waits for bexhoma to create its preassigned result folder.
 #: The run itself continues long after this.
 _CODE_WAIT_SECONDS = 120
@@ -224,6 +230,7 @@ class Workspace:
         self.run_directory = run_directory
         self.allow_parallel_runs = allow_parallel_runs
         self._validated: dict[Path, tuple[str, ...]] = {}
+        self._written_drafts: set[Path] = set()
         self._returned_read_characters = 0
         self._result_directory: Path | None = None
         self._reachable_result_files: set[Path] | None = None
@@ -478,14 +485,60 @@ class Workspace:
     def write_file(self, path: str, text: str) -> dict[str, Any]:
         """Write an experiment specification into the inbox.
 
+        A draft this workspace wrote earlier is replaced. A file that already
+        exists under the requested name but was not written here belongs to
+        another run, so the draft is saved under the next free numbered name
+        instead, and the result names that path.
+
         :param path: Destination path, relative to :attr:`root`.
         :param text: Full file contents; any previous version is replaced.
-        :return: ``{"written": path, "bytes": n}``.
+        :return: ``{"written": path, "bytes": n}``, plus a ``note`` when the
+            draft was saved under a numbered name.
         :rtype: dict[str, Any]
         """
-        destination = self._resolve_in_inbox(path)
+        requested = self._resolve_in_inbox(path)
+        destination = requested
+        if requested not in self._written_drafts:
+            destination = self._claim_draft(requested)
+            self._written_drafts.add(destination)
         destination.write_text(text, encoding="utf-8")
-        return {"written": path, "bytes": len(text.encode("utf-8"))}
+        result: dict[str, Any] = {"written": path, "bytes": len(text.encode("utf-8"))}
+        if destination != requested:
+            written = path[: len(path) - len(requested.name)] + destination.name
+            result["written"] = written
+            result["note"] = (
+                f"{path} already belongs to another run, so your draft was saved "
+                f"as {written}; use that path from now on"
+            )
+        return result
+
+    def _claim_draft(self, requested: Path) -> Path:
+        """Create a new draft file exclusively, numbering the name if it is taken.
+
+        A requested name that already carries a counter, such as ``x_01`` next
+        to an existing ``x``, continues that sequence rather than stacking a
+        second counter onto it. Exclusive creation keeps two runs claiming the
+        same number at the same moment from both getting it.
+        """
+        base = requested.stem
+        match = _DRAFT_COUNTER.match(base)
+        if match and requested.with_name(match["base"] + requested.suffix).exists():
+            base = match["base"]
+        names = [requested.name] + [
+            f"{base}_{number:02d}{requested.suffix}"
+            for number in range(1, _DRAFT_COUNTER_LIMIT + 1)
+        ]
+        for name in names:
+            candidate = requested.with_name(name)
+            try:
+                os.close(os.open(candidate, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+            except FileExistsError:
+                continue
+            return candidate
+        raise ToolError(
+            f"{requested.name} and all its numbered variants up to "
+            f"_{_DRAFT_COUNTER_LIMIT} exist; choose another name"
+        )
 
     def invalidate_validation(self, path: str) -> None:
         """Forget any earlier validation approval for one inbox file.
@@ -2115,7 +2168,9 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
             "name": "write_file",
             "description": (
                 "Write an experiment specification into the inbox directory. "
-                "Always write the complete file; there is no partial edit."
+                "Always write the complete file; there is no partial edit. "
+                "If another run already holds the name, the file is saved under "
+                "a numbered name; the result's 'written' is the path to use."
             ),
             "parameters": {
                 "type": "object",

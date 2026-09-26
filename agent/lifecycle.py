@@ -22,6 +22,11 @@ Lifecycle:
 An endpoint this machine does not own -- a hosted API, or an Ollama already
 running -- has nothing to start or stop, so ``AGENT_MODEL_SERVER=external`` in
 :file:`.env` keeps the same phase chain and drops steps 1, 3 and 5.
+
+Several lifecycles started side by side can share one vLLM server with
+``AGENT_MODEL_SERVER=shared``: each starts the server when it is not running
+and reuses it when it is, but none stops it, since another lifecycle may still
+be using it. Steps 2 and 5 are then left to the pod's idle watchdog.
 """
 from __future__ import annotations
 
@@ -74,10 +79,13 @@ _FOLLOWUP_SUBMIT_ATTEMPTS = 2
 #: own default.
 _TRAJECTORY_SUBDIR = "agent"
 
-#: The only two answers to who owns the model endpoint. ``bundled`` is started
-#: and stopped by this wrapper; ``external`` is already running.
+#: The only answers to who owns the model endpoint. ``bundled`` is started and
+#: stopped by this wrapper; ``shared`` is started by whichever lifecycle needs it
+#: first and stopped only by the pod's idle watchdog; ``external`` is already
+#: running.
 _BUNDLED_SERVER = "bundled"
-_SERVER_OWNERS = frozenset({_BUNDLED_SERVER, "external"})
+_SHARED_SERVER = "shared"
+_SERVER_OWNERS = frozenset({_BUNDLED_SERVER, _SHARED_SERVER, "external"})
 
 #: Runs Bexhoma's experiment manager (the ``bexperiments`` console script) with
 #: ``python -c`` rather than by locating the installed wrapper, whose name and
@@ -169,7 +177,8 @@ class ModelServer:
     :file:`agent/model_server.ps1` on Windows, is this wrapper's to start and
     stop; a hosted API or an Ollama that is already running answers on its
     own, so switching it does nothing and the phase chain is all that is left
-    to do.
+    to do. ``shared`` says that other lifecycles may be using the bundled
+    server too, so it is started but never stopped from here.
     """
 
     def __init__(
@@ -177,9 +186,11 @@ class ModelServer:
         script: Path,
         bundled: bool = True,
         run_command: Callable[..., subprocess.CompletedProcess[Any]] = subprocess.run,
+        shared: bool = False,
     ) -> None:
         self.script = script
         self.bundled = bundled
+        self.shared = shared
         self._run_command = run_command
 
     def _command(self, state: str) -> list[str]:
@@ -203,7 +214,7 @@ class ModelServer:
         """Bring the server ``up`` or ``down``, failing on operator errors."""
         if state not in {"up", "down"}:
             raise ValueError(f"unsupported model-server state: {state}")
-        if not self.bundled:
+        if not self.bundled or (self.shared and state == "down"):
             return
         result = self._run_command(self._command(state), check=False)
         if result.returncode:
@@ -751,6 +762,13 @@ def _parser() -> argparse.ArgumentParser:
                              "'inbox' subdirectory beside the trajectories")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
+        "--allow-parallel-runs", action="store_true",
+        default=_env_flag("AGENT_ALLOW_PARALLEL_RUNS", default=False),
+        help="let this investigation submit while another agent-started "
+             "experiment is still benchmarking (AGENT_ALLOW_PARALLEL_RUNS); "
+             "forwarded to every phase's agent.harness.agent invocation",
+    )
+    parser.add_argument(
         "--baseline", action=argparse.BooleanOptionalAction,
         default=_env_flag("AGENT_BASELINE", default=True),
         help="also answer the question with the bare model -- no catalog, "
@@ -856,9 +874,12 @@ def main() -> int:
         agent_command.append("--dry-run")
     if args.enable_thinking:
         agent_command.append("--enable-thinking")
+    if args.allow_parallel_runs:
+        agent_command.append("--allow-parallel-runs")
 
     # .env says who owns the endpoint: bundled means the vLLM server is started
-    # and stopped here, external means it is already running and is left alone.
+    # and stopped here, shared means it is started here but left for its idle
+    # watchdog to stop, external means it is already running and is left alone.
     # Anything else is a typo, and guessing at one would quietly change which
     # lifecycle a run gets.
     owner = os.environ.get("AGENT_MODEL_SERVER", _BUNDLED_SERVER)
@@ -869,9 +890,15 @@ def main() -> int:
             file=sys.stderr,
         )
         return 2
-    bundled = owner == _BUNDLED_SERVER
+    bundled = owner in (_BUNDLED_SERVER, _SHARED_SERVER)
+    shared = owner == _SHARED_SERVER
+    # The switch script must not replace a pod running another model while
+    # other lifecycles may be using it; this tells it so.
+    if shared:
+        os.environ["MODEL_SERVER_SHARED"] = "1"
     lifecycle = AgentLifecycle(
-        config, agent_command, ModelServer(config.server_script, bundled),
+        config, agent_command,
+        ModelServer(config.server_script, bundled, shared=shared),
         interpret_model=args.interpret_model, baseline=args.baseline)
     try:
         final_run = lifecycle.run(
@@ -884,7 +911,9 @@ def main() -> int:
 
     answer = final_run / "answer.md"
     print(f"final verdict: {answer}")
-    if bundled:
+    if shared:
+        print("model server left running; its idle watchdog releases the GPU")
+    elif bundled:
         print("model server is down")
     return 0
 

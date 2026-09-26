@@ -39,7 +39,14 @@ $CONTEXT       = if ($env:MODEL_SERVER_CONTEXT)  { $env:MODEL_SERVER_CONTEXT }  
 $NAMESPACE     = if ($env:MODEL_SERVER_NAMESPACE){ $env:MODEL_SERVER_NAMESPACE }else { 'perdelt' }
 $START_TIMEOUT = if ($env:MODEL_SERVER_START_TIMEOUT_SECONDS) { [int] $env:MODEL_SERVER_START_TIMEOUT_SECONDS } else { 2400 }
 $STOP_TIMEOUT  = if ($env:MODEL_SERVER_STOP_TIMEOUT_SECONDS)  { [int] $env:MODEL_SERVER_STOP_TIMEOUT_SECONDS }  else { 300 }
-$GENERATION    = if ($env:MODEL_SERVER_GENERATION) { $env:MODEL_SERVER_GENERATION } else { 'idle-watchdog-v2' }
+# Each manifest carries its own generation annotation, so the expected value is
+# read from the manifest being applied. A fixed default would call every other
+# model's live pod outdated and replace it on each `up`.
+$manifestGeneration = Select-String -Path $MANIFEST -Pattern '^\s*bexhoma\.local/model-server-generation:\s*(\S+)' |
+    Select-Object -First 1 | ForEach-Object { $_.Matches[0].Groups[1].Value }
+$GENERATION    = if ($env:MODEL_SERVER_GENERATION) { $env:MODEL_SERVER_GENERATION } elseif ($manifestGeneration) { $manifestGeneration } else { 'idle-watchdog-v2' }
+# Set by agent/lifecycle.py when several lifecycles share this server.
+$SHARED        = $env:MODEL_SERVER_SHARED -eq '1'
 
 $portForwardLog = Join-Path $env:TEMP 'vllm-portforward.log'
 
@@ -118,8 +125,20 @@ function Invoke-Up {
     $parts = "$podState" -split '\|', 2
     $phase = $parts[0]
     $currentGeneration = if ($parts.Count -gt 1) { $parts[1] } else { '' }
-    if ($phase -and ((($phase -ne 'Running') -and ($phase -ne 'Pending')) -or ($currentGeneration -ne $GENERATION))) {
-        $shownGeneration = if ($currentGeneration) { $currentGeneration } else { 'unversioned' }
+    $shownGeneration = if ($currentGeneration) { $currentGeneration } else { 'unversioned' }
+    if ($phase -and ($phase -ne 'Running') -and ($phase -ne 'Pending')) {
+        Write-Host "replacing model pod in phase $phase"
+        # Deleted by phase as well as by name: lifecycles sharing the server
+        # arrive together, and another may already have replaced the finished
+        # pod with a starting one, which must survive.
+        kubectl --context $CONTEXT --namespace $NAMESPACE delete pod `
+            --field-selector "metadata.name=$POD,status.phase!=Running,status.phase!=Pending" `
+            --wait=true --timeout="${STOP_TIMEOUT}s"
+    } elseif ($phase -and ($currentGeneration -ne $GENERATION)) {
+        if ($SHARED) {
+            [Console]::Error.WriteLine("model pod runs generation $shownGeneration, not $GENERATION; another lifecycle is using that model, so it is left alone")
+            exit 3
+        }
         Write-Host "replacing model pod in phase $phase, generation $shownGeneration"
         kubectl --context $CONTEXT --namespace $NAMESPACE delete pod $POD `
             --ignore-not-found --wait=true --timeout="${STOP_TIMEOUT}s"

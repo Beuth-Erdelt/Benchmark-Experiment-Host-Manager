@@ -157,6 +157,7 @@ class AgentLifecycleTest(unittest.TestCase):
                 inbox="inbox",
                 dry_run=True,
                 enable_thinking=False,
+                allow_parallel_runs=False,
                 baseline=False,
             )
             parser = mock.Mock()
@@ -218,7 +219,8 @@ class AgentLifecycleTest(unittest.TestCase):
             server_start_attempts=1, attempts=1, followups=0, temperature=0.0,
             max_tokens=1024, catalog="contracts/contract_catalog.yml",
             environment="dev/catalog/environment.yml", method="", inbox="inbox",
-            dry_run=True, enable_thinking=False, baseline=False,
+            dry_run=True, enable_thinking=False, allow_parallel_runs=False,
+            baseline=False,
         )
         for name, value in overrides.items():
             setattr(arguments, name, value)
@@ -250,9 +252,62 @@ class AgentLifecycleTest(unittest.TestCase):
 
         self.assertEqual(code, 2)
 
-    def test_both_model_server_owners_are_accepted(self) -> None:
+    def test_allow_parallel_runs_forwards_to_the_child_only_when_set(self) -> None:
+        """Parallel lifecycles need every phase's agent to accept a busy cluster."""
         with tempfile.TemporaryDirectory() as temporary:
-            for owner in ("bundled", "external"):
+            root = Path(temporary)
+            (root / "run").mkdir()
+            for enabled in (False, True):
+                parser = mock.Mock()
+                parser.parse_args.return_value = self._wrapper_arguments(
+                    root, allow_parallel_runs=enabled)
+                lifecycle = mock.Mock()
+                lifecycle.run.return_value = root / "run"
+                with (
+                    mock.patch.object(lifecycle_module, "load_dotenv"),
+                    mock.patch.object(lifecycle_module, "_install_signal_handlers"),
+                    mock.patch.object(lifecycle_module, "_parser", return_value=parser),
+                    mock.patch.object(lifecycle_module, "ModelServer"),
+                    mock.patch.object(
+                        lifecycle_module, "AgentLifecycle", return_value=lifecycle,
+                    ) as lifecycle_class,
+                ):
+                    self.assertEqual(lifecycle_module.main(), 0)
+                    child_command = lifecycle_class.call_args.args[1]
+                self.assertEqual("--allow-parallel-runs" in child_command, enabled)
+
+    def test_a_shared_server_tells_the_switch_script_so(self) -> None:
+        """The script must not replace another lifecycle's model pod."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "run").mkdir()
+            parser = mock.Mock()
+            parser.parse_args.return_value = self._wrapper_arguments(root)
+            lifecycle = mock.Mock()
+            lifecycle.run.return_value = root / "run"
+            seen: list[str | None] = []
+
+            def build(*_args, **_kwargs) -> mock.Mock:
+                seen.append(os.environ.get("MODEL_SERVER_SHARED"))
+                return lifecycle
+
+            with (
+                mock.patch.object(lifecycle_module, "load_dotenv"),
+                mock.patch.object(lifecycle_module, "_install_signal_handlers"),
+                mock.patch.object(lifecycle_module, "_parser", return_value=parser),
+                mock.patch.object(lifecycle_module, "ModelServer") as server_class,
+                mock.patch.object(lifecycle_module, "AgentLifecycle", side_effect=build),
+                mock.patch.dict(os.environ, {"AGENT_MODEL_SERVER": "shared"}),
+            ):
+                os.environ.pop("MODEL_SERVER_SHARED", None)
+                self.assertEqual(lifecycle_module.main(), 0)
+
+        self.assertEqual(seen, ["1"])
+        self.assertTrue(server_class.call_args.kwargs["shared"])
+
+    def test_every_model_server_owner_is_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            for owner in ("bundled", "shared", "external"):
                 (Path(temporary) / "run").mkdir(exist_ok=True)
                 code = self._run_main(
                     self._wrapper_arguments(Path(temporary)),
@@ -748,6 +803,28 @@ probe_activity() {{
 
         self.assertEqual(
             commands, [["bash", str(self.config.server_script), "up"]])
+
+    def test_a_shared_server_is_started_but_never_stopped(self) -> None:
+        """Another lifecycle may still be using it; its idle watchdog stops it."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        final = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        self._report("101")
+        commands: list[list[str]] = []
+
+        def record(command: list[str], check: bool) -> subprocess.CompletedProcess:
+            commands.append(command)
+            return subprocess.CompletedProcess(command, 0)
+
+        server = ModelServer(self.config.server_script, run_command=record, shared=True)
+        lifecycle = _Lifecycle(self.config, ["agent"], server, runs=[design, final])
+
+        lifecycle.run("question")
+
+        self.assertEqual(
+            [command[-1] for command in commands], ["up", "up"])
 
     def test_a_powershell_switch_script_is_run_through_powershell(self) -> None:
         """A Windows workstation has no bash, so a .ps1 switch uses powershell."""

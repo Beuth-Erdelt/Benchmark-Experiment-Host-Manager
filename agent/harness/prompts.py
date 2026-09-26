@@ -76,7 +76,9 @@ are guessing.
   earlier.
 - write_file(path, text) writes your specification. You may only write into
   {inbox}/, only files ending .yml or .yaml, and you must write the whole file
-  every time -- there is no partial edit.
+  every time -- there is no partial edit. If another run already holds the
+  name, your file is saved under a numbered name; use the path the result
+  returns as "written" from then on.
 - validate(path) dry-run checks a written specification against the catalog and
   the environment. It runs nothing and costs no cluster time. It returns
   "valid", a list of "errors", whether the environment was checked, and an
@@ -288,7 +290,8 @@ evidence for interpreting the current experiment.
 # Tools and budgets
 
 - read_file(path) reads the catalog, environment, or your draft.
-- write_file(path, text) writes a complete YAML file into {inbox}/.
+- write_file(path, text) writes a complete YAML file into {inbox}/; use the
+  path it returns as "written", which is numbered if another run held the name.
 - validate(path) checks it without running anything.
 - submit(path) launches only the exact validated bytes.
 

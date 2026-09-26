@@ -159,7 +159,11 @@ One more setting decides who owns the endpoint. `AGENT_MODEL_SERVER=bundled`,
 the default, means the lifecycle wrapper below starts and stops the vLLM server
 around every phase. `AGENT_MODEL_SERVER=external` means the endpoint is already
 there — a hosted API, or an Ollama running on your machine — so the wrapper
-only chains the phases and never touches a server. Each block in `.env.example`
+only chains the phases and never touches a server. `AGENT_MODEL_SERVER=shared`
+is for several lifecycles running side by side: each starts the vLLM server if
+it is not running and reuses it if it is, but none stops it, because another
+may still be using it; the pod's idle watchdog releases the GPU instead (see
+"Running two investigations at once" below). Each block in `.env.example`
 already carries the right value, and an exported `AGENT_MODEL_SERVER` overrides
 the file for one shell, exactly as the three settings above do. The agent CLI
 itself never starts a server in either case.
@@ -278,12 +282,12 @@ agent/model_server.sh down   # or agent/model_server.ps1 down
 MODEL_SERVER_MANIFEST=agent/k8s/vllm-glm45-air-int4.yml agent/model_server.sh up
 ```
 
-The switch does carry a same-shape safety net -- it replaces a live pod
-automatically when its `bexhoma.local/model-server-generation` annotation
-does not match `MODEL_SERVER_GENERATION` -- but that variable defaults to
-Qwen's generation value, so it only fires unprompted when switching from one of
-the four alternatives back to Qwen with default settings, not the other
-direction. `down` first is the instruction that works between any of the five.
+The switch does carry a safety net: it replaces a live pod automatically when
+its `bexhoma.local/model-server-generation` annotation does not match the one
+in the manifest being applied (or `MODEL_SERVER_GENERATION`, when set), so `up`
+with a different manifest swaps the model by itself. With
+`AGENT_MODEL_SERVER=shared` it refuses instead, since another lifecycle may be
+using the running model, and the wrapper retries until that pod is gone.
 
 **Context and namespace** are environment variables, and the manifest itself
 pins neither, so these decide where the server objects are created.
@@ -411,6 +415,26 @@ trajectory, so a later reader knows the timings were not taken on a quiet
 cluster. Pin the two investigations to different nodes with `placement:` before
 doing this, or the numbers will describe the interference rather than the
 systems.
+
+Both runs can share one inbox. A draft name that another run already holds is
+saved under the next free counter, `name_01.yml`, `name_02.yml` and so on,
+instead of overwriting the other run's draft.
+
+To run several complete investigations at once, start one lifecycle per shell
+with a shared model server and parallel runs allowed:
+
+```sh
+AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 1>"
+AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 2>"
+AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 3>"
+```
+
+`AGENT_ALLOW_PARALLEL_RUNS=1` in `.env` does the same as the flag. All shells
+must use the same manifest. The first lifecycle to need the model starts it,
+the others reuse it, and nobody stops it: the pod's idle watchdog releases the
+GPU once no lifecycle has sent a request for a while, typically during the
+benchmarks, and the next lifecycle that needs the model starts it again. When
+the lifecycles run in step, that restart is paid once for all of them.
 
 ## Autonomous Kubernetes lifecycle
 

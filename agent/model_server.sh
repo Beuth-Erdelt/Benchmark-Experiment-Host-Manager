@@ -28,7 +28,13 @@ CONTEXT="${MODEL_SERVER_CONTEXT:-oidc_ds_cluster}"
 NAMESPACE="${MODEL_SERVER_NAMESPACE:-}"
 START_TIMEOUT="${MODEL_SERVER_START_TIMEOUT_SECONDS:-2400}"
 STOP_TIMEOUT="${MODEL_SERVER_STOP_TIMEOUT_SECONDS:-300}"
-GENERATION="${MODEL_SERVER_GENERATION:-idle-watchdog-v2}"
+# Each manifest carries its own generation annotation, so the expected value is
+# read from the manifest being applied. A fixed default would call every other
+# model's live pod outdated and replace it on each `up`.
+MANIFEST_GENERATION=$(sed -n 's/^ *bexhoma\.local\/model-server-generation: *//p' "$MANIFEST" | head -n 1)
+GENERATION="${MODEL_SERVER_GENERATION:-${MANIFEST_GENERATION:-idle-watchdog-v2}}"
+# Set by agent/lifecycle.py when several lifecycles share this server.
+SHARED="${MODEL_SERVER_SHARED:-0}"
 
 # A benchmark outlives the cluster token by hours, so a later `up` would fail at
 # exactly the moment interpretation needs the server unless we refresh here.
@@ -87,10 +93,20 @@ up() {
         2>/dev/null || true)
     phase="${pod_state%%|*}"
     current_generation="${pod_state#*|}"
-    if [ -n "$phase" ] && { \
-        { [ "$phase" != "Running" ] && [ "$phase" != "Pending" ]; } \
-        || [ "$current_generation" != "$GENERATION" ]; \
-    }; then
+    if [ -n "$phase" ] && [ "$phase" != "Running" ] && [ "$phase" != "Pending" ]; then
+        echo "replacing model pod in phase $phase"
+        # Deleted by phase as well as by name: lifecycles sharing the server
+        # arrive together, and another may already have replaced the finished
+        # pod with a starting one, which must survive.
+        kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete pod \
+            --field-selector "metadata.name=$POD,status.phase!=Running,status.phase!=Pending" \
+            --wait=true --timeout="${STOP_TIMEOUT}s"
+    elif [ -n "$phase" ] && [ "$current_generation" != "$GENERATION" ]; then
+        if [ "$SHARED" = "1" ]; then
+            echo "model pod runs generation ${current_generation:-unversioned}, not $GENERATION;" \
+                "another lifecycle is using that model, so it is left alone" >&2
+            exit 3
+        fi
         echo "replacing model pod in phase $phase, generation ${current_generation:-unversioned}"
         kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete pod "$POD" \
             --ignore-not-found --wait=true --timeout="${STOP_TIMEOUT}s"
