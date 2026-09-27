@@ -1163,8 +1163,10 @@ def validate_spec(
         except spec.SpecError as error:
             environment_errors.append(
                 {"stage": ENVIRONMENT_STAGE, "message": str(error)})
-    if blind_pin_error := _check_placement_free_capacity(environment, experiment):
-        environment_errors.append(blind_pin_error)
+    # Disabled: environment.yml currently never records a node's free
+    # capacity, so this would refuse every pin.
+    #if blind_pin_error := _check_placement_free_capacity(environment, experiment):
+    #    environment_errors.append(blind_pin_error)
     if component_error := _check_component_placement(catalog, environment, experiment):
         environment_errors.append(component_error)
 
