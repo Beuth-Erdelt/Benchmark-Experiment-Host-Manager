@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.4.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.5.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -94,7 +94,7 @@ provenance:
   sut:
     "bexhoma-sut-{configuration}-{code}-{experiment_run}.yml": "SUT Deployment manifest, one archived copy per experiment_run — the live object itself is restarted in place, not recreated, so copies can be identical"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.{container}.log": "SUT container stdout, one capture per experiment_run"
-    "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.describe.log": "kubectl describe pod, one capture per experiment_run"
+    "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.describe.log": "kubectl describe pod, one capture per experiment_run; each container's Last State block (Reason, Exit Code, Finished) says why its latest restart happened, and its Mounts plus the pod's Volumes say whether its data directory survived that restart"
 
 versions:
   images: recorded_as_tag_not_digest
@@ -130,6 +130,19 @@ validity:
   - id: no_sut_container_restarts
     kind: absolute
     checks: "bexhoma-sut-*-restarts.json sums to 0"
+    reports:
+      where: "report/index.md Health Summary (count per reason), report/connections.md SUT Container Restarts (one line per restarted container)"
+      fields: [container, reason, exit_code, finished, data_volume]
+      source: "the pod's latest provenance.sut *.describe.log: the container's Last State block"
+      semantics: "reason is the Kubernetes termination reason of the most recent restart (OOMKilled, Error, ...), or unknown when no describe log was captured; only the latest termination is recorded, so a container restarted several times shows the last reason only"
+    scopes: "every metric of the restarted configuration from the restart's finished time onward"
+  - id: sut_data_survived_restarts
+    kind: absolute
+    label: "SUT data survived container restarts"
+    checks: "every restarted SUT container keeps its data directory on a mounted volume: a mount at or above PGDATA when the container sets it, otherwise any mount other than /dev/shm, the /data raw-data volume, or a ConfigMap/Secret/Projected/DownwardAPI volume"
+    skipped_when: "there were no restarts, or no describe log explains them"
+    why: "without such a volume the data lives in the container's writable layer, which a restart discards; the DBMS re-initializes an empty database while the pod still carries loaded=True, so bexhoma does not reload it"
+    scopes: "every query of that configuration after the restart ran against an empty database; its SQL errors (relation ... does not exist) are consequences of the restart, not findings about the queries"
   - id: key_metric_present
     kind: absolute
     checks: "benchmark-type headline column(s) contain no 0/NaN — see key_metrics_by_benchmark_type"
@@ -210,6 +223,13 @@ answer_contract:
     - id: verdict
       instruction: "State the scientific hypothesis verdict as supported, refuted, inconclusive, or invalid; separately state pass/fail/skip counts and whether any FAILED row scopes or invalidates a metric reported below it."
       source: [agent_summary_contract.fields.verdict, verdict_shape]
+      failure_causality:
+        instruction: "When any check failed, name the first failure as the root cause instead of adding failures up. Order failures by timestamp; errors that follow a SUT restart are its downstream effects, not independent findings."
+        downstream_of_restart:
+          - "connection or I/O errors in the streams running when the container terminated"
+          - "missing relations and every other error after the restart when sut_data_survived_restarts failed"
+        for_restart: "state its reason (validity.no_sut_container_restarts.reports) and what was running at its finished time: the round, the number of concurrent streams, and the query, read from the benchmarker logs of that round"
+        why: "a restart turns into many failed checks and SQL errors; counting them as separate findings hides the one cause that a follow-up has to address"
     - id: evidence
       instruction: "Cite the specific tier-1 or tier-2 file and value backing every claim in the verdict."
       source: tiers

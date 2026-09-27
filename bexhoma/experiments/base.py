@@ -31,6 +31,7 @@ import math
 from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
+from bexhoma import sut_restarts
 
 if TYPE_CHECKING:
     from bexhoma.configurations.base import SutConfiguration
@@ -2648,25 +2649,27 @@ class ExperimentBase():
         restarts_files = sorted(result_dir.glob("bexhoma-sut-*-restarts.json"))
         if restarts_files:
             print("\n### SUT Container Restarts")
-            # One file per (configuration, experiment_run), but the SUT pod is
-            # restarted in place rather than recreated across repeat runs, so
-            # its restartCount is cumulative across every run's snapshot, not
-            # a per-run delta -- take the max per pod name, not the sum across
-            # files, or the same restarts would be counted once per run.
-            per_pod_total: dict[str, int] = {}
-            per_pod_counts: dict[str, str] = {}
-            for restarts_file in restarts_files:
-                with open(restarts_file) as _f:
-                    pod_restarts: dict[str, str] = json.load(_f)
-                for pod, counts in pod_restarts.items():
-                    pod_total = sum(int(x) for x in counts.split()) if counts.strip() else 0
-                    if pod not in per_pod_total or pod_total > per_pod_total[pod]:
-                        per_pod_total[pod] = pod_total
-                        per_pod_counts[pod] = counts
+            # Aggregated by max per pod, not summed across files -- see
+            # sut_restarts.read_restart_counts().
+            per_pod_total, per_pod_counts = sut_restarts.read_restart_counts(result_dir)
+            restart_details = sut_restarts.collect_restart_details(result_dir)
             for pod, counts in per_pod_counts.items():
                 print(f"* {pod}: {counts}")
+                for detail in restart_details:
+                    if detail.pod == pod:
+                        print(f"  * {sut_restarts.format_detail(detail)}")
             total_restarts = sum(per_pod_total.values())
             self._record_test(total_restarts == 0, "No SUT container restarts")
+            # A restarted container without a data volume re-initializes an
+            # empty database, so every later query fails because of the
+            # restart, not on its own merits.
+            known = [d.data_volume for d in restart_details if d.data_volume is not None]
+            if known:
+                self._record_test(all(known), "SUT data survived container restarts")
+            elif restart_details:
+                self._record_skipped_test("SUT data survived container restarts (no describe log)")
+            else:
+                self._record_skipped_test("SUT data survived container restarts (no restarts)")
         return connections_sorted, monitoring_applications
     def show_summary(self, write_report: bool = False):
         """
