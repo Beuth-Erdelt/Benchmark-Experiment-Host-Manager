@@ -149,11 +149,9 @@ Mistral blocks in `.env.example`) could reject an unrecognised field.
 
 `AGENT_EXTRA_BODY` (or `--extra-body`) is a JSON object added to every request
 body, for fields an endpoint defines beyond the OpenAI API. OpenRouter is the
-case it was added for: its `provider` field pins which provider and precision
-serve a request (the Gemma 4 block in `.env.example` pins one BF16 provider),
-and its `reasoning` field turns on thinking, which OpenRouter honours where it
-ignores `chat_template_kwargs`. The object is recorded in each phase's `meta` event, so
-a trajectory shows which routing produced it.
+case it was added for; [Using OpenRouter](#using-openrouter) explains the
+fields it takes. The object is recorded in each phase's `meta` event, so a
+trajectory shows which routing produced it.
 
 One more setting decides who owns the endpoint. `AGENT_MODEL_SERVER=bundled`,
 the default, means the lifecycle wrapper below starts and stops the vLLM server
@@ -163,6 +161,138 @@ only chains the phases and never touches a server. Each block in `.env.example`
 already carries the right value, and an exported `AGENT_MODEL_SERVER` overrides
 the file for one shell, exactly as the three settings above do. The agent CLI
 itself never starts a server in either case.
+
+## Using OpenRouter
+
+OpenRouter is a paid broker that puts one OpenAI-compatible API in front of
+many hosting providers. The agent treats it like any other hosted endpoint, so
+a run through it needs an OpenRouter API key but no GPU and no model server on
+the cluster. The benchmarks themselves still run on the cluster as usual.
+
+### A first run
+
+Create a key at <https://openrouter.ai/keys>, copy `.env.example` to `.env`,
+and uncomment its OpenRouter block. With your key filled in, it comes down to
+these five lines:
+
+```sh
+AGENT_MODEL=google/gemma-4-31b-it
+AGENT_BASE_URL=https://openrouter.ai/api/v1
+AGENT_MODEL_SERVER=external
+AGENT_API_KEY=sk-or-v1-replace-with-your-key
+AGENT_EXTRA_BODY={"provider": {"order": ["crusoe"], "allow_fallbacks": false, "quantizations": ["bf16"]}, "reasoning": {"enabled": true}}
+```
+
+Then start the lifecycle as in [The short path](#the-short-path):
+
+```sh
+.venv/bin/python -m agent.lifecycle --task "<benchmark question>" --followups 1 --max-tokens 65536
+```
+
+To try the key and the routing without submitting a benchmark, add
+`--dry-run`. The run then stops as soon as its design has passed validation.
+
+### What the extra request fields do
+
+Unless told otherwise, OpenRouter picks a provider for each request, and the
+providers of one model differ in ways that matter to a run. Some serve the
+weights at reduced precision (8 or 4 bits instead of the full 16-bit BF16),
+some do not support tool calls, without which the agent cannot work, and their
+reply ceilings range from about 8k to over 200k tokens. `AGENT_EXTRA_BODY`
+therefore pins the routing. Each of its fields does one thing:
+
+- `provider.order` lists the providers to try, in that order.
+- `provider.allow_fallbacks: false` stops OpenRouter from trying any provider
+  that is not on the list.
+- `provider.quantizations: ["bf16"]` refuses any endpoint that serves the model
+  below full precision.
+- `reasoning.enabled: true` turns the model's thinking on. OpenRouter ignores
+  vLLM's switch, so `AGENT_ENABLE_THINKING` has no effect here and can stay off.
+
+### Models we have run
+
+For each model below, OpenRouter's endpoint list on 2026-09-27 marks the named
+provider as serving full BF16 precision with tool calls and thinking. It is the
+only provider marked BF16 for Glimmer and Qwen; Gemma has a second one, Novita,
+which the next paragraph rules out. To switch models, change `AGENT_MODEL`, the
+provider name in `AGENT_EXTRA_BODY`, and `--max-tokens`.
+
+| Model | `AGENT_MODEL` | Provider | `--max-tokens` |
+|---|---|---|---|
+| Gemma 4 31B | `google/gemma-4-31b-it` | `crusoe` | 65536 |
+| Muse Glimmer 30B | `meta/muse-glimmer-30b` | `deepinfra` | 16384, the lifecycle default |
+| Qwen3.8 27B | `qwen/qwen3.8-27b` | `deepinfra` | 65536 |
+
+Three details come from past runs. DeepInfra caps Glimmer's replies at 16384
+tokens, and OpenRouter answers a larger `--max-tokens` with a 404 error, "Filter
+by Context Length", meaning that no allowed provider can serve a reply that
+long. Crusoe often turns Gemma requests away with short rate-limit errors
+(HTTP 429), which the harness's retries absorb. Novita, Gemma's second BF16
+provider, refused an 18k-token prompt as too long on 2026-09-22, so it is not a
+safe fallback.
+
+When the pinned provider is down, every request fails instead of being quietly
+rerouted. To run anyway, name another provider and drop the `quantizations`
+filter, as on 2026-09-26, when Gemma ran on Parasail's 8-bit endpoint because
+Crusoe was down. The trajectory records that routing, but the run is then no
+longer at full precision.
+
+### Settings for a single run
+
+Each setting above also works as an exported variable or a flag for a single
+run, as described in [Choosing the model server](#choosing-the-model-server),
+with one exception: the lifecycle wrapper has no `--extra-body` flag. It hands
+`AGENT_EXTRA_BODY` on to each phase, so export that one, in single quotes
+because it contains spaces and double quotes. The phase agent on its own does
+accept `--extra-body`. The key still comes from `.env`:
+
+```sh
+export AGENT_MODEL_SERVER=external
+export AGENT_EXTRA_BODY='{"provider": {"order": ["deepinfra"], "allow_fallbacks": false, "quantizations": ["bf16"]}, "reasoning": {"enabled": true}}'
+.venv/bin/python -m agent.lifecycle \
+  --model meta/muse-glimmer-30b \
+  --base-url https://openrouter.ai/api/v1 \
+  --task "<benchmark question>"
+```
+
+### In the cluster
+
+The unattended Job in
+[Autonomous Kubernetes lifecycle](#autonomous-kubernetes-lifecycle) reads the
+same settings from its environment block. Store the key as a Kubernetes secret
+so that it never appears in a manifest:
+
+```sh
+read -rs OPENROUTER_KEY   # paste the key; it is not echoed
+kubectl -n <namespace> create secret generic agent-openrouter \
+  --from-literal=AGENT_API_KEY="$OPENROUTER_KEY"
+```
+
+Then replace the `AGENT_MODEL`, `AGENT_BASE_URL` and `AGENT_MODEL_SERVER`
+entries in the Job's `env` list in `agent/k8s/lifecycle-controller.yml` with
+these:
+
+```yaml
+- name: AGENT_MODEL
+  value: google/gemma-4-31b-it
+- name: AGENT_BASE_URL
+  value: https://openrouter.ai/api/v1
+- name: AGENT_MODEL_SERVER
+  value: external
+- name: AGENT_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: agent-openrouter
+      key: AGENT_API_KEY
+- name: AGENT_EXTRA_BODY
+  value: '{"provider": {"order": ["crusoe"], "allow_fallbacks": false, "quantizations": ["bf16"]}, "reasoning": {"enabled": true}}'
+- name: AGENT_MAX_TOKENS
+  value: "65536"
+```
+
+The Job's `MODEL_SERVER_BASE_URL` and `MODEL_SERVER_MANIFEST` entries can stay.
+They are read only by the script that starts the bundled server, and with an
+external endpoint that script never runs.
 
 ## Self-hosted model server
 
@@ -246,26 +376,8 @@ both manifest paths and the model name for `agent/k8s/vllm-gemma4-31b.yml` and
 experiments, and the bare-model baseline runs by default -- pass
 `--no-baseline` to skip it.
 
-Either model also runs without any manifest through OpenRouter, which needs no
-GPU. Point the harness at the broker, name the model exactly as OpenRouter
-does, and pin the providers, since routing decides precision and whether tool
-calls work at all:
-
-```sh
-export AGENT_MODEL_SERVER=external
-export AGENT_EXTRA_BODY='{"provider": {"order": ["deepinfra"], "allow_fallbacks": false}, "reasoning": {"enabled": true}}'
-python agent/lifecycle.py \
-  --model meta/muse-glimmer-30b \
-  --base-url https://openrouter.ai/api/v1 \
-  --task "<the question to investigate>"
-```
-
-The wrapper has no `--extra-body` of its own; it passes `AGENT_EXTRA_BODY` to
-the phase agent, which does (`agent/harness/agent.py --extra-body`).
-
-`AGENT_API_KEY` carries the broker key; keep it in the gitignored `.env` or a
-Kubernetes secret, never in a manifest. Gemma's identifier is
-`google/gemma-4-31b-it`, and its full-precision provider is `crusoe`.
+Either model also runs without any manifest or GPU through OpenRouter; see
+[Using OpenRouter](#using-openrouter).
 
 All five manifests use the same pod and service names, so only one can be up
 at a time, and each keeps its own weights PVC, so switching between them never
