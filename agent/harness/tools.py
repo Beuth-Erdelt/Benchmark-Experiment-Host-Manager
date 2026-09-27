@@ -709,29 +709,36 @@ class Workspace:
             )
 
         lock_path = self.results_root / _RUN_LOCK
-        parallel = not _runlock.try_claim(lock_path, os.getpid())
-        if parallel and not self.allow_parallel_runs:
-            # The lock file outlives the process that wrote it. A controller
-            # restarted into a new container gets a fresh PID namespace, where
-            # the recorded PID may belong to an unrelated live process, and the
-            # lock would then never look free again. The status files, refreshed
-            # from the result folders, say whether an agent-started experiment
-            # is genuinely unfinished; with none, the lock is stale.
-            if self._unfinished_experiments():
-                raise ToolError(
-                    "submit refused: another agent-started experiment is still running")
-            _runlock.release(lock_path)
-            if not _runlock.try_claim(lock_path, os.getpid()):
-                raise ToolError(
-                    "submit refused: another agent-started experiment is still running")
-            parallel = False
-        # The operator asked for this run to go ahead anyway. The lock stays
-        # with its current holder; this run simply does not wait for it, and
-        # says so in its result so the trajectory records the choice.
-
-        code = None
+        # Deciding that no other run is active and reserving this run's code
+        # happen under one gate. A submission that has claimed the lock has
+        # then always reserved its code as well, so the next one deciding
+        # whether the lock is stale sees it among the unfinished experiments.
         try:
-            code = self._new_code()
+            with _runlock.gate(lock_path) as lock:
+                parallel = lock.held()
+                if parallel and not self.allow_parallel_runs:
+                    # The lock file outlives the process that wrote it. A
+                    # controller restarted into a new container gets a fresh
+                    # PID namespace, where the recorded PID may belong to an
+                    # unrelated live process, and the lock would then never
+                    # look free again. The status files, refreshed from the
+                    # result folders, say whether an agent-started experiment
+                    # is genuinely unfinished; with none, the lock is stale.
+                    if self._unfinished_experiments():
+                        raise ToolError(
+                            "submit refused: another agent-started experiment "
+                            "is still running")
+                    parallel = False
+                # With parallel runs allowed, the lock stays with its current
+                # holder; this run simply does not wait for it, and says so in
+                # its result so the trajectory records the choice.
+                code = self._new_code()
+                if not parallel:
+                    lock.set_holder(os.getpid())
+        except TimeoutError as error:
+            raise ToolError(f"submit refused: {error}") from error
+
+        try:
             submitted = (self.run_directory or self.inbox) / _SUBMITTED_SPEC
             submitted.write_bytes(contents)
             provenance = self._stage_provenance(submitted)
@@ -746,9 +753,8 @@ class Workspace:
         except Exception:
             if not parallel:
                 _runlock.release(lock_path)
-            if code is not None:
-                # Release the reserved code: nothing was launched under it.
-                (self.status_dir / f"{code}.json").unlink(missing_ok=True)
+            # Release the reserved code: nothing was launched under it.
+            (self.status_dir / f"{code}.json").unlink(missing_ok=True)
             raise
         # Hand the lock to the detached child's own PID, so it stays held for as
         # long as that process runs -- even after this one exits -- without

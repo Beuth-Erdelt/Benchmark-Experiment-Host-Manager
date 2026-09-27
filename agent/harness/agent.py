@@ -52,6 +52,8 @@ _TRAJECTORY_SUBDIR = "agent"
 _DEFAULT_BASE_URL = "http://localhost:8000/v1"
 _AGENT_SUMMARY_NAME = "agent_summary.yml"
 _AGENT_SUMMARY_VERSION = "1.0.0"
+#: Numbered variants tried when an investigation's timestamp name is taken.
+_INVESTIGATION_NAME_LIMIT = 99
 
 #: Validate calls allowed per run: one first attempt plus two repairs.
 _DEFAULT_ATTEMPTS = 3
@@ -2072,6 +2074,32 @@ def _record_run_directory(record: str | None, run_directory: Path) -> None:
         Path(record).write_text(str(run_directory.resolve()), encoding="utf-8")
 
 
+def _new_investigation_directory(trajectories: Path) -> Path:
+    """Create an investigation directory that no other agent shares.
+
+    The name is a timestamp, and agents started on the same clock tick --
+    Windows' clock can advance in steps of about 15 ms -- would otherwise both
+    take it and interleave their trajectories. The directory is therefore
+    created exclusively, and a name already taken gets a counter.
+
+    :param trajectories: Folder holding the investigation directories.
+    :return: The newly created, empty investigation directory.
+    """
+    trajectories.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%dT%H%M%S%f")
+    names = [stamp] + [
+        f"{stamp}-{number:02d}" for number in range(1, _INVESTIGATION_NAME_LIMIT + 1)
+    ]
+    for name in names:
+        candidate = trajectories / name
+        try:
+            candidate.mkdir()
+        except FileExistsError:
+            continue
+        return candidate
+    raise FileExistsError(f"investigation {stamp} and all its numbered variants exist")
+
+
 def _phase_number(run_directory: Path) -> int:
     """Return the next one-based phase number in an investigation."""
     log = run_directory / "trajectory.jsonl"
@@ -2392,7 +2420,7 @@ def main() -> int:
     status = args.status or str(trajectories / _DEFAULT_STATUS)
     source: Path | None = None
     if args.phase in ("design", "baseline"):
-        run_directory = trajectories / datetime.now().strftime("%Y%m%dT%H%M%S%f")
+        run_directory = _new_investigation_directory(trajectories)
     else:
         source = _resolve_investigation(root, args.run) if args.run else None
         if source is not None and not (source / "trajectory.jsonl").is_file():
@@ -2401,9 +2429,7 @@ def main() -> int:
         if source is None and not args.report:
             print("error: interpretation requires --run or --report", file=sys.stderr)
             return 2
-        run_directory = source or (
-            trajectories / datetime.now().strftime("%Y%m%dT%H%M%S%f")
-        )
+        run_directory = source or _new_investigation_directory(trajectories)
 
     phase_number = _phase_number(run_directory)
     phase_directory = run_directory / "phases" / f"{phase_number:02d}-{args.phase}"

@@ -8,6 +8,8 @@ import json
 import os
 import shutil
 import tempfile
+import threading
+import time
 import unittest
 from pathlib import Path
 from typing import Any
@@ -15,7 +17,7 @@ from unittest import mock
 
 import yaml
 
-from agent.harness import agent as agent_module, prompts, submit as submit_adapter
+from agent.harness import _runlock, agent as agent_module, prompts, submit as submit_adapter
 from agent.harness.agent import (
     _harness_revision,
     Trajectory,
@@ -2015,6 +2017,40 @@ resources:
 
         self.assertNotIn("error", result)
         self.assertFalse(result["parallel_with_running_experiment"])
+
+    def test_submit_waits_for_a_claim_in_progress_and_then_sees_it(self) -> None:
+        """Another agent claiming the lock must not look like a stale lock.
+
+        Its claim and its code reservation happen under one gate. A submission
+        arriving meanwhile waits and then finds the reservation, instead of
+        judging the lock stale in between and overwriting it.
+        """
+        self._validate()
+        lock_path = self.root / "results" / ".bexhoma-agent.lock"
+        claiming = threading.Event()
+
+        def other_agent() -> None:
+            with _runlock.gate(lock_path) as lock:
+                claiming.set()
+                time.sleep(0.3)
+                self.workspace._reserve_code("41")
+                lock.set_holder(os.getpid())
+
+        other = threading.Thread(target=other_agent)
+        other.start()
+        claiming.wait()
+        try:
+            with mock.patch("agent.harness.tools.subprocess.Popen") as popen:
+                result = self.workspace.call("submit", {"path": self.path})
+        finally:
+            other.join()
+
+        self.assertIn("still running", result["error"])
+        popen.assert_not_called()
+        self.assertEqual(lock_path.read_text(encoding="ascii"), str(os.getpid()))
+        self.assertEqual(
+            [path.name for path in self.workspace.status_dir.glob("*.json")], ["41.json"]
+        )
 
     def test_submit_may_be_allowed_alongside_a_running_experiment(self) -> None:
         """Serial is the default; sharing the cluster is a deliberate choice."""
@@ -4436,6 +4472,19 @@ class PhaseTest(unittest.TestCase):
             )
 
             self.assertEqual(_phase_number(investigation), 3)
+
+    def test_agents_started_on_the_same_clock_tick_get_their_own_directory(self) -> None:
+        """A shared timestamp name would interleave two agents' trajectories."""
+        with tempfile.TemporaryDirectory() as directory:
+            trajectories = Path(directory)
+            with mock.patch.object(agent_module, "datetime") as clock:
+                clock.now.return_value.strftime.return_value = "20260927T100000000000"
+                first = agent_module._new_investigation_directory(trajectories)
+                second = agent_module._new_investigation_directory(trajectories)
+
+            self.assertEqual(first.name, "20260927T100000000000")
+            self.assertEqual(second.name, "20260927T100000000000-01")
+            self.assertTrue(first.is_dir() and second.is_dir())
 
     def test_stages_expose_only_the_tools_they_need(self) -> None:
         def names(schemas):
