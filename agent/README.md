@@ -271,23 +271,23 @@ the phase agent, which does (`agent/harness/agent.py --extra-body`).
 Kubernetes secret, never in a manifest. Gemma's identifier is
 `google/gemma-4-31b-it`, and its full-precision provider is `crusoe`.
 
-All five manifests use the same pod and service names, so only one can be up
+All five manifests use the same Job and service names, so only one can be up
 at a time, and each keeps its own weights PVC, so switching between them never
 re-downloads any of their weights and none needs deleting. Kubernetes cannot
-change a running pod's container command or image in place, though, so
-switching which manifest is deployed needs the pod brought down first:
+change a Job's pod template in place, though, so switching which manifest is
+deployed needs the server brought down first:
 
 ```sh
 agent/model_server.sh down   # or agent/model_server.ps1 down
 MODEL_SERVER_MANIFEST=agent/k8s/vllm-glm45-air-int4.yml agent/model_server.sh up
 ```
 
-The switch does carry a safety net: it replaces a live pod automatically when
+The switch does carry a safety net: it replaces a live Job automatically when
 its `bexhoma.local/model-server-generation` annotation does not match the one
 in the manifest being applied (or `MODEL_SERVER_GENERATION`, when set), so `up`
 with a different manifest swaps the model by itself. With
 `AGENT_MODEL_SERVER=shared` it refuses instead, since another lifecycle may be
-using the running model, and the wrapper retries until that pod is gone.
+using the running model, and the wrapper retries until that Job is gone.
 
 **Context and namespace** are environment variables, and the manifest itself
 pins neither, so these decide where the server objects are created.
@@ -328,7 +328,7 @@ Getting the GPU labels wrong fails quietly rather than loudly: the pod stays
 unschedulable, and startup waits for capacity by design instead of reporting an
 error. When first bringing this up on a new cluster, pass
 `--server-start-attempts 3` so a misconfiguration surfaces as a failure, and
-check `kubectl describe pod` if it does.
+check `kubectl describe job/bexhoma-agent-model` if it does.
 
 ## One-command local lifecycle
 
@@ -400,6 +400,15 @@ GPU once twenty minutes pass without a request. Set `IDLE_SHUTDOWN_SECONDS` in
 the manifest to change that window, or to `0` to keep the server up until
 something deletes it. Running `agent/model_server.sh down` is still the quickest
 way to hand the GPU back.
+
+The server runs as a Kubernetes Job, so what the watchdog leaves behind cleans
+itself up too: ten minutes after the pod ends as `Completed`, Kubernetes deletes
+the Job and the pod (`ttlSecondsAfterFinished` in the manifest). Read why it
+stopped before then with `kubectl logs job/bexhoma-agent-model`. An `up` in the
+meantime replaces the finished Job itself. Container restarts count against the
+Job's `backoffLimit`, so a server that keeps crashing ends the Job and frees
+the GPU rather than restarting forever. A bare `bexhoma-agent-model` pod left
+over from before the server ran as a Job is deleted by the next `up` or `down`.
 
 ## Running two investigations at once
 

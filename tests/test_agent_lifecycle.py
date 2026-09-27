@@ -41,10 +41,15 @@ CONTROLLER_MANIFEST = (
 )
 
 
-def _model_pod() -> dict:
-    """Return the model server Pod document from the shipped manifest."""
+def _model_job() -> dict:
+    """Return the model server Job document from the shipped manifest."""
     documents = list(yaml.safe_load_all(MANIFEST.read_text(encoding="utf-8")))
-    return next(document for document in documents if document.get("kind") == "Pod")
+    return next(document for document in documents if document.get("kind") == "Job")
+
+
+def _model_pod() -> dict:
+    """Return the pod template the model server Job runs."""
+    return _model_job()["spec"]["template"]
 
 
 def _watchdog_script() -> str:
@@ -557,13 +562,28 @@ class AgentLifecycleTest(unittest.TestCase):
         # Always would restart the pod the moment the watchdog ended it.
         self.assertEqual(pod["spec"]["restartPolicy"], "OnFailure")
         self.assertEqual(
-            pod["metadata"]["annotations"]["bexhoma.local/model-server-generation"],
-            "idle-watchdog-v2",
+            _model_job()["metadata"]["annotations"][
+                "bexhoma.local/model-server-generation"],
+            "idle-watchdog-v3",
         )
         self.assertGreater(int(environment["IDLE_SHUTDOWN_SECONDS"]), 0)
         self.assertGreater(int(environment["IDLE_POLL_SECONDS"]), 0)
         # The shell has to survive the server launch to be able to watch it.
         self.assertIn("VLLM_PID=$!", container["args"][0])
+
+    def test_a_finished_model_server_is_removed_by_kubernetes(self) -> None:
+        """A Completed pod must not linger once the watchdog has ended it."""
+        job = _model_job()
+
+        self.assertGreater(job["spec"]["ttlSecondsAfterFinished"], 0)
+        # The Service finds the Job's pod, whose name is generated, by label.
+        service = next(
+            document for document in yaml.safe_load_all(
+                MANIFEST.read_text(encoding="utf-8"))
+            if document.get("kind") == "Service")
+        labels = _model_pod()["metadata"]["labels"]
+        for key, value in service["spec"]["selector"].items():
+            self.assertEqual(labels[key], value)
 
     def test_model_pod_startup_script_is_valid_shell(self) -> None:
         """This script only ever runs in-cluster, so syntax is checked here."""
