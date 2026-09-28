@@ -46,6 +46,7 @@ __all__ = [
     "load_environment",
     "evaluate_derive_expression",
     "parse_memory_quantity",
+    "normalize_memory_knob",
     "parse_cpu_quantity",
     "resolve_system_definition",
     "resolve_system",
@@ -62,7 +63,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.7.0"
+CATALOG_CONTRACT_VERSION = "1.8.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -239,6 +240,50 @@ def parse_memory_quantity(value: str) -> int:
         raise SpecError(f"invalid memory quantity {value!r}") from error
 
 
+def normalize_memory_knob(
+    knob_name: str,
+    value: Any,
+    memory_units: list[str],
+    memory_formatter: Callable[[int], Any],
+) -> Any:
+    """Bring a ``type: memory`` knob value into the system's own unit syntax.
+
+    Implements ``catalog_concepts.memory_knob_format``: an integer with one of
+    the system's ``memory_units`` and a bare integer pass through unchanged; a
+    Kubernetes quantity (``40Gi``) is converted to bytes and rewritten by
+    ``memory_formatter``. Anything else is rejected here, so it fails
+    validation instead of stopping the DBMS from starting.
+
+    :param knob_name: Knob name, for the error message.
+    :param value: The value from a profile's ``knobs:`` or ``systems[].override``.
+    :param memory_units: The system's own unit suffixes, e.g. ``["MB", "GB"]``.
+    :param memory_formatter: Formats a byte count in the system's own units.
+    :return: The value to apply.
+    :raises SpecError: When the value matches none of the accepted forms.
+    """
+    if isinstance(value, int) and not isinstance(value, bool):
+        return value
+    text = str(value).strip()
+    if text.isdigit():
+        return text
+    for unit in memory_units:
+        if text.endswith(unit) and text[: -len(unit)].isdigit():
+            return text
+    for suffix, _ in _MEMORY_UNITS:
+        if text.endswith(suffix):
+            try:
+                return memory_formatter(parse_memory_quantity(text))
+            except SpecError:
+                break
+    accepted = ", ".join(memory_units) if memory_units else "none declared"
+    raise SpecError(
+        f"memory knob '{knob_name}'={value!r} is not a valid value: use an "
+        f"integer with one of the system's units ({accepted}), e.g. 40GB, or "
+        f"a Kubernetes quantity such as 40Gi (see "
+        f"catalog_concepts.memory_knob_format)"
+    )
+
+
 def parse_cpu_quantity(value: Any) -> float:
     """Parse a Kubernetes-style CPU quantity into whole cores.
 
@@ -329,9 +374,10 @@ def resolve_system(
         (``name``, optional ``profile``, optional ``override``).
     :param resources: Experiment resource limits — ``memory_limit``,
         ``cpu_limit``, ``storage_class``, ``scaling_factor``.
-    :param memory_formatter: Formats a derived byte count for a
-        ``type: memory`` knob into the value the target system actually
-        expects (e.g. a PostgreSQL-style ``"20480MB"`` GUC string). Callers
+    :param memory_formatter: Formats a byte count for a ``type: memory``
+        knob — derived, or given as a Kubernetes quantity such as ``40Gi`` —
+        into the value the target system actually expects (e.g. a
+        PostgreSQL-style ``"20480MB"`` GUC string). Callers
         translating for a specific system pass its own formatter; defaults
         to a plain byte-count string when none is given.
     :return: The resolved system.
@@ -385,6 +431,10 @@ def resolve_system(
         if knob_name not in known_knobs:
             raise SpecError(f"system '{system_name}' has no knob '{knob_name}'")
         knob_meta = known_knobs[knob_name]
+        if knob_meta.get("type") == _KNOB_TYPE_MEMORY:
+            value = normalize_memory_knob(
+                knob_name, value, definition.get("memory_units", []), memory_formatter
+            )
         resolved.knobs[knob_name] = ResolvedKnob(
             name=knob_name,
             value=value,

@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.7.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.8.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -91,6 +91,12 @@ catalog_concepts:
     when: "a system declares its own default arg_style; an individual knob
       may override it -- e.g. duckdb_force_execution declares arg_style:
       env-var even though PgDuckDB's system-level default is pg-guc"
+  memory_knob_format:
+    semantics: "value of a type: memory knob, not a resource quantity: an
+      integer plus one of the system's memory_units (40GB), kept; a
+      Kubernetes quantity (40Gi), rewritten as 40960MB; or a bare integer,
+      kept, in the knob's base unit (8kB pages for shared_buffers)"
+    out_of_scope: "other spellings (40gb, 40 GB, 1.5GB)"
   sut_isolation:
     semantics: "every resolved configuration -- each systems[] entry, and
       each resource-sweep cell (see experiment_schema.fields.resources) --
@@ -781,6 +787,7 @@ systems:
     deployment: bexhoma-deployment-postgres
     image: postgres:18.3
     arg_style: pg-guc
+    memory_units: [B, kB, MB, GB, TB]
 
     engine:
       execution:   "row-based executor; uses PostgreSQL indexes when selective"

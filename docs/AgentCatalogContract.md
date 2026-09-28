@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.7.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.8.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   experimental_design:
@@ -48,6 +48,12 @@ catalog_concepts:                    # vocabulary used throughout this file's ow
   arg_style:      {semantics: "how a resolved knob is applied -- pg-guc (default): a --set ...GUC patch;
                                 env-var: via the knob's own env_var name instead; a knob may override its
                                 system's default"}
+  memory_knob_format: {semantics: "a type: memory knob value (profile knobs/derive or systems[].override) is
+                                an integer with one of the system's memory_units (40GB -- passed unchanged),
+                                a Kubernetes quantity (40Gi -- converted, e.g. to 40960MB for PostgreSQL), or a
+                                bare integer (passed unchanged, read in the knob's base unit, e.g. 8kB pages for
+                                shared_buffers)", out_of_scope: "40gb, '40 GB', 1.5GB, unlisted units -- rejected
+                                at validation"}
   knob_status:    {semantics: "a knob with status: reference-only exists in the DBMS but is commented out
                                 in the shipped k8s template -- still legal to set via profile/override,
                                 just not active by default. fixed: true (separate) marks a knob that isn't
@@ -102,7 +108,8 @@ experiment_schema:
                              to sweep every systems: entry against every list entry (one resolved
                              config per system*cell pair); cpu and memory sweep lists must share one length"}
   quantity_format:
-    memory_and_storage: {binary: [Ki, Mi, Gi, Ti], decimal: [K, M, G, T], out_of_scope: [KB, MB, GB, TB], examples: ["32G", "32Gi", "512Mi"]}
+    memory_and_storage: {binary: [Ki, Mi, Gi, Ti], decimal: [K, M, G, T], out_of_scope: [KB, MB, GB, TB], examples: ["32G", "32Gi", "512Mi"],
+                         out_of_scope_fields: "type: memory knob values -- see catalog_concepts.memory_knob_format"}
     cpu: {semantics: "cores, or millicores with trailing m", examples: ["8", "0.5", "500m"]}
 
 workloads:
@@ -201,6 +208,7 @@ systems:
   PostgreSQL:
     image: postgres:18.3
     arg_style: pg-guc
+    memory_units: [B, kB, MB, GB, TB]   # PgDuckDB inherits it via extends
     physical_design: {indexes: true, constraints: true, statistics: true, storage_format: [heap]}
     knobs_active_by_default: [max_connections, max_worker_processes, max_parallel_workers,
       max_parallel_workers_per_gather, max_parallel_maintenance_workers, shared_buffers,

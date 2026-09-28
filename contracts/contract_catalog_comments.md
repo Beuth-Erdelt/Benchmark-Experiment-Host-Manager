@@ -110,6 +110,34 @@ This moved the version 1.6.1 -> 1.7.0 (minor: a default changed; nothing
 that validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION`
 kept in lockstep.
 
+## Memory knobs take the DBMS's units, or a converted Kubernetes quantity (2026-09-28)
+
+A run failed at SUT start with PostgreSQL's `invalid value for parameter
+"shared_buffers": "40Gi"`. 40Gi is exactly the `analytical-ssd` formula
+(0.3125 x 128Gi) worked out by hand and written as a
+`systems[].override`. The `derive:` path already rewrote its result
+through the system's memory formatter (whole MB), but overrides were
+applied verbatim, and the contract never said which syntax a
+`type: memory` knob takes. The only memory-format rule it did state,
+`quantity_format`, is the Kubernetes one and explicitly rules out `GB`.
+So the contract actively steered an author towards `Gi`.
+
+`catalog_concepts.memory_knob_format` now defines the value, and
+`systems.<name>.memory_units` lists each system's own suffixes
+(PgDuckDB inherits PostgreSQL's via `extends:`). The resolver accepts both
+spellings rather than only the DBMS one: a Kubernetes quantity is
+converted to bytes and rewritten in the system's units, so a value
+copied from `resources.memory` works as-is. Bare integers still pass
+unchanged because PostgreSQL gives them a meaning (the knob's base unit),
+and rejecting them would break specs that validated before. Anything
+else (`40gb`, `40 GB`, `1.5GB`) is now a validation error instead of a
+crash-looping SUT pod.
+
+This moved the version 1.7.0 -> 1.8.0 (minor: a format was defined and a
+second spelling accepted; the only values now rejected are ones the DBMS
+would have refused at startup anyway), with `spec.CATALOG_CONTRACT_VERSION`
+kept in lockstep.
+
 ## Pinning loader and benchmarker pods is uncommon (2026-09-25)
 
 `placement.loading` and `placement.benchmarking` used to carry only a
