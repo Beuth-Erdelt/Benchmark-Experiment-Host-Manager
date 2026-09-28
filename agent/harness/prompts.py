@@ -371,7 +371,7 @@ _METHOD_MISSING = (
 #: How the environment descriptor is described when one exists for this cluster.
 _ENVIRONMENT_AVAILABLE = (
     "{path} -- the cluster you actually have: which nodes exist, what capacity "
-    "each has, and which storage classes are available."
+    "each has, and which storage classes are available. Do not expect to receive all of the node's resources."
     #"Placement and resource "
     #"requests must fit it. Nodes that cannot be used are listed separately, with "
     #"a reason, and naming one will be rejected."
