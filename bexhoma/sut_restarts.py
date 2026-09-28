@@ -44,6 +44,28 @@ _TOP_LEVEL_KEY = re.compile(r"^(\S[^:]*):\s*(.*)$")
 _INDENTED_NAME = re.compile(r"^  (\S[^:]*):\s*$")
 _FIELD = re.compile(r"^\s+([A-Za-z][\w .-]*?):\s*(.*)$")
 _MOUNT = re.compile(r"^\s+(/\S*) from (\S+) \(")
+_COUNTS_LINE = re.compile(r"^\d+(\s+\d+)*$")
+
+
+def clean_restart_counts(output: str | None) -> str:
+    """
+    Extract the per-container restart counts from raw kubectl output.
+
+    ``cluster.kubectl()`` merges stderr into stdout, so client-side warnings
+    (klog lines such as ``E0928 10:11:12.123 1234 memcache.go:265] ...``)
+    can surround the jsonpath result. Only a line made up entirely of
+    integers is the result; the last such line wins.
+
+    :param output: Raw kubectl output, possibly ``None`` on failure.
+    :return: Space-separated restart counts, or ``""`` if none were found.
+    :rtype: str
+    """
+    counts = ""
+    for line in (output or "").splitlines():
+        line = line.strip().strip('"')
+        if _COUNTS_LINE.match(line):
+            counts = line
+    return counts
 
 
 @dataclass
@@ -105,7 +127,10 @@ def read_restart_counts(result_dir: Path) -> tuple[dict[str, int], dict[str, str
         with open(restarts_file) as handle:
             pod_restarts: dict[str, str] = json.load(handle)
         for pod, counts in pod_restarts.items():
-            pod_total = sum(int(x) for x in counts.split()) if counts.strip() else 0
+            # Snapshots written before clean_restart_counts() existed may
+            # still carry kubectl warning lines.
+            counts = clean_restart_counts(counts)
+            pod_total = sum(int(x) for x in counts.split())
             if pod not in per_pod_total or pod_total > per_pod_total[pod]:
                 per_pod_total[pod] = pod_total
                 per_pod_raw[pod] = counts

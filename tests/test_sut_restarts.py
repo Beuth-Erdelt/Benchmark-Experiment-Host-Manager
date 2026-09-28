@@ -106,6 +106,23 @@ class ParseDescribeLogTest(unittest.TestCase):
         self.assertTrue(sut_restarts.has_data_volume(with_pvc.containers["dbms"], with_pvc.volume_types))
 
 
+class RestartCountsTest(unittest.TestCase):
+    """kubectl merges stderr into stdout, so warning lines surround the counts."""
+
+    _KLOG = "E0928 10:11:12.123456   1234 memcache.go:265] couldn't get current server API group list\n"
+
+    def test_clean_drops_kubectl_warnings(self) -> None:
+        self.assertEqual(sut_restarts.clean_restart_counts(self._KLOG + "1 0"), "1 0")
+        self.assertEqual(sut_restarts.clean_restart_counts(self._KLOG), "")
+        self.assertEqual(sut_restarts.clean_restart_counts(None), "")
+
+    def test_read_tolerates_polluted_snapshot(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            _write_result(result_dir, self._KLOG + "1 0", None)
+            self.assertEqual(sut_restarts.read_restart_counts(result_dir), ({_POD: 1}, {_POD: "1 0"}))
+
+
 class CollectRestartDetailsTest(unittest.TestCase):
     """Restart counts come from restarts.json; reasons from the describe log."""
 
