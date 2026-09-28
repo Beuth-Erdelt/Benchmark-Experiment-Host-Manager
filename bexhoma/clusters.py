@@ -1473,24 +1473,40 @@ class Kubernetes():
         nothing at their final path. A failed verification retries the whole
         upload (not just the rename), since the tmp file may also be gone.
 
-        Before each attempt the remote parent directory is created with
-        ``mkdir -p``: ``kubectl cp`` into a pod runs ``tar -C <parent>``, which
-        fails hard on a missing directory. ``/results/{code}`` in particular is
-        only created by benchmarking-job setup, so it does not exist when an
-        experiment fails before any benchmarker job ran (e.g. during loading).
+        Directory uploads (``filename_local`` ending in ``/.``) skip the tmp path
+        and rename and copy straight into ``filename_remote``. ``kubectl cp`` of a
+        directory is a merge into the existing target -- files present only in
+        the pod are kept -- which no single rename can do: ``rename()`` cannot
+        replace a non-empty directory, and ``mv`` onto an existing directory
+        moves the source *into* it instead. Such uploads are verified with
+        ``test -d`` on the target.
+
+        Before each attempt the remote directory is created with ``mkdir -p``:
+        ``kubectl cp`` into a pod runs ``tar -C <dir>``, which fails hard on a
+        missing directory. ``/results/{code}`` in particular is only created by
+        benchmarking-job setup, so it does not exist when an experiment fails
+        before any benchmarker job ran (e.g. during loading).
 
         :param filename_remote: Destination path inside the container.
-        :param filename_local: Source path on the local machine.
+        :param filename_local: Source path on the local machine. A path ending
+            in ``/.`` uploads the directory's contents.
         :param pod: Target Pod name.
         :param container: Target container name.  Defaults to ``dashboard``.
         :param max_retries: Maximum number of attempts before raising.
         :return: Output of the kubectl command.
         :raises RuntimeError: If every attempt returns a failure.
         """
+        is_directory = filename_local.replace('\\', '/').endswith('/.')
         filename_local = to_unc(filename_local)
-        filename_remote_tmp = filename_remote + '.uploadtmp'
-        dir_remote = posixpath.dirname(filename_remote_tmp)
-        cmd = f'cp "{filename_local}" {pod}:{filename_remote_tmp} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
+        if is_directory:
+            filename_remote_target = filename_remote
+            dir_remote = filename_remote.rstrip('/')
+            verify = f"test -d '{filename_remote}' && echo UPLOAD_OK"
+        else:
+            filename_remote_target = filename_remote + '.uploadtmp'
+            dir_remote = posixpath.dirname(filename_remote_target)
+            verify = f"test -s '{filename_remote}' && echo UPLOAD_OK"
+        cmd = f'cp "{filename_local}" {pod}:{filename_remote_target} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
             if dir_remote:
                 self.execute_command_in_pod(
@@ -1498,15 +1514,15 @@ class Kubernetes():
                     pod=pod, container=container)
             result = self.kubectl(cmd)
             if result is not None:
-                self.execute_command_in_pod(
-                    command=f"mv '{filename_remote_tmp}' '{filename_remote}'",
-                    pod=pod, container=container)
+                if not is_directory:
+                    self.execute_command_in_pod(
+                        command=f"mv '{filename_remote_target}' '{filename_remote}'",
+                        pod=pod, container=container)
                 _, verify_stdout, _ = self.execute_command_in_pod(
-                    command=f"test -s '{filename_remote}' && echo UPLOAD_OK",
-                    pod=pod, container=container)
+                    command=verify, pod=pod, container=container)
                 if 'UPLOAD_OK' in str(verify_stdout):
                     return result
-                print(f"upload_file: rename into place could not be verified for "
+                print(f"upload_file: upload could not be verified for "
                       f"{pod}:{filename_remote} (attempt {attempt}/{max_retries})")
             if attempt < max_retries:
                 print(f"upload_file: attempt {attempt}/{max_retries} failed, retrying in 10s ...")
