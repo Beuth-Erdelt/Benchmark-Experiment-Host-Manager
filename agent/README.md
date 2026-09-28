@@ -424,6 +424,9 @@ Startup retries indefinitely when neither has a free GPU. To fail
 after a bounded number of attempts, add for example
 `--server-start-attempts 3`. A zero benchmark timeout waits indefinitely; use
 `--benchmark-timeout-seconds <seconds>` when unattended work needs a deadline.
+Pods the scheduler refuses are logged but may pend indefinitely by default;
+`--unschedulable-timeout-seconds <seconds>` gives such a benchmark up and cleans
+it up once they have been refused that long.
 If the submitted benchmark process is definitively failed or has exited without
 a report, the wrapper invokes Bexhoma's experiment-scoped cleanup for that exact
 code. It does not remove shared monitoring, dashboard, or message-queue objects.

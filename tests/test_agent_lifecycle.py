@@ -150,6 +150,7 @@ class AgentLifecycleTest(unittest.TestCase):
                 model_server_manifest=None,
                 poll_seconds=1.0,
                 benchmark_timeout_seconds=0.0,
+                unschedulable_timeout_seconds=0.0,
                 server_retry_seconds=1.0,
                 server_start_attempts=1,
                 attempts=1,
@@ -220,7 +221,8 @@ class AgentLifecycleTest(unittest.TestCase):
             results=None, trajectories="trajectories", status="status",
             server_script="agent/model_server.sh", model_server_manifest=None,
             poll_seconds=1.0,
-            benchmark_timeout_seconds=0.0, server_retry_seconds=1.0,
+            benchmark_timeout_seconds=0.0, unschedulable_timeout_seconds=0.0,
+            server_retry_seconds=1.0,
             server_start_attempts=1, attempts=1, followups=0, temperature=0.0,
             max_tokens=1024, catalog="contracts/contract_catalog.yml",
             environment="dev/catalog/environment.yml", method="", inbox="inbox",
@@ -1010,7 +1012,10 @@ probe_activity() {{
         status_file = self.status / "101.json"
         refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
         cases = {
-            "given up as unschedulable": (self.config, refusal, "unschedulable"),
+            "given up as unschedulable": (
+                LifecycleConfig(
+                    **{**self.config.__dict__, "unschedulable_timeout_seconds": 900.0}),
+                refusal, "unschedulable"),
             "no longer waited for": (
                 LifecycleConfig(
                     **{**self.config.__dict__, "benchmark_timeout_seconds": 1.0}),
@@ -1242,6 +1247,7 @@ class UnschedulableBenchmarkTest(unittest.TestCase):
             inbox=self.inbox,
             server_script=self.root / "server.sh",
             poll_seconds=0.001,
+            unschedulable_timeout_seconds=900.0,
         )
         self.server = _Server()
 
@@ -1269,6 +1275,26 @@ class UnschedulableBenchmarkTest(unittest.TestCase):
             lifecycle._wait_for_report("101")
 
         self.assertEqual(lifecycle.cleaned_codes, ["101"])
+
+    def test_pods_pend_indefinitely_without_an_unschedulable_timeout(self) -> None:
+        report = self.results / "101" / "report" / "index.md"
+        refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
+        self.config = LifecycleConfig(
+            **{**self.config.__dict__, "unschedulable_timeout_seconds": 0.0})
+        lifecycle = self._waiting_lifecycle([refusal] * 400)
+        polls = []
+
+        def sleep(_seconds: float) -> None:
+            polls.append(1)
+            if len(polls) == 300:
+                report.parent.mkdir(parents=True, exist_ok=True)
+                report.write_text("done", encoding="utf-8")
+
+        lifecycle._sleep = sleep
+        with mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()):
+            self.assertEqual(lifecycle._wait_for_report("101"), report)
+
+        self.assertEqual(lifecycle.cleaned_codes, [])
 
     def test_a_pod_that_schedules_within_the_grace_period_is_not_failed(self) -> None:
         report = self.results / "101" / "report" / "index.md"

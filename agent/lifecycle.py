@@ -60,11 +60,6 @@ _WAIT_NOTICE_SECONDS = 600.0
 #: poll interval.
 _SCHEDULING_CHECK_SECONDS = 120.0
 
-#: How long every Pod of a benchmark may stay unschedulable before the run is
-#: given up. A Pod waiting for a node another tenant is using can be placed
-#: minutes later, but one refused for a quarter of an hour is not merely slow.
-_UNSCHEDULABLE_GRACE_SECONDS = 900.0
-
 #: How much of a refusal, or of the agent's own account, a failure message keeps.
 _REASON_CHARS = 400
 
@@ -166,6 +161,10 @@ class LifecycleConfig:
     results: Path | None = None
     poll_seconds: float = 30.0
     benchmark_timeout_seconds: float = 0.0
+    #: How long a benchmark's Pods may stay unschedulable before the run is
+    #: given up. Zero lets them pend forever: on a shared cluster a Pod waiting
+    #: for a node another tenant is using can be placed hours later.
+    unschedulable_timeout_seconds: float = 0.0
     server_retry_seconds: float = 60.0
     server_start_attempts: int = 0
 
@@ -500,7 +499,11 @@ class AgentLifecycle:
                         refused_since = time.monotonic()
                         print(f"benchmark {code} has Pods the scheduler is "
                               f"refusing:\n  " + "\n  ".join(refused), flush=True)
-                    elif time.monotonic() - refused_since >= _UNSCHEDULABLE_GRACE_SECONDS:
+                    elif (
+                        self.config.unschedulable_timeout_seconds > 0
+                        and time.monotonic() - refused_since
+                        >= self.config.unschedulable_timeout_seconds
+                    ):
                         # No state is recorded: the cleanup does not stop
                         # bexhoma's process, and while it may still run the
                         # harness must count this benchmark as occupying the
@@ -508,7 +511,8 @@ class AgentLifecycle:
                         self._cleanup_failed_benchmark(code)
                         raise LifecycleError(
                             f"benchmark {code} was unschedulable for "
-                            f"{_UNSCHEDULABLE_GRACE_SECONDS / 60:.0f} min and was "
+                            f"{self.config.unschedulable_timeout_seconds / 60:.0f} "
+                            f"min and was "
                             f"given up:\n  " + "\n  ".join(refused)
                         )
                 elif refused == []:
@@ -736,6 +740,10 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--poll-seconds", type=float, default=30.0)
     parser.add_argument("--benchmark-timeout-seconds", type=float, default=0.0,
                         help="zero waits indefinitely")
+    parser.add_argument("--unschedulable-timeout-seconds", type=float, default=0.0,
+                        help="give a benchmark up, and remove it from the cluster, "
+                             "once its Pods have been unschedulable this long; "
+                             "zero lets them pend indefinitely")
     parser.add_argument("--server-retry-seconds", type=float, default=60.0)
     parser.add_argument(
         "--server-start-attempts", type=int, default=0,
@@ -795,6 +803,7 @@ def main() -> int:
     if (
         args.poll_seconds <= 0
         or args.benchmark_timeout_seconds < 0
+        or args.unschedulable_timeout_seconds < 0
         or args.server_retry_seconds <= 0
         or args.server_start_attempts < 0
     ):
@@ -841,6 +850,7 @@ def main() -> int:
         server_script=_path_from_root(root, args.server_script),
         poll_seconds=args.poll_seconds,
         benchmark_timeout_seconds=args.benchmark_timeout_seconds,
+        unschedulable_timeout_seconds=args.unschedulable_timeout_seconds,
         server_retry_seconds=args.server_retry_seconds,
         server_start_attempts=args.server_start_attempts,
     )

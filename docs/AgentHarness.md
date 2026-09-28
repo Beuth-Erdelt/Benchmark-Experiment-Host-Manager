@@ -202,6 +202,9 @@ Useful flags:
   is definitively failed or has exited with no report, the wrapper invokes
   bexhoma's experiment-scoped cleanup for that exact experiment code and leaves
   shared monitoring and message-queue objects alone.
+- `--unschedulable-timeout-seconds S` gives a benchmark up, and removes it from
+  the cluster, once its Pods have been refused by the scheduler for S seconds.
+  The default of zero lets them pend indefinitely; the refusal is still logged.
 - `--dry-run` designs and validates but never submits.
 
 After a terminal disconnect, resume an investigation that already submitted its
