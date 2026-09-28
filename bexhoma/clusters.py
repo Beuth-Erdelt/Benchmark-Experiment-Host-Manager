@@ -16,6 +16,7 @@ from kubernetes.client.rest import ApiException
 import subprocess
 import traceback
 import os
+import posixpath
 import psutil
 import logging
 import socket
@@ -1472,6 +1473,12 @@ class Kubernetes():
         nothing at their final path. A failed verification retries the whole
         upload (not just the rename), since the tmp file may also be gone.
 
+        Before each attempt the remote parent directory is created with
+        ``mkdir -p``: ``kubectl cp`` into a pod runs ``tar -C <parent>``, which
+        fails hard on a missing directory. ``/results/{code}`` in particular is
+        only created by benchmarking-job setup, so it does not exist when an
+        experiment fails before any benchmarker job ran (e.g. during loading).
+
         :param filename_remote: Destination path inside the container.
         :param filename_local: Source path on the local machine.
         :param pod: Target Pod name.
@@ -1482,8 +1489,13 @@ class Kubernetes():
         """
         filename_local = to_unc(filename_local)
         filename_remote_tmp = filename_remote + '.uploadtmp'
+        dir_remote = posixpath.dirname(filename_remote_tmp)
         cmd = f'cp "{filename_local}" {pod}:{filename_remote_tmp} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
+            if dir_remote:
+                self.execute_command_in_pod(
+                    command=f"mkdir -p '{dir_remote}'",
+                    pod=pod, container=container)
             result = self.kubectl(cmd)
             if result is not None:
                 self.execute_command_in_pod(
