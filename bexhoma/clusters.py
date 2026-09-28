@@ -73,6 +73,14 @@ CLUSTER_UNREACHABLE_MESSAGES = (
     'Error from server (Forbidden)',
 )
 
+#: Fragments of a kubectl ``error:`` line meaning the command failed before
+#: anything was sent, so any command can be repeated. ``create -f`` first
+#: downloads the OpenAPI schema to validate the manifest; a flaky connection
+#: makes that download fail with ``failed to download openapi: unknown``.
+CLUSTER_NOT_SENT_MESSAGES = (
+    'failed to download openapi',
+)
+
 #: Fragments of a kubectl ``error:`` line meaning the connection broke while
 #: the command may already have been running, so only commands that are safe
 #: to repeat may be retried.
@@ -109,6 +117,9 @@ def is_cluster_connection_error(output: str, include_interrupted: bool = True) -
     for line in output.splitlines():
         line = line.strip()
         if line.startswith(CLUSTER_UNREACHABLE_MESSAGES):
+            return True
+        if (line.startswith('error:')
+                and any(message in line for message in CLUSTER_NOT_SENT_MESSAGES)):
             return True
         if (include_interrupted and line.startswith('error:')
                 and any(message in line for message in CLUSTER_INTERRUPTED_MESSAGES)):

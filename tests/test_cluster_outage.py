@@ -81,6 +81,13 @@ class ClusterOutageTest(unittest.TestCase):
             'Error from server (Forbidden): pods "bexhoma-benchmarker-x" is forbidden: '
             'User "keycloak:perdelt" cannot get resource "pods" in API group "" '
             'in the namespace "perdelt"\n', include_interrupted=False))
+        # create -f fails validating the manifest before sending anything.
+        self.assertTrue(is_cluster_connection_error(
+            'error: error validating "D:/data/benchmarks/1790573665/'
+            'deploymenttemplate-bexhoma-dashboard.yml": error validating data: '
+            'failed to download openapi: unknown; if you choose to ignore these '
+            'errors, turn validation off with --validate=false\n',
+            include_interrupted=False))
 
     def test_api_query_waits_until_the_api_server_is_back(self) -> None:
         """A pod query during an outage must return once the server answers."""
