@@ -59,6 +59,13 @@ CLUSTER_API_RETRIES = 14
 CLUSTER_API_BACKOFF_FACTOR = 1
 CLUSTER_API_BACKOFF_MAX_SECONDS = 30
 
+#: Default (connect, read) timeout in seconds of every Kubernetes Python client
+#: request. Without it urllib3 waits indefinitely, so a connection the API
+#: server accepts but never answers (e.g. a load balancer forwarding the TLS
+#: handshake to a hung backend) blocks for minutes instead of being retried.
+#: The connect timeout also covers the TLS handshake.
+CLUSTER_API_TIMEOUT_SECONDS = (5, 60)
+
 #: kubectl messages meaning the request was never carried out, so any command
 #: can be repeated. They are matched at the start of a line because the
 #: operating system's (localized) explanation follows them. ``Forbidden``
@@ -323,6 +330,8 @@ class Kubernetes():
         that the retry policy must be set before the client builds its
         connection pool. Without it, an unreachable API server raises a
         urllib3 error that none of the ``ApiException`` handlers catch.
+        Requests that do not set ``_request_timeout`` themselves get
+        :data:`CLUSTER_API_TIMEOUT_SECONDS`, so a stalled connection is retried.
         """
         configuration = kubernetes_client.Configuration()
         kubernetes_config.load_kube_config(context=self.context, client_configuration=configuration)
@@ -331,7 +340,16 @@ class Kubernetes():
             backoff_factor=CLUSTER_API_BACKOFF_FACTOR,
             backoff_max=CLUSTER_API_BACKOFF_MAX_SECONDS,
         )
-        return kubernetes_client.ApiClient(configuration=configuration)
+        api_client = kubernetes_client.ApiClient(configuration=configuration)
+        # the client passes timeout=None to urllib3 when no _request_timeout is
+        # given, which overrides any pool default, so set it per request
+        request = api_client.rest_client.request
+
+        def request_with_timeout(*args, _request_timeout=None, **kwargs):
+            return request(*args, _request_timeout=_request_timeout or CLUSTER_API_TIMEOUT_SECONDS, **kwargs)
+
+        api_client.rest_client.request = request_with_timeout
+        return api_client
 
     def get_available_storage_types(self) -> list:
         """

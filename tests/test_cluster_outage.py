@@ -119,6 +119,41 @@ class ClusterOutageTest(unittest.TestCase):
             self.assertEqual(cluster.get_pods(component='sut'), [])
         self.assertEqual(backoffs, [2, 4])
 
+    def test_api_query_retries_a_request_nobody_answers(self) -> None:
+        """A connection the server accepts but never answers must not block the query."""
+        requests = []
+        release = threading.Event()
+        self.addCleanup(release.set)
+
+        class FirstRequestHangsHandler(_EmptyPodListHandler):
+            """Leave the first request unanswered, like a hung API server backend."""
+
+            def do_GET(self) -> None:
+                requests.append(self.path)
+                if len(requests) == 1:
+                    release.wait()
+                    return
+                super().do_GET()
+
+        server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), FirstRequestHangsHandler)
+        server.daemon_threads = True
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+
+        def point_at_local_server(context=None, client_configuration=None) -> None:
+            """Stand in for kubeconfig loading."""
+            client_configuration.host = f'http://127.0.0.1:{server.server_port}'
+
+        cluster = _bare_cluster()
+        with mock.patch.object(clusters.kubernetes_config, 'load_kube_config',
+                               side_effect=point_at_local_server), \
+                mock.patch.object(clusters, 'CLUSTER_API_TIMEOUT_SECONDS', (1, 1)):
+            cluster.v1core = kubernetes_client.CoreV1Api(api_client=cluster._new_api_client())
+            with mock.patch('urllib3.util.retry.time.sleep'):
+                self.assertEqual(cluster.get_pods(component='sut'), [])
+        self.assertEqual(len(requests), 2)
+
     def test_kubectl_retries_until_the_cluster_is_back(self) -> None:
         """A kubectl command must be repeated until the cluster answers."""
         cluster = _bare_cluster()
