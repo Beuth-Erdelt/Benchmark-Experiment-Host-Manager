@@ -4651,6 +4651,23 @@ class PhaseTest(unittest.TestCase):
         )
 
         self.assertNotIn("Method before verdict", messages[0]["content"])
+        self.assertNotIn("opens the handbook", messages[0]["content"])
+
+    def test_interpret_prompt_says_read_file_opens_the_handbook(self) -> None:
+        """Told only to follow the report's links, models looked for the handbook
+        relative to the report and guessed paths for turns on end."""
+        messages = prompts.interpret_messages(
+            task="Which configuration is faster?",
+            report_path="/state/results/42/report/index.md",
+            result_contract_path="/state/results/42/contract_result.yml",
+            specification=_SPEC,
+            method_path="agent/handbook/handbook.md",
+        )
+
+        system = messages[0]["content"]
+        read_file = system[system.index("- read_file("):system.index("- assess_comparison_quality(")]
+        self.assertIn("It also opens the handbook at agent/handbook/handbook.md.", read_file)
+        self.assertIn("the report does not link to it", system)
 
 
 class ClusterCredentialTest(unittest.TestCase):

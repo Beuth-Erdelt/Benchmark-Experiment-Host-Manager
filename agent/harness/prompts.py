@@ -168,7 +168,8 @@ rather than inferring or approximating the count.
 # Tools
 
 - read_file(path, section?) reads the report, the files it links to, and the
-  result contract. Use `section` for targeted reads from large Markdown pages.
+  result contract.{handbook_read} Use `section` for targeted reads from large
+  Markdown pages.
 - assess_comparison_quality(path) deterministically checks a `benchmarking.md`
   page for incomplete query coverage, non-comparable whole-workload throughput,
   suspicious repetitions, and checkable result claims. Its result
@@ -343,8 +344,10 @@ _METHOD_INTERPRET_REQUIRED = """\
 # Method before verdict
 
 {path} is the experiment design handbook -- the methodological guidance the
-design phase works from. Its principles govern reading a measurement as much as
-planning one, and it carries identifiers such as M2.3 so a specific principle
+design phase works from. It lies outside the result folder, and read_file
+opens it by exactly that path: the report does not link to it, and it does not
+sit relative to the report. Its principles govern reading a measurement as much
+as planning one, and it carries identifiers such as M2.3 so a specific principle
 can be pointed at.
 
 Before you may record a verdict you must read, by their exact headings and in
@@ -507,6 +510,7 @@ def interpret_messages(
         )
     system = INTERPRET_SYSTEM_PROMPT.format(
         result_contract_path=result_contract_path, method_requirement=requirement,
+        handbook_read="" if method_path is None else f" It also opens the handbook at {method_path}.",
         followup_budget=followup_budget)
     user = f"The question was:\n\n{task}\n\nThe report is at {report_path}."
     if specification:
