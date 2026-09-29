@@ -554,6 +554,12 @@ def _converse(
             messages.append({"role": "tool", "tool_call_id": call.id,
                              "content": json.dumps(result, ensure_ascii=False)})
 
+        # A record accepted on the last turn left no turn for the closing answer,
+        # and a phase without one counts as incomplete although its work is done.
+        # It gets that one turn, with the tools withdrawn because it is finished.
+        if finished and turn == max_turns:
+            max_turns += 1
+
     return summary, turn, events
 
 
@@ -1073,6 +1079,21 @@ def _withheld_rate_notice(assessment: dict[str, Any] | None) -> str:
     )
 
 
+def _is_one_of(value: Any, allowed: set[str]) -> bool:
+    """Report whether a value the model sent is one of a closed set of words.
+
+    Testing membership directly raises for an object or a list, which are
+    unhashable. Nex-N2.5-mini sent each question's validity as an object, and
+    the resulting TypeError ended the whole phase instead of refusing the record.
+
+    :param value: The value as the model sent it.
+    :param allowed: The words it must be one of.
+    :return: ``True`` when the value is one of them.
+    :rtype: bool
+    """
+    return isinstance(value, str) and value in allowed
+
+
 class _InterpretationGate:
     """Require validity-first reads and trace every cited evidence path."""
 
@@ -1232,13 +1253,15 @@ class _InterpretationGate:
         verdict_statuses = {"supported", "refuted", "inconclusive", "invalid"}
         if (
             not isinstance(hypothesis_verdict, dict)
-            or hypothesis_verdict.get("status") not in verdict_statuses
+            or not _is_one_of(hypothesis_verdict.get("status"), verdict_statuses)
             or not isinstance(hypothesis_verdict.get("conclusion"), str)
             or not hypothesis_verdict["conclusion"].strip()
         ):
             return {
                 "error": (
-                    "hypothesis_verdict needs a valid status and a non-empty conclusion"
+                    "hypothesis_verdict needs a status that is one of "
+                    f"{', '.join(sorted(verdict_statuses))}, and a non-empty "
+                    "conclusion"
                 )
             }
         verdict_paths = hypothesis_verdict.get("evidence_paths")
@@ -1311,14 +1334,22 @@ class _InterpretationGate:
         statuses = {"settled", "partial", "unresolved"}
         validity_states = {"supported", "limited", "invalid"}
         text_fields = {"question", "status", "conclusion", "evidence", "missing"}
-        for question in questions:
-            if (
-                not isinstance(question, dict)
-                or question.get("status") not in statuses
-                or question.get("validity") not in validity_states
-                or any(not isinstance(question.get(field), str) for field in text_fields)
-            ):
-                return {"error": "every question needs all text fields and valid states"}
+        for index, question in enumerate(questions):
+            if not isinstance(question, dict):
+                return {"error": f"questions[{index}] must be an object"}
+            # A refusal that only said "valid states" left the model guessing
+            # which field was wrong, so each names the field and its words.
+            for field, allowed in (("status", statuses), ("validity", validity_states)):
+                if not _is_one_of(question.get(field), allowed):
+                    return {"error": (
+                        f"questions[{index}].{field} must be one word: "
+                        f"{', '.join(sorted(allowed))}"
+                    )}
+            not_text = sorted(
+                field for field in text_fields if not isinstance(question.get(field), str)
+            )
+            if not_text:
+                return {"error": f"questions[{index}] needs text in: {', '.join(not_text)}"}
             unread_evidence = self._unread(question.get("evidence_paths"))
             if unread_evidence is None:
                 return {"error": "every question needs non-empty evidence_paths"}
@@ -1340,7 +1371,7 @@ class _InterpretationGate:
         if not isinstance(follow_up, dict):
             return {"error": "follow_up must be an object"}
         action = follow_up.get("action")
-        if action not in {"finish", "followup"}:
+        if not _is_one_of(action, {"finish", "followup"}):
             return {"error": "follow_up.action must be finish or followup"}
         if not isinstance(follow_up.get("rationale"), str) or not follow_up["rationale"]:
             return {"error": "follow_up needs a rationale"}

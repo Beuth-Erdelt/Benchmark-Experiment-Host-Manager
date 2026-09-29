@@ -3570,6 +3570,82 @@ resources:
                 environment_path=None,
             )
 
+    def test_an_object_where_a_word_belongs_is_refused_not_a_crash(self) -> None:
+        """Nex-N2.5-mini sent each question's validity as {scope, evidence_paths};
+        the membership test raised on the unhashable dict and killed the phase.
+        A list is unhashable too, wherever a closed set of words is expected."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        valid = _record_arguments([assessment])
+        object_validity = _record_arguments([{
+            **assessment,
+            "validity": {"scope": "Q1 only", "evidence_paths": [_REPORT_PATH]},
+        }])
+        list_action = {**valid, "follow_up": {**valid["follow_up"], "action": ["finish"]}}
+        list_status = {**valid, "hypothesis_verdict": {
+            **valid["hypothesis_verdict"], "status": ["inconclusive"]}}
+        model = _Model([
+            _evidence_record_reply("object", object_validity),
+            _tool_reply(ToolCall("list", "record_interpretation", list_action)),
+            _tool_reply(ToolCall("status", "record_interpretation", list_status)),
+            _tool_reply(ToolCall("valid", "record_interpretation", valid)),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
+        self.assertTrue(outcome["phase_complete"])
+        self.assertIsNone(outcome["incomplete_record"])
+        refusals = [
+            event["result"]["error"]
+            for event in map(json.loads, (self.run / "trajectory.jsonl").read_text().splitlines())
+            if event["type"] == "tool_call" and event["tool"] == "record_interpretation"
+            and "error" in event["result"]
+        ]
+        self.assertEqual(refusals, [
+            "questions[0].validity must be one word: invalid, limited, supported",
+            "follow_up.action must be finish or followup",
+            "hypothesis_verdict needs a status that is one of inconclusive, invalid, "
+            "refuted, supported, and a non-empty conclusion",
+        ])
+
+    def test_a_record_accepted_on_the_last_turn_still_gets_its_closing_answer(self) -> None:
+        """Without the closing text the phase counted as incomplete, and the Job
+        that ran it failed although the verdict had been recorded."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        last_turn = agent_module._INTERPRET_TURNS + agent_module._CLOSING_TURNS
+        reads = [
+            _tool_reply(ToolCall(f"read-{turn}", "read_file", {"path": _REPORT_PATH}))
+            for turn in range(last_turn - 1)
+        ]
+        model = _Model([
+            *reads,
+            _evidence_record_reply("record", _record_arguments([assessment])),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
+        self.assertTrue(outcome["phase_complete"])
+        self.assertEqual(outcome["turns"], last_turn + 1)
+        # The closing turn is offered without tools: the phase is finished.
+        self.assertEqual(model.tool_sets[-1], set())
+
     def test_interpretation_requires_report_contract_and_read_evidence(self) -> None:
         assessment = {
             "question": "is it faster?", "status": "settled", "conclusion": "yes",
