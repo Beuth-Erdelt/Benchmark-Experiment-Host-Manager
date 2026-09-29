@@ -2462,11 +2462,6 @@ def main() -> int:
               "Pass an existing --method, or an empty one (set AGENT_METHOD empty) "
               "to design without a handbook.", file=sys.stderr)
         return 2
-    # The prompts name the handbook by this path. The interpretation prompt's other
-    # paths are absolute, and models told a root-relative one kept prefixing a
-    # slash to it and then hunting for the file.
-    if method_path is not None:
-        method_path = str((root / method_path).resolve())
     # The baseline phase has no tools and no design space, so it needs no
     # workspace; building one would only assert a catalog it never reads.
     workspace = None if args.phase == "baseline" else tools.Workspace(
