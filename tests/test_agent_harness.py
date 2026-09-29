@@ -4226,6 +4226,35 @@ class PhaseTest(unittest.TestCase):
             design.assert_not_called()
             self.assertIn("no experiment design handbook at", stderr.getvalue())
 
+    def test_the_handbook_is_named_by_its_absolute_path(self) -> None:
+        """The report paths are absolute; a relative handbook path got mangled."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            (root / "contracts").mkdir()
+            (root / "contracts" / "contract_catalog.yml").write_text("version: 1\n")
+            (root / "results").mkdir()
+            handbook = root / "agent" / "handbook" / "handbook.md"
+            handbook.parent.mkdir(parents=True)
+            handbook.write_text("## Navigation\n")
+
+            argv = [
+                "agent", "--model", "fake", "--root", str(root),
+                "--trajectories", "investigations", "--results", str(root / "results"),
+                "--environment", "", "--task", "question",
+                "--method", "agent/handbook/handbook.md",
+            ]
+            with (
+                mock.patch("sys.argv", argv),
+                mock.patch("agent.harness.agent.model_client.ChatModel"),
+                mock.patch(
+                    "agent.harness.agent.run_design", side_effect=RuntimeError("stop")
+                ) as design,
+                self.assertRaises(RuntimeError),
+            ):
+                agent_main()
+
+            self.assertEqual(design.call_args.kwargs["method_path"], str(handbook))
+
     def test_an_exhausted_context_window_is_reported_and_recorded(self) -> None:
         """A phase that outgrew the window must say so, not die mid-turn."""
         with tempfile.TemporaryDirectory() as directory:
