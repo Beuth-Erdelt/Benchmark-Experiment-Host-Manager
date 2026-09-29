@@ -408,6 +408,39 @@ class WorkspaceTest(unittest.TestCase):
         with self.assertRaises(ToolError):
             workspace.peek_text("agent/handbook/handbook_source_map.md")
 
+    def test_a_refused_read_aimed_at_the_handbook_names_its_path(self) -> None:
+        """Models guessed mount points for turns on end when the refusal said only 'no'."""
+        method = self.root / "agent" / "handbook" / "handbook.md"
+        method.parent.mkdir(parents=True, exist_ok=True)
+        method.write_text("# Method contract\n")
+        (method.parent / "handbook_appendix.md").write_text("# Appendix\n")
+        workspace = Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            method_path="agent/handbook/handbook.md",
+            results_root=str(self.root / "results"), run_directory=self.run,
+        )
+
+        def refusal(path: str) -> str:
+            return workspace.call("read_file", {"path": path})["error"]
+
+        # Design phase: the read scope is the contracts, the inbox and the handbook.
+        self.assertIn("readable as 'agent/handbook/handbook.md'",
+                      refusal("/agent/handbook/handbook.md"))
+        self.assertIn("readable as 'agent/handbook/handbook_appendix.md'",
+                      refusal("handbook_appendix.md"))
+        self.assertNotIn("handbook", refusal("/etc/hostname"))
+
+        workspace.restrict_to_result(_REPORT_PATH, _RESULT_CONTRACT_PATH)
+
+        for guess in ("/agent/handbook/handbook.md", "handbook.md",
+                      "../handbook/handbook.md", "/state/results/1/agent/handbook/handbook.md"):
+            message = refusal(guess)
+            self.assertIn("not reachable from the selected report", message)
+            self.assertIn("readable as 'agent/handbook/handbook.md'", message)
+        self.assertNotIn("handbook", refusal("results/old/report/secret.md"))
+        self.assertIn("text", workspace.read_file("agent/handbook/handbook.md"))
+
     def test_a_claim_no_measurement_could_refute_is_rejected(self) -> None:
         """M1.1: adequacy language means every possible run confirms the hypothesis."""
         self.workspace.write_file(self.path, _SPEC.replace(

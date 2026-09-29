@@ -249,6 +249,8 @@ class Workspace:
         self.method_path = (
             str((self.root / method_path).resolve()) if method_path else None
         )
+        # The handbook as the prompts name it, which a refused read quotes back.
+        self._method_named = method_path or None
         self.results_root = Path(results_root).resolve() if results_root else None
         self.status_dir = (self.root / status_dir).resolve()
         self.run_directory = run_directory
@@ -385,6 +387,7 @@ class Workspace:
                 return candidate
             raise ToolError(
                 f"path {path!r} is not reachable from the selected report"
+                + self._handbook_hint(candidate)
             )
         if str(candidate) in self._readable_files:
             return candidate
@@ -393,7 +396,31 @@ class Workspace:
         raise ToolError(
             f"path {path!r} is outside the read scope; you may read the contract "
             "files you were pointed at and your own drafts, and nothing else"
+            + self._handbook_hint(candidate)
         )
+
+    def _handbook_hint(self, candidate: Path) -> str:
+        """Name the handbook's readable path when a refused read was aiming at it.
+
+        The prompts name the handbook relative to :attr:`root`, beside absolute
+        report paths. Models have prefixed it with a slash or guessed a mount
+        point, and a refusal that only said the path was out of scope set them
+        guessing further, one turn per guess.
+
+        :param candidate: The resolved path that was refused.
+        :return: A clause to append to the refusal, or ``""`` when the read was
+            not aimed at the handbook or its appendix.
+        :rtype: str
+        """
+        if not self._method_named:
+            return ""
+        named = Path(self._method_named)
+        if candidate.name == named.name:
+            return f"; the handbook is readable as {self._method_named!r}, exactly as written"
+        if self.method_appendix_path and candidate.name == Path(self.method_appendix_path).name:
+            appendix = named.with_name(Path(self.method_appendix_path).name)
+            return f"; the handbook appendix is readable as {str(appendix)!r}, exactly as written"
+        return ""
 
     def peek_text(self, path: str) -> str:
         """Return a readable file's text for the harness's own checks.
