@@ -83,6 +83,65 @@ The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
 fields corrected and conditions added; nothing that validated before is
 rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
 
+## tpch `loading.pods` defaults to 8 (2026-09-30)
+
+`workloads.tpch.loading.pods` now carries `default: 8`, and its `why:` tells
+the agent to keep it unless the hypothesis states a reason to change it.
+Loader pod count is rarely the variable under study, and an arbitrary
+choice per experiment made loading times incomparable across runs.
+`tpch.py`'s own `-nlp` default stays 1, so `tpch_catalog.build_tpch_argv()`
+reads the catalog default and emits `-nlp 8` explicitly when `pods` is
+omitted. Folded into 1.9.0 (not yet released) as an additive change.
+
+## `observe:` parked while the agent is a prototype (2026-09-30)
+
+Monitoring is switched off for the agent while it is a prototype: the
+`observe:` block was taken out of `experiment_schema.fields`, leaving a
+one-line placeholder comment where it stood, so the agent no longer sees the
+option and the validator rejects `observe:` as an unknown top-level field.
+The block is kept here verbatim; to re-enable monitoring, paste it back in
+place of the placeholder (same indentation, between `systems:` and
+`placement:`), add `"observe"` back to the section tuple in
+`agent/harness/validation.py::_check_contract_shape`, and bump the version.
+
+Only the agent loses the option. `build_argv()` still maps `observe` to
+`-m`/`-mc`/`-ma`, so catalog runs through `experiment.py` can still monitor.
+
+The block moved the version 1.8.0 -> 1.9.0 (minor, as for the
+`loading.split` removal: a field that validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in
+lockstep.
+
+```yaml
+    observe:
+      type: object
+      when: "only relevant when the hypothesis needs hardware metrics (CPU
+        and memory use, and GPU use where present) or database-internal
+        statistics -- leave all three off otherwise. Readings only become
+        reliable after a few scrape intervals have accumulated: a phase
+        shorter than roughly 2-5 minutes can show 0/NaN readings rather than
+        a real signal, so keep rounds/query_repeats long enough for the phase
+        to clear this warm-up window if monitoring results matter"
+      fields:
+        monitoring_sut: {type: bool, semantics: "collect hardware metrics of
+          the system under test for this experiment"}
+        monitoring_cluster:
+          type: bool
+          semantics: "collect the same hardware metrics from a monitoring
+            installation that covers every node of the cluster; it is shared
+            by all experiments and reused if it is already running"
+          when: "use it instead of monitoring_sut when load outside the SUT
+            matters, e.g. on the benchmarker's node; turning on both is the
+            same as turning on monitoring_cluster alone"
+        monitoring_app:
+          type: bool
+          semantics: "attach the database's own metrics exporter to the SUT
+            and collect its internal statistics, such as connections, buffer
+            cache hits and lock waits"
+          when: "only takes effect together with monitoring_sut or
+            monitoring_cluster, and only for systems that define an exporter
+            (PostgreSQL and PgDuckDB in this catalog)"
+```
+
 ## Pinning the SUT is recommended; max_sut has no default (2026-09-25)
 
 `placement.sut` now carries a `when:` recommending it. `placement:` is

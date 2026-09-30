@@ -244,7 +244,10 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     if params.get("store_explain"):
         argv.append("-xse")
 
-    _append_flag(argv, "-nlp", loading.get("pods"))
+    # The catalog's loading.pods default (8) differs from tpch.py's -nlp default (1),
+    # so it must be emitted explicitly rather than left to argparse.
+    pods_default = catalog["workloads"]["tpch"]["loading"]["pods"].get("default")
+    _append_flag(argv, "-nlp", loading.get("pods", pods_default))
     _append_flag(argv, "-nlt", loading.get("threads"))
     _append_flag(argv, "--loading-timeout", loading.get("timeout_minutes"))
     if post_load.get("indexes"):

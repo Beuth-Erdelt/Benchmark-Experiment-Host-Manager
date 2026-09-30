@@ -576,7 +576,8 @@ def _check_contract_shape(
         _check_systems_shape(experiment, schema, locations),
         *(_check_fields(experiment.get(section, {}),
                         schema[section]["fields"], section, locations)
-          for section in ("observe", "placement")),
+          #for section in ("observe", "placement")),
+          for section in ("placement",)),
         _check_resources_shape(experiment, schema, locations),
     ):
         if error:

@@ -1737,11 +1737,15 @@ resources:
             ("title: comparison", "title: 42", "must be a string"),
             ("discriminates: [system, concurrency]",
              "discriminates: [system, 2]", "must be a string"),
-            ("resources:", "observe:\n  monitoring_sut: not-a-bool\nresources:",
+            ("active_queries: [5]", "active_queries: [5], measure_datatransfer: not-a-bool",
              "must be a boolean"),
         ):
             with self.subTest(broken):
                 self.assertIn(expected, self._rejection(_SPEC.replace(original, broken)))
+
+    def test_observe_is_rejected_while_parked(self) -> None:
+        broken = _SPEC.replace("resources:", "observe:\n  monitoring_sut: true\nresources:")
+        self.assertIn("unknown field 'observe'", self._rejection(broken))
 
     def test_malformed_nested_shape_returns_a_verdict(self) -> None:
         broken = yaml.safe_load(_SPEC)
