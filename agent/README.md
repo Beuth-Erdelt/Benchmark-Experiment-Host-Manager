@@ -451,6 +451,13 @@ Startup retries indefinitely when neither has a free GPU. To fail
 after a bounded number of attempts, add for example
 `--server-start-attempts 3`. A zero benchmark timeout waits indefinitely; use
 `--benchmark-timeout-seconds <seconds>` when unattended work needs a deadline.
+While it waits, `up` prints once a minute what it is waiting for: the
+scheduler's latest refusal while the pod pends, then the server's latest log
+line while it loads. `MODEL_SERVER_START_TIMEOUT_SECONDS` (2400) counts from
+when the pod is scheduled; the wait for a GPU before that is unbounded unless
+`MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS` is set. The pod reads its weights into
+the page cache before vLLM starts, because sequential reads from the Ceph
+volume are several times faster than vLLM's own mmap loading.
 Pods the scheduler refuses are logged but may pend indefinitely by default;
 `--unschedulable-timeout-seconds <seconds>` gives such a benchmark up and cleans
 it up once they have been refused that long.

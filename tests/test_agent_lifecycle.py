@@ -566,7 +566,7 @@ class AgentLifecycleTest(unittest.TestCase):
         self.assertEqual(
             _model_job()["metadata"]["annotations"][
                 "bexhoma.local/model-server-generation"],
-            "idle-watchdog-v3",
+            "idle-watchdog-v4",
         )
         self.assertGreater(int(environment["IDLE_SHUTDOWN_SECONDS"]), 0)
         self.assertGreater(int(environment["IDLE_POLL_SECONDS"]), 0)

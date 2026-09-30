@@ -65,7 +65,7 @@ metadata:
   name: bexhoma-agent-model
   annotations:
     # The switch replaces older immutable Job specifications before apply.
-    bexhoma.local/model-server-generation: idle-watchdog-v3-muse-glimmer-30b
+    bexhoma.local/model-server-generation: idle-watchdog-v4-muse-glimmer-30b
   labels: {app: bexhoma, component: agent, role: model-server}
 spec:
   # Long enough to read why the server stopped (kubectl logs
@@ -162,6 +162,26 @@ spec:
               from huggingface_hub import HfApi
               print(HfApi().model_info('$MODEL_REPO').sha)
               ")"
+                  # Refuse up front when the volume cannot hold the rest of the
+                  # download. `hf download` would otherwise fail partway through
+                  # and leave a directory that looks like a model but is not one.
+                  NEEDED_BYTES="$(python3 -c "
+              from huggingface_hub import HfApi
+              info = HfApi().model_info('$MODEL_REPO', revision='$RESOLVED_REVISION', files_metadata=True)
+              print(sum(sibling.size or 0 for sibling in info.siblings))
+              ")"
+                  PRESENT_BYTES=0
+                  if [ -d "$LOCAL_DIR" ]; then
+                      PRESENT_BYTES="$(du -sb "$LOCAL_DIR" | cut -f1)"
+                  fi
+                  FREE_BYTES="$(df -B1 --output=avail /models | tail -n 1 | tr -d ' ')"
+                  if [ $((NEEDED_BYTES - PRESENT_BYTES)) -gt "$FREE_BYTES" ]; then
+                      echo "ERROR: $MODEL_REPO needs $((NEEDED_BYTES / 1073741824)) GiB," \
+                          "$((PRESENT_BYTES / 1073741824)) GiB are already present and" \
+                          "only $((FREE_BYTES / 1073741824)) GiB are free on /models:"
+                      du -sh /models/* 2>/dev/null || true
+                      exit 1
+                  fi
                   echo "Downloading $MODEL_REPO @ $RESOLVED_REVISION ..."
                   # `hf`, not `huggingface-cli`: the old entry point still exists in
                   # this image but prints a deprecation notice and exits 0 without
@@ -175,6 +195,18 @@ spec:
                   echo "ERROR: no config.json under $LOCAL_DIR after download"
                   exit 1
               fi
+
+              # The Ceph volume serves 16 MiB sequential reads at about 130 MB/s
+              # per reader and 240 MB/s for four in parallel, but vLLM loads the
+              # shards through mmap page faults, which its 128 KiB read-ahead
+              # turns into about 30 MB/s (all measured 2026-09-30). Reading the
+              # shards sequentially first leaves them in the page cache, so the
+              # engine loads from memory instead.
+              echo "Prefetching $(du -sh "$LOCAL_DIR" | cut -f1) of weights into the page cache ..."
+              PREFETCH_STARTED=$SECONDS
+              find "$LOCAL_DIR" -name '*.safetensors' -print0 \
+                  | xargs -0 -r -P 4 -I{} dd if={} of=/dev/null bs=16M status=none
+              echo "Prefetch done in $((SECONDS - PREFETCH_STARTED))s"
 
               # The trajectory records whatever alias the server answers to (see
               # ChatModel.resolve_served_model in agent/harness/model_client.py), so
