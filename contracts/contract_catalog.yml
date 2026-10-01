@@ -762,6 +762,15 @@ systems:
     image: postgres:18.3
     arg_style: pg-guc
     memory_units: [B, kB, MB, GB, TB]
+    memory_budget:
+      semantics: "knobs interact; a peak above resources.memory limit
+        OOMKills the SUT. Worst case ~ shared_buffers + (S + W) * H *
+        work_mem * 2 (hash nodes may use 2x work_mem: PostgreSQL's
+        hash_mem_multiplier default, not a knob here), S = largest workload.rounds entry, W =
+        min(S * max_parallel_workers_per_gather, max_parallel_workers,
+        max_worker_processes), H = sort/hash nodes per plan (TPC-H ~2-4).
+        Every worker gets its own work_mem."
+      out_of_scope: "not checked; keep the estimate below the limit"
 
     engine:
       execution:   "row-based executor; uses PostgreSQL indexes when selective"

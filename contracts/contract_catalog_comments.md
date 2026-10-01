@@ -197,6 +197,40 @@ second spelling accepted; the only values now rejected are ones the DBMS
 would have refused at startup anyway), with `spec.CATALOG_CONTRACT_VERSION`
 kept in lockstep.
 
+## PostgreSQL `memory_budget` note (2026-10-01)
+
+Experiment 1790463251 OOMKilled all 9 PostgreSQL SUTs (4 streams x Q18,
+`work_mem=1GB`, `max_parallel_workers_per_gather=32`, 64Gi limit). No
+single knob was wrong; their product was. `systems.PostgreSQL.memory_budget`
+gives the estimate. It is descriptive only: nothing enforces it.
+
+The first estimate was `streams x (max_parallel_workers_per_gather + 1) x
+work_mem`. Checked against the PostgreSQL 18 docs (runtime-config-resource),
+it is off in both directions:
+
+- Overcounts workers. Parallel workers come from a shared pool, capped by
+  `max_parallel_workers` and `max_worker_processes`. A Gather that can't get
+  its workers runs with fewer. So the processes are `S + min(S x per_gather,
+  max_parallel_workers, max_worker_processes)`: 4 + 16 = 20 here, not 132.
+- Undercounts per process. `work_mem` is per sort/hash *node*, and a plan
+  has several. Hash nodes may use `work_mem x hash_mem_multiplier`, default
+  2.0. Each worker has its own limit ("Resource limits such as work_mem are
+  applied individually to each worker"). A parallel hash join shares one
+  table, but its budget also scales with the number of participants.
+- Leaves out `shared_buffers`. That is shared memory, and the container's
+  cgroup counts it once its pages are touched.
+
+For the incident, with H = 1..3: 20 x 1..3 x 1GB x 2 = 40-120GB plus
+`shared_buffers`, against 64Gi. The estimate is a ceiling: not every node
+fills its budget at once. Since PG13, hash aggregation spills to disk at
+the limit instead of growing past it. Also left out: per-backend overhead
+and `maintenance_work_mem` per index build or autovacuum worker during
+loading. PgDuckDB inherits the key through `extends:`, because a system
+that doesn't declare a top-level key falls back to its base's value. DuckDB's
+own memory is separate and not covered.
+
+This is additive and folded into 1.9.0, which is not yet released.
+
 ## Pinning loader and benchmarker pods is uncommon (2026-09-25)
 
 `placement.loading` and `placement.benchmarking` used to carry only a
