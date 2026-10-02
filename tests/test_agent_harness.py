@@ -31,6 +31,7 @@ from agent.harness.agent import (
     run_design,
     run_interpret,
 )
+import httpx
 from openai import (
     APIConnectionError, BadRequestError, InternalServerError, RateLimitError,
 )
@@ -39,6 +40,7 @@ from agent.harness.model_client import (
     ChatModel, ContextWindowExhausted, ModelNotServed, ModelUnreachable, Reply,
     ToolCall,
 )
+from agent.harness import model_client as model_client_module
 from agent.harness import tools as tools_module
 from agent.harness import validate as validate_cli
 from agent.harness import validation
@@ -4961,6 +4963,8 @@ class ChatModelTest(unittest.TestCase):
         model._context_window_asked = False
         model._counted_messages = 0
         model._counted_prompt_tokens = 0
+        model._tokenize_url = None
+        model._http = mock.Mock()
         model._sleep = mock.Mock()
         model._client = mock.Mock()
         model._client.chat.completions.create.return_value = response
@@ -5410,6 +5414,111 @@ class ChatModelTest(unittest.TestCase):
 
         with self.assertRaises(ContextWindowExhausted):
             model.reply([{"role": "user", "content": "question"}])
+
+    @staticmethod
+    def _counts(*counts: int) -> list[Any]:
+        """Build the answers a vLLM tokenizer endpoint gives, one per count."""
+        answers = []
+        for count in counts:
+            answer = mock.Mock()
+            answer.json.return_value = {"count": count, "max_model_len": 0}
+            answers.append(answer)
+        return answers
+
+    def test_the_tokenizer_lives_beside_the_openai_path(self) -> None:
+        self.assertEqual(model_client_module._tokenize_url("http://localhost:8001/v1"),
+                         "http://localhost:8001/tokenize")
+        self.assertEqual(model_client_module._tokenize_url("http://host/v1/"),
+                         "http://host/tokenize")
+
+    def test_a_turn_near_the_window_is_sized_on_an_exact_count(self) -> None:
+        """A 32k-character tool result full of numbers was estimated at 3
+        characters per token, the estimate fell short, and the phase died with
+        60k tokens of room left. Near the window, the appended messages are
+        counted by the server instead: what they add on top of its last count."""
+        model = self._model(max_tokens=16000, window=20000,
+                            usage={"prompt_tokens": 6000, "completion_tokens": 12})
+        model._tokenize_url = "http://fake/tokenize"
+        tools = [{"type": "function", "function": {"name": "read_file"}}]
+        messages: list[dict[str, Any]] = [{"role": "user", "content": "question"}]
+        model.reply(messages, tools)
+        messages += [{"role": "assistant", "content": "answer"},
+                     {"role": "tool", "content": "1,2;" * 4000}]
+        model._http.post.side_effect = self._counts(9000, 5800)
+
+        reply = model.reply(messages, tools)
+
+        # 6000 counted, plus the 3200 the new messages add, plus the margin.
+        self.assertEqual(reply.generation_budget, 20000 - 9200 - 512)
+        whole, before = (call.kwargs["json"] for call in model._http.post.call_args_list)
+        self.assertEqual(whole["messages"], messages)
+        self.assertEqual(before["messages"], messages[:1])
+        self.assertEqual(whole["tools"], tools)
+
+    def test_a_turn_far_from_the_window_is_not_counted(self) -> None:
+        """Counting costs a request; a turn that fits even at one token per
+        character does not need it."""
+        model = self._model(max_tokens=1000, window=100000)
+        model._tokenize_url = "http://fake/tokenize"
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.generation_budget, 1000)
+        model._http.post.assert_not_called()
+
+    def test_a_server_without_a_tokenizer_falls_back_to_the_estimate(self) -> None:
+        """A hosted endpoint has no /tokenize; it is asked once, then estimated."""
+        model = self._model(max_tokens=19500, window=20000)
+        model._tokenize_url = "http://fake/tokenize"
+        model._http.post.side_effect = httpx.ConnectError("refused")
+        messages = [{"role": "user", "content": "question"}]
+
+        with contextlib.redirect_stderr(io.StringIO()):
+            model.reply(messages)
+            model.reply(messages)
+
+        self.assertIsNone(model._tokenize_url)
+        self.assertEqual(model._http.post.call_count, 1)
+
+    def test_an_at_least_figure_is_a_floor_not_a_count(self) -> None:
+        """vLLM reports "at least N input tokens" as the window minus the
+        requested output plus one, without counting. Anchoring on it let the
+        retry shrink by only the margin, and the server refused it again."""
+        model = self._model(max_tokens=65536)
+        answer = model._client.chat.completions.create.return_value
+        model._client.chat.completions.create.side_effect = [
+            self._bad_request(
+                "This model's maximum context length is 131072 tokens. However, "
+                "you requested 65536 output tokens and your prompt contains at "
+                "least 65537 input tokens, for a total of at least 131073 tokens."
+            ),
+            answer,
+        ]
+        messages = [{"role": "user", "content": "x" * 160000}]
+
+        reply = model.reply(messages)
+
+        self.assertEqual(model._counted_prompt_tokens, 0)
+        # The estimate of the real prompt (80000) exceeds the floor and wins.
+        self.assertEqual(reply.generation_budget,
+                         131072 - model._prompt_tokens(messages) - 512)
+        self.assertLess(reply.generation_budget, 131072 - 80000)
+
+    def test_a_count_the_server_states_exactly_is_anchored(self) -> None:
+        model = self._model(max_tokens=32768)
+        answer = model._client.chat.completions.create.return_value
+        model._client.chat.completions.create.side_effect = [
+            self._bad_request(
+                "This model's maximum context length is 8000 tokens. However, you "
+                "requested 32768 tokens (3000 in the messages, 29768 in the "
+                "completion)."
+            ),
+            answer,
+        ]
+
+        model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(model._counted_prompt_tokens, 3000)
 
 
 if __name__ == "__main__":

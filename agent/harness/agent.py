@@ -2478,10 +2478,14 @@ def _report_context_exhausted(
     :rtype: int
     """
     trajectory.record("aborted", reason="context window exhausted", max_tokens=max_tokens)
+    # Each turn's output is already narrowed to the room the window leaves, so
+    # a smaller --max-tokens would not have helped; the conversation itself is
+    # what no longer fits.
     print("error: the conversation no longer leaves room for an answer within the "
-          f"model server's context window. Lower --max-tokens (currently {max_tokens}) "
-          "so each turn reserves less, or rerun the phase so it starts from a fresh "
-          "context.", file=sys.stderr)
+          "model server's context window, even with this turn's output narrowed "
+          f"below --max-tokens ({max_tokens}). Rerun the phase so it starts from a "
+          "fresh context, or serve the model with a larger context window.",
+          file=sys.stderr)
     print(f"  {error}", file=sys.stderr)
     return 2
 
