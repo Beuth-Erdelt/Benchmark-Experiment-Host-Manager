@@ -3700,6 +3700,63 @@ resources:
         ]
         self.assertEqual(len(rejected), 3)
 
+    def _evidence_gate(self, workspace: Workspace, report_path: str):
+        """Open one result for interpretation and read its report."""
+        workspace.restrict_to_result(report_path, _RESULT_CONTRACT_PATH)
+        gate = agent_module._InterpretationGate(
+            workspace, report_path, _RESULT_CONTRACT_PATH)
+        self.assertIn("text", gate.read_file({"path": report_path}))
+        return gate
+
+    def test_cited_evidence_matches_its_read_in_every_path_form(self) -> None:
+        """A model read the report by its absolute path and cited it the way the
+        result contract asks, relative to the result folder; the gate resolved
+        that against the workspace root and refused it as unread."""
+        report = self.root / _REPORT_PATH
+        gate = self._evidence_gate(self.workspace, str(report))
+        forms = [
+            "report/index.md", "./report/index.md", "report\\index.md",
+            "old/report/index.md", _REPORT_PATH, str(report),
+            report.as_posix().replace("/", "\\"),
+            "D:\\data\\benchmarks\\old\\report\\index.md",
+            "/data/benchmarks/old/report/index.md",
+        ]
+        for form in forms:
+            with self.subTest(form):
+                self.assertEqual(gate._unread([form]), [])
+        self.assertEqual(
+            gate._unread(["report/execution.md", "../other/report/index.md"]),
+            ["../other/report/index.md", "report/execution.md"],
+        )
+
+    def test_cited_evidence_survives_a_moved_result_folder(self) -> None:
+        """Reads and citations agree wherever the result folder now lives, and
+        the stored record carries no absolute path."""
+        archive = self.root / "archive"
+        shutil.copytree(self.root / "results", archive)
+        moved = Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            environment_path="environment.yml",
+            results_root=str(archive), run_directory=self.run,
+        )
+        gate = self._evidence_gate(moved, "archive/old/report/index.md")
+        old_location = str(self.root / _REPORT_PATH)
+        self.assertEqual(gate._unread(["report/index.md", old_location]), [])
+        self.assertEqual(
+            agent_module._result_relative(old_location, archive / "old", self.root),
+            "report/index.md",
+        )
+
+    def test_an_unread_evidence_refusal_names_what_was_read(self) -> None:
+        """Echoing only the refused paths left the model guessing what differed."""
+        gate = self._evidence_gate(self.workspace, _REPORT_PATH)
+
+        refusal = gate._unread_error("cites unread evidence", ["report/x.md"])
+
+        self.assertEqual(refusal["unread"], ["report/x.md"])
+        self.assertIn("report/index.md", refusal["read"])
+
     def _handbook_workspace(self, headings: tuple[str, ...]) -> Workspace:
         """Build a workspace whose handbook carries exactly these chapters."""
         method = self.root / "agent" / "handbook" / "handbook.md"

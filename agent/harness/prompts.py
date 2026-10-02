@@ -196,7 +196,9 @@ whole record as a single object. When the report records a failed check,
 `validity.scope` must explain which metrics or conclusions are affected. A
 monitoring-only failure does not invalidate throughput or latency; state how
 many benchmark phases it touches. Every validity and question `evidence_paths`
-entry must be a path successfully opened with read_file in this context.
+entry must be a path successfully opened with read_file in this context; cite
+it relative to the result folder (e.g. `report/index.md`) or as the absolute
+path you read.
 
 Record one `hypothesis_verdict` for the hypothesis in the archived
 experiment.yml. Its status is `supported`, `refuted`, `inconclusive`, or
