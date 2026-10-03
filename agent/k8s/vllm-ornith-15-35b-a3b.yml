@@ -405,7 +405,7 @@ spec:
                 matchExpressions:
                   - key: gpu
                     operator: In
-                    values: [h200]
+                    values: [h200,b200]
       volumes:
         - name: dshm
           emptyDir:

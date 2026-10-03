@@ -31,7 +31,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: bexhoma-agent-model-weights
+  name: bexhoma-agent-model-weights-muse
   labels: {app: bexhoma, component: agent, role: model-server}
 spec:
   accessModes:
@@ -379,4 +379,4 @@ spec:
             sizeLimit: 16Gi
         - name: model-storage
           persistentVolumeClaim:
-            claimName: bexhoma-agent-model-weights
+            claimName: bexhoma-agent-model-weights-muse
