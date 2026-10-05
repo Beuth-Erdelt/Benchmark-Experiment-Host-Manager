@@ -31,6 +31,7 @@ from agent.harness.agent import (
     run_design,
     run_interpret,
 )
+import httpx
 from openai import (
     APIConnectionError, BadRequestError, InternalServerError, RateLimitError,
 )
@@ -39,6 +40,7 @@ from agent.harness.model_client import (
     ChatModel, ContextWindowExhausted, ModelNotServed, ModelUnreachable, Reply,
     ToolCall,
 )
+from agent.harness import model_client as model_client_module
 from agent.harness import tools as tools_module
 from agent.harness import validate as validate_cli
 from agent.harness import validation
@@ -1737,11 +1739,15 @@ resources:
             ("title: comparison", "title: 42", "must be a string"),
             ("discriminates: [system, concurrency]",
              "discriminates: [system, 2]", "must be a string"),
-            ("resources:", "observe:\n  monitoring_sut: not-a-bool\nresources:",
+            ("active_queries: [5]", "active_queries: [5], measure_datatransfer: not-a-bool",
              "must be a boolean"),
         ):
             with self.subTest(broken):
                 self.assertIn(expected, self._rejection(_SPEC.replace(original, broken)))
+
+    def test_observe_is_rejected_while_parked(self) -> None:
+        broken = _SPEC.replace("resources:", "observe:\n  monitoring_sut: true\nresources:")
+        self.assertIn("unknown field 'observe'", self._rejection(broken))
 
     def test_malformed_nested_shape_returns_a_verdict(self) -> None:
         broken = yaml.safe_load(_SPEC)
@@ -3570,6 +3576,82 @@ resources:
                 environment_path=None,
             )
 
+    def test_an_object_where_a_word_belongs_is_refused_not_a_crash(self) -> None:
+        """Nex-N2.5-mini sent each question's validity as {scope, evidence_paths};
+        the membership test raised on the unhashable dict and killed the phase.
+        A list is unhashable too, wherever a closed set of words is expected."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        valid = _record_arguments([assessment])
+        object_validity = _record_arguments([{
+            **assessment,
+            "validity": {"scope": "Q1 only", "evidence_paths": [_REPORT_PATH]},
+        }])
+        list_action = {**valid, "follow_up": {**valid["follow_up"], "action": ["finish"]}}
+        list_status = {**valid, "hypothesis_verdict": {
+            **valid["hypothesis_verdict"], "status": ["inconclusive"]}}
+        model = _Model([
+            _evidence_record_reply("object", object_validity),
+            _tool_reply(ToolCall("list", "record_interpretation", list_action)),
+            _tool_reply(ToolCall("status", "record_interpretation", list_status)),
+            _tool_reply(ToolCall("valid", "record_interpretation", valid)),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
+        self.assertTrue(outcome["phase_complete"])
+        self.assertIsNone(outcome["incomplete_record"])
+        refusals = [
+            event["result"]["error"]
+            for event in map(json.loads, (self.run / "trajectory.jsonl").read_text().splitlines())
+            if event["type"] == "tool_call" and event["tool"] == "record_interpretation"
+            and "error" in event["result"]
+        ]
+        self.assertEqual(refusals, [
+            "questions[0].validity must be one word: invalid, limited, supported",
+            "follow_up.action must be finish or followup",
+            "hypothesis_verdict needs a status that is one of inconclusive, invalid, "
+            "refuted, supported, and a non-empty conclusion",
+        ])
+
+    def test_a_record_accepted_on_the_last_turn_still_gets_its_closing_answer(self) -> None:
+        """Without the closing text the phase counted as incomplete, and the Job
+        that ran it failed although the verdict had been recorded."""
+        assessment = {
+            "question": "is it faster?", "status": "settled", "conclusion": "yes",
+            "evidence": "the measured latency is lower", "missing": "",
+        }
+        last_turn = agent_module._INTERPRET_TURNS + agent_module._CLOSING_TURNS
+        reads = [
+            _tool_reply(ToolCall(f"read-{turn}", "read_file", {"path": _REPORT_PATH}))
+            for turn in range(last_turn - 1)
+        ]
+        model = _Model([
+            *reads,
+            _evidence_record_reply("record", _record_arguments([assessment])),
+            _text_reply(_interpretation_text()),
+        ])
+
+        outcome = run_interpret(
+            task="is it faster?", report_path=_REPORT_PATH, specification=_SPEC,
+            workspace=self.workspace, model=model, trajectory=Trajectory(self.run),
+            result_contract_path=_RESULT_CONTRACT_PATH, followups=0,
+            environment_path=None,
+        )
+
+        self.assertTrue(outcome["phase_complete"])
+        self.assertEqual(outcome["turns"], last_turn + 1)
+        # The closing turn is offered without tools: the phase is finished.
+        self.assertEqual(model.tool_sets[-1], set())
+
     def test_interpretation_requires_report_contract_and_read_evidence(self) -> None:
         assessment = {
             "question": "is it faster?", "status": "settled", "conclusion": "yes",
@@ -3619,6 +3701,63 @@ resources:
             and "error" in event.get("result", {})
         ]
         self.assertEqual(len(rejected), 3)
+
+    def _evidence_gate(self, workspace: Workspace, report_path: str):
+        """Open one result for interpretation and read its report."""
+        workspace.restrict_to_result(report_path, _RESULT_CONTRACT_PATH)
+        gate = agent_module._InterpretationGate(
+            workspace, report_path, _RESULT_CONTRACT_PATH)
+        self.assertIn("text", gate.read_file({"path": report_path}))
+        return gate
+
+    def test_cited_evidence_matches_its_read_in_every_path_form(self) -> None:
+        """A model read the report by its absolute path and cited it the way the
+        result contract asks, relative to the result folder; the gate resolved
+        that against the workspace root and refused it as unread."""
+        report = self.root / _REPORT_PATH
+        gate = self._evidence_gate(self.workspace, str(report))
+        forms = [
+            "report/index.md", "./report/index.md", "report\\index.md",
+            "old/report/index.md", _REPORT_PATH, str(report),
+            report.as_posix().replace("/", "\\"),
+            "D:\\data\\benchmarks\\old\\report\\index.md",
+            "/data/benchmarks/old/report/index.md",
+        ]
+        for form in forms:
+            with self.subTest(form):
+                self.assertEqual(gate._unread([form]), [])
+        self.assertEqual(
+            gate._unread(["report/execution.md", "../other/report/index.md"]),
+            ["../other/report/index.md", "report/execution.md"],
+        )
+
+    def test_cited_evidence_survives_a_moved_result_folder(self) -> None:
+        """Reads and citations agree wherever the result folder now lives, and
+        the stored record carries no absolute path."""
+        archive = self.root / "archive"
+        shutil.copytree(self.root / "results", archive)
+        moved = Workspace(
+            root=str(self.root), inbox="inbox",
+            catalog_path="contracts/contract_catalog.yml",
+            environment_path="environment.yml",
+            results_root=str(archive), run_directory=self.run,
+        )
+        gate = self._evidence_gate(moved, "archive/old/report/index.md")
+        old_location = str(self.root / _REPORT_PATH)
+        self.assertEqual(gate._unread(["report/index.md", old_location]), [])
+        self.assertEqual(
+            agent_module._result_relative(old_location, archive / "old", self.root),
+            "report/index.md",
+        )
+
+    def test_an_unread_evidence_refusal_names_what_was_read(self) -> None:
+        """Echoing only the refused paths left the model guessing what differed."""
+        gate = self._evidence_gate(self.workspace, _REPORT_PATH)
+
+        refusal = gate._unread_error("cites unread evidence", ["report/x.md"])
+
+        self.assertEqual(refusal["unread"], ["report/x.md"])
+        self.assertIn("report/index.md", refusal["read"])
 
     def _handbook_workspace(self, headings: tuple[str, ...]) -> Workspace:
         """Build a workspace whose handbook carries exactly these chapters."""
@@ -4651,6 +4790,23 @@ class PhaseTest(unittest.TestCase):
         )
 
         self.assertNotIn("Method before verdict", messages[0]["content"])
+        self.assertNotIn("opens the handbook", messages[0]["content"])
+
+    def test_interpret_prompt_says_read_file_opens_the_handbook(self) -> None:
+        """Told only to follow the report's links, models looked for the handbook
+        relative to the report and guessed paths for turns on end."""
+        messages = prompts.interpret_messages(
+            task="Which configuration is faster?",
+            report_path="/state/results/42/report/index.md",
+            result_contract_path="/state/results/42/contract_result.yml",
+            specification=_SPEC,
+            method_path="agent/handbook/handbook.md",
+        )
+
+        system = messages[0]["content"]
+        read_file = system[system.index("- read_file("):system.index("- assess_comparison_quality(")]
+        self.assertIn("It also opens the handbook at agent/handbook/handbook.md.", read_file)
+        self.assertIn("the report does not link to it", system)
 
 
 class ClusterCredentialTest(unittest.TestCase):
@@ -4807,6 +4963,8 @@ class ChatModelTest(unittest.TestCase):
         model._context_window_asked = False
         model._counted_messages = 0
         model._counted_prompt_tokens = 0
+        model._tokenize_url = None
+        model._http = mock.Mock()
         model._sleep = mock.Mock()
         model._client = mock.Mock()
         model._client.chat.completions.create.return_value = response
@@ -5256,6 +5414,111 @@ class ChatModelTest(unittest.TestCase):
 
         with self.assertRaises(ContextWindowExhausted):
             model.reply([{"role": "user", "content": "question"}])
+
+    @staticmethod
+    def _counts(*counts: int) -> list[Any]:
+        """Build the answers a vLLM tokenizer endpoint gives, one per count."""
+        answers = []
+        for count in counts:
+            answer = mock.Mock()
+            answer.json.return_value = {"count": count, "max_model_len": 0}
+            answers.append(answer)
+        return answers
+
+    def test_the_tokenizer_lives_beside_the_openai_path(self) -> None:
+        self.assertEqual(model_client_module._tokenize_url("http://localhost:8001/v1"),
+                         "http://localhost:8001/tokenize")
+        self.assertEqual(model_client_module._tokenize_url("http://host/v1/"),
+                         "http://host/tokenize")
+
+    def test_a_turn_near_the_window_is_sized_on_an_exact_count(self) -> None:
+        """A 32k-character tool result full of numbers was estimated at 3
+        characters per token, the estimate fell short, and the phase died with
+        60k tokens of room left. Near the window, the appended messages are
+        counted by the server instead: what they add on top of its last count."""
+        model = self._model(max_tokens=16000, window=20000,
+                            usage={"prompt_tokens": 6000, "completion_tokens": 12})
+        model._tokenize_url = "http://fake/tokenize"
+        tools = [{"type": "function", "function": {"name": "read_file"}}]
+        messages: list[dict[str, Any]] = [{"role": "user", "content": "question"}]
+        model.reply(messages, tools)
+        messages += [{"role": "assistant", "content": "answer"},
+                     {"role": "tool", "content": "1,2;" * 4000}]
+        model._http.post.side_effect = self._counts(9000, 5800)
+
+        reply = model.reply(messages, tools)
+
+        # 6000 counted, plus the 3200 the new messages add, plus the margin.
+        self.assertEqual(reply.generation_budget, 20000 - 9200 - 512)
+        whole, before = (call.kwargs["json"] for call in model._http.post.call_args_list)
+        self.assertEqual(whole["messages"], messages)
+        self.assertEqual(before["messages"], messages[:1])
+        self.assertEqual(whole["tools"], tools)
+
+    def test_a_turn_far_from_the_window_is_not_counted(self) -> None:
+        """Counting costs a request; a turn that fits even at one token per
+        character does not need it."""
+        model = self._model(max_tokens=1000, window=100000)
+        model._tokenize_url = "http://fake/tokenize"
+
+        reply = model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(reply.generation_budget, 1000)
+        model._http.post.assert_not_called()
+
+    def test_a_server_without_a_tokenizer_falls_back_to_the_estimate(self) -> None:
+        """A hosted endpoint has no /tokenize; it is asked once, then estimated."""
+        model = self._model(max_tokens=19500, window=20000)
+        model._tokenize_url = "http://fake/tokenize"
+        model._http.post.side_effect = httpx.ConnectError("refused")
+        messages = [{"role": "user", "content": "question"}]
+
+        with contextlib.redirect_stderr(io.StringIO()):
+            model.reply(messages)
+            model.reply(messages)
+
+        self.assertIsNone(model._tokenize_url)
+        self.assertEqual(model._http.post.call_count, 1)
+
+    def test_an_at_least_figure_is_a_floor_not_a_count(self) -> None:
+        """vLLM reports "at least N input tokens" as the window minus the
+        requested output plus one, without counting. Anchoring on it let the
+        retry shrink by only the margin, and the server refused it again."""
+        model = self._model(max_tokens=65536)
+        answer = model._client.chat.completions.create.return_value
+        model._client.chat.completions.create.side_effect = [
+            self._bad_request(
+                "This model's maximum context length is 131072 tokens. However, "
+                "you requested 65536 output tokens and your prompt contains at "
+                "least 65537 input tokens, for a total of at least 131073 tokens."
+            ),
+            answer,
+        ]
+        messages = [{"role": "user", "content": "x" * 160000}]
+
+        reply = model.reply(messages)
+
+        self.assertEqual(model._counted_prompt_tokens, 0)
+        # The estimate of the real prompt (80000) exceeds the floor and wins.
+        self.assertEqual(reply.generation_budget,
+                         131072 - model._prompt_tokens(messages) - 512)
+        self.assertLess(reply.generation_budget, 131072 - 80000)
+
+    def test_a_count_the_server_states_exactly_is_anchored(self) -> None:
+        model = self._model(max_tokens=32768)
+        answer = model._client.chat.completions.create.return_value
+        model._client.chat.completions.create.side_effect = [
+            self._bad_request(
+                "This model's maximum context length is 8000 tokens. However, you "
+                "requested 32768 tokens (3000 in the messages, 29768 in the "
+                "completion)."
+            ),
+            answer,
+        ]
+
+        model.reply([{"role": "user", "content": "question"}])
+
+        self.assertEqual(model._counted_prompt_tokens, 3000)
 
 
 if __name__ == "__main__":

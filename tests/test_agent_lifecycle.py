@@ -566,7 +566,7 @@ class AgentLifecycleTest(unittest.TestCase):
         self.assertEqual(
             _model_job()["metadata"]["annotations"][
                 "bexhoma.local/model-server-generation"],
-            "idle-watchdog-v3",
+            "idle-watchdog-v4",
         )
         self.assertGreater(int(environment["IDLE_SHUTDOWN_SECONDS"]), 0)
         self.assertGreater(int(environment["IDLE_POLL_SECONDS"]), 0)
@@ -1056,15 +1056,43 @@ probe_activity() {{
         )
 
     def test_incomplete_final_phase_is_an_error_and_cleans_up(self) -> None:
+        """Once its repetitions are spent, an interpretation that never completes
+        ends the run, with the server released."""
         incomplete = _trajectory(
             self.trajectories / "1", "interpret", code=None,
             summary="partial", phase_complete=False)
-        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=[])
+        repeats = [
+            _trajectory(self.trajectories / str(index), "interpret", code=None,
+                        summary="partial", phase_complete=False)
+            for index in range(2, 2 + lifecycle_module._INCOMPLETE_INTERPRETATION_ATTEMPTS)
+        ]
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=repeats)
 
         with self.assertRaisesRegex(LifecycleError, "neither a submitted benchmark"):
             lifecycle.run(None, resume=incomplete)
 
-        self.assertEqual(self.server.actions, ["down"])
+        self.assertEqual(
+            [phase for phase, _ in lifecycle.invocations],
+            ["interpret"] * lifecycle_module._INCOMPLETE_INTERPRETATION_ATTEMPTS)
+        self.assertEqual(self.server.actions[-1], "down")
+
+    def test_a_resumed_incomplete_interpretation_is_repeated(self) -> None:
+        """r1 of the 2026-09-29 Nex batch recorded an interpretation without its
+        closing text. Every restart then read that same outcome and raised again
+        without rerunning anything, until the Job's retries were gone."""
+        incomplete = _trajectory(
+            self.trajectories / "1", "interpret", code=None,
+            summary="partial", phase_complete=False)
+        final = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=[final])
+
+        lifecycle.run(None, resume=incomplete)
+
+        self.assertEqual(lifecycle.invocations, [("interpret", incomplete)])
+        # The resumed process starts the server before the model is needed.
+        self.assertEqual(self.server.actions, ["up", "down"])
 
     def test_server_start_retries_until_shared_gpu_is_available(self) -> None:
         design = _trajectory(

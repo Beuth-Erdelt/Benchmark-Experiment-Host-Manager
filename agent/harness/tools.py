@@ -56,6 +56,13 @@ _CLUSTER_CONFIG = "cluster.config"
 #: silently accepted and then rejected by the YAML loader.
 _SPEC_SUFFIXES = (".yml", ".yaml")
 
+#: Evidence is cited the way the result contract records it, so a record stays
+#: valid when its result folder moves; absolute read paths are accepted too.
+_EVIDENCE_PATHS_DESCRIPTION = (
+    "Files you opened with read_file, relative to the result folder, e.g. "
+    "report/index.md. The absolute path you read is accepted as well."
+)
+
 #: The inbox is shared by agent runs started side by side, and the model picks
 #: its draft's name, usually from the task. A name another run already holds is
 #: therefore given a two-digit counter instead of being overwritten.
@@ -2382,6 +2389,7 @@ _RECORD_INTERPRETATION = {
                         },
                         "conclusion": {"type": "string"},
                         "evidence_paths": {
+                            "description": _EVIDENCE_PATHS_DESCRIPTION,
                             "type": "array",
                             "items": {"type": "string"},
                             "minItems": 1,
@@ -2406,6 +2414,7 @@ _RECORD_INTERPRETATION = {
                             "conclusion": {"type": "string"},
                             "evidence": {"type": "string"},
                             "evidence_paths": {
+                                "description": _EVIDENCE_PATHS_DESCRIPTION,
                                 "type": "array",
                                 "items": {"type": "string"},
                                 "minItems": 1,
@@ -2424,6 +2433,7 @@ _RECORD_INTERPRETATION = {
                     "properties": {
                         "scope": {"type": "string"},
                         "evidence_paths": {
+                            "description": _EVIDENCE_PATHS_DESCRIPTION,
                             "type": "array",
                             "items": {"type": "string"},
                             "minItems": 1,

@@ -26,7 +26,10 @@ BASE_URL="${MODEL_SERVER_BASE_URL:-http://localhost:$PORT/v1}"
 LOGIN="${KUBE_LOGIN_SCRIPT:-$HOME/git/BIRD-Interact/scripts/kube-login.sh}"
 CONTEXT="${MODEL_SERVER_CONTEXT:-oidc_ds_cluster}"
 NAMESPACE="${MODEL_SERVER_NAMESPACE:-}"
+# Counted from when the pod is scheduled; the wait for a GPU before that is
+# unbounded by default, as startup waits for capacity by design.
 START_TIMEOUT="${MODEL_SERVER_START_TIMEOUT_SECONDS:-2400}"
+SCHEDULE_TIMEOUT="${MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS:-0}"
 STOP_TIMEOUT="${MODEL_SERVER_STOP_TIMEOUT_SECONDS:-300}"
 # Each manifest carries its own generation annotation, so the expected value is
 # read from the manifest being applied. A fixed default would call every other
@@ -100,7 +103,35 @@ down() {
     kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete svc "$SVC" \
         --ignore-not-found
     pkill -f "port-forward (pod/$JOB|svc/$SVC)" 2>/dev/null || true
-    echo "model server down; the 150Gi weights volume is kept so restart needs no re-download"
+    echo "model server down; the weights volume is kept so restart needs no re-download"
+}
+
+# "<pod>|<PodScheduled status>" of the Job's live pod, or "|" while it has none.
+pod_state() {
+    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get pods -l "job-name=$JOB" \
+        -o go-template='{{range .items}}{{if not .metadata.deletionTimestamp}}{{.metadata.name}}|{{range .status.conditions}}{{if eq .type "PodScheduled"}}{{.status}}{{end}}{{end}}{{"\n"}}{{end}}{{end}}' \
+        2>/dev/null | head -n 1 || true
+}
+
+# One line on why the server is not answering yet, so that a long `up` says
+# what it waits for instead of looking hung: the scheduler's latest refusal
+# while the pod pends, the server's latest log line once it is loading.
+report_waiting() {
+    local pod="$1" scheduled="$2" detail
+    if [ -z "$pod" ]; then
+        echo "waiting: the model Job has no pod yet"
+    elif [ "$scheduled" != "True" ]; then
+        detail=$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get events \
+            --field-selector "involvedObject.name=$pod,reason=FailedScheduling" \
+            --sort-by=.lastTimestamp -o jsonpath='{.items[-1:].message}' 2>/dev/null || true)
+        echo "waiting for a GPU node: ${detail:-pod $pod is pending}"
+    else
+        # The idle watchdog logs an unreadable /metrics every poll while the
+        # engine loads; progress bars redraw with carriage returns.
+        detail=$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" logs "$pod" --tail=20 2>/dev/null \
+            | tr '\r' '\n' | grep -v '^metrics unreadable\|^ *$' | tail -n 1 | cut -c1-200 || true)
+        echo "loading: ${detail:-pod $pod is starting}"
+    fi
 }
 
 # Deletes the finished model Job with this uid, and its pod, and waits until
@@ -166,13 +197,31 @@ up() {
     # the one that loses the race to create its replacement fails AlreadyExists;
     # applied again, it finds that replacement and keeps it.
     kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f "$MANIFEST"         || kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f "$MANIFEST"
-    # The Job's pod has a generated name, so readiness is read off the Job.
-    deadline=$((SECONDS + START_TIMEOUT))
+    # The Job's pod has a generated name, so readiness is read off the Job. The
+    # start timeout only runs once the pod is scheduled: waiting for a free GPU
+    # took 2.5 hours on 2026-09-30 and is bounded by SCHEDULE_TIMEOUT instead.
+    waiting_since=$SECONDS
+    scheduled_at=""
+    last_report=""
     until [ "$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get job "$JOB" \
         -o jsonpath='{.status.ready}' 2>/dev/null || true)" = "1" ]; do
-        if (( SECONDS >= deadline )); then
-            echo "model Job had no ready pod within ${START_TIMEOUT}s; see kubectl describe job/$JOB" >&2
+        IFS='|' read -r pod scheduled <<<"$(pod_state)"
+        if [ -z "$scheduled_at" ] && [ "$scheduled" = "True" ]; then
+            scheduled_at=$SECONDS
+            echo "model pod $pod scheduled after $((SECONDS - waiting_since))s; loading the model"
+        fi
+        if [ -z "$scheduled_at" ]; then
+            if (( SCHEDULE_TIMEOUT > 0 && SECONDS - waiting_since >= SCHEDULE_TIMEOUT )); then
+                echo "model pod was not scheduled within ${SCHEDULE_TIMEOUT}s; see kubectl describe job/$JOB" >&2
+                exit 1
+            fi
+        elif (( SECONDS - scheduled_at >= START_TIMEOUT )); then
+            echo "model pod was not ready within ${START_TIMEOUT}s of being scheduled; see kubectl logs job/$JOB" >&2
             exit 1
+        fi
+        if [ -z "$last_report" ] || (( SECONDS - last_report >= 60 )); then
+            last_report=$SECONDS
+            report_waiting "$pod" "$scheduled"
         fi
         sleep 5
     done

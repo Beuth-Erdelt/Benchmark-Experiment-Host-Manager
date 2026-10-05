@@ -293,6 +293,32 @@ models. It prefers the H200, leaving the benchmark's B200 free. Select it with
 `agent/lifecycle.py --model-server-manifest agent/k8s/vllm-gemma4-31b.yml`.
 This manifest has not yet been served.
 
+`agent/k8s/vllm-nex-n25-mini.yml` deploys Nex-N2.5-mini
+(`nex-agi/Nex-N2.5-mini`), a mixture-of-experts model with 35B parameters and
+about 3B active per token, on the same vLLM image, with the `qwen3_coder` tool
+and `qwen3` reasoning parsers and a 131072-token context. Its ~70 GB of BF16
+weights need an H200 or a B200; it prefers the H200. OpenRouter lists no
+provider for it, so this manifest is the only way to run it. Run it at the
+temperature its model card recommends, 0.7: at the harness's default of 0 it
+fell into repetition loops that ran to the token limit on 2026-09-28. Pass
+`--temperature 0.7` to `agent/lifecycle.py`; the in-cluster Job forwards no
+temperature, so set `AGENT_EXTRA_BODY={"temperature": 0.7}` there. Select it
+with `MODEL_SERVER_MANIFEST=agent/k8s/vllm-nex-n25-mini.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-nex-n25-mini.yml`.
+
+`agent/k8s/vllm-ornith-15-35b-a3b.yml` deploys Ornith-1.5-35B-A3B
+(`ornith-ai/Ornith-1.5-35B-A3B`), a mixture-of-experts reasoning model with
+36B parameters and about 3B active per token, unquantized on the same vLLM
+image, with the `qwen3_xml` tool and `qwen3` reasoning parsers and a
+131072-token context. Like Nex, its ~72 GB of BF16 weights need an H200 or a
+B200, it prefers the H200, and it is not on OpenRouter. Its weights keep a
+100Gi volume of their own, as GLM's and Llama's do. The model card recommends
+temperature 0.6 (`--temperature 0.6`, or `AGENT_EXTRA_BODY={"temperature": 0.6}`
+in the Job); top_p and top_k come from the checkpoint's own generation config.
+Select it with `MODEL_SERVER_MANIFEST=agent/k8s/vllm-ornith-15-35b-a3b.yml`, or
+per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-ornith-15-35b-a3b.yml`.
+
 ### Starting a run by hand
 
 Bring the server up with the manifest you want, then start the investigation.
@@ -319,8 +345,9 @@ for comparison (off by default).
 Either model also runs without any manifest or GPU through OpenRouter; see
 [Using OpenRouter](#using-openrouter).
 
-All five manifests use the same Job and service names, so only one can be up
-at a time, and each keeps its own weights PVC, so switching between them never
+All seven manifests use the same Job and service names, so only one can be up
+at a time, and their weights stay on persistent volumes -- a shared one, or
+their own for GLM, Llama and Ornith -- so switching between them never
 re-downloads any of their weights and none needs deleting. Kubernetes cannot
 change a Job's pod template in place, though, so switching which manifest is
 deployed needs the server brought down first:
@@ -424,6 +451,13 @@ Startup retries indefinitely when neither has a free GPU. To fail
 after a bounded number of attempts, add for example
 `--server-start-attempts 3`. A zero benchmark timeout waits indefinitely; use
 `--benchmark-timeout-seconds <seconds>` when unattended work needs a deadline.
+While it waits, `up` prints once a minute what it is waiting for: the
+scheduler's latest refusal while the pod pends, then the server's latest log
+line while it loads. `MODEL_SERVER_START_TIMEOUT_SECONDS` (2400) counts from
+when the pod is scheduled; the wait for a GPU before that is unbounded unless
+`MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS` is set. The pod reads its weights into
+the page cache before vLLM starts, because sequential reads from the Ceph
+volume are several times faster than vLLM's own mmap loading.
 Pods the scheduler refuses are logged but may pend indefinitely by default;
 `--unschedulable-timeout-seconds <seconds>` gives such a benchmark up and cleans
 it up once they have been refused that long.

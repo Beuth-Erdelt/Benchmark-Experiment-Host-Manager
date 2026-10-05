@@ -37,7 +37,10 @@ $BASE_URL      = if ($env:MODEL_SERVER_BASE_URL) { $env:MODEL_SERVER_BASE_URL } 
 $LOGIN         = if ($env:KUBE_LOGIN_SCRIPT)     { $env:KUBE_LOGIN_SCRIPT }     else { Join-Path $HOME 'git/BIRD-Interact/scripts/kube-login.sh' }
 $CONTEXT       = if ($env:MODEL_SERVER_CONTEXT)  { $env:MODEL_SERVER_CONTEXT }  else { 'oidc_ds_cluster' }
 $NAMESPACE     = if ($env:MODEL_SERVER_NAMESPACE){ $env:MODEL_SERVER_NAMESPACE }else { 'perdelt' }
+# Counted from when the pod is scheduled; the wait for a GPU before that is
+# unbounded by default, as startup waits for capacity by design.
 $START_TIMEOUT = if ($env:MODEL_SERVER_START_TIMEOUT_SECONDS) { [int] $env:MODEL_SERVER_START_TIMEOUT_SECONDS } else { 2400 }
+$SCHEDULE_TIMEOUT = if ($env:MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS) { [int] $env:MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS } else { 0 }
 $STOP_TIMEOUT  = if ($env:MODEL_SERVER_STOP_TIMEOUT_SECONDS)  { [int] $env:MODEL_SERVER_STOP_TIMEOUT_SECONDS }  else { 300 }
 # Each manifest carries its own generation annotation, so the expected value is
 # read from the manifest being applied. A fixed default would call every other
@@ -132,7 +135,48 @@ function Invoke-Down {
     kubectl --context $CONTEXT --namespace $NAMESPACE delete svc $SVC `
         --ignore-not-found
     Stop-PortForward
-    Write-Host 'model server down; the 150Gi weights volume is kept so restart needs no re-download'
+    Write-Host 'model server down; the weights volume is kept so restart needs no re-download'
+}
+
+function Get-PodState {
+    <# "<pod>|<PodScheduled status>" of the Job's live pod, or '' while it has none. #>
+    # Under 'Stop', PowerShell 5.1 turns kubectl's stderr into a terminating error.
+    $ErrorActionPreference = 'Continue'
+    $template = 'go-template={{range .items}}{{if not .metadata.deletionTimestamp}}{{.metadata.name}}|{{range .status.conditions}}{{if eq .type `PodScheduled`}}{{.status}}{{end}}{{end}}{{println}}{{end}}{{end}}'
+    $lines = & kubectl --context $CONTEXT --namespace $NAMESPACE get pods -l "job-name=$JOB" -o $template 2>$null
+    return "$(@($lines | Where-Object { $_ }) | Select-Object -First 1)"
+}
+
+function Write-WaitingReport {
+    <#
+    One line on why the server is not answering yet, so that a long `up` says
+    what it waits for instead of looking hung: the scheduler's latest refusal
+    while the pod pends, the server's latest log line once it is loading.
+    #>
+    param([string] $Pod, [string] $Scheduled)
+    $ErrorActionPreference = 'Continue'
+    if (-not $Pod) {
+        Write-Host 'waiting: the model Job has no pod yet'
+    } elseif ($Scheduled -ne 'True') {
+        $detail = (& kubectl --context $CONTEXT --namespace $NAMESPACE get events `
+            --field-selector "involvedObject.name=$Pod,reason=FailedScheduling" `
+            --sort-by=.lastTimestamp -o 'jsonpath={.items[-1:].message}' 2>$null) -join ' '
+        if (-not $detail) { $detail = "pod $Pod is pending" }
+        Write-Host "waiting for a GPU node: $detail"
+    } else {
+        # The idle watchdog logs an unreadable /metrics every poll while the
+        # engine loads; progress bars redraw with carriage returns.
+        $detail = @(& kubectl --context $CONTEXT --namespace $NAMESPACE logs $Pod --tail=20 2>$null) |
+            ForEach-Object { $_ -split "`r" } |
+            Where-Object { $_.Trim() -and $_ -notmatch '^metrics unreadable' } |
+            Select-Object -Last 1
+        if ($detail) {
+            $detail = $detail.Substring(0, [Math]::Min(200, $detail.Length))
+        } else {
+            $detail = "pod $Pod is starting"
+        }
+        Write-Host "loading: $detail"
+    }
 }
 
 function Get-JobField {
@@ -221,12 +265,30 @@ function Invoke-Up {
         kubectl --context $CONTEXT --namespace $NAMESPACE apply -f $MANIFEST
     }
     Assert-LastExitCode 'kubectl apply'
-    # The Job's pod has a generated name, so readiness is read off the Job.
-    $readyDeadline = (Get-Date).AddSeconds($START_TIMEOUT)
+    # The Job's pod has a generated name, so readiness is read off the Job. The
+    # start timeout only runs once the pod is scheduled: waiting for a free GPU
+    # took 2.5 hours on 2026-09-30 and is bounded by SCHEDULE_TIMEOUT instead.
+    $waitingSince = Get-Date
+    $scheduledAt = $null
+    $lastReport = $null
     while ((Get-JobField 'jsonpath={.status.ready}') -ne '1') {
-        if ((Get-Date) -ge $readyDeadline) {
-            Write-Error "model Job had no ready pod within ${START_TIMEOUT}s; see kubectl describe job/$JOB"
+        $pod, $scheduled = (Get-PodState) -split '\|', 2
+        if ((-not $scheduledAt) -and ($scheduled -eq 'True')) {
+            $scheduledAt = Get-Date
+            Write-Host "model pod $pod scheduled after $([int]($scheduledAt - $waitingSince).TotalSeconds)s; loading the model"
+        }
+        if (-not $scheduledAt) {
+            if (($SCHEDULE_TIMEOUT -gt 0) -and ((Get-Date) -ge $waitingSince.AddSeconds($SCHEDULE_TIMEOUT))) {
+                Write-Error "model pod was not scheduled within ${SCHEDULE_TIMEOUT}s; see kubectl describe job/$JOB"
+                exit 1
+            }
+        } elseif ((Get-Date) -ge $scheduledAt.AddSeconds($START_TIMEOUT)) {
+            Write-Error "model pod was not ready within ${START_TIMEOUT}s of being scheduled; see kubectl logs job/$JOB"
             exit 1
+        }
+        if ((-not $lastReport) -or ((Get-Date) -ge $lastReport.AddSeconds(60))) {
+            $lastReport = Get-Date
+            Write-WaitingReport $pod $scheduled
         }
         Start-Sleep -Seconds 5
     }

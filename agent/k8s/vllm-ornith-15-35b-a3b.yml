@@ -1,7 +1,7 @@
 # Self-hosted model server for the agent harness.
 #
-# Serves google/gemma-4-31B-it, the dense 31B Gemma 4 model, through vLLM's
-# OpenAI-compatible API, which is what agent/harness/model_client.py speaks.
+# Serves ornith-ai/Ornith-1.5-35B-A3B through vLLM's OpenAI-compatible API,
+# which is what agent/harness/model_client.py speaks.
 # Follows the same shape as the other vLLM servers in this cluster: one Pod that
 # downloads the weights into a PVC on first start and serves them from there
 # afterwards.
@@ -13,11 +13,21 @@
 # The pod runs under a Job so that Kubernetes also removes what is left: the
 # finished Job and its Completed pod are deleted ttlSecondsAfterFinished later.
 #
+# Ornith-1.5-35B-A3B is a mixture-of-experts reasoning model built on the
+# Qwen3.5-MoE architecture: 36B parameters in total, about 3B of them active per
+# token. Its publisher serves it on two 80 GB GPUs, because its ~72 GB of BF16
+# weights nearly fill one. One H200 or B200 holds it with room to spare, so this
+# runs it unquantized on a single GPU with the stock vLLM image, which keeps the
+# idle watchdog below reading the vLLM metrics it was written against.
+#
 # Placement note: this accepts an H200 or a B200 node but prefers the H200.
-# The B200 node is where bexhoma put the system under test on 2026-09-21, and a
-# server kept up across a benchmark (external mode) would otherwise share that
-# node with the measurement. The operator wrapper stops this server while a
-# submitted benchmark runs, so in bundled mode either node is fine.
+# The B200 node is where bexhoma puts the system under test, and a server kept
+# up across a benchmark (shared or external mode) would otherwise share that
+# node with the measurement. An H100 is excluded: the weights alone leave too
+# little of its 80 GB for KV cache.
+#
+# The weights get their own volume, as in the GLM and Llama manifests: the
+# shared one already holds several other checkpoints.
 #
 # The objects carry no namespace of their own: agent/model_server.sh applies them
 # into MODEL_SERVER_NAMESPACE, so this manifest is not tied to one account.
@@ -32,18 +42,17 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: bexhoma-agent-model-weights-gemma4
+  name: bexhoma-agent-model-weights-ornith
   labels: {app: bexhoma, component: agent, role: model-server}
 spec:
   accessModes:
     - ReadWriteOnce
-  # Per-cluster: name a storage class your account can claim 150Gi from.
+  # Per-cluster: name a storage class your account can claim 100Gi from.
   storageClassName: cephcsi
   resources:
     requests:
-      # About 63 GB of BF16 weights. The shared volume retains this model beside
-      # the Qwen and Muse Glimmer checkpoints without downloading any again.
-      storage: 150Gi
+      # About 72 GB of BF16 weights, and nothing else on this volume.
+      storage: 100Gi
 ---
 apiVersion: v1
 kind: Service
@@ -66,7 +75,7 @@ metadata:
   name: bexhoma-agent-model
   annotations:
     # The switch replaces older immutable Job specifications before apply.
-    bexhoma.local/model-server-generation: idle-watchdog-v4-gemma4-31b
+    bexhoma.local/model-server-generation: idle-watchdog-v4-ornith-15-35b-a3b
   labels: {app: bexhoma, component: agent, role: model-server}
 spec:
   # Long enough to read why the server stopped (kubectl logs
@@ -82,8 +91,9 @@ spec:
     spec:
       containers:
         - name: vllm-container
-          # vLLM v0.29.0, which ships both gemma4 parsers and the tool chat template
-          # used below; v0.30.0 was only published the day this was written. Pin
+          # vLLM v0.29.0, the newest image another agent manifest already pins
+          # (the model card asks for 0.19.1 or later). It carries the Qwen3.5-MoE
+          # architecture and the qwen3 and qwen3_xml parsers this model needs. Pin
           # its linux/amd64 digest so a later tag update cannot change an archived
           # experiment.
           image: vllm/vllm-openai@sha256:082ca6f035279109041ffd3fe0695cb568b29bc580b35c4f297a66a08b216c1b
@@ -114,11 +124,11 @@ spec:
           # Without these, the pod reports Ready the moment the shell starts, which
           # is long before the weights are downloaded and the engine is loaded --
           # "Running" would then mean nothing to anyone waiting to send a request.
-          # The startup probe carries the first-start download, about 63 GB, and
+          # The startup probe carries the first-start download, about 72 GB, and
           # a cold load from the Ceph volume, measured on 2026-09-21 at about
-          # 20 MB/s -- close to 55 minutes for this checkpoint on its own. 360 x
+          # 20 MB/s -- close to an hour for this checkpoint on its own. 360 x
           # 20 s allows two hours so the first start fits download and load
-          # together; the Glimmer manifest's 66 minutes covers only a load.
+          # together.
           startupProbe:
             httpGet:
               path: /health
@@ -140,8 +150,8 @@ spec:
           args:
             - |
               set -euo pipefail
-              MODEL_REPO="google/gemma-4-31B-it"
-              LOCAL_DIR="/models/gemma-4-31b-it"
+              MODEL_REPO="ornith-ai/Ornith-1.5-35B-A3B"
+              LOCAL_DIR="/models/ornith-1.5-35b-a3b"
               # Which exact upstream commit was downloaded, so a served alias built
               # from it (below) tells a trajectory which weights answered, not just
               # which repo they came from -- "main" moves, this file does not.
@@ -226,19 +236,21 @@ spec:
                   SERVED_MODEL_NAME="${MODEL_REPO}@$(cut -c1-12 "$REVISION_FILE")"
               fi
 
-              # Flags follow vLLM's Gemma 4 recipe for tool calling with thinking:
-              # both parsers are named gemma4, and the recipe replaces the
-              # checkpoint's own chat template with the one vLLM ships in its image,
-              # tuned for tool calls and reasoning. That template reads
-              # enable_thinking, so the harness's thinking switch takes effect.
-              # Images and audio are switched off, as the recipe advises for
-              # text-only use, which skips the multimodal memory profiling.
+              # The parsers are the ones the model card's vLLM recipe names:
+              # qwen3_xml turns the model's XML-style tool syntax into structured
+              # tool_calls, and qwen3 splits its thinking out of the visible
+              # answer. The checkpoint's own chat template is used unchanged; the
+              # publisher adjusted it for consistency with training. It thinks by
+              # default and switches that off only for enable_thinking false, so
+              # the harness's thinking switch changes nothing here.
+              # Images and videos are switched off for this text-only use, which
+              # skips the multimodal memory profiling.
               #
               # The checkpoint supports 256K tokens; 131072 matches the other agent
               # models, so no model sees a longer history than another. A requested
               # 65536 output ceiling then leaves room for the catalog, handbook and
-              # tool history. The weights alone take about 63 GB, so placement is
-              # limited to the cluster's H200 and B200 nodes.
+              # tool history. Only every fourth layer is full attention, with two
+              # KV heads, so a full-length sequence costs under 3 GiB of KV cache.
               #
               # Started in the background rather than exec'd, because the shell
               # stays alive as the idle watchdog below. That is what makes the pod
@@ -251,17 +263,18 @@ spec:
               # INFO (already the level set above), which is how to confirm the
               # temperature model_client.py sends is the one actually used -- the
               # model's generation_config.json only supplies temperature/top_k/top_p
-              # for requests that omit them.
+              # for requests that omit them. The harness sends only a temperature,
+              # so top_p 0.95 and top_k 20, the card's recommended values, come
+              # from that file.
               vllm serve "$LOCAL_DIR" \
                 --served-model-name "$SERVED_MODEL_NAME" \
                 --tensor-parallel-size 1 \
                 --max-model-len 131072 \
                 --gpu-memory-utilization 0.90 \
                 --enable-auto-tool-choice \
-                --tool-call-parser gemma4 \
-                --reasoning-parser gemma4 \
-                --chat-template /vllm-workspace/examples/tool_chat_template_gemma4.jinja \
-                --limit-mm-per-prompt '{"image": 0, "audio": 0}' \
+                --tool-call-parser qwen3_xml \
+                --reasoning-parser qwen3 \
+                --limit-mm-per-prompt '{"image": 0, "video": 0}' \
                 --generation-config auto \
                 --enable-log-requests \
                 --host 0.0.0.0 \
@@ -400,4 +413,4 @@ spec:
             sizeLimit: 16Gi
         - name: model-storage
           persistentVolumeClaim:
-            claimName: bexhoma-agent-model-weights-gemma4
+            claimName: bexhoma-agent-model-weights-ornith

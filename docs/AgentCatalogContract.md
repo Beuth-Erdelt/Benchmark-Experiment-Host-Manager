@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.8.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.9.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   experimental_design:
@@ -97,7 +97,7 @@ experiment_schema:
     systems:    {type: list, item_fields: [name, profile, override, post_load],
                  semantics: "one resolved configuration per entry; benchmarked one at a time,
                              never concurrently -- see catalog_concepts.sut_isolation"}
-    observe:    {type: object, fields: [monitoring_sut, monitoring_cluster, monitoring_app]}
+    # observe: parked while the agent is a prototype -- see contract_catalog_comments.md
     placement:  {type: object, fields: [sut, loading, benchmarking],
                  semantics: "each node named must exist, and not be tainted out, in environment.yml's nodes:",
                  when: "pinning sut is recommended (same hardware for all SUTs); pinning
@@ -140,7 +140,7 @@ workloads:
       store_explain:        {type: bool, default: false, support: "PostgreSQL and PgDuckDB only",
                              when: "requires an 'explain' key in the DBMS connection's JDBC config"}
     loading:
-      pods:   {type: int, min: 1, support: "works for every DBMS"}
+      pods:   {type: int, min: 1, default: 8, why: "keep 8; change only for a reason stated in the hypothesis", support: "works for every DBMS"}
       threads: {type: int, min: 1, support: "only honored by some loaders (e.g. MySQL); prefer pods"}
       post_load:   # indexes/constraints/statistics are mutually independent -- all 8 combinations legal per system
         indexes:    {type: bool, default: false}

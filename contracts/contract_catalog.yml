@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.8.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.9.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -259,34 +259,7 @@ experiment_schema:
             resolve_physical_design_overrides() resolves the per-system
             selection separately and experiment.py applies it in-process via
             SutConfiguration.set_experiment(indexing=...) -- not through argv"
-    observe:
-      type: object
-      when: "only relevant when the hypothesis needs hardware metrics (CPU
-        and memory use, and GPU use where present) or database-internal
-        statistics -- leave all three off otherwise. Readings only become
-        reliable after a few scrape intervals have accumulated: a phase
-        shorter than roughly 2-5 minutes can show 0/NaN readings rather than
-        a real signal, so keep rounds/query_repeats long enough for the phase
-        to clear this warm-up window if monitoring results matter"
-      fields:
-        monitoring_sut: {type: bool, semantics: "collect hardware metrics of
-          the system under test for this experiment"}
-        monitoring_cluster:
-          type: bool
-          semantics: "collect the same hardware metrics from a monitoring
-            installation that covers every node of the cluster; it is shared
-            by all experiments and reused if it is already running"
-          when: "use it instead of monitoring_sut when load outside the SUT
-            matters, e.g. on the benchmarker's node; turning on both is the
-            same as turning on monitoring_cluster alone"
-        monitoring_app:
-          type: bool
-          semantics: "attach the database's own metrics exporter to the SUT
-            and collect its internal statistics, such as connections, buffer
-            cache hits and lock waits"
-          when: "only takes effect together with monitoring_sut or
-            monitoring_cluster, and only for systems that define an exporter
-            (PostgreSQL and PgDuckDB in this catalog)"
+    # observe: disabled while the agent is a prototype -- parked in contract_catalog_comments.md
     placement:
       type: object
       semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"
@@ -488,10 +461,11 @@ workloads:
       pods:
         type: int
         min: 1
+        default: 8
         why: "number of loader pods that generate and ingest the data in
-          parallel, each handling a slice of the tables. Raise it to shorten
-          loading for a large scaling_factor, since this is the loader knob that
-          works for every DBMS"
+          parallel, each handling a slice of the tables. Keep the default 8;
+          change it only for a reason stated in the hypothesis (e.g. loading
+          itself is the object of study)"
         support: "works for every DBMS"
       threads:
         type: int
@@ -788,6 +762,15 @@ systems:
     image: postgres:18.3
     arg_style: pg-guc
     memory_units: [B, kB, MB, GB, TB]
+    memory_budget:
+      semantics: "knobs interact; a peak above resources.memory limit
+        OOMKills the SUT. Worst case ~ shared_buffers + (S + W) * H *
+        work_mem * 2 (hash nodes may use 2x work_mem: PostgreSQL's
+        hash_mem_multiplier default, not a knob here), S = largest workload.rounds entry, W =
+        min(S * max_parallel_workers_per_gather, max_parallel_workers,
+        max_worker_processes), H = sort/hash nodes per plan (TPC-H ~2-4).
+        Every worker gets its own work_mem."
+      out_of_scope: "not checked; keep the estimate below the limit"
 
     engine:
       execution:   "row-based executor; uses PostgreSQL indexes when selective"

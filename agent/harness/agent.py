@@ -25,7 +25,7 @@ import re
 import sys
 from dataclasses import asdict
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 from collections.abc import Callable
 
@@ -554,6 +554,12 @@ def _converse(
             messages.append({"role": "tool", "tool_call_id": call.id,
                              "content": json.dumps(result, ensure_ascii=False)})
 
+        # A record accepted on the last turn left no turn for the closing answer,
+        # and a phase without one counts as incomplete although its work is done.
+        # It gets that one turn, with the tools withdrawn because it is finished.
+        if finished and turn == max_turns:
+            max_turns += 1
+
     return summary, turn, events
 
 
@@ -571,6 +577,67 @@ def _report_failed_checks(path: Path) -> int | None:
     except (OSError, ValueError, KeyError, TypeError, yaml.YAMLError):
         return None
     return failed if isinstance(failed, int) and not isinstance(failed, bool) else None
+
+
+def _evidence_candidates(value: str, result_directory: Path, root: Path) -> list[Path]:
+    """Return the files a cited evidence path may name, most likely first.
+
+    The result contract defines evidence paths as relative to the result
+    folder, while reads use absolute or workspace-relative paths. A model that
+    read ``D:\\data\\benchmarks\\<code>\\report\\index.md`` and then cited
+    ``report/index.md``, as the contract asks, was refused as having read
+    nothing. Every form is therefore tried: result-relative, anchored on the
+    result's own code, workspace-relative, and the path as written. Backslashes
+    count as separators and a drive letter as a root, so a Windows path reads
+    the same on Linux; anchoring on the code finds the file even after the
+    result folder was moved to another location.
+
+    :param value: The evidence path as the model wrote it.
+    :param result_directory: The result folder being interpreted.
+    :param root: The workspace root that read paths are relative to.
+    :return: Resolved, distinct candidate files.
+    :rtype: list[Path]
+    """
+    text = value.strip()
+    parts = PurePosixPath(text.replace("\\", "/")).parts
+    absolute = bool(parts) and (
+        parts[0].startswith("/") or re.fullmatch(r"[A-Za-z]:", parts[0]) is not None
+    )
+    candidates = [Path(text)] if absolute else [result_directory.joinpath(*parts)]
+    code = os.path.normcase(result_directory.name)
+    anchors = [index for index, part in enumerate(parts)
+               if os.path.normcase(part) == code]
+    if anchors and anchors[-1] + 1 < len(parts):
+        candidates.append(result_directory.joinpath(*parts[anchors[-1] + 1:]))
+    if not absolute:
+        candidates.append(root / text)
+    resolved: list[Path] = []
+    for candidate in candidates:
+        try:
+            path = candidate.resolve()
+        except (OSError, ValueError):
+            continue
+        if path not in resolved:
+            resolved.append(path)
+    return resolved
+
+
+def _result_relative(value: str, result_directory: Path, root: Path) -> str:
+    """Return a cited evidence path in its portable, result-relative form.
+
+    :param value: The evidence path as the model wrote it.
+    :param result_directory: The result folder it belongs to.
+    :param root: The workspace root that read paths are relative to.
+    :return: The POSIX path relative to the result folder, or the path as
+        written when no candidate lies inside the result folder.
+    :rtype: str
+    """
+    inside = [
+        path for path in _evidence_candidates(value, result_directory, root)
+        if path.is_relative_to(result_directory)
+    ]
+    chosen = next((path for path in inside if path.is_file()), inside[0] if inside else None)
+    return chosen.relative_to(result_directory).as_posix() if chosen else value
 
 
 def _write_agent_summary(
@@ -608,11 +675,10 @@ def _write_agent_summary(
     if not isinstance(experiment, dict):
         experiment = {}
 
-    evidence_paths = []
-    for value in hypothesis_verdict["evidence_paths"]:
-        source = Path(value)
-        source = source.resolve() if source.is_absolute() else (root / source).resolve()
-        evidence_paths.append(source.relative_to(result_directory).as_posix())
+    evidence_paths = [
+        _result_relative(value, result_directory, root)
+        for value in hypothesis_verdict["evidence_paths"]
+    ]
 
     summary = {
         "agent_summary_version": _AGENT_SUMMARY_VERSION,
@@ -1073,6 +1139,21 @@ def _withheld_rate_notice(assessment: dict[str, Any] | None) -> str:
     )
 
 
+def _is_one_of(value: Any, allowed: set[str]) -> bool:
+    """Report whether a value the model sent is one of a closed set of words.
+
+    Testing membership directly raises for an object or a list, which are
+    unhashable. Nex-N2.5-mini sent each question's validity as an object, and
+    the resulting TypeError ended the whole phase instead of refusing the record.
+
+    :param value: The value as the model sent it.
+    :param allowed: The words it must be one of.
+    :return: ``True`` when the value is one of them.
+    :rtype: bool
+    """
+    return isinstance(value, str) and value in allowed
+
+
 class _InterpretationGate:
     """Require validity-first reads and trace every cited evidence path."""
 
@@ -1124,6 +1205,14 @@ class _InterpretationGate:
             result["overall_status_failed"] = self.failed_checks
         return result
 
+    def _cited(self, path: str) -> Path | None:
+        """Return the read file a cited evidence path names, or ``None``."""
+        return next((
+            candidate for candidate in _evidence_candidates(
+                path, self.result_directory, self._workspace.root)
+            if candidate in self._read_paths
+        ), None)
+
     def _unread(self, paths: Any) -> list[str] | None:
         """Return unread paths, or ``None`` when the path list is malformed."""
         if (
@@ -1131,9 +1220,26 @@ class _InterpretationGate:
             or any(not isinstance(path, str) or not path.strip() for path in paths)
         ):
             return None
-        return sorted(
-            path for path in paths if self._resolve(path) not in self._read_paths
+        return sorted(path for path in paths if self._cited(path) is None)
+
+    def _unread_error(self, error: str, unread: list[str]) -> dict[str, Any]:
+        """Refuse unread evidence, naming what was read so it can be cited.
+
+        Echoing back only the refused strings left a model that had read the
+        files unable to see what differed; it spent a whole turn's budget
+        guessing. Listing the reads gives it paths it can copy.
+        """
+        read = sorted(
+            path.relative_to(self.result_directory).as_posix()
+            if path.is_relative_to(self.result_directory) else str(path)
+            for path in self._read_paths
         )
+        return {
+            "error": error,
+            "unread": unread,
+            "read": read,
+            "hint": "cite paths relative to the result folder, e.g. report/index.md",
+        }
 
     def assess_comparison_quality(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Run and retain the deterministic comparison-quality assessment."""
@@ -1232,13 +1338,15 @@ class _InterpretationGate:
         verdict_statuses = {"supported", "refuted", "inconclusive", "invalid"}
         if (
             not isinstance(hypothesis_verdict, dict)
-            or hypothesis_verdict.get("status") not in verdict_statuses
+            or not _is_one_of(hypothesis_verdict.get("status"), verdict_statuses)
             or not isinstance(hypothesis_verdict.get("conclusion"), str)
             or not hypothesis_verdict["conclusion"].strip()
         ):
             return {
                 "error": (
-                    "hypothesis_verdict needs a valid status and a non-empty conclusion"
+                    "hypothesis_verdict needs a status that is one of "
+                    f"{', '.join(sorted(verdict_statuses))}, and a non-empty "
+                    "conclusion"
                 )
             }
         verdict_paths = hypothesis_verdict.get("evidence_paths")
@@ -1246,13 +1354,11 @@ class _InterpretationGate:
         if unread_verdict is None:
             return {"error": "hypothesis_verdict needs non-empty evidence_paths"}
         if unread_verdict:
-            return {
-                "error": "hypothesis_verdict cites unread evidence",
-                "unread": unread_verdict,
-            }
+            return self._unread_error(
+                "hypothesis_verdict cites unread evidence", unread_verdict)
         outside_result = [
             path for path in verdict_paths
-            if not self._resolve(path).is_relative_to(self.result_directory)
+            if not self._cited(path).is_relative_to(self.result_directory)
         ]
         if outside_result:
             return {
@@ -1296,9 +1402,9 @@ class _InterpretationGate:
         if unread_validity is None:
             return {"error": "validity.evidence_paths must be a non-empty path list"}
         if unread_validity:
-            return {"error": "validity cites unread evidence", "unread": unread_validity}
+            return self._unread_error("validity cites unread evidence", unread_validity)
         if self.report not in {
-            self._resolve(path) for path in validity["evidence_paths"]
+            self._cited(path) for path in validity["evidence_paths"]
         }:
             return {"error": "validity evidence must cite the report index"}
         return None
@@ -1311,19 +1417,27 @@ class _InterpretationGate:
         statuses = {"settled", "partial", "unresolved"}
         validity_states = {"supported", "limited", "invalid"}
         text_fields = {"question", "status", "conclusion", "evidence", "missing"}
-        for question in questions:
-            if (
-                not isinstance(question, dict)
-                or question.get("status") not in statuses
-                or question.get("validity") not in validity_states
-                or any(not isinstance(question.get(field), str) for field in text_fields)
-            ):
-                return {"error": "every question needs all text fields and valid states"}
+        for index, question in enumerate(questions):
+            if not isinstance(question, dict):
+                return {"error": f"questions[{index}] must be an object"}
+            # A refusal that only said "valid states" left the model guessing
+            # which field was wrong, so each names the field and its words.
+            for field, allowed in (("status", statuses), ("validity", validity_states)):
+                if not _is_one_of(question.get(field), allowed):
+                    return {"error": (
+                        f"questions[{index}].{field} must be one word: "
+                        f"{', '.join(sorted(allowed))}"
+                    )}
+            not_text = sorted(
+                field for field in text_fields if not isinstance(question.get(field), str)
+            )
+            if not_text:
+                return {"error": f"questions[{index}] needs text in: {', '.join(not_text)}"}
             unread_evidence = self._unread(question.get("evidence_paths"))
             if unread_evidence is None:
                 return {"error": "every question needs non-empty evidence_paths"}
             if unread_evidence:
-                return {"error": "question cites unread evidence", "unread": unread_evidence}
+                return self._unread_error("question cites unread evidence", unread_evidence)
             if question["status"] == "settled" and question["missing"].strip():
                 return {"error": "a settled question cannot list missing evidence; "
                         "use partial or unresolved"}
@@ -1340,7 +1454,7 @@ class _InterpretationGate:
         if not isinstance(follow_up, dict):
             return {"error": "follow_up must be an object"}
         action = follow_up.get("action")
-        if action not in {"finish", "followup"}:
+        if not _is_one_of(action, {"finish", "followup"}):
             return {"error": "follow_up.action must be finish or followup"}
         if not isinstance(follow_up.get("rationale"), str) or not follow_up["rationale"]:
             return {"error": "follow_up needs a rationale"}
@@ -2364,10 +2478,14 @@ def _report_context_exhausted(
     :rtype: int
     """
     trajectory.record("aborted", reason="context window exhausted", max_tokens=max_tokens)
+    # Each turn's output is already narrowed to the room the window leaves, so
+    # a smaller --max-tokens would not have helped; the conversation itself is
+    # what no longer fits.
     print("error: the conversation no longer leaves room for an answer within the "
-          f"model server's context window. Lower --max-tokens (currently {max_tokens}) "
-          "so each turn reserves less, or rerun the phase so it starts from a fresh "
-          "context.", file=sys.stderr)
+          "model server's context window, even with this turn's output narrowed "
+          f"below --max-tokens ({max_tokens}). Rerun the phase so it starts from a "
+          "fresh context, or serve the model with a larger context window.",
+          file=sys.stderr)
     print(f"  {error}", file=sys.stderr)
     return 2
 

@@ -70,6 +70,10 @@ _DEFAULT_ATTEMPTS = 3
 #: repeated before the investigation is given up as unsubmittable.
 _FOLLOWUP_SUBMIT_ATTEMPTS = 2
 
+#: Times an interpretation that ended without a complete verdict, and without a
+#: follow-up to submit, is repeated on the same result before the run fails.
+_INCOMPLETE_INTERPRETATION_ATTEMPTS = 2
+
 #: Subdirectory of Bexhoma's result folder that holds investigation
 #: trajectories when ``--trajectories`` is not given, matching the agent CLI's
 #: own default.
@@ -266,6 +270,7 @@ class AgentLifecycle:
                 self._read_phase_state(current)
 
             refused_followups = 0
+            incomplete_interpretations = 0
             while True:
                 phase, outcome = self._read_phase_state(current)
                 code = outcome.get("code")
@@ -277,6 +282,7 @@ class AgentLifecycle:
                     print(f"benchmark {code} finished: {report}", flush=True)
                     self._start_server()
                     refused_followups = 0
+                    incomplete_interpretations = 0
                     current = self._invoke_agent("interpret", source=current)
                     continue
 
@@ -299,6 +305,30 @@ class AgentLifecycle:
                         f"({refused_followups} of {_FOLLOWUP_SUBMIT_ATTEMPTS})",
                         flush=True,
                     )
+                    current = self._invoke_agent("interpret", source=current)
+                    continue
+                # An interpretation that ended without a complete verdict and
+                # without a follow-up to submit is repeated on the same result.
+                # Raising instead used to fail the same way on every restart,
+                # because a resumed run reads that same last outcome, so the Job
+                # used up its retries without running the phase again. The count
+                # restarts with each new benchmark and with each resume, which
+                # the Job's backoff limit bounds.
+                if (
+                    phase == "interpret"
+                    and not outcome.get("validated_path")
+                    and incomplete_interpretations < _INCOMPLETE_INTERPRETATION_ATTEMPTS
+                ):
+                    incomplete_interpretations += 1
+                    print(
+                        f"the interpretation ended without a complete verdict; "
+                        f"repeating that phase ({incomplete_interpretations} of "
+                        f"{_INCOMPLETE_INTERPRETATION_ATTEMPTS})",
+                        flush=True,
+                    )
+                    # A resumed run has not started the server yet; bringing up
+                    # one that is already running changes nothing.
+                    self._start_server()
                     current = self._invoke_agent("interpret", source=current)
                     continue
                 raise LifecycleError(

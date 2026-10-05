@@ -83,6 +83,65 @@ The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
 fields corrected and conditions added; nothing that validated before is
 rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
 
+## tpch `loading.pods` defaults to 8 (2026-09-30)
+
+`workloads.tpch.loading.pods` now carries `default: 8`, and its `why:` tells
+the agent to keep it unless the hypothesis states a reason to change it.
+Loader pod count is rarely the variable under study, and an arbitrary
+choice per experiment made loading times incomparable across runs.
+`tpch.py`'s own `-nlp` default stays 1, so `tpch_catalog.build_tpch_argv()`
+reads the catalog default and emits `-nlp 8` explicitly when `pods` is
+omitted. Folded into 1.9.0 (not yet released) as an additive change.
+
+## `observe:` parked while the agent is a prototype (2026-09-30)
+
+Monitoring is switched off for the agent while it is a prototype: the
+`observe:` block was taken out of `experiment_schema.fields`, leaving a
+one-line placeholder comment where it stood, so the agent no longer sees the
+option and the validator rejects `observe:` as an unknown top-level field.
+The block is kept here verbatim; to re-enable monitoring, paste it back in
+place of the placeholder (same indentation, between `systems:` and
+`placement:`), add `"observe"` back to the section tuple in
+`agent/harness/validation.py::_check_contract_shape`, and bump the version.
+
+Only the agent loses the option. `build_argv()` still maps `observe` to
+`-m`/`-mc`/`-ma`, so catalog runs through `experiment.py` can still monitor.
+
+The block moved the version 1.8.0 -> 1.9.0 (minor, as for the
+`loading.split` removal: a field that validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in
+lockstep.
+
+```yaml
+    observe:
+      type: object
+      when: "only relevant when the hypothesis needs hardware metrics (CPU
+        and memory use, and GPU use where present) or database-internal
+        statistics -- leave all three off otherwise. Readings only become
+        reliable after a few scrape intervals have accumulated: a phase
+        shorter than roughly 2-5 minutes can show 0/NaN readings rather than
+        a real signal, so keep rounds/query_repeats long enough for the phase
+        to clear this warm-up window if monitoring results matter"
+      fields:
+        monitoring_sut: {type: bool, semantics: "collect hardware metrics of
+          the system under test for this experiment"}
+        monitoring_cluster:
+          type: bool
+          semantics: "collect the same hardware metrics from a monitoring
+            installation that covers every node of the cluster; it is shared
+            by all experiments and reused if it is already running"
+          when: "use it instead of monitoring_sut when load outside the SUT
+            matters, e.g. on the benchmarker's node; turning on both is the
+            same as turning on monitoring_cluster alone"
+        monitoring_app:
+          type: bool
+          semantics: "attach the database's own metrics exporter to the SUT
+            and collect its internal statistics, such as connections, buffer
+            cache hits and lock waits"
+          when: "only takes effect together with monitoring_sut or
+            monitoring_cluster, and only for systems that define an exporter
+            (PostgreSQL and PgDuckDB in this catalog)"
+```
+
 ## Pinning the SUT is recommended; max_sut has no default (2026-09-25)
 
 `placement.sut` now carries a `when:` recommending it. `placement:` is
@@ -137,6 +196,40 @@ This moved the version 1.7.0 -> 1.8.0 (minor: a format was defined and a
 second spelling accepted; the only values now rejected are ones the DBMS
 would have refused at startup anyway), with `spec.CATALOG_CONTRACT_VERSION`
 kept in lockstep.
+
+## PostgreSQL `memory_budget` note (2026-10-01)
+
+Experiment 1790463251 OOMKilled all 9 PostgreSQL SUTs (4 streams x Q18,
+`work_mem=1GB`, `max_parallel_workers_per_gather=32`, 64Gi limit). No
+single knob was wrong; their product was. `systems.PostgreSQL.memory_budget`
+gives the estimate. It is descriptive only: nothing enforces it.
+
+The first estimate was `streams x (max_parallel_workers_per_gather + 1) x
+work_mem`. Checked against the PostgreSQL 18 docs (runtime-config-resource),
+it is off in both directions:
+
+- Overcounts workers. Parallel workers come from a shared pool, capped by
+  `max_parallel_workers` and `max_worker_processes`. A Gather that can't get
+  its workers runs with fewer. So the processes are `S + min(S x per_gather,
+  max_parallel_workers, max_worker_processes)`: 4 + 16 = 20 here, not 132.
+- Undercounts per process. `work_mem` is per sort/hash *node*, and a plan
+  has several. Hash nodes may use `work_mem x hash_mem_multiplier`, default
+  2.0. Each worker has its own limit ("Resource limits such as work_mem are
+  applied individually to each worker"). A parallel hash join shares one
+  table, but its budget also scales with the number of participants.
+- Leaves out `shared_buffers`. That is shared memory, and the container's
+  cgroup counts it once its pages are touched.
+
+For the incident, with H = 1..3: 20 x 1..3 x 1GB x 2 = 40-120GB plus
+`shared_buffers`, against 64Gi. The estimate is a ceiling: not every node
+fills its budget at once. Since PG13, hash aggregation spills to disk at
+the limit instead of growing past it. Also left out: per-backend overhead
+and `maintenance_work_mem` per index build or autovacuum worker during
+loading. PgDuckDB inherits the key through `extends:`, because a system
+that doesn't declare a top-level key falls back to its base's value. DuckDB's
+own memory is separate and not covered.
+
+This is additive and folded into 1.9.0, which is not yet released.
 
 ## Pinning loader and benchmarker pods is uncommon (2026-09-25)
 

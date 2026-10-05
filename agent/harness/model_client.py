@@ -23,6 +23,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+import httpx
 from openai import (
     APIConnectionError, BadRequestError, InternalServerError, OpenAI, OpenAIError,
     RateLimitError,
@@ -69,10 +70,14 @@ _PROMPT_TOKENS_PATTERN = re.compile(
     r"(\d+)\s+(?:input tokens|in the messages)", re.IGNORECASE
 )
 
-#: Characters per token for the messages appended since the last exchange.
-#: Deliberately low: overestimating the appended text shrinks the generation
-#: budget slightly, while underestimating it would overflow the window.
-_CHARACTERS_PER_TOKEN = 3
+#: Characters per token for the messages appended since the last exchange,
+#: used only when the server cannot count them exactly. Deliberately low:
+#: overestimating the appended text shrinks the generation budget slightly,
+#: while underestimating it overflows the window. Three was too high for a
+#: tool result dense with numbers and punctuation, which tokenizes nearer two.
+_CHARACTERS_PER_TOKEN = 2
+#: Path vLLM serves its tokenizer under, beside (not inside) ``/v1``.
+_TOKENIZE_PATH = "/tokenize"
 
 
 class ContextWindowExhausted(RuntimeError):
@@ -183,6 +188,10 @@ class ChatModel:
         self.enable_thinking = enable_thinking
         self.extra_body = dict(extra_body or {})
         self._client = OpenAI(base_url=base_url, api_key=api_key, timeout=timeout)
+        self._http = httpx.Client(timeout=timeout)
+        #: Where the server counts a conversation's tokens; ``None`` once it
+        #: turned out not to offer that, so it is asked only once.
+        self._tokenize_url: str | None = _tokenize_url(base_url)
         self._context_window: int | None = None
         self._context_window_asked = False
         self._counted_messages = 0
@@ -252,6 +261,18 @@ class ChatModel:
                 self._context_window = None
         return self._context_window
 
+    def _anchored(self, messages: list[dict[str, Any]]) -> tuple[int, int]:
+        """Split the conversation at the last exact count the server reported.
+
+        :param messages: Full conversation about to be sent.
+        :return: Tokens the server counted for the anchored prefix, and how many
+            messages that prefix holds; both zero when there is no anchor.
+        :rtype: tuple[int, int]
+        """
+        if self._counted_messages and len(messages) >= self._counted_messages:
+            return self._counted_prompt_tokens, self._counted_messages
+        return 0, 0
+
     def _prompt_tokens(self, messages: list[dict[str, Any]]) -> int:
         """Estimate the tokens this conversation will occupy.
 
@@ -262,18 +283,106 @@ class ChatModel:
         :return: Estimated prompt tokens.
         :rtype: int
         """
-        appended = messages
-        counted = 0
-        if self._counted_messages and len(messages) >= self._counted_messages:
-            appended = messages[self._counted_messages:]
-            counted = self._counted_prompt_tokens
-        characters = sum(len(json.dumps(message, default=str)) for message in appended)
-        return counted + characters // _CHARACTERS_PER_TOKEN
+        counted, prefix = self._anchored(messages)
+        return counted + _characters(messages[prefix:]) // _CHARACTERS_PER_TOKEN
 
-    def _generation_budget(self, messages: list[dict[str, Any]]) -> int:
-        """Cap this turn's output so the request fits the server's window.
+    def _extra_body(self) -> dict[str, Any]:
+        """Return the request fields this endpoint takes beyond the OpenAI API."""
+        # The OpenAI client forwards fields outside its own API only through
+        # extra_body; a copy, so the thinking switch never leaks into the
+        # configured set.
+        extra_body = dict(self.extra_body)
+        if self.enable_thinking:
+            # vLLM's documented switch for a hybrid reasoning model's chat
+            # template (glm45, qwen3, ...); a template that does not read the
+            # kwarg ignores it. Pinned explicitly rather than left to the
+            # server's own default so it cannot be silently toggled off by
+            # something upstream of this request.
+            extra_body["chat_template_kwargs"] = {"enable_thinking": True}
+        return extra_body
+
+    def _tokenized(
+        self, messages: list[dict[str, Any]], tools: list[dict[str, Any]] | None,
+    ) -> int | None:
+        """Return the tokens the server counts for a conversation, if it can.
+
+        :param messages: The conversation to count.
+        :param tools: The tool schemas sent with it.
+        :return: The server's count, or ``None`` when it does not count.
+        :rtype: int | None
+        """
+        if self._tokenize_url is None:
+            return None
+        body: dict[str, Any] = {
+            "model": self.model, "messages": messages, "add_generation_prompt": True,
+        }
+        if tools:
+            body["tools"] = tools
+        template_kwargs = self._extra_body().get("chat_template_kwargs")
+        if template_kwargs:
+            body["chat_template_kwargs"] = template_kwargs
+        try:
+            response = self._http.post(self._tokenize_url, json=body)
+            response.raise_for_status()
+            count = response.json().get("count")
+        except (httpx.HTTPError, ValueError, AttributeError) as error:
+            count, reason = None, str(error)
+        else:
+            reason = "it answered without a count"
+        if isinstance(count, int) and not isinstance(count, bool):
+            return count
+        # Hosted endpoints do not offer this; asking every turn would only
+        # repeat the refusal, so the estimate takes over for good.
+        self._tokenize_url = None
+        print(
+            f"{self.base_url} does not count prompt tokens ({reason}); "
+            "estimating them instead",
+            file=sys.stderr, flush=True,
+        )
+        return None
+
+    def _counted_tokens(
+        self, messages: list[dict[str, Any]], tools: list[dict[str, Any]] | None,
+    ) -> int | None:
+        """Count the conversation exactly, building on the server's last count.
+
+        The messages appended since that count are measured as the difference
+        between tokenizing the conversation with and without them. Whatever
+        the tokenizer endpoint renders differently from a real request -- tool
+        schemas an older server leaves out, template quirks -- appears on both
+        sides of that difference and cancels.
 
         :param messages: Full conversation about to be sent.
+        :param tools: Tool schemas sent with it.
+        :return: Prompt tokens, or ``None`` when the server cannot count them.
+        :rtype: int | None
+        """
+        counted, prefix = self._anchored(messages)
+        whole = self._tokenized(messages, tools)
+        if whole is None or not prefix:
+            return whole
+        before = self._tokenized(messages[:prefix], tools)
+        if before is None:
+            return None
+        return counted + max(0, whole - before)
+
+    def _generation_budget(
+        self,
+        messages: list[dict[str, Any]],
+        tools: list[dict[str, Any]] | None = None,
+        at_least: int = 0,
+    ) -> int:
+        """Cap this turn's output so the request fits the server's window.
+
+        The prompt is estimated, and counted exactly only when even the most
+        pessimistic estimate -- one token per character of everything appended
+        since the server's last count -- could leave too little room for the
+        configured ceiling. Early turns then cost no extra request, and a turn
+        near the window is sized on the real figure instead of a guess.
+
+        :param messages: Full conversation about to be sent.
+        :param tools: Tool schemas sent with it.
+        :param at_least: A lower bound on the prompt the server named.
         :return: Tokens this turn may generate.
         :rtype: int
         :raises ContextWindowExhausted: When too little room is left to answer.
@@ -281,7 +390,15 @@ class ChatModel:
         window = self._window()
         if window is None:
             return self.max_tokens
-        room = window - self._prompt_tokens(messages) - _CONTEXT_MARGIN_TOKENS
+        prompt = self._prompt_tokens(messages)
+        counted, prefix = self._anchored(messages)
+        worst_case = counted + _characters(messages[prefix:])
+        if max(worst_case, at_least) + _CONTEXT_MARGIN_TOKENS + self.max_tokens > window:
+            exact = self._counted_tokens(messages, tools)
+            if exact is not None:
+                prompt = exact
+        prompt = max(prompt, at_least)
+        room = window - prompt - _CONTEXT_MARGIN_TOKENS
         if room < _MINIMUM_GENERATION_TOKENS:
             raise ContextWindowExhausted(
                 f"the conversation leaves {max(room, 0)} of {window} tokens for an "
@@ -337,10 +454,13 @@ class ChatModel:
 
         A hosted endpoint often does not advertise its context length in the
         model list, so the per-turn ceiling is sent unchanged and the server
-        answers with a 400 that names the window. Adopt that figure, anchor the
-        prompt estimate on the token count the same message reports, recompute
-        the generation budget against the now-known window, and send the turn
-        once more. A 400 that is not about context length, or a retry that the
+        answers with a 400 that names the window. Adopt that figure, take the
+        prompt size the same message reports, recompute the generation budget against
+        the now-known window, and send the turn once more. A size stated as
+        "at least N" is only a floor -- vLLM derives it as the window minus the
+        requested output, plus one, without counting -- so it never replaces
+        the anchor; anchoring on it once let the retry shrink by only the
+        margin and be refused again. A 400 that is not about context length, or a retry that the
         server still refuses, is not something this can recover from.
 
         :param request: The refused request, mutated in place with the new ceiling.
@@ -356,11 +476,14 @@ class ChatModel:
             raise error
         self._context_window = window
         self._context_window_asked = True
-        reported_prompt = _reported_prompt_tokens(error)
-        if reported_prompt is not None:
+        reported_prompt, exact = _reported_prompt_tokens(error)
+        if reported_prompt is not None and exact:
             self._counted_messages = len(messages)
             self._counted_prompt_tokens = reported_prompt
-        request["max_tokens"] = self._generation_budget(messages)
+        request["max_tokens"] = self._generation_budget(
+            messages, request.get("tools"),
+            at_least=0 if exact else reported_prompt or 0,
+        )
         try:
             return self._create_with_backoff(request)
         except BadRequestError as retry_error:
@@ -389,24 +512,14 @@ class ChatModel:
             answer, so the server refuses the request -- whether that is caught
             before the request or from the server's own 400.
         """
-        budget = self._generation_budget(messages)
+        budget = self._generation_budget(messages, tools)
         request: dict[str, Any] = {
             "model": self.model,
             "messages": messages,
             "temperature": self.temperature,
             "max_tokens": budget,
         }
-        # The OpenAI client forwards fields outside its own API only through
-        # extra_body; a copy, so the thinking switch never leaks into the
-        # configured set.
-        extra_body = dict(self.extra_body)
-        if self.enable_thinking:
-            # vLLM's documented switch for a hybrid reasoning model's chat
-            # template (glm45, qwen3, ...); a template that does not read the
-            # kwarg ignores it. Pinned explicitly rather than left to the
-            # server's own default so it cannot be silently toggled off by
-            # something upstream of this request.
-            extra_body["chat_template_kwargs"] = {"enable_thinking": True}
+        extra_body = self._extra_body()
         if extra_body:
             request["extra_body"] = extra_body
         if tools:
@@ -544,15 +657,39 @@ def _named_context_window(error: BadRequestError) -> int | None:
     return int(match.group(1) or match.group(2)) if match else None
 
 
-def _reported_prompt_tokens(error: BadRequestError) -> int | None:
+def _reported_prompt_tokens(error: BadRequestError) -> tuple[int | None, bool]:
     """Return the prompt size a context-length 400 reports, if it states one.
 
     :param error: The 400 the server raised.
-    :return: Input tokens the server counted, or ``None`` when it named no figure.
-    :rtype: int | None
+    :return: Input tokens the server named, or ``None`` when it named no
+        figure; and whether that figure is a count rather than an "at least"
+        lower bound.
+    :rtype: tuple[int | None, bool]
     """
-    match = _PROMPT_TOKENS_PATTERN.search(_error_message(error))
-    return int(match.group(1)) if match else None
+    message = _error_message(error)
+    match = _PROMPT_TOKENS_PATTERN.search(message)
+    if not match:
+        return None, False
+    floor = message[:match.start()].rstrip().lower().endswith("at least")
+    return int(match.group(1)), not floor
+
+
+def _characters(messages: list[dict[str, Any]]) -> int:
+    """Return the serialized length of some messages, in characters."""
+    return sum(len(json.dumps(message, default=str)) for message in messages)
+
+
+def _tokenize_url(base_url: str) -> str:
+    """Return where a vLLM server behind ``base_url`` counts tokens.
+
+    :param base_url: The OpenAI-compatible endpoint, usually ending in ``/v1``.
+    :return: The tokenizer URL at the server's root.
+    :rtype: str
+    """
+    root = base_url.rstrip("/")
+    if root.endswith("/v1"):
+        root = root[:-len("/v1")]
+    return root + _TOKENIZE_PATH
 
 
 def _error_message(error: OpenAIError) -> str:
