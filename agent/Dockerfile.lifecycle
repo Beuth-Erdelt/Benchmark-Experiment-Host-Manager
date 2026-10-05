@@ -17,7 +17,9 @@ COPY dev ./dev
 COPY experiments ./experiments
 COPY k8s ./k8s
 
-RUN python -m pip install --no-cache-dir ".[agent]"
+# bexhoma/collectors/base.py imports IPython, which the package does not
+# declare; without it every submitted benchmark dies at import time.
+RUN python -m pip install --no-cache-dir ".[agent]" ipython
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1

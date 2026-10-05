@@ -67,6 +67,9 @@ class BenchmarkRunner:
         :param template_override: When non-empty, overrides the default YAML job template.
         :param reset_seconds: Seconds spent running this connection's reset script
             (0 if none ran), recorded on the connection as ``time_reset``.
+        :raises RuntimeError: If the chunk-assignment queue cannot be filled
+            with exactly ``parallelism`` items, which would otherwise let pods
+            race on a corrupted assignment.
         """
         cfg = self._config
         cfg.logger.debug('BenchmarkRunner.run_pod()')
@@ -209,8 +212,7 @@ class BenchmarkRunner:
             cfg.upload_experiment_file('connections.config')
             cfg.upload_experiment_file('protocol.json')
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, cfg.code)
-        for i in range(1, parallelism + 1):
-            cfg.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
+        cfg.experiment.cluster.fill_messagequeue(queue=redisQueue, length=parallelism)
         round_index = int(client) - 1
         benchmark_run_index = (int(benchmark_run) - 1) if benchmark_run else 0
         benchmarker_rounds = cfg.experiment_dict.get('benchmarker', [])

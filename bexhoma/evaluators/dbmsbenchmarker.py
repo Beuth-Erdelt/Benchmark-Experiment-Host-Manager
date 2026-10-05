@@ -538,7 +538,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         Record DBMSBenchmarker pass/fail tests.
 
         Tests query metric columns (Geo Times, Power@Size, Throughput@Size),
-        SQL error and warning counts supplied by ``_show_extra_sections``, and
+        SQL error and warning counts supplied by ``_show_extra_sections``,
+        that the successful-query pool behind those totals is complete, and
         workflow completeness.
 
         :param experiment: The owning experiment object.
@@ -566,10 +567,23 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
                 passed_warnings,
                 "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)"
             )
+            # dbmsbenchmarker only folds a query into Geo Times/Power@Size/Throughput@Size
+            # for a connection if every active connection sharing this experiment code
+            # completed it; one connection's failure silently drops the query from every
+            # other connection's totals too, without tripping the 0-or-NaN column checks
+            # above unless every query ends up dropped this way.
+            num_active_queries = extra.get("num_active_queries", 0)
+            if num_active_queries > 0 and "num_of_queries" in df_reduced.columns:
+                min_num_of_queries = int(df_reduced["num_of_queries"].min())
+                passed_query_pool = min_num_of_queries == num_active_queries
+                experiment._record_test(
+                    passed_query_pool,
+                    "All active queries counted in the totals" if passed_query_pool else
+                    "Some active queries missing from the totals (see Per Phase table's num_of_queries column)"
+                )
             # EXPLAIN is opt-in (-se/--store-explain); skip rather than fail when
             # nothing was captured at all, since that is the common case of the
             # flag simply not being used, not a real defect.
-            num_active_queries = extra.get("num_active_queries", 0)
             num_queries_with_explain = extra.get("num_queries_with_explain", 0)
             if num_queries_with_explain == 0:
                 experiment._record_skipped_test("EXPLAIN captured for every active query (-se/--store-explain not used)")

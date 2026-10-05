@@ -17,7 +17,7 @@ See LICENSE for details.
 
 from pathlib import Path
 
-SEARCH_PATHS = ["docs", "logs_tests", "images", "scripts"]
+SEARCH_PATHS = ["docs", "logs_tests", "images", "scripts", "agent"]
 
 INCLUDE_SUFFIXES = {".md", ".txt", ".sh", ".py", ".log"}
 INCLUDE_NAME_PREFIXES = {"Dockerfile"}

@@ -56,11 +56,30 @@ _CLUSTER_CONFIG = "cluster.config"
 #: silently accepted and then rejected by the YAML loader.
 _SPEC_SUFFIXES = (".yml", ".yaml")
 
+#: Evidence is cited the way the result contract records it, so a record stays
+#: valid when its result folder moves; absolute read paths are accepted too.
+_EVIDENCE_PATHS_DESCRIPTION = (
+    "Files you opened with read_file, relative to the result folder, e.g. "
+    "report/index.md. The absolute path you read is accepted as well."
+)
+
+#: The inbox is shared by agent runs started side by side, and the model picks
+#: its draft's name, usually from the task. A name another run already holds is
+#: therefore given a two-digit counter instead of being overwritten.
+_DRAFT_COUNTER = re.compile(r"^(?P<base>.+)_(?P<number>\d{2})$")
+_DRAFT_COUNTER_LIMIT = 99
+
 #: How long submit waits for bexhoma to create its preassigned result folder.
 #: The run itself continues long after this.
 _CODE_WAIT_SECONDS = 120
 _RUN_LOCK = ".bexhoma-agent.lock"
+#: Status-file states of an experiment that has not reached a terminal one.
+_UNFINISHED_STATES = ("reserved", "starting", "running")
 _SUBMITTED_SPEC = "submitted-experiment.yml"
+#: Archived beside the phase's own trajectory whenever validation fully
+#: passes, so a dry run still leaves the design behind even though it is
+#: never handed to :meth:`Workspace.submit`.
+_VALIDATED_SPEC = "validated-experiment.yml"
 _STAGED_CATALOG = "submitted-contract_catalog.yml"
 _STAGED_RESULT_CONTRACT = "submitted-contract_result.yml"
 _STAGED_ENVIRONMENT = "submitted-environment.yml"
@@ -78,22 +97,47 @@ _SECTION_CHARACTER_LIMIT = 12_000
 #: reject them, never silently remove their tail.
 _AUTHORITATIVE_CHARACTER_LIMIT = 48_000
 _AUTHORITATIVE_FILENAMES = {
-    "contract_catalog.yml", "contract_result.yml", "experiment_design_handbook.md",
+    "contract_catalog.yml", "contract_result.yml", "handbook.md",
     "environment.yml", "experiment.yml", "submitted-experiment.yml",
 }
-#: Hard ceiling on file text returned during one agent invocation. This bounds
-#: prompt growth even when the model keeps opening large evidence pages. It
-#: allows for all three contracts plus the cluster descriptor in one design
-#: context, with room left for a draft to be read back.
+#: Ceiling on file text returned during one model conversation when the served
+#: context window is unknown. This bounds prompt growth even when the model
+#: keeps opening large evidence pages.
 _READ_CONTEXT_CHARACTER_LIMIT = 110_000
+#: Share of the prompt room (context window minus the per-turn output ceiling)
+#: that file text may occupy. The rest holds the system prompt, the task, tool
+#: calls and the model's own earlier turns.
+_READ_SHARE_OF_PROMPT_ROOM = 0.6
+#: Characters per token when sizing the read budget. Contract YAML and English
+#: prose tokenize at roughly 3.5 to 4 characters per token; 3.5 errs low.
+_READ_CHARACTERS_PER_TOKEN = 3.5
+
+
+def read_budget_for_window(context_window: int | None, max_tokens: int) -> int:
+    """Size one conversation's file-reading allowance from the model's window.
+
+    Every turn reserves ``max_tokens`` for the answer, so only the rest of the
+    window can hold the prompt. File text gets a fixed share of that rest.
+
+    :param context_window: Tokens the server accepts per request, or ``None``
+        when it does not publish the figure.
+    :param max_tokens: The per-turn output ceiling.
+    :return: Cumulative characters of file text one conversation may receive.
+    :rtype: int
+    """
+    if context_window is None:
+        return _READ_CONTEXT_CHARACTER_LIMIT
+    prompt_room = max(context_window - max_tokens, 0)
+    return int(prompt_room * _READ_SHARE_OF_PROMPT_ROOM * _READ_CHARACTERS_PER_TOKEN)
 
 #: A phase is suspicious when its aggregate latency differs by at least this
 #: factor from the median of the other repetitions at the same concurrency.
 #: The result remains usable; this is a disclosure gate, not an invalidation.
 _REPETITION_ANOMALY_RATIO = 3.0
-#: Relative noise assumed at a level even when its repetitions agree exactly.
-#: One repetition, or repetitions that happen to land on the same value, would
-#: otherwise claim perfect precision and make every step look resolvable.
+#: Relative noise assumed for a single measurement even when its repetitions
+#: agree exactly. One repetition, or repetitions that happen to land on the
+#: same value, would otherwise claim perfect precision and make every step look
+#: resolvable. Like observed scatter it shrinks with the number of repetitions.
 _SHAPE_NOISE_FLOOR = 0.05
 
 #: Factors the catalog lets an experiment isolate. Everything the contract can
@@ -110,6 +154,21 @@ _LOWER_IS_BETTER = ("Geo Times [s]",)
 _METRIC_SUBSTRINGS = (
     ("throughput", "higher_is_better"), ("latency", "lower_is_better"),
 )
+
+#: A phase rate the report forms by adding up its pods' own rates (YCSB), and the
+#: per-pod duration each of those rates was measured over.
+_SUMMED_RATE = "[OVERALL].Throughput(ops/sec)"
+_POD_DURATION_MS = "[OVERALL].RunTime(ms)"
+_MILLISECONDS_PER_SECOND = 1000.0
+
+#: Policy, not a scientific boundary: how far a summed rate may exceed its
+#: common-duration approximation before no shape or ranking is built on it. It
+#: is set to catch large distortions, such as the doubled rates of 2026-09-24.
+_RATE_DISCREPANCY_LIMIT = 0.20
+
+#: Relative slack for a phase rate to count as the sum of its pods' rates, which
+#: the report rounds to two decimals each.
+_RATE_ROUNDING_TOLERANCE = 1e-3
 
 #: Unit each ordered factor is swept in, for the assessor's own prose.
 _FACTOR_UNITS = {"concurrency": "clients", "cpu": "cores", "memory": "GiB"}
@@ -197,12 +256,16 @@ class Workspace:
         self.method_path = (
             str((self.root / method_path).resolve()) if method_path else None
         )
+        # The handbook as the prompts name it, which a refused read quotes back.
+        self._method_named = method_path or None
         self.results_root = Path(results_root).resolve() if results_root else None
         self.status_dir = (self.root / status_dir).resolve()
         self.run_directory = run_directory
         self.allow_parallel_runs = allow_parallel_runs
         self._validated: dict[Path, tuple[str, ...]] = {}
-        self._returned_read_characters = 0
+        self._written_drafts: set[Path] = set()
+        self.read_budget = _READ_CONTEXT_CHARACTER_LIMIT
+        self.reset_read_context()
         self._result_directory: Path | None = None
         self._reachable_result_files: set[Path] | None = None
         self.inbox.mkdir(parents=True, exist_ok=True)
@@ -217,6 +280,24 @@ class Workspace:
             self._readable_files.add(self.environment_path)
         if self.method_path:
             self._readable_files.add(self.method_path)
+        # The handbook's appendix (local interface notes and the source list)
+        # sits beside it. It is readable but not required, so it costs the
+        # read budget only when the agent asks for it.
+        self.method_appendix_path: str | None = None
+        if self.method_path:
+            method = Path(self.method_path)
+            appendix = method.with_name(f"{method.stem}_appendix.md")
+            if appendix.is_file():
+                self.method_appendix_path = str(appendix)
+                self._readable_files.add(self.method_appendix_path)
+
+    def set_read_budget(self, characters: int) -> None:
+        """Set how much file text one model conversation may receive.
+
+        :param characters: Cumulative characters per conversation, usually
+            from :func:`read_budget_for_window`.
+        """
+        self.read_budget = characters
 
     def reset_read_context(self) -> None:
         """Start a fresh model context with a fresh cumulative read allowance.
@@ -226,6 +307,7 @@ class Workspace:
         to the first must not consume the second conversation's allowance.
         """
         self._returned_read_characters = 0
+        self._returned_reads: dict[tuple[Path, str | None, int], tuple[str, int]] = {}
 
     def restrict_to_result(self, report_path: str, result_contract_path: str) -> None:
         """Restrict reads to one result and files reachable from its report.
@@ -251,6 +333,8 @@ class Workspace:
         # result soundly needs the same principles that designing one does.
         if self.method_path:
             self._reachable_result_files.add(Path(self.method_path))
+        if self.method_appendix_path:
+            self._reachable_result_files.add(Path(self.method_appendix_path))
         self.reset_read_context()
 
     def restore_design_reads(self) -> None:
@@ -310,6 +394,7 @@ class Workspace:
                 return candidate
             raise ToolError(
                 f"path {path!r} is not reachable from the selected report"
+                + self._handbook_hint(candidate)
             )
         if str(candidate) in self._readable_files:
             return candidate
@@ -318,7 +403,44 @@ class Workspace:
         raise ToolError(
             f"path {path!r} is outside the read scope; you may read the contract "
             "files you were pointed at and your own drafts, and nothing else"
+            + self._handbook_hint(candidate)
         )
+
+    def _handbook_hint(self, candidate: Path) -> str:
+        """Name the handbook's readable path when a refused read was aiming at it.
+
+        The prompts name the handbook relative to :attr:`root`, beside absolute
+        report paths. Models have prefixed it with a slash or guessed a mount
+        point, and a refusal that only said the path was out of scope set them
+        guessing further, one turn per guess.
+
+        :param candidate: The resolved path that was refused.
+        :return: A clause to append to the refusal, or ``""`` when the read was
+            not aimed at the handbook or its appendix.
+        :rtype: str
+        """
+        if not self._method_named:
+            return ""
+        named = Path(self._method_named)
+        if candidate.name == named.name:
+            return f"; the handbook is readable as {self._method_named!r}, exactly as written"
+        if self.method_appendix_path and candidate.name == Path(self.method_appendix_path).name:
+            appendix = named.with_name(Path(self.method_appendix_path).name)
+            return f"; the handbook appendix is readable as {str(appendix)!r}, exactly as written"
+        return ""
+
+    def peek_text(self, path: str) -> str:
+        """Return a readable file's text for the harness's own checks.
+
+        Unlike :meth:`read_file`, nothing reaches the model, so the read budget
+        is neither charged nor consulted.
+
+        :param path: Path as the agent wrote it, relative to :attr:`root`.
+        :return: The file's full text.
+        :rtype: str
+        :raises ToolError: When the path is not inside the read scope.
+        """
+        return self._resolve_readable(path).read_text(encoding="utf-8")
 
     def read_file(
         self, path: str, section: str | None = None, offset: int = 0,
@@ -361,7 +483,10 @@ class Workspace:
                 "available_sections": headings[:40],
                 "more_sections": max(0, len(headings) - 40),
             }
-        if authoritative and len(text) > _AUTHORITATIVE_CHARACTER_LIMIT:
+        # A section read is explicitly partial and paginated via next_offset,
+        # so the whole-or-nothing rule only governs whole-file reads.
+        whole_authoritative = authoritative and section is None
+        if whole_authoritative and len(text) > _AUTHORITATIVE_CHARACTER_LIMIT:
             return {
                 "error": (
                     f"authoritative file has {len(text)} characters, above the "
@@ -395,16 +520,34 @@ class Workspace:
             payload["offset"] = offset
             payload["selected_characters"] = len(text)
             text = text[offset:]
-        elif authoritative:
+        elif whole_authoritative:
             limit = len(text)
 
-        remaining = _READ_CONTEXT_CHARACTER_LIMIT - self._returned_read_characters
+        # The conversation keeps every tool result, so unchanged text that was
+        # already returned is still in front of the model. Sending it again
+        # would only spend the budget on a duplicate.
+        read_key = (source, section, offset)
+        digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        previous = self._returned_reads.get(read_key)
+        if previous is not None and previous[0] == digest:
+            payload["unchanged"] = (
+                "this exact content was already returned earlier in this "
+                "conversation and has not changed since; use that copy"
+            )
+            if section is not None and previous[1] < len(text):
+                payload["next_offset"] = offset + previous[1]
+            payload["context_characters_remaining"] = (
+                self.read_budget - self._returned_read_characters
+            )
+            return payload
+
+        remaining = self.read_budget - self._returned_read_characters
         if remaining <= 0:
             return {
                 "error": "file-reading context budget is exhausted; answer from the evidence already read",
                 "path": path,
             }
-        if authoritative and len(text) > remaining:
+        if whole_authoritative and len(text) > remaining:
             return {
                 "error": (
                     "authoritative file does not fit the remaining file-reading context budget; "
@@ -428,9 +571,10 @@ class Workspace:
             text = text[:shown]
         payload["text"] = text
         payload["returned_characters"] = len(text)
+        self._returned_reads[read_key] = (digest, len(text))
         self._returned_read_characters += len(text)
         payload["context_characters_remaining"] = (
-            _READ_CONTEXT_CHARACTER_LIMIT - self._returned_read_characters
+            self.read_budget - self._returned_read_characters
         )
         self._discover_result_links(source)
         return payload
@@ -456,14 +600,60 @@ class Workspace:
     def write_file(self, path: str, text: str) -> dict[str, Any]:
         """Write an experiment specification into the inbox.
 
+        A draft this workspace wrote earlier is replaced. A file that already
+        exists under the requested name but was not written here belongs to
+        another run, so the draft is saved under the next free numbered name
+        instead, and the result names that path.
+
         :param path: Destination path, relative to :attr:`root`.
         :param text: Full file contents; any previous version is replaced.
-        :return: ``{"written": path, "bytes": n}``.
+        :return: ``{"written": path, "bytes": n}``, plus a ``note`` when the
+            draft was saved under a numbered name.
         :rtype: dict[str, Any]
         """
-        destination = self._resolve_in_inbox(path)
+        requested = self._resolve_in_inbox(path)
+        destination = requested
+        if requested not in self._written_drafts:
+            destination = self._claim_draft(requested)
+            self._written_drafts.add(destination)
         destination.write_text(text, encoding="utf-8")
-        return {"written": path, "bytes": len(text.encode("utf-8"))}
+        result: dict[str, Any] = {"written": path, "bytes": len(text.encode("utf-8"))}
+        if destination != requested:
+            written = path[: len(path) - len(requested.name)] + destination.name
+            result["written"] = written
+            result["note"] = (
+                f"{path} already belongs to another run, so your draft was saved "
+                f"as {written}; use that path from now on"
+            )
+        return result
+
+    def _claim_draft(self, requested: Path) -> Path:
+        """Create a new draft file exclusively, numbering the name if it is taken.
+
+        A requested name that already carries a counter, such as ``x_01`` next
+        to an existing ``x``, continues that sequence rather than stacking a
+        second counter onto it. Exclusive creation keeps two runs claiming the
+        same number at the same moment from both getting it.
+        """
+        base = requested.stem
+        match = _DRAFT_COUNTER.match(base)
+        if match and requested.with_name(match["base"] + requested.suffix).exists():
+            base = match["base"]
+        names = [requested.name] + [
+            f"{base}_{number:02d}{requested.suffix}"
+            for number in range(1, _DRAFT_COUNTER_LIMIT + 1)
+        ]
+        for name in names:
+            candidate = requested.with_name(name)
+            try:
+                os.close(os.open(candidate, os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+            except FileExistsError:
+                continue
+            return candidate
+        raise ToolError(
+            f"{requested.name} and all its numbered variants up to "
+            f"_{_DRAFT_COUNTER_LIMIT} exist; choose another name"
+        )
 
     def invalidate_validation(self, path: str) -> None:
         """Forget any earlier validation approval for one inbox file.
@@ -513,6 +703,11 @@ class Workspace:
         result = validation.validate_spec(str(target), self.catalog_path, self.environment_path)
         if result.get("valid") and result.get("environment_checked"):
             self._validated[target] = self._fingerprint(target)
+            # Archived even when the phase never submits (--dry-run, or a
+            # submission the model never gets to): otherwise a passing design
+            # would leave nothing behind but its name in the inbox.
+            if self.run_directory is not None:
+                (self.run_directory / _VALIDATED_SPEC).write_bytes(target.read_bytes())
         else:
             self._validated.pop(target, None)
         return result
@@ -548,16 +743,36 @@ class Workspace:
             )
 
         lock_path = self.results_root / _RUN_LOCK
-        parallel = not _runlock.try_claim(lock_path, os.getpid())
-        if parallel and not self.allow_parallel_runs:
-            raise ToolError("submit refused: another agent-started experiment is still running")
-        # The operator asked for this run to go ahead anyway. The lock stays
-        # with its current holder; this run simply does not wait for it, and
-        # says so in its result so the trajectory records the choice.
-
-        code = None
+        # Deciding that no other run is active and reserving this run's code
+        # happen under one gate. A submission that has claimed the lock has
+        # then always reserved its code as well, so the next one deciding
+        # whether the lock is stale sees it among the unfinished experiments.
         try:
-            code = self._new_code()
+            with _runlock.gate(lock_path) as lock:
+                parallel = lock.held()
+                if parallel and not self.allow_parallel_runs:
+                    # The lock file outlives the process that wrote it. A
+                    # controller restarted into a new container gets a fresh
+                    # PID namespace, where the recorded PID may belong to an
+                    # unrelated live process, and the lock would then never
+                    # look free again. The status files, refreshed from the
+                    # result folders, say whether an agent-started experiment
+                    # is genuinely unfinished; with none, the lock is stale.
+                    if self._unfinished_experiments():
+                        raise ToolError(
+                            "submit refused: another agent-started experiment "
+                            "is still running")
+                    parallel = False
+                # With parallel runs allowed, the lock stays with its current
+                # holder; this run simply does not wait for it, and says so in
+                # its result so the trajectory records the choice.
+                code = self._new_code()
+                if not parallel:
+                    lock.set_holder(os.getpid())
+        except TimeoutError as error:
+            raise ToolError(f"submit refused: {error}") from error
+
+        try:
             submitted = (self.run_directory or self.inbox) / _SUBMITTED_SPEC
             submitted.write_bytes(contents)
             provenance = self._stage_provenance(submitted)
@@ -572,9 +787,8 @@ class Workspace:
         except Exception:
             if not parallel:
                 _runlock.release(lock_path)
-            if code is not None:
-                # Release the reserved code: nothing was launched under it.
-                (self.status_dir / f"{code}.json").unlink(missing_ok=True)
+            # Release the reserved code: nothing was launched under it.
+            (self.status_dir / f"{code}.json").unlink(missing_ok=True)
             raise
         # Hand the lock to the detached child's own PID, so it stays held for as
         # long as that process runs -- even after this one exits -- without
@@ -749,6 +963,16 @@ class Workspace:
             "log": log,
             "provenance": provenance,
         }, indent=2), encoding="utf-8")
+
+    def _unfinished_experiments(self) -> list[dict[str, Any]]:
+        """Return submitted experiments that have not reached a terminal state.
+
+        :return: Status entries still reserved, starting or running, as
+            :meth:`list_results` derives them from the result folders.
+        :rtype: list[dict[str, Any]]
+        """
+        return [entry for entry in self.list_results()["experiments"]
+                if entry.get("state") in _UNFINISHED_STATES]
 
     def list_results(self) -> dict[str, Any]:
         """List experiments submitted from this workspace, newest first.
@@ -1006,6 +1230,118 @@ def _error_coverage(text: str) -> tuple[set[int], dict[str, set[int]], int]:
     return set(query_columns.values()), errors, total
 
 
+def _query_evidence(text: str) -> dict[str, Any]:
+    """Summarize complete query rows by configuration and actual concurrency."""
+    evidence: dict[str, Any] = {
+        "source_section": "### Latency of Timer Execution [ms]",
+        "queries": [], "omitted_queries": [],
+        "latency_by_context": [], "failures": [],
+        "reason": "Per-query evidence is unavailable without complete phase and latency tables.",
+        "aggregation": (
+            "Arithmetic mean of connection timings within each phase, then equal-weight "
+            "mean across repetitions at the same configuration and concurrency. "
+            "Min/max describe phase means, not confidence intervals. These execution "
+            "timings are not the report's aggregate Geo Times."
+        ),
+        "scope": (
+            "Only the listed queries and observed settings are summarized. Check "
+            "query-specific reversals before generalizing an aggregate ranking. "
+            "Successful timings do not establish that restarts were harmless or "
+            "that missing queries would have the same ranking."
+        ),
+    }
+    phase_table = _markdown_table(text, "#### Per Phase")
+    if phase_table is None or not {"phase", "pod_count"}.issubset(phase_table[0]):
+        return evidence
+    headers, rows = phase_table
+    phases = {}
+    for row in rows:
+        phase = _plain_markdown_cell(row[headers.index("phase")])
+        try:
+            concurrency = int(row[headers.index("pod_count")])
+        except ValueError:
+            return evidence
+        if concurrency <= 0 or len(phase.rsplit("-", 2)) != 3:
+            return evidence
+        phases[phase] = (phase.rsplit("-", 2)[0], concurrency)
+
+    # Keep failures localized; configuration-wide coverage cannot say which load failed.
+    error_headers, error_rows = _markdown_table(text, "### Errors (failed queries)") or ([], [])
+    failures: dict[tuple[str, int], float] = {}
+    for row in error_rows:
+        phase = _plain_markdown_cell(row[0]).rsplit("-", 2)[0]
+        for header, cell in zip(error_headers[1:], row[1:]):
+            query = _query_number(header)
+            if query is None:
+                continue
+            try:
+                count = float(cell)
+            except ValueError:
+                continue
+            if math.isfinite(count) and count > 0:
+                key = (phase, query)
+                failures[key] = failures.get(key, 0) + count
+    evidence["failures"] = [
+        {"phase": phase, "configuration": phases.get(phase, (None, None))[0],
+         "concurrency": phases.get(phase, (None, None))[1],
+         "query": query, "errors": count}
+        for (phase, query), count in sorted(failures.items())
+    ]
+
+    latency_table = _markdown_table(text, evidence["source_section"])
+    if latency_table is None:
+        return evidence
+    headers, rows = latency_table
+    columns: dict[str, list[int]] = {}
+    for position, header in enumerate(headers[1:], 1):
+        phase = _plain_markdown_cell(header).rsplit("-", 2)[0]
+        if phase not in phases:
+            return evidence
+        columns.setdefault(phase, []).append(position)
+    if set(columns) != set(phases) or any(
+        len(columns[phase]) != context[1] for phase, context in phases.items()
+    ):
+        return evidence
+
+    contexts: dict[tuple[str, int], dict[str, Any]] = {}
+    failed_queries = {query for _, query in failures}
+    for row in rows:
+        query = _query_number(row[0])
+        if query is None:
+            continue
+        try:
+            values = [float(cell) for cell in row[1:]]
+        except ValueError:
+            values = []
+        if query in failed_queries or not values or any(
+            not math.isfinite(value) or value <= 0 for value in values
+        ):
+            evidence["omitted_queries"].append(query)
+            continue
+        evidence["queries"].append(query)
+        repetitions: dict[tuple[str, int], list[float]] = {}
+        for phase, positions in columns.items():
+            repetitions.setdefault(phases[phase], []).append(
+                statistics.mean(values[position - 1] for position in positions)
+            )
+        for context, means in repetitions.items():
+            contexts.setdefault(context, {})[str(query)] = {
+                "mean_ms": round(statistics.mean(means), 2),
+                "min_ms": round(min(means), 2), "max_ms": round(max(means), 2),
+                "repetitions": len(means),
+            }
+    evidence["latency_by_context"] = [
+        {"configuration": configuration, "concurrency": concurrency, "queries": queries}
+        for (configuration, concurrency), queries in sorted(contexts.items())
+    ]
+    evidence["reason"] = (
+        "Each summarized query has positive finite timings for every reported connection "
+        "and no recorded query error. Omitted rows are not evidence of success. "
+        "Failure locations come from the Errors table; other validity checks still apply."
+    )
+    return evidence
+
+
 def _numeric_quantity(value: Any, factor: str) -> float | None:
     """Return one CPU or memory limit in a common numeric unit."""
     if isinstance(value, bool) or not isinstance(value, (int, float, str)):
@@ -1136,15 +1472,20 @@ def _configuration_resources(
 
 
 def _level_noise(values: list[float], mean: float) -> float:
-    """Estimate one level's measurement noise from its own repetitions.
+    """Estimate how precisely one level's mean is known from its repetitions.
+
+    A single measurement scatters by the repetitions' standard deviation, or by
+    the noise floor when that is larger. The mean of ``n`` independent
+    repetitions is ``sqrt(n)`` times more precise than one of them (its standard
+    error), so repetitions that agree resolve smaller steps than one run can.
 
     :param values: Every measurement taken at this factor level.
     :param mean: Mean of those measurements.
     :return: Half-width below which a difference is not resolvable here.
     :rtype: float
     """
-    half_range = (max(values) - min(values)) / 2 if len(values) > 1 else 0.0
-    return max(half_range, _SHAPE_NOISE_FLOOR * abs(mean))
+    scatter = statistics.stdev(values) if len(values) > 1 else 0.0
+    return max(scatter, _SHAPE_NOISE_FLOOR * abs(mean)) / math.sqrt(len(values))
 
 
 def _step_direction(
@@ -1248,9 +1589,161 @@ def _expected_levels(
         return {cell[factor] for cell in resource_cells}
     workload = experiment.get("workload")
     declared = workload.get("rounds") if isinstance(workload, dict) else None
+    # A round runs its rounds entry times the declared client threads; only
+    # workloads with a benchmarking block (YCSB) declare more than one.
+    benchmarking = experiment.get("benchmarking")
+    threads = benchmarking.get("threads") if isinstance(benchmarking, dict) else None
+    if not isinstance(threads, int) or isinstance(threads, bool):
+        threads = 1
     return {
-        float(level) for level in declared or []
+        float(level * threads) for level in declared or []
         if isinstance(level, (int, float)) and not isinstance(level, bool)
+    }
+
+
+def _common_duration_rate(
+    rates: list[float], durations: list[float],
+) -> tuple[float, float, float]:
+    """Compare a sum of rates with the rate over the longest contributing duration.
+
+    A rate times its duration approximately recovers the work behind it. Spread
+    over the longest duration, that work gives the rate a group sustained if all
+    of its members started together. Adding the rates instead counts a member
+    that finished early as if it had kept going. The approximation ignores
+    staggered starts and report rounding, so it is a check on the sum, not a
+    corrected throughput.
+
+    :param rates: Each member's own rate.
+    :param durations: The duration each rate was measured over, in any one unit.
+    :return: The summed rate, the common-duration approximation, and the relative
+        excess of the first over the second.
+    :rtype: tuple[float, float, float]
+    """
+    summed = sum(rates)
+    approximation = sum(
+        rate * duration for rate, duration in zip(rates, durations)
+    ) / max(durations)
+    return summed, approximation, summed / approximation - 1
+
+
+def _rate_aggregation(text: str) -> dict[str, Any]:
+    """Check that every summed phase rate adds up pods measured over comparable durations.
+
+    :param text: The report's ``benchmarking.md`` page.
+    :return: The status, the measurements of every multi-pod phase, the phases
+        that could not be checked, and the phases whose summed rate carries no
+        shape or ranking.
+    :rtype: dict[str, Any]
+    """
+    not_applicable = {
+        "status": "not_applicable", "metric": _SUMMED_RATE, "withheld_phases": [],
+    }
+    phase_table = _markdown_table(text, "#### Per Phase")
+    if phase_table is None or not {"phase", "pod_count", _SUMMED_RATE}.issubset(
+        phase_table[0]
+    ):
+        return not_applicable
+    headers, rows = phase_table
+    phases: dict[str, tuple[int, float]] = {}
+    unchecked: dict[str, str] = {}
+    for row in rows:
+        phase = _plain_markdown_cell(row[headers.index("phase")])
+        try:
+            pods = int(row[headers.index("pod_count")])
+            reported = float(row[headers.index(_SUMMED_RATE)])
+        except ValueError:
+            unchecked[phase] = "the phase row has no usable pod count or rate"
+            continue
+        if phase in phases:
+            unchecked[phase] = "the phase appears in more than one row"
+        elif pods > 1:
+            phases[phase] = (pods, reported)
+    if not phases and not unchecked:
+        return not_applicable
+
+    # Each pod's rate and duration cells by phase, or None without a usable table.
+    connection_table = _markdown_table(text, "#### Per Connection")
+    pod_rows: dict[str, list[tuple[str, str]]] | None = None
+    if connection_table is not None and {
+        "phase", _SUMMED_RATE, _POD_DURATION_MS,
+    }.issubset(connection_table[0]):
+        connection_headers, connection_rows = connection_table
+        pod_rows = {}
+        for row in connection_rows:
+            phase = _plain_markdown_cell(row[connection_headers.index("phase")])
+            pod_rows.setdefault(phase, []).append((
+                row[connection_headers.index(_SUMMED_RATE)],
+                row[connection_headers.index(_POD_DURATION_MS)],
+            ))
+
+    measured = []
+    for phase, (pods, reported) in sorted(phases.items()):
+        if phase in unchecked:
+            continue
+        if pod_rows is None:
+            unchecked[phase] = "the report has no per-pod rates and durations"
+            continue
+        if len(pod_rows.get(phase, [])) != pods:
+            unchecked[phase] = (
+                f"{len(pod_rows.get(phase, []))} pod rows for {pods} pods"
+            )
+            continue
+        try:
+            rates = [float(rate) for rate, _ in pod_rows[phase]]
+            durations = [
+                float(duration) / _MILLISECONDS_PER_SECOND
+                for _, duration in pod_rows[phase]
+            ]
+        except ValueError:
+            unchecked[phase] = "a pod rate or duration is not a number"
+            continue
+        if any(
+            not math.isfinite(value) or value <= 0 for value in rates + durations
+        ):
+            unchecked[phase] = "a pod rate or duration is zero or not finite"
+            continue
+        summed, approximation, excess = _common_duration_rate(rates, durations)
+        if abs(summed - reported) > _RATE_ROUNDING_TOLERANCE * abs(reported):
+            unchecked[phase] = "the phase rate is not the sum of its pods' rates"
+            continue
+        measured.append({
+            "phase": phase,
+            "pods": pods,
+            "summed_rate": round(summed, 2),
+            "common_duration_rate_approximation": round(approximation, 2),
+            "shortest_pod_seconds": round(min(durations), 3),
+            "longest_pod_seconds": round(max(durations), 3),
+            "excess": round(excess, 3),
+            "material_discrepancy": excess > _RATE_DISCREPANCY_LIMIT,
+        })
+
+    discrepant = [entry["phase"] for entry in measured if entry["material_discrepancy"]]
+    if discrepant:
+        status = "material_discrepancy"
+    elif unchecked:
+        status = "unchecked"
+    else:
+        status = "no_material_discrepancy_detected"
+    return {
+        "status": status,
+        "metric": _SUMMED_RATE,
+        "limit": _RATE_DISCREPANCY_LIMIT,
+        "phases": measured,
+        "unchecked_phases": [
+            {"phase": phase, "reason": reason} for phase, reason in sorted(unchecked.items())
+        ],
+        "withheld_phases": sorted(set(discrepant) | set(unchecked)),
+        "explanation": (
+            f"Each phase's {_SUMMED_RATE} adds up its pods' own rates, which equals "
+            "the rate over the whole round only when every pod ran for the same "
+            "time. The common-duration approximation spreads each pod's work "
+            "(rate times duration) over the longest pod duration; it ignores "
+            "staggered starts and is a check on the sum, not a corrected "
+            "throughput or capacity. A phase whose sum exceeds it by more than "
+            f"{_RATE_DISCREPANCY_LIMIT:.0%}, or that could not be checked, carries "
+            "no shape or ranking for this metric. 'No material discrepancy "
+            "detected' does not establish steady operation or synchronized starts."
+        ),
     }
 
 
@@ -1260,11 +1753,28 @@ def _decode_observations(
     rows: list[list[str]],
     metrics: list[tuple[str, str]],
     resource_cells: list[dict[str, float]],
-) -> list[tuple[dict[str, str | float], dict[str, float]]]:
-    """Decode each report row into its factor coordinates and metric values."""
-    positions = {name: headers.index(name) for name in ("phase", "pod_count")}
+    withheld_phases: frozenset[str] = frozenset(),
+) -> tuple[
+    list[tuple[dict[str, str | float], dict[str, float]]],
+    dict[str, dict[str, str | float]],
+]:
+    """Decode each report row into its factor coordinates and metric values.
+
+    :param withheld_phases: Phases whose summed rate failed its aggregation
+        check; that metric is marked NaN so no claim is built on it.
+    :return: The observations, and the phases left out because they measured
+        nothing, each with its factor coordinates.
+    :rtype: tuple[list[tuple[dict[str, str | float], dict[str, float]]],
+        dict[str, dict[str, str | float]]]
+    """
+    # A YCSB pod runs several client threads and its report totals them per
+    # round; a TPC-H pod is a single stream, so there the pod count is the
+    # client count.
+    clients = "threads" if "threads" in headers else "pod_count"
+    positions = {name: headers.index(name) for name in ("phase", clients)}
     positions.update({metric: headers.index(metric) for metric, _ in metrics})
     observations = []
+    excluded = {}
     for row in rows:
         phase = _plain_markdown_cell(row[positions["phase"]])
         dimensions = _configuration_dimensions(
@@ -1273,12 +1783,22 @@ def _decode_observations(
         if dimensions is None:
             continue
         try:
-            dimensions["concurrency"] = float(row[positions["pod_count"]])
+            dimensions["concurrency"] = float(row[positions[clients]])
             values = {metric: float(row[positions[metric]]) for metric, _ in metrics}
         except ValueError:
             continue
+        # None of these metrics can be zero in a round that ran, so a zero or NaN
+        # means it measured nothing (the report's "contains 0 or NaN" checks
+        # fail on it). Averaged in, it would drown the real level differences.
+        if any(not math.isfinite(value) or value <= 0 for value in values.values()):
+            excluded[phase] = dimensions
+            continue
+        # Marked rather than dropped: leaving the phase out would let the
+        # remaining levels form a different, equally unsupported curve.
+        if phase in withheld_phases and _SUMMED_RATE in values:
+            values[_SUMMED_RATE] = math.nan
         observations.append((dimensions, values))
-    return observations
+    return observations, excluded
 
 
 def _group_by_context(
@@ -1323,6 +1843,12 @@ def _ordered_sweep_claims(
                 level: [values[metric] for values in repetitions]
                 for level, repetitions in levels.items()
             }
+            if any(math.isnan(value) for values in per_level.values() for value in values):
+                claims.append({
+                    "factor": factor, "context": dict(context), "metric": metric,
+                    "withheld": True,
+                })
+                continue
             summary = sorted(
                 (level, statistics.mean(values), _level_noise(values, statistics.mean(values)))
                 for level, values in per_level.items()
@@ -1388,6 +1914,15 @@ def _categorical_claims(
         if len(measurements) < 2 or set(measurements) != expected_systems:
             continue
         for metric, direction in metrics:
+            if any(
+                math.isnan(values[metric])
+                for repetitions in measurements.values() for values in repetitions
+            ):
+                claims.append({
+                    "factor": "system", "context": dict(context), "metric": metric,
+                    "withheld": True,
+                })
+                continue
             means = {
                 str(system): round(
                     statistics.mean(values[metric] for values in repetitions), 2
@@ -1431,13 +1966,21 @@ def _unsupported(reason: str) -> dict[str, Any]:
     }
 
 
-def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
+def _shape_claims(
+    text: str,
+    specification: str | None,
+    withheld_phases: frozenset[str] = frozenset(),
+    discrepant_phases: frozenset[str] = frozenset(),
+) -> dict[str, Any]:
     """Build typed claims from the factors the archived specification varied.
 
     :param text: The report's ``benchmarking.md`` page.
     :param specification: The archived ``experiment.yml``, when it is available.
-    :return: Ordered sweeps, categorical comparisons, and the factors that could
-        not be characterised.
+    :param withheld_phases: Phases whose summed rate failed its aggregation check.
+    :param discrepant_phases: Those of them whose pods were measured running for
+        materially different times.
+    :return: Ordered sweeps, categorical comparisons, the claims withheld because
+        they rest on such a rate, and the factors that could not be characterised.
     :rtype: dict[str, Any]
     """
     if not specification:
@@ -1459,8 +2002,8 @@ def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
     metrics = _characterized_metrics(headers)
     if not metrics or not {"phase", "pod_count"}.issubset(headers):
         return _unsupported(discriminates)
-    observations = _decode_observations(
-        experiment, headers, rows, metrics, resource_cells
+    observations, excluded = _decode_observations(
+        experiment, headers, rows, metrics, resource_cells, withheld_phases
     )
 
     unsupported = []
@@ -1479,11 +2022,48 @@ def _shape_claims(text: str, specification: str | None) -> dict[str, Any]:
         )
         if not categorical:
             unsupported.append("system")
-    return {
-        "ordered_sweeps": ordered_sweeps,
-        "categorical_comparisons": categorical,
+    # A round dropped because it measured nothing leaves no rate to mark, but a
+    # pod-duration skew measured in it still speaks against the comparison it
+    # belonged to; without this, the remaining rounds would form the very curve
+    # the check withheld.
+    dropped_skews = [
+        dimensions for phase, dimensions in excluded.items()
+        if phase in discrepant_phases
+    ]
+    for claim in ordered_sweeps + categorical:
+        if claim["metric"] == _SUMMED_RATE and any(
+            all(dimensions.get(peer) == level for peer, level in claim["context"].items())
+            for dimensions in dropped_skews
+        ):
+            claim["withheld"] = True
+    withheld = [
+        {key: claim[key] for key in ("factor", "context", "metric")}
+        for claim in ordered_sweeps + categorical if claim.get("withheld")
+    ]
+    characterization = {
+        "ordered_sweeps": [claim for claim in ordered_sweeps if not claim.get("withheld")],
+        "categorical_comparisons": [
+            claim for claim in categorical if not claim.get("withheld")
+        ],
         "unsupported_factors": unsupported,
+        "excluded_phases": list(excluded),
     }
+    if withheld:
+        characterization["withheld_claims"] = withheld
+        characterization["withheld_reason"] = (
+            "These claims rest on a summed rate that failed its aggregation check "
+            "(see rate_aggregation) in at least one of their rounds, even where "
+            "that round is excluded for another reason, so the report's figures "
+            "cannot support their shape or ranking. Other metrics are unaffected. "
+            "Do not rebuild these claims in prose from the same figures."
+        )
+    if excluded:
+        characterization["exclusion_reason"] = (
+            "These rounds reported zero or NaN for a characterised metric, so they "
+            "measured nothing and are left out of every shape and ranking here. "
+            "Disclose them; only the remaining rounds count as repetitions."
+        )
+    return characterization
 
 
 def _validity_scope(
@@ -1566,7 +2146,14 @@ def _assess_comparison_quality(
     planned_queries, errors, error_count = _error_coverage(text)
     planned_queries.update(common_queries)
     configurations.update(errors)
-    characterization = _shape_claims(text, specification)
+    aggregation = _rate_aggregation(text)
+    characterization = _shape_claims(
+        text, specification, frozenset(aggregation["withheld_phases"]),
+        frozenset(
+            entry["phase"] for entry in aggregation.get("phases", [])
+            if entry["material_discrepancy"]
+        ),
+    )
     if error_count:
         invalid_factors = {
             claim["factor"] for claim in characterization["ordered_sweeps"]
@@ -1581,8 +2168,11 @@ def _assess_comparison_quality(
             set(characterization["unsupported_factors"]) | invalid_factors
         )
         characterization["unusable_reason"] = (
-            "planned queries failed, so aggregate throughput does not represent "
-            "the same completed work across factor levels"
+            "Planned queries failed; aggregate factor claims are withheld. Inspect "
+            "query_evidence for the successful subset and the actual failure phases. "
+            "Do not infer full-workload performance from subset timings or assume "
+            "that every phase failed. Empty typed claims do not license the same "
+            "unsupported claims in prose."
         )
     has_query_comparison = bool(planned_queries or configurations)
     if (
@@ -1624,7 +2214,13 @@ def _assess_comparison_quality(
         "common_successful_queries": sorted(common_queries),
         "unresolved_queries": sorted({query for values in errors.values() for query in values}),
         "systems": coverage,
+        "coverage_scope": (
+            "Configuration coverage marks a query incomplete if any recorded execution "
+            "failed. It does not mean that query failed at every concurrency or "
+            "repetition. See query_evidence.failures for the observed locations."
+        ),
         "error_count": error_count,
+        "query_evidence": _query_evidence(text),
         "whole_workload_throughput": throughput_status,
         "whole_workload_throughput_reason": (
             "At least one planned query errored, so wall time and completed-query "
@@ -1641,6 +2237,7 @@ def _assess_comparison_quality(
             "invalidate it automatically."
         ),
         "result_characterization": characterization,
+        "rate_aggregation": aggregation,
         "validity_scope": _validity_scope(report_text, text, monitoring_text),
     }
 
@@ -1692,7 +2289,9 @@ TOOL_SCHEMAS: list[dict[str, Any]] = [
             "name": "write_file",
             "description": (
                 "Write an experiment specification into the inbox directory. "
-                "Always write the complete file; there is no partial edit."
+                "Always write the complete file; there is no partial edit. "
+                "If another run already holds the name, the file is saved under "
+                "a numbered name; the result's 'written' is the path to use."
             ),
             "parameters": {
                 "type": "object",
@@ -1790,6 +2389,7 @@ _RECORD_INTERPRETATION = {
                         },
                         "conclusion": {"type": "string"},
                         "evidence_paths": {
+                            "description": _EVIDENCE_PATHS_DESCRIPTION,
                             "type": "array",
                             "items": {"type": "string"},
                             "minItems": 1,
@@ -1814,6 +2414,7 @@ _RECORD_INTERPRETATION = {
                             "conclusion": {"type": "string"},
                             "evidence": {"type": "string"},
                             "evidence_paths": {
+                                "description": _EVIDENCE_PATHS_DESCRIPTION,
                                 "type": "array",
                                 "items": {"type": "string"},
                                 "minItems": 1,
@@ -1830,106 +2431,41 @@ _RECORD_INTERPRETATION = {
                 "validity": {
                     "type": "object",
                     "properties": {
-                        "failed_checks": {"type": "integer", "minimum": 0},
                         "scope": {"type": "string"},
-                        "affected_phases": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "performance_metrics_affected": {"type": "boolean"},
                         "evidence_paths": {
+                            "description": _EVIDENCE_PATHS_DESCRIPTION,
                             "type": "array",
                             "items": {"type": "string"},
                             "minItems": 1,
                         },
                     },
-                    "required": [
-                        "failed_checks", "scope", "affected_phases",
-                        "performance_metrics_affected", "evidence_paths",
-                    ],
+                    "required": ["scope", "evidence_paths"],
                 },
-                "comparison_quality": {
-                    "type": "object",
-                    "properties": {
-                        "query_coverage": {
-                            "type": "string",
-                            "enum": ["complete", "partial", "not_applicable"],
-                        },
-                        "whole_workload_throughput": {
-                            "type": "string",
-                            "enum": ["comparable", "not_comparable", "not_applicable"],
-                        },
-                        "suspect_repetitions": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                    },
-                    "required": [
-                        "query_coverage", "whole_workload_throughput",
-                        "suspect_repetitions",
-                    ],
-                },
-                "result_claims": {
-                    "type": "object",
-                    "properties": {
-                        "ordered_sweeps": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "factor": {
-                                        "type": "string",
-                                        "enum": sorted(
-                                            _DISCRIMINATING_FACTORS - {"system"}
-                                        ),
-                                    },
-                                    "context": {
-                                        "type": "object",
-                                        "additionalProperties": {
-                                            "type": ["string", "number"],
-                                        },
-                                    },
-                                    "metric": {"type": "string"},
-                                    "shape": {
-                                        "type": "string",
-                                        "enum": sorted(_SHAPE_VALUES),
-                                    },
-                                    "turning_level": {
-                                        "type": ["number", "null"],
-                                    },
-                                },
-                                "required": [
-                                    "factor", "context", "metric", "shape",
-                                    "turning_level",
-                                ],
+                "disputes": {
+                    "type": "array",
+                    "description": (
+                        "Optional. Where the deterministic characterization is "
+                        "wrong or misleading for this question, say which claim "
+                        "and why. Disputes are filed with the record and change "
+                        "nothing the harness computed; they are how you "
+                        "disagree, instead of restating a claim you do not hold."
+                    ),
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "claim": {
+                                "type": "string",
+                                "description": (
+                                    "Which assessor claim this disputes, in your "
+                                    "own words, naming its factor, fixed context "
+                                    "and metric, e.g. '<factor> sweep at "
+                                    "<context>, <metric>'."
+                                ),
                             },
+                            "reason": {"type": "string"},
                         },
-                        "categorical_comparisons": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "factor": {"type": "string", "enum": ["system"]},
-                                    "context": {
-                                        "type": "object",
-                                        "additionalProperties": {
-                                            "type": ["string", "number"],
-                                        },
-                                    },
-                                    "metric": {"type": "string"},
-                                    "ranking": {
-                                        "type": "array",
-                                        "items": {"type": "string"},
-                                        "minItems": 2,
-                                    },
-                                },
-                                "required": [
-                                    "factor", "context", "metric", "ranking",
-                                ],
-                            },
-                        },
+                        "required": ["claim", "reason"],
                     },
-                    "required": ["ordered_sweeps", "categorical_comparisons"],
                 },
                 "follow_up": {
                     "type": "object",
@@ -1944,6 +2480,7 @@ _RECORD_INTERPRETATION = {
                         },
                         "full_workload_required": {"type": "boolean"},
                         "cost_rationale": {"type": "string"},
+                        "independent_repeat": {"type": "boolean"},
                     },
                     "required": [
                         "action", "rationale", "unresolved_question",
@@ -1953,8 +2490,7 @@ _RECORD_INTERPRETATION = {
                 },
             },
             "required": [
-                "hypothesis_verdict", "validity", "comparison_quality", "result_claims",
-                "questions", "follow_up",
+                "hypothesis_verdict", "validity", "questions", "follow_up",
             ],
         },
     },

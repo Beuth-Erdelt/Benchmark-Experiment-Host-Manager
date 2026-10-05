@@ -100,6 +100,7 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     workload_spec = experiment["workload"]
     params = workload_spec.get("params", {})
     loading = experiment.get("loading", {})
+    benchmarking = experiment.get("benchmarking", {})
     resources = experiment.get("resources", {})
     observe = experiment.get("observe", {})
     placement = experiment.get("placement", {})
@@ -126,21 +127,35 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-xli", params.get("logging_interval"))
     _append_flag(argv, "-xio", params.get("insert_order"))
     _append_flag(argv, "-xmet", params.get("max_execution_time"))
+    if params.get("verify_result"):
+        argv.append("-tr")
 
     _append_flag(argv, "-nlp", loading.get("pods"))
     _append_flag(argv, "-nlt", loading.get("threads"))
+    _append_flag(argv, "--loading-timeout", loading.get("timeout_minutes"))
+    _append_flag(argv, "-nbp", benchmarking.get("pods"))
+    _append_flag(argv, "-nbt", benchmarking.get("threads"))
+
+    # The PostgreSQL configuration below always attaches a CHECKPOINT +
+    # VACUUM ANALYZE resetscript so every benchmarking round starts from the
+    # same state, but ycsb.py only actually runs it when -ar is passed --
+    # there is no experiment.yml knob for this because skipping the reset
+    # would only ever introduce a round-to-round confound, never a valid
+    # treatment choice.
+    argv.append("-ar")
 
     rounds = workload_spec.get("rounds")
     if rounds:
         argv.extend(["-ne", ",".join(str(clients) for clients in rounds)])
     _append_flag(argv, "-nc", workload_spec.get("repetitions"))
 
-    # Concurrent-SUT caps. The contract default is 1 -- one system at a time,
-    # see catalog_concepts.sut_isolation -- so an absent field emits an
-    # explicit "-ms 1"/"-mse 1" (ycsb.py's own CLI default is "no limit").
-    # A field set to 0 means "no limit": the flag is simply omitted.
-    for field_name, flag in (("max_sut", "-ms"), ("max_sut_experiment", "-mse")):
-        cap = experiment.get(field_name, 1)
+    # Concurrent-SUT caps. max_sut_experiment defaults to 1 -- one system at a
+    # time, see catalog_concepts.sut_isolation -- so an absent field emits an
+    # explicit "-mse 1" (ycsb.py's own CLI default is "no limit"). max_sut
+    # has no default. A field that is absent or 0 means "no limit": the flag
+    # is simply omitted.
+    for field_name, flag, default in (("max_sut", "-ms", None), ("max_sut_experiment", "-mse", 1)):
+        cap = experiment.get(field_name, default)
         if cap:
             _append_flag(argv, flag, cap)
 

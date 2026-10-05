@@ -74,7 +74,7 @@ def run(path: str, catalog_path: str, experiment_code: str) -> None:
     argv = catalog_spec.build_argv(catalog, specification)
     # Serial execution of the systems under test is the catalog contract's own
     # default (catalog_concepts.sut_isolation): build_argv already emits the
-    # -ms/-mse caps, so this adapter must not restate them.
+    # -mse cap, so this adapter must not restate them.
     argv.extend(["-e", experiment_code, "-rp"])
     workload_name = specification["workload"]["name"]
     entry_module = experiment_cli.entry_module_for_workload(workload_name)

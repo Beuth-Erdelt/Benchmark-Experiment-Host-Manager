@@ -49,6 +49,7 @@ All instance attributes are declared in `Kubernetes.__init__`.  Key groups:
 | `eval()` for cluster config | Config files are Python dicts, not YAML/JSON; this is a legacy format |
 | Kubernetes API errors trigger `cluster_access()` retry | Short-lived kubeconfig tokens expire; auto-refresh avoids manual re-auth |
 | `kubectl` subprocess fallback | Some operations (create from file, exec, cp) are simpler as CLI calls than raw API |
+| Cluster outages are waited out for `CLUSTER_OUTAGE_BUDGET_SECONDS` (5 min) on every path to the cluster: the API clients get a urllib3 `Retry` (exponential backoff, idempotent methods only for read errors), and `kubectl()`, `execute_command_in_pod()` and `load_data_asynch()`'s label writes retry on `is_cluster_connection_error()` | The API server is only reachable over a VPN that drops for a minute or so, and a flaky VPN also makes it reject permitted requests as `Forbidden`; pods inside the cluster keep running meanwhile. Unguarded, an unreachable server raised a urllib3 error none of the `ApiException` handlers catch (crashing the experiment loop), and failed `kubectl` calls were swallowed (a job never created, a "phase done" label or pod counter never written). Errors meaning the command never ran (including `create -f` failing to download the OpenAPI schema for validation) are always retried; a connection broken mid-command only where the command is safe to repeat — reset scripts pass `retry_interrupted=False`. A retried `create` answered with `AlreadyExists` counts as success, since manifests use fixed names. Not covered: the init/index scripts `load_data_asynch()` runs over `kubectl exec`, whose session ending is taken as the script finishing |
 | `to_unc()` for Windows paths | `kubectl cp` on Windows requires UNC paths when the source is a drive-lettered path |
 | `upload_file()`/`download_file()` pass `--retries {KUBECTL_CP_INTERNAL_RETRIES}` to `kubectl cp` itself, on top of their own outer cold-retry loop | kubectl's exec-based tar transport can truncate its own stdout stream mid-copy on larger payloads (`error: unexpected EOF` with kubectl's default of zero retries — see [kubectl#1425](https://github.com/kubernetes/kubectl/issues/1425)); kubectl's own `--retries` resumes the tar stream at the last byte offset instead of restarting the whole transfer, which the outer loop's fresh `kubectl cp` invocation does not do |
 | `container = ''` override in `store_pod_description` / `pod_description` | `kubectl describe pod` is not container-scoped; the parameter is kept for API symmetry |
@@ -325,12 +326,18 @@ Unlike the podcount counters above, this queue is populated with `RPUSH` (append
 The key **must** include `EXPERIMENT_RUN`, unlike the round/job counters, because loading is
 redone from scratch for every `experiment_run` in a repeat-run sweep (a fresh SUT pod is
 deployed per run — the counters' "loading has exactly one round per (CONFIGURATION,
-EXPERIMENT)" assumption above does not hold across runs). Before repopulating,
-`start_pod()` calls `delete_messagequeue_key()` to clear any leftover entries, then verifies
-`add_to_messagequeue()`'s returned list length matches `entry_parallelism` exactly, raising
-`RuntimeError` otherwise — a silently-swallowed `kubectl exec` failure (anything other than
-the literal `"error dialing backend"`, which is retried) would otherwise leave the queue short
-by one entry, and the unlucky pod's `LPOP` would come back empty. `generator.sh` treats that
+EXPERIMENT)" assumption above does not hold across runs). `start_pod()` fills the queue via
+`Kubernetes.fill_messagequeue()`, which clears any leftover entries with
+`delete_messagequeue_key()`, pushes 1..`entry_parallelism`, and verifies
+`add_to_messagequeue()`'s returned list length matches exactly. A wrong length is retried
+from a cleared queue (`MESSAGEQUEUE_FILL_MAX_ATTEMPTS` attempts,
+`MESSAGEQUEUE_FILL_RETRY_SECONDS` apart) before raising `RuntimeError` — a
+silently-swallowed `kubectl exec` failure (anything other than the literal
+`"error dialing backend"`, which `add_to_messagequeue()` itself retries), e.g. from a brief
+VPN drop, would otherwise leave the queue short by one entry, and the unlucky pod's `LPOP`
+would come back empty. The benchmarker queue
+(`bexhoma-benchmarker-{CONNECTION}-{EXPERIMENT}`, filled by `BenchmarkRunner.run_pod()`)
+goes through the same method. `generator.sh` treats that
 as fatal (`exit 1`) rather than defaulting `BEXHOMA_CHILD` to a fixed value, which used to
 silently duplicate another pod's chunk (and leave some other chunk never loaded at all).
 

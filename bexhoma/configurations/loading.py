@@ -13,6 +13,8 @@ from math import ceil
 from timeit import default_timer
 from typing import TYPE_CHECKING
 
+from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, wait_for_cluster
+
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
@@ -68,16 +70,23 @@ def load_data_asynch(
         return "", stdout.decode('utf-8'), stderr.decode('utf-8')
 
     def kubectl(command, context):
+        # Only used for reading and (over)writing labels, which is safe to
+        # repeat; a lost "phase done" label would stall loading for good.
         fullcommand = 'kubectl --context {context} {command}'.format(
             context=context, command=command)
         logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
-        proc = subprocess.Popen(
-            fullcommand, stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-        stdout, stderr = proc.communicate()
-        logger.debug(stdout.decode('utf-8'))
-        logger.debug(stderr.decode('utf-8'))
-        return stdout.decode('utf-8')
+        deadline = time.monotonic() + CLUSTER_OUTAGE_BUDGET_SECONDS
+        while True:
+            proc = subprocess.Popen(
+                fullcommand, stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            stdout, stderr = proc.communicate()
+            logger.debug(stdout.decode('utf-8'))
+            logger.debug(stderr.decode('utf-8'))
+            if (is_cluster_connection_error(stderr.decode('utf-8'))
+                    and wait_for_cluster(deadline)):
+                continue
+            return stdout.decode('utf-8')
 
     time_scriptgroup_start = default_timer()
     if time_start_int == 0:
@@ -317,23 +326,12 @@ class LoadingCoordinator:
             redisQueue = '{}-{}-{}-{}-{}{}'.format(
                 app, component, cfg.configuration, cfg.code, experiment_run, suffix)
             # Clear any leftover entries before repopulating, then verify the
-            # queue ends up at exactly entry_parallelism items. add_to_messagequeue
-            # only retries on a literal "error dialing backend"; any other
-            # transient kubectl-exec failure would otherwise be swallowed
-            # silently, leaving fewer than entry_parallelism items in the queue
-            # and causing one pod's lpop to come back empty further down the
-            # line (its generator.sh then fails loudly instead of silently
-            # colliding with another pod's chunk index).
-            cfg.experiment.cluster.delete_messagequeue_key(queue=redisQueue)
-            pushed_length = None
-            for i in range(1, entry_parallelism + 1):
-                pushed_length = cfg.experiment.cluster.add_to_messagequeue(queue=redisQueue, data=i)
-            if pushed_length != entry_parallelism:
-                raise RuntimeError(
-                    "Chunk-assignment queue {} has length {} after pushing {} "
-                    "entries; refusing to start the loading job, as its pods "
-                    "would race on a corrupted chunk assignment.".format(
-                        redisQueue, pushed_length, entry_parallelism))
+            # queue ends up at exactly entry_parallelism items (retrying on a
+            # transient kubectl-exec failure). A short queue would make one
+            # pod's lpop come back empty further down the line (its
+            # generator.sh then fails loudly instead of silently colliding
+            # with another pod's chunk index).
+            cfg.experiment.cluster.fill_messagequeue(queue=redisQueue, length=entry_parallelism)
             if 'parameters' in loader_entry:
                 cfg._push_pod_configs(
                     queue_key=redisQueue,
@@ -960,7 +958,9 @@ class LoadingCoordinator:
                 cmd = shellcommand.format(s=scriptfolder + script_in_pod)
             else:
                 continue
-            _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd)
+            # A reset script may be half-applied when the connection breaks,
+            # so it is only retried if it never reached the pod.
+            _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False)
             for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
                 if content:
                     tenant_infix = f'-{tenant_tag}' if tenant_tag else ''

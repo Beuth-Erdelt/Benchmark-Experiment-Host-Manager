@@ -95,7 +95,7 @@ supports TPC-H with PostgreSQL and PgDuckDB, and YCSB with PostgreSQL.
 
 Three documents govern a run. The catalog says what an experiment may express.
 The result contract, `contracts/contract_result.yml`, says what may be claimed
-from a finished result. The experiment design handbook, `agent/experiment_design_handbook.md`, says
+from a finished result. The experiment design handbook, `agent/handbook/handbook.md`, says
 what makes a design sound rather than merely legal: it is read before every
 design and every follow-up, its digest is recorded in the trajectory, and the
 few principles a machine can decide are enforced by the validator, which cites
@@ -138,14 +138,101 @@ loses that safety margin. And a metered API refuses turns once a per-minute
 quota is reached, where a self-hosted server would simply queue them, so a
 refused turn is retried with a widening wait before the phase gives up.
 
+`AGENT_ENABLE_THINKING` (or `--enable-thinking`), off by default, pins the
+served chat template's thinking mode on via `chat_template_kwargs` — vLLM's
+documented switch for a hybrid reasoning model such as GLM-4.5-Air or
+Qwen3 — rather than leaving it to the server's own default. It cannot force
+non-empty reasoning on every turn: a hybrid model may still answer a
+straightforward turn with none. It is off unless set because `ChatModel` is
+generic to any OpenAI-compatible endpoint, and a stricter one (the OpenAI or
+Mistral blocks in `.env.example`) could reject an unrecognised field.
+
+`AGENT_EXTRA_BODY` (or `--extra-body`) is a JSON object added to every request
+body, for fields an endpoint defines beyond the OpenAI API. OpenRouter is the
+case it was added for; [Using OpenRouter](#using-openrouter) explains the
+fields it takes. The object is recorded in each phase's `meta` event, so a
+trajectory shows which routing produced it.
+
 One more setting decides who owns the endpoint. `AGENT_MODEL_SERVER=bundled`,
 the default, means the lifecycle wrapper below starts and stops the vLLM server
 around every phase. `AGENT_MODEL_SERVER=external` means the endpoint is already
 there — a hosted API, or an Ollama running on your machine — so the wrapper
-only chains the phases and never touches a server. Each block in `.env.example`
+only chains the phases and never touches a server. `AGENT_MODEL_SERVER=shared`
+is for several lifecycles running side by side: each starts the vLLM server if
+it is not running and reuses it if it is, but none stops it, because another
+may still be using it; the pod's idle watchdog releases the GPU instead (see
+"Running two investigations at once" below). Each block in `.env.example`
 already carries the right value, and an exported `AGENT_MODEL_SERVER` overrides
 the file for one shell, exactly as the three settings above do. The agent CLI
 itself never starts a server in either case.
+
+## Using OpenRouter
+
+OpenRouter is a paid API that serves many models through one OpenAI-compatible
+endpoint, so the agent needs no GPU and no model server. The benchmarks still
+run on the cluster.
+
+**1. Put the key and model in `.env`.** Create a key at
+<https://openrouter.ai/keys>, copy `.env.example` to `.env`, and uncomment its
+OpenRouter block:
+
+```sh
+AGENT_MODEL=google/gemma-4-31b-it
+AGENT_BASE_URL=https://openrouter.ai/api/v1
+AGENT_MODEL_SERVER=external
+AGENT_API_KEY=sk-or-v1-replace-with-your-key
+AGENT_EXTRA_BODY={"provider": {"order": ["crusoe"], "allow_fallbacks": false, "quantizations": ["bf16"]}, "reasoning": {"enabled": true}}
+```
+
+**2. Run.** Add `--dry-run` to stop once the design is validated, without
+submitting a benchmark.
+
+```sh
+.venv/bin/python -m agent.lifecycle --task "<benchmark question>" --max-tokens 65536
+```
+
+The last `.env` line pins one provider at full 16-bit precision (BF16), forbids
+falling back to any other, and turns thinking on. Without it OpenRouter picks
+any provider, and some serve reduced-precision weights or lack the tool calls
+the agent depends on. The lifecycle has no `--extra-body` flag, so this setting
+always comes from `.env` or an exported variable.
+
+**Other models.** Change `AGENT_MODEL`, the provider in `AGENT_EXTRA_BODY`, and
+`--max-tokens`. Each provider below is the model's full-precision one on
+OpenRouter as of 2026-09-27. If it is down, requests fail instead of being
+rerouted; to run anyway, name another provider and drop `quantizations`, and
+the run is then at lower precision.
+
+| Model | `AGENT_MODEL` | Provider | `--max-tokens` |
+|---|---|---|---|
+| Gemma 4 31B | `google/gemma-4-31b-it` | `crusoe` | 65536 |
+| Muse Glimmer 30B | `meta/muse-glimmer-30b` | `deepinfra` | 16384, the provider's cap |
+| Qwen3.8 27B | `qwen/qwen3.8-27b` | `deepinfra` | 65536 |
+
+**In the cluster.** Store the key as a secret, then set these entries in the
+Job's `env` list in `agent/k8s/lifecycle-controller.yml`:
+
+```sh
+read -rs OPENROUTER_KEY   # paste the key; it is not echoed
+kubectl -n <namespace> create secret generic agent-openrouter \
+  --from-literal=AGENT_API_KEY="$OPENROUTER_KEY"
+```
+
+```yaml
+- name: AGENT_MODEL
+  value: google/gemma-4-31b-it
+- name: AGENT_BASE_URL
+  value: https://openrouter.ai/api/v1
+- name: AGENT_MODEL_SERVER
+  value: external
+- name: AGENT_API_KEY
+  valueFrom:
+    secretKeyRef: {name: agent-openrouter, key: AGENT_API_KEY}
+- name: AGENT_EXTRA_BODY
+  value: '{"provider": {"order": ["crusoe"], "allow_fallbacks": false, "quantizations": ["bf16"]}, "reasoning": {"enabled": true}}'
+- name: AGENT_MAX_TOKENS
+  value: "65536"
+```
 
 ## Self-hosted model server
 
@@ -153,6 +240,129 @@ itself never starts a server in either case.
 the cluster. They are a convenience, not part of the pipeline: any
 OpenAI-compatible endpoint does. If you use them, four values are specific to
 the cluster they were written for.
+
+`agent/k8s/vllm-glm45-air-int4.yml` is an alternative manifest that deploys
+GLM-4.5-Air at INT4 instead of Qwen3.8, using
+`QuantTrio/GLM-4.5-Air-GPTQ-Int4-Int8Mix`. The INT4 requantizations of the
+smaller REAP-82B-pruned checkpoint (MidnightPhreaker's GPTQ-INT4-gs32 and
+AWQ-4bit repos) return 401 Unauthorized both from outside the cluster and from
+this pod's own download step -- gated or private, and unreachable without a
+Hugging Face account this deployment does not have -- so this manifest quantizes
+the full, un-pruned GLM-4.5-Air instead (106B total / 12B active parameters,
+~67GB of weights), and is pinned to the cluster's H200 node rather than
+accepting either Hopper node, since 67GB leaves too little of an 80GB H100 for
+useful KV cache. Select it with
+`MODEL_SERVER_MANIFEST=agent/k8s/vllm-glm45-air-int4.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-glm45-air-int4.yml`;
+either overrides the script's own default. See the comments at the top of that
+file before relying on it.
+
+`agent/k8s/vllm-llama33-70b-int4.yml` is a third alternative, deploying
+Llama-3.3-70B at INT4 (`shuyuej/Llama-3.3-70B-Instruct-GPTQ`) instead of
+Qwen3.8. Meta's own `meta-llama/Llama-3.3-70B-Instruct` repo is gated behind a
+license acceptance this deployment cannot complete without a Hugging Face
+account, the same friction the GLM manifest above hit; this community
+requantization is confirmed public. At 42GB of weights it fits either Hopper
+node with headroom to spare, unlike the GLM manifest. One capability gap
+drove a harness change: vLLM's `llama3_json` chat template for the Llama 3
+family can only represent a message with exactly one tool call once that turn
+is replayed as history, and the model does sometimes return several in one
+completion regardless of the parser's own documentation, so
+`ChatModel.reply` in `agent/harness/model_client.py` now keeps at most one
+tool call per reply unconditionally, for every backend, not just Llama's. A
+model that really can batch several calls in one turn loses that ability;
+this shows up as more turns per phase at most, not a failure. Select it with
+`MODEL_SERVER_MANIFEST=agent/k8s/vllm-llama33-70b-int4.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-llama33-70b-int4.yml`.
+
+`agent/k8s/vllm-muse-glimmer-30b.yml` deploys Meta's Muse Glimmer 30B
+(`meta-models/Muse-Glimmer-30B`) on Meta's own vLLM image, with the
+`muse_glimmer` tool and reasoning parsers and the model's native 131072-token
+context, on either the H200 or the B200. Select it with
+`MODEL_SERVER_MANIFEST=agent/k8s/vllm-muse-glimmer-30b.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-muse-glimmer-30b.yml`.
+Its first start downloads roughly 60GB and loads it from Ceph, which took
+45 minutes on 2026-09-21; the startup probe allows 66.
+
+`agent/k8s/vllm-gemma4-31b.yml` deploys Google's Gemma 4 31B
+(`google/gemma-4-31B-it`) on the released vLLM v0.29.0 image, with the `gemma4`
+tool and reasoning parsers, vLLM's own Gemma 4 tool chat template, image and
+audio inputs switched off, and a 131072-token context to match the other
+models. It prefers the H200, leaving the benchmark's B200 free. Select it with
+`MODEL_SERVER_MANIFEST=agent/k8s/vllm-gemma4-31b.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-gemma4-31b.yml`.
+This manifest has not yet been served.
+
+`agent/k8s/vllm-nex-n25-mini.yml` deploys Nex-N2.5-mini
+(`nex-agi/Nex-N2.5-mini`), a mixture-of-experts model with 35B parameters and
+about 3B active per token, on the same vLLM image, with the `qwen3_coder` tool
+and `qwen3` reasoning parsers and a 131072-token context. Its ~70 GB of BF16
+weights need an H200 or a B200; it prefers the H200. OpenRouter lists no
+provider for it, so this manifest is the only way to run it. Run it at the
+temperature its model card recommends, 0.7: at the harness's default of 0 it
+fell into repetition loops that ran to the token limit on 2026-09-28. Pass
+`--temperature 0.7` to `agent/lifecycle.py`; the in-cluster Job forwards no
+temperature, so set `AGENT_EXTRA_BODY={"temperature": 0.7}` there. Select it
+with `MODEL_SERVER_MANIFEST=agent/k8s/vllm-nex-n25-mini.yml`, or per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-nex-n25-mini.yml`.
+
+`agent/k8s/vllm-ornith-15-35b-a3b.yml` deploys Ornith-1.5-35B-A3B
+(`ornith-ai/Ornith-1.5-35B-A3B`), a mixture-of-experts reasoning model with
+36B parameters and about 3B active per token, unquantized on the same vLLM
+image, with the `qwen3_xml` tool and `qwen3` reasoning parsers and a
+131072-token context. Like Nex, its ~72 GB of BF16 weights need an H200 or a
+B200, it prefers the H200, and it is not on OpenRouter. Its weights keep a
+100Gi volume of their own, as GLM's and Llama's do. The model card recommends
+temperature 0.6 (`--temperature 0.6`, or `AGENT_EXTRA_BODY={"temperature": 0.6}`
+in the Job); top_p and top_k come from the checkpoint's own generation config.
+Select it with `MODEL_SERVER_MANIFEST=agent/k8s/vllm-ornith-15-35b-a3b.yml`, or
+per run with
+`agent/lifecycle.py --model-server-manifest agent/k8s/vllm-ornith-15-35b-a3b.yml`.
+
+### Starting a run by hand
+
+Bring the server up with the manifest you want, then start the investigation.
+The server publishes its model under the repository name plus the downloaded
+revision, but a self-hosted endpoint serves exactly one model, so the harness
+adopts whatever it finds and the `--model` you pass only has to be readable:
+
+```sh
+export MODEL_SERVER_NAMESPACE="<writable namespace>"
+MODEL_SERVER_MANIFEST=agent/k8s/vllm-muse-glimmer-30b.yml agent/model_server.sh up
+python agent/lifecycle.py \
+  --model-server-manifest agent/k8s/vllm-muse-glimmer-30b.yml \
+  --model meta-models/Muse-Glimmer-30B \
+  --task "<the question to investigate>"
+```
+
+The wrapper starts and stops the server itself, so the `up` above is optional;
+run it first when you want the weights loaded before the clock starts. Swap
+both manifest paths and the model name for `agent/k8s/vllm-gemma4-31b.yml` and
+`google/gemma-4-31B-it` to run Gemma instead. `--followups N` allows follow-up
+experiments, and `--baseline` also answers the question with the bare model
+for comparison (off by default).
+
+Either model also runs without any manifest or GPU through OpenRouter; see
+[Using OpenRouter](#using-openrouter).
+
+All seven manifests use the same Job and service names, so only one can be up
+at a time, and their weights stay on persistent volumes -- a shared one, or
+their own for GLM, Llama and Ornith -- so switching between them never
+re-downloads any of their weights and none needs deleting. Kubernetes cannot
+change a Job's pod template in place, though, so switching which manifest is
+deployed needs the server brought down first:
+
+```sh
+agent/model_server.sh down   # or agent/model_server.ps1 down
+MODEL_SERVER_MANIFEST=agent/k8s/vllm-glm45-air-int4.yml agent/model_server.sh up
+```
+
+The switch does carry a safety net: it replaces a live Job automatically when
+its `bexhoma.local/model-server-generation` annotation does not match the one
+in the manifest being applied (or `MODEL_SERVER_GENERATION`, when set), so `up`
+with a different manifest swaps the model by itself. With
+`AGENT_MODEL_SERVER=shared` it refuses instead, since another lifecycle may be
+using the running model, and the wrapper retries until that Job is gone.
 
 **Context and namespace** are environment variables, and the manifest itself
 pins neither, so these decide where the server objects are created.
@@ -193,7 +403,7 @@ Getting the GPU labels wrong fails quietly rather than loudly: the pod stays
 unschedulable, and startup waits for capacity by design instead of reporting an
 error. When first bringing this up on a new cluster, pass
 `--server-start-attempts 3` so a misconfiguration surfaces as a failure, and
-check `kubectl describe pod` if it does.
+check `kubectl describe job/bexhoma-agent-model` if it does.
 
 ## One-command local lifecycle
 
@@ -224,11 +434,11 @@ either by leaving `AGENT_METHOD` empty in `.env` or for one run:
 AGENT_METHOD= .venv/bin/python -m agent.lifecycle --task "<benchmark question>"
 ```
 
-Before the design phase, the wrapper also answers the question with the bare
+With `--baseline` (or `AGENT_BASELINE=1`), before the design phase the wrapper also answers the question with the bare
 model — no catalog, handbook, or tools — as its own investigation, so the full
 pipeline's answer can be read against what the model alone would have said. Its
-`answer.md` path is printed and referenced from the design trajectory. Skip it
-with `--no-baseline`, or set `AGENT_BASELINE=0`. The same phase is available on
+`answer.md` path is printed and referenced from the design trajectory. It is
+off by default. The same phase is available on
 its own with `python -m agent.harness.agent --phase baseline --task "..."`.
 
 Results land wherever `cluster.config` declares its `resultfolder`, which is the
@@ -241,6 +451,16 @@ Startup retries indefinitely when neither has a free GPU. To fail
 after a bounded number of attempts, add for example
 `--server-start-attempts 3`. A zero benchmark timeout waits indefinitely; use
 `--benchmark-timeout-seconds <seconds>` when unattended work needs a deadline.
+While it waits, `up` prints once a minute what it is waiting for: the
+scheduler's latest refusal while the pod pends, then the server's latest log
+line while it loads. `MODEL_SERVER_START_TIMEOUT_SECONDS` (2400) counts from
+when the pod is scheduled; the wait for a GPU before that is unbounded unless
+`MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS` is set. The pod reads its weights into
+the page cache before vLLM starts, because sequential reads from the Ceph
+volume are several times faster than vLLM's own mmap loading.
+Pods the scheduler refuses are logged but may pend indefinitely by default;
+`--unschedulable-timeout-seconds <seconds>` gives such a benchmark up and cleans
+it up once they have been refused that long.
 If the submitted benchmark process is definitively failed or has exited without
 a report, the wrapper invokes Bexhoma's experiment-scoped cleanup for that exact
 code. It does not remove shared monitoring, dashboard, or message-queue objects.
@@ -266,6 +486,15 @@ the manifest to change that window, or to `0` to keep the server up until
 something deletes it. Running `agent/model_server.sh down` is still the quickest
 way to hand the GPU back.
 
+The server runs as a Kubernetes Job, so what the watchdog leaves behind cleans
+itself up too: ten minutes after the pod ends as `Completed`, Kubernetes deletes
+the Job and the pod (`ttlSecondsAfterFinished` in the manifest). Read why it
+stopped before then with `kubectl logs job/bexhoma-agent-model`. An `up` in the
+meantime replaces the finished Job itself. Container restarts count against the
+Job's `backoffLimit`, so a server that keeps crashing ends the Job and frees
+the GPU rather than restarting forever. A bare `bexhoma-agent-model` pod left
+over from before the server ran as a Job is deleted by the next `up` or `down`.
+
 ## Running two investigations at once
 
 An agent-started run takes an exclusive lock on the result folder, so a second
@@ -280,6 +509,26 @@ trajectory, so a later reader knows the timings were not taken on a quiet
 cluster. Pin the two investigations to different nodes with `placement:` before
 doing this, or the numbers will describe the interference rather than the
 systems.
+
+Both runs can share one inbox. A draft name that another run already holds is
+saved under the next free counter, `name_01.yml`, `name_02.yml` and so on,
+instead of overwriting the other run's draft.
+
+To run several complete investigations at once, start one lifecycle per shell
+with a shared model server and parallel runs allowed:
+
+```sh
+AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 1>"
+AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 2>"
+AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 3>"
+```
+
+`AGENT_ALLOW_PARALLEL_RUNS=1` in `.env` does the same as the flag. All shells
+must use the same manifest. The first lifecycle to need the model starts it,
+the others reuse it, and nobody stops it: the pod's idle watchdog releases the
+GPU once no lifecycle has sent a request for a while, typically during the
+benchmarks, and the next lifecycle that needs the model starts it again. When
+the lifecycles run in step, that restart is paid once for all of them.
 
 ## Autonomous Kubernetes lifecycle
 
@@ -435,10 +684,11 @@ queries, marks whole-workload throughput non-comparable when a planned query
 errored, and surfaces unusually different repetitions as warnings. Independently
 of workload name, it uses the archived `discriminates` factors to compute
 ordered concurrency, CPU, and memory shapes and categorical system rankings.
-The structured interpretation must reproduce those shapes, rankings, and
-factor-level means exactly; it cannot call a measured rise a plateau or quote a
-different value. Failed monitoring checks also carry exact affected phases and
-whether performance metrics remain usable.
+The harness files those computed claims beside the model's verdict. The model
+can dispute a claim with a reason; it does not have to copy the computed values
+back. Evidence checks establish that the cited files were read from this result,
+not that their contents support the conclusion. Failed monitoring checks also
+carry exact affected phases and whether performance metrics remain usable.
 
 ## Outputs
 
@@ -450,13 +700,19 @@ investigation directories: `inbox/`, where the design and follow-up-authoring
 agents draft specifications before they validate, and `status/`, the registry
 of `<experiment-code>.json` files behind `list_results` and the operator
 wrappers' resume logic. Override them with `--inbox` and `--status`.
+A status file says `running` from submission until the lifecycle sees the
+report, when it becomes `finished`, or sees the benchmark's process exit
+without one, when it becomes `failed`. A benchmark the lifecycle gives up on
+or stops waiting for keeps `running`, because its bexhoma process may still
+be using the cluster.
 
 The design invocation first creates a timestamp-only working directory there.
 After the design produces a valid experiment, the harness renames it to
 `<result-folder>/agent/<timestamp>-sf<scale>-<model>/`, with characters that are
 unsafe in a directory name replaced by hyphens. For example,
-`20260827T111847490995-sf2-qwen3.8-27b` identifies the experiment scale and the
-served model without opening the trajectory. An incomplete design remains
+`20260827T111847490995-sf2-Qwen-Qwen3.8-27B-FP8-a1b2c3d4e5f6` identifies the
+experiment scale and the exact served model, commit included, without opening
+the trajectory. An incomplete design remains
 timestamp-only because it has no trustworthy scale factor. Every
 interpretation and follow-up appends to the same directory:
 
@@ -476,7 +732,11 @@ result contract, and environment descriptor used for validation.
 After successful interpretation, it also contains `agent_summary.yml`: the
 experiment code, `follow_up_of`, hypothesis, scientific verdict, technical
 validity, and unresolved next question. Its evidence paths are relative to that
-result folder so the lineage remains portable to another machine.
+result folder so the lineage remains portable to another machine. An
+interpretation the harness accepted incomplete, after repeated refusals of its
+record, also carries `incomplete_record`, naming the parts that were left out.
+A result whose summed throughput the harness could not vouch for also carries
+`measurement_restriction`, the qualification it appended to the answer.
 If Bexhoma takes longer than the startup wait to create that folder, the design
 phase still returns its assigned code and records `starting`; the staged inputs
 are copied into the folder when it becomes observable.

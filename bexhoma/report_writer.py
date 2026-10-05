@@ -59,7 +59,6 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
-import json
 import os
 import re
 from datetime import datetime, timezone
@@ -69,6 +68,7 @@ import pandas as pd
 import yaml
 
 from bexhoma import evaluators
+from bexhoma import sut_restarts
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
 
@@ -77,7 +77,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.4.0"
+SCHEMA_VERSION = "1.5.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -143,8 +143,11 @@ quoting any number, not after:
 
 | Failed test | Scopes / invalidates | Check |
 |---|---|---|
+| `No SUT container restarts` | Every metric of the restarted configuration from the restart's `Finished` time onward — the Health Summary names the termination reason (e.g. `OOMKilled`) | `connections.md`'s SUT Container Restarts |
+| `SUT data survived container restarts` | Every query of that configuration after the restart ran against a freshly initialized, empty database; its SQL errors (`relation … does not exist`, connection/I/O errors) are consequences of the restart, not findings about the queries | `connections.md`'s SUT Container Restarts |
 | `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
+| `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured — dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
 | `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
 | `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `benchmarking.md`'s Per Phase table |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
@@ -161,6 +164,12 @@ _INTERPRETATION_RULES_MD = """### Interpretation Rules
   `report/` folder (a different experiment code) as directly comparable
   without independently verifying equivalent conditions — cross-code
   comparison is what the `collectors` module is built for, not this report.
+- **Name the first failure, not the sum of failures.** Order failures by
+  timestamp and treat the earliest as the root cause. Errors that follow a
+  SUT restart (connection/I/O errors in the streams running at that moment,
+  missing relations afterwards) are its downstream effects. For a restart,
+  state its reason and what was running when it happened: the round, the
+  number of concurrent streams, and the query.
 - **Report variance, not just point estimates.** Metric tables are already
   aggregated across parallel pods, but a sweep normally has multiple
   experiment-run/client repetitions. Summarize the range across those
@@ -355,16 +364,7 @@ def _count_sut_restarts(result_dir: Path) -> tuple[int, dict[str, str]]:
              mapping pod name to its raw per-container restart-count string.
     :rtype: tuple[int, dict[str, str]]
     """
-    per_pod_total: dict[str, int] = {}
-    per_pod: dict[str, str] = {}
-    for restarts_file in sorted(result_dir.glob("bexhoma-sut-*-restarts.json")):
-        with open(restarts_file) as handle:
-            pod_restarts: dict[str, str] = json.load(handle)
-        for pod, counts in pod_restarts.items():
-            pod_total = sum(int(x) for x in counts.split()) if counts.strip() else 0
-            if pod not in per_pod_total or pod_total > per_pod_total[pod]:
-                per_pod_total[pod] = pod_total
-                per_pod[pod] = counts
+    per_pod_total, per_pod = sut_restarts.read_restart_counts(result_dir)
     return sum(per_pod_total.values()), per_pod
 
 
@@ -573,7 +573,9 @@ def _build_tests_lines(test_results: list[tuple]) -> list[str]:
     return lines
 
 
-def _build_health_summary_lines(total_restarts: int, extra_context: dict) -> list[str]:
+def _build_health_summary_lines(
+    total_restarts: int, extra_context: dict, restart_details: list[sut_restarts.RestartDetail] | None = None,
+) -> list[str]:
     """
     Build the terse ``### Health Summary`` block: one status line per
     concern, "none" in the clean case, a link to the tier-2 file with the
@@ -583,6 +585,9 @@ def _build_health_summary_lines(total_restarts: int, extra_context: dict) -> lis
     :param extra_context: The ``extra_context`` dict returned by
         ``_show_extra_sections()``; carries ``num_errors``/``num_warnings``
         only for DBMSBenchmarker-family benchmarks.
+    :param restart_details: Output of
+        :func:`sut_restarts.collect_restart_details`; adds the termination
+        reasons and the lost-data count to the restart line.
     :return: Markdown lines for the Health Summary block.
     :rtype: list[str]
     """
@@ -590,7 +595,15 @@ def _build_health_summary_lines(total_restarts: int, extra_context: dict) -> lis
     if total_restarts == 0:
         lines.append("- SUT container restarts: none")
     else:
-        lines.append(f"- SUT container restarts: {total_restarts} — see [connections.md](connections.md) for per-pod detail")
+        line = f"- SUT container restarts: {total_restarts}"
+        if restart_details:
+            reasons = sut_restarts.summarize_reasons(restart_details)
+            line += " (" + ", ".join(f"{reason}: {count}" for reason, count in reasons.items()) + ")"
+            lost = sum(1 for d in restart_details if d.data_volume is False)
+            if lost:
+                line += (f"; {lost} without a data volume — the database restarted empty, so every "
+                         "later query of that configuration is invalid")
+        lines.append(line + " — see [connections.md](connections.md) for per-pod detail")
     if 'num_errors' in extra_context:
         num_errors = extra_context['num_errors']
         num_warnings = extra_context.get('num_warnings', 0)
@@ -623,6 +636,7 @@ def _connections_index(df_connections: pd.DataFrame) -> dict[str, str]:
 
 def _build_connections_md_lines(
     df_connections: pd.DataFrame, result_dir: Path, report_dir: Path, restarts_per_pod: dict[str, str],
+    restart_details: list[sut_restarts.RestartDetail] | None = None,
 ) -> list[str]:
     """
     Build ``connections.md``'s body: one subsection per row of
@@ -639,6 +653,9 @@ def _build_connections_md_lines(
     :param report_dir: The ``report/`` directory.
     :param restarts_per_pod: Pod name to raw restart-count string, from
         :func:`_count_sut_restarts`.
+    :param restart_details: Output of
+        :func:`sut_restarts.collect_restart_details`; one nested line per
+        restarted container with its reason, finish time and data volume.
     :return: Markdown lines for the whole file body (excluding frontmatter).
     :rtype: list[str]
     """
@@ -648,6 +665,13 @@ def _build_connections_md_lines(
         lines.append("")
         for pod, counts in sorted(restarts_per_pod.items()):
             lines.append(f"* {pod}: {counts}")
+            for detail in restart_details or []:
+                if detail.pod != pod:
+                    continue
+                line = f"  * {sut_restarts.format_detail(detail)}"
+                if detail.describe_file:
+                    line += f" ([{detail.describe_file}]({_relmd(result_dir / detail.describe_file, report_dir)}))"
+                lines.append(line)
         lines.append("")
     for _connection_id, row in df_connections.iterrows():
         name = str(row.get('connection', _connection_id))
@@ -860,8 +884,11 @@ def write_markdown_report(
         written_sections.append({"title": "Monitoring", "file": "monitoring.md", "description": "CPU/RAM/application metrics plus the full metric catalog (all configured Prometheus metrics, not just the curated few)."})
 
     total_restarts, restarts_per_pod = _count_sut_restarts(result_dir)
+    restart_details = sut_restarts.collect_restart_details(result_dir)
     if not df_connections.empty:
-        connections_lines = _build_connections_md_lines(df_connections, result_dir, report_dir, restarts_per_pod)
+        connections_lines = _build_connections_md_lines(
+            df_connections, result_dir, report_dir, restarts_per_pod, restart_details,
+        )
         _write_file(report_dir / "connections.md", _frontmatter({
             "schema_version": SCHEMA_VERSION, "section": "connections", "parent": "index.md",
         }) + "\n".join(connections_lines))
@@ -873,7 +900,7 @@ def write_markdown_report(
 
     _write_index_md(
         report_dir, experiment, total_restarts, extra_context, written_sections,
-        key_metrics_lines, monitoring_summary_lines,
+        key_metrics_lines, monitoring_summary_lines, restart_details,
     )
 
 
@@ -929,6 +956,7 @@ def _write_file(path: Path, text: str) -> None:
 def _write_index_md(
     report_dir: Path, experiment, total_restarts: int, extra_context: dict, written_sections: list[dict],
     key_metrics_lines: list[str], monitoring_summary_lines: list[str],
+    restart_details: list[sut_restarts.RestartDetail] | None = None,
 ) -> None:
     """
     Write ``index.md`` — the tier-1 entry point.
@@ -967,6 +995,9 @@ def _write_index_md(
         brief ``### Monitoring`` block (see
         :func:`_build_monitoring_summary_lines`), or empty when monitoring
         was not active or collected no data.
+    :param restart_details: Output of
+        :func:`sut_restarts.collect_restart_details`, forwarded to the
+        Health Summary.
     """
     passed = sum(1 for p, _ in experiment._test_results if p is True)
     failed = sum(1 for p, _ in experiment._test_results if p is False)
@@ -998,7 +1029,7 @@ def _write_index_md(
         lines.append("")
         lines.extend(monitoring_summary_lines)
     lines.append("")
-    lines.extend(_build_health_summary_lines(total_restarts, extra_context))
+    lines.extend(_build_health_summary_lines(total_restarts, extra_context, restart_details))
     lines.append("")
     lines.append(_INTERPRETATION_RULES_MD)
     if written_sections:

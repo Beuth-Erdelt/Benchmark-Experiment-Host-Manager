@@ -133,9 +133,16 @@ different server without editing anything.
 
 `.env.example` carries a ready block for each backend in use: the bundled vLLM
 server reached through a local port forward, the same server reached by its
-in-cluster service name, a local Ollama, OpenAI, and Mistral. Ollama and Mistral
-serve the same protocol under a `/v1` path, so nothing but these three values
-changes.
+in-cluster service name, a local Ollama, OpenAI, Mistral, and the university's
+BHT LLM API. Ollama, Mistral and the BHT API serve the same protocol under a
+`/v1` path, so nothing but these three values changes. The BHT API needs no
+cluster at all. It serves three tiers under the aliases `bht/small`,
+`bht/medium` and `bht/large`, and the alias is what goes into `AGENT_MODEL`. Its
+block notes each tier's context window, because the medium tier's leaves little
+room for a reply late in a run. Each tier also allows a key only 100,000 tokens
+a day, prompt and reply counted together, while a single design phase has used
+between 280,000 and 640,000. Without a raised quota the BHT API is therefore
+suited to short tests rather than a full investigation.
 
 Two behaviours differ once you leave the self-hosted server. First, the agent
 resolves the configured model name against the endpoint's model list: an
@@ -195,6 +202,9 @@ Useful flags:
   is definitively failed or has exited with no report, the wrapper invokes
   bexhoma's experiment-scoped cleanup for that exact experiment code and leaves
   shared monitoring and message-queue objects alone.
+- `--unschedulable-timeout-seconds S` gives a benchmark up, and removes it from
+  the cluster, once its Pods have been refused by the scheduler for S seconds.
+  The default of zero lets them pend indefinitely; the refusal is still logged.
 - `--dry-run` designs and validates but never submits.
 
 After a terminal disconnect, resume an investigation that already submitted its
@@ -211,8 +221,18 @@ Before every design and every follow-up the agent reads an *experiment design
 handbook* — a document of methodological guidance on what makes a benchmark
 sound rather than merely legal. Its digest is recorded in the run's trajectory,
 and the few principles a machine can decide are enforced by the validator, which
-cites them by identifier. The shipped handbook is `agent/experiment_design_handbook.md`, and `AGENT_METHOD`
-in `.env` names it.
+cites them by identifier. The shipped handbook is `agent/handbook/handbook.md`, and `AGENT_METHOD`
+in `.env` names it. Its appendix — the local agent interface and the full source
+list — lives beside it in `handbook_appendix.md`. The agent may read that file,
+but unlike the handbook's Navigation section it is not required reading.
+
+Each model conversation may receive a limited amount of file text. The harness
+sizes that allowance from the served context window minus `--max-tokens`: file
+text may fill 60% of the rest, at about 3.5 characters per token. A model with a
+131,072-token window gets about 240,000 characters at the default
+`--max-tokens 16384`, and about 137,000 at `--max-tokens 65536`. When the server
+does not publish its window, the allowance is 110,000 characters. Re-reading
+unchanged text already returned in the same conversation costs nothing.
 
 The other arm of the with/without comparison designs with no handbook at all.
 Switch it off by leaving `AGENT_METHOD` empty in `.env`, or for one run:
@@ -226,11 +246,11 @@ single run; any path that is not a file means no handbook.
 
 ### The bare-model baseline
 
-Before the design phase, the wrapper also answers the question with the bare
+With `--baseline` (or `AGENT_BASELINE=1`), before the design phase the wrapper also answers the question with the bare
 model — no catalog, no handbook, no tools — as its own separate investigation,
 so the full pipeline's answer can be read against what the model alone would
 have said. The baseline `answer.md` path is printed and linked from the design
-trajectory. Skip it with `--no-baseline`, or `AGENT_BASELINE=0`. The same phase
+trajectory. It is off by default. The same phase
 runs on its own:
 
 ```sh
@@ -339,10 +359,11 @@ planned query errored, and flags unusually different repetitions as warnings.
 Independently of the workload name, it reads the archived `discriminates`
 factors — the axes the experiment set out to vary — and computes the ordered
 concurrency, CPU, and memory shapes and the categorical system rankings itself.
-The structured interpretation must reproduce those shapes, rankings, and
-factor-level means exactly: it cannot call a measured rise a plateau or quote a
-different number. Failed monitoring checks carry the exact affected phases and
-whether the performance metrics remain usable.
+The harness files those computed claims beside the model's verdict. The model
+can dispute a claim with a reason; it does not have to copy the computed values
+back. Evidence checks establish that the cited files were read from this result,
+not that their contents support the conclusion. Failed monitoring checks carry
+the exact affected phases and whether the performance metrics remain usable.
 
 ## What a run writes
 
@@ -353,6 +374,11 @@ checkout keeps no run artifacts of its own. Override the location with
 `inbox/`, where the design and follow-up agents draft specifications before
 validating them, and `status/`, the registry of `<experiment-code>.json` files
 behind the resume logic. Override them with `--inbox` and `--status`.
+A status file says `running` from submission until the lifecycle sees the
+report, when it becomes `finished`, or sees the benchmark's process exit
+without one, when it becomes `failed`. A benchmark the lifecycle gives up on
+or stops waiting for keeps `running`, because its bexhoma process may still
+be using the cluster.
 
 The design step first creates a timestamp-only working directory. Once it
 produces a valid experiment, the harness renames the directory to
@@ -379,8 +405,13 @@ result contract, and environment descriptor used to validate it. After a
 successful interpretation it gains `agent_summary.yml`: the experiment code, its
 `follow_up_of` parent, the hypothesis, the scientific verdict, the technical
 validity, and the unresolved next question, with evidence paths relative to that
-folder so the lineage stays portable. Follow-up authoring receives only these
-compact summaries of its ancestors, never their full reports or metrics.
+folder so the lineage stays portable. An interpretation the harness accepted
+incomplete, after repeated refusals of its record, also carries
+`incomplete_record`, naming the parts that were left out. A result whose summed
+throughput the harness could not vouch for also carries
+`measurement_restriction`, the qualification it appended to the answer.
+Follow-up authoring receives only these compact summaries of its ancestors,
+never their full reports or metrics.
 
 ## Running two investigations at once
 
@@ -455,7 +486,9 @@ The controller authenticates as its own service account, so it does not depend
 on a workstation's expiring login, and its write authority is limited to the one
 namespace. The Job's environment block is where an in-cluster run picks its
 model server (`AGENT_MODEL_SERVER`) and its handbook (`AGENT_METHOD`), exactly as
-`.env` does locally. The language model still receives only the catalog,
+`.env` does locally. `AGENT_FOLLOWUPS`, `AGENT_ATTEMPTS` and `AGENT_MAX_TOKENS`
+set the follow-up budget, the validation attempts per design and the per-reply
+token ceiling; the last two keep the lifecycle's own defaults when left unset. The language model still receives only the catalog,
 environment, result contract, and phase tools — never Kubernetes or terminal
 access.
 

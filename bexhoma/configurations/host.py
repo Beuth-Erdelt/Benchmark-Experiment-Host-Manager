@@ -7,6 +7,8 @@ import os
 from collections import Counter
 from typing import TYPE_CHECKING, Tuple
 
+from .. import sut_restarts
+
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
@@ -192,10 +194,7 @@ class HostProbe:
             pod_sut = self._config.pod_sut
         result = self._config.experiment.cluster.kubectl(
             'get pods/' + pod_sut + ' -o jsonpath="{.status.containerStatuses[*].restartCount}"')
-        try:
-            return result
-        except Exception:
-            return ""
+        return sut_restarts.clean_restart_counts(result)
 
     def get_host_node(self) -> str:
         """Return the node name the SUT pod is scheduled on.

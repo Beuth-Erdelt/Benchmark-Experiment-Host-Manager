@@ -24,6 +24,7 @@ from agent.lifecycle import (
     _install_signal_handlers,
     _parser,
 )
+from agent import lifecycle_controller as controller_module
 from agent.lifecycle_controller import (
     _events,
     _latest_resumable,
@@ -40,10 +41,15 @@ CONTROLLER_MANIFEST = (
 )
 
 
-def _model_pod() -> dict:
-    """Return the model server Pod document from the shipped manifest."""
+def _model_job() -> dict:
+    """Return the model server Job document from the shipped manifest."""
     documents = list(yaml.safe_load_all(MANIFEST.read_text(encoding="utf-8")))
-    return next(document for document in documents if document.get("kind") == "Pod")
+    return next(document for document in documents if document.get("kind") == "Job")
+
+
+def _model_pod() -> dict:
+    """Return the pod template the model server Job runs."""
+    return _model_job()["spec"]["template"]
 
 
 def _watchdog_script() -> str:
@@ -141,8 +147,10 @@ class AgentLifecycleTest(unittest.TestCase):
                 trajectories="trajectories",
                 status="status",
                 server_script="agent/model_server.sh",
+                model_server_manifest=None,
                 poll_seconds=1.0,
                 benchmark_timeout_seconds=0.0,
+                unschedulable_timeout_seconds=0.0,
                 server_retry_seconds=1.0,
                 server_start_attempts=1,
                 attempts=1,
@@ -154,6 +162,8 @@ class AgentLifecycleTest(unittest.TestCase):
                 method="",
                 inbox="inbox",
                 dry_run=True,
+                enable_thinking=False,
+                allow_parallel_runs=False,
                 baseline=False,
             )
             parser = mock.Mock()
@@ -178,6 +188,30 @@ class AgentLifecycleTest(unittest.TestCase):
             self.assertNotIn("--api-key", child_command)
             self.assertNotIn("cli-secret-value", child_command)
 
+    def test_enable_thinking_forwards_to_the_child_only_when_set(self) -> None:
+        """Off by default, matching the direct agent CLI's own default."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "run").mkdir()
+            for enabled, expected in ((False, False), (True, True)):
+                arguments = self._wrapper_arguments(root, enable_thinking=enabled)
+                parser = mock.Mock()
+                parser.parse_args.return_value = arguments
+                lifecycle = mock.Mock()
+                lifecycle.run.return_value = root / "run"
+                with (
+                    mock.patch.object(lifecycle_module, "load_dotenv"),
+                    mock.patch.object(lifecycle_module, "_install_signal_handlers"),
+                    mock.patch.object(lifecycle_module, "_parser", return_value=parser),
+                    mock.patch.object(lifecycle_module, "ModelServer"),
+                    mock.patch.object(
+                        lifecycle_module, "AgentLifecycle", return_value=lifecycle,
+                    ) as lifecycle_class,
+                ):
+                    self.assertEqual(lifecycle_module.main(), 0)
+                    child_command = lifecycle_class.call_args.args[1]
+                self.assertEqual("--enable-thinking" in child_command, expected)
+
     def _wrapper_arguments(self, root: Path, **overrides) -> argparse.Namespace:
         """Build a complete wrapper argument set, so a test states only its point."""
         arguments = argparse.Namespace(
@@ -185,12 +219,15 @@ class AgentLifecycleTest(unittest.TestCase):
             interpret_model=None,
             base_url="https://model.example/v1", api_key="key", root=str(root),
             results=None, trajectories="trajectories", status="status",
-            server_script="agent/model_server.sh", poll_seconds=1.0,
-            benchmark_timeout_seconds=0.0, server_retry_seconds=1.0,
+            server_script="agent/model_server.sh", model_server_manifest=None,
+            poll_seconds=1.0,
+            benchmark_timeout_seconds=0.0, unschedulable_timeout_seconds=0.0,
+            server_retry_seconds=1.0,
             server_start_attempts=1, attempts=1, followups=0, temperature=0.0,
             max_tokens=1024, catalog="contracts/contract_catalog.yml",
             environment="dev/catalog/environment.yml", method="", inbox="inbox",
-            dry_run=True, baseline=False,
+            dry_run=True, enable_thinking=False, allow_parallel_runs=False,
+            baseline=False,
         )
         for name, value in overrides.items():
             setattr(arguments, name, value)
@@ -222,9 +259,62 @@ class AgentLifecycleTest(unittest.TestCase):
 
         self.assertEqual(code, 2)
 
-    def test_both_model_server_owners_are_accepted(self) -> None:
+    def test_allow_parallel_runs_forwards_to_the_child_only_when_set(self) -> None:
+        """Parallel lifecycles need every phase's agent to accept a busy cluster."""
         with tempfile.TemporaryDirectory() as temporary:
-            for owner in ("bundled", "external"):
+            root = Path(temporary)
+            (root / "run").mkdir()
+            for enabled in (False, True):
+                parser = mock.Mock()
+                parser.parse_args.return_value = self._wrapper_arguments(
+                    root, allow_parallel_runs=enabled)
+                lifecycle = mock.Mock()
+                lifecycle.run.return_value = root / "run"
+                with (
+                    mock.patch.object(lifecycle_module, "load_dotenv"),
+                    mock.patch.object(lifecycle_module, "_install_signal_handlers"),
+                    mock.patch.object(lifecycle_module, "_parser", return_value=parser),
+                    mock.patch.object(lifecycle_module, "ModelServer"),
+                    mock.patch.object(
+                        lifecycle_module, "AgentLifecycle", return_value=lifecycle,
+                    ) as lifecycle_class,
+                ):
+                    self.assertEqual(lifecycle_module.main(), 0)
+                    child_command = lifecycle_class.call_args.args[1]
+                self.assertEqual("--allow-parallel-runs" in child_command, enabled)
+
+    def test_a_shared_server_tells_the_switch_script_so(self) -> None:
+        """The script must not replace another lifecycle's model pod."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "run").mkdir()
+            parser = mock.Mock()
+            parser.parse_args.return_value = self._wrapper_arguments(root)
+            lifecycle = mock.Mock()
+            lifecycle.run.return_value = root / "run"
+            seen: list[str | None] = []
+
+            def build(*_args, **_kwargs) -> mock.Mock:
+                seen.append(os.environ.get("MODEL_SERVER_SHARED"))
+                return lifecycle
+
+            with (
+                mock.patch.object(lifecycle_module, "load_dotenv"),
+                mock.patch.object(lifecycle_module, "_install_signal_handlers"),
+                mock.patch.object(lifecycle_module, "_parser", return_value=parser),
+                mock.patch.object(lifecycle_module, "ModelServer") as server_class,
+                mock.patch.object(lifecycle_module, "AgentLifecycle", side_effect=build),
+                mock.patch.dict(os.environ, {"AGENT_MODEL_SERVER": "shared"}),
+            ):
+                os.environ.pop("MODEL_SERVER_SHARED", None)
+                self.assertEqual(lifecycle_module.main(), 0)
+
+        self.assertEqual(seen, ["1"])
+        self.assertTrue(server_class.call_args.kwargs["shared"])
+
+    def test_every_model_server_owner_is_accepted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            for owner in ("bundled", "shared", "external"):
                 (Path(temporary) / "run").mkdir(exist_ok=True)
                 code = self._run_main(
                     self._wrapper_arguments(Path(temporary)),
@@ -291,6 +381,35 @@ class AgentLifecycleTest(unittest.TestCase):
                 configuration["users"][0]["user"]["tokenFile"],
                 str(account / "token"),
             )
+
+    def test_controller_forwards_attempts_and_max_tokens_only_when_set(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "input").mkdir()
+            (root / "input" / "task.txt").write_text("question\n", encoding="utf-8")
+            base_environment = {
+                "AGENT_ROOT": str(root), "AGENT_STATE_ROOT": str(root / "state"),
+                "AGENT_INPUT_DIRECTORY": str(root / "input"),
+                "AGENT_LIFECYCLE_ID": "run", "POD_NAMESPACE": "research",
+                "KUBERNETES_SERVICE_HOST": "10.0.0.1", "AGENT_MODEL": "model",
+            }
+
+            def command_for(extra: dict[str, str]) -> list[str]:
+                with mock.patch.dict(os.environ, {**base_environment, **extra}, clear=True), \
+                        mock.patch.object(controller_module, "_write_in_cluster_kubeconfig"), \
+                        mock.patch.object(controller_module, "_write_runtime_cluster_config"), \
+                        mock.patch.object(controller_module, "_refresh_environment"), \
+                        mock.patch.object(controller_module.os, "execv") as execv:
+                    controller_module.main()
+                return execv.call_args.args[1]
+
+            configured = command_for({"AGENT_ATTEMPTS": "10", "AGENT_MAX_TOKENS": "65536"})
+            self.assertEqual(configured[configured.index("--attempts") + 1], "10")
+            self.assertEqual(configured[configured.index("--max-tokens") + 1], "65536")
+
+            defaulted = command_for({})
+            self.assertNotIn("--attempts", defaulted)
+            self.assertNotIn("--max-tokens", defaulted)
 
     def test_controller_injects_namespace_context_and_result_root(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -401,7 +520,7 @@ class AgentLifecycleTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {}, clear=False):
             os.environ.pop("AGENT_METHOD", None)
             default = _parser().parse_args(["--task", "q"])
-        self.assertEqual(default.method, "agent/experiment_design_handbook.md")
+        self.assertEqual(default.method, "agent/handbook/handbook.md")
 
         without = _parser().parse_args(["--task", "q", "--method", ""])
         self.assertEqual(without.method, "")
@@ -409,6 +528,16 @@ class AgentLifecycleTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"AGENT_METHOD": ""}):
             from_environment = _parser().parse_args(["--task", "q"])
         self.assertEqual(from_environment.method, "")
+
+    def test_enable_thinking_defaults_off_and_follows_its_env_var(self) -> None:
+        """The wrapper must accept the same flag the direct agent CLI takes."""
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("AGENT_ENABLE_THINKING", None)
+            self.assertFalse(_parser().parse_args(["--task", "q"]).enable_thinking)
+
+        with mock.patch.dict(os.environ, {"AGENT_ENABLE_THINKING": "true"}):
+            arguments = _parser().parse_args(["--task", "q"])
+        self.assertTrue(arguments.enable_thinking)
 
     def test_the_wrapper_defaults_to_three_validation_attempts(self) -> None:
         """The wrapper must pass the direct agent CLI's retry budget unchanged."""
@@ -422,7 +551,7 @@ class AgentLifecycleTest(unittest.TestCase):
         ]["nodeSelectorTerms"][0]["matchExpressions"]
 
         self.assertIn(
-            {"key": "gpu", "operator": "In", "values": ["h100", "h200"]},
+            {"key": "gpu", "operator": "In", "values": ["h100", "h200", "b200"]},
             expressions,
         )
 
@@ -435,13 +564,28 @@ class AgentLifecycleTest(unittest.TestCase):
         # Always would restart the pod the moment the watchdog ended it.
         self.assertEqual(pod["spec"]["restartPolicy"], "OnFailure")
         self.assertEqual(
-            pod["metadata"]["annotations"]["bexhoma.local/model-server-generation"],
-            "idle-watchdog-v2",
+            _model_job()["metadata"]["annotations"][
+                "bexhoma.local/model-server-generation"],
+            "idle-watchdog-v4",
         )
         self.assertGreater(int(environment["IDLE_SHUTDOWN_SECONDS"]), 0)
         self.assertGreater(int(environment["IDLE_POLL_SECONDS"]), 0)
         # The shell has to survive the server launch to be able to watch it.
         self.assertIn("VLLM_PID=$!", container["args"][0])
+
+    def test_a_finished_model_server_is_removed_by_kubernetes(self) -> None:
+        """A Completed pod must not linger once the watchdog has ended it."""
+        job = _model_job()
+
+        self.assertGreater(job["spec"]["ttlSecondsAfterFinished"], 0)
+        # The Service finds the Job's pod, whose name is generated, by label.
+        service = next(
+            document for document in yaml.safe_load_all(
+                MANIFEST.read_text(encoding="utf-8"))
+            if document.get("kind") == "Service")
+        labels = _model_pod()["metadata"]["labels"]
+        for key, value in service["spec"]["selector"].items():
+            self.assertEqual(labels[key], value)
 
     def test_model_pod_startup_script_is_valid_shell(self) -> None:
         """This script only ever runs in-cluster, so syntax is checked here."""
@@ -520,7 +664,7 @@ probe_activity() {{
 
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         self.trajectories = self.root / "trajectories"
         self.results = self.root / "results"
         self.status = self.root / "status"
@@ -619,9 +763,9 @@ probe_activity() {{
             [("baseline", None), ("design", None), ("interpret", design)],
         )
 
-    def test_baseline_defaults_on_and_can_be_switched_off(self) -> None:
+    def test_baseline_defaults_off_and_can_be_switched_on(self) -> None:
         with mock.patch.dict(os.environ, {"AGENT_BASELINE": ""}, clear=False):
-            self.assertTrue(_parser().parse_args(["--task", "q"]).baseline)
+            self.assertFalse(_parser().parse_args(["--task", "q"]).baseline)
             self.assertFalse(
                 _parser().parse_args(["--task", "q", "--no-baseline"]).baseline
             )
@@ -682,6 +826,28 @@ probe_activity() {{
         self.assertEqual(
             commands, [["bash", str(self.config.server_script), "up"]])
 
+    def test_a_shared_server_is_started_but_never_stopped(self) -> None:
+        """Another lifecycle may still be using it; its idle watchdog stops it."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        final = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        self._report("101")
+        commands: list[list[str]] = []
+
+        def record(command: list[str], check: bool) -> subprocess.CompletedProcess:
+            commands.append(command)
+            return subprocess.CompletedProcess(command, 0)
+
+        server = ModelServer(self.config.server_script, run_command=record, shared=True)
+        lifecycle = _Lifecycle(self.config, ["agent"], server, runs=[design, final])
+
+        lifecycle.run("question")
+
+        self.assertEqual(
+            [command[-1] for command in commands], ["up", "up"])
+
     def test_a_powershell_switch_script_is_run_through_powershell(self) -> None:
         """A Windows workstation has no bash, so a .ps1 switch uses powershell."""
         commands: list[list[str]] = []
@@ -717,6 +883,48 @@ probe_activity() {{
         self.assertEqual(
             self.server.actions, ["up", "down", "up", "down", "up", "down"])
         self.assertEqual(lifecycle.invocations[-1], ("interpret", design))
+
+    def test_an_authored_followup_that_was_not_submitted_is_retried(self) -> None:
+        """A validated follow-up whose submission the cluster refused -- a stale
+        run lock did exactly this on 2026-09-22 -- must be attempted again
+        rather than ending the investigation with no verdict."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        refused = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            validated_path="inbox/followup.yml", summary="could not submit")
+        submitted = _trajectory(
+            self.trajectories / "3", "interpret", code="102",
+            summary="follow-up submitted", phase_complete=True)
+        final = _trajectory(
+            self.trajectories / "4", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        self._report("101")
+        self._report("102")
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server,
+                               runs=[design, refused, submitted, final])
+
+        lifecycle.run("question")
+
+        self.assertEqual([phase for phase, _ in lifecycle.invocations],
+                         ["design", "interpret", "interpret", "interpret"])
+
+    def test_a_followup_refused_again_and_again_ends_the_run(self) -> None:
+        """The retry is bounded, so a permanently refused follow-up reports a
+        failure instead of looping."""
+        design = _trajectory(
+            self.trajectories / "1", "design", code="101", summary="submitted")
+        refusals = [
+            _trajectory(self.trajectories / str(index), "interpret", code=None,
+                        validated_path="inbox/followup.yml", summary="could not submit")
+            for index in range(2, 6)
+        ]
+        self._report("101")
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server,
+                               runs=[design, *refusals])
+
+        with self.assertRaises(lifecycle_module.LifecycleError):
+            lifecycle.run("question")
 
     def test_resume_does_not_start_model_before_waiting_for_active_benchmark(self) -> None:
         design = _trajectory(
@@ -766,6 +974,71 @@ probe_activity() {{
         self.assertEqual(self.server.actions, ["down", "down"])
         self.assertEqual(lifecycle.cleaned_codes, ["101"])
 
+    def test_a_finished_benchmark_is_recorded_as_finished(self) -> None:
+        """Nothing else in a sequential run corrects the state written at submission."""
+        status_file = self.status / "101.json"
+        status = {"code": "101", "state": "running", "results": str(self.results / "101")}
+        status_file.write_text(json.dumps(status), encoding="utf-8")
+        self._report("101")
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=[])
+
+        lifecycle._wait_for_report("101")
+
+        self.assertEqual(
+            json.loads(status_file.read_text(encoding="utf-8")),
+            {**status, "state": "finished"},
+        )
+
+    def test_a_benchmark_whose_process_exited_is_recorded_as_failed(self) -> None:
+        status_file = self.status / "101.json"
+        status_file.write_text(
+            json.dumps({"code": "101", "state": "running", "pid": 4242}),
+            encoding="utf-8")
+        lifecycle = _Lifecycle(
+            self.config, ["agent"], self.server, runs=[], sleep=lambda _: None,
+            refused_pods=lambda _code: [])
+
+        with (
+            mock.patch("agent.lifecycle._pid_alive", return_value=False),
+            self.assertRaisesRegex(LifecycleError, "exited before producing"),
+        ):
+            lifecycle._wait_for_report("101")
+
+        self.assertEqual(
+            json.loads(status_file.read_text(encoding="utf-8"))["state"], "failed")
+
+    def test_a_benchmark_whose_process_may_still_run_keeps_its_state(self) -> None:
+        """While bexhoma may still run, the harness must count the cluster as busy."""
+        status_file = self.status / "101.json"
+        refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
+        cases = {
+            "given up as unschedulable": (
+                LifecycleConfig(
+                    **{**self.config.__dict__, "unschedulable_timeout_seconds": 900.0}),
+                refusal, "unschedulable"),
+            "no longer waited for": (
+                LifecycleConfig(
+                    **{**self.config.__dict__, "benchmark_timeout_seconds": 1.0}),
+                [], "timed out"),
+        }
+        for case, (config, refused, message) in cases.items():
+            with self.subTest(case):
+                status_file.write_text(
+                    json.dumps({"code": "101", "state": "running"}), encoding="utf-8")
+                lifecycle = _Lifecycle(
+                    config, ["agent"], self.server, runs=[], sleep=lambda _: None,
+                    refused_pods=lambda _code, refused=refused: refused)
+
+                with (
+                    mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()),
+                    self.assertRaisesRegex(LifecycleError, message),
+                ):
+                    lifecycle._wait_for_report("101")
+
+                self.assertEqual(
+                    json.loads(status_file.read_text(encoding="utf-8"))["state"],
+                    "running")
+
     def test_failed_benchmark_cleanup_uses_the_exact_experiment_code(self) -> None:
         lifecycle = AgentLifecycle(self.config, ["agent"], self.server)
 
@@ -783,15 +1056,43 @@ probe_activity() {{
         )
 
     def test_incomplete_final_phase_is_an_error_and_cleans_up(self) -> None:
+        """Once its repetitions are spent, an interpretation that never completes
+        ends the run, with the server released."""
         incomplete = _trajectory(
             self.trajectories / "1", "interpret", code=None,
             summary="partial", phase_complete=False)
-        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=[])
+        repeats = [
+            _trajectory(self.trajectories / str(index), "interpret", code=None,
+                        summary="partial", phase_complete=False)
+            for index in range(2, 2 + lifecycle_module._INCOMPLETE_INTERPRETATION_ATTEMPTS)
+        ]
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=repeats)
 
         with self.assertRaisesRegex(LifecycleError, "neither a submitted benchmark"):
             lifecycle.run(None, resume=incomplete)
 
-        self.assertEqual(self.server.actions, ["down"])
+        self.assertEqual(
+            [phase for phase, _ in lifecycle.invocations],
+            ["interpret"] * lifecycle_module._INCOMPLETE_INTERPRETATION_ATTEMPTS)
+        self.assertEqual(self.server.actions[-1], "down")
+
+    def test_a_resumed_incomplete_interpretation_is_repeated(self) -> None:
+        """r1 of the 2026-09-29 Nex batch recorded an interpretation without its
+        closing text. Every restart then read that same outcome and raised again
+        without rerunning anything, until the Job's retries were gone."""
+        incomplete = _trajectory(
+            self.trajectories / "1", "interpret", code=None,
+            summary="partial", phase_complete=False)
+        final = _trajectory(
+            self.trajectories / "2", "interpret", code=None,
+            summary="final answer", phase_complete=True)
+        lifecycle = _Lifecycle(self.config, ["agent"], self.server, runs=[final])
+
+        lifecycle.run(None, resume=incomplete)
+
+        self.assertEqual(lifecycle.invocations, [("interpret", incomplete)])
+        # The resumed process starts the server before the model is needed.
+        self.assertEqual(self.server.actions, ["up", "down"])
 
     def test_server_start_retries_until_shared_gpu_is_available(self) -> None:
         design = _trajectory(
@@ -853,6 +1154,25 @@ probe_activity() {{
         message = str(failure.exception)
         self.assertIn("resources.cpu is a sweep list", message)
         self.assertIn("the catalog forbids the comparison this question needs", message)
+
+    def test_a_concurrent_agent_does_not_take_over_the_investigation(self) -> None:
+        """Several lifecycles share one trajectory folder; each keeps its own run."""
+        lifecycle = AgentLifecycle(self.config, ["agent"], self.server)
+
+        def design(command, *args, **kwargs):
+            own = _trajectory(self.trajectories / "20260926T100000000000",
+                              "design", code="101", summary="submitted")
+            # Another lifecycle's design phase finishes meanwhile, with a newer name.
+            _trajectory(self.trajectories / "20260926T100000000001",
+                        "design", code="102", summary="submitted")
+            record = Path(command[command.index("--run-record") + 1])
+            record.write_text(str(own), encoding="utf-8")
+            return mock.Mock(returncode=0)
+
+        with mock.patch("agent.lifecycle.subprocess.run", side_effect=design):
+            result = lifecycle._invoke_agent("design", task="question")
+
+        self.assertEqual(result, (self.trajectories / "20260926T100000000000").resolve())
 
     def test_real_invoker_appends_interpretation_to_same_investigation(self) -> None:
         investigation = _trajectory(
@@ -933,6 +1253,154 @@ probe_activity() {{
             lifecycle._invoke_agent("interpret", source=investigation)
 
         self.assertEqual(commands[0].count("--model"), 1)
+
+
+class UnschedulableBenchmarkTest(unittest.TestCase):
+    """The wait gives up on a benchmark whose Pods the scheduler refuses."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.root = Path(self.temporary.name)
+        self.trajectories = self.root / "trajectories"
+        self.results = self.root / "results"
+        self.status = self.root / "status"
+        self.inbox = self.root / "inbox"
+        for path in (self.trajectories, self.results, self.status, self.inbox):
+            path.mkdir()
+        self.config = LifecycleConfig(
+            root=self.root,
+            trajectories=self.trajectories,
+            results=self.results,
+            status=self.status,
+            inbox=self.inbox,
+            server_script=self.root / "server.sh",
+            poll_seconds=0.001,
+            unschedulable_timeout_seconds=900.0,
+        )
+        self.server = _Server()
+
+    def tearDown(self) -> None:
+        self.temporary.cleanup()
+
+    def _waiting_lifecycle(self, refusals: list[list[str] | None]) -> _Lifecycle:
+        """Build a lifecycle whose scheduling checks return `refusals` in turn."""
+        (self.status / "101.json").write_text(
+            json.dumps({"state": "running"}), encoding="utf-8")
+        return _Lifecycle(
+            self.config, ["agent"], self.server, runs=[],
+            sleep=lambda _: None,
+            refused_pods=lambda _code: refusals.pop(0) if refusals else [],
+        )
+
+    def test_a_pod_refused_past_the_grace_period_fails_the_benchmark(self) -> None:
+        refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
+        lifecycle = self._waiting_lifecycle([refusal] * 40)
+
+        with (
+            mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()),
+            self.assertRaisesRegex(LifecycleError, "unschedulable"),
+        ):
+            lifecycle._wait_for_report("101")
+
+        self.assertEqual(lifecycle.cleaned_codes, ["101"])
+
+    def test_pods_pend_indefinitely_without_an_unschedulable_timeout(self) -> None:
+        report = self.results / "101" / "report" / "index.md"
+        refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
+        self.config = LifecycleConfig(
+            **{**self.config.__dict__, "unschedulable_timeout_seconds": 0.0})
+        lifecycle = self._waiting_lifecycle([refusal] * 400)
+        polls = []
+
+        def sleep(_seconds: float) -> None:
+            polls.append(1)
+            if len(polls) == 300:
+                report.parent.mkdir(parents=True, exist_ok=True)
+                report.write_text("done", encoding="utf-8")
+
+        lifecycle._sleep = sleep
+        with mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()):
+            self.assertEqual(lifecycle._wait_for_report("101"), report)
+
+        self.assertEqual(lifecycle.cleaned_codes, [])
+
+    def test_a_pod_that_schedules_within_the_grace_period_is_not_failed(self) -> None:
+        report = self.results / "101" / "report" / "index.md"
+        refusal = ["bexhoma-sut-postgresql-1-101-abc: 0/28 nodes are available"]
+        # Refused twice, then placed; the report appears on the next poll.
+        lifecycle = self._waiting_lifecycle([refusal, refusal, [], []])
+        polls = []
+
+        def sleep(_seconds: float) -> None:
+            polls.append(1)
+            if len(polls) == 5:
+                report.parent.mkdir(parents=True, exist_ok=True)
+                report.write_text("done", encoding="utf-8")
+
+        lifecycle._sleep = sleep
+        with mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()):
+            self.assertEqual(lifecycle._wait_for_report("101"), report)
+
+        self.assertEqual(lifecycle.cleaned_codes, [])
+
+    def test_an_unreachable_cluster_never_counts_as_a_refusal(self) -> None:
+        report = self.results / "101" / "report" / "index.md"
+        lifecycle = self._waiting_lifecycle([None] * 40)
+        polls = []
+
+        def sleep(_seconds: float) -> None:
+            polls.append(1)
+            if len(polls) == 30:
+                report.parent.mkdir(parents=True, exist_ok=True)
+                report.write_text("done", encoding="utf-8")
+
+        lifecycle._sleep = sleep
+        with mock.patch("agent.lifecycle.time.monotonic", side_effect=_clock()):
+            self.assertEqual(lifecycle._wait_for_report("101"), report)
+
+        self.assertEqual(lifecycle.cleaned_codes, [])
+
+    def test_only_this_benchmark_s_refused_pods_are_read(self) -> None:
+        pods = {"items": [
+            {"metadata": {"name": "bexhoma-sut-postgresql-1-101-abc"},
+             "status": {"phase": "Pending", "conditions": [
+                 {"type": "PodScheduled", "status": "False",
+                  "message": "0/28 nodes are available"}]}},
+            {"metadata": {"name": "bexhoma-sut-postgresql-1-999-xyz"},
+             "status": {"phase": "Pending", "conditions": [
+                 {"type": "PodScheduled", "status": "False",
+                  "message": "someone else's problem"}]}},
+            {"metadata": {"name": "bexhoma-sut-postgresql-1-101-run"},
+             "status": {"phase": "Running", "conditions": [
+                 {"type": "PodScheduled", "status": "True"}]}},
+        ]}
+
+        with mock.patch(
+            "agent.lifecycle.subprocess.run",
+            return_value=mock.Mock(returncode=0, stdout=json.dumps(pods)),
+        ):
+            refused = lifecycle_module._refused_pods("101")
+
+        self.assertEqual(len(refused), 1)
+        self.assertIn("101-abc", refused[0])
+
+    def test_a_failing_kubectl_is_reported_as_unknown_not_as_refused(self) -> None:
+        with mock.patch(
+            "agent.lifecycle.subprocess.run",
+            return_value=mock.Mock(returncode=1, stdout=""),
+        ):
+            self.assertIsNone(lifecycle_module._refused_pods("101"))
+
+        with mock.patch("agent.lifecycle.subprocess.run", side_effect=OSError):
+            self.assertIsNone(lifecycle_module._refused_pods("101"))
+
+
+def _clock(step: float = 60.0):
+    """Yield a monotonic clock advancing `step` seconds per reading."""
+    current = 0.0
+    while True:
+        yield current
+        current += step
 
 
 if __name__ == "__main__":

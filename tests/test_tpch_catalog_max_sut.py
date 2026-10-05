@@ -4,11 +4,13 @@ Tests for the concurrent-SUT caps (``max_sut`` / ``max_sut_experiment``).
 The catalog contract's default benchmarking situation is one
 system-under-test at a time (see ``catalog_concepts.sut_isolation``). Because
 ``tpch.py``'s own ``-ms``/``-mse`` CLI defaults are "no limit", the default
-of 1 has to be applied by the argv builder, not inherited. This covers:
+of 1 for ``max_sut_experiment`` has to be applied by the argv builder, not
+inherited. This covers:
 
-* ``bexhoma/experiments/tpch_catalog.py::build_tpch_argv``: ``-ms``/``-mse``
-  are always emitted -- an absent field becomes ``-ms 1``/``-mse 1``; a
-  field set to 0 ("no limit") drops the flag so ``tpch.py`` inherits its own
+* ``bexhoma/experiments/tpch_catalog.py::build_tpch_argv``: ``-mse`` is
+  always emitted -- an absent field becomes ``-mse 1``; ``max_sut`` has no
+  default, so an absent field emits no ``-ms``; a field set to 0 ("no
+  limit") drops the flag so ``tpch.py`` inherits its own
   no-limit default; an explicit N is passed through;
 * ``bexhoma/spec.py::validate_experiment``: a negative or non-integer cap
   is rejected before any argv is built.
@@ -59,9 +61,9 @@ class MaxSutArgvEmissionTest(unittest.TestCase):
         spec.update(overrides)
         return catalog_spec.build_argv(self.catalog, spec)
 
-    def test_absent_fields_emit_the_default_of_one(self):
+    def test_absent_fields_emit_only_the_experiment_cap(self):
         argv = self._argv()
-        self.assertEqual(_flag_value(argv, '-ms'), '1')
+        self.assertNotIn('-ms', argv)
         self.assertEqual(_flag_value(argv, '-mse'), '1')
 
     def test_zero_means_no_limit_and_drops_the_flag(self):

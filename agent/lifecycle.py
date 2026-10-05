@@ -22,6 +22,11 @@ Lifecycle:
 An endpoint this machine does not own -- a hosted API, or an Ollama already
 running -- has nothing to start or stop, so ``AGENT_MODEL_SERVER=external`` in
 :file:`.env` keeps the same phase chain and drops steps 1, 3 and 5.
+
+Several lifecycles started side by side can share one vLLM server with
+``AGENT_MODEL_SERVER=shared``: each starts the server when it is not running
+and reuses it when it is, but none stops it, since another lifecycle may still
+be using it. Steps 2 and 5 are then left to the pod's idle watchdog.
 """
 from __future__ import annotations
 
@@ -31,6 +36,7 @@ import os
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -49,21 +55,37 @@ __all__ = ["AgentLifecycle", "LifecycleConfig", "LifecycleError", "ModelServer",
 #: hours, and polling silently is indistinguishable from having died.
 _WAIT_NOTICE_SECONDS = 600.0
 
+#: How often the wait asks Kubernetes whether this benchmark's Pods are being
+#: refused. Scheduling decisions change slowly, so this stays well above the
+#: poll interval.
+_SCHEDULING_CHECK_SECONDS = 120.0
+
 #: How much of a refusal, or of the agent's own account, a failure message keeps.
 _REASON_CHARS = 400
 
 #: Validation calls passed to each design and follow-up authoring phase.
 _DEFAULT_ATTEMPTS = 3
 
+#: Times an interpretation whose follow-up was validated but not submitted is
+#: repeated before the investigation is given up as unsubmittable.
+_FOLLOWUP_SUBMIT_ATTEMPTS = 2
+
+#: Times an interpretation that ended without a complete verdict, and without a
+#: follow-up to submit, is repeated on the same result before the run fails.
+_INCOMPLETE_INTERPRETATION_ATTEMPTS = 2
+
 #: Subdirectory of Bexhoma's result folder that holds investigation
 #: trajectories when ``--trajectories`` is not given, matching the agent CLI's
 #: own default.
 _TRAJECTORY_SUBDIR = "agent"
 
-#: The only two answers to who owns the model endpoint. ``bundled`` is started
-#: and stopped by this wrapper; ``external`` is already running.
+#: The only answers to who owns the model endpoint. ``bundled`` is started and
+#: stopped by this wrapper; ``shared`` is started by whichever lifecycle needs it
+#: first and stopped only by the pod's idle watchdog; ``external`` is already
+#: running.
 _BUNDLED_SERVER = "bundled"
-_SERVER_OWNERS = frozenset({_BUNDLED_SERVER, "external"})
+_SHARED_SERVER = "shared"
+_SERVER_OWNERS = frozenset({_BUNDLED_SERVER, _SHARED_SERVER, "external"})
 
 #: Runs Bexhoma's experiment manager (the ``bexperiments`` console script) with
 #: ``python -c`` rather than by locating the installed wrapper, whose name and
@@ -85,6 +107,46 @@ def _env_flag(name: str, default: bool) -> bool:
     return value.strip().lower() not in ("0", "false", "no", "off")
 
 
+def _refused_pods(code: str) -> list[str] | None:
+    """Return this benchmark's Pods that Kubernetes is refusing to schedule.
+
+    Scheduling is the one failure the status file cannot express: the launching
+    process stays healthy and the experiment stays ``running`` while no Pod ever
+    starts. Kubernetes states the refusal plainly, so it is read directly.
+
+    :param code: Experiment code, which every Pod of the run carries in its name.
+    :return: One ``name: reason`` line per refused Pod, or ``None`` when
+        Kubernetes could not be asked, which is never treated as a refusal.
+    :rtype: list[str] | None
+    """
+    try:
+        query = subprocess.run(
+            ["kubectl", "get", "pods", "-o", "json"],
+            capture_output=True, text=True, check=False, timeout=60,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if query.returncode:
+        return None
+    try:
+        pods = json.loads(query.stdout).get("items", [])
+    except json.JSONDecodeError:
+        return None
+
+    refused = []
+    for pod in pods:
+        name = pod.get("metadata", {}).get("name", "")
+        if code not in name or pod.get("status", {}).get("phase") != "Pending":
+            continue
+        for condition in pod.get("status", {}).get("conditions", []):
+            if (condition.get("type") == "PodScheduled"
+                    and condition.get("status") == "False"):
+                reason = condition.get("message") or condition.get("reason") or ""
+                refused.append(f"{name}: {reason[:_REASON_CHARS]}")
+                break
+    return refused
+
+
 class LifecycleError(RuntimeError):
     """Raised when an agent phase or benchmark cannot complete."""
 
@@ -103,6 +165,10 @@ class LifecycleConfig:
     results: Path | None = None
     poll_seconds: float = 30.0
     benchmark_timeout_seconds: float = 0.0
+    #: How long a benchmark's Pods may stay unschedulable before the run is
+    #: given up. Zero lets them pend forever: on a shared cluster a Pod waiting
+    #: for a node another tenant is using can be placed hours later.
+    unschedulable_timeout_seconds: float = 0.0
     server_retry_seconds: float = 60.0
     server_start_attempts: int = 0
 
@@ -115,7 +181,8 @@ class ModelServer:
     :file:`agent/model_server.ps1` on Windows, is this wrapper's to start and
     stop; a hosted API or an Ollama that is already running answers on its
     own, so switching it does nothing and the phase chain is all that is left
-    to do.
+    to do. ``shared`` says that other lifecycles may be using the bundled
+    server too, so it is started but never stopped from here.
     """
 
     def __init__(
@@ -123,9 +190,11 @@ class ModelServer:
         script: Path,
         bundled: bool = True,
         run_command: Callable[..., subprocess.CompletedProcess[Any]] = subprocess.run,
+        shared: bool = False,
     ) -> None:
         self.script = script
         self.bundled = bundled
+        self.shared = shared
         self._run_command = run_command
 
     def _command(self, state: str) -> list[str]:
@@ -149,7 +218,7 @@ class ModelServer:
         """Bring the server ``up`` or ``down``, failing on operator errors."""
         if state not in {"up", "down"}:
             raise ValueError(f"unsupported model-server state: {state}")
-        if not self.bundled:
+        if not self.bundled or (self.shared and state == "down"):
             return
         result = self._run_command(self._command(state), check=False)
         if result.returncode:
@@ -169,11 +238,13 @@ class AgentLifecycle:
         sleep: Callable[[float], None] = time.sleep,
         interpret_model: str | None = None,
         baseline: bool = False,
+        refused_pods: Callable[[str], list[str] | None] = _refused_pods,
     ) -> None:
         self.config = config
         self.agent_command = list(agent_command)
         self.server = server
         self._sleep = sleep
+        self._refused_pods = refused_pods
         self.interpret_model = interpret_model
         self.baseline = baseline
 
@@ -198,6 +269,8 @@ class AgentLifecycle:
                 current = resume.resolve()
                 self._read_phase_state(current)
 
+            refused_followups = 0
+            incomplete_interpretations = 0
             while True:
                 phase, outcome = self._read_phase_state(current)
                 code = outcome.get("code")
@@ -208,11 +281,56 @@ class AgentLifecycle:
                     report = self._wait_for_report(str(code))
                     print(f"benchmark {code} finished: {report}", flush=True)
                     self._start_server()
+                    refused_followups = 0
+                    incomplete_interpretations = 0
                     current = self._invoke_agent("interpret", source=current)
                     continue
 
                 if self._is_final(phase, outcome):
                     return current
+                # An interpretation that validated a follow-up but could not
+                # submit it met a cluster that refused the submission, not a
+                # model that failed to do its work. Repeating the phase is what
+                # gets the experiment submitted; the count bounds it, so a
+                # submission refused every time ends the run rather than looping.
+                if (
+                    phase == "interpret"
+                    and outcome.get("validated_path")
+                    and refused_followups < _FOLLOWUP_SUBMIT_ATTEMPTS
+                ):
+                    refused_followups += 1
+                    print(
+                        f"the interpretation authored a follow-up it could not "
+                        f"submit; retrying that phase "
+                        f"({refused_followups} of {_FOLLOWUP_SUBMIT_ATTEMPTS})",
+                        flush=True,
+                    )
+                    current = self._invoke_agent("interpret", source=current)
+                    continue
+                # An interpretation that ended without a complete verdict and
+                # without a follow-up to submit is repeated on the same result.
+                # Raising instead used to fail the same way on every restart,
+                # because a resumed run reads that same last outcome, so the Job
+                # used up its retries without running the phase again. The count
+                # restarts with each new benchmark and with each resume, which
+                # the Job's backoff limit bounds.
+                if (
+                    phase == "interpret"
+                    and not outcome.get("validated_path")
+                    and incomplete_interpretations < _INCOMPLETE_INTERPRETATION_ATTEMPTS
+                ):
+                    incomplete_interpretations += 1
+                    print(
+                        f"the interpretation ended without a complete verdict; "
+                        f"repeating that phase ({incomplete_interpretations} of "
+                        f"{_INCOMPLETE_INTERPRETATION_ATTEMPTS})",
+                        flush=True,
+                    )
+                    # A resumed run has not started the server yet; bringing up
+                    # one that is already running changes nothing.
+                    self._start_server()
+                    current = self._invoke_agent("interpret", source=current)
+                    continue
                 raise LifecycleError(
                     f"agent {phase} phase produced neither a submitted benchmark "
                     "nor a complete final verdict"
@@ -254,10 +372,17 @@ class AgentLifecycle:
     def _invoke_agent(
         self, phase: str, task: str | None = None, source: Path | None = None,
     ) -> Path:
-        before = set(self._trajectory_runs())
         command = [*self.agent_command, "--phase", phase]
+        record: Path | None = None
         if phase in ("design", "baseline"):
             command.extend(["--task", task or ""])
+            # The child names its own investigation directory in this file.
+            # Looking for the newest directory instead would hand every
+            # lifecycle running side by side the same, latest one.
+            descriptor, name = tempfile.mkstemp(prefix="agent-run-", suffix=".txt")
+            os.close(descriptor)
+            record = Path(name)
+            command.extend(["--run-record", str(record)])
         else:
             if source is None:
                 raise LifecycleError("interpretation needs the current investigation")
@@ -271,15 +396,20 @@ class AgentLifecycle:
         print(f"starting the {phase} phase", flush=True)
         log = source / "trajectory.jsonl" if source is not None else None
         previous_size = log.stat().st_size if log is not None and log.is_file() else None
-        result = subprocess.run(command, cwd=self.config.root, check=False)
+        try:
+            result = subprocess.run(command, cwd=self.config.root, check=False)
+            recorded = record.read_text(encoding="utf-8").strip() if record else ""
+        finally:
+            if record is not None:
+                record.unlink(missing_ok=True)
         if phase in ("design", "baseline"):
-            created = sorted(set(self._trajectory_runs()) - before)
-            if not created:
+            investigation = Path(recorded) if recorded else None
+            if investigation is None or not (investigation / "trajectory.jsonl").is_file():
                 raise LifecycleError(
                     f"agent {phase} phase created no investigation "
                     f"(exit code {result.returncode})"
                 )
-            investigation = created[-1]
+            investigation = investigation.resolve()
         else:
             if source is None:
                 raise LifecycleError("interpretation needs an investigation")
@@ -322,14 +452,6 @@ class AgentLifecycle:
             return None
         print(f"baseline answer: {baseline_run / 'answer.md'}", flush=True)
         return baseline_run
-
-    def _trajectory_runs(self) -> list[Path]:
-        if not self.config.trajectories.is_dir():
-            return []
-        return [
-            path.resolve() for path in self.config.trajectories.iterdir()
-            if path.is_dir() and (path / "trajectory.jsonl").is_file()
-        ]
 
     def _read_phase_state(self, run: Path) -> tuple[str, dict[str, Any]]:
         log = run / "trajectory.jsonl"
@@ -391,12 +513,40 @@ class AgentLifecycle:
         print(f"waiting for benchmark {code}", flush=True)
         started = time.monotonic()
         next_notice = started + _WAIT_NOTICE_SECONDS
+        next_scheduling_check = started + _SCHEDULING_CHECK_SECONDS
+        refused_since: float | None = None
         while not report.is_file():
             if time.monotonic() >= next_notice:
                 minutes = (time.monotonic() - started) / 60
                 print(f"benchmark {code} still running after {minutes:.0f} min",
                       flush=True)
                 next_notice += _WAIT_NOTICE_SECONDS
+            if time.monotonic() >= next_scheduling_check:
+                next_scheduling_check += _SCHEDULING_CHECK_SECONDS
+                refused = self._refused_pods(code)
+                if refused:
+                    if refused_since is None:
+                        refused_since = time.monotonic()
+                        print(f"benchmark {code} has Pods the scheduler is "
+                              f"refusing:\n  " + "\n  ".join(refused), flush=True)
+                    elif (
+                        self.config.unschedulable_timeout_seconds > 0
+                        and time.monotonic() - refused_since
+                        >= self.config.unschedulable_timeout_seconds
+                    ):
+                        # No state is recorded: the cleanup does not stop
+                        # bexhoma's process, and while it may still run the
+                        # harness must count this benchmark as occupying the
+                        # cluster.
+                        self._cleanup_failed_benchmark(code)
+                        raise LifecycleError(
+                            f"benchmark {code} was unschedulable for "
+                            f"{self.config.unschedulable_timeout_seconds / 60:.0f} "
+                            f"min and was "
+                            f"given up:\n  " + "\n  ".join(refused)
+                        )
+                elif refused == []:
+                    refused_since = None
             if status_file.is_file():
                 status = json.loads(status_file.read_text(encoding="utf-8"))
                 if status.get("state") == "failed":
@@ -404,6 +554,7 @@ class AgentLifecycle:
                     raise LifecycleError(f"benchmark {code} is marked failed")
                 pid = status.get("pid")
                 if isinstance(pid, int) and pid > 0 and not _pid_alive(pid):
+                    _record_benchmark_state(status_file, "failed")
                     self._cleanup_failed_benchmark(code)
                     raise LifecycleError(
                         f"benchmark {code} process {pid} exited before producing {report}"
@@ -411,6 +562,7 @@ class AgentLifecycle:
             if deadline is not None and time.monotonic() >= deadline:
                 raise LifecycleError(f"timed out waiting for benchmark {code}: {report}")
             self._sleep(self.config.poll_seconds)
+        _record_benchmark_state(status_file, "finished")
         return report
 
     def _cleanup_failed_benchmark(self, code: str) -> None:
@@ -427,6 +579,29 @@ class AgentLifecycle:
                 f"status {result.returncode}",
                 file=sys.stderr,
             )
+
+
+def _record_benchmark_state(status_file: Path, state: str) -> None:
+    """Persist a benchmark state the lifecycle has just observed.
+
+    The harness writes ``running`` at submission and derives later states only
+    when it lists results, which a sequential investigation never does, so
+    without this the file keeps saying ``running`` after the benchmark ended.
+    Only states the harness would derive itself are written -- a report means
+    finished, an exited process without one means failed -- so the file and
+    the harness's check against two runs sharing the cluster never disagree.
+
+    :param status_file: The benchmark's status file; nothing is written when
+        the harness recorded none.
+    :type status_file: Path
+    :param state: ``finished`` or ``failed``.
+    :type state: str
+    """
+    if not status_file.is_file():
+        return
+    status = json.loads(status_file.read_text(encoding="utf-8"))
+    status["state"] = state
+    status_file.write_text(json.dumps(status, indent=2), encoding="utf-8")
 
 
 def _link_baseline(design_run: Path, baseline_run: Path) -> None:
@@ -583,9 +758,22 @@ def _parser() -> argparse.ArgumentParser:
         default="agent/model_server.ps1" if sys.platform == "win32"
         else "agent/model_server.sh",
     )
+    parser.add_argument(
+        "--model-server-manifest",
+        default=os.environ.get("MODEL_SERVER_MANIFEST"),
+        help="k8s manifest the server switch applies, e.g. "
+             "agent/k8s/vllm-glm45-air-int4.yml to deploy GLM-4.5-Air "
+             "instead of the default Qwen3.8 manifest; defaults to "
+             "MODEL_SERVER_MANIFEST, and in turn to the server script's own "
+             "default when neither is set",
+    )
     parser.add_argument("--poll-seconds", type=float, default=30.0)
     parser.add_argument("--benchmark-timeout-seconds", type=float, default=0.0,
                         help="zero waits indefinitely")
+    parser.add_argument("--unschedulable-timeout-seconds", type=float, default=0.0,
+                        help="give a benchmark up, and remove it from the cluster, "
+                             "once its Pods have been unschedulable this long; "
+                             "zero lets them pend indefinitely")
     parser.add_argument("--server-retry-seconds", type=float, default=60.0)
     parser.add_argument(
         "--server-start-attempts", type=int, default=0,
@@ -595,13 +783,21 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--followups", type=int, default=1)
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max-tokens", type=int, default=16384)
+    parser.add_argument(
+        "--enable-thinking", action="store_true",
+        default=_env_flag("AGENT_ENABLE_THINKING", default=False),
+        help="ask the chat template for thinking mode on every turn via "
+             "chat_template_kwargs (AGENT_ENABLE_THINKING); vLLM's switch for "
+             "a hybrid reasoning model such as GLM-4.5-Air or Qwen3; forwarded "
+             "to every phase's agent.harness.agent invocation",
+    )
     parser.add_argument("--catalog", default="contracts/contract_catalog.yml")
     parser.add_argument("--environment", default="environment.yml",
                         help="cluster descriptor from `bexhoma environment create`; "
                              "defaults to environment.yml in the working directory")
     parser.add_argument("--method",
                         default=os.environ.get(
-                            "AGENT_METHOD", "agent/experiment_design_handbook.md"),
+                            "AGENT_METHOD", "agent/handbook/handbook.md"),
                         help="experiment design handbook; set AGENT_METHOD empty, or "
                              "pass an empty string, to design without one")
     parser.add_argument("--inbox", default=None,
@@ -609,11 +805,18 @@ def _parser() -> argparse.ArgumentParser:
                              "'inbox' subdirectory beside the trajectories")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
+        "--allow-parallel-runs", action="store_true",
+        default=_env_flag("AGENT_ALLOW_PARALLEL_RUNS", default=False),
+        help="let this investigation submit while another agent-started "
+             "experiment is still benchmarking (AGENT_ALLOW_PARALLEL_RUNS); "
+             "forwarded to every phase's agent.harness.agent invocation",
+    )
+    parser.add_argument(
         "--baseline", action=argparse.BooleanOptionalAction,
-        default=_env_flag("AGENT_BASELINE", default=True),
+        default=_env_flag("AGENT_BASELINE", default=False),
         help="also answer the question with the bare model -- no catalog, "
              "handbook, or tools -- as a separate investigation, for comparison "
-             "with the full pipeline (AGENT_BASELINE; on by default)",
+             "with the full pipeline (AGENT_BASELINE; off by default)",
     )
     return parser
 
@@ -630,6 +833,7 @@ def main() -> int:
     if (
         args.poll_seconds <= 0
         or args.benchmark_timeout_seconds < 0
+        or args.unschedulable_timeout_seconds < 0
         or args.server_retry_seconds <= 0
         or args.server_start_attempts < 0
     ):
@@ -676,6 +880,7 @@ def main() -> int:
         server_script=_path_from_root(root, args.server_script),
         poll_seconds=args.poll_seconds,
         benchmark_timeout_seconds=args.benchmark_timeout_seconds,
+        unschedulable_timeout_seconds=args.unschedulable_timeout_seconds,
         server_retry_seconds=args.server_retry_seconds,
         server_start_attempts=args.server_start_attempts,
     )
@@ -683,6 +888,11 @@ def main() -> int:
     # as ps expose them. The agent already reads this inherited environment
     # variable, including when --api-key supplied the wrapper's override.
     os.environ["AGENT_API_KEY"] = args.api_key
+    # agent/model_server.sh and its PowerShell port read MODEL_SERVER_MANIFEST
+    # from the environment, not from an argument, so this is how --model-server-
+    # manifest reaches the switch invoked below.
+    if args.model_server_manifest:
+        os.environ["MODEL_SERVER_MANIFEST"] = args.model_server_manifest
     agent_command = [
         sys.executable, "-m", "agent.harness.agent",
         "--model", args.model,
@@ -707,9 +917,14 @@ def main() -> int:
         agent_command.extend(["--results", str(config.results)])
     if args.dry_run:
         agent_command.append("--dry-run")
+    if args.enable_thinking:
+        agent_command.append("--enable-thinking")
+    if args.allow_parallel_runs:
+        agent_command.append("--allow-parallel-runs")
 
     # .env says who owns the endpoint: bundled means the vLLM server is started
-    # and stopped here, external means it is already running and is left alone.
+    # and stopped here, shared means it is started here but left for its idle
+    # watchdog to stop, external means it is already running and is left alone.
     # Anything else is a typo, and guessing at one would quietly change which
     # lifecycle a run gets.
     owner = os.environ.get("AGENT_MODEL_SERVER", _BUNDLED_SERVER)
@@ -720,9 +935,15 @@ def main() -> int:
             file=sys.stderr,
         )
         return 2
-    bundled = owner == _BUNDLED_SERVER
+    bundled = owner in (_BUNDLED_SERVER, _SHARED_SERVER)
+    shared = owner == _SHARED_SERVER
+    # The switch script must not replace a pod running another model while
+    # other lifecycles may be using it; this tells it so.
+    if shared:
+        os.environ["MODEL_SERVER_SHARED"] = "1"
     lifecycle = AgentLifecycle(
-        config, agent_command, ModelServer(config.server_script, bundled),
+        config, agent_command,
+        ModelServer(config.server_script, bundled, shared=shared),
         interpret_model=args.interpret_model, baseline=args.baseline)
     try:
         final_run = lifecycle.run(
@@ -735,7 +956,9 @@ def main() -> int:
 
     answer = final_run / "answer.md"
     print(f"final verdict: {answer}")
-    if bundled:
+    if shared:
+        print("model server left running; its idle watchdog releases the GPU")
+    elif bundled:
         print("model server is down")
     return 0
 

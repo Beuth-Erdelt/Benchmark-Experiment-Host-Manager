@@ -25,7 +25,7 @@ import re
 import sys
 from dataclasses import asdict
 from datetime import datetime, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 from collections.abc import Callable
 
@@ -43,7 +43,7 @@ _DEFAULT_RESULT_CONTRACT = os.path.join("contracts", "contract_result.yml")
 _DEFAULT_ENVIRONMENT = "environment.yml"
 #: The experiment design handbook: what makes a design sound, beside what the catalog
 #: makes legal and what the result contract makes claimable.
-_DEFAULT_METHOD = "agent/experiment_design_handbook.md"
+_DEFAULT_METHOD = "agent/handbook/handbook.md"
 #: Subdirectory of Bexhoma's result folder that holds investigation
 #: trajectories when ``--trajectories`` is not given. Keeping them beside the
 #: benchmark results, rather than inside this checkout, means a working tree
@@ -52,6 +52,8 @@ _TRAJECTORY_SUBDIR = "agent"
 _DEFAULT_BASE_URL = "http://localhost:8000/v1"
 _AGENT_SUMMARY_NAME = "agent_summary.yml"
 _AGENT_SUMMARY_VERSION = "1.0.0"
+#: Numbered variants tried when an investigation's timestamp name is taken.
+_INVESTIGATION_NAME_LIMIT = 99
 
 #: Validate calls allowed per run: one first attempt plus two repairs.
 _DEFAULT_ATTEMPTS = 3
@@ -83,6 +85,15 @@ _EXHAUSTED_WITH_PASS_NOTICE = (
     "Your {tool} budget is used up, but the last file you validated passed. "
     "Submit that exact file now, then reply with a short account of what you "
     "designed. Do not edit it further -- there is no attempt left to re-check it."
+)
+
+#: Shown on a dry run whose last attempt passed. Nothing can be handed over, but
+#: nothing failed either; the notice for a failed attempt asks what was left
+#: unresolved, which leads a model to report a passing design as unconfirmed.
+_EXHAUSTED_DRY_RUN_PASS_NOTICE = (
+    "Your {tool} budget is used up, and the last file you validated passed. "
+    "This run ends at validation, so nothing further is needed: reply with a "
+    "short account, in plain sentences, of what you designed."
 )
 
 #: Given to a model whose turn produced only internal reasoning: no tool call
@@ -345,6 +356,28 @@ def _phase_account(trajectory_path: Path, phase: str, outcome: dict[str, Any]) -
     return lines
 
 
+def _spent_budget_warning(trajectory_path: Path) -> str | None:
+    """Return a warning when the current phase used up its tool budget.
+
+    A phase can still succeed after spending it -- a dry run whose design
+    passed, for instance -- and nothing else on the console would then say that
+    the model kept re-checking until no attempt was left.
+
+    :param trajectory_path: The run's trajectory log.
+    :return: The warning line, or ``None`` when the budget was not spent.
+    :rtype: str | None
+    """
+    events = _trajectory_events(trajectory_path)
+    phase_starts = [index for index, event in enumerate(events)
+                    if event.get("type") == "meta"]
+    phase_events = events[phase_starts[-1]:] if phase_starts else events
+    for event in phase_events:
+        if event.get("type") == "budget_exhausted":
+            return (f"warning: the {event.get('tool')} budget was used up in this "
+                    "phase; the reasoning trace shows how the attempts were spent.")
+    return None
+
+
 def _trajectory_events(path: Path) -> list[dict[str, Any]]:
     """Read a trajectory log, skipping a line a killed process left half-written."""
     events: list[dict[str, Any]] = []
@@ -373,6 +406,7 @@ def _converse(
     closing_validator: Callable[[str], str | None] | None = None,
     stage: str | None = None,
     require_done: bool = False,
+    ended_on_pass: Callable[[list[tuple[str, dict[str, Any], dict[str, Any]]]], bool] | None = None,
 ) -> tuple[str, int, list[tuple[str, dict[str, Any], dict[str, Any]]]]:
     """Drive the model until it stops calling tools, the phase is done, or turns run out.
 
@@ -395,6 +429,10 @@ def _converse(
     :param closing_validator: Return an error message for an invalid closing answer.
     :param stage: Optional stage label written on assistant and tool events.
     :param require_done: Reject a text-only answer until ``done_when`` has fired.
+    :param ended_on_pass: Called with the events so far once the budget is
+        spent where no handover follows; ``True`` means the last attempt
+        passed, so the closing notice says so instead of asking what was left
+        unresolved.
     :return: The closing text, the turns used, and every tool call made.
     :rtype: tuple[str, int, list[tuple[str, dict, dict]]]
     """
@@ -402,6 +440,12 @@ def _converse(
     finished = False
     notified = False
     summary = ""
+    # A server's tool-call parser typically only pattern-matches a name out of
+    # the completion; it does not itself refuse a name the ``tools`` field
+    # never offered. Checked here so a withheld tool -- ``submit`` on a
+    # ``--dry-run``, in particular -- cannot be reached even if the model
+    # emits it anyway.
+    offered_tool_names = {schema["function"]["name"] for schema in tool_schemas}
     events: list[tuple[str, dict[str, Any], dict[str, Any]]] = []
     turn = 0
     stalls = 0
@@ -415,10 +459,13 @@ def _converse(
         pending = bool(spent and not finished and handover_pending
                        and handover_pending(events))
         if spent and not finished and not notified:
-            notice = (
-                _EXHAUSTED_WITH_PASS_NOTICE if pending else _EXHAUSTED_NOTICE
-            ).format(tool=limited_tool)
-            messages.append({"role": "user", "content": notice})
+            if pending:
+                notice = _EXHAUSTED_WITH_PASS_NOTICE
+            elif ended_on_pass is not None and ended_on_pass(events):
+                notice = _EXHAUSTED_DRY_RUN_PASS_NOTICE
+            else:
+                notice = _EXHAUSTED_NOTICE
+            messages.append({"role": "user", "content": notice.format(tool=limited_tool)})
             trajectory.record("budget_exhausted", turn=turn, tool=limited_tool,
                               handover_pending=pending)
             notified = True
@@ -430,7 +477,8 @@ def _converse(
                           reasoning=reply.reasoning,
                           tool_calls=[asdict(call) for call in reply.tool_calls],
                           usage=reply.usage, finish_reason=reply.finish_reason,
-                          generation_budget=reply.generation_budget, **stage_field)
+                          generation_budget=reply.generation_budget,
+                          response_model=reply.response_model, **stage_field)
         messages.append(reply.message)
 
         # A turn that produced only reasoning -- no tool call, no visible answer
@@ -490,6 +538,8 @@ def _converse(
                 result = {"error": "the phase is already complete; no further tools were run"}
             elif call.name == limited_tool and remaining <= 0:
                 result = {"error": f"{limited_tool} budget of {limit} call(s) is exhausted"}
+            elif call.name not in offered_tool_names:
+                result = {"error": f"tool {call.name!r} is not offered in this phase"}
             else:
                 result = (tool_handler or workspace.call)(call.name, call.arguments)
                 if call.name == limited_tool:
@@ -503,6 +553,12 @@ def _converse(
                               **stage_field)
             messages.append({"role": "tool", "tool_call_id": call.id,
                              "content": json.dumps(result, ensure_ascii=False)})
+
+        # A record accepted on the last turn left no turn for the closing answer,
+        # and a phase without one counts as incomplete although its work is done.
+        # It gets that one turn, with the tools withdrawn because it is finished.
+        if finished and turn == max_turns:
+            max_turns += 1
 
     return summary, turn, events
 
@@ -523,6 +579,67 @@ def _report_failed_checks(path: Path) -> int | None:
     return failed if isinstance(failed, int) and not isinstance(failed, bool) else None
 
 
+def _evidence_candidates(value: str, result_directory: Path, root: Path) -> list[Path]:
+    """Return the files a cited evidence path may name, most likely first.
+
+    The result contract defines evidence paths as relative to the result
+    folder, while reads use absolute or workspace-relative paths. A model that
+    read ``D:\\data\\benchmarks\\<code>\\report\\index.md`` and then cited
+    ``report/index.md``, as the contract asks, was refused as having read
+    nothing. Every form is therefore tried: result-relative, anchored on the
+    result's own code, workspace-relative, and the path as written. Backslashes
+    count as separators and a drive letter as a root, so a Windows path reads
+    the same on Linux; anchoring on the code finds the file even after the
+    result folder was moved to another location.
+
+    :param value: The evidence path as the model wrote it.
+    :param result_directory: The result folder being interpreted.
+    :param root: The workspace root that read paths are relative to.
+    :return: Resolved, distinct candidate files.
+    :rtype: list[Path]
+    """
+    text = value.strip()
+    parts = PurePosixPath(text.replace("\\", "/")).parts
+    absolute = bool(parts) and (
+        parts[0].startswith("/") or re.fullmatch(r"[A-Za-z]:", parts[0]) is not None
+    )
+    candidates = [Path(text)] if absolute else [result_directory.joinpath(*parts)]
+    code = os.path.normcase(result_directory.name)
+    anchors = [index for index, part in enumerate(parts)
+               if os.path.normcase(part) == code]
+    if anchors and anchors[-1] + 1 < len(parts):
+        candidates.append(result_directory.joinpath(*parts[anchors[-1] + 1:]))
+    if not absolute:
+        candidates.append(root / text)
+    resolved: list[Path] = []
+    for candidate in candidates:
+        try:
+            path = candidate.resolve()
+        except (OSError, ValueError):
+            continue
+        if path not in resolved:
+            resolved.append(path)
+    return resolved
+
+
+def _result_relative(value: str, result_directory: Path, root: Path) -> str:
+    """Return a cited evidence path in its portable, result-relative form.
+
+    :param value: The evidence path as the model wrote it.
+    :param result_directory: The result folder it belongs to.
+    :param root: The workspace root that read paths are relative to.
+    :return: The POSIX path relative to the result folder, or the path as
+        written when no candidate lies inside the result folder.
+    :rtype: str
+    """
+    inside = [
+        path for path in _evidence_candidates(value, result_directory, root)
+        if path.is_relative_to(result_directory)
+    ]
+    chosen = next((path for path in inside if path.is_file()), inside[0] if inside else None)
+    return chosen.relative_to(result_directory).as_posix() if chosen else value
+
+
 def _write_agent_summary(
     report_path: str,
     specification: str | None,
@@ -530,6 +647,8 @@ def _write_agent_summary(
     validity: dict[str, Any],
     follow_up: dict[str, Any],
     root: Path,
+    incomplete: dict[str, Any] | None = None,
+    restriction: str = "",
 ) -> tuple[Path, dict[str, Any]]:
     """Persist one compact, portable interpretation beside its result.
 
@@ -539,6 +658,10 @@ def _write_agent_summary(
     :param validity: Recorded mechanical validity assessment.
     :param follow_up: Recorded finish-or-follow-up decision.
     :param root: Workspace root used to resolve model-visible evidence paths.
+    :param incomplete: Refusal count and omitted parts of a record accepted
+        incomplete, or ``None`` for a complete record.
+    :param restriction: The harness's qualification of a measurement in this
+        result, or an empty string when there is none.
     :return: Written path and summary object.
     :rtype: tuple[Path, dict[str, Any]]
     """
@@ -552,11 +675,10 @@ def _write_agent_summary(
     if not isinstance(experiment, dict):
         experiment = {}
 
-    evidence_paths = []
-    for value in hypothesis_verdict["evidence_paths"]:
-        source = Path(value)
-        source = source.resolve() if source.is_absolute() else (root / source).resolve()
-        evidence_paths.append(source.relative_to(result_directory).as_posix())
+    evidence_paths = [
+        _result_relative(value, result_directory, root)
+        for value in hypothesis_verdict["evidence_paths"]
+    ]
 
     summary = {
         "agent_summary_version": _AGENT_SUMMARY_VERSION,
@@ -570,10 +692,20 @@ def _write_agent_summary(
         },
         "technical_validity": {
             "failed_checks": validity["failed_checks"],
-            "scope": validity["scope"],
+            # Absent when an incomplete record left the model's validity account out.
+            "scope": validity.get("scope"),
         },
         "unresolved_question": follow_up["unresolved_question"],
     }
+    # A later follow-up reads this file as settled history, so a record the
+    # harness accepted incomplete has to say so here and not only in the trajectory.
+    if incomplete:
+        summary["incomplete_record"] = incomplete
+    # The verdict is the model's and may rest on a measurement the harness could
+    # not vouch for; the harness files its restriction beside it rather than
+    # overruling the verdict.
+    if restriction:
+        summary["measurement_restriction"] = restriction
     target = result_directory / _AGENT_SUMMARY_NAME
     temporary = result_directory / f".{_AGENT_SUMMARY_NAME}.tmp"
     temporary.write_text(
@@ -582,6 +714,27 @@ def _write_agent_summary(
     )
     temporary.replace(target)
     return target, summary
+
+
+def _incomplete_record_notice(incomplete: dict[str, Any]) -> str:
+    """Tell the reader of the final answer which parts of its record are missing.
+
+    :param incomplete: Refusal count and omitted parts, each with its refusal.
+    :type incomplete: dict[str, Any]
+    :return: One Markdown paragraph for the end of the answer.
+    :rtype: str
+    """
+    omitted = "; ".join(
+        f"`{field}` ({reason})" for field, reason in incomplete["omitted"].items()
+    )
+    return (
+        "**Incomplete record.** The harness accepted this interpretation after "
+        f"{incomplete['rounds']} refused attempts and left out the parts that "
+        f"still failed its checks: {omitted}. The verdict cites only evidence "
+        "the model read from this result; the harness checks that, not whether "
+        "the evidence supports the conclusion. No follow-up was started on the "
+        "basis of this record."
+    )
 
 
 def _load_ancestor_summaries(
@@ -659,8 +812,10 @@ def run_baseline(
     messages = prompts.baseline_messages(task)
     trajectory.record("meta", phase="baseline", model=model.model,
                       harness=_harness_revision(),
-                      params={"temperature": model.temperature,
-                              "max_tokens": model.max_tokens},
+                      params={"base_url": model.base_url,
+                              "temperature": model.temperature,
+                              "max_tokens": model.max_tokens,
+                              "extra_body": model.extra_body},
                       catalog_sha256=None, environment_sha256=None,
                       environment_present=False, method_sha256=None,
                       method_present=False, budgets={})
@@ -676,7 +831,8 @@ def run_baseline(
         trajectory.record("assistant", turn=turn, text=reply.text,
                           reasoning=reply.reasoning, tool_calls=[],
                           usage=reply.usage, finish_reason=reply.finish_reason,
-                          generation_budget=reply.generation_budget, stage="baseline")
+                          generation_budget=reply.generation_budget,
+                          response_model=reply.response_model, stage="baseline")
         messages.append(reply.message)
         if reply.text.strip():
             answer = reply.text
@@ -735,10 +891,13 @@ def run_design(
     messages = prompts.design_messages(
         task=task, catalog_path=catalog_path, environment_path=environment_path,
         method_path=method_path, inbox=workspace.inbox.name, attempts=attempts,
-        followups=followups)
+        followups=followups, dry_run=dry_run)
     trajectory.record("meta", phase="design", model=model.model,
                       harness=_harness_revision(),
-                      params={"temperature": model.temperature, "max_tokens": model.max_tokens},
+                      params={"base_url": model.base_url,
+                              "temperature": model.temperature,
+                              "max_tokens": model.max_tokens,
+                              "extra_body": model.extra_body},
                       catalog_sha256=catalog_sha256,
                       environment_sha256=_file_sha256(environment_path),
                       environment_present=environment_path is not None,
@@ -768,6 +927,9 @@ def run_design(
         limited_tool="validate", limit=attempts,
         done_when=lambda name, result: name == "submit" and "code" in result,
         handover_pending=None if dry_run else _submission_owed,
+        # A dry run never submits, so a submission still owed is simply a last
+        # validation that passed.
+        ended_on_pass=_submission_owed if dry_run else None,
         tool_handler=handler)
 
     validated = [args["path"] for name, args, result in events
@@ -914,7 +1076,82 @@ def _checkable_result_claims(characterization: dict[str, Any]) -> dict[str, Any]
         }
         for result in characterization.get("categorical_comparisons", [])
     ]
-    return {"ordered_sweeps": ordered, "categorical_comparisons": categorical}
+    claims: dict[str, Any] = {
+        "ordered_sweeps": ordered, "categorical_comparisons": categorical,
+    }
+    if characterization.get("withheld_claims"):
+        claims["withheld_claims"] = characterization["withheld_claims"]
+    return claims
+
+
+def _withheld_rate_notice(assessment: dict[str, Any] | None) -> str:
+    """Qualify the answer whenever the assessor cannot vouch for a summed rate.
+
+    Written by the harness rather than the model, so it stands even when the
+    model's record was accepted incomplete or its prose repeats the sum. It
+    follows the aggregation check itself rather than the claims withheld on it,
+    because a comparison too incomplete to build is still one the model can
+    rebuild in prose from the same sums.
+
+    :param assessment: The full comparison-quality assessment, if one ran.
+    :type assessment: dict[str, Any] | None
+    :return: One Markdown paragraph, or an empty string when every summed rate
+        passed its check.
+    :rtype: str
+    """
+    if not assessment:
+        return ""
+    aggregation = assessment.get("rate_aggregation", {})
+    discrepant = [
+        entry for entry in aggregation.get("phases", []) if entry["material_discrepancy"]
+    ]
+    # An excluded round's sum enters no comparison, and a round that could not be
+    # checked is no evidence against the others; it is disclosed as excluded.
+    excluded = set(
+        assessment.get("result_characterization", {}).get("excluded_phases", []))
+    unchecked = [
+        entry for entry in aggregation.get("unchecked_phases", [])
+        if entry["phase"] not in excluded
+    ]
+    if not discrepant and not unchecked:
+        return ""
+    reasons = []
+    if discrepant:
+        largest = max(discrepant, key=lambda entry: entry["excess"])
+        reasons.append(
+            f"in {len(discrepant)} phase(s) the pods ran for different lengths of "
+            f"time, and the summed rate exceeds its common-duration approximation "
+            f"by up to {largest['excess']:.0%} ({largest['phase']}: "
+            f"{largest['summed_rate']:,.0f} summed against about "
+            f"{largest['common_duration_rate_approximation']:,.0f})"
+        )
+    if unchecked:
+        reasons.append(f"{len(unchecked)} phase(s) could not be checked")
+    return (
+        "**Throughput claims withheld by the harness.** Each phase's "
+        f"`{aggregation['metric']}` adds up its pods' own rates, which is the rate "
+        "over the whole round only when every pod ran for the same time. Here "
+        f"{'; '.join(reasons)}. The "
+        "reported sums therefore cannot support the requested throughput shape or "
+        "comparison, and the approximation is a check, not a corrected figure. "
+        "This does not mean the experiment failed; its other measurements are "
+        "unaffected."
+    )
+
+
+def _is_one_of(value: Any, allowed: set[str]) -> bool:
+    """Report whether a value the model sent is one of a closed set of words.
+
+    Testing membership directly raises for an object or a list, which are
+    unhashable. Nex-N2.5-mini sent each question's validity as an object, and
+    the resulting TypeError ended the whole phase instead of refusing the record.
+
+    :param value: The value as the model sent it.
+    :param allowed: The words it must be one of.
+    :return: ``True`` when the value is one of them.
+    :rtype: bool
+    """
+    return isinstance(value, str) and value in allowed
 
 
 class _InterpretationGate:
@@ -937,6 +1174,8 @@ class _InterpretationGate:
         self._read_paths: set[Path] = set()
         self._validity_read = False
         self.comparison_quality: dict[str, Any] | None = None
+        self._failed_repairs = 0
+        self.accepted_after_failed_repairs: dict[str, Any] | None = None
         self.result_claims: dict[str, Any] | None = None
         self.validity_scope: dict[str, Any] | None = None
         self._specification = specification
@@ -966,6 +1205,14 @@ class _InterpretationGate:
             result["overall_status_failed"] = self.failed_checks
         return result
 
+    def _cited(self, path: str) -> Path | None:
+        """Return the read file a cited evidence path names, or ``None``."""
+        return next((
+            candidate for candidate in _evidence_candidates(
+                path, self.result_directory, self._workspace.root)
+            if candidate in self._read_paths
+        ), None)
+
     def _unread(self, paths: Any) -> list[str] | None:
         """Return unread paths, or ``None`` when the path list is malformed."""
         if (
@@ -973,9 +1220,26 @@ class _InterpretationGate:
             or any(not isinstance(path, str) or not path.strip() for path in paths)
         ):
             return None
-        return sorted(
-            path for path in paths if self._resolve(path) not in self._read_paths
+        return sorted(path for path in paths if self._cited(path) is None)
+
+    def _unread_error(self, error: str, unread: list[str]) -> dict[str, Any]:
+        """Refuse unread evidence, naming what was read so it can be cited.
+
+        Echoing back only the refused strings left a model that had read the
+        files unable to see what differed; it spent a whole turn's budget
+        guessing. Listing the reads gives it paths it can copy.
+        """
+        read = sorted(
+            path.relative_to(self.result_directory).as_posix()
+            if path.is_relative_to(self.result_directory) else str(path)
+            for path in self._read_paths
         )
+        return {
+            "error": error,
+            "unread": unread,
+            "read": read,
+            "hint": "cite paths relative to the result folder, e.g. report/index.md",
+        }
 
     def assess_comparison_quality(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Run and retain the deterministic comparison-quality assessment."""
@@ -1014,8 +1278,31 @@ class _InterpretationGate:
             return {**_QUALITY_NOT_APPLICABLE, "reason": result["error"]}
         return result
 
-    def validate_record(self, arguments: dict[str, Any]) -> dict[str, Any]:
-        """Validate one structured interpretation record."""
+    def _evidence_error(self, arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Refuse a record whose verdict does not cite read evidence from this result.
+
+        These rules are never waived. The reads, the assessment and the verdict's
+        own cited evidence are what make the record a verdict about this result
+        at all; everything else in it can be left out, but not these. They
+        establish that the cited files were read, not that their contents
+        support the conclusion.
+
+        :param arguments: The record the model offered.
+        :type arguments: dict[str, Any]
+        :return: The refusal, or ``None`` when the verdict cites only evidence
+            read from this result.
+        :rtype: dict[str, Any] | None
+        """
+        # A call that carries nothing is a transport or generation failure, not a
+        # disagreement about content. Saying which field is missing would send the
+        # model hunting for a mistake it did not make, so name the real problem.
+        if not arguments:
+            return {
+                "error": (
+                    "record_interpretation arrived with no arguments; send the "
+                    "whole record as one object in a single call"
+                )
+            }
         missing_reads = []
         if self.report not in self._read_paths:
             missing_reads.append(str(self.report))
@@ -1038,54 +1325,28 @@ class _InterpretationGate:
         if self.failed_checks is None:
             return {"error": "report frontmatter has no valid overall_status.failed count"}
 
-        recorded_quality = arguments.get("comparison_quality")
-        if self.benchmarking.is_file():
-            if self.comparison_quality is None:
-                return {
-                    "error": "run assess_comparison_quality on benchmarking.md first",
-                    "missing": [str(self.benchmarking)],
-                }
-            expected_quality = {
-                "query_coverage": self.comparison_quality["query_coverage"],
-                "whole_workload_throughput": self.comparison_quality[
-                    "whole_workload_throughput"
-                ],
-                "suspect_repetitions": [
-                    item["phase"]
-                    for item in self.comparison_quality["suspect_repetitions"]
-                ],
-            }
-        else:
-            expected_quality = dict(_QUALITY_NOT_APPLICABLE)
-        if recorded_quality != expected_quality:
+        # The assessment still has to have been run -- the verdict is meant to be
+        # formed against it -- but the model is no longer asked to retype what it
+        # said. The harness holds those values and files them with the record.
+        if self.benchmarking.is_file() and self.comparison_quality is None:
             return {
-                "error": "comparison_quality must match the deterministic assessment",
-                "expected": expected_quality,
-            }
-
-        recorded_claims = arguments.get("result_claims")
-        expected_claims = self.result_claims or dict(_EMPTY_RESULT_CLAIMS)
-        if recorded_claims != expected_claims:
-            return {
-                "error": (
-                    "result_claims must match the deterministic characterization; "
-                    "the shape, turning level and ranking are checked fields"
-                ),
-                "expected": expected_claims,
-                "claimed": recorded_claims,
+                "error": "run assess_comparison_quality on benchmarking.md first",
+                "missing": [str(self.benchmarking)],
             }
 
         hypothesis_verdict = arguments.get("hypothesis_verdict")
         verdict_statuses = {"supported", "refuted", "inconclusive", "invalid"}
         if (
             not isinstance(hypothesis_verdict, dict)
-            or hypothesis_verdict.get("status") not in verdict_statuses
+            or not _is_one_of(hypothesis_verdict.get("status"), verdict_statuses)
             or not isinstance(hypothesis_verdict.get("conclusion"), str)
             or not hypothesis_verdict["conclusion"].strip()
         ):
             return {
                 "error": (
-                    "hypothesis_verdict needs a valid status and a non-empty conclusion"
+                    "hypothesis_verdict needs a status that is one of "
+                    f"{', '.join(sorted(verdict_statuses))}, and a non-empty "
+                    "conclusion"
                 )
             }
         verdict_paths = hypothesis_verdict.get("evidence_paths")
@@ -1093,85 +1354,90 @@ class _InterpretationGate:
         if unread_verdict is None:
             return {"error": "hypothesis_verdict needs non-empty evidence_paths"}
         if unread_verdict:
-            return {
-                "error": "hypothesis_verdict cites unread evidence",
-                "unread": unread_verdict,
-            }
+            return self._unread_error(
+                "hypothesis_verdict cites unread evidence", unread_verdict)
         outside_result = [
             path for path in verdict_paths
-            if not self._resolve(path).is_relative_to(self.result_directory)
+            if not self._cited(path).is_relative_to(self.result_directory)
         ]
         if outside_result:
             return {
                 "error": "hypothesis_verdict evidence must be inside this result folder",
                 "outside": outside_result,
             }
+        return None
 
+    @staticmethod
+    def _disputes_error(arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Check the optional disputes of computed claims."""
+        disputes = arguments.get("disputes", [])
+        if not isinstance(disputes, list):
+            return {"error": "disputes must be a list of {claim, reason} objects"}
+        for dispute in disputes:
+            if (
+                not isinstance(dispute, dict)
+                or not isinstance(dispute.get("claim"), str)
+                or not dispute["claim"].strip()
+                or not isinstance(dispute.get("reason"), str)
+                or not dispute["reason"].strip()
+            ):
+                return {
+                    "error": "every dispute needs a non-empty claim and reason",
+                }
+        return None
+
+    def _validity_error(self, arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Check the model's account of what the failed validity checks affect."""
         validity = arguments.get("validity")
         if not isinstance(validity, dict):
             return {"error": "validity must be an object"}
-        failed_checks = validity.get("failed_checks")
-        if failed_checks != self.failed_checks or isinstance(failed_checks, bool):
-            return {
-                "error": (
-                    "validity.failed_checks must match report frontmatter: "
-                    f"expected {self.failed_checks}"
-                )
-            }
+        # How many checks failed, which phases they scope and whether they touch
+        # the performance metrics are all read off the report by the harness; the
+        # scope sentence is the model's own account of what that means here.
         if not isinstance(validity.get("scope"), str):
             return {"error": "validity.scope must be text"}
         if self.failed_checks > 0 and not validity["scope"].strip():
             return {"error": "failed validity checks require a scope explanation"}
-        expected_affected_phases = (
-            self.validity_scope.get("affected_phases", [])
-            if self.validity_scope else []
-        )
-        expected_performance_scope = (
-            self.validity_scope.get("performance_metrics_affected", False)
-            if self.validity_scope else self.failed_checks > 0
-        )
-        if validity.get("affected_phases") != expected_affected_phases:
-            return {
-                "error": "validity.affected_phases must match the deterministic scope",
-                "expected": expected_affected_phases,
-            }
-        if validity.get("performance_metrics_affected") is not expected_performance_scope:
-            return {
-                "error": (
-                    "validity.performance_metrics_affected must match the "
-                    "deterministic scope"
-                ),
-                "expected": expected_performance_scope,
-            }
         unread_validity = self._unread(validity.get("evidence_paths"))
         if unread_validity is None:
             return {"error": "validity.evidence_paths must be a non-empty path list"}
         if unread_validity:
-            return {"error": "validity cites unread evidence", "unread": unread_validity}
+            return self._unread_error("validity cites unread evidence", unread_validity)
         if self.report not in {
-            self._resolve(path) for path in validity["evidence_paths"]
+            self._cited(path) for path in validity["evidence_paths"]
         }:
             return {"error": "validity evidence must cite the report index"}
+        return None
 
+    def _questions_error(self, arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Check the assessment of each explicit question in the request."""
         questions = arguments.get("questions")
         if not isinstance(questions, list) or not questions:
             return {"error": "questions must be a non-empty list"}
         statuses = {"settled", "partial", "unresolved"}
         validity_states = {"supported", "limited", "invalid"}
         text_fields = {"question", "status", "conclusion", "evidence", "missing"}
-        for question in questions:
-            if (
-                not isinstance(question, dict)
-                or question.get("status") not in statuses
-                or question.get("validity") not in validity_states
-                or any(not isinstance(question.get(field), str) for field in text_fields)
-            ):
-                return {"error": "every question needs all text fields and valid states"}
+        for index, question in enumerate(questions):
+            if not isinstance(question, dict):
+                return {"error": f"questions[{index}] must be an object"}
+            # A refusal that only said "valid states" left the model guessing
+            # which field was wrong, so each names the field and its words.
+            for field, allowed in (("status", statuses), ("validity", validity_states)):
+                if not _is_one_of(question.get(field), allowed):
+                    return {"error": (
+                        f"questions[{index}].{field} must be one word: "
+                        f"{', '.join(sorted(allowed))}"
+                    )}
+            not_text = sorted(
+                field for field in text_fields if not isinstance(question.get(field), str)
+            )
+            if not_text:
+                return {"error": f"questions[{index}] needs text in: {', '.join(not_text)}"}
             unread_evidence = self._unread(question.get("evidence_paths"))
             if unread_evidence is None:
                 return {"error": "every question needs non-empty evidence_paths"}
             if unread_evidence:
-                return {"error": "question cites unread evidence", "unread": unread_evidence}
+                return self._unread_error("question cites unread evidence", unread_evidence)
             if question["status"] == "settled" and question["missing"].strip():
                 return {"error": "a settled question cannot list missing evidence; "
                         "use partial or unresolved"}
@@ -1179,12 +1445,16 @@ class _InterpretationGate:
                 return {"error": "a settled question requires supported evidence"}
             if question["status"] != "settled" and not question["missing"].strip():
                 return {"error": "a partial or unresolved question must name missing evidence"}
+        return None
 
+    @staticmethod
+    def _follow_up_error(arguments: dict[str, Any]) -> dict[str, Any] | None:
+        """Check the finish-or-follow-up decision for internal consistency."""
         follow_up = arguments.get("follow_up")
         if not isinstance(follow_up, dict):
             return {"error": "follow_up must be an object"}
         action = follow_up.get("action")
-        if action not in {"finish", "followup"}:
+        if not _is_one_of(action, {"finish", "followup"}):
             return {"error": "follow_up.action must be finish or followup"}
         if not isinstance(follow_up.get("rationale"), str) or not follow_up["rationale"]:
             return {"error": "follow_up needs a rationale"}
@@ -1201,6 +1471,16 @@ class _InterpretationGate:
             return {"error": "follow_up.full_workload_required must be true or false"}
         if not isinstance(follow_up.get("cost_rationale"), str):
             return {"error": "follow_up.cost_rationale must be text"}
+        independent_repeat = follow_up.get("independent_repeat", False)
+        if not isinstance(independent_repeat, bool):
+            return {"error": "follow_up.independent_repeat must be true or false"}
+        if independent_repeat and (action != "followup" or target_queries):
+            return {
+                "error": (
+                    "an independent repeat reruns its parent unchanged, so it needs "
+                    "action=followup and an empty target_queries list"
+                )
+            }
         if action == "followup" and (
             not follow_up.get("unresolved_question")
             or not follow_up.get("experiment_goal")
@@ -1231,8 +1511,95 @@ class _InterpretationGate:
                     "target_queries empty, with full_workload_required=false"
                 )
             }
+        return None
 
-        return {"recorded": True, "questions": len(questions)}
+    def _section_errors(self, arguments: dict[str, Any]) -> dict[str, dict[str, Any]]:
+        """Check each part the model writes beside its verdict, independently.
+
+        :param arguments: The record the model offered.
+        :type arguments: dict[str, Any]
+        :return: The refusal of every part that fails, keyed by its record field
+            in the order the parts are checked; empty when all of them pass.
+        :rtype: dict[str, dict[str, Any]]
+        """
+        checks = {
+            "disputes": self._disputes_error,
+            "validity": self._validity_error,
+            "questions": self._questions_error,
+            "follow_up": self._follow_up_error,
+        }
+        return {
+            field: error for field, check in checks.items()
+            if (error := check(arguments)) is not None
+        }
+
+    def _validate_record(self, arguments: dict[str, Any]) -> dict[str, Any]:
+        """Check one structured interpretation record, refusing what is unusable."""
+        if (error := self._evidence_error(arguments)) is not None:
+            return error
+        if errors := self._section_errors(arguments):
+            return next(iter(errors.values()))
+        return {"recorded": True, "questions": len(arguments["questions"])}
+
+    #: Consecutive refusals of one record before the harness stops refusing. A
+    #: model that cannot satisfy a structural rule after this many tries is not
+    #: going to, and a phase that dies here throws away a finished benchmark.
+    MAX_REPAIR_ROUNDS = 4
+
+    def validate_record(self, arguments: dict[str, Any]) -> dict[str, Any]:
+        """Validate a record, and accept it incomplete once repair has stalled.
+
+        Only the parts beside the verdict can be waived, and a waived part is
+        left out of the record rather than filed unchecked. A record whose
+        verdict does not cite read evidence from this result is refused however
+        long repair has run.
+
+        :param arguments: The record the model offered.
+        :type arguments: dict[str, Any]
+        :return: The acceptance, or the refusal to hand back to the model.
+        :rtype: dict[str, Any]
+        """
+        result = self._validate_record(arguments)
+        if result.get("recorded"):
+            self._failed_repairs = 0
+            return result
+        self._failed_repairs += 1
+        if (
+            self._failed_repairs < self.MAX_REPAIR_ROUNDS
+            or self._evidence_error(arguments) is not None
+        ):
+            return result
+        # Accepted incomplete: the verdict cites only evidence the model read from
+        # this result, some part beside it does not pass, and the alternative is
+        # losing the interpretation altogether. The failing parts are left out
+        # rather than filed unchecked, and the record names each one with its
+        # refusal.
+        self.accepted_after_failed_repairs = {
+            "rounds": self._failed_repairs,
+            "omitted": {
+                field: error["error"]
+                for field, error in self._section_errors(arguments).items()
+            },
+        }
+        return {
+            "recorded": True,
+            "accepted_after_failed_repairs": self.accepted_after_failed_repairs,
+        }
+
+    def harness_validity_scope(self) -> dict[str, Any]:
+        """Give the validity figures the harness reads off the report itself.
+
+        :return: Failed-check count, affected phases, and whether the failures
+            reach the performance metrics.
+        :rtype: dict[str, Any]
+        """
+        scope = self.validity_scope or {}
+        return {
+            "failed_checks": self.failed_checks,
+            "affected_phases": scope.get("affected_phases", []),
+            "performance_metrics_affected": scope.get(
+                "performance_metrics_affected", bool(self.failed_checks)),
+        }
 
 
 class InterpretationIncomplete(RuntimeError):
@@ -1251,6 +1618,7 @@ def _interpret_evidence(
 ) -> tuple[
     str, dict[str, Any], list[dict[str, Any]], dict[str, Any],
     dict[str, Any], dict[str, Any], dict[str, Any], list[Any], int,
+    dict[str, Any] | None,
 ]:
     """Read the finished result folder and record how far it answers the question.
 
@@ -1262,9 +1630,11 @@ def _interpret_evidence(
     :param result_contract_path: Exact result contract governing the report.
     :return: Report, scientific verdict, question assessments, validity
         assessment, comparison quality, checkable result claims, follow-up plan,
-        events, and turns used.
+        events, turns used, and -- when the record was accepted incomplete --
+        the refusal count and the parts left out, otherwise ``None``.
     :rtype: tuple[str, dict[str, Any], list[dict[str, Any]], dict[str, Any],
-        dict[str, Any], dict[str, Any], dict[str, Any], list, int]
+        dict[str, Any], dict[str, Any], dict[str, Any], list, int,
+        dict[str, Any] | None]
     """
     hypothesis_verdict: dict[str, Any] = {}
     question_assessments: list[dict[str, Any]] = []
@@ -1285,12 +1655,41 @@ def _interpret_evidence(
             return workspace.call(name, arguments)
         result = gate.validate_record(arguments)
         if result.get("recorded"):
+            incomplete = gate.accepted_after_failed_repairs
+            omitted = incomplete["omitted"] if incomplete else {}
             hypothesis_verdict.update(arguments["hypothesis_verdict"])
-            question_assessments[:] = arguments["questions"]
-            validity_assessment.update(arguments["validity"])
-            comparison_quality.update(arguments["comparison_quality"])
-            result_claims.update(arguments["result_claims"])
-            follow_up.update(arguments["follow_up"])
+            if "questions" not in omitted:
+                question_assessments[:] = arguments["questions"]
+            if "validity" not in omitted:
+                validity_assessment.update(arguments["validity"])
+            # The claims and the quality summary come from the assessor, not from
+            # the model: they are what the harness measured, and asking for them
+            # back only ever tested transcription.
+            comparison_quality.update(
+                gate.comparison_quality or dict(_QUALITY_NOT_APPLICABLE))
+            result_claims.update(gate.result_claims or dict(_EMPTY_RESULT_CLAIMS))
+            validity_assessment.update(gate.harness_validity_scope())
+            if arguments.get("disputes") and "disputes" not in omitted:
+                result_claims["disputes"] = arguments["disputes"]
+            if incomplete:
+                # Cluster time is not spent on an interpretation the harness could
+                # not fully check. The open question survives when the model's own
+                # decision passed, so a person can still take it up by hand.
+                proposed = {} if "follow_up" in omitted else arguments["follow_up"]
+                follow_up.update({
+                    "action": "finish",
+                    "rationale": (
+                        "The harness accepted this interpretation incomplete, so "
+                        "it starts no follow-up on its basis."
+                    ),
+                    "unresolved_question": proposed.get("unresolved_question") or "",
+                    "experiment_goal": "",
+                    "target_queries": [],
+                    "full_workload_required": False,
+                    "cost_rationale": "",
+                })
+            else:
+                follow_up.update(arguments["follow_up"])
         return result
 
     trajectory.record("stage", name="evidence_interpretation", context_reset=True)
@@ -1306,6 +1705,7 @@ def _interpret_evidence(
     return (
         interpretation, hypothesis_verdict, question_assessments, validity_assessment,
         comparison_quality, result_claims, follow_up, events, turns,
+        gate.accepted_after_failed_repairs,
     )
 
 
@@ -1368,11 +1768,12 @@ def _author_followup(
             return {"error": "read every contract you were pointed at before authoring",
                     "missing": missing}
         if name == "validate":
-            draft = workspace.call("read_file", {"path": arguments.get("path", "")})
-            if "text" not in draft:
-                return draft
             try:
-                experiment = yaml.safe_load(draft["text"])
+                draft = workspace.peek_text(arguments.get("path", ""))
+            except (tools.ToolError, OSError) as error:
+                return {"error": str(error)}
+            try:
+                experiment = yaml.safe_load(draft)
             except yaml.YAMLError:
                 experiment = None
             if not isinstance(experiment, dict):
@@ -1390,7 +1791,15 @@ def _author_followup(
                 followup_execution = {
                     key: value for key, value in experiment.items() if key not in ignored
                 }
-                if followup_execution == parent_execution:
+                repeat = decision.get("independent_repeat") is True
+                if repeat and followup_execution != parent_execution:
+                    return methodology_error(
+                        "the approved follow-up is an independent repeat, so it must "
+                        "keep every execution setting of its parent; change only its "
+                        "title, hypothesis, discriminates or follow_up_of",
+                        arguments["path"],
+                    )
+                if not repeat and followup_execution == parent_execution:
                     return methodology_error(
                         "the follow-up repeats its parent's execution settings; "
                         "change at least one controlled treatment",
@@ -1473,7 +1882,10 @@ def run_interpret(
         specification=specification, method_path=method_path, followups=followups)
     trajectory.record("meta", phase="interpret", model=model.model,
                       harness=_harness_revision(),
-                      params={"temperature": model.temperature, "max_tokens": model.max_tokens},
+                      params={"base_url": model.base_url,
+                              "temperature": model.temperature,
+                              "max_tokens": model.max_tokens,
+                              "extra_body": model.extra_body},
                       report=report_path,
                       catalog_sha256=_file_sha256(catalog_path),
                       environment_sha256=_file_sha256(environment_path),
@@ -1492,6 +1904,7 @@ def run_interpret(
         decision,
         all_events,
         total_turns,
+        record_incomplete,
     ) = _interpret_evidence(
         messages, workspace, model, trajectory, report_path, result_contract_path,
         method_path, specification
@@ -1515,10 +1928,12 @@ def run_interpret(
     )
     result_directory = report.parent.parent
     experiment_code = result_directory.name
+    rate_notice = _withheld_rate_notice(comparison_quality.get("details"))
     agent_summary_path, agent_summary = _write_agent_summary(
         report_path=report_path, specification=specification,
         hypothesis_verdict=hypothesis_verdict, validity=validity_assessment,
-        follow_up=decision, root=workspace.root,
+        follow_up=decision, root=workspace.root, incomplete=record_incomplete,
+        restriction=rate_notice,
     )
     trajectory.record("artifact", phase="interpret",
                       agent_summary=str(agent_summary_path))
@@ -1527,8 +1942,12 @@ def run_interpret(
     )
 
     if decision.get("action") == "followup" and followups > 0:
+        # The author designs on the interpretation it is handed, so it gets the
+        # harness's qualification too, not only the model's own prose.
         author_summary, author_events, author_turns = _author_followup(
-            task=task, specification=specification, interpretation=interpretation,
+            task=task, specification=specification,
+            interpretation="\n\n".join(
+                part for part in (interpretation, rate_notice) if part),
             decision=decision, ancestor_summaries=ancestor_summaries,
             experiment_code=experiment_code,
             workspace=workspace, model=model,
@@ -1539,6 +1958,9 @@ def run_interpret(
         total_turns += author_turns
 
     summary_parts = [interpretation] if interpretation else []
+    summary_parts.append(rate_notice)
+    if record_incomplete:
+        summary_parts.append(_incomplete_record_notice(record_incomplete))
     if decision.get("action") == "followup" and followups > 0:
         summary_parts.append(author_summary or (
             "A follow-up was selected but was not submitted: " + decision.get("rationale", "")
@@ -1563,6 +1985,7 @@ def run_interpret(
                     validity_assessment=validity_assessment,
                     comparison_quality=comparison_quality,
                     result_claims=result_claims,
+                    incomplete_record=record_incomplete,
                     followup_decision=decision or None,
                     agent_summary_path=str(agent_summary_path),
                     ancestor_summaries_loaded=len(ancestor_summaries),
@@ -1642,6 +2065,36 @@ def _carry_forward(
     return task, specification, code, followups
 
 
+def _env_flag(name: str) -> bool:
+    """Read a boolean environment variable, tolerating the usual spellings.
+
+    :param name: Environment variable to read.
+    :return: ``False`` when unset, empty, ``0``, ``false``, ``no`` or ``off``;
+        ``True`` otherwise.
+    :rtype: bool
+    """
+    value = os.environ.get(name)
+    if value is None or not value.strip():
+        return False
+    return value.strip().lower() not in ("0", "false", "no", "off")
+
+
+def _parse_extra_body(text: str) -> dict[str, Any]:
+    """Parse the extra request fields given on the command line.
+
+    :param text: A JSON object, or an empty string for none.
+    :return: The fields to add to every request body.
+    :rtype: dict[str, Any]
+    :raises ValueError: When the text is not a JSON object.
+    """
+    if not text.strip():
+        return {}
+    fields = json.loads(text)
+    if not isinstance(fields, dict):
+        raise ValueError(f"--extra-body must be a JSON object, not {type(fields).__name__}")
+    return fields
+
+
 def _build_parser() -> argparse.ArgumentParser:
     """Build the command-line parser.
 
@@ -1692,6 +2145,21 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("-a", "--attempts", type=int, default=_DEFAULT_ATTEMPTS)
     parser.add_argument("-f", "--followups", type=int, default=_DEFAULT_FOLLOWUPS)
     parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument(
+        "--enable-thinking", action="store_true",
+        default=_env_flag("AGENT_ENABLE_THINKING"),
+        help="ask the chat template for thinking mode on every turn via "
+             "chat_template_kwargs (default: $AGENT_ENABLE_THINKING); vLLM's "
+             "documented switch for a hybrid reasoning model (glm45, qwen3); "
+             "off by default since a strict OpenAI-compatible server could "
+             "reject the extra field"
+    )
+    parser.add_argument(
+        "--extra-body", default=os.environ.get("AGENT_EXTRA_BODY", ""),
+        help="JSON object added to every request body (default: "
+             "$AGENT_EXTRA_BODY), for fields an endpoint defines beyond the "
+             "OpenAI API, such as OpenRouter's provider routing"
+    )
     parser.add_argument("--max-tokens", type=int, default=_DEFAULT_MAX_TOKENS,
                         help="ceiling on tokens generated per turn, thinking included")
     parser.add_argument("--allow-parallel-runs", action="store_true",
@@ -1700,7 +2168,50 @@ def _build_parser() -> argparse.ArgumentParser:
                              "two then share the cluster")
     parser.add_argument("--dry-run", action="store_true",
                         help="design and validate only; do not submit to the cluster")
+    parser.add_argument("--run-record", default=None,
+                        help="file this phase writes its investigation directory "
+                             "into, so a wrapper running several agents side by "
+                             "side learns which directory is its own")
     return parser
+
+
+def _record_run_directory(record: str | None, run_directory: Path) -> None:
+    """Tell a wrapper which investigation directory this phase is writing.
+
+    Scanning the trajectory folder for the newest directory cannot tell
+    concurrent agents apart, so the wrapper names a file and reads it back.
+
+    :param record: The ``--run-record`` path, or ``None`` when no wrapper asked.
+    :param run_directory: The investigation directory, after any relocation.
+    """
+    if record:
+        Path(record).write_text(str(run_directory.resolve()), encoding="utf-8")
+
+
+def _new_investigation_directory(trajectories: Path) -> Path:
+    """Create an investigation directory that no other agent shares.
+
+    The name is a timestamp, and agents started on the same clock tick --
+    Windows' clock can advance in steps of about 15 ms -- would otherwise both
+    take it and interleave their trajectories. The directory is therefore
+    created exclusively, and a name already taken gets a counter.
+
+    :param trajectories: Folder holding the investigation directories.
+    :return: The newly created, empty investigation directory.
+    """
+    trajectories.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now().strftime("%Y%m%dT%H%M%S%f")
+    names = [stamp] + [
+        f"{stamp}-{number:02d}" for number in range(1, _INVESTIGATION_NAME_LIMIT + 1)
+    ]
+    for name in names:
+        candidate = trajectories / name
+        try:
+            candidate.mkdir()
+        except FileExistsError:
+            continue
+        return candidate
+    raise FileExistsError(f"investigation {stamp} and all its numbered variants exist")
 
 
 def _phase_number(run_directory: Path) -> int:
@@ -1967,10 +2478,14 @@ def _report_context_exhausted(
     :rtype: int
     """
     trajectory.record("aborted", reason="context window exhausted", max_tokens=max_tokens)
+    # Each turn's output is already narrowed to the room the window leaves, so
+    # a smaller --max-tokens would not have helped; the conversation itself is
+    # what no longer fits.
     print("error: the conversation no longer leaves room for an answer within the "
-          f"model server's context window. Lower --max-tokens (currently {max_tokens}) "
-          "so each turn reserves less, or rerun the phase so it starts from a fresh "
-          "context.", file=sys.stderr)
+          "model server's context window, even with this turn's output narrowed "
+          f"below --max-tokens ({max_tokens}). Rerun the phase so it starts from a "
+          "fresh context, or serve the model with a larger context window.",
+          file=sys.stderr)
     print(f"  {error}", file=sys.stderr)
     return 2
 
@@ -1988,6 +2503,11 @@ def main() -> int:
     args = _build_parser().parse_args()
     if not args.model:
         print("error: no model given; pass --model or set AGENT_MODEL", file=sys.stderr)
+        return 2
+    try:
+        extra_body = _parse_extra_body(args.extra_body)
+    except ValueError as error:
+        print(f"error: {error}", file=sys.stderr)
         return 2
 
     root = Path(args.root).resolve()
@@ -2018,7 +2538,7 @@ def main() -> int:
     status = args.status or str(trajectories / _DEFAULT_STATUS)
     source: Path | None = None
     if args.phase in ("design", "baseline"):
-        run_directory = trajectories / datetime.now().strftime("%Y%m%dT%H%M%S%f")
+        run_directory = _new_investigation_directory(trajectories)
     else:
         source = _resolve_investigation(root, args.run) if args.run else None
         if source is not None and not (source / "trajectory.jsonl").is_file():
@@ -2027,17 +2547,18 @@ def main() -> int:
         if source is None and not args.report:
             print("error: interpretation requires --run or --report", file=sys.stderr)
             return 2
-        run_directory = source or (
-            trajectories / datetime.now().strftime("%Y%m%dT%H%M%S%f")
-        )
+        run_directory = source or _new_investigation_directory(trajectories)
 
     phase_number = _phase_number(run_directory)
     phase_directory = run_directory / "phases" / f"{phase_number:02d}-{args.phase}"
     phase_directory.mkdir(parents=True, exist_ok=True)
+    _record_run_directory(args.run_record, run_directory)
     trajectory = Trajectory(run_directory)
     model = model_client.ChatModel(model=args.model, base_url=args.base_url,
                                    api_key=args.api_key, temperature=args.temperature,
-                                   max_tokens=args.max_tokens)
+                                   max_tokens=args.max_tokens,
+                                   enable_thinking=args.enable_thinking,
+                                   extra_body=extra_body)
     try:
         model.resolve_served_model()
     except model_client.ModelNotServed as error:
@@ -2067,6 +2588,13 @@ def main() -> int:
         results_root=str(results),
         status_dir=status, run_directory=phase_directory,
         allow_parallel_runs=args.allow_parallel_runs)
+    if workspace is not None:
+        window = model.context_window()
+        if not isinstance(window, int):
+            window = None
+        workspace.set_read_budget(tools.read_budget_for_window(window, args.max_tokens))
+        trajectory.record("read_budget", context_window=window,
+                          max_tokens=args.max_tokens, characters=workspace.read_budget)
 
     print(f"{args.phase} phase with {model.model} at {args.base_url}", flush=True)
     print(f"investigation: {run_directory}", flush=True)
@@ -2190,6 +2718,7 @@ def main() -> int:
                 previous_directory
             )
             workspace.run_directory = phase_directory
+            _record_run_directory(args.run_record, run_directory)
     phase_report, _ = _write_reports(
         run_directory, trajectory, phase_number, args.phase, summary_text, final,
     )
@@ -2201,6 +2730,8 @@ def main() -> int:
     for key in ("validated_path", "code", "files_read", "bytes_read", "characters_returned"):
         if outcome.get(key):
             print(f"  {key}: {outcome[key]}")
+    if complete and (warning := _spent_budget_warning(trajectory.path)):
+        print(warning, file=sys.stderr)
     if not complete:
         for line in _phase_account(trajectory.path, args.phase, outcome):
             print(line, file=sys.stderr)

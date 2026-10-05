@@ -8,7 +8,7 @@ which turns it into a ``ycsb.py`` argument vector. These tests check that:
 * the emitted argv parses back cleanly through ``ycsb.build_parser()``;
 * catalog params/loading/rounds/observe/placement/resources map to the right
   ``ycsb.py`` flags;
-* the contract's default-1 SUT isolation is applied (``-ms``/``-mse``), same
+* the contract's default-1 SUT isolation is applied (``-mse``), same
   as the tpch builder;
 * a profile's resolved knobs become ``--set`` deployment patches;
 * an unsupported system and a resources: sweep are rejected.
@@ -84,6 +84,42 @@ class BuildYcsbArgvTest(unittest.TestCase):
         self.assertEqual(args.num_loading_pods, '1')
         self.assertEqual(args.num_loading_threads, '8')
 
+    def test_benchmarking_pods_and_threads_are_optional(self):
+        args = ycsb.build_parser().parse_args(self._argv())
+        self.assertEqual(args.num_benchmarking_pods, '1')
+        self.assertEqual(args.num_benchmarking_threads, '1')
+
+    def test_benchmarking_pods_and_threads_map_to_nbp_nbt(self):
+        argv = self._argv(benchmarking={'pods': 4, 'threads': 128})
+        args = ycsb.build_parser().parse_args(argv)
+        self.assertEqual(args.num_benchmarking_pods, '4')
+        self.assertEqual(args.num_benchmarking_threads, '128')
+
+    def test_reset_between_rounds_is_always_activated(self):
+        """Skipping the CHECKPOINT/VACUUM ANALYZE reset is never a valid choice."""
+        args = ycsb.build_parser().parse_args(self._argv())
+        self.assertTrue(args.activate_reset)
+
+    def test_loading_timeout_is_translated(self):
+        argv = self._argv(loading={'pods': 1, 'threads': 8, 'timeout_minutes': 15})
+        args = ycsb.build_parser().parse_args(argv)
+        self.assertEqual(args.loading_timeout, 15)
+
+    def test_loading_timeout_is_optional(self):
+        args = ycsb.build_parser().parse_args(self._argv())
+        self.assertIsNone(args.loading_timeout)
+
+    def test_verify_result_is_off_by_default(self):
+        args = ycsb.build_parser().parse_args(self._argv())
+        self.assertFalse(args.test_result)
+
+    def test_verify_result_maps_to_tr(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['workload']['params']['verify_result'] = True
+        argv = catalog_spec.build_argv(self.catalog, spec)
+        args = ycsb.build_parser().parse_args(argv)
+        self.assertTrue(args.test_result)
+
     def test_observe_and_placement_and_resources(self):
         argv = self._argv()
         self.assertIn('-m', argv)
@@ -93,9 +129,9 @@ class BuildYcsbArgvTest(unittest.TestCase):
         self.assertEqual(_flag_value(argv, '-lr'), '32Gi')
         self.assertEqual(_flag_value(argv, '-rss'), '50Gi')
 
-    def test_default_sut_isolation_caps_emitted(self):
+    def test_default_sut_isolation_cap_emitted(self):
         argv = self._argv()
-        self.assertEqual(_flag_value(argv, '-ms'), '1')
+        self.assertNotIn('-ms', argv)
         self.assertEqual(_flag_value(argv, '-mse'), '1')
 
     def test_zero_cap_drops_the_flag(self):

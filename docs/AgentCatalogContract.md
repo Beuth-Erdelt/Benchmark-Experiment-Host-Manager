@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.4.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.9.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   experimental_design:
@@ -48,6 +48,12 @@ catalog_concepts:                    # vocabulary used throughout this file's ow
   arg_style:      {semantics: "how a resolved knob is applied -- pg-guc (default): a --set ...GUC patch;
                                 env-var: via the knob's own env_var name instead; a knob may override its
                                 system's default"}
+  memory_knob_format: {semantics: "a type: memory knob value (profile knobs/derive or systems[].override) is
+                                an integer with one of the system's memory_units (40GB -- passed unchanged),
+                                a Kubernetes quantity (40Gi -- converted, e.g. to 40960MB for PostgreSQL), or a
+                                bare integer (passed unchanged, read in the knob's base unit, e.g. 8kB pages for
+                                shared_buffers)", out_of_scope: "40gb, '40 GB', 1.5GB, unlisted units -- rejected
+                                at validation"}
   knob_status:    {semantics: "a knob with status: reference-only exists in the DBMS but is commented out
                                 in the shipped k8s template -- still legal to set via profile/override,
                                 just not active by default. fixed: true (separate) marks a knob that isn't
@@ -57,10 +63,8 @@ catalog_concepts:                    # vocabulary used throughout this file's ow
                                 its own, next SUT started only after the previous is torn down. Co-located
                                 SUTs interfere (shared node CPU/memory-bandwidth/disk/network), so a
                                 side-by-side run would measure interference, not the discriminates: factor.
-                                Enforced by two independent caps, both default 1: top-level max_sut (-ms,
-                                cluster-wide) and max_sut_experiment (-mse, this experiment only). Set
-                                either to 0 (no limit) or N>1 for parallel SUTs -- only for SUTs on
-                                separate nodes. Omitting them keeps the serial default.
+                                Enforced by max_sut_experiment (-mse, default 1). The cluster-wide
+                                max_sut (-ms) has no default and is unrelated to this rule.
                                 Parallel loader pods / benchmarker clients run within one SUT and are exempt"}
 
 experiment_schema:
@@ -76,10 +80,11 @@ experiment_schema:
     discriminates: {type: "list[str]", required: true, values: [system, concurrency, cpu, memory],
                     example: "[system, concurrency, memory]"}
     follow_up_of: {type: str, required: false}
-    max_sut:            {type: int, default: 1, semantics: "max SUTs running at once CLUSTER-WIDE (-ms);
-                          1 = one system at a time, 0 = no limit, N>1 = up to N -- see catalog_concepts.sut_isolation"}
-    max_sut_experiment: {type: int, default: 1, semantics: "same, scoped to this experiment only (-mse);
-                          independent of max_sut, both enforced together; 0 = no limit"}
+    max_sut:            {type: int, required: false, semantics: "max SUTs running at once CLUSTER-WIDE (-ms);
+                          unset or 0 = no limit", when: "set 1 only when the SUT must not share the cluster"}
+    max_sut_experiment: {type: int, default: 1, semantics: "max of this experiment's SUTs running at once (-mse);
+                          0 = no limit -- see catalog_concepts.sut_isolation",
+                          when: "keep 1 when placement.sut is set"}
     workload:   {type: object, fields: [name, params, rounds, repetitions]}
     loading:    {type: object, fields: [pods, threads, timeout_minutes, post_load],
                  timeout_minutes: {type: int, min: 1, required: false,
@@ -92,15 +97,19 @@ experiment_schema:
     systems:    {type: list, item_fields: [name, profile, override, post_load],
                  semantics: "one resolved configuration per entry; benchmarked one at a time,
                              never concurrently -- see catalog_concepts.sut_isolation"}
-    observe:    {type: object, fields: [monitoring_sut, monitoring_cluster, monitoring_app]}
+    # observe: parked while the agent is a prototype -- see contract_catalog_comments.md
     placement:  {type: object, fields: [sut, loading, benchmarking],
-                 semantics: "each node named must exist, and not be tainted out, in environment.yml's nodes:"}
+                 semantics: "each node named must exist, and not be tainted out, in environment.yml's nodes:",
+                 when: "pinning sut is recommended (same hardware for all SUTs); pinning
+                        loading/benchmarking is uncommon -- only when the network path to the
+                        SUT might play a role in the hypothesis"}
     resources:  {type: object, fields: [cpu, memory, storage, storage_class],
                  semantics: "cpu/memory: a single {request,limit} dict shared by every system, OR a list
                              to sweep every systems: entry against every list entry (one resolved
                              config per system*cell pair); cpu and memory sweep lists must share one length"}
   quantity_format:
-    memory_and_storage: {binary: [Ki, Mi, Gi, Ti], decimal: [K, M, G, T], out_of_scope: [KB, MB, GB, TB], examples: ["32G", "32Gi", "512Mi"]}
+    memory_and_storage: {binary: [Ki, Mi, Gi, Ti], decimal: [K, M, G, T], out_of_scope: [KB, MB, GB, TB], examples: ["32G", "32Gi", "512Mi"],
+                         out_of_scope_fields: "type: memory knob values -- see catalog_concepts.memory_knob_format"}
     cpu: {semantics: "cores, or millicores with trailing m", examples: ["8", "0.5", "500m"]}
 
 workloads:
@@ -119,7 +128,7 @@ workloads:
                           SUT); placement.benchmarking validation must count these, not the SUT limits"}
     params:            # workload.params keys
       scaling_factor:      {type: int, unit: GB, min: 1}
-      timeout:              {type: int, unit: seconds, default: 600, min: 1, semantics: "per-query; a query still running at the limit is cancelled and counted as an error"}
+      timeout:              {type: int, unit: seconds, default: 1800, min: 1, semantics: "per-query; a query still running at the limit is cancelled and counted as an error"}
       query_repeats:        {type: int, default: 1, min: 1}
       measure_datatransfer: {type: bool, default: false}
       active_queries:       {type: "list[int]", default: all, min: 1, max: 22,
@@ -131,7 +140,7 @@ workloads:
       store_explain:        {type: bool, default: false, support: "PostgreSQL and PgDuckDB only",
                              when: "requires an 'explain' key in the DBMS connection's JDBC config"}
     loading:
-      pods:   {type: int, min: 1, support: "works for every DBMS"}
+      pods:   {type: int, min: 1, default: 8, why: "keep 8; change only for a reason stated in the hypothesis", support: "works for every DBMS"}
       threads: {type: int, min: 1, support: "only honored by some loaders (e.g. MySQL); prefer pods"}
       post_load:   # indexes/constraints/statistics are mutually independent -- all 8 combinations legal per system
         indexes:    {type: bool, default: false}
@@ -173,10 +182,20 @@ workloads:
       logging_interval: {type: int, unit: seconds, default: 10, why: "status-line interval; also the time_series resolution"}
       insert_order:    {type: enum, values: [hashed, ordered], default: hashed, why: "hashed = uniform key distribution; ordered = append-heavy hot index end"}
       max_execution_time: {type: int, unit: seconds, default: 0, why: "wall-clock cap on the benchmarking phase only; loading always runs to completion"}
+      verify_result:   {type: bool, default: false, why: "record pass/fail checks (non-zero throughput, planned workflow ran, no FAILED operation column)
+                        alongside the summary; turn on when validity depends on ruling out a silently broken or partial run"}
     loading:
       pods:    {type: int, min: 1, support: "works for every DBMS; total row count split across pods"}
       threads: {type: int, min: 1, support: "honored by YCSB's JDBC loader -- unlike tpch, raise threads and pods together"}
-    rounds:      {type: "list[int]", why: "parallel-client sweep; each entry is a concurrent benchmarker-pod count; total ops split across pods (constant total work)"}
+      timeout_minutes: {type: int, min: 1, required: false, semantics: "generic field (experiment_schema.loading.timeout_minutes); now wired for ycsb too"}
+    benchmarking:
+      pods:    {type: int, min: 1, default: 1, why: "benchmarker pods per round, before `rounds` multiplies further; effective pod count = rounds entry * this"}
+      threads: {type: int, min: 1, default: 1, why: "total client threads for the round, split across `pods` only (not against `rounds`); for a thread-based
+                concurrency target (e.g. 128 clients) without one pod per client, keep rounds to a single entry and set pods/threads directly here"}
+      why: "PostgreSQL always runs CHECKPOINT + VACUUM ANALYZE before every benchmarking round, regardless of these settings -- there is no knob to
+            disable it, since skipping it would only introduce a round-to-round confound"
+    rounds:      {type: "list[int]", why: "parallel-client sweep; each entry is a concurrent benchmarker-pod count (further multiplied by benchmarking.pods);
+                  total ops split across the resulting pods (constant total work). Use benchmarking.threads instead for a pure thread-based sweep"}
     repetitions: {type: int, default: 1}
     produces:
       per_operation: {metrics: [throughput, latency_avg, latency_p95, latency_p99], unit: [ops/s, us, us, us],
@@ -189,6 +208,7 @@ systems:
   PostgreSQL:
     image: postgres:18.3
     arg_style: pg-guc
+    memory_units: [B, kB, MB, GB, TB]   # PgDuckDB inherits it via extends
     physical_design: {indexes: true, constraints: true, statistics: true, storage_format: [heap]}
     knobs_active_by_default: [max_connections, max_worker_processes, max_parallel_workers,
       max_parallel_workers_per_gather, max_parallel_maintenance_workers, shared_buffers,
@@ -215,11 +235,12 @@ systems:
     knobs_own:
       shared_preload_libraries: {default: pg_duckdb, fixed: true}
       duckdb_force_execution:   {type: bool, default: false, arg_style: env-var, env_var: DUCKDB_FORCE_EXECUTION,
-                                 when: "set true whenever the hypothesis compares PgDuckDB's execution engine
-                                        against another system. Left at its default on heap tables, pg_duckdb's
-                                        cost-based routing keeps queries in PostgreSQL's own executor, so the
-                                        extension is loaded but idle and the run measures PostgreSQL against
-                                        PostgreSQL. Leave it false only when the routing behaviour itself is under test"}
+                                 when: "enable whenever the hypothesis needs to guarantee that DuckDB's execution
+                                        engine is what ran, rather than trusting pg_duckdb's own per-query cost-based
+                                        routing to pick it. Left at its default (false), pg_duckdb still decides for
+                                        itself, query by query, whether to route through DuckDB or PostgreSQL's own
+                                        executor -- so false does not mean 'PostgreSQL only', only that the
+                                        extension's own routing logic stays in control"}
     profiles:
       analytical-ssd: {ref: "PostgreSQL.profiles.analytical-ssd"}   # identical knob values from the same memory/cpu limits
 ```
@@ -253,10 +274,9 @@ maintained, real, runnable `experiment.yml` this resolves — a two-system
 (`PostgreSQL` vs. `PgDuckDB`) `analytical-ssd`-profile sweep across
 concurrency (1→16) and memory (64Gi→32Gi), with `discriminates: [system,
 concurrency, memory]`. Both systems (× every swept cell) resolve into one
-command, but bexhoma benchmarks them **one SUT at a time** — `max_sut` and
-`max_sut_experiment` both default to `1` — so the two never contend for the
-same node. Set either to `0` (no limit) or `N` in the experiment.yml to
-allow parallel SUTs; see `catalog_concepts.sut_isolation`.
+command, but bexhoma benchmarks them **one SUT at a time** —
+`max_sut_experiment` defaults to `1` — so the two never contend for the
+same node. See `catalog_concepts.sut_isolation`.
 
 ## Known gaps versus an idealized contract
 

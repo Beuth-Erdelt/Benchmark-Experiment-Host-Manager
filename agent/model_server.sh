@@ -19,16 +19,25 @@
 set -euo pipefail
 
 MANIFEST="${MODEL_SERVER_MANIFEST:-$(cd "$(dirname "$0")" && pwd)/k8s/vllm-qwen38-27b.yml}"
-POD="${MODEL_SERVER_POD:-bexhoma-agent-model}"
+JOB="${MODEL_SERVER_JOB:-bexhoma-agent-model}"
 SVC="${MODEL_SERVER_SERVICE:-bexhoma-agent-model}"
 PORT="${MODEL_SERVER_PORT:-8001}"
 BASE_URL="${MODEL_SERVER_BASE_URL:-http://localhost:$PORT/v1}"
 LOGIN="${KUBE_LOGIN_SCRIPT:-$HOME/git/BIRD-Interact/scripts/kube-login.sh}"
 CONTEXT="${MODEL_SERVER_CONTEXT:-oidc_ds_cluster}"
 NAMESPACE="${MODEL_SERVER_NAMESPACE:-}"
+# Counted from when the pod is scheduled; the wait for a GPU before that is
+# unbounded by default, as startup waits for capacity by design.
 START_TIMEOUT="${MODEL_SERVER_START_TIMEOUT_SECONDS:-2400}"
+SCHEDULE_TIMEOUT="${MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS:-0}"
 STOP_TIMEOUT="${MODEL_SERVER_STOP_TIMEOUT_SECONDS:-300}"
-GENERATION="${MODEL_SERVER_GENERATION:-idle-watchdog-v2}"
+# Each manifest carries its own generation annotation, so the expected value is
+# read from the manifest being applied. A fixed default would call every other
+# model's live Job outdated and replace it on each `up`.
+MANIFEST_GENERATION=$(sed -n 's/^ *bexhoma\.local\/model-server-generation: *//p' "$MANIFEST" | head -n 1)
+GENERATION="${MODEL_SERVER_GENERATION:-${MANIFEST_GENERATION:-idle-watchdog-v3}}"
+# Set by agent/lifecycle.py when several lifecycles share this server.
+SHARED="${MODEL_SERVER_SHARED:-0}"
 
 # A benchmark outlives the cluster token by hours, so a later `up` would fail at
 # exactly the moment interpretation needs the server unless we refresh here.
@@ -57,53 +66,175 @@ USAGE
         kubectl config set-context "$CONTEXT" --namespace="$NAMESPACE" >/dev/null
         return
     fi
-    if ! kubectl --context "$CONTEXT" auth whoami >/dev/null 2>&1 </dev/null; then
+    if ! cluster_auth_ok; then
         echo "cluster token expired; re-authenticating"
-        bash "$LOGIN" >/dev/null 2>&1 </dev/null
+        bash "$LOGIN" >/dev/null 2>&1 </dev/null || true
     fi
     # Always restore the configured namespace: a valid token does not imply
     # that the context still points at the namespace where this user can write.
     kubectl config set-context "$CONTEXT" --namespace="$NAMESPACE" >/dev/null
-    kubectl --context "$CONTEXT" auth whoami >/dev/null 2>&1 </dev/null
+    if ! cluster_auth_ok; then
+        echo "cannot access namespace '$NAMESPACE' in context '$CONTEXT' after re-authenticating with $LOGIN" >&2
+        exit 1
+    fi
+}
+
+# True when the context's token is accepted and may read pods in the namespace.
+# `auth whoami` is not usable here: it needs the SelfSubjectReview API, which
+# not every cluster serves, whereas SelfSubjectAccessReview always is.
+cluster_auth_ok() {
+    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" auth can-i get pods \
+        >/dev/null 2>&1 </dev/null
+}
+
+# Before the server ran as a Job it was a bare pod under the Job's name, which
+# the Service would still select alongside the Job's pod. Job pods always carry
+# a generated suffix, so this name only ever matches such a leftover.
+delete_legacy_pod() {
+    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete pod "$JOB" \
+        --ignore-not-found --wait=true --timeout="${STOP_TIMEOUT}s"
 }
 
 down() {
     ensure_login
-    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete pod "$POD" \
-        --ignore-not-found --wait=true --timeout="${STOP_TIMEOUT}s"
+    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete job "$JOB" \
+        --ignore-not-found --cascade=foreground --wait=true --timeout="${STOP_TIMEOUT}s"
+    delete_legacy_pod
     kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete svc "$SVC" \
         --ignore-not-found
-    pkill -f "port-forward (pod/$POD|svc/$SVC)" 2>/dev/null || true
-    echo "model server down; the 150Gi weights volume is kept so restart needs no re-download"
+    pkill -f "port-forward (pod/$JOB|svc/$SVC)" 2>/dev/null || true
+    echo "model server down; the weights volume is kept so restart needs no re-download"
+}
+
+# "<pod>|<PodScheduled status>" of the Job's live pod, or "|" while it has none.
+pod_state() {
+    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get pods -l "job-name=$JOB" \
+        -o go-template='{{range .items}}{{if not .metadata.deletionTimestamp}}{{.metadata.name}}|{{range .status.conditions}}{{if eq .type "PodScheduled"}}{{.status}}{{end}}{{end}}{{"\n"}}{{end}}{{end}}' \
+        2>/dev/null | head -n 1 || true
+}
+
+# One line on why the server is not answering yet, so that a long `up` says
+# what it waits for instead of looking hung: the scheduler's latest refusal
+# while the pod pends, the server's latest log line once it is loading.
+report_waiting() {
+    local pod="$1" scheduled="$2" detail
+    if [ -z "$pod" ]; then
+        echo "waiting: the model Job has no pod yet"
+    elif [ "$scheduled" != "True" ]; then
+        detail=$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get events \
+            --field-selector "involvedObject.name=$pod,reason=FailedScheduling" \
+            --sort-by=.lastTimestamp -o jsonpath='{.items[-1:].message}' 2>/dev/null || true)
+        echo "waiting for a GPU node: ${detail:-pod $pod is pending}"
+    else
+        # The idle watchdog logs an unreadable /metrics every poll while the
+        # engine loads; progress bars redraw with carriage returns.
+        detail=$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" logs "$pod" --tail=20 2>/dev/null \
+            | tr '\r' '\n' | grep -v '^metrics unreadable\|^ *$' | tail -n 1 | cut -c1-200 || true)
+        echo "loading: ${detail:-pod $pod is starting}"
+    fi
+}
+
+# Deletes the finished model Job with this uid, and its pod, and waits until
+# both are gone. The uid precondition is what makes this safe when lifecycles
+# share the server: they arrive together, and another may already have replaced
+# the finished Job with a starting one under the same name, which must survive.
+# The server answers that case with a Conflict, and it is left alone.
+delete_finished_job() {
+    local uid="$1" output deadline
+    # MSYS_NO_PATHCONV keeps Git Bash on Windows from rewriting the API path.
+    if ! output=$(printf '{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Foreground","preconditions":{"uid":"%s"}}' "$uid" \
+        | MSYS_NO_PATHCONV=1 kubectl --context "$CONTEXT" delete \
+            --raw "/apis/batch/v1/namespaces/$NAMESPACE/jobs/$JOB" -f - 2>&1); then
+        case "$output" in
+            *Conflict*|*NotFound*) ;;
+            *) echo "$output" >&2; exit 1 ;;
+        esac
+    fi
+    deadline=$((SECONDS + STOP_TIMEOUT))
+    while [ "$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get job "$JOB" \
+        -o jsonpath='{.metadata.uid}' 2>/dev/null || true)" = "$uid" ]; do
+        if (( SECONDS >= deadline )); then
+            echo "finished model Job was not deleted within ${STOP_TIMEOUT}s" >&2
+            exit 1
+        fi
+        sleep 2
+    done
 }
 
 up() {
     ensure_login
-    # A finished watchdog pod keeps its name, and Kubernetes cannot update a
-    # live Pod's command or restart policy in place. Replace finished pods and
+    delete_legacy_pod
+    # A finished Job keeps its name until its TTL runs out, and Kubernetes
+    # cannot update a Job's pod template in place. Replace finished Jobs and
     # older immutable generations, while preserving a current loaded server.
-    pod_state=$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get pod "$POD" \
-        -o go-template='{{.status.phase}}|{{index .metadata.annotations "bexhoma.local/model-server-generation"}}' \
+    job_state=$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get job "$JOB" \
+        -o go-template='{{.metadata.uid}}|{{range .status.conditions}}{{if eq .status "True"}}{{.type}} {{end}}{{end}}|{{index .metadata.annotations "bexhoma.local/model-server-generation"}}' \
         2>/dev/null || true)
-    phase="${pod_state%%|*}"
-    current_generation="${pod_state#*|}"
-    if [ -n "$phase" ] && { \
-        { [ "$phase" != "Running" ] && [ "$phase" != "Pending" ]; } \
-        || [ "$current_generation" != "$GENERATION" ]; \
-    }; then
-        echo "replacing model pod in phase $phase, generation ${current_generation:-unversioned}"
-        kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete pod "$POD" \
-            --ignore-not-found --wait=true --timeout="${STOP_TIMEOUT}s"
+    IFS='|' read -r uid conditions current_generation <<<"$job_state"
+    # Complete and Failed are set once the pod has ended; the other two already
+    # while it terminates, and a terminating server is no more usable.
+    finished=""
+    for condition in $conditions; do
+        case "$condition" in
+            Complete|Failed|SuccessCriteriaMet|FailureTarget) finished="$condition" ;;
+        esac
+    done
+    if [ -n "$uid" ] && [ -n "$finished" ]; then
+        echo "replacing finished model Job ($finished)"
+        delete_finished_job "$uid"
+    elif [ -n "$uid" ] && [ "$current_generation" != "$GENERATION" ]; then
+        if [ "$SHARED" = "1" ]; then
+            echo "model Job runs generation ${current_generation:-unversioned}, not $GENERATION;" \
+                "another lifecycle is using that model, so it is left alone" >&2
+            exit 3
+        fi
+        echo "replacing model Job of generation ${current_generation:-unversioned}"
+        kubectl --context "$CONTEXT" --namespace "$NAMESPACE" delete job "$JOB" \
+            --ignore-not-found --cascade=foreground --wait=true --timeout="${STOP_TIMEOUT}s"
     fi
     # The manifest names no namespace, so this flag is what places the objects.
-    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f "$MANIFEST"
-    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" \
-        wait --for=condition=ready "pod/$POD" \
-        --timeout="${START_TIMEOUT}s"
+    # Lifecycles sharing the server may both have deleted the finished Job, and
+    # the one that loses the race to create its replacement fails AlreadyExists;
+    # applied again, it finds that replacement and keeps it.
+    kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f "$MANIFEST"         || kubectl --context "$CONTEXT" --namespace "$NAMESPACE" apply -f "$MANIFEST"
+    # The Job's pod has a generated name, so readiness is read off the Job. The
+    # start timeout only runs once the pod is scheduled: waiting for a free GPU
+    # took 2.5 hours on 2026-09-30 and is bounded by SCHEDULE_TIMEOUT instead.
+    waiting_since=$SECONDS
+    scheduled_at=""
+    last_report=""
+    until [ "$(kubectl --context "$CONTEXT" --namespace "$NAMESPACE" get job "$JOB" \
+        -o jsonpath='{.status.ready}' 2>/dev/null || true)" = "1" ]; do
+        IFS='|' read -r pod scheduled <<<"$(pod_state)"
+        if [ -z "$scheduled_at" ] && [ "$scheduled" = "True" ]; then
+            scheduled_at=$SECONDS
+            echo "model pod $pod scheduled after $((SECONDS - waiting_since))s; loading the model"
+        fi
+        if [ -z "$scheduled_at" ]; then
+            if (( SCHEDULE_TIMEOUT > 0 && SECONDS - waiting_since >= SCHEDULE_TIMEOUT )); then
+                echo "model pod was not scheduled within ${SCHEDULE_TIMEOUT}s; see kubectl describe job/$JOB" >&2
+                exit 1
+            fi
+        elif (( SECONDS - scheduled_at >= START_TIMEOUT )); then
+            echo "model pod was not ready within ${START_TIMEOUT}s of being scheduled; see kubectl logs job/$JOB" >&2
+            exit 1
+        fi
+        if [ -z "$last_report" ] || (( SECONDS - last_report >= 60 )); then
+            last_report=$SECONDS
+            report_waiting "$pod" "$scheduled"
+        fi
+        sleep 5
+    done
     if [[ "$BASE_URL" == http://localhost:* ]] \
         && ! curl -sf --max-time 3 "$BASE_URL/models" >/dev/null; then
-        pkill -f "port-forward (pod/$POD|svc/$SVC)" 2>/dev/null || true
-        setsid nohup kubectl --context "$CONTEXT" --namespace "$NAMESPACE" port-forward \
+        pkill -f "port-forward (pod/$JOB|svc/$SVC)" 2>/dev/null || true
+        # macOS ships no setsid. Without this fallback the forward never
+        # starts there, and the wait below times out on a server that is up.
+        detach=""
+        if command -v setsid >/dev/null 2>&1; then
+            detach="setsid"
+        fi
+        $detach nohup kubectl --context "$CONTEXT" --namespace "$NAMESPACE" port-forward \
             "svc/$SVC" "$PORT:80" >/tmp/vllm-portforward.log 2>&1 &
     fi
     deadline=$((SECONDS + START_TIMEOUT))

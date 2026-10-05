@@ -58,6 +58,233 @@ per-experiment *selection* choice made via `loading.post_load` /
 fully capable of all three, and an experiment can still choose not to apply
 them there.
 
+## `observe:` — what is measured, and when it is worth it (2026-09-24)
+
+The three monitoring switches used to carry a one-line `semantics:` each and
+no `when:`, which hid three facts. First, the whole block only matters when
+the hypothesis needs hardware metrics (CPU, memory, GPU) or database-internal
+statistics, so that is now the block's `when:`, together with the warm-up
+note that used to be labelled `why:` although it describes when readings can
+be trusted. Second, `monitoring_app` was described as benchmarker/loader
+metrics, but bexhoma actually attaches the database's own metrics exporter to
+the SUT; and it only takes effect when `monitoring_sut` or
+`monitoring_cluster` is also on, because bexhoma sets up no monitoring at all
+otherwise. Third, `monitoring_cluster` replaces rather than adds to the
+per-experiment collection, so turning on both equals cluster monitoring
+alone.
+
+The new wording deliberately says what is measured, not how it is collected.
+An earlier draft described SUT monitoring as sidecar containers, which is no
+longer how bexhoma collects it; naming the mechanism is what makes such text
+go stale. "Hardware metrics" deliberately omits disk and network, because
+the metric collector bexhoma deploys is configured to skip both.
+
+The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
+fields corrected and conditions added; nothing that validated before is
+rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
+
+## tpch `loading.pods` defaults to 8 (2026-09-30)
+
+`workloads.tpch.loading.pods` now carries `default: 8`, and its `why:` tells
+the agent to keep it unless the hypothesis states a reason to change it.
+Loader pod count is rarely the variable under study, and an arbitrary
+choice per experiment made loading times incomparable across runs.
+`tpch.py`'s own `-nlp` default stays 1, so `tpch_catalog.build_tpch_argv()`
+reads the catalog default and emits `-nlp 8` explicitly when `pods` is
+omitted. Folded into 1.9.0 (not yet released) as an additive change.
+
+## `observe:` parked while the agent is a prototype (2026-09-30)
+
+Monitoring is switched off for the agent while it is a prototype: the
+`observe:` block was taken out of `experiment_schema.fields`, leaving a
+one-line placeholder comment where it stood, so the agent no longer sees the
+option and the validator rejects `observe:` as an unknown top-level field.
+The block is kept here verbatim; to re-enable monitoring, paste it back in
+place of the placeholder (same indentation, between `systems:` and
+`placement:`), add `"observe"` back to the section tuple in
+`agent/harness/validation.py::_check_contract_shape`, and bump the version.
+
+Only the agent loses the option. `build_argv()` still maps `observe` to
+`-m`/`-mc`/`-ma`, so catalog runs through `experiment.py` can still monitor.
+
+The block moved the version 1.8.0 -> 1.9.0 (minor, as for the
+`loading.split` removal: a field that validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept in
+lockstep.
+
+```yaml
+    observe:
+      type: object
+      when: "only relevant when the hypothesis needs hardware metrics (CPU
+        and memory use, and GPU use where present) or database-internal
+        statistics -- leave all three off otherwise. Readings only become
+        reliable after a few scrape intervals have accumulated: a phase
+        shorter than roughly 2-5 minutes can show 0/NaN readings rather than
+        a real signal, so keep rounds/query_repeats long enough for the phase
+        to clear this warm-up window if monitoring results matter"
+      fields:
+        monitoring_sut: {type: bool, semantics: "collect hardware metrics of
+          the system under test for this experiment"}
+        monitoring_cluster:
+          type: bool
+          semantics: "collect the same hardware metrics from a monitoring
+            installation that covers every node of the cluster; it is shared
+            by all experiments and reused if it is already running"
+          when: "use it instead of monitoring_sut when load outside the SUT
+            matters, e.g. on the benchmarker's node; turning on both is the
+            same as turning on monitoring_cluster alone"
+        monitoring_app:
+          type: bool
+          semantics: "attach the database's own metrics exporter to the SUT
+            and collect its internal statistics, such as connections, buffer
+            cache hits and lock waits"
+          when: "only takes effect together with monitoring_sut or
+            monitoring_cluster, and only for systems that define an exporter
+            (PostgreSQL and PgDuckDB in this catalog)"
+```
+
+## Pinning the SUT is recommended; max_sut has no default (2026-09-25)
+
+`placement.sut` now carries a `when:` recommending it. `placement:` is
+experiment-wide, so a pinned SUT node is shared by every configuration, which
+keeps the hardware constant across the comparison on a heterogeneous cluster.
+Unpinned, the scheduler may put different systems on different machines, and
+the measured difference then mixes the node with the `discriminates` factor.
+Comparing nodes takes one experiment per node, linked by `follow_up_of`.
+
+The same change split the two concurrent-SUT caps by purpose. Keeping one
+experiment's configurations apart is experimental design, so the
+one-at-a-time reasoning and the default of 1 now live on
+`max_sut_experiment` alone, which also says to stay at 1 when the SUT is
+pinned. The cluster-wide `max_sut` is cluster etiquette: with a default of
+1 it made an experiment wait for every other bexhoma experiment on the
+cluster, even on other nodes. It now has no default, and the argv builders
+emit `-ms` only when it is set. The tradeoff is that another experiment's
+SUT may now land on the pinned node; an experiment that needs the node to
+itself sets `max_sut: 1`. The old wording also suggested running parallel
+SUTs "each pinned to a different node via placement:", which one
+experiment.yml cannot do, since `placement.sut` names a single node; that
+suggestion is gone.
+
+This moved the version 1.6.1 -> 1.7.0 (minor: a default changed; nothing
+that validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION`
+kept in lockstep.
+
+## Memory knobs take the DBMS's units, or a converted Kubernetes quantity (2026-09-28)
+
+A run failed at SUT start with PostgreSQL's `invalid value for parameter
+"shared_buffers": "40Gi"`. 40Gi is exactly the `analytical-ssd` formula
+(0.3125 x 128Gi) worked out by hand and written as a
+`systems[].override`. The `derive:` path already rewrote its result
+through the system's memory formatter (whole MB), but overrides were
+applied verbatim, and the contract never said which syntax a
+`type: memory` knob takes. The only memory-format rule it did state,
+`quantity_format`, is the Kubernetes one and explicitly rules out `GB`.
+So the contract actively steered an author towards `Gi`.
+
+`catalog_concepts.memory_knob_format` now defines the value, and
+`systems.<name>.memory_units` lists each system's own suffixes
+(PgDuckDB inherits PostgreSQL's via `extends:`). The resolver accepts both
+spellings rather than only the DBMS one: a Kubernetes quantity is
+converted to bytes and rewritten in the system's units, so a value
+copied from `resources.memory` works as-is. Bare integers still pass
+unchanged because PostgreSQL gives them a meaning (the knob's base unit),
+and rejecting them would break specs that validated before. Anything
+else (`40gb`, `40 GB`, `1.5GB`) is now a validation error instead of a
+crash-looping SUT pod.
+
+This moved the version 1.7.0 -> 1.8.0 (minor: a format was defined and a
+second spelling accepted; the only values now rejected are ones the DBMS
+would have refused at startup anyway), with `spec.CATALOG_CONTRACT_VERSION`
+kept in lockstep.
+
+## PostgreSQL `memory_budget` note (2026-10-01)
+
+Experiment 1790463251 OOMKilled all 9 PostgreSQL SUTs (4 streams x Q18,
+`work_mem=1GB`, `max_parallel_workers_per_gather=32`, 64Gi limit). No
+single knob was wrong; their product was. `systems.PostgreSQL.memory_budget`
+gives the estimate. It is descriptive only: nothing enforces it.
+
+The first estimate was `streams x (max_parallel_workers_per_gather + 1) x
+work_mem`. Checked against the PostgreSQL 18 docs (runtime-config-resource),
+it is off in both directions:
+
+- Overcounts workers. Parallel workers come from a shared pool, capped by
+  `max_parallel_workers` and `max_worker_processes`. A Gather that can't get
+  its workers runs with fewer. So the processes are `S + min(S x per_gather,
+  max_parallel_workers, max_worker_processes)`: 4 + 16 = 20 here, not 132.
+- Undercounts per process. `work_mem` is per sort/hash *node*, and a plan
+  has several. Hash nodes may use `work_mem x hash_mem_multiplier`, default
+  2.0. Each worker has its own limit ("Resource limits such as work_mem are
+  applied individually to each worker"). A parallel hash join shares one
+  table, but its budget also scales with the number of participants.
+- Leaves out `shared_buffers`. That is shared memory, and the container's
+  cgroup counts it once its pages are touched.
+
+For the incident, with H = 1..3: 20 x 1..3 x 1GB x 2 = 40-120GB plus
+`shared_buffers`, against 64Gi. The estimate is a ceiling: not every node
+fills its budget at once. Since PG13, hash aggregation spills to disk at
+the limit instead of growing past it. Also left out: per-backend overhead
+and `maintenance_work_mem` per index build or autovacuum worker during
+loading. PgDuckDB inherits the key through `extends:`, because a system
+that doesn't declare a top-level key falls back to its base's value. DuckDB's
+own memory is separate and not covered.
+
+This is additive and folded into 1.9.0, which is not yet released.
+
+## Pinning loader and benchmarker pods is uncommon (2026-09-25)
+
+`placement.loading` and `placement.benchmarking` used to carry only a
+one-line `semantics:`, so nothing told an agent whether pinning them was
+normal. Design runs pinned them routinely, which adds a node choice to every
+experiment without a reason in the hypothesis and can crowd many client pods
+onto one node (see the YCSB `benchmarking:` section below for a run that
+stalled that way). Both fields now carry a `when:` saying that pinning is
+uncommon and only recommended when the network path between the client pods
+and the SUT might play a role, in which case the network belongs in
+`discriminates`. `placement.sut` is unchanged, because the node the SUT runs
+on is a genuine factor on a heterogeneous cluster.
+
+This moved the version 1.6.0 -> 1.6.1 (patch: guidance only; nothing that
+validated before is rejected now), with `spec.CATALOG_CONTRACT_VERSION` kept
+in lockstep.
+
+## TPC-H loading timeout recommendation (2026-09-24)
+
+`catalog_concepts.experimental_design.bounded_loading` tells an agent to set
+`loading.timeout_minutes` but deliberately gives no universal value, and until
+now nothing said what value suits TPC-H. `workloads.tpch.loading.timeout_minutes`
+now recommends 10 minutes per unit of scaling factor. The rule is a
+maintainer's rule of thumb and is advisory only: validation does not compare
+the timeout against the scaling factor. The entry repeats the schema field's
+`type: int`, `min: 1` and `required: false`, because the agent validator
+merges the workload's loading block over the schema's and lets the workload
+entry win. Without those keys the TPC-H entry would silently switch off the
+integer and minimum checks.
+
+Together with the `engine:` description below, this moved the version
+1.5.0 -> 1.5.1, with `spec.CATALOG_CONTRACT_VERSION` kept in lockstep. Neither
+change alters what validates, but a new version makes any agent or cache keyed
+on the version string re-read the catalog.
+
+## `engine:` — description, not option (2026-09-24)
+
+Each system may carry an `engine:` block (`execution`, `data_layout`) that
+describes in plain words how it runs queries and stores data — for
+example, that PgDuckDB executes vectorized and ignores PostgreSQL indexes
+while still reading the same heap tables. It exists so that whoever
+interprets a result can explain a difference between systems, not so that
+an experiment can choose anything. Unlike `physical_design:`, which states a
+capability that `post_load` then selects from, `engine:` has no selection
+counterpart at all.
+
+Consequently it plays no part in validation or resolution. `bexhoma/spec.py`
+never reads it, and it does not reach the generated command line. On the
+`experiment.yml` side, the `systems[]` item fields are only `name`,
+`profile`, `override` and `post_load`, so an entry that sets `engine:` is
+rejected as an unknown field by the agent's validator. Because `engine:` is
+not one of the keys `extends:` merges, a system that extends another falls
+back to the base's description unless it declares its own — PgDuckDB does.
+
 ## Storage class mechanics (implementation detail)
 
 `resources.storage_class` maps, underneath bexhoma, to
@@ -225,6 +452,90 @@ The version moved 1.3.0 -> 1.4.0 with `spec.CATALOG_CONTRACT_VERSION` kept in
 lockstep (required by `tests/test_naming_conformance.py`), even though the
 contract shape did not change, so that any agent or cache keyed on the version
 string re-reads the block.
+
+## YCSB benchmarking-phase pods/threads split added (2026-09-12)
+
+`workloads.ycsb` gained a `benchmarking:` block (`catalog_contract_version`
+1.4.0 -> 1.5.0, `spec.CATALOG_CONTRACT_VERSION` kept in lockstep), mirroring
+the pre-existing `loading:` block's `pods`/`threads` pair but for the
+benchmarking phase, and `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()`
+now emits `-nbp`/`-nbt` from it.
+
+Rationale: before this change, the only lever the catalog exposed for
+benchmarking-phase concurrency was `rounds`, and each entry in that list
+becomes one Kubernetes pod running the YCSB benchmarker with exactly one
+thread (`ycsb.py`'s own `-nbp`/`-nbt` default to `1`, and neither was ever
+wired into the catalog translator). An agent designing a concurrency sweep
+had no way to ask for "128 concurrent clients" except `rounds: [128]`, i.e.
+128 separate single-threaded pods. A design run on 2026-09-11 did exactly
+that (`rounds: [64, 128]`, both pinned to one node via `placement.benchmarking`)
+and stalled: Kubernetes nodes default to a 110-pod kubelet cap, so a chunk of
+the 128 pods most likely sat `Pending` indefinitely, and the run had to be
+killed by hand after an OIDC access-token refresh mid-poll (a known,
+unrelated failure mode, see this repository's `CLAUDE.md` "Cluster access"
+section) made the stall visible in the log.
+
+`benchmarking.pods`/`benchmarking.threads` let an experiment reach a given
+thread-level concurrency without multiplying pod count: `rounds: [1]` with
+`benchmarking: {pods: 4, threads: 128}` runs 4 pods at 32 threads each, 128
+total clients, instead of 128 pods. The two mechanisms are independent and
+compose by multiplication rather than one replacing the other — `rounds`
+still multiplies pod count on top of `benchmarking.pods`, and
+`benchmarking.threads` splits only across `benchmarking.pods`, not across the
+`rounds` multiplier — so a `rounds` sweep of more than one entry combined
+with a non-default `benchmarking.threads` compounds concurrency; both
+`contract_catalog.yml`'s `why:` text and `docs/AgentCatalogContract.md`
+spell this out to head off that combination being set by accident. This is
+purely a catalog-and-translator addition: `-nbp`/`-nbt` already existed on
+`ycsb.py`'s CLI (via the shared `bexhoma/cli_args.py` base parser) and were
+already read by `ycsb.py`'s own run loop; neither file needed a change.
+
+## Three YCSB knobs that validated but silently did nothing, corrected (2026-09-12)
+
+Reading `ycsb.py` end to end while investigating the incident above turned up
+three places where `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()`
+either never translated a field the schema already accepted, or never gave
+the workload a way to reach a real `ycsb.py` behavior at all. All three are
+fixed in the same change as the `benchmarking:` block above.
+
+- **`loading.timeout_minutes` reached the validator's timeout budget but not
+  `ycsb.py`.** This field is generic (`experiment_schema.fields.loading`),
+  and `agent/harness/validation.py`'s cost estimate already accounts for it
+  for every workload. `bexhoma/experiments/tpch_catalog.py` translates it
+  into `--loading-timeout`; `ycsb_catalog.py` never did, so a YCSB
+  experiment declaring this field got a clean validation and a timeout
+  figure in its budget that was never actually enforced against a stuck
+  load. `build_ycsb_argv()` now emits `--loading-timeout` from it, exactly
+  like the TPC-H builder.
+- **The PostgreSQL reset script never ran.** `ycsb.py`'s PostgreSQL branch
+  unconditionally calls `config.set_benchmark_resetscript(['reset-ycsb.sql'])`
+  with a comment saying it runs CHECKPOINT + VACUUM ANALYZE before each
+  benchmarking round "to produce a consistent, cold-cache starting state" —
+  but that script only actually executes when `ycsb.py`'s shared `-ar`/
+  `--activate-reset` flag is set (`bexhoma/experiments/base.py`'s
+  `resetscript_active = args.activate_reset`), and no catalog path ever set
+  it. Every catalog-driven YCSB run therefore skipped the reset regardless
+  of what an experiment.yml said, letting table bloat and buffer-cache state
+  carry over from one round or repetition into the next — a real confound
+  for a workload whose entire point is comparing rounds. Unlike the other
+  two fixes, this one is not exposed as a new `experiment.yml` field:
+  `build_ycsb_argv()` now emits `-ar` unconditionally, because skipping the
+  reset is never a valid experimental treatment, only a bug.
+- **`-tr`/`--test-result` had no YCSB-side path to turn it on.** The
+  underlying mechanism is workload-agnostic (`bexhoma/experiments/base.py`
+  reads `self.args.test_result` directly), and `bexhoma/evaluators/ycsb.py`
+  already implements `record_tests()` — non-zero loading/benchmarking
+  throughput, the planned workflow actually ran, no `FAILED` operation
+  column — so turning it on is meaningful, not a no-op. `tpch_catalog.py`
+  gates its own `-tr` emission on a `params.verify_result` value, but that
+  param was never added to `contract_catalog.yml`'s `workloads.tpch.params`,
+  making it unreachable from the documented contract for TPC-H too (a
+  pre-existing issue, left alone since fixing it wasn't asked for). YCSB
+  gets its own, properly documented `params.verify_result` (`type: bool`,
+  default `false`), and `build_ycsb_argv()` emits `-tr` when it is set.
+
+No version bump beyond the 1.4.0 -> 1.5.0 move above: these three fixes and
+the `benchmarking:` addition land together as one catalog-contract change.
 
 ## PgDuckDB's orphaned experiments directory (implementation detail)
 

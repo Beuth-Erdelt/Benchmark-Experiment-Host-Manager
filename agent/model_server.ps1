@@ -30,16 +30,26 @@ $ErrorActionPreference = 'Stop'
 
 $defaultManifest = (Resolve-Path (Join-Path $PSScriptRoot 'k8s\vllm-qwen38-27b.yml')).Path
 $MANIFEST        = if ($env:MODEL_SERVER_MANIFEST) { $env:MODEL_SERVER_MANIFEST } else { $defaultManifest }
-$POD            = if ($env:MODEL_SERVER_POD)      { $env:MODEL_SERVER_POD }      else { 'bexhoma-agent-model' }
+$JOB            = if ($env:MODEL_SERVER_JOB)      { $env:MODEL_SERVER_JOB }      else { 'bexhoma-agent-model' }
 $SVC            = if ($env:MODEL_SERVER_SERVICE)  { $env:MODEL_SERVER_SERVICE }  else { 'bexhoma-agent-model' }
 $PORT          = if ($env:MODEL_SERVER_PORT)     { $env:MODEL_SERVER_PORT }     else { '8001' }
 $BASE_URL      = if ($env:MODEL_SERVER_BASE_URL) { $env:MODEL_SERVER_BASE_URL } else { "http://localhost:$PORT/v1" }
 $LOGIN         = if ($env:KUBE_LOGIN_SCRIPT)     { $env:KUBE_LOGIN_SCRIPT }     else { Join-Path $HOME 'git/BIRD-Interact/scripts/kube-login.sh' }
 $CONTEXT       = if ($env:MODEL_SERVER_CONTEXT)  { $env:MODEL_SERVER_CONTEXT }  else { 'oidc_ds_cluster' }
 $NAMESPACE     = if ($env:MODEL_SERVER_NAMESPACE){ $env:MODEL_SERVER_NAMESPACE }else { 'perdelt' }
+# Counted from when the pod is scheduled; the wait for a GPU before that is
+# unbounded by default, as startup waits for capacity by design.
 $START_TIMEOUT = if ($env:MODEL_SERVER_START_TIMEOUT_SECONDS) { [int] $env:MODEL_SERVER_START_TIMEOUT_SECONDS } else { 2400 }
+$SCHEDULE_TIMEOUT = if ($env:MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS) { [int] $env:MODEL_SERVER_SCHEDULE_TIMEOUT_SECONDS } else { 0 }
 $STOP_TIMEOUT  = if ($env:MODEL_SERVER_STOP_TIMEOUT_SECONDS)  { [int] $env:MODEL_SERVER_STOP_TIMEOUT_SECONDS }  else { 300 }
-$GENERATION    = if ($env:MODEL_SERVER_GENERATION) { $env:MODEL_SERVER_GENERATION } else { 'idle-watchdog-v2' }
+# Each manifest carries its own generation annotation, so the expected value is
+# read from the manifest being applied. A fixed default would call every other
+# model's live Job outdated and replace it on each `up`.
+$manifestGeneration = Select-String -Path $MANIFEST -Pattern '^\s*bexhoma\.local/model-server-generation:\s*(\S+)' |
+    Select-Object -First 1 | ForEach-Object { $_.Matches[0].Groups[1].Value }
+$GENERATION    = if ($env:MODEL_SERVER_GENERATION) { $env:MODEL_SERVER_GENERATION } elseif ($manifestGeneration) { $manifestGeneration } else { 'idle-watchdog-v3' }
+# Set by agent/lifecycle.py when several lifecycles share this server.
+$SHARED        = $env:MODEL_SERVER_SHARED -eq '1'
 
 $portForwardLog = Join-Path $env:TEMP 'vllm-portforward.log'
 
@@ -59,7 +69,7 @@ function Stop-PortForward {
     Get-CimInstance Win32_Process -Filter "Name = 'kubectl.exe'" -ErrorAction SilentlyContinue |
         Where-Object {
             $_.CommandLine -and $_.CommandLine -match 'port-forward' -and
-            ($_.CommandLine -match [regex]::Escape("pod/$POD") -or
+            ($_.CommandLine -match [regex]::Escape("pod/$JOB") -or
              $_.CommandLine -match [regex]::Escape("svc/$SVC"))
         } |
         ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
@@ -81,56 +91,207 @@ function Invoke-EnsureLogin {
         return
     }
 
-    $null | & kubectl --context $CONTEXT auth whoami *> $null
-    if ($LASTEXITCODE -ne 0) {
+    if (-not (Test-ClusterAuth)) {
         Write-Host 'cluster token expired; re-authenticating'
+        $ErrorActionPreference = 'Continue'
         $null | & bash $LOGIN *> $null
+        $ErrorActionPreference = 'Stop'
     }
     # Always restore the configured namespace: a valid token does not imply that
     # the context still points at the namespace where this user can write.
     kubectl config set-context $CONTEXT --namespace=$NAMESPACE | Out-Null
-    $null | & kubectl --context $CONTEXT auth whoami *> $null
+    if (-not (Test-ClusterAuth)) {
+        throw "cannot access namespace '$NAMESPACE' in context '$CONTEXT' after re-authenticating with $LOGIN"
+    }
+}
+
+function Test-ClusterAuth {
+    <#
+    True when the context's token is accepted and may read pods in the namespace.
+    `auth whoami` is not usable here: it needs the SelfSubjectReview API, which
+    not every cluster serves, whereas SelfSubjectAccessReview always is.
+    #>
+    # Under 'Stop', PowerShell 5.1 turns kubectl's stderr into a terminating error.
+    $ErrorActionPreference = 'Continue'
+    $null | & kubectl --context $CONTEXT --namespace $NAMESPACE auth can-i get pods *> $null
+    return $LASTEXITCODE -eq 0
+}
+
+function Remove-LegacyPod {
+    <#
+    Before the server ran as a Job it was a bare pod under the Job's name, which
+    the Service would still select alongside the Job's pod. Job pods always carry
+    a generated suffix, so this name only ever matches such a leftover.
+    #>
+    kubectl --context $CONTEXT --namespace $NAMESPACE delete pod $JOB `
+        --ignore-not-found --wait=true --timeout="${STOP_TIMEOUT}s"
 }
 
 function Invoke-Down {
     Invoke-EnsureLogin
-    kubectl --context $CONTEXT --namespace $NAMESPACE delete pod $POD `
-        --ignore-not-found --wait=true --timeout="${STOP_TIMEOUT}s"
+    kubectl --context $CONTEXT --namespace $NAMESPACE delete job $JOB `
+        --ignore-not-found --cascade=foreground --wait=true --timeout="${STOP_TIMEOUT}s"
+    Remove-LegacyPod
     kubectl --context $CONTEXT --namespace $NAMESPACE delete svc $SVC `
         --ignore-not-found
     Stop-PortForward
-    Write-Host 'model server down; the 150Gi weights volume is kept so restart needs no re-download'
+    Write-Host 'model server down; the weights volume is kept so restart needs no re-download'
+}
+
+function Get-PodState {
+    <# "<pod>|<PodScheduled status>" of the Job's live pod, or '' while it has none. #>
+    # Under 'Stop', PowerShell 5.1 turns kubectl's stderr into a terminating error.
+    $ErrorActionPreference = 'Continue'
+    $template = 'go-template={{range .items}}{{if not .metadata.deletionTimestamp}}{{.metadata.name}}|{{range .status.conditions}}{{if eq .type `PodScheduled`}}{{.status}}{{end}}{{end}}{{println}}{{end}}{{end}}'
+    $lines = & kubectl --context $CONTEXT --namespace $NAMESPACE get pods -l "job-name=$JOB" -o $template 2>$null
+    return "$(@($lines | Where-Object { $_ }) | Select-Object -First 1)"
+}
+
+function Write-WaitingReport {
+    <#
+    One line on why the server is not answering yet, so that a long `up` says
+    what it waits for instead of looking hung: the scheduler's latest refusal
+    while the pod pends, the server's latest log line once it is loading.
+    #>
+    param([string] $Pod, [string] $Scheduled)
+    $ErrorActionPreference = 'Continue'
+    if (-not $Pod) {
+        Write-Host 'waiting: the model Job has no pod yet'
+    } elseif ($Scheduled -ne 'True') {
+        $detail = (& kubectl --context $CONTEXT --namespace $NAMESPACE get events `
+            --field-selector "involvedObject.name=$Pod,reason=FailedScheduling" `
+            --sort-by=.lastTimestamp -o 'jsonpath={.items[-1:].message}' 2>$null) -join ' '
+        if (-not $detail) { $detail = "pod $Pod is pending" }
+        Write-Host "waiting for a GPU node: $detail"
+    } else {
+        # The idle watchdog logs an unreadable /metrics every poll while the
+        # engine loads; progress bars redraw with carriage returns.
+        $detail = @(& kubectl --context $CONTEXT --namespace $NAMESPACE logs $Pod --tail=20 2>$null) |
+            ForEach-Object { $_ -split "`r" } |
+            Where-Object { $_.Trim() -and $_ -notmatch '^metrics unreadable' } |
+            Select-Object -Last 1
+        if ($detail) {
+            $detail = $detail.Substring(0, [Math]::Min(200, $detail.Length))
+        } else {
+            $detail = "pod $Pod is starting"
+        }
+        Write-Host "loading: $detail"
+    }
+}
+
+function Get-JobField {
+    <# One field of the model Job, or '' when there is no such Job. #>
+    param([string] $Output)
+    try {
+        return (& kubectl --context $CONTEXT --namespace $NAMESPACE get job $JOB -o $Output 2>$null) -join ''
+    } catch {
+        return ''
+    }
+}
+
+function Remove-FinishedJob {
+    <#
+    Deletes the finished model Job with this uid, and its pod, and waits until
+    both are gone. The uid precondition is what makes this safe when lifecycles
+    share the server: they arrive together, and another may already have replaced
+    the finished Job with a starting one under the same name, which must survive.
+    The server answers that case with a Conflict, and it is left alone.
+    #>
+    param([string] $Uid)
+    # Under Stop, Windows PowerShell turns the first line kubectl writes to
+    # stderr into a terminating error, before the Conflict could be recognised.
+    $ErrorActionPreference = 'Continue'
+    $body ='{"kind":"DeleteOptions","apiVersion":"v1","propagationPolicy":"Foreground","preconditions":{"uid":"' + $Uid + '"}}'
+    # A file rather than a pipe: Windows PowerShell prefixes piped text with a
+    # byte-order mark, which kubectl's JSON parser rejects.
+    $bodyFile = [System.IO.Path]::GetTempFileName()
+    try {
+        [System.IO.File]::WriteAllText($bodyFile, $body)
+        $output = (& kubectl --context $CONTEXT delete `
+            --raw "/apis/batch/v1/namespaces/$NAMESPACE/jobs/$JOB" -f $bodyFile 2>&1) -join "`n"
+    } finally {
+        Remove-Item -LiteralPath $bodyFile -Force -ErrorAction SilentlyContinue
+    }
+    if (($LASTEXITCODE -ne 0) -and ($output -notmatch 'Conflict|NotFound')) {
+        throw "deleting the finished model Job failed: $output"
+    }
+    $deadline = (Get-Date).AddSeconds($STOP_TIMEOUT)
+    while ((Get-JobField 'jsonpath={.metadata.uid}') -eq $Uid) {
+        if ((Get-Date) -ge $deadline) {
+            throw "finished model Job was not deleted within ${STOP_TIMEOUT}s"
+        }
+        Start-Sleep -Seconds 2
+    }
 }
 
 function Invoke-Up {
     Invoke-EnsureLogin
+    Remove-LegacyPod
 
-    # A finished watchdog pod keeps its name, and Kubernetes cannot update a live
-    # Pod's command or restart policy in place. Replace finished pods and older
-    # immutable generations, while preserving a current loaded server.
-    $goTemplate = 'go-template={{.status.phase}}|{{index .metadata.annotations "bexhoma.local/model-server-generation"}}'
-    $podState = ''
-    try {
-        $podState = (& kubectl --context $CONTEXT --namespace $NAMESPACE get pod $POD -o $goTemplate 2>$null) -join ''
-    } catch {
-        $podState = ''
-    }
-    $parts = "$podState" -split '\|', 2
-    $phase = $parts[0]
-    $currentGeneration = if ($parts.Count -gt 1) { $parts[1] } else { '' }
-    if ($phase -and ((($phase -ne 'Running') -and ($phase -ne 'Pending')) -or ($currentGeneration -ne $GENERATION))) {
-        $shownGeneration = if ($currentGeneration) { $currentGeneration } else { 'unversioned' }
-        Write-Host "replacing model pod in phase $phase, generation $shownGeneration"
-        kubectl --context $CONTEXT --namespace $NAMESPACE delete pod $POD `
-            --ignore-not-found --wait=true --timeout="${STOP_TIMEOUT}s"
+    # A finished Job keeps its name until its TTL runs out, and Kubernetes
+    # cannot update a Job's pod template in place. Replace finished Jobs and
+    # older immutable generations, while preserving a current loaded server.
+    # Go raw strings in backquotes, because Windows PowerShell strips the double
+    # quotes from a native command's argument and the template would not parse.
+    $goTemplate = 'go-template={{.metadata.uid}}|{{range .status.conditions}}{{if eq .status `True`}}{{.type}} {{end}}{{end}}|{{index .metadata.annotations `bexhoma.local/model-server-generation`}}'
+    $parts = "$(Get-JobField $goTemplate)" -split '\|', 3
+    $uid = $parts[0]
+    $conditions = if ($parts.Count -gt 1) { $parts[1] -split ' ' } else { @() }
+    $currentGeneration = if ($parts.Count -gt 2) { $parts[2] } else { '' }
+    $shownGeneration = if ($currentGeneration) { $currentGeneration } else { 'unversioned' }
+    # Complete and Failed are set once the pod has ended; the other two already
+    # while it terminates, and a terminating server is no more usable.
+    $finished = $conditions | Where-Object { $_ -in @('Complete', 'Failed', 'SuccessCriteriaMet', 'FailureTarget') } |
+        Select-Object -Last 1
+    if ($uid -and $finished) {
+        Write-Host "replacing finished model Job ($finished)"
+        Remove-FinishedJob $uid
+    } elseif ($uid -and ($currentGeneration -ne $GENERATION)) {
+        if ($SHARED) {
+            [Console]::Error.WriteLine("model Job runs generation $shownGeneration, not $GENERATION; another lifecycle is using that model, so it is left alone")
+            exit 3
+        }
+        Write-Host "replacing model Job of generation $shownGeneration"
+        kubectl --context $CONTEXT --namespace $NAMESPACE delete job $JOB `
+            --ignore-not-found --cascade=foreground --wait=true --timeout="${STOP_TIMEOUT}s"
     }
 
     # The manifest names no namespace, so this flag is what places the objects.
+    # Lifecycles sharing the server may both have deleted the finished Job, and
+    # the one that loses the race to create its replacement fails AlreadyExists;
+    # applied again, it finds that replacement and keeps it.
     kubectl --context $CONTEXT --namespace $NAMESPACE apply -f $MANIFEST
+    if ($LASTEXITCODE -ne 0) {
+        kubectl --context $CONTEXT --namespace $NAMESPACE apply -f $MANIFEST
+    }
     Assert-LastExitCode 'kubectl apply'
-    kubectl --context $CONTEXT --namespace $NAMESPACE `
-        wait --for=condition=ready "pod/$POD" --timeout="${START_TIMEOUT}s"
-    Assert-LastExitCode 'kubectl wait'
+    # The Job's pod has a generated name, so readiness is read off the Job. The
+    # start timeout only runs once the pod is scheduled: waiting for a free GPU
+    # took 2.5 hours on 2026-09-30 and is bounded by SCHEDULE_TIMEOUT instead.
+    $waitingSince = Get-Date
+    $scheduledAt = $null
+    $lastReport = $null
+    while ((Get-JobField 'jsonpath={.status.ready}') -ne '1') {
+        $pod, $scheduled = (Get-PodState) -split '\|', 2
+        if ((-not $scheduledAt) -and ($scheduled -eq 'True')) {
+            $scheduledAt = Get-Date
+            Write-Host "model pod $pod scheduled after $([int]($scheduledAt - $waitingSince).TotalSeconds)s; loading the model"
+        }
+        if (-not $scheduledAt) {
+            if (($SCHEDULE_TIMEOUT -gt 0) -and ((Get-Date) -ge $waitingSince.AddSeconds($SCHEDULE_TIMEOUT))) {
+                Write-Error "model pod was not scheduled within ${SCHEDULE_TIMEOUT}s; see kubectl describe job/$JOB"
+                exit 1
+            }
+        } elseif ((Get-Date) -ge $scheduledAt.AddSeconds($START_TIMEOUT)) {
+            Write-Error "model pod was not ready within ${START_TIMEOUT}s of being scheduled; see kubectl logs job/$JOB"
+            exit 1
+        }
+        if ((-not $lastReport) -or ((Get-Date) -ge $lastReport.AddSeconds(60))) {
+            $lastReport = Get-Date
+            Write-WaitingReport $pod $scheduled
+        }
+        Start-Sleep -Seconds 5
+    }
 
     if (($BASE_URL -like 'http://localhost:*') -and -not (Test-ModelEndpoint $BASE_URL)) {
         Stop-PortForward
