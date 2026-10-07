@@ -25,7 +25,11 @@ server:
   `--model-server-manifest` used below — leave `AGENT_MODEL_SERVER` unset
   (`bundled`) unless you are running more than one lifecycle at once, which
   needs `shared` instead (see
-  [Choose the model endpoint](#4-choose-the-model-endpoint)).
+  [Choose the model endpoint](#4-choose-the-model-endpoint)). Also set
+  `MODEL_SERVER_CONTEXT` and `MODEL_SERVER_NAMESPACE`: neither has a default,
+  so `agent/model_server.sh`/`.ps1` refuses to start the server without them —
+  they must name the kubeconfig context and namespace this cluster is reached
+  under (see [Self-hosted model server](#self-hosted-model-server)).
 
 ```sh
 bexhoma agent lifecycle --task "Is pg_duckdb faster than PostgreSQL for aggregation under concurrency, and does that depend on how many cores we give it? We have a 10 GB dataset, and our servers have 64 GB of RAM." --followups 3 --max-tokens 65536 --model-server-manifest agent/k8s/vllm-qwen38-27b.yml --attempts 10 --enable-thinking --allow-parallel-runs
