@@ -808,7 +808,7 @@ if __name__ == '__main__':
                     config.set_loading_parameters(
                         BENCHBASE_PROFILE = 'postgres',
                         BEXHOMA_DATABASE = 'postgres',
-                        BEXHOMA_HOST = 'bexhoma-service.perdelt.svc.cluster.local',
+                        BEXHOMA_HOST = 'bexhoma-service',
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         )
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
@@ -833,7 +833,7 @@ if __name__ == '__main__':
                                     config.add_benchmarking_parameters(
                                         BENCHBASE_PROFILE = 'postgres',
                                         BEXHOMA_DATABASE = 'postgres',
-                                        BEXHOMA_HOST = 'bexhoma-service.perdelt.svc.cluster.local',
+                                        BEXHOMA_HOST = 'bexhoma-service',
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         )

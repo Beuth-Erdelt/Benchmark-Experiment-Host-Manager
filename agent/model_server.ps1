@@ -34,9 +34,9 @@ $JOB            = if ($env:MODEL_SERVER_JOB)      { $env:MODEL_SERVER_JOB }     
 $SVC            = if ($env:MODEL_SERVER_SERVICE)  { $env:MODEL_SERVER_SERVICE }  else { 'bexhoma-agent-model' }
 $PORT          = if ($env:MODEL_SERVER_PORT)     { $env:MODEL_SERVER_PORT }     else { '8001' }
 $BASE_URL      = if ($env:MODEL_SERVER_BASE_URL) { $env:MODEL_SERVER_BASE_URL } else { "http://localhost:$PORT/v1" }
-$LOGIN         = if ($env:KUBE_LOGIN_SCRIPT)     { $env:KUBE_LOGIN_SCRIPT }     else { Join-Path $HOME 'git/BIRD-Interact/scripts/kube-login.sh' }
-$CONTEXT       = if ($env:MODEL_SERVER_CONTEXT)  { $env:MODEL_SERVER_CONTEXT }  else { 'oidc_ds_cluster' }
-$NAMESPACE     = if ($env:MODEL_SERVER_NAMESPACE){ $env:MODEL_SERVER_NAMESPACE }else { 'perdelt' }
+$LOGIN         = if ($env:KUBE_LOGIN_SCRIPT)     { $env:KUBE_LOGIN_SCRIPT }     else { '' }
+$CONTEXT       = if ($env:MODEL_SERVER_CONTEXT)  { $env:MODEL_SERVER_CONTEXT }  else { '' }
+$NAMESPACE     = if ($env:MODEL_SERVER_NAMESPACE){ $env:MODEL_SERVER_NAMESPACE }else { '' }
 # Counted from when the pod is scheduled; the wait for a GPU before that is
 # unbounded by default, as startup waits for capacity by design.
 $START_TIMEOUT = if ($env:MODEL_SERVER_START_TIMEOUT_SECONDS) { [int] $env:MODEL_SERVER_START_TIMEOUT_SECONDS } else { 2400 }
@@ -86,12 +86,44 @@ function Invoke-EnsureLogin {
     at exactly the moment interpretation needs the server unless the session is
     refreshed here.
     #>
+    # Required, with no default. The namespace decides whose objects this script
+    # creates and deletes, and the set-context calls below write it into the
+    # caller's kubeconfig, where every later namespace-less kubectl call --
+    # bexhoma's SUT creation included -- inherits it. A default would therefore
+    # not merely misplace the model server, it would redirect the whole run into
+    # the account the default happens to name.
+    if (-not $NAMESPACE) {
+        [Console]::Error.WriteLine(@'
+error: MODEL_SERVER_NAMESPACE is unset and has no default; it names the
+       namespace the model server is created in and deleted from.
+
+  agent/model_server.ps1 directly : $env:MODEL_SERVER_NAMESPACE = "<namespace>"
+  agent/lifecycle.py              : MODEL_SERVER_NAMESPACE=<namespace> in .env
+  in-cluster lifecycle Job        : set automatically from the Job's namespace
+
+It must equal credentials.k8s.context.<context>.namespace in cluster.config,
+or bexhoma will place the benchmark somewhere else than the model server.
+'@)
+        exit 2
+    }
+    # Required too, with no default for the same reason: a stranger's cluster
+    # name would silently point every kubectl call below at it.
+    if (-not $CONTEXT) {
+        [Console]::Error.WriteLine('error: MODEL_SERVER_CONTEXT is unset and has no default; set it, ' +
+            'or export it in .env, to the kubeconfig context this cluster is reached under.')
+        exit 2
+    }
+
     if ($env:MODEL_SERVER_IN_CLUSTER -eq '1') {
         kubectl config set-context $CONTEXT --namespace=$NAMESPACE | Out-Null
         return
     }
 
-    if (-not (Test-ClusterAuth)) {
+    # KUBE_LOGIN_SCRIPT has no default either: unlike NAMESPACE and CONTEXT this
+    # one is optional -- an ordinary kubeconfig that never expires needs no
+    # refresh -- so an expired token is reported below rather than handed to a
+    # script that was never configured.
+    if ((-not (Test-ClusterAuth)) -and $LOGIN) {
         Write-Host 'cluster token expired; re-authenticating'
         $ErrorActionPreference = 'Continue'
         $null | & bash $LOGIN *> $null
@@ -101,7 +133,11 @@ function Invoke-EnsureLogin {
     # the context still points at the namespace where this user can write.
     kubectl config set-context $CONTEXT --namespace=$NAMESPACE | Out-Null
     if (-not (Test-ClusterAuth)) {
-        throw "cannot access namespace '$NAMESPACE' in context '$CONTEXT' after re-authenticating with $LOGIN"
+        if ($LOGIN) {
+            throw "cannot access namespace '$NAMESPACE' in context '$CONTEXT' after re-authenticating with $LOGIN"
+        }
+        throw ("cannot access namespace '$NAMESPACE' in context '$CONTEXT'; set KUBE_LOGIN_SCRIPT " +
+            'to a script that refreshes credentials, or re-authenticate manually')
     }
 }
 

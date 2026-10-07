@@ -10,7 +10,7 @@ setuptools.setup(
     name="bexhoma",
     version="0.8.17",
     author="Patrick K. Erdelt",
-    author_email="perdelt@beuth-hochschule.de",
+    author_email="patrick.erdelt@bht-berlin.de",
     description="This python tools helps managing DBMS benchmarking experiments in a Kubernetes-based HPC cluster environment. It enables users to configure hardware / software setups for easily repeating tests over varying configurations.",
     long_description=long_description,
     long_description_content_type="text/markdown",

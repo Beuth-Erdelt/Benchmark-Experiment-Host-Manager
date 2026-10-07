@@ -498,12 +498,14 @@ as a Job, so a finished server removes itself.
 They are a convenience, not part of the pipeline — any OpenAI-compatible
 endpoint works. If you use them, four values are specific to the cluster they
 were written for and must be set for yours: the kubeconfig context and namespace
-(exported as `MODEL_SERVER_CONTEXT` and `MODEL_SERVER_NAMESPACE`; the namespace
-has no default because the switch also writes it into the kube context), the
-login refresh script (`KUBE_LOGIN_SCRIPT=/bin/true` when an ordinary kubeconfig
-needs no refresh), and the storage class and GPU node labels, which are edited
-directly in the manifest. Getting the GPU labels wrong leaves the pod
-unschedulable and startup waits for capacity by design, so pass
+(exported as `MODEL_SERVER_CONTEXT` and `MODEL_SERVER_NAMESPACE`; neither has a
+default, since a stranger's cluster name or namespace would otherwise silently
+redirect every kubectl call the switch makes — and `MODEL_SERVER_NAMESPACE` is
+also the one the switch writes into the kube context itself), the optional
+login refresh script (`KUBE_LOGIN_SCRIPT`, empty by default; an ordinary
+kubeconfig that never expires needs none), and the storage class and GPU node
+labels, which are edited directly in the manifest. Getting the GPU labels wrong
+leaves the pod unschedulable and startup waits for capacity by design, so pass
 `--server-start-attempts 3` the first time and check `kubectl describe pod` if
 it stalls.
 
