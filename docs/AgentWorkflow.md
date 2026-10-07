@@ -120,6 +120,14 @@ workload/system pairing, illegal parameter value, unmet profile precondition,
 placement/resource ceiling exceeded, ...) and exits non-zero — fix
 `experiment.yml` and re-run step 4 before touching step 5.
 
+The agent prototype (see [`AgentHarness.md`](AgentHarness.md)) ships a
+stricter superset of this same dry run, `python -m agent.harness.validate`,
+which additionally enforces its experiment design handbook's decidable
+principles and reports a run-count/timeout estimate. Like
+`validate_experiment.py`, it touches no cluster, no model server, and no
+GPU — it reads files only, so it needs no served model or network access,
+despite living in the `agent` package.
+
 ## Step 5 — run it
 
 ```

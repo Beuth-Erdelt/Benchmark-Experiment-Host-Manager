@@ -693,9 +693,22 @@ at all, call the validator directly:
 It prints the same structured verdict the design agent's `validate` tool
 receives — the `valid` flag, a list of `{stage, message}` errors, whether the
 environment was checked, and the run and timeout estimate — and exits 0 when the
-specification is valid and 1 otherwise. It touches no cluster. `--environment`
+specification is valid and 1 otherwise. It touches no cluster, no model server,
+and no GPU: `agent/harness/validation.py` only reads the experiment, catalog,
+and environment files and never imports the model client, so no `agent` extra,
+served model, or network access is needed to run it. `--environment`
 is required; pass an empty string to skip the placement and resource-ceiling
 checks, which the verdict then records in its `environment_checked` field.
+
+This is a stricter superset of the repository's plain
+[`validate_experiment.py`](../validate_experiment.py): both resolve the
+experiment against the catalog and check placement/resources against
+`environment.yml`, but this one also enforces the experiment design
+handbook's decidable principles (falsifiable claim, fixed envelope, factor
+attribution, repetitions) and reports a run-count and declared-timeout-budget
+estimate. Use the plain validator for a quick catalog/placement check with no
+extra install; use this one when the result needs to pass the same gate the
+design agent's own `validate` tool enforces.
 
 Validation reports both the expanded benchmark-phase count and a conservative
 declared-timeout budget. The latter assumes every active query reaches its

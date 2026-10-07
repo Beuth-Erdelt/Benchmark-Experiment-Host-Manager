@@ -362,9 +362,22 @@ It prints the same structured verdict the design agent's `validate` tool
 receives — the `valid` flag, a list of `{stage, message}` errors, whether the
 environment was checked, and the expanded benchmark-phase count with a
 conservative declared-timeout budget — and exits 0 when the specification is
-valid, 1 otherwise. It touches no cluster. `--environment` is required on
+valid, 1 otherwise. It touches no cluster, no model server, and no GPU: this
+module only reads the experiment, catalog, and environment files and never
+imports the model client, so it needs no served model, network access, or
+even the `agent` install extra. `--environment` is required on
 purpose; pass an empty string to skip the placement and resource-ceiling checks,
 and the verdict then records that it did so in its `environment_checked` field.
+
+This is a stricter superset of the repository's plain
+[`validate_experiment.py`](../validate_experiment.py), covered in
+[`AgentWorkflow.md`](AgentWorkflow.md)'s step 4: both
+resolve the experiment against the catalog and check placement/resources
+against `environment.yml`, but this one also enforces the experiment design
+handbook's decidable principles and reports the run-count/timeout estimate
+below. Reach for the plain validator for a quick catalog/placement check with
+no extra install; reach for this one when the result must pass the same gate
+the design agent's own `validate` tool enforces.
 
 [`dev/catalog/experiment.yml`](../dev/catalog/experiment.yml) is a maintained,
 runnable example: a two-system PostgreSQL-versus-PgDuckDB sweep across
