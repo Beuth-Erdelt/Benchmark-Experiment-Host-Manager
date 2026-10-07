@@ -11,9 +11,13 @@ Contributions are welcome. Areas where help is most useful:
 
 ## Pull requests
 
-- Branch off from `master` with a short descriptive name (`feature/ycsb-redis`, `fix/loader-encoding`).
+- `master` is always the latest stable release; nobody pushes to it directly. `dev` tracks ongoing development.
+- Branch off from `dev` with a short descriptive name (`feature/ycsb-redis`, `fix/loader-encoding`).
+- Open your pull request against `dev`, not `master`.
 - Keep each PR focused on one change. Unrelated fixes belong in a separate PR.
 - Reference the relevant issue number in the PR description where applicable.
+- Make sure all checks pass and review feedback is resolved before merging.
+- PRs are merged into `dev` via **squash merge**.
 - By submitting a PR you agree to license your contribution under the **GNU Affero General Public License v3**.
 
 ---
