@@ -10,7 +10,7 @@ server:
 - A Kubernetes cluster with a working `kubectl` context: the agent reads it
   both to snapshot the environment (`bexhoma environment create`) and to
   start the self-hosted model server.
-- A free GPU node (H100, H200, or B200) for the model server. The
+- A free GPU node (H200 or B200) for the model server. The
   `vllm-qwen38-27b.yml` manifest below requests one `nvidia.com/gpu` and up to
   96Gi of memory for the vLLM pod itself — separate from the database node
   the benchmark runs on.

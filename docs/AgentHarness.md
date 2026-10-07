@@ -623,7 +623,8 @@ volumes elsewhere.
 ```sh
 .venv/bin/python -m pytest \
   tests/test_agent_harness.py \
-  tests/test_agent_lifecycle.py -q
+  tests/test_agent_lifecycle.py \
+  tests/test_agent_query_evidence.py -q
 ```
 
 Neither test needs a cluster or a model server.
