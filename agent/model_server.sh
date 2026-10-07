@@ -79,7 +79,10 @@ USAGE
     # no refresh -- so an expired token is reported below rather than handed
     # to a script that was never configured.
     if ! cluster_auth_ok && [ -n "$LOGIN" ]; then
-        echo "cluster token expired; re-authenticating"
+        # can-i failing could mean an expired token, but also a wrong context
+        # name, an unreachable API server, or no VPN -- causes this check
+        # cannot tell apart, so the message does not claim which one it is.
+        echo "cluster auth check failed; attempting re-login"
         bash "$LOGIN" >/dev/null 2>&1 </dev/null || true
     fi
     # Always restore the configured namespace: a valid token does not imply

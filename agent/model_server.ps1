@@ -124,7 +124,10 @@ or bexhoma will place the benchmark somewhere else than the model server.
     # refresh -- so an expired token is reported below rather than handed to a
     # script that was never configured.
     if ((-not (Test-ClusterAuth)) -and $LOGIN) {
-        Write-Host 'cluster token expired; re-authenticating'
+        # can-i failing could mean an expired token, but also a wrong context
+        # name, an unreachable API server, or no VPN -- causes this check
+        # cannot tell apart, so the message does not claim which one it is.
+        Write-Host 'cluster auth check failed; attempting re-login'
         $ErrorActionPreference = 'Continue'
         $null | & bash $LOGIN *> $null
         $ErrorActionPreference = 'Stop'
