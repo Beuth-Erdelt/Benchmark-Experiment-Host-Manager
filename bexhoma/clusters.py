@@ -42,6 +42,18 @@ import platform
 #: instead of failing outright. See https://github.com/kubernetes/kubectl/issues/1425.
 KUBECTL_CP_INTERNAL_RETRIES = 20
 
+#: Hard ceiling on one kubectl() subprocess call, in seconds. Unlike the
+#: Kubernetes Python client (see CLUSTER_API_TIMEOUT_SECONDS below), a shelled
+#: -out ``kubectl`` call had no timeout at all: a connection the API server
+#: (or an intermediate proxy) accepts but then silently stops answering on --
+#: observed directly on this cluster via a kubectl logs call wedged in
+#: subprocess.communicate() for over an hour -- blocked the whole run forever,
+#: never reaching the retry/outage-budget logic below because that logic only
+#: runs once the subprocess call returns. Generous rather than tight, since
+#: this same method also runs ``kubectl cp`` of potentially large generated
+#: benchmark data; a legitimate slow transfer must not be mistaken for a hang.
+CLUSTER_KUBECTL_TIMEOUT_SECONDS = 600
+
 #: How long a single cluster call keeps retrying while the cluster cannot be
 #: reached. The API server is only reachable over a VPN that can drop for a
 #: minute or more; pods inside the cluster keep running meanwhile, so the host
@@ -1374,7 +1386,14 @@ class Kubernetes():
         def run_with_fallback(fullcommand, retried=False):
             encodings = ["utf-8", "latin1", "cp1252"]
             try:
-                raw = subprocess.check_output(fullcommand, shell=True, stderr=subprocess.STDOUT)
+                raw = subprocess.check_output(
+                    fullcommand, shell=True, stderr=subprocess.STDOUT,
+                    timeout=CLUSTER_KUBECTL_TIMEOUT_SECONDS)
+            except subprocess.TimeoutExpired:
+                print(f"kubectl command timed out after {CLUSTER_KUBECTL_TIMEOUT_SECONDS}s: {fullcommand}")
+                if wait_for_cluster(deadline):
+                    return run_with_fallback(fullcommand, retried=True)
+                return None
             except subprocess.CalledProcessError as e:
                 print("Command failed!")
                 print(f"Return code: {e.returncode}")

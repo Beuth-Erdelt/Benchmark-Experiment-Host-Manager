@@ -221,6 +221,12 @@ function Write-WaitingReport {
 function Get-JobField {
     <# One field of the model Job, or '' when there is no such Job. #>
     param([string] $Output)
+    # Under 'Stop', PowerShell 5.1 turns kubectl's stderr into a terminating
+    # error even when redirected to $null -- the TokenRequest API warning this
+    # cluster's auth plugin prints on every call would otherwise make this
+    # always throw and return '', so Get-JobField -ne '1' never stops being
+    # true and the caller's wait loop never sees the Job actually turn ready.
+    $ErrorActionPreference = 'Continue'
     try {
         return (& kubectl --context $CONTEXT --namespace $NAMESPACE get job $JOB -o $Output 2>$null) -join ''
     } catch {
