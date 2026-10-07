@@ -19,6 +19,13 @@ server:
   PostgreSQL/pg_duckdb placement and the 10 GB dataset's scale factor against;
   run `bexhoma environment create` after any cluster change so the agent sees
   current, not stale, capacity.
+- A `.env` in the repository root: `cp .env.example .env`, then uncomment the
+  block for the local, port-forwarded self-hosted vLLM server (`AGENT_MODEL`,
+  `AGENT_BASE_URL=http://localhost:8001/v1`, `AGENT_API_KEY`) to match the
+  `--model-server-manifest` used below — leave `AGENT_MODEL_SERVER` unset
+  (`bundled`) unless you are running more than one lifecycle at once, which
+  needs `shared` instead (see
+  [Choose the model endpoint](#4-choose-the-model-endpoint)).
 
 ```sh
 bexhoma agent lifecycle --task "Is pg_duckdb faster than PostgreSQL for aggregation under concurrency, and does that depend on how many cores we give it? We have a 10 GB dataset, and our servers have 64 GB of RAM." --followups 3 --max-tokens 65536 --model-server-manifest agent/k8s/vllm-qwen38-27b.yml --attempts 10 --enable-thinking --allow-parallel-runs

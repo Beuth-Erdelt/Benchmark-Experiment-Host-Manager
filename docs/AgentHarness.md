@@ -164,7 +164,12 @@ One more setting, `AGENT_MODEL_SERVER`, decides who owns the endpoint:
 - `shared`: for several lifecycles running side by side (see
   [Running two investigations at once](#running-two-investigations-at-once)).
   Each starts the server if it is not running and reuses it if it is, but none
-  stops it.
+  stops it. Unlike `bundled`, which releases the GPU the moment its one
+  benchmark starts, a lone `shared` lifecycle holds the GPU for its whole
+  benchmark wait too — nothing tells it another lifecycle might still need the
+  server, so only the pod's own idle watchdog (twenty minutes with no request)
+  gives it back. `shared` is for running several investigations at once, not a
+  drop-in replacement for `bundled` when running just one.
 
 Each block in `.env.example` already carries the right value. The agent CLI
 itself never starts a server in any case.
