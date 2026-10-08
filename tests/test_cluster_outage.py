@@ -158,9 +158,10 @@ class ClusterOutageTest(unittest.TestCase):
         """A kubectl command must be repeated until the cluster answers."""
         cluster = _bare_cluster()
         outage = subprocess.CalledProcessError(1, 'kubectl', output=UNREACHABLE_OUTPUT.encode())
+        success = mock.Mock(stdout=b'labelled')
         with (
-            mock.patch.object(clusters.subprocess, 'check_output',
-                              side_effect=[outage, outage, b'labelled']) as run,
+            mock.patch.object(clusters.subprocess, 'run',
+                              side_effect=[outage, outage, success]) as run,
             mock.patch.object(clusters.time, 'sleep') as pause,
         ):
             self.assertEqual(cluster.kubectl('label pod x a=b --overwrite'), 'labelled')
@@ -173,7 +174,7 @@ class ClusterOutageTest(unittest.TestCase):
         outage = subprocess.CalledProcessError(1, 'kubectl', output=UNREACHABLE_OUTPUT.encode())
         clock = iter(range(0, 10_000, clusters.CLUSTER_OUTAGE_RETRY_SECONDS))
         with (
-            mock.patch.object(clusters.subprocess, 'check_output', side_effect=outage),
+            mock.patch.object(clusters.subprocess, 'run', side_effect=outage),
             mock.patch.object(clusters.time, 'sleep'),
             mock.patch.object(clusters.time, 'monotonic', side_effect=lambda: next(clock)),
         ):
@@ -187,7 +188,7 @@ class ClusterOutageTest(unittest.TestCase):
             1, 'kubectl',
             output=b'Error from server (AlreadyExists): jobs.batch "loader" already exists')
         with (
-            mock.patch.object(clusters.subprocess, 'check_output',
+            mock.patch.object(clusters.subprocess, 'run',
                               side_effect=[lost_reply, exists]),
             mock.patch.object(clusters.time, 'sleep'),
         ):
