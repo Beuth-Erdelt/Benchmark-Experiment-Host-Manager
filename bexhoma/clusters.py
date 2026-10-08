@@ -100,6 +100,35 @@ CLUSTER_NOT_SENT_MESSAGES = (
     'failed to download openapi',
 )
 
+#: Client-side advisory lines kubectl prints to stderr on this cluster on
+#: every single call (its auto-generated ServiceAccount tokens predate the
+#: TokenRequest API). kubectl() merges stderr into stdout, and a naive
+#: caller that treats the result as pure data -- e.g. get_pod_containers()
+#: splitting on whitespace -- picks up stray words from the warning text
+#: itself as if they were real output; "Use tokens from the TokenRequest
+#: API ... secret-based tokens." contributes the bare word "tokens", which
+#: showed up as a fabricated, nonexistent container name. Stripped here so
+#: every caller of kubectl() gets clean data, not just the ones that
+#: happen to post-filter it themselves (see clean_restart_counts() in
+#: sut_restarts.py for the same class of problem solved locally instead).
+CLUSTER_CLIENT_WARNING_PREFIXES = (
+    'Warning: Use tokens from the TokenRequest API',
+)
+
+
+def _strip_client_warnings(text: str) -> str:
+    """
+    Remove known benign client-side kubectl warning lines from combined output.
+
+    :param text: Decoded, combined stdout+stderr of a kubectl invocation.
+    :return: The same text with any line starting with a known warning
+        prefix removed.
+    :rtype: str
+    """
+    lines = text.splitlines(keepends=True)
+    kept = [line for line in lines if not line.lstrip().startswith(CLUSTER_CLIENT_WARNING_PREFIXES)]
+    return ''.join(kept)
+
 #: Fragments of a kubectl ``error:`` line meaning the connection broke while
 #: the command may already have been running, so only commands that are safe
 #: to repeat may be retried.
@@ -1427,7 +1456,7 @@ class Kubernetes():
                 return None
             for enc in encodings:
                 try:
-                    return raw.decode(enc)
+                    return _strip_client_warnings(raw.decode(enc))
                 except UnicodeDecodeError:
                     continue
             print("Failed to decode output with any known encoding")
