@@ -12,7 +12,7 @@
 # The pod runs under a Job so that Kubernetes also removes what is left: the
 # finished Job and its Completed pod are deleted ttlSecondsAfterFinished later.
 #
-# Placement note: this accepts either Hopper node (H100 or H200), whichever the
+# Placement note: this accepts either the H200 or the B200 node, whichever the
 # scheduler can place first, and deliberately excludes cl-worker36. cl-worker36
 # is where bexhoma puts the system under test, and a model server competing for
 # that node's CPU, memory and page cache would contaminate the measurements the

@@ -5,6 +5,9 @@ Recorded on 2026-09-21 from the source review and executable probes in
 backlog. It excludes style issues and speculative improvements that do not
 threaten safety or the validity of a benchmark conclusion.
 
+Re-checked against the code on 2026-10-05. Each item below ends with its
+status; none of the five is fully repaired.
+
 ## 1. Phase and dry-run tool boundaries are advisory — partly repaired
 
 The loop advertises a phase-specific tool list, but dispatch still accepts any
@@ -33,6 +36,10 @@ that loop would bypass the check.
 allowlist (done), and the workspace itself refuses submission in dry-run mode
 (open).
 
+**Status 2026-10-05: unchanged.** `Workspace.submit` in `agent/harness/tools.py`
+still has no notion of a dry run; the guard is the withheld tool schema plus the
+dispatch check in `agent/harness/agent.py`.
+
 ## 2. Accepted interpretations are not semantically tied to their evidence
 
 The evidence gate proves that required result files were opened and that cited
@@ -45,6 +52,12 @@ its closing answer while the phase still succeeds.
 resolve to the relevant metric/check, and the delivered answer is rendered from
 or checked against the accepted record.
 
+**Status 2026-10-05: partly repaired.** Since 2026-09-25 the harness files its
+computed validity and result claims beside the model's verdict, withholds
+comparisons it can show are invalid (for example YCSB throughput summed over
+unequal pod durations), and carries the resulting measurement restriction into
+the answer. A cited file is still not checked for supporting its claim.
+
 ## 3. A benchmark can pass without proof that the full dataset loaded
 
 The result contract discloses that loading completeness is not verified. That
@@ -54,6 +67,11 @@ throughput and latency numbers and still pass the current evidence workflow.
 **Repair criterion:** each system records and validates expected-versus-loaded
 row counts, or an equivalent workload-specific completeness invariant, before
 performance results are claimable.
+
+**Status 2026-10-05: open, disclosed.** `contracts/contract_result.yml` lists it
+under `known_gaps` and tells the interpreter where to look for evidence of a
+truncated load (the loading pods' sensor and stderr logs, and latency collapse on
+queries touching a missing table). No check enforces it.
 
 ## 4. Submission can execute different catalog inputs from those validated
 
@@ -66,6 +84,13 @@ differ from the provenance snapshot attached to the run.
 and environment snapshot, and verifies their recorded hashes immediately before
 launch.
 
+**Status 2026-10-05: partly repaired.** `Workspace.submit` refuses a
+specification whose bytes, or whose catalog or environment file, differ from what
+passed validation (`_fingerprint`), and stages copies of all inputs. The child
+process is still started with `--catalog` pointing at the live catalog path
+rather than the staged copy, so a change after the check and before it reads the
+file is still possible.
+
 ## 5. Recovery state is not committed atomically
 
 Trajectory events, status YAML and phase artifacts are separate writes. A crash
@@ -76,3 +101,10 @@ from the newest design root rather than reconstructing the latest durable phase.
 **Repair criterion:** use an atomic phase checkpoint (or a replayable event
 protocol with commit markers), then resume from the newest committed phase and
 reconcile any submitted experiment by its durable code.
+
+**Status 2026-10-05: open, mitigated.** Status files are still written with a
+plain `write_text`. The in-cluster controller recovers a submission from durable
+status and resumes by experiment code, and concurrent lifecycles now take
+the run lock atomically (`agent/harness/_runlock.py`) and record their own
+investigation directory (`--run-record`), which closed two races between them.
+A crash between the separate writes can still lose a status file or a follow-up.

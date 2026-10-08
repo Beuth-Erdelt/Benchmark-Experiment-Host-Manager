@@ -34,7 +34,7 @@ bexperiments = "bexhoma.scripts.experimentsmanager:manage"
 # that ordinary bexhoma users do not install them.
 #   pip install -e ".[agent]"
 [project.optional-dependencies]
-agent = ["openai>=1.0", "python-dotenv>=1.0"]
+agent = ["openai>=1.0", "python-dotenv>=1.0", "httpx>=0.27"]
 
 # ---- setuptools configuration ----
 [tool.setuptools]

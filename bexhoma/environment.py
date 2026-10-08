@@ -59,6 +59,12 @@ ENVIRONMENT_CONTRACT_VERSION = "1.0.0"
 #: aborting the whole run.
 _HTTP_FORBIDDEN = 403
 
+#: Page size for the cluster-wide pod listing in collect_node_usage(). Keeps
+#: each individual response small enough to survive an intermediate proxy
+#: that has been observed to drop a single, unpaginated response of this kind
+#: partway through on a cluster with many pods.
+_PAGE_SIZE = 500
+
 __all__ = [
     "ENVIRONMENT_CONTRACT_VERSION",
     "EnvironmentError",
@@ -387,8 +393,23 @@ def collect_node_usage(cluster: Any, nodes: list[NodeInfo]) -> None:
     :param nodes: Curated, schedulable nodes (mutated in place), as returned by :func:`collect_nodes`.
     :raises EnvironmentError: When the Pod API can't be reached for a reason other than permissions.
     """
+    # Paginated rather than one list_pod_for_all_namespaces() call: on a large,
+    # busy cluster that single response can run into the hundreds of MB, and an
+    # intermediate proxy between here and the API server has been observed to
+    # cut the connection partway through such a response (IncompleteRead) well
+    # before any client-side timeout. Pages of _PAGE_SIZE stay well under
+    # whatever that limit is, at the cost of one extra round trip per page.
+    pod_items: list[Any] = []
+    continue_token: str | None = None
     try:
-        pods = cluster.v1core.list_pod_for_all_namespaces()
+        while True:
+            page = cluster.v1core.list_pod_for_all_namespaces(
+                limit=_PAGE_SIZE, _continue=continue_token
+            )
+            pod_items.extend(page.items or [])
+            continue_token = page.metadata._continue if page.metadata else None
+            if not continue_token:
+                break
     except ApiException as error:
         if error.status == _HTTP_FORBIDDEN:
             print(
@@ -400,7 +421,7 @@ def collect_node_usage(cluster: Any, nodes: list[NodeInfo]) -> None:
         raise EnvironmentError(f"could not list pods for resource-usage accounting: {error}") from error
     except Exception as error:
         raise EnvironmentError(f"could not list pods for resource-usage accounting: {error}") from error
-    requests_by_node = _accumulate_pod_requests(pods.items or [])
+    requests_by_node = _accumulate_pod_requests(pod_items)
     for node in nodes:
         node.free = _compute_free_resources(node.allocatable, requests_by_node.get(node.name, {}))
 

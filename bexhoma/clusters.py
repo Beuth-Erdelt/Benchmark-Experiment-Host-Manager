@@ -42,6 +42,18 @@ import platform
 #: instead of failing outright. See https://github.com/kubernetes/kubectl/issues/1425.
 KUBECTL_CP_INTERNAL_RETRIES = 20
 
+#: Hard ceiling on one kubectl() subprocess call, in seconds. Unlike the
+#: Kubernetes Python client (see CLUSTER_API_TIMEOUT_SECONDS below), a shelled
+#: -out ``kubectl`` call had no timeout at all: a connection the API server
+#: (or an intermediate proxy) accepts but then silently stops answering on --
+#: observed directly on this cluster via a kubectl logs call wedged in
+#: subprocess.communicate() for over an hour -- blocked the whole run forever,
+#: never reaching the retry/outage-budget logic below because that logic only
+#: runs once the subprocess call returns. Generous rather than tight, since
+#: this same method also runs ``kubectl cp`` of potentially large generated
+#: benchmark data; a legitimate slow transfer must not be mistaken for a hang.
+CLUSTER_KUBECTL_TIMEOUT_SECONDS = 600
+
 #: How long a single cluster call keeps retrying while the cluster cannot be
 #: reached. The API server is only reachable over a VPN that can drop for a
 #: minute or more; pods inside the cluster keep running meanwhile, so the host
@@ -87,6 +99,35 @@ CLUSTER_UNREACHABLE_MESSAGES = (
 CLUSTER_NOT_SENT_MESSAGES = (
     'failed to download openapi',
 )
+
+#: Client-side advisory lines kubectl prints to stderr on this cluster on
+#: every single call (its auto-generated ServiceAccount tokens predate the
+#: TokenRequest API). kubectl() merges stderr into stdout, and a naive
+#: caller that treats the result as pure data -- e.g. get_pod_containers()
+#: splitting on whitespace -- picks up stray words from the warning text
+#: itself as if they were real output; "Use tokens from the TokenRequest
+#: API ... secret-based tokens." contributes the bare word "tokens", which
+#: showed up as a fabricated, nonexistent container name. Stripped here so
+#: every caller of kubectl() gets clean data, not just the ones that
+#: happen to post-filter it themselves (see clean_restart_counts() in
+#: sut_restarts.py for the same class of problem solved locally instead).
+CLUSTER_CLIENT_WARNING_PREFIXES = (
+    'Warning: Use tokens from the TokenRequest API',
+)
+
+
+def _strip_client_warnings(text: str) -> str:
+    """
+    Remove known benign client-side kubectl warning lines from combined output.
+
+    :param text: Decoded, combined stdout+stderr of a kubectl invocation.
+    :return: The same text with any line starting with a known warning
+        prefix removed.
+    :rtype: str
+    """
+    lines = text.splitlines(keepends=True)
+    kept = [line for line in lines if not line.lstrip().startswith(CLUSTER_CLIENT_WARNING_PREFIXES)]
+    return ''.join(kept)
 
 #: Fragments of a kubectl ``error:`` line meaning the connection broke while
 #: the command may already have been running, so only commands that are safe
@@ -1374,7 +1415,14 @@ class Kubernetes():
         def run_with_fallback(fullcommand, retried=False):
             encodings = ["utf-8", "latin1", "cp1252"]
             try:
-                raw = subprocess.check_output(fullcommand, shell=True, stderr=subprocess.STDOUT)
+                raw = subprocess.check_output(
+                    fullcommand, shell=True, stderr=subprocess.STDOUT,
+                    timeout=CLUSTER_KUBECTL_TIMEOUT_SECONDS)
+            except subprocess.TimeoutExpired:
+                print(f"kubectl command timed out after {CLUSTER_KUBECTL_TIMEOUT_SECONDS}s: {fullcommand}")
+                if wait_for_cluster(deadline):
+                    return run_with_fallback(fullcommand, retried=True)
+                return None
             except subprocess.CalledProcessError as e:
                 print("Command failed!")
                 print(f"Return code: {e.returncode}")
@@ -1408,7 +1456,7 @@ class Kubernetes():
                 return None
             for enc in encodings:
                 try:
-                    return raw.decode(enc)
+                    return _strip_client_warnings(raw.decode(enc))
                 except UnicodeDecodeError:
                     continue
             print("Failed to decode output with any known encoding")

@@ -35,7 +35,7 @@ flowchart TB
     subgraph L[Optional local test lifecycle · agent/lifecycle.py]
         direction TB
         L0[Start or resume one investigation]:::local
-        LU[Ensure vLLM is UP<br/>retry until H100 or H200 is available]:::local
+        LU[Ensure vLLM is UP<br/>retry until a listed GPU node is free]:::local
         LD[Ensure vLLM is DOWN<br/>wait until pod is deleted]:::local
         LW[Poll exact experiment code<br/>report or failed process]:::local
         LF[Final cleanup: vLLM DOWN<br/>also on error or Ctrl-C]:::local
@@ -301,10 +301,14 @@ vLLM up → design → vLLM down → wait for report
 
 The vLLM steps happen only for a server this machine owns. `AGENT_MODEL_SERVER`
 in `.env` says whether it does: the default `bundled` gives the chain above,
-while `external` names an endpoint that is already answering — a hosted API, or
-an Ollama on the workstation — and leaves the same chain with the four switch
-steps removed. Nothing else about a run changes with it, and the agent CLI
-starts no server in either case.
+`external` names an endpoint that is already answering — a hosted API, or an
+Ollama on the workstation — and leaves the same chain with the four switch steps
+removed, and `shared` serves several lifecycles running side by side: each
+starts the server if it is not running and reuses it if it is, but none stops
+it, so the pod's idle watchdog releases the GPU once no lifecycle has sent a
+request for a while. Nothing else about a run changes with it, and the agent CLI
+starts no server in any case. The server runs as a Kubernetes Job, so a finished
+one removes itself.
 
 The low-level switch refreshes the local OIDC login noninteractively, clears a
 pod that has already finished or carries an older immutable manifest generation,
@@ -331,9 +335,9 @@ path, since it hands the GPU back the moment a benchmark starts rather than
 twenty minutes later.
 
 Autonomous switching does not mean guaranteed immediate capacity. The vLLM pod
-accepts either compatible Hopper node (`gpu in [h100, h200]`), whichever becomes
-available first. If both are allocated, it remains Pending and interpretation
-waits until one returns. Kubernetes priority or a reserved GPU would be required
+accepts any node its manifest's `gpu` selector lists (`gpu in [h200, b200]` for
+most manifests), whichever becomes available first. If all are allocated, it
+remains Pending and interpretation waits until one returns. Kubernetes priority or a reserved GPU would be required
 for a bounded restart time.
 
 ## Kubernetes lifecycle controller
@@ -363,7 +367,7 @@ block is where an in-cluster run chooses its model server (`AGENT_MODEL_SERVER`)
 and its handbook (`AGENT_METHOD`, empty for the without-handbook arm of the
 ablation), exactly as `.env` does locally.
 
-Agent submission adds BeXhoma's existing one-SUT-per-experiment limit. Database
+The catalog's `max_sut_experiment` field defaults to one. Database
 configurations therefore execute sequentially, while the query streams inside
 the active configuration still follow the experiment's concurrency rounds.
 This is both an isolation rule for credible measurements and an agent-side
@@ -464,7 +468,7 @@ process boundaries.
 - Temperature zero does not guarantee identical model decisions; exact model
   weights, tokenizer, and serving configuration are not archived by the
   trajectory.
-- The optional local lifecycle can wait for shared H100/H200 capacity but cannot
+- The optional local lifecycle can wait for shared GPU capacity but cannot
   create or reserve it.
 - The pod's idle watchdog bounds how long a forgotten server holds a GPU, but it
   deliberately fails open: if its metric names stop matching a future vLLM, the
@@ -473,9 +477,13 @@ process boundaries.
 ## Documentation ownership
 
 - This file is the single full pipeline and decision description.
-- [README.md](README.md) is the single quick-start guide.
+- [README.md](README.md) is the single quick-start guide;
+  `docs/AgentHarness.md` carries the same operating instructions in the
+  published documentation and must be updated together with it.
+- [WEAKNESSES.md](WEAKNESSES.md) is the open repair backlog.
 - `contracts/contract_catalog.yml` and `contracts/contract_result.yml` are the
   normative machine-readable interfaces.
 - `docs/Design-Catalog-Contract.md` and `docs/AgentResultContract.md` explain
   the broader reusable Bexhoma contracts.
-- `docs/FEATURES.md` is historical traceability, not another user guide.
+- `design-decisions.md` and `prototype-architecture.md` are the original v0.1
+  design record, kept for history.

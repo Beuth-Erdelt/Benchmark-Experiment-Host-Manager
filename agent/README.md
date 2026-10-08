@@ -4,6 +4,10 @@ The prototype turns a research question into a catalog-valid benchmark,
 submits it through Bexhoma, interprets the finished report, and may submit a
 budgeted follow-up. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full annotated
 pipeline, contracts, module map, replay rules, and limitations.
+[WEAKNESSES.md](WEAKNESSES.md) is the open repair backlog;
+[design-decisions.md](design-decisions.md) and
+[prototype-architecture.md](prototype-architecture.md) are the original v0.1
+design record and are kept for history, not as current reference.
 
 ## The short path
 
@@ -104,6 +108,13 @@ empty value designs without one, which is the other arm of the with/without
 ablation. `--method` overrides the file for a single run, on the agent CLI and on
 the lifecycle wrapper alike; any path that is not a file means no handbook.
 
+The handbook's appendix (the local agent interface and the full source list)
+sits beside it in `handbook_appendix.md`; the agent may read it but is not
+required to. Each conversation may receive a limited amount of file text, sized
+from the served context window minus `--max-tokens` (60% of the remainder, at
+about 3.5 characters per token; 110,000 characters when the server publishes no
+window). Re-reading unchanged text already returned costs nothing.
+
 ## Choosing the model server
 
 Three settings decide which server answers the agent: `AGENT_MODEL` is the name
@@ -122,7 +133,8 @@ different server without editing anything.
 
 `.env.example` carries a ready block for each backend we use: the bundled vLLM
 server through a local port forward, the same server reached by its in-cluster
-service name, a local Ollama, OpenAI, and Mistral. Ollama and Mistral serve the
+service name, a local Ollama, OpenAI, Mistral, and OpenRouter (see
+[Using OpenRouter](#using-openrouter)). Ollama and Mistral serve the
 same protocol under a `/v1` path, so nothing but these three values changes.
 
 Two differences are worth knowing when you leave the self-hosted server. The
@@ -236,10 +248,24 @@ kubectl -n <namespace> create secret generic agent-openrouter \
 
 ## Self-hosted model server
 
-`agent/k8s/vllm-qwen38-27b.yml` and `agent/model_server.sh` run a vLLM server on
+`agent/k8s/vllm-qwen38-27b.yml` and `agent/model_server.sh` (`agent/model_server.ps1`
+is its PowerShell port for Windows workstations) run a vLLM server on
 the cluster. They are a convenience, not part of the pipeline: any
 OpenAI-compatible endpoint does. If you use them, four values are specific to
 the cluster they were written for.
+
+| Manifest | Model | GPU node | Temperature | Notes |
+|---|---|---|---|---|
+| `vllm-qwen38-27b.yml` | Qwen3.8 27B | H200 or B200 | default | the default |
+| `vllm-glm45-air-int4.yml` | GLM-4.5-Air INT4 | H200 or B200 (not H100) | default | quantized here from the full model |
+| `vllm-llama33-70b-int4.yml` | Llama-3.3-70B INT4 | H100, H200 or B200 | default | one tool call kept per reply |
+| `vllm-muse-glimmer-30b.yml` | Muse Glimmer 30B | H200 or B200 | default | first start downloads ~60 GB |
+| `vllm-gemma4-31b.yml` | Gemma 4 31B | prefers H200 | default | not yet served self-hosted |
+| `vllm-nex-n25-mini.yml` | Nex-N2.5-mini | prefers H200, or B200 | 0.7 | not on OpenRouter |
+| `vllm-ornith-15-35b-a3b.yml` | Ornith-1.5-35B-A3B | prefers H200, or B200 | 0.6 | not on OpenRouter |
+
+The sections below give each manifest's reasons and caveats. Select one with
+`MODEL_SERVER_MANIFEST=<path>` or `agent/lifecycle.py --model-server-manifest <path>`.
 
 `agent/k8s/vllm-glm45-air-int4.yml` is an alternative manifest that deploys
 GLM-4.5-Air at INT4 instead of Qwen3.8, using
@@ -249,9 +275,8 @@ AWQ-4bit repos) return 401 Unauthorized both from outside the cluster and from
 this pod's own download step -- gated or private, and unreachable without a
 Hugging Face account this deployment does not have -- so this manifest quantizes
 the full, un-pruned GLM-4.5-Air instead (106B total / 12B active parameters,
-~67GB of weights), and is pinned to the cluster's H200 node rather than
-accepting either Hopper node, since 67GB leaves too little of an 80GB H100 for
-useful KV cache. Select it with
+~67GB of weights), and accepts only the H200 and B200 nodes, not the H100,
+since 67GB leaves too little of an 80GB H100 for useful KV cache. Select it with
 `MODEL_SERVER_MANIFEST=agent/k8s/vllm-glm45-air-int4.yml`, or per run with
 `agent/lifecycle.py --model-server-manifest agent/k8s/vllm-glm45-air-int4.yml`;
 either overrides the script's own default. See the comments at the top of that
@@ -262,8 +287,8 @@ Llama-3.3-70B at INT4 (`shuyuej/Llama-3.3-70B-Instruct-GPTQ`) instead of
 Qwen3.8. Meta's own `meta-llama/Llama-3.3-70B-Instruct` repo is gated behind a
 license acceptance this deployment cannot complete without a Hugging Face
 account, the same friction the GLM manifest above hit; this community
-requantization is confirmed public. At 42GB of weights it fits either Hopper
-node with headroom to spare, unlike the GLM manifest. One capability gap
+requantization is confirmed public. At 42GB of weights it fits any of the
+H100, H200 and B200 nodes with headroom to spare, unlike the GLM manifest. One capability gap
 drove a harness change: vLLM's `llama3_json` chat template for the Llama 3
 family can only represent a message with exactly one tool call once that turn
 is replayed as history, and the model does sometimes return several in one
@@ -446,8 +471,9 @@ same setting bexhoma itself reads, so the two cannot disagree. A relative value
 there resolves against the repository. Override it for one run with `--results`,
 or for a shell with `AGENT_RESULTS`.
 
-The model pod accepts either the shared H100 or H200, whichever schedules first.
-Startup retries indefinitely when neither has a free GPU. To fail
+The model pod accepts any node its manifest's `gpu` selector lists (H200 or B200
+for most manifests), whichever schedules first. Startup retries indefinitely
+when none has a free GPU. To fail
 after a bounded number of attempts, add for example
 `--server-start-attempts 3`. A zero benchmark timeout waits indefinitely; use
 `--benchmark-timeout-seconds <seconds>` when unattended work needs a deadline.
@@ -589,11 +615,13 @@ to the selected namespace. The language model still receives only the catalog,
 environment, result contract, and phase tools; it never receives Kubernetes or
 terminal access.
 
-Agent-submitted experiments also force BeXhoma's existing maximum active SUT
-count to one. System configurations therefore load and benchmark sequentially.
-This prevents comparison systems from sharing benchmark resources and prevents
-two cold-cache generators from writing the same raw TPC-H directory. Query
-streams within one active system remain concurrent according to `rounds`.
+The catalog's `max_sut_experiment` field defaults to one, so an agent-submitted
+experiment loads and benchmarks its system configurations sequentially unless the
+design says otherwise. This prevents comparison systems from sharing benchmark
+resources and prevents two cold-cache generators from writing the same raw TPC-H
+directory. Query streams within one active system remain concurrent according
+to `rounds`. The cluster-wide `max_sut` has no default, so an experiment waits
+for other experiments' SUTs only when its design sets it.
 
 ## Portable phase-by-phase operation
 
@@ -665,9 +693,22 @@ at all, call the validator directly:
 It prints the same structured verdict the design agent's `validate` tool
 receives — the `valid` flag, a list of `{stage, message}` errors, whether the
 environment was checked, and the run and timeout estimate — and exits 0 when the
-specification is valid and 1 otherwise. It touches no cluster. `--environment`
+specification is valid and 1 otherwise. It touches no cluster, no model server,
+and no GPU: `agent/harness/validation.py` only reads the experiment, catalog,
+and environment files and never imports the model client, so no `agent` extra,
+served model, or network access is needed to run it. `--environment`
 is required; pass an empty string to skip the placement and resource-ceiling
 checks, which the verdict then records in its `environment_checked` field.
+
+This is a stricter superset of the repository's plain
+[`validate_experiment.py`](../validate_experiment.py): both resolve the
+experiment against the catalog and check placement/resources against
+`environment.yml`, but this one also enforces the experiment design
+handbook's decidable principles (falsifiable claim, fixed envelope, factor
+attribution, repetitions) and reports a run-count and declared-timeout-budget
+estimate. Use the plain validator for a quick catalog/placement check with no
+extra install; use this one when the result needs to pass the same gate the
+design agent's own `validate` tool enforces.
 
 Validation reports both the expanded benchmark-phase count and a conservative
 declared-timeout budget. The latter assumes every active query reaches its
@@ -749,10 +790,49 @@ those three values with valid target nodes or omit the `placement` block before
 revalidation. Do not ship this working tree's local hard-coded Kubernetes
 `nodeSelector` overrides; portable templates must remain unpinned.
 
+## Reference: flags and environment
+
+A flag overrides the environment, and the environment overrides `.env`. Flags
+with no environment form are marked with a dash.
+
+| Flag | Environment | Meaning |
+|---|---|---|
+| `--interpret-model` | `AGENT_INTERPRET_MODEL` | model for the interpretation phase; defaults to `--model`, so the verdict can run on a stronger model than the design |
+| `--attempts` | `AGENT_ATTEMPTS` | validation calls allowed per authoring phase (default 3: one first attempt plus two repairs) |
+| `--followups` | `AGENT_FOLLOWUPS` | follow-up budget; the Job defaults to 1 |
+| `--poll-seconds` | — | how often the lifecycle polls a running benchmark (default 30) |
+| `--server-retry-seconds` | — | wait between model-server start retries (default 60) |
+| `--server-start-attempts` | — | model-server start attempts; 0 retries until capacity returns |
+| `--run-record` | — | file a phase writes its investigation directory into; set by the lifecycle wrapper so concurrent agents find their own directory |
+
+`agent/model_server.sh` reads these variables, all optional except the
+namespace:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `MODEL_SERVER_MANIFEST` | `k8s/vllm-qwen38-27b.yml` | manifest to deploy |
+| `MODEL_SERVER_JOB`, `MODEL_SERVER_SERVICE` | `bexhoma-agent-model` | Job and Service names |
+| `MODEL_SERVER_PORT` | `8001` | local port for the port forward |
+| `MODEL_SERVER_BASE_URL` | `http://localhost:$PORT/v1` | endpoint the agent is pointed at |
+| `MODEL_SERVER_IN_CLUSTER` | `0` | `1` when running inside the cluster |
+| `MODEL_SERVER_SHARED` | `0` | `1` never stops the server; set by `AGENT_MODEL_SERVER=shared` |
+| `MODEL_SERVER_STOP_TIMEOUT_SECONDS` | `300` | wait for the Job to disappear on stop |
+
+`AGENT_CLUSTER_LOGIN` names a command the harness runs to refresh the cluster
+credential just before an experiment is submitted, because a design phase can run
+for hours and outlast a login that was valid at launch. A command that hangs is
+stopped after 120 seconds.
+
+The in-cluster controller Job also reads `AGENT_ROOT` (default `/opt/bexhoma`),
+`AGENT_STATE_ROOT` (`/state`), `AGENT_INPUT_DIRECTORY` (`/input`) and
+`AGENT_TASK_FILE` (`<input>/task.txt`). Change them only when mounting the
+volumes elsewhere.
+
 ## Verification
 
 ```sh
 .venv/bin/python -m pytest \
   tests/test_agent_harness.py \
-  tests/test_agent_lifecycle.py -q
+  tests/test_agent_lifecycle.py \
+  tests/test_agent_query_evidence.py -q
 ```

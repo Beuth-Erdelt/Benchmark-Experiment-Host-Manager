@@ -403,7 +403,7 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
-              # H200 only, unlike the Qwen and REAP-82B-INT4 manifests: see the
+              # H200-class only (H200 or B200, never H100): see the
               # sizing note at the top of this file for why an H100's 80GB does
               # not leave enough room for this model's ~67GB of weights plus any
               # useful KV cache.

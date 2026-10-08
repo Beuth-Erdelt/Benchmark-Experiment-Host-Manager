@@ -133,16 +133,9 @@ different server without editing anything.
 
 `.env.example` carries a ready block for each backend in use: the bundled vLLM
 server reached through a local port forward, the same server reached by its
-in-cluster service name, a local Ollama, OpenAI, Mistral, and the university's
-BHT LLM API. Ollama, Mistral and the BHT API serve the same protocol under a
-`/v1` path, so nothing but these three values changes. The BHT API needs no
-cluster at all. It serves three tiers under the aliases `bht/small`,
-`bht/medium` and `bht/large`, and the alias is what goes into `AGENT_MODEL`. Its
-block notes each tier's context window, because the medium tier's leaves little
-room for a reply late in a run. Each tier also allows a key only 100,000 tokens
-a day, prompt and reply counted together, while a single design phase has used
-between 280,000 and 640,000. Without a raised quota the BHT API is therefore
-suited to short tests rather than a full investigation.
+in-cluster service name, a local Ollama, OpenAI, Mistral, and OpenRouter.
+Ollama and Mistral serve the same protocol under a `/v1` path, so nothing but
+these three values changes.
 
 Two behaviours differ once you leave the self-hosted server. First, the agent
 resolves the configured model name against the endpoint's model list: an
@@ -152,13 +145,55 @@ match. Second, a metered API refuses a turn once a per-minute quota is reached
 where a self-hosted server would simply queue it, so a refused turn is retried
 with a widening wait before the phase gives up.
 
-One more setting, `AGENT_MODEL_SERVER`, decides who owns the endpoint. The
-default `bundled` means the lifecycle wrapper in step 5 starts and stops a
-self-hosted vLLM server around every phase. `external` means the endpoint is
-already there — a hosted API, or an Ollama on your machine — so the wrapper only
-chains the phases and never touches a server. Each block in `.env.example`
-already carries the right value. The agent CLI itself never starts a server in
-either case.
+`AGENT_ENABLE_THINKING` (or `--enable-thinking`), off by default, pins the
+served chat template's thinking mode on via `chat_template_kwargs`, vLLM's
+switch for a hybrid reasoning model such as GLM-4.5-Air or Qwen3. It is off
+unless set because a stricter endpoint could reject the unrecognised field.
+`AGENT_EXTRA_BODY` (or `--extra-body`) is a JSON object added to every request
+body, for fields an endpoint defines beyond the OpenAI API; it is recorded in
+each phase's `meta` event, so a trajectory shows which routing produced it. The
+lifecycle wrapper has no such flag, so there the setting comes from `.env` or an
+exported variable.
+
+One more setting, `AGENT_MODEL_SERVER`, decides who owns the endpoint:
+
+- `bundled` (the default): the lifecycle wrapper in step 5 starts and stops a
+  self-hosted vLLM server around every phase.
+- `external`: the endpoint is already there (a hosted API, or an Ollama on your
+  machine), so the wrapper only chains the phases and never touches a server.
+- `shared`: for several lifecycles running side by side (see
+  [Running two investigations at once](#running-two-investigations-at-once)).
+  Each starts the server if it is not running and reuses it if it is, but none
+  stops it. Unlike `bundled`, which releases the GPU the moment its one
+  benchmark starts, a lone `shared` lifecycle holds the GPU for its whole
+  benchmark wait too — nothing tells it another lifecycle might still need the
+  server, so only the pod's own idle watchdog (twenty minutes with no request)
+  gives it back. `shared` is for running several investigations at once, not a
+  drop-in replacement for `bundled` when running just one.
+
+Each block in `.env.example` already carries the right value. The agent CLI
+itself never starts a server in any case.
+
+### Using OpenRouter
+
+OpenRouter serves many models through one OpenAI-compatible endpoint, so the
+agent needs no GPU and no model server; the benchmarks still run on the
+cluster. Create a key at <https://openrouter.ai/keys>, copy `.env.example` to
+`.env` and uncomment its OpenRouter block:
+
+```sh
+AGENT_MODEL=google/gemma-4-31b-it
+AGENT_BASE_URL=https://openrouter.ai/api/v1
+AGENT_MODEL_SERVER=external
+AGENT_API_KEY=sk-or-v1-replace-with-your-key
+AGENT_EXTRA_BODY={"provider": {"order": ["crusoe"], "allow_fallbacks": false, "quantizations": ["bf16"]}, "reasoning": {"enabled": true}}
+```
+
+The last line pins one provider at full 16-bit precision, forbids falling back
+to another, and turns thinking on. Without it OpenRouter picks any provider, and
+some serve reduced-precision weights or lack the tool calls the agent needs.
+The full list of tested models, providers and `--max-tokens` values, and the
+in-cluster secret setup, are in [`agent/README.md`](../agent/README.md#using-openrouter).
 
 ## 5 — The one-command lifecycle
 
@@ -332,9 +367,22 @@ It prints the same structured verdict the design agent's `validate` tool
 receives — the `valid` flag, a list of `{stage, message}` errors, whether the
 environment was checked, and the expanded benchmark-phase count with a
 conservative declared-timeout budget — and exits 0 when the specification is
-valid, 1 otherwise. It touches no cluster. `--environment` is required on
+valid, 1 otherwise. It touches no cluster, no model server, and no GPU: this
+module only reads the experiment, catalog, and environment files and never
+imports the model client, so it needs no served model, network access, or
+even the `agent` install extra. `--environment` is required on
 purpose; pass an empty string to skip the placement and resource-ceiling checks,
 and the verdict then records that it did so in its `environment_checked` field.
+
+This is a stricter superset of the repository's plain
+[`validate_experiment.py`](../validate_experiment.py), covered in
+[`AgentWorkflow.md`](AgentWorkflow.md)'s step 4: both
+resolve the experiment against the catalog and check placement/resources
+against `environment.yml`, but this one also enforces the experiment design
+handbook's decidable principles and reports the run-count/timeout estimate
+below. Reach for the plain validator for a quick catalog/placement check with
+no extra install; reach for this one when the result must pass the same gate
+the design agent's own `validate` tool enforces.
 
 [`dev/catalog/experiment.yml`](../dev/catalog/experiment.yml) is a maintained,
 runnable example: a two-system PostgreSQL-versus-PgDuckDB sweep across
@@ -423,21 +471,59 @@ records in its trajectory that it did so, and you should pin the two
 investigations to different nodes with a `placement:` block first, or the
 numbers will describe the interference rather than the systems.
 
+Both runs can share one inbox: a draft name another run already holds is saved
+under the next free counter (`name_01.yml`, `name_02.yml`, ...) instead of
+overwriting it.
+
+To run several complete investigations at once, start one lifecycle per shell
+with a shared model server and parallel runs allowed:
+
+```sh
+AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 1>"
+AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 2>"
+```
+
+`AGENT_ALLOW_PARALLEL_RUNS=1` in `.env` does the same as the flag, and all
+shells must use the same manifest. The first lifecycle to need the model starts
+it, the others reuse it, and nobody stops it: the pod's idle watchdog releases
+the GPU once no lifecycle has sent a request for a while, and the next one that
+needs the model starts it again.
+
 ## Self-hosted model server
 
 [`agent/k8s/vllm-qwen38-27b.yml`](../agent/k8s/vllm-qwen38-27b.yml) and
-[`agent/model_server.sh`](../agent/model_server.sh) run a vLLM server on the cluster.
+[`agent/model_server.sh`](../agent/model_server.sh) (with [`agent/model_server.ps1`](../agent/model_server.ps1)
+as its PowerShell port for Windows) run a vLLM server on the cluster
+as a Job, so a finished server removes itself.
 They are a convenience, not part of the pipeline — any OpenAI-compatible
 endpoint works. If you use them, four values are specific to the cluster they
 were written for and must be set for yours: the kubeconfig context and namespace
-(exported as `MODEL_SERVER_CONTEXT` and `MODEL_SERVER_NAMESPACE`; the namespace
-has no default because the switch also writes it into the kube context), the
-login refresh script (`KUBE_LOGIN_SCRIPT=/bin/true` when an ordinary kubeconfig
-needs no refresh), and the storage class and GPU node labels, which are edited
-directly in the manifest. Getting the GPU labels wrong leaves the pod
-unschedulable and startup waits for capacity by design, so pass
+(exported as `MODEL_SERVER_CONTEXT` and `MODEL_SERVER_NAMESPACE`; neither has a
+default, since a stranger's cluster name or namespace would otherwise silently
+redirect every kubectl call the switch makes — and `MODEL_SERVER_NAMESPACE` is
+also the one the switch writes into the kube context itself), the optional
+login refresh script (`KUBE_LOGIN_SCRIPT`, empty by default; an ordinary
+kubeconfig that never expires needs none), and the storage class and GPU node
+labels, which are edited directly in the manifest. Getting the GPU labels wrong
+leaves the pod unschedulable and startup waits for capacity by design, so pass
 `--server-start-attempts 3` the first time and check `kubectl describe pod` if
 it stalls.
+
+[`agent/k8s/`](../agent/k8s/) holds manifests for other models. Select one with
+`MODEL_SERVER_MANIFEST=<path>` or `agent/lifecycle.py --model-server-manifest <path>`;
+each manifest's header comments give its sizing reasons. Nex and Ornith loop at
+the harness default temperature of 0, so run them at the temperature listed.
+Per-model details are in [`agent/README.md`](../agent/README.md#self-hosted-model-server).
+
+| Manifest | Model | GPU node | Temperature | Notes |
+|---|---|---|---|---|
+| `vllm-qwen38-27b.yml` | Qwen3.8 27B | H200 or B200 | default | the default |
+| `vllm-glm45-air-int4.yml` | GLM-4.5-Air INT4 | H200 or B200 (not H100) | default | quantized here from the full model |
+| `vllm-llama33-70b-int4.yml` | Llama-3.3-70B INT4 | H100, H200 or B200 | default | one tool call kept per reply |
+| `vllm-muse-glimmer-30b.yml` | Muse Glimmer 30B | H200 or B200 | default | first start downloads ~60 GB |
+| `vllm-gemma4-31b.yml` | Gemma 4 31B | prefers H200 | default | not yet served self-hosted |
+| `vllm-nex-n25-mini.yml` | Nex-N2.5-mini | prefers H200, or B200 | 0.7 | not on OpenRouter |
+| `vllm-ornith-15-35b-a3b.yml` | Ornith-1.5-35B-A3B | prefers H200, or B200 | 0.6 | not on OpenRouter |
 
 The pod carries its own idle watchdog: it releases the GPU once twenty minutes
 pass with no request, so a phase run by hand does not strand a GPU node. Set
@@ -514,12 +600,51 @@ templates that force this test cluster onto one node. They must not ship in a
 portable release — removing `placement` from the YAML is not enough while those
 template overrides remain.
 
+## Reference: flags and environment
+
+A flag overrides the environment, and the environment overrides `.env`. Flags
+with no environment form are marked with a dash.
+
+| Flag | Environment | Meaning |
+|---|---|---|
+| `--interpret-model` | `AGENT_INTERPRET_MODEL` | model for the interpretation phase; defaults to `--model`, so the verdict can run on a stronger model than the design |
+| `--attempts` | `AGENT_ATTEMPTS` | validation calls allowed per authoring phase (default 3: one first attempt plus two repairs) |
+| `--followups` | `AGENT_FOLLOWUPS` | follow-up budget; the Job defaults to 1 |
+| `--poll-seconds` | — | how often the lifecycle polls a running benchmark (default 30) |
+| `--server-retry-seconds` | — | wait between model-server start retries (default 60) |
+| `--server-start-attempts` | — | model-server start attempts; 0 retries until capacity returns |
+| `--run-record` | — | file a phase writes its investigation directory into; set by the lifecycle wrapper so concurrent agents find their own directory |
+
+`agent/model_server.sh` reads these variables, all optional except the
+namespace:
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `MODEL_SERVER_MANIFEST` | `k8s/vllm-qwen38-27b.yml` | manifest to deploy |
+| `MODEL_SERVER_JOB`, `MODEL_SERVER_SERVICE` | `bexhoma-agent-model` | Job and Service names |
+| `MODEL_SERVER_PORT` | `8001` | local port for the port forward |
+| `MODEL_SERVER_BASE_URL` | `http://localhost:$PORT/v1` | endpoint the agent is pointed at |
+| `MODEL_SERVER_IN_CLUSTER` | `0` | `1` when running inside the cluster |
+| `MODEL_SERVER_SHARED` | `0` | `1` never stops the server; set by `AGENT_MODEL_SERVER=shared` |
+| `MODEL_SERVER_STOP_TIMEOUT_SECONDS` | `300` | wait for the Job to disappear on stop |
+
+`AGENT_CLUSTER_LOGIN` names a command the harness runs to refresh the cluster
+credential just before an experiment is submitted, because a design phase can run
+for hours and outlast a login that was valid at launch. A command that hangs is
+stopped after 120 seconds.
+
+The in-cluster controller Job also reads `AGENT_ROOT` (default `/opt/bexhoma`),
+`AGENT_STATE_ROOT` (`/state`), `AGENT_INPUT_DIRECTORY` (`/input`) and
+`AGENT_TASK_FILE` (`<input>/task.txt`). Change them only when mounting the
+volumes elsewhere.
+
 ## Verification
 
 ```sh
 .venv/bin/python -m pytest \
   tests/test_agent_harness.py \
-  tests/test_agent_lifecycle.py -q
+  tests/test_agent_lifecycle.py \
+  tests/test_agent_query_evidence.py -q
 ```
 
 Neither test needs a cluster or a model server.

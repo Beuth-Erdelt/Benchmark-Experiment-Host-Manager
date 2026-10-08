@@ -23,8 +23,8 @@ JOB="${MODEL_SERVER_JOB:-bexhoma-agent-model}"
 SVC="${MODEL_SERVER_SERVICE:-bexhoma-agent-model}"
 PORT="${MODEL_SERVER_PORT:-8001}"
 BASE_URL="${MODEL_SERVER_BASE_URL:-http://localhost:$PORT/v1}"
-LOGIN="${KUBE_LOGIN_SCRIPT:-$HOME/git/BIRD-Interact/scripts/kube-login.sh}"
-CONTEXT="${MODEL_SERVER_CONTEXT:-oidc_ds_cluster}"
+LOGIN="${KUBE_LOGIN_SCRIPT:-}"
+CONTEXT="${MODEL_SERVER_CONTEXT:-}"
 NAMESPACE="${MODEL_SERVER_NAMESPACE:-}"
 # Counted from when the pod is scheduled; the wait for a GPU before that is
 # unbounded by default, as startup waits for capacity by design.
@@ -62,19 +62,40 @@ or bexhoma will place the benchmark somewhere else than the model server.
 USAGE
         exit 2
     fi
+    # Required too, with no default for the same reason: a stranger's cluster
+    # name would silently point every kubectl call below at it.
+    if [ -z "$CONTEXT" ]; then
+        echo "error: MODEL_SERVER_CONTEXT is unset and has no default; export it," \
+             "or set it in .env, to the kubeconfig context this cluster is" \
+             "reached under." >&2
+        exit 2
+    fi
     if [ "${MODEL_SERVER_IN_CLUSTER:-0}" = "1" ]; then
         kubectl config set-context "$CONTEXT" --namespace="$NAMESPACE" >/dev/null
         return
     fi
-    if ! cluster_auth_ok; then
-        echo "cluster token expired; re-authenticating"
+    # KUBE_LOGIN_SCRIPT has no default either: unlike NAMESPACE and CONTEXT
+    # this one is optional -- an ordinary kubeconfig that never expires needs
+    # no refresh -- so an expired token is reported below rather than handed
+    # to a script that was never configured.
+    if ! cluster_auth_ok && [ -n "$LOGIN" ]; then
+        # can-i failing could mean an expired token, but also a wrong context
+        # name, an unreachable API server, or no VPN -- causes this check
+        # cannot tell apart, so the message does not claim which one it is.
+        echo "cluster auth check failed; attempting re-login"
         bash "$LOGIN" >/dev/null 2>&1 </dev/null || true
     fi
     # Always restore the configured namespace: a valid token does not imply
     # that the context still points at the namespace where this user can write.
     kubectl config set-context "$CONTEXT" --namespace="$NAMESPACE" >/dev/null
     if ! cluster_auth_ok; then
-        echo "cannot access namespace '$NAMESPACE' in context '$CONTEXT' after re-authenticating with $LOGIN" >&2
+        if [ -n "$LOGIN" ]; then
+            echo "cannot access namespace '$NAMESPACE' in context '$CONTEXT' after re-authenticating with $LOGIN" >&2
+        else
+            echo "cannot access namespace '$NAMESPACE' in context '$CONTEXT'; set" \
+                 "KUBE_LOGIN_SCRIPT to a script that refreshes credentials, or" \
+                 "re-authenticate manually" >&2
+        fi
         exit 1
     fi
 }
