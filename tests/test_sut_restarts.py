@@ -78,7 +78,7 @@ def _describe(pod: str = _POD, with_pvc: bool = False) -> str:
 
 
 def _write_result(result_dir: Path, restarts: str, describe_text: str | None) -> None:
-    (result_dir / "bexhoma-sut-postgresql-1-1-restarts.json").write_text(json.dumps({_POD: restarts}))
+    (result_dir / "bexhoma-sut-postgresql-1-1784910886-1-restarts.json").write_text(json.dumps({_POD: restarts}))
     if describe_text is not None:
         (result_dir / f"bexhoma-sut-postgresql-1-123-1-{_POD[-16:]}.describe.log").write_text(describe_text)
 

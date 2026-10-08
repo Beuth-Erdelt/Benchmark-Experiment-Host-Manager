@@ -12,8 +12,8 @@ Output contract
 1. **Entry point, stop-early rule.** Always start at ``index.md``. Its Tests
    table, Health Summary, and section links usually answer "did this pass"
    and "what ran" on their own — stop there if that is the question. Only
-   open a tier-2 file when an actual metric value is needed, and only follow
-   a tier-2 file's Provenance link when its evidence still does not resolve
+   open a tier-2 file when an actual metric value is needed, and only open a
+   raw file listed in ``files.md`` when that evidence still does not resolve
    the question.
 2. **Tiered file groups, with read-when conditions.**
 
@@ -22,12 +22,14 @@ Output contract
      ``monitoring.md``, ``connections.md`` (each only written when the
      underlying phase/data is actually active). Read when a metric value is
      needed, or a Tests-table failure needs tracing to its connection/phase.
-   - Tier 3 — Diagnosis: the literal, pre-existing result-folder files linked
-     from every tier-2 file's ``### Provenance`` footer (``connections.config``,
-     per-pod logs, rendered Kubernetes manifests, loading DDL/bash scripts and
-     their stdout/stderr, SUT container logs and ``kubectl describe pod``
-     output, Prometheus metric CSVs). Read only when tier 2's aggregated view
-     does not resolve the question.
+   - Tier 3 — Diagnosis: the literal, pre-existing result-folder files
+     (``connections.config``, per-pod logs, rendered Kubernetes manifests,
+     loading DDL/bash scripts and their stdout/stderr, SUT container logs and
+     ``kubectl describe pod`` output, Prometheus metric CSVs). ``files.md``
+     links each of them exactly once, grouped by kind (see
+     :data:`_FILE_KINDS`); every tier-2 file's ``### Provenance`` footer
+     names the groups behind that page instead of repeating the links. Read
+     only when tier 2's aggregated view does not resolve the question.
 3. **Naming legend**, framed as a decoding algorithm — see
    :data:`_NAMING_CONVENTIONS_MD`, embedded verbatim in ``index.md``.
 4. **Validity-first rule**: a failed Tests-table row scopes interpretation of
@@ -43,8 +45,8 @@ Consistency guarantee
 Every cross-reference is computed at generation time from the real
 filesystem/data, never hand-maintained as a separate list that could drift:
 ``index.md``'s ``sections`` frontmatter is built from the files this module
-actually wrote; every ``### Provenance`` link is ``glob()``-derived against
-the real result folder; every relative path is ``os.path.relpath()``-computed
+actually wrote; every ``files.md`` link is derived from a listing of the
+real result folder; every relative path is ``os.path.relpath()``-computed
 rather than a hand-typed ``../``; connection-name links in metric tables and
 ``connections.md``'s anchors both come from the same
 ``get_connections_of_experiment()`` call, so a link can never dangle.
@@ -59,6 +61,7 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
+import fnmatch
 import os
 import re
 from datetime import datetime, timezone
@@ -77,21 +80,92 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.5.0"
+SCHEMA_VERSION = "1.6.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
 #: contract and any pointer files), not rendered Kubernetes manifests -- see
 #: experiment.py::_copy_catalog_provenance and
-#: bexhoma/experiments/tpch_builder.py::_copy_provenance_files. Excluded from the
-#: workflow section's manifest glob (which would otherwise mislabel them as
-#: "rendered Kubernetes Job/Deployment/Service manifests") and instead given
-#: their own, accurately-described Provenance entry.
+#: bexhoma/experiments/tpch_builder.py::_copy_provenance_files. Their group in
+#: :data:`_FILE_KINDS` precedes the manifest group, so the manifests' broad
+#: ``*.yml`` pattern never mislabels them.
 _INPUT_PROVENANCE_FILENAMES = frozenset({
     "experiment.yml", "experiment.yaml",
     "contract_catalog.yml", "contract_result.yml",
     "catalog.yaml", "environment.yml",
 })
+
+#: Result-folder files ``files.md`` never links. ``agent_summary.yml`` is the
+#: agent harness's own interpretation of this result, written after a report
+#: was read; linking it from a regenerated report would hand that earlier
+#: verdict to the next interpretation as if it were evidence.
+_UNLINKED_FILENAMES = frozenset({"agent_summary.yml"})
+
+#: The groups of ``files.md``, as ``(anchor, heading, patterns, description)``.
+#: Each top-level result-folder file is listed once, under the first group
+#: with a matching pattern (case-sensitive, so the listing does not depend on
+#: the filesystem), which is why the specific groups precede the broad ones.
+_FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
+    ("inputs", "Experiment Inputs", tuple(sorted(_INPUT_PROVENANCE_FILENAMES)),
+     "The experiment.yml/.yaml this run was actually built from, plus provenance "
+     "copies of the contract(s)/catalog/environment file(s) that governed it — "
+     "not a Kubernetes manifest; see docs/AgentResultContract.md and "
+     "docs/Design-Catalog-Contract.md for what each one means."),
+    ("configs", "Connection and Workload Configs", ("*.config",),
+     "`connections.config` is the list of every connection dict (identity, "
+     "parameters, timings); each `<job>.config` is a durable single-connection "
+     "backup; `queries.config` is the workload definition, including the literal "
+     "SQL text of every query for DBMSBenchmarker-family benchmarks (TPC-H/TPC-DS)."),
+    ("job-describe", "Job Descriptions", ("*.describe.job.log",),
+     "`kubectl describe job` output for every loading/generator Job — unlike a "
+     "single pod's describe, this covers the Job's full pod-creation history, so "
+     "a failed pod replaced under `backoffLimit` still shows up here."),
+    ("sut-describe", "SUT Pod Descriptions", ("bexhoma-sut-*.describe.log",),
+     "`kubectl describe pod` output for every SUT pod, one capture per "
+     "experiment_run — event history (scheduling, image pulls, restarts, "
+     "OOMKills), each container's Last State (why its latest restart "
+     "happened), and the volumes it mounts (whether its data survived)."),
+    ("pod-describe", "Other Pod Descriptions", ("*.describe.log",),
+     "`kubectl describe pod` output for every loading and benchmarker pod — "
+     "event history (scheduling, image pulls, restarts, OOMKills) for that "
+     "specific pod object, not just static spec."),
+    ("plans", "Submitted Experiment Plans", ("bexhoma-experiment-dict-*.json",),
+     "The loader/benchmarker plan of each configuration — the exact round and "
+     "entry layout submitted, written once at experiment start."),
+    ("manifests", "Kubernetes Manifests", ("*.yml", "*.yaml"),
+     "Rendered Kubernetes Job/Deployment/Service manifests actually submitted — "
+     "check for the exact resource requests/limits, image tag, env vars, and "
+     "replica/parallelism counts."),
+    ("loading-scripts", "Loading Scripts", ("*-loading-*.sql.log", "*-loading-*.sh.log"),
+     "The exact rendered SQL/bash script that ran for each configuration's "
+     "loading phase — despite the `.log` suffix, this is the script source "
+     "itself, not output. Check here to see exactly what schema/DDL was applied."),
+    ("loading-output", "Loading Script Output", ("*-loading-*.stdout.log", "*-loading-*.stderr.log"),
+     "stdout and stderr of running each loading script — check stderr first if "
+     "a loading phase failed silently."),
+    ("loading-pods", "Loading Pod Logs", ("*-loading-*.sensor.log", "*-loading-*.datagenerator.log"),
+     "`.sensor.log`: the per-table client command each loading pod issued and "
+     "what it returned (a row count on success, a client error otherwise); "
+     "`.datagenerator.log`: stdout of that pod's data-generation init container."),
+    ("benchmarker", "Benchmarker Logs", ("bexhoma-benchmarker-*.log", "bexhoma-benchmarker.*.all.df.pickle"),
+     "Raw per-pod benchmarker/driver logs and the cached aggregated DataFrame "
+     "they were parsed into — read the logs for the literal output behind a "
+     "surprising number."),
+    ("sut-logs", "SUT Container Logs", ("bexhoma-sut-*.log",),
+     "stdout of each SUT container, one capture per experiment_run "
+     "(`.dbms.log` is the DBMS process itself) — read for the literal error "
+     "text behind a failed or slow query."),
+    ("sut-restarts", "SUT Restart Counts", ("bexhoma-sut-*-restarts.json",),
+     "Per-pod SUT container restart counts, one snapshot per experiment_run; "
+     "restartCount is cumulative across runs, so aggregate by max per pod."),
+    ("monitoring", "Monitoring Metrics", ("query_*_metric_*.csv",),
+     "Wide-format monitoring CSVs (one column per connection, one row per "
+     "Prometheus scrape), one per metric and component — find each "
+     "connection's own column by name."),
+    ("other", "Other Result Files", ("*",),
+     "Further raw outputs of the benchmark driver and evaluator that no tier-2 "
+     "page aggregates directly."),
+)
 
 _NAMING_CONVENTIONS_MD = """### Naming Conventions
 
@@ -120,19 +194,16 @@ unique and monotonically increasing across experiments, but is **not**
 evidence that two different codes ran under comparable conditions — see
 Interpretation Rules below.
 
-**Result-folder filenames** (manifests, logs, `.describe.log` — linked from
-every tier-2 file's Provenance footer) follow a related but distinct
+**Result-folder filenames** (manifests, logs, `.describe.log` — all linked
+from [files.md](files.md)) follow a related but distinct
 convention: `<app>-<component>-<configuration>-<code>[-<experiment_run>[-<client>[-<benchmark_run>]]]`,
 optionally followed by Kubernetes' own pod-hash/random suffix on files tied to
 a specific pod (e.g. `bexhoma-benchmarker-postgresql-1-1784910886-1-1-1-qp9nt.dbmsbenchmarker.log`).
-The long-lived SUT Deployment's own k8s object identity is the one
-exception worth knowing, not its filenames: the live object is restarted in
-place across every `-nc` repeat rather than recreated, so its
-`metadata.name` never carries `experiment_run`. Its archived manifest still
-does, though (`bexhoma-sut-postgresql-1-1784910886-1.yml`,
-`bexhoma-sut-postgresql-1-1784910886-2.yml`, ... — one file per run, even
-when identical), same as its `.describe.log` and container `.log` files
-(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`).
+SUT files follow it too, one per experiment_run
+(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`), although
+the SUT pod itself is restarted in place across `-nc` repeats rather than
+recreated. A `<configuration>-<experiment_run>-<client>-<benchmark_run>.config`
+file holds the connection dict of one job.
 """
 
 _VALIDITY_RULES_MD = """### Validity-First Rules
@@ -182,8 +253,8 @@ _INTERPRETATION_RULES_MD = """### Interpretation Rules
 _ENTRY_POINT_MD = (
     "Start here. If the Tests and Health Summary below already answer the "
     "question, no other file needs opening. Only open a tier-2 file when an "
-    "actual metric value is needed, and only follow a tier-2 file's "
-    "Provenance link when its evidence still does not resolve the question."
+    "actual metric value is needed, and only open a raw file listed in "
+    "files.md when that evidence still does not resolve the question."
 )
 
 _TIER_TABLE_MD = """### Report Structure
@@ -192,7 +263,7 @@ _TIER_TABLE_MD = """### Report Structure
 |---|---|---|
 | 1 — Answers | `index.md` (this file) | Always, first |
 | 2 — Evidence | linked below, one file per active phase/topic | An actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase |
-| 3 — Diagnosis | raw result-folder files linked from each tier-2 file's Provenance footer | Tier 2's aggregated tables do not resolve the question |
+| 3 — Diagnosis | raw result-folder files, each linked once from [files.md](files.md) and grouped by kind; each tier-2 file's Provenance footer names the groups behind it | Tier 2's aggregated tables do not resolve the question |
 """
 
 
@@ -221,45 +292,79 @@ def _relmd(target: Path, start: Path) -> str:
     return Path(os.path.relpath(target, start=start)).as_posix()
 
 
-def _glob_provenance(
-    result_dir: Path, report_dir: Path, patterns: list[str], description: str,
-    exclude: frozenset[str] = frozenset(),
-) -> list[str]:
+def _group_result_files(result_dir: Path) -> dict[str, list[Path]]:
     """
-    Build a described Markdown block for every real file matching any of
-    ``patterns`` — one italic line explaining why/what to look for, then one
-    bullet link per matched file.
-
-    An agent should never have to open a Provenance link just to find out
-    what kind of file it is; the description answers that up front.
+    Sort every top-level file of the result folder into its
+    :data:`_FILE_KINDS` group.
 
     :param result_dir: The experiment's result folder (one level above ``report/``).
+    :return: Map of group anchor to its files, sorted by name, holding only
+             the groups that have at least one file, in :data:`_FILE_KINDS`
+             order.
+    :rtype: dict[str, list[Path]]
+    """
+    groups: dict[str, list[Path]] = {}
+    files = sorted(
+        path for path in result_dir.iterdir()
+        if path.is_file() and path.name not in _UNLINKED_FILENAMES
+    )
+    for path in files:
+        for anchor, _heading, patterns, _description in _FILE_KINDS:
+            if any(fnmatch.fnmatchcase(path.name, pattern) for pattern in patterns):
+                groups.setdefault(anchor, []).append(path)
+                break
+    return {anchor: groups[anchor] for anchor, *_ in _FILE_KINDS if anchor in groups}
+
+
+def _build_files_md_lines(groups: dict[str, list[Path]], report_dir: Path) -> list[str]:
+    """
+    Build ``files.md``'s body: one section per file group, with a line saying
+    what that kind of file holds, then one link per file.
+
+    This is the only page that links the raw result-folder files, so each
+    file is linked exactly once. An agent should never have to open a file
+    just to find out what kind it is; the description answers that up front.
+
+    :param groups: Output of :func:`_group_result_files`.
     :param report_dir: The ``report/`` directory the links are written from.
-    :param patterns: ``Path.glob()`` patterns to match against ``result_dir``.
-    :param description: One-line explanation of what this file kind contains
-        and why it might be worth opening — rendered as an italic line above
-        the links.
-    :param exclude: Basenames to drop from the match set even though they hit
-        one of ``patterns`` — e.g. a broad ``*.yml``/``*.yaml`` manifest glob
-        also matching a non-manifest input file (:data:`_INPUT_PROVENANCE_FILENAMES`)
-        that gets its own, differently-described entry instead.
-    :return: ``[description_line, "", *bullet_lines, ""]``, or an empty list
-             when nothing matches — a link (and its description) is never
-             written for a file kind that does not exist. Description lines
-             are distinguished from bullet lines by not starting with ``"- ["``
-             (see :func:`_write_tier2_file`, which extracts only the bullet
-             lines into the frontmatter's ``provenance`` path list).
+    :return: Markdown lines for the whole file body (excluding frontmatter).
     :rtype: list[str]
     """
-    matches: set[Path] = set()
-    for pattern in patterns:
-        matches.update(result_dir.glob(pattern))
-    matches = {path for path in matches if path.name not in exclude}
-    if not matches:
+    lines = [
+        "Every raw file of this result folder, linked once and grouped by kind. "
+        "Each tier-2 page's Provenance footer names the groups behind it.",
+        "",
+    ]
+    for anchor, heading, patterns, description in _FILE_KINDS:
+        if anchor not in groups:
+            continue
+        lines.extend([f"<a id=\"{anchor}\"></a>", f"### {heading}", "", f"*{description}*", ""])
+        if anchor != "other":
+            lines.extend(["Pattern: " + ", ".join(f"`{pattern}`" for pattern in patterns), ""])
+        lines.extend(f"- [{path.name}]({_relmd(path, report_dir)})" for path in groups[anchor])
+        lines.append("")
+    return lines
+
+
+def _provenance_lines(groups: dict[str, list[Path]], anchors: tuple[str, ...]) -> list[str]:
+    """
+    Build a tier-2 page's ``### Provenance`` footer: one link per
+    ``files.md`` group behind that page, with its file count.
+
+    :param groups: Output of :func:`_group_result_files`.
+    :param anchors: The page's group anchors, in display order.
+    :return: Markdown lines for the footer, or an empty list when none of the
+             groups has a file.
+    :rtype: list[str]
+    """
+    headings = {anchor: heading for anchor, heading, *_ in _FILE_KINDS}
+    present = [anchor for anchor in anchors if anchor in groups]
+    if not present:
         return []
-    lines = [f"*{description}*", ""]
-    lines.extend(f"- [{path.name}]({_relmd(path, report_dir)})" for path in sorted(matches))
-    lines.append("")
+    lines = ["### Provenance", "", "Raw result-folder files behind this page, listed in files.md:", ""]
+    for anchor in present:
+        count = len(groups[anchor])
+        lines.append(f"- [{headings[anchor]}](files.md#{anchor}): {count} file{'s' if count != 1 else ''}")
     return lines
 
 
@@ -399,8 +504,7 @@ def _get_metric_definitions(connections_sorted: list[dict]) -> dict[str, dict]:
 
 def _build_monitoring_sections(
     experiment, evaluator, connections_sorted: list[dict], monitoring_applications: dict,
-    result_dir: Path, report_dir: Path,
-) -> tuple[list[Section], list[str]]:
+) -> list[Section]:
     """
     Build ``monitoring.md``'s content: the curated CPU/RAM tables (same data
     ``show_summary_monitoring()`` already prints), the curated Application
@@ -422,16 +526,12 @@ def _build_monitoring_sections(
     :param connections_sorted: Connection dicts as read by ``show_summary_header()``.
     :param monitoring_applications: Curated application-metric DataFrames,
         keyed by title, as returned by ``show_summary_header()``.
-    :param result_dir: The experiment's result folder.
-    :param report_dir: The ``report/`` directory.
-    :return: Tuple of the sections to render into ``monitoring.md``, and
-             extra Provenance bullet lines for the metric CSVs it references.
-    :rtype: tuple[list[Section], list[str]]
+    :return: The sections to render into ``monitoring.md``.
+    :rtype: list[Section]
     """
     if not (experiment.monitoring_active or experiment.cluster.monitor_cluster_active):
-        return [], []
+        return []
     sections: list[Section] = []
-    provenance: list[str] = []
     monitoring_components = experiment.workload.get('monitoring_components', {})
     for component, title in monitoring_components.items():
         df_monitoring, _insufficient_samples = experiment.show_summary_monitoring_table(evaluator, component)
@@ -472,22 +572,13 @@ def _build_monitoring_sections(
                 heading=f"{meta['title']} (`{metric_key}`, {component} — {component_title})", level=4,
                 dataframe=df_cleaned, link_connections=True,
             ))
-            csv_path = result_dir / f"query_{component}_metric_{metric_key}.csv"
-            if csv_path.exists():
-                provenance.append(f"- [{csv_path.name}]({_relmd(csv_path, report_dir)})")
     if catalog_rows:
         sections.append(Section(
             heading="Full Metric Catalog", level=3, index=False,
             dataframe=pd.DataFrame(catalog_rows),
             children=catalog_value_sections,
         ))
-    if provenance:
-        provenance = [
-            "*One CSV per metric per component (wide format: one column per "
-            "connection, one row per Prometheus scrape) backing each catalog "
-            "table above.*", "",
-        ] + provenance + [""]
-    return sections, provenance
+    return sections
 
 
 def _build_monitoring_summary_lines(monitoring_sections: list[Section]) -> list[str]:
@@ -639,14 +730,18 @@ def _build_connections_md_lines(
     restart_details: list[sut_restarts.RestartDetail] | None = None,
 ) -> list[str]:
     """
-    Build ``connections.md``'s body: one subsection per row of
-    ``df_connections``, each with its own parameter columns plus glob-derived
-    links to its benchmarker log, its SUT's container log, and its
-    ``kubectl describe pod`` output. The monitoring CSVs are not
-    connection-specific (each holds every connection's own column merged
-    together), so they're listed once in a single document-level Provenance
-    section at the end instead of being repeated identically inside every
-    per-connection subsection.
+    Build ``connections.md``'s body: the SUT container restarts, then one
+    subsection per row of ``df_connections`` with its own parameter columns.
+
+    A sweep repeats most parameters on every connection, so a parameter with
+    the same value on every connection is listed once under ``### Shared by
+    All Connections``, one shared by every connection of a configuration once
+    under that configuration's ``###`` heading, and each connection's
+    ``####`` subsection lists only the rest and links both.
+
+    Raw files are not linked per connection: ``files.md`` lists each one
+    once, and the caller appends a Provenance footer naming its groups. Only
+    a restart line links its describe log, as the evidence for its reason.
 
     :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
     :param result_dir: The experiment's result folder.
@@ -673,13 +768,10 @@ def _build_connections_md_lines(
                     line += f" ([{detail.describe_file}]({_relmd(result_dir / detail.describe_file, report_dir)}))"
                 lines.append(line)
         lines.append("")
+    by_configuration: dict[str, list[tuple[str, dict[str, str]]]] = {}
     for _connection_id, row in df_connections.iterrows():
         name = str(row.get('connection', _connection_id))
-        slug = _slugify(name)
-        configuration = str(row.get('configuration', ''))
-        lines.append(f"#### {name}")
-        lines.append("")
-        lines.append(f"<a id=\"{slug}\"></a>")
+        parameters: dict[str, str] = {}
         for column, value in row.items():
             if column == 'connection' or value is None:
                 continue
@@ -687,36 +779,62 @@ def _build_connections_md_lines(
                 continue
             if str(value) == '':
                 continue
-            lines.append(f"* {column}: {value}")
-        log_links = _glob_provenance(
-            result_dir, report_dir, [f"*{name}*.log", f"*{configuration}*.dbms*.log"],
-            "This connection's own benchmarker/driver pod log, and its SUT's container "
-            "log (the DBMS process's own stdout) — read for the literal error text or "
-            "log lines behind a failed/slow query.",
-        )
-        describe_links = _glob_provenance(
-            result_dir, report_dir, [f"*{configuration}*.describe.log"],
-            "`kubectl describe pod` output for this connection's SUT — its event "
-            "history (scheduling, image pull, restarts, OOMKills), not just static spec.",
-        )
-        if log_links or describe_links:
-            lines.append("")
-            lines.append("##### Provenance")
-            lines.append("")
-            lines.extend(log_links)
-            lines.extend(describe_links)
+            parameters[str(column)] = str(value)
+        by_configuration.setdefault(str(row.get('configuration', '')), []).append((name, parameters))
+    shared = _shared_parameters([p for members in by_configuration.values() for _, p in members])
+    if shared:
+        lines.extend(["<a id=\"shared\"></a>", "### Shared by All Connections", "",
+                      "*Identical for every connection below, so listed once here.*", ""])
+        lines.extend(f"* {column}: {value}" for column, value in shared.items())
         lines.append("")
-    metric_links = _glob_provenance(
-        result_dir, report_dir, ["query_*_metric_*.csv"],
-        "Wide-format monitoring CSVs (one column per connection, one row per "
-        "Prometheus scrape) backing the metrics shown above — find each "
-        "connection's own column by name.",
-    )
-    if metric_links:
-        lines.append("### Provenance")
-        lines.append("")
-        lines.extend(metric_links)
+    for configuration, members in by_configuration.items():
+        configuration_shared = {
+            column: value for column, value in _shared_parameters([p for _, p in members]).items()
+            if column not in shared
+        }
+        configuration_slug = "shared-" + _slugify(configuration)
+        if configuration:
+            lines.extend([f"<a id=\"{configuration_slug}\"></a>", f"### {configuration}", ""])
+        if configuration_shared:
+            lines.extend([f"*Identical for every {configuration} connection below.*", ""])
+            lines.extend(f"* {column}: {value}" for column, value in configuration_shared.items())
+            lines.append("")
+        also = []
+        if configuration_shared:
+            also.append(f"[{configuration}](#{configuration_slug})")
+        if shared:
+            also.append("[Shared by All Connections](#shared)")
+        for name, parameters in members:
+            lines.append(f"#### {name}")
+            lines.append("")
+            lines.append(f"<a id=\"{_slugify(name)}\"></a>")
+            if also:
+                lines.append(f"*Plus the parameters under {' and '.join(also)}.*")
+            lines.extend(
+                f"* {column}: {value}" for column, value in parameters.items()
+                if column not in shared and column not in configuration_shared
+            )
+            lines.append("")
     return lines
+
+
+def _shared_parameters(parameter_sets: list[dict[str, str]]) -> dict[str, str]:
+    """
+    Return the parameters that every one of several connections carries with
+    the same value.
+
+    :param parameter_sets: One parameter dict per connection.
+    :return: The common parameters, in the first connection's order; empty
+             for fewer than two connections, where nothing is repeated.
+    :rtype: dict[str, str]
+    """
+    if len(parameter_sets) < 2:
+        return {}
+    first, *rest = parameter_sets
+    return {
+        column: value for column, value in first.items()
+        if all(other.get(column) == value for other in rest)
+    }
 
 
 def write_markdown_report(
@@ -785,62 +903,21 @@ def write_markdown_report(
     connections_index = _connections_index(df_connections)
     written_sections: list[dict] = []
 
+    groups = _group_result_files(result_dir)
+
     if workflow_section is not None:
-        input_provenance_links = _glob_provenance(
-            result_dir, report_dir, sorted(_INPUT_PROVENANCE_FILENAMES),
-            "The experiment.yml/.yaml this run was actually built from, plus provenance "
-            "copies of the contract(s)/catalog/environment file(s) that governed it — "
-            "not a Kubernetes manifest; see docs/AgentResultContract.md and "
-            "docs/Design-Catalog-Contract.md for what each one means.",
-        )
-        manifest_links = _glob_provenance(
-            result_dir, report_dir, ["*.yml", "*.yaml"],
-            "Rendered Kubernetes Job/Deployment/Service manifests actually submitted — "
-            "check for the exact resource requests/limits, image tag, env vars, and "
-            "replica/parallelism counts.",
-            exclude=_INPUT_PROVENANCE_FILENAMES,
-        )
-        pod_describe_links = _glob_provenance(
-            result_dir, report_dir, ["*.describe.log"],
-            "`kubectl describe pod` output for every pod in this experiment — event "
-            "history (scheduling, image pulls, restarts, OOMKills) for that specific "
-            "pod object, not just static spec.",
-        )
-        job_describe_links = _glob_provenance(
-            result_dir, report_dir, ["*.describe.job.log"],
-            "`kubectl describe job` output for every loading/generator Job in this "
-            "experiment — unlike a single pod's describe above, this covers the Job's "
-            "full pod-creation history over its whole lifetime, so a failed pod that "
-            "was replaced under `backoffLimit` still shows up here even after that "
-            "failed pod's own describe has aged out via garbage collection.",
-        )
         _write_tier2_file(
             report_dir, "workflow.md", "workflow", "Actual vs. planned experiment workflow.",
             [workflow_section], connections_index,
-            input_provenance_links + manifest_links + pod_describe_links + job_describe_links,
+            _provenance_lines(groups, ("inputs", "plans", "manifests", "sut-describe", "pod-describe", "job-describe")),
         )
         written_sections.append({"title": "Workflow", "file": "workflow.md", "description": "Actual vs. planned workflow (per configuration/run/client)."})
 
     if loading_section is not None:
-        loading_script_links = _glob_provenance(
-            result_dir, report_dir, ["*-loading-*.sql.log", "*-loading-*.sh.log"],
-            "The exact rendered SQL/bash script that ran for each configuration's "
-            "loading phase — despite the `.log` suffix, this is the script source "
-            "itself, not output. Check here to see exactly what schema/DDL was applied.",
-        )
-        loading_stdout_links = _glob_provenance(
-            result_dir, report_dir, ["*-loading-*.stdout.log"],
-            "stdout of running each loading script above.",
-        )
-        loading_stderr_links = _glob_provenance(
-            result_dir, report_dir, ["*-loading-*.stderr.log"],
-            "stderr of running each loading script above — check here first if a "
-            "loading phase failed silently.",
-        )
         _write_tier2_file(
             report_dir, "loading.md", "loading", "Data-loading phase results.",
             [loading_section], connections_index,
-            loading_script_links + loading_stdout_links + loading_stderr_links,
+            _provenance_lines(groups, ("loading-scripts", "loading-output", "loading-pods")),
         )
         written_sections.append({"title": "Loading", "file": "loading.md", "description": "Per-connection and per-run loading throughput/timing."})
 
@@ -848,38 +925,23 @@ def write_markdown_report(
         benchmarking_all = ([benchmarking_section] if benchmarking_section is not None else []) + extra_sections
         if explain_section is not None:
             benchmarking_all = benchmarking_all + [explain_section]
-        benchmarking_links = _glob_provenance(
-            result_dir, report_dir,
-            ["bexhoma-benchmarker-*.log", "bexhoma-benchmarker.*.all.df.pickle"],
-            "Raw per-pod benchmarker logs and the cached aggregated DataFrame they "
-            "were parsed into — read the logs for the literal output behind a "
-            "surprising number.",
-        )
-        if 'num_errors' in extra_context:
-            # queries.config only carries literal SQL text for DBMSBenchmarker-family
-            # benchmarks (TPC-H/TPC-DS); other tools store their workload elsewhere.
-            benchmarking_links += _glob_provenance(
-                result_dir, report_dir, ["queries.config"],
-                "The DBMSBenchmarker query config actually run, including the literal "
-                "SQL text of every query behind the titles in the Latency/Errors/"
-                "Warnings tables above — follow this for the explicit queries.",
-            )
         _write_tier2_file(
             report_dir, "benchmarking.md", "benchmarking",
             "Benchmarking phase results, including any secondary (co-running) benchmarks.",
-            benchmarking_all, connections_index, benchmarking_links,
+            benchmarking_all, connections_index,
+            _provenance_lines(groups, ("benchmarker", "configs")),
         )
         written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
 
-    monitoring_sections, monitoring_provenance = _build_monitoring_sections(
-        experiment, benchmark.evaluator, connections_sorted, monitoring_applications, result_dir, report_dir,
+    monitoring_sections = _build_monitoring_sections(
+        experiment, benchmark.evaluator, connections_sorted, monitoring_applications,
     )
     monitoring_summary_lines = _build_monitoring_summary_lines(monitoring_sections)
     if monitoring_sections:
         _write_tier2_file(
             report_dir, "monitoring.md", "monitoring",
             "SUT CPU/RAM/application monitoring, and the full catalog of every collected metric.",
-            monitoring_sections, connections_index, monitoring_provenance,
+            monitoring_sections, connections_index, _provenance_lines(groups, ("monitoring",)),
         )
         written_sections.append({"title": "Monitoring", "file": "monitoring.md", "description": "CPU/RAM/application metrics plus the full metric catalog (all configured Prometheus metrics, not just the curated few)."})
 
@@ -889,10 +951,17 @@ def write_markdown_report(
         connections_lines = _build_connections_md_lines(
             df_connections, result_dir, report_dir, restarts_per_pod, restart_details,
         )
+        connections_lines += _provenance_lines(
+            groups, ("configs", "benchmarker", "sut-logs", "sut-describe", "sut-restarts", "monitoring"),
+        )
         _write_file(report_dir / "connections.md", _frontmatter({
             "schema_version": SCHEMA_VERSION, "section": "connections", "parent": "index.md",
-        }) + "\n".join(connections_lines))
-        written_sections.append({"title": "Connections", "file": "connections.md", "description": "One subsection per connection/pod: its own parameters, logs, monitoring, and SUT container detail."})
+        }) + "\n".join(connections_lines).strip("\n") + "\n")
+        written_sections.append({"title": "Connections", "file": "connections.md", "description": "One subsection per connection/pod: its own parameters, plus SUT container restart detail."})
+
+    _write_file(report_dir / "files.md", _frontmatter({
+        "schema_version": SCHEMA_VERSION, "section": "files", "parent": "index.md",
+    }) + "\n".join(_build_files_md_lines(groups, report_dir)).strip("\n") + "\n")
 
     key_metrics_lines: list[str] = []
     if key_metrics_section is not None:
@@ -920,24 +989,17 @@ def _write_tier2_file(
         parameter for callers to pass consistently.
     :param sections: Top-level sections to render.
     :param connections_index: Map of connection name to ``connections.md`` anchor slug.
-    :param provenance_lines: Pre-built Markdown lines for the ``### Provenance``
-        footer (glob-derived by the caller via :func:`_glob_provenance`) —
-        a mix of italic description lines and ``- [name](path)`` bullet
-        lines; only the bullet lines are extracted into the frontmatter's
-        ``provenance`` path list.
+    :param provenance_lines: The ``### Provenance`` footer from
+        :func:`_provenance_lines`, or an empty list for none.
     """
     del description  # documented for callers; not rendered into the file body itself
     body_lines = _render_sections(sections, connections_index)
-    provenance_paths = [
-        line.split("](", 1)[1].rstrip(")") for line in provenance_lines if line.startswith("- [")
-    ]
     text = _frontmatter({
         "schema_version": SCHEMA_VERSION, "section": section_tag, "parent": "index.md",
-        "provenance": provenance_paths,
     })
     text += "\n".join(body_lines).strip("\n") + "\n"
     if provenance_lines:
-        text += "\n### Provenance\n\n" + "\n".join(provenance_lines).strip("\n") + "\n"
+        text += "\n" + "\n".join(provenance_lines).strip("\n") + "\n"
     _write_file(report_dir / filename, text)
 
 

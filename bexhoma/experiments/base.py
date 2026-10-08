@@ -1608,7 +1608,7 @@ class ExperimentBase():
             self.cluster.monitor_cluster_exists = False
         for config in self.configurations:
             if config.experiment_dict["loader"] or config.experiment_dict["benchmarker"]:
-                filename = f"bexhoma-experiment-dict-{config.configuration}.json".lower()
+                filename = f"bexhoma-experiment-dict-{config.configuration}-{self.code}.json".lower()
                 filepath = self.result_filename_local(filename)
                 with open(filepath, 'w') as _f:
                     json.dump(config.experiment_dict, _f, indent=2)
@@ -1984,7 +1984,7 @@ class ExperimentBase():
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
                             experiment_run = str(config.num_experiment_to_apply_done + 1)
                             restarts_filename = self.result_filename_local(
-                                f"bexhoma-sut-{config.configuration}-{experiment_run}-restarts.json".lower())
+                                f"bexhoma-sut-{config.configuration}-{self.code}-{experiment_run}-restarts.json".lower())
                             with open(restarts_filename, 'w') as _f:
                                 json.dump(sut_restarts, _f, indent=2)
                             config.lifecycle.stop_sut()

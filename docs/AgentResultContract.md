@@ -12,7 +12,7 @@ blocks embedded verbatim in every `report/index.md`
 `report/index.md` to interpret an actual run.
 
 ```yaml
-result_contract_version: "1.5.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
+result_contract_version: "1.6.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
                                     # bump tracks report_writer.py's own frontmatter/tier/layout changes
 
 entry_point:
@@ -37,13 +37,19 @@ tiers:                                  # only "with_report" tiers 1-2 are new f
   1_answers:   {glob: "report/index.md"}
   2_evidence:  {glob: "report/{workflow,loading,benchmarking,monitoring,connections}.md"}
                                           # each written only if that phase was active
-  3_diagnosis: {result_dir: "*"}         # see provenance: below; linked from every tier-2 "### Provenance" footer
+  3_diagnosis: {glob: "report/files.md", result_dir: "*"}
+                                          # see provenance: below; report/files.md links every raw file once,
+                                          # one section per kind; tier-2 "### Provenance" footers link those sections
 
 provenance:                              # pre-existing files, never written or modified by the report
   connections:  {"connections.config": "repr() list of every connection dict (identity, params, timings)",
-                 "{connection}.config": "durable single-connection backup, survives dashboard rewrites",
+                 "{job}.config":        "durable single-connection backup, survives dashboard rewrites;
+                                         named by the job identifier, shared by every driver pod of that job",
                  "queries.config":      "SF/type/duration/defaultParameters/benchmark_sequence/workflow_planned"}
-  workflow:     {"*.yml / *.yaml (minus the input-provenance filenames below)":
+  workflow:     {"bexhoma-experiment-dict-{configuration}-{code}.json":
+                                         "the loader/benchmarker plan submitted for that configuration
+                                          (exact round/entry layout), written once at experiment start",
+                 "*.yml / *.yaml (minus the input-provenance filenames below)":
                                          "rendered K8s Job/Deployment/Service manifests actually submitted;
                                           every image: field is a concrete tag, BEXHOMA_PACKAGE_VERSION
                                           already substituted — the authoritative source for image versions",
@@ -82,7 +88,7 @@ provenance:                              # pre-existing files, never written or 
                                                             is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency,
                                                             not bexhoma's to rename freely — see monitoring.md's component_title
                                                             column for the human-readable pairing"}
-  restarts:     {"bexhoma-sut-{configuration}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one snapshot per experiment_run; aggregate by max per pod (restartCount is cumulative across runs, same pod, not recreated), not by summing every file"}
+  restarts:     {"bexhoma-sut-{configuration}-{code}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one snapshot per experiment_run; aggregate by max per pod (restartCount is cumulative across runs, same pod, not recreated), not by summing every file"}
   sut_logs:     {"bexhoma-sut-{configuration}-{code}-{experiment_run}.yml":                    "SUT Deployment manifest — one archived copy per experiment_run, even when identical to the previous run's, since the live Deployment itself is restarted in place rather than recreated",
                  "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.{container}.log":  "SUT container stdout, one capture per experiment_run",
                  "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.describe.log":     "kubectl describe pod, one capture per experiment_run"}

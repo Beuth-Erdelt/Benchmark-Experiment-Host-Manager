@@ -18,10 +18,12 @@ separate analysis pipeline.
     benchmarking.md      ← Tier 2: Evidence
     monitoring.md         ← Tier 2: Evidence  (only when monitoring was active)
     connections.md         ← Tier 2: Evidence
+    files.md                ← Tier 3: index of the raw files below
 # Tier 3: Diagnosis is not new files — it's the pre-existing result-folder
 # files (connections.config, per-pod logs, rendered K8s manifests, loading
-# scripts + stdout/stderr, SUT container logs, Prometheus CSVs), linked from
-# every tier-2 file's Provenance footer.
+# scripts + stdout/stderr, SUT container logs, Prometheus CSVs), each linked
+# once from files.md; every tier-2 file's Provenance footer links the
+# files.md sections behind it.
 ```
 
 Enable it with `-rp`/`--report` on any entry script (`python tpch.py run ... -rp`)
@@ -50,7 +52,7 @@ below).
 |---|---|---|
 | **1 — Answers** | `index.md` | Always, first. Often the only file needed. |
 | **2 — Evidence** | `workflow.md`, `loading.md`, `benchmarking.md`, `monitoring.md`, `connections.md` | An actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase. |
-| **3 — Diagnosis** | linked raw result-folder files | Tier 2's aggregated tables don't resolve the question. |
+| **3 — Diagnosis** | `files.md`, and the raw result-folder files it links | Tier 2's aggregated tables don't resolve the question. |
 
 ### `index.md`
 
@@ -94,10 +96,15 @@ Latency/Errors/Warnings.
 
 `connections.md` is new relative to `show_summary()`: one subsection per row
 of `evaluator.get_connections_of_experiment()`, each with that connection's
-own parameter columns plus links to its own benchmarker log, its SUT's
-container log, its `kubectl describe pod` output, and the monitoring CSV
-covering it. Deliberately one file with many anchors rather than one file per
-connection — a parameter sweep can produce hundreds of connections.
+own parameter columns. Deliberately one file with many anchors rather than
+one file per connection — a parameter sweep can produce hundreds of
+connections. For the same reason a parameter is listed only once at the
+level where it stops varying: values identical on every connection under
+`### Shared by All Connections`, values identical within one configuration
+under that configuration's `###` heading, and only the rest in each
+connection's `####` subsection, which links both. It carries no per-connection file links:
+its Provenance footer points at the `files.md` sections holding the
+benchmarker logs, SUT container logs, describe logs and monitoring CSVs.
 
 ### Cross-referencing
 
@@ -139,24 +146,39 @@ key back through source code.
 
 ## Provenance and consistency
 
-Every `### Provenance` link is built by globbing the real result folder at
-generation time (`pathlib.Path.glob()`), never a hand-written filename
-pattern — a link can never point at a file that doesn't exist. Each group of
-links carries a one-line italic description above it — why look, what's in
-there — so an agent doesn't have to open a file just to find out what kind of
-evidence it holds (e.g. "the exact rendered SQL/bash script that ran ... despite
-the `.log` suffix, this is the script source itself, not output"). Every relative
+`files.md` is the only page that links raw result-folder files, and it links
+each of them exactly once. It is built by listing the real result folder at
+generation time, never from a hand-written filename list — a link can never
+point at a file that doesn't exist, and no file goes unlisted. Each file
+lands in the first group of `report_writer._FILE_KINDS` whose pattern it
+matches (case-sensitively, so the listing doesn't depend on the filesystem);
+anything no specific group claims lands in "Other Result Files". Only
+`agent_summary.yml` is left out: it is the agent harness's own earlier
+verdict, not evidence. Each group carries a one-line italic description —
+why look, what's in there — so an agent doesn't have to open a file just to
+find out what kind of evidence it holds (e.g. "the exact rendered SQL/bash
+script that ran ... despite the `.log` suffix, this is the script source
+itself, not output").
+
+Each tier-2 page ends in a short `### Provenance` footer that links the
+`files.md` sections behind it, with their file counts, instead of repeating
+the file links. The agent harness only lets an agent open a result file that
+a Markdown page it has read links to, so `files.md` is also what makes every
+raw file reachable; the per-file link lists it replaced were repeated across
+pages (and inside `connections.md`, once per connection), which made the
+report several times larger without making one more file reachable. Every relative
 path is `os.path.relpath()`-computed rather than a hand-typed `../`, so links
 stay correct regardless of future changes to the report's own directory
 depth. `index.md`'s `sections` list is built by recording each tier-2 file as
 it is actually written, not maintained as a separate constant — it cannot
 list a file that was never produced, or omit one that was.
 
-Files linked from tier 2, all pre-existing and unmodified by the report:
+Files linked from `files.md`, all pre-existing and unmodified by the report:
 
 | Artifact | Written by |
 |---|---|
-| `connections.config`, `{connection}.config`, `queries.config` | existing bexhoma pipeline |
+| `connections.config`, `{job}.config`, `queries.config` | existing bexhoma pipeline |
+| `bexhoma-experiment-dict-{configuration}-{code}.json` | `experiments/base.py::work_benchmark_list()` |
 | Benchmarker/loader pod logs, pickled DataFrames, DBMSBenchmarker cube | existing bexhoma pipeline |
 | Prometheus metric CSVs (`query_{component}_metric_{key}.csv`) | `transform_monitoring_results()` |
 | Rendered Kubernetes Job/Deployment/Service manifests | `configurations/manifest.py`, `configurations/lifecycle.py` |
@@ -201,7 +223,7 @@ kind of benchmark produced it.
 ```bash
 python tpch.py run -dbms PostgreSQL -sf 1 -ne 1 -rp
 # ...
-# writes /path/to/results/<code>/report/{index,workflow,benchmarking,monitoring,connections}.md
+# writes /path/to/results/<code>/report/{index,workflow,benchmarking,monitoring,connections,files}.md
 
 bexhoma summary -e <code> -rp
 # regenerates the report from local files only, no cluster connection needed
