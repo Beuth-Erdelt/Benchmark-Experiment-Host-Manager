@@ -1415,9 +1415,18 @@ class Kubernetes():
         def run_with_fallback(fullcommand, retried=False):
             encodings = ["utf-8", "latin1", "cp1252"]
             try:
-                raw = subprocess.check_output(
-                    fullcommand, shell=True, stderr=subprocess.STDOUT,
-                    timeout=CLUSTER_KUBECTL_TIMEOUT_SECONDS)
+                # stdout and stderr are kept separate (unlike the old
+                # check_output(..., stderr=STDOUT)) so that client-side
+                # advisory warnings on stderr -- e.g. "Warning: Use tokens
+                # from the TokenRequest API ..." -- can never land in the
+                # stdout a caller like get_pod_containers() parses as pure
+                # data. Merging them let a stray word from such a warning
+                # (e.g. "tokens") be picked up as a fabricated, nonexistent
+                # container name; see CLUSTER_CLIENT_WARNING_PREFIXES.
+                result = subprocess.run(
+                    fullcommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    timeout=CLUSTER_KUBECTL_TIMEOUT_SECONDS, check=True)
+                raw = result.stdout
             except subprocess.TimeoutExpired:
                 print(f"kubectl command timed out after {CLUSTER_KUBECTL_TIMEOUT_SECONDS}s: {fullcommand}")
                 if wait_for_cluster(deadline):
@@ -1427,21 +1436,22 @@ class Kubernetes():
                 print("Command failed!")
                 print(f"Return code: {e.returncode}")
                 print(f"Command: {e.cmd}")
-                if e.output:
-                    print("Raw output (bytes):", e.output)
+                combined_output = (e.output or b'') + (e.stderr or b'')
+                if combined_output:
+                    print("Raw output (bytes):", combined_output)
                     for enc in encodings:
                         try:
                             print(f"Decoded with {enc}:")
-                            print(e.output.decode(enc))
+                            print(combined_output.decode(enc))
                             break
                         except UnicodeDecodeError:
                             continue
-                    if b'Unauthorized' in e.output:
+                    if b'Unauthorized' in combined_output:
                         print("Create new access token")
                         self.cluster_access()
                         self.wait(2)
                         return run_with_fallback(fullcommand, retried)
-                    output_text = e.output.decode('utf-8', errors='replace')
+                    output_text = combined_output.decode('utf-8', errors='replace')
                     if retried and 'AlreadyExists' in output_text:
                         return output_text
                     if is_cluster_connection_error(output_text) and wait_for_cluster(deadline):
