@@ -93,6 +93,14 @@ choice per experiment made loading times incomparable across runs.
 reads the catalog default and emits `-nlp 8` explicitly when `pods` is
 omitted. Folded into 1.9.0 (not yet released) as an additive change.
 
+## `observe:` re-enabled (2026-10-09)
+
+The parked block below was pasted back unchanged and `"observe"` restored
+to the section tuple in `_check_contract_shape`, so the agent sees and may
+set monitoring again. This moved the version 1.9.0 -> 1.9.1 (patch:
+additive; nothing that validated before is rejected now), with
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
+
 ## `observe:` parked while the agent is a prototype (2026-09-30)
 
 Monitoring is switched off for the agent while it is a prototype: the
