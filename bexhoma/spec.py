@@ -98,6 +98,7 @@ _REQUIRED_HEADER_FIELDS = ("title", "hypothesis", "discriminates")
 #: Fallback ``arg_style`` for a knob/system that doesn't declare one.
 DEFAULT_ARG_STYLE = "pg-guc"
 _KNOB_TYPE_MEMORY = "memory"
+_KNOB_TYPE_INT = "int"
 
 
 class SpecError(Exception):
@@ -333,6 +334,10 @@ def resolve_system_definition(catalog: dict[str, Any], system_name: str) -> dict
 def _resolve_profile(catalog: dict[str, Any], definition: dict[str, Any], profile_name: str) -> dict[str, Any]:
     """Resolve a profile, following a ``ref:`` pointer to another system's profile if present.
 
+    A profile with a ``ref:`` may declare its own ``knobs:``/``derive:``/``requires:``
+    next to it; those are merged over the referenced profile's, so a system
+    keeps parity with the referenced profile and adds the knobs only it has.
+
     :param catalog: Parsed catalog.
     :param definition: Merged system definition the profile was requested on.
     :param profile_name: Profile name.
@@ -351,7 +356,11 @@ def _resolve_profile(catalog: dict[str, Any], definition: dict[str, Any], profil
     if not separator:
         raise SpecError(f"malformed profile ref {ref!r}, expected 'System.profiles.name'")
     ref_definition = resolve_system_definition(catalog, ref_system)
-    return _resolve_profile(catalog, ref_definition, ref_profile)
+    merged = dict(_resolve_profile(catalog, ref_definition, ref_profile))
+    for key in ("knobs", "derive", "requires"):
+        if key in profile:
+            merged[key] = {**merged.get(key, {}), **profile[key]}
+    return merged
 
 
 def resolve_system(
@@ -420,8 +429,11 @@ def resolve_system(
         }
         for knob_name, expression in profile.get("derive", {}).items():
             raw_value = evaluate_derive_expression(expression, derive_inputs)
-            if known_knobs.get(knob_name, {}).get("type") == _KNOB_TYPE_MEMORY:
+            knob_type = known_knobs.get(knob_name, {}).get("type")
+            if knob_type == _KNOB_TYPE_MEMORY:
                 values[knob_name] = memory_formatter(int(raw_value))
+            elif knob_type == _KNOB_TYPE_INT:
+                values[knob_name] = int(raw_value)
             else:
                 values[knob_name] = raw_value
 

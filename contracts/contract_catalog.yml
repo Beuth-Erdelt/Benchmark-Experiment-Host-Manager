@@ -68,11 +68,13 @@ catalog_concepts:
       physical_design: block, since that key is never merged"
   profile_ref:
     semantics: "a systems.<name>.profiles.<profile>.ref: 'System.profiles.name'
-      pointer resolves to that OTHER system's profile object directly (same
-      knobs:/derive:/requires:), instead of declaring its own knobs/derive"
+      pointer resolves to that OTHER system's profile object (same
+      knobs:/derive:/requires:); knobs:/derive:/requires: declared next to
+      the ref are merged on top, for knobs only this system has"
     when: "used for profile parity between systems -- e.g.
       PgDuckDB.profiles.analytical-ssd refs PostgreSQL.profiles.analytical-ssd,
-      so both resolve identical knob values from the same memory/cpu limits"
+      so both resolve identical knob values from the same memory/cpu limits,
+      and adds derive: for its own duckdb.* knobs"
   requires:
     semantics: "a profile's requires: {storage_class: [...]} lists which
       resources.storage_class values an experiment.yml using that profile
@@ -876,6 +878,13 @@ systems:
     deployment: bexhoma-deployment-pg-duck
     image: pgduckdb/pgduckdb:18-v1.1.1
     arg_style: pg-guc
+    memory_budget:
+      semantics: "PostgreSQL's memory_budget plus DuckDB's own: every
+        connection that runs a query in DuckDB gets its own DuckDB instance,
+        capped by duckdb.max_memory and not counted in work_mem. Worst case
+        ~ shared_buffers + S * duckdb.max_memory, S = largest
+        workload.rounds entry"
+      out_of_scope: "not checked; keep the estimate below the limit"
 
     engine:
       execution:   "vectorized executor; scans heap directly, does not use PostgreSQL indexes"
@@ -892,14 +901,31 @@ systems:
         default: false
         arg_style: env-var
         env_var: DUCKDB_FORCE_EXECUTION
-        why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"
-        when: "enable this whenever the hypothesis needs to guarantee that
-          DuckDB's execution engine is what ran, rather than trusting
-          pg_duckdb's own per-query cost-based routing to pick it. Left at
-          its default (false), pg_duckdb still decides for itself, query by
-          query, whether to route through DuckDB or PostgreSQL's own
-          executor. Set it true when the experiment needs certainty that
-          DuckDB's engine executed the query, not just that it was eligible to."
+        why: "pg_duckdb has no per-query engine choice: a query that reads
+          only PostgreSQL tables runs in
+          PostgreSQL's own executor unless this is true; DuckDB runs
+          automatically only for DuckDB-only features (DuckDB tables,
+          functions like read_parquet)"
+        when: "set it true whenever DuckDB is meant to execute queries on
+          PostgreSQL heap tables -- left false, those queries run in
+          PostgreSQL's executor with the extension idle"
+        out_of_scope: "true does not guarantee DuckDB ran: queries without
+          a FROM clause or touching pg_catalog stay in PostgreSQL, and a
+          query DuckDB cannot plan falls back to PostgreSQL silently. Only
+          EXPLAIN gives certainty -- a Custom Scan (DuckDBScan) node means
+          DuckDB executed it; use workload.params.store_explain when the
+          hypothesis depends on it"
+      duckdb.max_memory:
+        type: memory
+        default: 4GB
+        why: "memory cap of the DuckDB instance each connection gets, the
+          DuckDB counterpart of work_mem; PostgreSQL's memory knobs do not
+          bound it (see memory_budget)"
+      duckdb.threads:
+        type: int
+        default: -1
+        why: "DuckDB threads per connection; -1 means DuckDB's default, one
+          per detected core, which need not match resources.cpu.limit"
 
     physical_design:
       # explicitly re-declared, not inherited via extends -- see
@@ -914,3 +940,6 @@ systems:
     profiles:
       analytical-ssd:
         ref: PostgreSQL.profiles.analytical-ssd
+        derive:
+          duckdb.max_memory: "0.25 * memory_limit"
+          duckdb.threads:    "cpu_limit"

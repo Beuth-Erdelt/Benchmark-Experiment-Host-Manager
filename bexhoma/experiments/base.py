@@ -71,7 +71,7 @@ class DictToObject(object):
 SELECTOR_RE = re.compile(
     r'^(?P<kind>deployment|statefulset)\[(?P<workload>[^\]]+)\]'
     r'(@(?P<config>[^.\[\]]+))?'
-    r'\.container\[(?P<container>[^\]]+)\]\.(?P<param>[A-Za-z0-9_]+)$',
+    r'\.container\[(?P<container>[^\]]+)\]\.(?P<param>[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)?)$',
     re.IGNORECASE
 )
 
@@ -100,6 +100,8 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
     * ``statefulset[NAME].container[CONTAINER].PARAM``
     * ``deployment[NAME]@CONFIG.container[CONTAINER].PARAM``
     * ``statefulset[NAME]@CONFIG.container[CONTAINER].PARAM``
+
+    ``PARAM`` may carry one extension prefix, e.g. ``duckdb.max_memory``.
 
     The optional ``@CONFIG`` scope restricts the operation to the one
     configuration whose :attr:`~bexhoma.configurations.base.SutConfiguration.configuration`
