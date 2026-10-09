@@ -24,7 +24,9 @@ class BuildEnvironmentVersionFieldTest(unittest.TestCase):
         with mock.patch.object(environment, 'collect_nodes', return_value=([], [])), \
              mock.patch.object(environment, 'collect_node_usage', return_value=None), \
              mock.patch.object(environment, 'collect_storage_classes', return_value=[]), \
-             mock.patch.object(environment, 'collect_resource_limits', return_value={}):
+             mock.patch.object(environment, 'collect_resource_limits', return_value={}), \
+             mock.patch.object(environment, 'collect_monitoring_metrics',
+                               return_value={'availability_checked': False, 'hardware': {}}):
             result = environment.build_environment(fake_cluster)
         self.assertEqual(result['environment_contract_version'], environment.ENVIRONMENT_CONTRACT_VERSION)
         self.assertEqual(result['occupancy_source'], environment.OCCUPANCY_UNAVAILABLE)
@@ -136,6 +138,81 @@ class PrometheusOccupancyTest(unittest.TestCase):
         self.assertEqual(nodes[0].requested['cpu'], '2000m')
         self.assertEqual(nodes[0].free['cpu'], '14000m')
         self.assertEqual(nodes[0].limits_pct['cpu'], 50)
+
+
+class MonitoringMetricsTest(unittest.TestCase):
+    """The monitoring section mirrors cluster.config's cluster-wide hardware metrics."""
+
+    def setUp(self) -> None:
+        self.cluster = mock.Mock(namespace='bexhoma')
+        self.cluster.get_dashboard_pod_name.return_value = 'bexhoma-dashboard-0'
+        self.cluster.config = {'credentials': {'k8s': {'monitor': {
+            'service_monitoring': 'http://prometheus.monitor.svc.cluster.local:9090/api/v1/',
+            'metrics': {
+                'total_cpu_util_s': {
+                    'type': 'cluster', 'active': True, 'metric': 'counter',
+                    'query': 'sum(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}(.*)"}})',
+                    'title': 'CPU Utilization Time [s]',
+                },
+                'total_gpu_util': {
+                    'type': 'cluster', 'active': False, 'metric': 'gauge',
+                    'query': 'sum(DCGM_FI_DEV_GPU_UTIL{{UUID=~"{gpuid}"}})',
+                    'title': 'GPU Utilization [%]',
+                },
+                'io_wait_pct': {
+                    'type': 'cluster', 'active': True, 'metric': 'ratio',
+                    'query': ('100 * sum by (instance) (rate(node_cpu_seconds_total{{mode="iowait"}}[5m]))'
+                              ' / sum by (instance) (rate(node_cpu_seconds_total{{mode!="idle"}}[5m]))'),
+                    'title': 'I/O Wait [%]',
+                },
+            },
+        }}}}
+
+    def test_series_names_skip_functions_and_repeat_once(self) -> None:
+        query = self.cluster.config['credentials']['k8s']['monitor']['metrics']['io_wait_pct']['query']
+        self.assertEqual(environment._metric_series_names(query), ['node_cpu_seconds_total'])
+
+    def test_entries_carry_title_kind_active_required_and_availability(self) -> None:
+        present = [{'metric': {'__name__': 'container_cpu_usage_seconds_total'}, 'value': [0, '9']},
+                   {'metric': {'__name__': 'node_cpu_seconds_total'}, 'value': [0, '9']}]
+        with mock.patch.object(environment, '_query_prometheus', return_value=present) as query:
+            section = environment.collect_monitoring_metrics(self.cluster)
+        query.assert_called_once()
+        self.assertTrue(section['availability_checked'])
+        self.assertEqual(section['hardware']['total_cpu_util_s'], {
+            'title': 'CPU Utilization Time [s]', 'kind': 'counter',
+            'active': True, 'required': True, 'available': True,
+        })
+        self.assertEqual(section['hardware']['total_gpu_util'], {
+            'title': 'GPU Utilization [%]', 'kind': 'gauge',
+            'active': False, 'required': False, 'available': False,
+        })
+        self.assertTrue(section['hardware']['io_wait_pct']['available'])
+
+    def test_unchecked_availability_is_omitted_not_false(self) -> None:
+        self.cluster.get_dashboard_pod_name.return_value = ''
+        section = environment.collect_monitoring_metrics(self.cluster)
+        self.assertFalse(section['availability_checked'])
+        self.assertNotIn('available', section['hardware']['total_gpu_util'])
+
+    def test_failed_availability_query_is_unchecked(self) -> None:
+        with mock.patch.object(environment, '_query_prometheus',
+                               side_effect=environment.EnvironmentError('boom')):
+            section = environment.collect_monitoring_metrics(self.cluster)
+        self.assertFalse(section['availability_checked'])
+
+    def test_fingerprint_changes_with_cluster_config(self) -> None:
+        self.cluster.get_dashboard_pod_name.return_value = ''
+        before = environment.collect_monitoring_metrics(self.cluster)['source_sha256']
+        metrics = self.cluster.config['credentials']['k8s']['monitor']['metrics']
+        metrics['total_gpu_util']['active'] = True
+        self.assertNotEqual(environment.collect_monitoring_metrics(self.cluster)['source_sha256'], before)
+
+    def test_no_metrics_configured_gives_an_empty_section(self) -> None:
+        self.cluster.config = {'credentials': {'k8s': {}}}
+        section = environment.collect_monitoring_metrics(self.cluster)
+        self.assertEqual(section['hardware'], {})
+        self.assertFalse(section['availability_checked'])
 
 
 if __name__ == '__main__':

@@ -41,6 +41,7 @@ See LICENSE for details.
 from __future__ import annotations
 
 import datetime
+import hashlib
 import json
 import math
 import re
@@ -60,7 +61,7 @@ from bexhoma.spec import parse_memory_quantity
 #: source of truth, embedded directly at generation time, so unlike
 #: contract_catalog.yml/contract_result.yml there is no separate contract
 #: doc to drift out of sync with.
-ENVIRONMENT_CONTRACT_VERSION = "1.1.0"
+ENVIRONMENT_CONTRACT_VERSION = "1.2.0"
 
 #: RBAC users on a shared cluster are commonly granted node/storage-class
 #: read but not cluster-scoped pod listing (that would reveal every other
@@ -88,6 +89,18 @@ _PROMETHEUS_TIMEOUT_SECONDS = 20
 #: kube-state-metrics replicas do not count a pod twice.
 _PROMQL_ACTIVE_PODS = 'max by (namespace, pod) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)'
 
+#: Hardware metrics bexhoma itself reads: the CPU/RAM summary table
+#: (``experiments/base.py`` ``show_summary_monitoring_table``) and, for
+#: ``total_cpu_util_s``, the result contract's ``monitoring_component_cpu_nonzero``
+#: check. They must stay active whenever monitoring is on.
+REQUIRED_HARDWARE_METRICS = frozenset({
+    "total_cpu_util_s", "total_cpu_util", "total_cpu_memory", "total_cpu_memory_cached",
+})
+
+#: A series selector in a ``cluster.config`` query template: a name followed by
+#: its (format-escaped) label block.
+_SERIES_SELECTOR = re.compile(r"([A-Za-z_:][A-Za-z0-9_:]*)\s*\{")
+
 __all__ = [
     "ENVIRONMENT_CONTRACT_VERSION",
     "EnvironmentError",
@@ -96,6 +109,8 @@ __all__ = [
     "collect_nodes",
     "collect_node_usage",
     "collect_node_usage_prometheus",
+    "collect_monitoring_metrics",
+    "REQUIRED_HARDWARE_METRICS",
     "collect_storage_classes",
     "collect_resource_limits",
     "build_environment",
@@ -607,6 +622,106 @@ def collect_node_usage_prometheus(cluster: Any, nodes: list[NodeInfo]) -> bool:
     return True
 
 
+def _hardware_metric_definitions(cluster: Any) -> dict[str, dict[str, Any]]:
+    """Return ``cluster.config``'s cluster-wide (hardware) metric definitions.
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance.
+    :return: ``monitor.metrics`` as configured, empty when there is none.
+    :rtype: dict[str, dict[str, Any]]
+    """
+    monitor = cluster.config.get("credentials", {}).get("k8s", {}).get("monitor", {})
+    return monitor.get("metrics", {})
+
+
+def _metric_series_names(query: str) -> list[str]:
+    """Extract the Prometheus series names a ``cluster.config`` metric query selects.
+
+    Pure function. Only selectors with a label block count (``name{{...}}`` in
+    the ``str.format`` template), which every hardware query uses; function
+    names are followed by ``(`` and so never match.
+
+    :param query: A metric's ``query`` template.
+    :return: Distinct series names in order of appearance.
+    :rtype: list[str]
+    """
+    return list(dict.fromkeys(_SERIES_SELECTOR.findall(query)))
+
+
+def _metrics_source_sha256(definitions: dict[str, dict[str, Any]]) -> str:
+    """Fingerprint the metric definitions, to detect an environment.yml older than cluster.config.
+
+    :param definitions: ``monitor.metrics`` from ``cluster.config``.
+    :return: SHA-256 hex digest of the definitions in a canonical form.
+    :rtype: str
+    """
+    canonical = json.dumps(definitions, sort_keys=True, default=str)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _available_series(cluster: Any, series_names: list[str]) -> Optional[set[str]]:
+    """Return which of ``series_names`` the cluster's Prometheus holds right now.
+
+    One query for all names. ``None`` means it could not be checked (no
+    Prometheus, no dashboard pod, or the query failed), which is different
+    from "checked and absent".
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance (already connected).
+    :param series_names: Series names to look up.
+    :return: The names present, or ``None`` when unchecked.
+    :rtype: Optional[set[str]]
+    """
+    url = _prometheus_url(cluster)
+    pod = cluster.get_dashboard_pod_name() if url else ""
+    if not (url and pod and series_names):
+        return None
+    pattern = "|".join(re.escape(name) for name in series_names)
+    try:
+        result = _query_prometheus(cluster, pod, url, f'count by (__name__) ({{__name__=~"{pattern}"}})')
+    except Exception as error:
+        print(f"WARN: could not check metric availability in Prometheus ({error})")
+        return None
+    return {series.get("metric", {}).get("__name__") for series in result}
+
+
+def collect_monitoring_metrics(cluster: Any) -> dict[str, Any]:
+    """Describe the cluster-wide hardware metrics bexhoma can collect on this cluster.
+
+    Read from ``cluster.config``'s ``monitor.metrics``. Application metrics
+    are not listed: they depend on a system's exporter, not on the cluster,
+    and belong to the catalog. ``available`` says whether every series a
+    metric's query reads exists in Prometheus at generation time; it is left
+    out when that could not be checked.
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance (already connected).
+    :return: The ``monitoring`` section of ``environment.yml``.
+    :rtype: dict[str, Any]
+    """
+    definitions = _hardware_metric_definitions(cluster)
+    series_by_metric = {
+        key: _metric_series_names(str(definition.get("query", "")))
+        for key, definition in definitions.items()
+    }
+    available = _available_series(
+        cluster, list(dict.fromkeys(name for names in series_by_metric.values() for name in names))
+    )
+    hardware = {}
+    for key, definition in definitions.items():
+        entry = {
+            "title": definition.get("title", key),
+            "kind": definition.get("metric", ""),
+            "active": bool(definition.get("active", True)),
+            "required": key in REQUIRED_HARDWARE_METRICS,
+        }
+        if available is not None and series_by_metric[key]:
+            entry["available"] = all(name in available for name in series_by_metric[key])
+        hardware[key] = entry
+    return {
+        "source_sha256": _metrics_source_sha256(definitions),
+        "availability_checked": available is not None,
+        "hardware": hardware,
+    }
+
+
 def collect_node_usage(cluster: Any, nodes: list[NodeInfo]) -> str:
     """Populate each node's :attr:`NodeInfo.free` — allocatable minus in-use, cluster-wide.
 
@@ -801,6 +916,14 @@ def build_environment(cluster: Any) -> dict[str, Any]:
     _progress("Storage classes", f"{len(storage_classes)} found")
     _progress("Resource limits", "reading")
     resource_limits = collect_resource_limits(cluster, nodes)
+    _progress("Monitoring metrics", "reading cluster.config and checking Prometheus")
+    monitoring = collect_monitoring_metrics(cluster)
+    hardware = monitoring["hardware"]
+    if monitoring["availability_checked"]:
+        found = sum(1 for metric in hardware.values() if metric.get("available"))
+        _progress("Monitoring metrics", f"{len(hardware)} hardware metrics, {found} with data in Prometheus")
+    else:
+        _progress("Monitoring metrics", f"{len(hardware)} hardware metrics, availability not checked")
     return {
         "environment_contract_version": ENVIRONMENT_CONTRACT_VERSION,
         "cluster": {
@@ -813,6 +936,7 @@ def build_environment(cluster: Any) -> dict[str, Any]:
         "excluded_nodes": excluded_nodes,
         "storage_classes": [vars(storage_class) for storage_class in storage_classes],
         "resource_limits": resource_limits,
+        "monitoring": monitoring,
     }
 
 
