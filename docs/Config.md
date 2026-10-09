@@ -135,7 +135,7 @@ Each entry has:
     'type':   'cluster',    # 'cluster' = hardware metric; 'application' = DBMS-specific
     'active': True,         # False = skip this metric
     'metric': 'gauge',      # 'gauge' (mean), 'counter' (max−min delta), or 'ratio' (max)
-    'query':  '<promql>',   # PromQL; {configuration}, {experiment}, {host}, {gpuid} are substituted
+    'query':  '<promql>',   # PromQL; {configuration}, {experiment}, {host}, {gpuid}, {database}, {schema} are substituted
     'title':  'CPU Utilization [CPUs]',   # unit in brackets: what the query's value is measured in
 },
 ```
@@ -148,7 +148,7 @@ Each entry has:
 | `metric` | `gauge` | Aggregated as mean over the interval |
 | `metric` | `counter` | Aggregated as max − min (delta) over the interval |
 | `metric` | `ratio` | Aggregated as max over the interval |
-| `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{host}`, `{gpuid}`, `{namespace}` |
+| `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{host}`, `{gpuid}`, `{database}`, `{schema}`; literal PromQL braces are written `{{ }}` |
 | `sparse` | `True` (optional) | The metric only has a Prometheus series while its value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit). No data then means 0, so the report lists the gap as expected instead of failing the "No monitoring metrics missing" test |
 
 The default set of hardware metrics covers CPU utilization, CPU throttle, memory (working set and including page cache), network RX/TX, filesystem read/write, and, for the whole node rather than the container, I/O wait and per-core utilization (maximum and variance).
@@ -164,7 +164,7 @@ Each DBMS configuration (in `dockers`) references one of these sets by name via 
 
 | Name | Used by |
 |---|---|
-| `postgresql` | PostgreSQL, PGBouncer (SUT component) |
+| `postgresql` | PostgreSQL, PgDuckDB, PGBouncer (SUT component) |
 | `pgbouncer` | PGBouncer (pool component) |
 | `mysql` | MySQL |
 | `tidb` | TiDB (SQL layer) |
@@ -173,8 +173,8 @@ Each DBMS configuration (in `dockers`) references one of these sets by name via 
 | `yb-master` | YugabyteDB (master nodes) |
 | `yb-tserver` | YugabyteDB (tablet servers) |
 | `cockroachdb` | CockroachDB (worker nodes) |
-| `dragonfly` | Dragonfly |
-| `redis` | Redis |
+| `dragonfly` | Dragonfly, DragonflyCluster (worker nodes) |
+| `redis` | Redis (worker nodes) |
 
 Each named set follows the same structure as `metrics` above.
 See [Monitoring](Monitoring.md) for details on enabling and interpreting application metrics.

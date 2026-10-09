@@ -65,22 +65,38 @@ Prometheus runs with a service port named `port-prometheus` on port 9090.
 
 ## Hardware Metrics
 
-Hardware metrics are collected from cAdvisor via Prometheus and cover the following resource categories by default:
+Hardware metrics come from cAdvisor (per container), node-exporter (per node) and DCGM (per GPU) via Prometheus. The default definitions in `cluster.config` (key, kind and unit) are:
 
-| Category | Metrics collected |
-|---|---|
-| CPU utilisation | Instantaneous utilisation (`gauge`), total CPU seconds (`counter`), user-space seconds, system seconds |
-| CPU throttling | Throttled time (`gauge` and `counter`) |
-| CPU by other containers | CPU used by non-DBMS containers in the same pod (`gauge` and `counter`) |
-| Memory | Working set bytes (`gauge`), cached bytes including inactive file cache (`gauge`) |
-| Network | Receive bytes (`counter`), transmit bytes (`counter`) — disabled by default |
-| Filesystem | Read bytes (`counter`), write bytes (`counter`) — disabled by default |
-| I/O wait | Node-level I/O wait percentage (`gauge`) |
-| Per-core variance | Standard deviation of per-core CPU utilisation across the DBMS pod (`gauge`) |
-| GPU (DCGM) | GPU utilisation, power, and memory (`gauge`) — disabled by default |
+| Category | Metrics (key: kind) | Source |
+|---|---|---|
+| CPU | `total_cpu_util` CPUs in use (`gauge`), `total_cpu_util_s` CPU seconds (`counter`), `total_cpu_util_user_s` / `total_cpu_util_sys_s` user and system seconds (`counter`) | container |
+| CPU throttling | `total_cpu_throttled` throttled seconds per second (`gauge`), `total_cpu_throttled_s` throttled seconds (`counter`); both `sparse` | container |
+| CPU of other containers in the pod | `total_cpu_util_others` (`gauge`), `total_cpu_util_others_s` (`counter`) — disabled by default | container |
+| Memory | `total_cpu_memory` working set in MiB (`gauge`), `total_cpu_memory_cached` usage including page cache in MiB (`gauge`) | container |
+| Network | `total_network_rx` / `total_network_tx` MiB received / sent (`counter`) | pod |
+| Filesystem | `total_fs_read` / `total_fs_write` MiB read / written (`counter`), largest device per pod | container |
+| Per-core utilisation | `max_core_util` busiest core in % (`ratio`), `core_variance` variance of the per-core busy share in %² (`ratio`) | node |
+| I/O wait | `io_wait_pct` share of busy CPU time spent in I/O wait in % (`ratio`), `io_wait_total` I/O wait CPU seconds (`counter`) | node |
+| GPU (DCGM) | `total_gpu_util` %, `total_gpu_power` W, `total_gpu_memory` MiB, each summed over the pod's GPUs (`gauge`) — disabled by default | GPU |
+
+Node-level metrics describe the whole node the SUT runs on, including other workloads on it, not only the SUT container.
+The filesystem metrics take the largest device per pod because cAdvisor reports a RAID device and each of its member disks; summing over devices would count every read and write several times.
 
 Metrics marked as disabled (`active: False` in `cluster.config`) are present in the configuration but skipped during collection.
-To enable them, set `active: True` on the relevant entries.
+To enable them, set `active: True` on the relevant entries, or switch them per experiment with `-mm`.
+`bexhoma environment create` records under `monitoring.hardware` whether the cluster's Prometheus actually has data for each metric (`available`).
+
+### Metric kinds
+
+A metric's `metric` field says how its time series is reduced to one value per phase:
+
+| Kind | Reduced to | Use for |
+|---|---|---|
+| `counter` | maximum − minimum (the increase during the phase) | queries returning an ever-growing total, e.g. CPU seconds |
+| `gauge` | mean | current values, and queries that already apply `rate()` (a value per second) |
+| `ratio` | maximum | ratios and per-node peaks |
+
+A title names the unit in brackets, and says "since Start" or "since Stats Reset" when the value is an average over the server's lifetime rather than over the phase.
 
 See [Config.md](Config.md) for the full metric schema and how to add or modify metric definitions.
 
@@ -93,11 +109,12 @@ Bexhoma substitutes the following placeholders at runtime before sending the que
 
 | Placeholder | Substituted value |
 |---|---|
-| `{configuration}` | The name of the current DBMS configuration (e.g., `PostgreSQL`) |
+| `{configuration}` | The name of the current DBMS configuration, lower-case (e.g., `postgresql-1`) |
 | `{experiment}` | The numeric experiment code (e.g., `1775855486`) |
 | `{host}` | The Kubernetes node hosting the SUT |
 | `{gpuid}` | Pipe-separated list of GPU UUIDs present in the SUT pod |
-| `{namespace}` | The Kubernetes namespace of the current context |
+| `{database}` | The database name (the tenant's database in database-per-tenant mode) |
+| `{schema}` | The schema name (the tenant's schema in schema-per-tenant mode) |
 
 Because bexhoma uses Python's `str.format()` for substitution, literal PromQL label selector braces `{}` must be written as `{{}}` in the config:
 
@@ -129,59 +146,73 @@ Application metrics are DBMS-internal statistics exposed by an exporter sidecar 
 They are enabled with `-ma` and require a compatible exporter image to be configured in the DBMS's `dockers` entry (see [DBMS.md](DBMS.md)).
 
 Application metrics are scraped from the per-experiment Prometheus via the `service_monitoring_application` URL template, which points to the application Prometheus port (9090) of the exporter sidecar inside the cluster.
+They are only collected for the SUT's loading and benchmarking phases, not for loader, benchmarker or data generator pods.
 
-Bexhoma supports two collection patterns:
+Bexhoma supports two collection patterns, chosen per DBMS in its `dockers` entry:
 
 ### Blackbox collection
 
-The exporter exposes a `/probe` endpoint.
-Bexhoma sends one request per database, passing the target as a query parameter.
-This allows per-database metric breakdowns within a single DBMS instance.
+The exporter is probed once per database, with the target passed as a query parameter.
+This allows per-database metric breakdowns within a single DBMS instance (e.g. one database per tenant).
+The DBMS sets `blackbox: True` and a `blackbox_target` template, in which `{database}` is replaced by each database name:
 
-Used by: **PostgreSQL**, **PGBouncer**
+Used by: **PostgreSQL**, **PgDuckDB**
 
 ```python
 'monitor': {
-    'blackbox': True,
-    'metrics': { ... }
-}
+    'sut': {
+        'metrics': 'postgresql',
+        'blackbox': True,
+        'blackbox_target': 'postgres@localhost:5432/{database}?sslmode=disable',
+    },
+},
 ```
 
 ### Standard collection
 
 The exporter automatically exposes metrics for all databases in the instance via its default metrics endpoint.
-No per-database probing is needed.
+No per-database probing is needed; `blackbox` is `False` or left out.
 
-Used by: **MySQL**, **TiDB**, **TiKV**, **Placement Driver**, **YugabyteDB**, **CockroachDB**, **Dragonfly**, **Redis**
-
-```python
-'monitor': {
-    'blackbox': False,
-    'metrics': { ... }
-}
-```
+Used by: **MySQL**, **PGBouncer**, **TiDB**, **TiKV**, **Placement Driver**, **YugabyteDB**, **CockroachDB**, **Dragonfly**, **Redis**
 
 ### Named application metric sets
 
 The `monitor` block in `cluster.config` defines named metric sets, one per DBMS family.
-Each DBMS configuration in `dockers` references the relevant set via its `monitor.sut.metrics` or `monitor.worker.metrics` field:
+Each DBMS configuration in `dockers` references the relevant set by component (`monitor.sut.metrics`, `monitor.worker.metrics`, and so on):
 
 | Metric set | Used by |
 |---|---|
-| `postgresql` | PostgreSQL, PGBouncer (SUT component) |
+| `postgresql` | PostgreSQL, PgDuckDB, PGBouncer (SUT component) |
 | `pgbouncer` | PGBouncer (pool component) |
-| `mysql` | MySQL, MariaDB |
+| `mysql` | MySQL |
 | `tidb` | TiDB (SQL layer) |
 | `tikv` | TiDB (TiKV storage) |
 | `pd` | TiDB (Placement Driver) |
 | `yb-master` | YugabyteDB (master nodes) |
 | `yb-tserver` | YugabyteDB (tablet servers) |
 | `cockroachdb` | CockroachDB (worker nodes) |
-| `dragonfly` | Dragonfly |
-| `redis` | Redis |
+| `dragonfly` | Dragonfly, DragonflyCluster (worker nodes) |
+| `redis` | Redis (worker nodes) |
 
-Each named set follows the same metric schema as the hardware metrics (`type`, `active`, `metric`, `query`, `title`).
+Each named set follows the same metric schema as the hardware metrics (`type`, `active`, `metric`, `query`, `title`, optional `sparse`).
 The `type` field must be `application` so bexhoma routes queries to `service_monitoring_application` rather than `service_monitoring`.
+
+---
+
+## Missing Metrics
+
+When Prometheus returns no data for a query, dbmsbenchmarker does not fail: it logs `Metrics missing for <title> (<query>)` and stores a series of zeros, which would otherwise read like a measured idle component.
+Bexhoma scans the metric-fetch logs (`bexhoma-metrics-*.log`) and the benchmarker pod logs for these lines and reports each gap once, even when both processes logged it.
+
+Some gaps are expected, and their zeros are correct:
+
+| Reason | When |
+|---|---|
+| `data pre-existing` | An optional component, the data generator, had nothing to do and exited before the first scrape |
+| `series exists only while non-zero` | The metric is marked `sparse: True` in `cluster.config`: its series only exists while the value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit) |
+
+The test `No monitoring metrics missing` fails only on unexpected gaps; when every gap is expected it is recorded as skipped, with the reasons.
+The report lists all gaps in `monitoring.md`'s Missing Metrics, with an `expected` column, and counts expected and unexpected gaps separately in `index.md`'s Health Summary (see [AgentReport](AgentReport.md)).
 
 ---
 
