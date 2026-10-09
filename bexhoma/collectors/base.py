@@ -251,9 +251,9 @@ class CollectorBase:
             df_performance = pd.concat([df_performance, df_aggregated])
         return df_performance
 
-    #: Counters measured for the whole node rather than per container: parallel
-    #: jobs on one node all report the same value, so summing them would count
-    #: the node once per job.
+    #: Counters measured for the whole node rather than per container: SUTs of
+    #: different configurations can share a node and then report the same node
+    #: value, so summing them across configurations would count the node twice.
     NODE_LEVEL_COUNTERS = ('io_wait_total',)
 
     def _node_level_counter_titles(self) -> list:
@@ -277,9 +277,15 @@ class CollectorBase:
 
         Calls :meth:`get_monitoring_aggregated_per_job` to collect the per-job monitoring data,
         enriches it with connection metadata via :meth:`add_metadata`, then groups by
-        ``(code, experiment_run, client, type_tenants, num_tenants)`` and reduces each
-        metric column using ``'max'`` for ratio metrics and ``'sum'`` for counter metrics.
-        Node-level counters (see :meth:`_node_level_counter_titles`) are always reduced with ``'max'``.
+        ``(code, experiment_run, client, type_tenants, num_tenants)`` in two steps:
+
+        1. Within one configuration, the parallel jobs (schema- or database-per-tenant
+           tenants) all measure the same pods over concurrent windows, so their rows are
+           copies of one measurement: ratio and counter → ``max``, others → ``mean``.
+        2. Across configurations (container-per-tenant: one SUT per tenant) the values
+           belong to different SUTs: ratio → ``max``, others → ``sum``. Node-level
+           counters (see :meth:`_node_level_counter_titles`) stay ``max``, because
+           several SUTs can share a node.
 
         :param type: Component type forwarded to :meth:`get_monitoring_aggregated_per_job`.
         :type type: str
@@ -289,16 +295,20 @@ class CollectorBase:
         """
         df = self.get_monitoring_aggregated_per_job(type)
         df_metadata = self.add_metadata(df)
-        metric_cols = df.columns
-        filtered_agg_dict = {
-            col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum'
-            for col in metric_cols if col in df.columns
+        kinds = {col: self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item()
+                 for col in df.columns}
+        within_configuration = {
+            col: 'max' if kind in ('ratio', 'counter') else 'mean' for col, kind in kinds.items()
         }
+        across_configurations = {col: 'max' if kind == 'ratio' else 'sum' for col, kind in kinds.items()}
         for title in self._node_level_counter_titles():
-            if title in filtered_agg_dict:
-                filtered_agg_dict[title] = 'max'
+            if title in across_configurations:
+                across_configurations[title] = 'max'
         cols = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
-        df_metadata = df_metadata.groupby(cols).agg(filtered_agg_dict)
+        df_metadata = (
+            df_metadata.groupby(cols + ['configuration']).agg(within_configuration)
+            .groupby(cols).agg(across_configurations)
+        )
         df_metadata[cols] = pd.DataFrame(df_metadata.index.tolist(), index=df_metadata.index)
         df_metadata.index = ['_'.join(map(str, i)) for i in df_metadata.index]
         return df_metadata
@@ -442,6 +452,8 @@ class CollectorBase:
             df_col = pd.DataFrame(processed)
             df_col.columns = [col_name]
             results.append(df_col)
+        if not results:
+            return pd.DataFrame()
         return pd.concat(results, axis=1).round(2)
 
     def get_monitoring_timeseries_single(self, code, metric='pg_locks_count', component="benchmarking"):
@@ -504,8 +516,11 @@ class CollectorBase:
         by phase (``configuration-experiment_run-client``), collapsing parallel benchmark
         jobs within the same phase into a single row.
 
-        Aggregation per metric type: ratio → ``max``, counter → ``sum``, others → ``mean``.
-        Node-level counters (see :meth:`_node_level_counter_titles`) are always reduced with ``max``.
+        Aggregation per metric type: ratio → ``max``, counter → ``max``, others → ``mean``.
+        All jobs of a phase belong to one configuration, and every monitoring query
+        covers all pods of that configuration, so parallel jobs (e.g. schema- or
+        database-per-tenant tenants) report copies of one measurement over concurrent
+        windows; summing their counters would count the same pods once per job.
 
         The result index is the code-prefixed phase identifier
         (``<code>-<configuration>-<experiment_run>-<client>``).
@@ -531,10 +546,7 @@ class CollectorBase:
             if matches.empty:
                 continue
             metric_type = matches['metric'].iloc[0]
-            agg_dict[col] = 'max' if metric_type == 'ratio' else ('sum' if metric_type == 'counter' else 'mean')
-        for title in self._node_level_counter_titles():
-            if title in agg_dict:
-                agg_dict[title] = 'max'
+            agg_dict[col] = 'max' if metric_type in ('ratio', 'counter') else 'mean'
         group_cols = ['code', 'configuration', 'experiment_run', 'client']
         if not all(c in df_with_meta.columns for c in group_cols):
             return df
@@ -714,7 +726,8 @@ class CollectorBase:
 
         :param metric: Monitoring metric name (default ``'pg_locks_count'``).
         :type metric: str
-        :param component: Component name used as a label column (default ``'benchmarking'``).
+        :param component: Component to read the metric for (e.g. ``'benchmarking'``,
+            ``'loading'``); also stored as a label column (default ``'benchmarking'``).
         :type component: str
         :return: Grouped long-format time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame
@@ -725,7 +738,7 @@ class CollectorBase:
         for code in self.codes:
             evaluation = self.get_evaluator(code)
             df_connections = self.get_connections(evaluation)
-            df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric)
+            df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric, component=component)
             df_monitoring.index.name = "timestamp"
             df_long = df_monitoring.reset_index().melt(
                 id_vars="timestamp",
@@ -773,7 +786,7 @@ class CollectorBase:
             evaluation = self.get_evaluator(code)
             workload = self.get_workload(code)
             df_connections = self.get_connections(evaluation)
-            df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric)
+            df_monitoring = self.get_monitoring_timeseries_single(code, metric=metric, component=component)
             df_monitoring.index.name = "timestamp"
             df_long = df_monitoring.reset_index().melt(
                 id_vars="timestamp",
