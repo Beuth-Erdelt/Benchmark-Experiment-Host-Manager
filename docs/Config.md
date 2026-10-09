@@ -149,8 +149,10 @@ Each entry has:
 | `metric` | `counter` | Aggregated as max − min (delta) over the interval |
 | `metric` | `ratio` | Aggregated as max over the interval |
 | `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{host}`, `{gpuid}`, `{namespace}` |
+| `sparse` | `True` (optional) | The metric only has a Prometheus series while its value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit). No data then means 0, so the report lists the gap as expected instead of failing the "No monitoring metrics missing" test |
 
 The default set of hardware metrics covers CPU utilization, CPU throttle, memory (working set and cached), network RX/TX, filesystem read/write, I/O wait, and per-core variance.
+The filesystem metrics count the largest device per pod: cAdvisor reports a RAID device and each of its member disks, so summing over devices would count every read and write several times.
 GPU metrics (DCGM) are present but disabled by default (`active: False`).
 
 #### Named application metric sets

@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.7.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.8.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -158,11 +158,14 @@ validity:
   - id: no_monitoring_metrics_missing
     kind: absolute
     label: "No monitoring metrics missing"
-    checks: "no `Metrics missing for` line in provenance.monitoring's bexhoma-metrics-*.log or provenance.benchmarking's bexhoma-benchmarker-*.log (DBMSBenchmarker fetching per-stream metrics itself)"
+    checks: "no `Metrics missing for` line in provenance.monitoring's bexhoma-metrics-*.log or provenance.benchmarking's bexhoma-benchmarker-*.log (DBMSBenchmarker fetching per-stream metrics itself), counting a gap both logs report once; SKIPPED (not failed) when every gap is expected"
     why: "dbmsbenchmarker fills a metric Prometheus returned no data for with zeros and only logs it, so the zeros otherwise read as a measured idle component"
+    expected_gaps:
+      "data pre-existing": "an optional component (the data generator) had nothing to do and exited before the first scrape"
+      "series exists only while non-zero": "the metric is marked sparse in cluster.config (e.g. backends waiting on locks, CPU throttling of a container without a CPU limit); no data means 0"
     reports:
-      where: "report/index.md Health Summary (count and titles), report/monitoring.md Missing Metrics (source, title, connection, query)"
-    scopes: "the listed metrics' values in monitoring.md; other metrics stay valid"
+      where: "report/index.md Health Summary (count and titles of unexpected gaps; a separate line for expected ones), report/monitoring.md Missing Metrics (source, title, connection, query, component, expected)"
+    scopes: "the listed metrics' values in monitoring.md where `expected` is empty; expected gaps' zeros are correct; other metrics stay valid"
   - id: explain_captured_for_all_queries
     kind: absolute
     scope: dbmsbenchmarker_family_only

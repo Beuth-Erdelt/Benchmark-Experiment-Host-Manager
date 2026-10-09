@@ -3009,13 +3009,23 @@ class ExperimentBase():
                     self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
         # dbmsbenchmarker zero-fills a metric Prometheus did not return, so a
         # missing metric is only visible in the logs of the processes fetching it
-        missing = missing_metrics.collect_missing_metrics(Path(self.evaluator.path))
+        missing = missing_metrics.collect_missing_metrics(Path(self.evaluator.path), optional_components)
         if missing:
             print("\n### Missing Monitoring Metrics")
             for entry in missing:
                 connection = f" for connection {entry.connection}" if entry.connection else ""
-                print(f"* {entry.title}{connection} ({entry.source})")
-        self._record_test(not missing, "No monitoring metrics missing" if not missing else "Monitoring metrics missing")
+                expected = f", expected: {entry.expected}" if entry.expected else ""
+                print(f"* {entry.title}{connection} ({entry.source}{expected})")
+        unexpected = [entry for entry in missing if not entry.expected]
+        if unexpected:
+            self._record_test(False, "Monitoring metrics missing")
+        elif missing:
+            # Every gap has a harmless reason, e.g. a data generator that exited
+            # before the first scrape, or a series that only exists while non-zero.
+            reasons = "; ".join(sorted({entry.expected for entry in missing}))
+            self._record_skipped_test(f"Monitoring metrics missing ({reasons})")
+        else:
+            self._record_test(True, "No monitoring metrics missing")
 
 
 

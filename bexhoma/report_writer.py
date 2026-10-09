@@ -81,7 +81,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.7.0"
+SCHEMA_VERSION = "1.8.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -227,7 +227,7 @@ quoting any number, not after:
 | `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
 | `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `benchmarking.md`'s Per Phase table |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
-| `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros — their values in `monitoring.md` are not measurements | `monitoring.md`'s Missing Metrics |
+| `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros — their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason | `monitoring.md`'s Missing Metrics |
 
 A **skipped** test (e.g. monitoring skipped because data was pre-existing, or
 a phase shorter than the Prometheus scrape interval) does not invalidate
@@ -546,8 +546,12 @@ def _build_monitoring_sections(
             heading="Missing Metrics", level=3, index=False,
             dataframe=pd.DataFrame([vars(entry) for entry in missing]),
             lines=["Prometheus returned no data for these queries, and dbmsbenchmarker filled them "
-                   "with zeros: their values in the tables below are not measurements. `source` is "
-                   "the log that reported it (see files.md)."],
+                   "with zeros. Where `expected` is empty, those zeros are not measurements. Where "
+                   f"it names a reason, the zeros are correct: `{missing_metrics.EXPECTED_DATA_PREEXISTING}` "
+                   "means an optional component (the data generator) had nothing to do and exited "
+                   f"before the first scrape; `{missing_metrics.EXPECTED_SPARSE}` means the metric "
+                   "only has a series while its value is non-zero. `source` is the log that reported "
+                   "it (see files.md)."],
         ))
     monitoring_components = experiment.workload.get('monitoring_components', {})
     for component, title in monitoring_components.items():
@@ -727,11 +731,17 @@ def _build_health_summary_lines(
         else:
             lines.append(f"- SQL warnings: {num_warnings} — see [benchmarking.md](benchmarking.md)'s Warnings subsection for the affected queries")
     if missing is not None:
-        if not missing:
+        unexpected = [entry for entry in missing if not entry.expected]
+        expected = [entry for entry in missing if entry.expected]
+        if not unexpected:
             lines.append("- Missing monitoring metrics: none")
         else:
-            titles = sorted({entry.title for entry in missing})
-            lines.append(f"- Missing monitoring metrics: {len(missing)} ({', '.join(titles)}) — zero-filled, "
+            titles = sorted({entry.title for entry in unexpected})
+            lines.append(f"- Missing monitoring metrics: {len(unexpected)} ({', '.join(titles)}) — zero-filled, "
+                         "see [monitoring.md](monitoring.md)'s Missing Metrics")
+        if expected:
+            reasons = "; ".join(sorted({entry.expected for entry in expected}))
+            lines.append(f"- Expected monitoring gaps: {len(expected)} ({reasons}) — the zeros are correct, "
                          "see [monitoring.md](monitoring.md)'s Missing Metrics")
     return lines
 
@@ -962,7 +972,8 @@ def write_markdown_report(
 
     missing = None
     if experiment.monitoring_active or experiment.cluster.monitor_cluster_active:
-        missing = missing_metrics.collect_missing_metrics(result_dir)
+        missing = missing_metrics.collect_missing_metrics(
+            result_dir, experiment.workload.get('optional_monitoring_components', []))
     monitoring_sections = _build_monitoring_sections(
         experiment, benchmark.evaluator, connections_sorted, monitoring_applications, missing,
     )
