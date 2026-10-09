@@ -168,7 +168,7 @@ Returns one row per benchmark job across all codes. Each metric column is reduce
 Returns one row per phase across all codes. Calls `get_monitoring_aggregated_per_job()` and further reduces by grouping on `(code, configuration, experiment_run, client)`, collapsing all parallel jobs within a phase. Aggregation rules: ratio → max, counter → sum, other → mean. Index is the code-prefixed phase identifier.
 
 **`get_monitoring_aggregated_per_phase_multitenant(component='benchmarking')`**  
-Extends `get_monitoring_aggregated_per_job()` by grouping across tenants. Ratio metrics are reduced with `max`; counter metrics with `sum` (except *Total I/O Wait Time*, which uses `max`). Index is the underscore-joined group key.
+Extends `get_monitoring_aggregated_per_job()` by grouping across tenants. Ratio metrics are reduced with `max`; counter metrics with `sum` (except the node-level counter `io_wait_total`, *Node I/O Wait CPU Time*, which uses `max` because parallel jobs on one node all report the same node value). Index is the underscore-joined group key.
 
 ---
 

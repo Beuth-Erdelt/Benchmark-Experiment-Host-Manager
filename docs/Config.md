@@ -136,7 +136,7 @@ Each entry has:
     'active': True,         # False = skip this metric
     'metric': 'gauge',      # 'gauge' (mean), 'counter' (max−min delta), or 'ratio' (max)
     'query':  '<promql>',   # PromQL; {configuration}, {experiment}, {host}, {gpuid} are substituted
-    'title':  'CPU Utilization',
+    'title':  'CPU Utilization [CPUs]',   # unit in brackets: what the query's value is measured in
 },
 ```
 
@@ -151,7 +151,9 @@ Each entry has:
 | `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{host}`, `{gpuid}`, `{namespace}` |
 | `sparse` | `True` (optional) | The metric only has a Prometheus series while its value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit). No data then means 0, so the report lists the gap as expected instead of failing the "No monitoring metrics missing" test |
 
-The default set of hardware metrics covers CPU utilization, CPU throttle, memory (working set and cached), network RX/TX, filesystem read/write, I/O wait, and per-core variance.
+The default set of hardware metrics covers CPU utilization, CPU throttle, memory (working set and including page cache), network RX/TX, filesystem read/write, and, for the whole node rather than the container, I/O wait and per-core utilization (maximum and variance).
+Pick `metric` by what the query returns, not by the underlying series: a query that already applies `rate()` returns a value per second and is a `gauge`; only a query returning an ever-growing total is a `counter`.
+A title names the unit in brackets, and says "since Start" or "since Stats Reset" when the value is an average over the server's lifetime rather than over the phase.
 The filesystem metrics count the largest device per pod: cAdvisor reports a RAID device and each of its member disks, so summing over devices would count every read and write several times.
 GPU metrics (DCGM) are present but disabled by default (`active: False`).
 

@@ -251,6 +251,26 @@ class CollectorBase:
             df_performance = pd.concat([df_performance, df_aggregated])
         return df_performance
 
+    #: Counters measured for the whole node rather than per container: parallel
+    #: jobs on one node all report the same value, so summing them would count
+    #: the node once per job.
+    NODE_LEVEL_COUNTERS = ('io_wait_total',)
+
+    def _node_level_counter_titles(self) -> list:
+        """
+        Titles of the node-level counters, as this experiment's metrics define them.
+
+        Looked up by metric key, so results recorded under an older title keep
+        their ``max`` reduction.
+
+        :return: Metric titles.
+        :rtype: list[str]
+        """
+        if self.df_metrics is None or self.df_metrics.empty:
+            return []
+        return [self.df_metrics.loc[key, 'title'] for key in self.NODE_LEVEL_COUNTERS
+                if key in self.df_metrics.index]
+
     def get_monitoring_aggregated_per_phase_multitenant(self, type="benchmarking"):
         """
         Combines aggregated multi-tenant monitoring metrics from all experiment codes into one DataFrame.
@@ -259,7 +279,7 @@ class CollectorBase:
         enriches it with connection metadata via :meth:`add_metadata`, then groups by
         ``(code, experiment_run, client, type_tenants, num_tenants)`` and reduces each
         metric column using ``'max'`` for ratio metrics and ``'sum'`` for counter metrics.
-        ``'Total I/O Wait Time [s]'`` is always reduced with ``'max'``.
+        Node-level counters (see :meth:`_node_level_counter_titles`) are always reduced with ``'max'``.
 
         :param type: Component type forwarded to :meth:`get_monitoring_aggregated_per_job`.
         :type type: str
@@ -274,8 +294,9 @@ class CollectorBase:
             col: 'max' if self.df_metrics.loc[self.df_metrics['title'] == col, 'metric'].item() == 'ratio' else 'sum'
             for col in metric_cols if col in df.columns
         }
-        if 'Total I/O Wait Time [s]' in filtered_agg_dict:
-            filtered_agg_dict['Total I/O Wait Time [s]'] = 'max'
+        for title in self._node_level_counter_titles():
+            if title in filtered_agg_dict:
+                filtered_agg_dict[title] = 'max'
         cols = ['code', 'experiment_run', 'client', 'type_tenants', 'num_tenants']
         df_metadata = df_metadata.groupby(cols).agg(filtered_agg_dict)
         df_metadata[cols] = pd.DataFrame(df_metadata.index.tolist(), index=df_metadata.index)
@@ -408,7 +429,7 @@ class CollectorBase:
         for metric_key, row in self.df_metrics.iterrows():
             if row["active"] is False or row["active"] == False:
                 continue
-            reduction = 'diff' if row["metric"] == 'counter' else 'mean'
+            reduction = {'counter': 'diff', 'ratio': 'max'}.get(row["metric"], 'mean')
             col_name = row["title"]
             df = evaluation.get_monitoring_metric(metric=metric_key, component=type)
             df.index = evaluation.code + '-' + df.index.astype(str)
@@ -484,7 +505,7 @@ class CollectorBase:
         jobs within the same phase into a single row.
 
         Aggregation per metric type: ratio → ``max``, counter → ``sum``, others → ``mean``.
-        ``'Total I/O Wait Time [s]'`` is always reduced with ``max``.
+        Node-level counters (see :meth:`_node_level_counter_titles`) are always reduced with ``max``.
 
         The result index is the code-prefixed phase identifier
         (``<code>-<configuration>-<experiment_run>-<client>``).
@@ -511,8 +532,9 @@ class CollectorBase:
                 continue
             metric_type = matches['metric'].iloc[0]
             agg_dict[col] = 'max' if metric_type == 'ratio' else ('sum' if metric_type == 'counter' else 'mean')
-        if 'Total I/O Wait Time [s]' in agg_dict:
-            agg_dict['Total I/O Wait Time [s]'] = 'max'
+        for title in self._node_level_counter_titles():
+            if title in agg_dict:
+                agg_dict[title] = 'max'
         group_cols = ['code', 'configuration', 'experiment_run', 'client']
         if not all(c in df_with_meta.columns for c in group_cols):
             return df
