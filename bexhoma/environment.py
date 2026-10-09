@@ -243,6 +243,15 @@ class StorageClassInfo:
         )
 
 
+def _progress(step: str, message: str) -> None:
+    """Print one progress line in bexhoma's ``{step:30s}: message`` console style.
+
+    :param step: What is being collected, e.g. ``"Nodes"``.
+    :param message: What is happening or was found.
+    """
+    print(f"{step:30s}: {message}", flush=True)
+
+
 def _curate_resource_quantities(quantities: dict[str, str]) -> dict[str, str]:
     """Keep only benchmarking-relevant resource-quantity keys, as raw strings.
 
@@ -570,11 +579,13 @@ def collect_node_usage_prometheus(cluster: Any, nodes: list[NodeInfo]) -> bool:
     """
     url = _prometheus_url(cluster)
     if not url:
+        _progress("Occupancy", "no Prometheus in cluster.config")
         return False
     pod = cluster.get_dashboard_pod_name()
     if not pod:
         print("WARN: no dashboard pod to reach Prometheus from - falling back to the pod listing")
         return False
+    _progress("Occupancy", f"querying Prometheus {url} from pod {pod}")
     try:
         # An empty answer means kube-state-metrics is not scraped, which would
         # otherwise read as "nothing requested anywhere".
@@ -620,6 +631,7 @@ def collect_node_usage(cluster: Any, nodes: list[NodeInfo]) -> str:
     """
     if collect_node_usage_prometheus(cluster, nodes):
         return OCCUPANCY_PROMETHEUS
+    _progress("Occupancy", "listing pods cluster-wide through the Kubernetes API")
     # Paginated rather than one list_pod_for_all_namespaces() call: on a large,
     # busy cluster that single response can run into the hundreds of MB, and an
     # intermediate proxy between here and the API server has been observed to
@@ -778,8 +790,17 @@ def build_environment(cluster: Any) -> dict[str, Any]:
     :return: The environment descriptor, ready for :func:`write_environment_yml`.
     :rtype: dict[str, Any]
     """
+    _progress("Cluster", f"context {cluster.context}, namespace {cluster.namespace}")
+    _progress("Nodes", "listing")
     nodes, excluded_nodes = collect_nodes(cluster)
+    _progress("Nodes", f"{len(nodes)} schedulable, {len(excluded_nodes)} excluded (tainted)")
     occupancy_source = collect_node_usage(cluster, nodes) or OCCUPANCY_UNAVAILABLE
+    _progress("Occupancy", f"source: {occupancy_source}")
+    _progress("Storage classes", "listing")
+    storage_classes = collect_storage_classes(cluster)
+    _progress("Storage classes", f"{len(storage_classes)} found")
+    _progress("Resource limits", "reading")
+    resource_limits = collect_resource_limits(cluster, nodes)
     return {
         "environment_contract_version": ENVIRONMENT_CONTRACT_VERSION,
         "cluster": {
@@ -790,8 +811,8 @@ def build_environment(cluster: Any) -> dict[str, Any]:
         "occupancy_source": occupancy_source,
         "nodes": [vars(node) for node in nodes],
         "excluded_nodes": excluded_nodes,
-        "storage_classes": [vars(storage_class) for storage_class in collect_storage_classes(cluster)],
-        "resource_limits": collect_resource_limits(cluster, nodes),
+        "storage_classes": [vars(storage_class) for storage_class in storage_classes],
+        "resource_limits": resource_limits,
     }
 
 
@@ -926,9 +947,11 @@ def main(argv: Optional[list[str]] = None) -> None:
             for name in cli_args.hardware_baseline_storage_classes.split(",")
         ]
 
+    _progress("Cluster", "connecting")
     cli_cluster = clusters.Kubernetes(context=cli_args.context)
     cli_environment = build_environment(cli_cluster)
     if cli_args.hardware_baseline:
+        _progress("Hardware baseline", f"running sweep (up to {cli_args.hardware_baseline_timeout} min)")
         apply_hardware_baseline(
             cli_cluster, cli_environment,
             hardware_duration=cli_args.hardware_baseline_duration,
@@ -937,7 +960,7 @@ def main(argv: Optional[list[str]] = None) -> None:
             timeout_minutes=cli_args.hardware_baseline_timeout,
         )
     write_environment_yml(cli_environment, cli_args.output)
-    print(f"wrote {cli_args.output}")
+    _progress("Environment", f"wrote {cli_args.output}")
 
 
 if __name__ == "__main__":
