@@ -71,6 +71,7 @@ import pandas as pd
 import yaml
 
 from bexhoma import evaluators
+from bexhoma import missing_metrics
 from bexhoma import sut_restarts
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
@@ -80,7 +81,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.6.0"
+SCHEMA_VERSION = "1.7.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -162,6 +163,10 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
      "Wide-format monitoring CSVs (one column per connection, one row per "
      "Prometheus scrape), one per metric and component — find each "
      "connection's own column by name."),
+    ("metrics-fetch", "Metric Fetch Logs", ("bexhoma-metrics-*.log",),
+     "Output of each Prometheus fetch bexhoma ran in the dashboard pod, one file "
+     "per connection and component — a `Metrics missing for` line marks a "
+     "metric that returned no data and was filled with zeros."),
     ("other", "Other Result Files", ("*",),
      "Further raw outputs of the benchmark driver and evaluator that no tier-2 "
      "page aggregates directly."),
@@ -222,6 +227,7 @@ quoting any number, not after:
 | `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
 | `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `benchmarking.md`'s Per Phase table |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
+| `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros — their values in `monitoring.md` are not measurements | `monitoring.md`'s Missing Metrics |
 
 A **skipped** test (e.g. monitoring skipped because data was pre-existing, or
 a phase shorter than the Prometheus scrape interval) does not invalidate
@@ -504,6 +510,7 @@ def _get_metric_definitions(connections_sorted: list[dict]) -> dict[str, dict]:
 
 def _build_monitoring_sections(
     experiment, evaluator, connections_sorted: list[dict], monitoring_applications: dict,
+    missing: list[missing_metrics.MissingMetric] | None = None,
 ) -> list[Section]:
     """
     Build ``monitoring.md``'s content: the curated CPU/RAM tables (same data
@@ -526,12 +533,22 @@ def _build_monitoring_sections(
     :param connections_sorted: Connection dicts as read by ``show_summary_header()``.
     :param monitoring_applications: Curated application-metric DataFrames,
         keyed by title, as returned by ``show_summary_header()``.
+    :param missing: Output of :func:`missing_metrics.collect_missing_metrics`;
+        listed first, since their zero-filled values appear in the tables below.
     :return: The sections to render into ``monitoring.md``.
     :rtype: list[Section]
     """
     if not (experiment.monitoring_active or experiment.cluster.monitor_cluster_active):
         return []
     sections: list[Section] = []
+    if missing:
+        sections.append(Section(
+            heading="Missing Metrics", level=3, index=False,
+            dataframe=pd.DataFrame([vars(entry) for entry in missing]),
+            lines=["Prometheus returned no data for these queries, and dbmsbenchmarker filled them "
+                   "with zeros: their values in the tables below are not measurements. `source` is "
+                   "the log that reported it (see files.md)."],
+        ))
     monitoring_components = experiment.workload.get('monitoring_components', {})
     for component, title in monitoring_components.items():
         df_monitoring, _insufficient_samples = experiment.show_summary_monitoring_table(evaluator, component)
@@ -666,6 +683,7 @@ def _build_tests_lines(test_results: list[tuple]) -> list[str]:
 
 def _build_health_summary_lines(
     total_restarts: int, extra_context: dict, restart_details: list[sut_restarts.RestartDetail] | None = None,
+    missing: list[missing_metrics.MissingMetric] | None = None,
 ) -> list[str]:
     """
     Build the terse ``### Health Summary`` block: one status line per
@@ -679,6 +697,8 @@ def _build_health_summary_lines(
     :param restart_details: Output of
         :func:`sut_restarts.collect_restart_details`; adds the termination
         reasons and the lost-data count to the restart line.
+    :param missing: Output of :func:`missing_metrics.collect_missing_metrics`,
+        or ``None`` when monitoring was not active (no line then).
     :return: Markdown lines for the Health Summary block.
     :rtype: list[str]
     """
@@ -706,6 +726,13 @@ def _build_health_summary_lines(
             lines.append("- SQL warnings: none")
         else:
             lines.append(f"- SQL warnings: {num_warnings} — see [benchmarking.md](benchmarking.md)'s Warnings subsection for the affected queries")
+    if missing is not None:
+        if not missing:
+            lines.append("- Missing monitoring metrics: none")
+        else:
+            titles = sorted({entry.title for entry in missing})
+            lines.append(f"- Missing monitoring metrics: {len(missing)} ({', '.join(titles)}) — zero-filled, "
+                         "see [monitoring.md](monitoring.md)'s Missing Metrics")
     return lines
 
 
@@ -933,15 +960,18 @@ def write_markdown_report(
         )
         written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
 
+    missing = None
+    if experiment.monitoring_active or experiment.cluster.monitor_cluster_active:
+        missing = missing_metrics.collect_missing_metrics(result_dir)
     monitoring_sections = _build_monitoring_sections(
-        experiment, benchmark.evaluator, connections_sorted, monitoring_applications,
+        experiment, benchmark.evaluator, connections_sorted, monitoring_applications, missing,
     )
     monitoring_summary_lines = _build_monitoring_summary_lines(monitoring_sections)
     if monitoring_sections:
         _write_tier2_file(
             report_dir, "monitoring.md", "monitoring",
             "SUT CPU/RAM/application monitoring, and the full catalog of every collected metric.",
-            monitoring_sections, connections_index, _provenance_lines(groups, ("monitoring",)),
+            monitoring_sections, connections_index, _provenance_lines(groups, ("monitoring", "metrics-fetch")),
         )
         written_sections.append({"title": "Monitoring", "file": "monitoring.md", "description": "CPU/RAM/application metrics plus the full metric catalog (all configured Prometheus metrics, not just the curated few)."})
 
@@ -969,7 +999,7 @@ def write_markdown_report(
 
     _write_index_md(
         report_dir, experiment, total_restarts, extra_context, written_sections,
-        key_metrics_lines, monitoring_summary_lines, restart_details,
+        key_metrics_lines, monitoring_summary_lines, restart_details, missing,
     )
 
 
@@ -1019,6 +1049,7 @@ def _write_index_md(
     report_dir: Path, experiment, total_restarts: int, extra_context: dict, written_sections: list[dict],
     key_metrics_lines: list[str], monitoring_summary_lines: list[str],
     restart_details: list[sut_restarts.RestartDetail] | None = None,
+    missing: list[missing_metrics.MissingMetric] | None = None,
 ) -> None:
     """
     Write ``index.md`` — the tier-1 entry point.
@@ -1060,6 +1091,8 @@ def _write_index_md(
     :param restart_details: Output of
         :func:`sut_restarts.collect_restart_details`, forwarded to the
         Health Summary.
+    :param missing: Missing monitoring metrics, forwarded to the Health
+        Summary; ``None`` when monitoring was not active.
     """
     passed = sum(1 for p, _ in experiment._test_results if p is True)
     failed = sum(1 for p, _ in experiment._test_results if p is False)
@@ -1091,7 +1124,7 @@ def _write_index_md(
         lines.append("")
         lines.extend(monitoring_summary_lines)
     lines.append("")
-    lines.extend(_build_health_summary_lines(total_restarts, extra_context, restart_details))
+    lines.extend(_build_health_summary_lines(total_restarts, extra_context, restart_details, missing))
     lines.append("")
     lines.append(_INTERPRETATION_RULES_MD)
     if written_sections:

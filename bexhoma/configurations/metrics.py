@@ -4,6 +4,8 @@ from __future__ import annotations
 import copy
 from typing import TYPE_CHECKING
 
+from bexhoma import missing_metrics
+
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
@@ -315,6 +317,16 @@ class MetricsCollector:
             command=cmd, pod=pod_dashboard, container="dashboard")
         cfg.logger.debug(stdout)
         cfg.logger.debug(stderr)
+        # keep the output: dbmsbenchmarker zero-fills a metric Prometheus did not
+        # return and only logs it, so the report scans this file for that message
+        output = ''.join(
+            part.decode('utf-8', errors='replace') if isinstance(part, bytes) else (part or '')
+            for part in (stdout, stderr))
+        filename_log = cfg.path + '/' + missing_metrics.fetch_log_name(connection, component_type)
+        with open(filename_log, 'a', encoding='utf-8') as f:
+            f.write(f"### {cmd}\n{output}\n")
+        for missing in missing_metrics.parse_missing_metrics(output):
+            print("{:30s}: WARNING metric missing for {}: {}".format(connection, component_type, missing.title))
         # re-upload connections.config because metrics.py may have overwritten it
         filename = 'connections.config'
         stdout = cfg.upload_experiment_file(filename)

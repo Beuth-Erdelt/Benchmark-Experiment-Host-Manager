@@ -31,6 +31,7 @@ import math
 from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
+from bexhoma import missing_metrics
 from bexhoma import sut_restarts
 
 if TYPE_CHECKING:
@@ -2963,6 +2964,15 @@ class ExperimentBase():
                 else:
                     suffix = "no 0 or NaN" if passed else "0 or NaN"
                     self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
+        # dbmsbenchmarker zero-fills a metric Prometheus did not return, so a
+        # missing metric is only visible in the logs of the processes fetching it
+        missing = missing_metrics.collect_missing_metrics(Path(self.evaluator.path))
+        if missing:
+            print("\n### Missing Monitoring Metrics")
+            for entry in missing:
+                connection = f" for connection {entry.connection}" if entry.connection else ""
+                print(f"* {entry.title}{connection} ({entry.source})")
+        self._record_test(not missing, "No monitoring metrics missing" if not missing else "Monitoring metrics missing")
 
 
 
