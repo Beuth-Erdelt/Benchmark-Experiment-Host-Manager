@@ -70,42 +70,54 @@ class SpecValidationTest(unittest.TestCase):
     def setUp(self):
         self.catalog = catalog_spec.load_catalog(_CATALOG_FILE)
 
-    def test_values_must_be_booleans(self):
-        with self.assertRaisesRegex(catalog_spec.SpecError, 'true or false'):
-            catalog_spec.validate_experiment(self.catalog, _with_metrics({'total_gpu_util': 'on'}))
+    def test_must_be_a_list_of_keys(self):
+        for metrics in ({'total_gpu_util': True}, 'total_gpu_util', [1]):
+            with self.subTest(metrics), self.assertRaisesRegex(catalog_spec.SpecError, 'list of hardware metric keys'):
+                catalog_spec.validate_experiment(self.catalog, _with_metrics(metrics))
 
     def test_needs_hardware_monitoring(self):
-        spec = _with_metrics({'total_gpu_util': True})
+        spec = _with_metrics(['total_gpu_util'])
         spec['observe']['monitoring_sut'] = False
         with self.assertRaisesRegex(catalog_spec.SpecError, 'monitoring_sut or observe.monitoring_cluster'):
             catalog_spec.validate_experiment(self.catalog, spec)
 
-    def test_environment_accepts_a_known_switch(self):
-        catalog_spec.validate_environment(_ENVIRONMENT, _with_metrics({'total_gpu_util': True}))
+    def test_hardware_monitoring_needs_metrics(self):
+        for observe in ({'monitoring_sut': True}, {'monitoring_cluster': True}, {'monitoring_sut': True, 'metrics': []}):
+            spec = copy.deepcopy(_BASE_SPEC)
+            spec['observe'] = observe
+            with self.subTest(observe), self.assertRaisesRegex(catalog_spec.SpecError, 'names no metric'):
+                catalog_spec.validate_experiment(self.catalog, spec)
+
+    def test_no_monitoring_needs_no_metrics(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['observe'] = {'monitoring_sut': False}
+        catalog_spec.validate_experiment(self.catalog, spec)
+
+    def test_environment_accepts_known_metrics(self):
+        # A required, default-active metric may be listed: the hypothesis relies on it.
+        catalog_spec.validate_environment(_ENVIRONMENT, _with_metrics(['total_gpu_util', 'total_cpu_util']))
 
     def test_environment_rejections(self):
         for metrics, expected in (
-            ({'total_disk_magic': True}, 'not a hardware metric'),
-            ({'total_cpu_util': False}, 'required'),
-            ({'total_fs_read': True}, 'no data'),
+            (['total_disk_magic'], 'not a hardware metric'),
+            (['total_fs_read'], 'no data'),
         ):
             with self.subTest(metrics), self.assertRaisesRegex(catalog_spec.SpecError, expected):
                 catalog_spec.validate_environment(_ENVIRONMENT, _with_metrics(metrics))
 
-    def test_switching_off_a_metric_without_data_is_fine(self):
-        catalog_spec.validate_environment(_ENVIRONMENT, _with_metrics({'total_fs_read': False}))
-
     def test_environment_without_metric_list_asks_for_regeneration(self):
         with self.assertRaisesRegex(catalog_spec.SpecError, 'regenerate'):
-            catalog_spec.validate_environment({'nodes': []}, _with_metrics({'total_gpu_util': True}))
+            catalog_spec.validate_environment({'nodes': []}, _with_metrics(['total_gpu_util']))
 
-    def test_build_argv_emits_the_flag(self):
-        argv = catalog_spec.build_argv(self.catalog, _with_metrics({'total_gpu_util': True, 'total_fs_read': False}))
+    def test_build_argv_switches_listed_metrics_on(self):
+        argv = catalog_spec.build_argv(self.catalog, _with_metrics(['total_gpu_util', 'total_cpu_util']))
         args = ycsb.build_parser().parse_args(argv)
-        self.assertEqual(args.monitoring_metrics, {'total_gpu_util': True, 'total_fs_read': False})
+        self.assertEqual(args.monitoring_metrics, {'total_gpu_util': True, 'total_cpu_util': True})
 
-    def test_build_argv_without_metrics_emits_nothing(self):
-        self.assertNotIn('-mm', catalog_spec.build_argv(self.catalog, copy.deepcopy(_BASE_SPEC)))
+    def test_build_argv_without_monitoring_emits_nothing(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        del spec['observe']
+        self.assertNotIn('-mm', catalog_spec.build_argv(self.catalog, spec))
 
 
 class ExperimentOverrideTest(unittest.TestCase):

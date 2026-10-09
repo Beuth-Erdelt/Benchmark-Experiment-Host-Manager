@@ -788,7 +788,11 @@ systems:
     profile: analytical-ssd
     override: {duckdb_force_execution: false}
 
-observe: {monitoring_sut: true, monitoring_cluster: true, monitoring_app: true}
+observe:
+  monitoring_sut: true
+  monitoring_cluster: true
+  monitoring_app: true
+  metrics: [total_cpu_util, total_cpu_memory]
 
 placement:
   sut: node-group-sut

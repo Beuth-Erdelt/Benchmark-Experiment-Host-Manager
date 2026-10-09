@@ -46,7 +46,7 @@ _BASE_SPEC = {
     },
     'loading': {'pods': 1, 'threads': 8},
     'systems': [{'name': 'PostgreSQL'}],
-    'observe': {'monitoring_sut': True},
+    'observe': {'monitoring_sut': True, 'metrics': ['total_cpu_util']},
     'placement': {'sut': 'cl-worker36', 'loading': 'cl-worker19'},
     'resources': {
         'cpu': {'request': 8, 'limit': 8},

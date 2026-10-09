@@ -104,10 +104,11 @@ experiment_schema:
                                              matters; both on = monitoring_cluster alone"},
                  monitoring_app: {when: "only with monitoring_sut or monitoring_cluster, and only
                                          for systems with an exporter (PostgreSQL, PgDuckDB)"},
-                 metrics: {type: object, semantics: "{metric_key: true|false} overriding single hardware
-                                  metrics' default active flag; keys from environment.yml monitoring.hardware",
-                           when: "only with monitoring_sut or monitoring_cluster; required: true metrics
-                                  cannot be switched off, available: false ones cannot be switched on"}}
+                 metrics: {type: "list[str]", semantics: "hardware metric keys the hypothesis relies on;
+                                  listed ones are switched on, the rest keep their default; keys from
+                                  environment.yml monitoring.hardware",
+                           when: "required exactly when monitoring_sut or monitoring_cluster is on; list
+                                  defaults too; available: false ones cannot be listed"}}
     placement:  {type: object, fields: [sut, loading, benchmarking],
                  semantics: "each node named must exist, and not be tainted out, in environment.yml's nodes:",
                  when: "pinning sut is recommended (same hardware for all SUTs); pinning

@@ -471,8 +471,8 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     before anything else is resolved); the optional ``follow_up_of``, if
     present, is a string; the optional ``max_sut``/``max_sut_experiment``
     concurrent-SUT caps, if present, are non-negative integers (0 = no
-    limit); ``observe.metrics``, if present, maps keys to booleans and comes
-    with hardware monitoring switched on; the workload exists; every named
+    limit); ``observe.metrics`` is a non-empty list of keys exactly when
+    hardware monitoring is switched on; the workload exists; every named
     system is in the workload's ``supports:`` list; and, for each system's
     *effective* post_load (its own ``systems[].post_load`` override — a
     selection choice — or else the shared ``loading.post_load`` default),
@@ -499,15 +499,18 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
             raise SpecError(f"'{cap_field}' must be a non-negative integer (0 = no limit)")
 
     observe = experiment.get("observe") or {}
-    metric_overrides = observe.get("metrics")
-    if metric_overrides:
-        if not isinstance(metric_overrides, dict) or not all(
-            isinstance(key, str) and isinstance(active, bool) for key, active in metric_overrides.items()
-        ):
-            raise SpecError("observe.metrics must map hardware metric keys to true or false")
-        if not (observe.get("monitoring_sut") or observe.get("monitoring_cluster")):
+    metrics = observe.get("metrics")
+    hardware_monitoring = observe.get("monitoring_sut") or observe.get("monitoring_cluster")
+    if metrics is not None:
+        if not isinstance(metrics, list) or not all(isinstance(key, str) for key in metrics):
+            raise SpecError("observe.metrics must be a list of hardware metric keys")
+        if not hardware_monitoring:
             raise SpecError(
                 "observe.metrics only takes effect with observe.monitoring_sut or observe.monitoring_cluster")
+    if hardware_monitoring and not metrics:
+        raise SpecError(
+            "hardware monitoring is on, but observe.metrics names no metric; list the hardware "
+            "metrics the hypothesis relies on, even those that are active by default")
 
     workload_name = experiment["workload"]["name"]
     workloads = catalog.get("workloads", {})
@@ -590,8 +593,7 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
     cluster-wide ``resource_limits`` ceiling, when no SUT node is pinned);
     when set, ``resources.storage_class`` names a storage class the
     cluster actually has; and every ``observe.metrics`` key is a hardware
-    metric in ``monitoring.hardware``, no required metric is switched off,
-    and no metric without data in Prometheus is switched on.
+    metric in ``monitoring.hardware`` that has data in Prometheus.
 
     This is independent of :func:`validate_experiment`: that function checks
     an experiment against what the catalog *permits*; this one checks it
@@ -655,38 +657,34 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
                 f"resources.storage_class '{storage_class}' is not in environment.yml's storage_classes"
             )
 
-    _validate_metric_overrides(environment, (experiment.get("observe") or {}).get("metrics") or {})
+    _validate_metrics(environment, (experiment.get("observe") or {}).get("metrics") or [])
 
 
-def _validate_metric_overrides(environment: dict[str, Any], overrides: dict[str, Any]) -> None:
+def _validate_metrics(environment: dict[str, Any], metrics: list[str]) -> None:
     """Check ``observe.metrics`` against ``environment.yml``'s ``monitoring.hardware``.
 
     :param environment: Parsed environment descriptor.
-    :param overrides: The experiment's ``observe.metrics`` (key -> active).
+    :param metrics: The experiment's ``observe.metrics`` (keys to switch on).
     :raises SpecError: When the environment has no metric list, a key is unknown,
-        a required metric is switched off, or a metric without data is switched on.
+        or a metric has no data.
     """
-    if not overrides:
+    if not metrics:
         return
     hardware = (environment.get("monitoring") or {}).get("hardware")
     if not hardware:
         raise SpecError(
             "observe.metrics is set, but environment.yml has no monitoring.hardware section; "
             "regenerate it with 'bexhoma environment create'")
-    for key, active in overrides.items():
+    for key in metrics:
         metric = hardware.get(key)
         if metric is None:
             raise SpecError(
-                f"observe.metrics.{key} is not a hardware metric in environment.yml's "
+                f"observe.metrics: {key} is not a hardware metric in environment.yml's "
                 f"monitoring.hardware; known: {sorted(hardware)}")
-        if not active and metric.get("required"):
+        if metric.get("available") is False:
             raise SpecError(
-                f"observe.metrics.{key} cannot be switched off: it is required "
-                "(bexhoma's CPU/RAM summary and result checks read it)")
-        if active and metric.get("available") is False:
-            raise SpecError(
-                f"observe.metrics.{key} is switched on, but Prometheus had no data for it "
-                "when environment.yml was generated, so it would only collect empty readings")
+                f"observe.metrics: {key} has no data in Prometheus "
+                "(available: false when environment.yml was generated), so it would only collect empty readings")
 
 
 def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:

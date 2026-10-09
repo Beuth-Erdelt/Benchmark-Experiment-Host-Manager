@@ -31,7 +31,7 @@ systems:
   - name: PostgreSQL
     profile: analytical-ssd
 
-observe: {monitoring_sut: true, monitoring_cluster: false, monitoring_app: false}
+observe: {monitoring_sut: true, monitoring_cluster: false, monitoring_app: false, metrics: [total_cpu_util]}
 
 resources:
   cpu: {request: 4, limit: 4}

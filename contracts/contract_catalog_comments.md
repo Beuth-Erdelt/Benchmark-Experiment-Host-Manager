@@ -123,6 +123,34 @@ This moved the version 1.9.1 -> 1.10.0 (minor: a new field the agent can
 set; nothing that validated before is rejected now), with
 `spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
 
+### Revised the same day: a required list of the metrics the hypothesis relies on
+
+In a first agent run the design left `observe.metrics` out and relied on the
+defaults. That was a sound choice, but nothing in the spec showed that it was
+a choice. Making every non-required metric opt-in would have forced one, at
+the price that a forgotten metric is lost for good and needs a rerun.
+Instead, `observe.metrics` is now a `list[str]` of the metrics the hypothesis
+relies on, and it is required exactly when `monitoring_sut` or
+`monitoring_cluster` is on. Listed metrics are switched on; unlisted ones
+keep their default, so the default set is still collected. The argument for
+the selection belongs in the hypothesis, not in a separate field; there is
+no check that the hypothesis mentions the listed metrics.
+
+A list cannot switch a metric off. That was not needed: metrics are queried
+from Prometheus after the run, so a default metric costs almost nothing, and
+switching one off can only lose data. Humans keep `-mm key=off`.
+`build_argv()` passes the list as `-mm key=on,...`, so the CLI, the
+experiment check and `configurations/metrics.py` are unchanged. The rules
+are: a non-empty list of strings when hardware monitoring is on, no list
+otherwise (`spec.validate_experiment()`); every key exists in
+`monitoring.hardware` and is not `available: false`
+(`spec.validate_environment()`).
+
+Folded into 1.10.0. Neither 1.9.1 nor 1.10.0 is released yet, and the
+released 1.9.0 has no `observe:` at all, so nothing that validates there
+is rejected now. Against the unreleased 1.9.1, a spec that turns on
+monitoring without listing metrics is rejected.
+
 ## `observe:` re-enabled (2026-10-09)
 
 The parked block below was pasted back unchanged and `"observe"` restored

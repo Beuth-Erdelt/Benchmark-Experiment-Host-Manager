@@ -6,8 +6,11 @@ occupancy from Prometheus") and the `monitoring:` section with the hardware
 metrics (`title`, `kind`, `active`, `required`, `available`, `source_sha256`).
 Also done (catalog contract 1.10.0): `observe.metrics` for hardware metrics,
 validated in `spec.validate_experiment()`/`validate_environment()`, passed as
-`-mm key=on,key=off`, checked against `cluster.config` by the experiment and
-applied in `configurations/metrics.py`.
+`-mm key=on,...`, checked against `cluster.config` by the experiment and
+applied in `configurations/metrics.py`. Revised the same day: it is a list of
+the metrics the hypothesis relies on (switched on, required whenever hardware
+monitoring is on), not the override map proposed under "Contract shape"
+below; see `contracts/contract_catalog_comments.md`.
 Not done: the refresh on agent start, the staleness check (`source_sha256`
 is written but not compared), and application metrics in the catalog
 (waits for the catalog split). Builds on `observe:` being re-enabled in catalog

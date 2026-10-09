@@ -1746,9 +1746,15 @@ resources:
                 self.assertIn(expected, self._rejection(_SPEC.replace(original, broken)))
 
     def test_observe_is_accepted(self) -> None:
-        spec = _SPEC.replace("resources:", "observe:\n  monitoring_sut: true\nresources:")
+        self._with_metric_environment()
+        spec = _SPEC.replace(
+            "resources:", "observe:\n  monitoring_sut: true\n  metrics: [total_cpu_util]\nresources:")
         self.workspace.write_file(self.path, spec)
         self.assertTrue(self.workspace.validate(self.path)["valid"])
+
+    def test_monitoring_without_metrics_is_rejected(self) -> None:
+        spec = _SPEC.replace("resources:", "observe:\n  monitoring_sut: true\nresources:")
+        self.assertIn("names no metric", self._rejection(spec))
 
     def test_unknown_observe_field_is_rejected(self) -> None:
         broken = _SPEC.replace("resources:", "observe:\n  monitoring_gpu: true\nresources:")
@@ -1761,27 +1767,27 @@ resources:
             "    total_cpu_util: {title: CPU, kind: gauge, active: true, required: true, available: true}\n"
         )
 
-    def test_single_metrics_can_be_switched_per_experiment(self) -> None:
+    def test_single_metrics_can_be_switched_on_per_experiment(self) -> None:
         self._with_metric_environment()
         spec = _SPEC.replace(
             "resources:",
-            "observe:\n  monitoring_sut: true\n  metrics: {total_gpu_util: true}\nresources:")
+            "observe:\n  monitoring_sut: true\n  metrics: [total_gpu_util, total_cpu_util]\nresources:")
         self.workspace.write_file(self.path, spec)
         self.assertTrue(self.workspace.validate(self.path)["valid"])
 
-    def test_metric_switch_is_checked_against_the_environment(self) -> None:
+    def test_metric_list_is_checked_against_the_environment(self) -> None:
         self._with_metric_environment()
         for metrics, expected in (
-            ("{total_disk_magic: true}", "not a hardware metric"),
-            ("{total_cpu_util: false}", "required"),
+            ("[total_disk_magic]", "not a hardware metric"),
+            ("{total_gpu_util: true}", "list"),
         ):
             with self.subTest(metrics):
                 spec = _SPEC.replace(
                     "resources:", f"observe:\n  monitoring_sut: true\n  metrics: {metrics}\nresources:")
                 self.assertIn(expected, self._rejection(spec))
 
-    def test_metric_switch_needs_hardware_monitoring(self) -> None:
-        spec = _SPEC.replace("resources:", "observe:\n  metrics: {total_gpu_util: true}\nresources:")
+    def test_metric_list_needs_hardware_monitoring(self) -> None:
+        spec = _SPEC.replace("resources:", "observe:\n  metrics: [total_gpu_util]\nresources:")
         self.assertIn("monitoring_sut or observe.monitoring_cluster", self._rejection(spec))
 
     def test_malformed_nested_shape_returns_a_verdict(self) -> None:

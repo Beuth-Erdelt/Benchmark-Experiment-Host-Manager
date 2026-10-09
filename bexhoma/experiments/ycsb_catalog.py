@@ -166,7 +166,7 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
         argv.append("-mc")
     if observe.get("monitoring_app"):
         argv.append("-ma")
-    _append_flag(argv, "-mm", format_metric_overrides(observe.get("metrics") or {}))
+    _append_flag(argv, "-mm", format_metric_overrides(dict.fromkeys(observe.get("metrics") or [], True)))
 
     _append_flag(argv, "-rnn", placement.get("sut"))
     _append_flag(argv, "-rnl", placement.get("loading"))
