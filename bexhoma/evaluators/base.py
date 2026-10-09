@@ -122,7 +122,9 @@ class EvaluatorBase:
         """
         Load and cache the persisted experiment dict for one configuration.
 
-        Reads ``bexhoma-experiment-dict-{configuration}.json``, written once per
+        Reads ``bexhoma-experiment-dict-{configuration}-{code}.json`` (or the
+        ``bexhoma-experiment-dict-{configuration}.json`` of result folders
+        written before ``{code}`` joined the name), written once per
         configuration at the start of every run (see
         ``experiments/base.py::work_benchmark_list()``), so the exact round/entry
         layout that was actually submitted can be consulted after the fact.
@@ -144,10 +146,14 @@ class EvaluatorBase:
             # so this stays case-insensitive rather than assuming every existing
             # file was written post-fix.
             result = {}
-            target = f"bexhoma-experiment-dict-{configuration}.json".lower()
+            code = os.path.basename(os.path.normpath(self.path))
+            targets = {
+                f"bexhoma-experiment-dict-{configuration}-{code}.json".lower(),
+                f"bexhoma-experiment-dict-{configuration}.json".lower(),
+            }
             try:
-                for entry in os.listdir(self.path):
-                    if entry.lower() == target:
+                for entry in sorted(os.listdir(self.path), key=len, reverse=True):
+                    if entry.lower() in targets:
                         with open(f"{self.path}/{entry}", 'r') as f:
                             result = json.load(f)
                         break

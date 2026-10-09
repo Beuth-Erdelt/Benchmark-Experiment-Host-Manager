@@ -3,7 +3,7 @@ SUT container restart analysis for a finished experiment's result folder.
 
 Two sources are combined:
 
-* ``bexhoma-sut-{configuration}-{experiment_run}-restarts.json`` — per-pod
+* ``bexhoma-sut-{configuration}-{code}-{experiment_run}-restarts.json`` — per-pod
   restart counts, one snapshot per experiment_run. The SUT pod is restarted
   in place rather than recreated across repeat runs, so its ``restartCount``
   is cumulative across snapshots; aggregate by max per pod, never by sum.

@@ -297,9 +297,9 @@ class SutRestartsPerRunTest(unittest.TestCase):
         from bexhoma import report_writer
 
         with tempfile.TemporaryDirectory() as tmp_dir:
-            with open(os.path.join(tmp_dir, 'bexhoma-sut-postgresql-1-1-restarts.json'), 'w') as f:
+            with open(os.path.join(tmp_dir, 'bexhoma-sut-postgresql-1-1784910886-1-restarts.json'), 'w') as f:
                 json.dump({'pod-a': '2'}, f)
-            with open(os.path.join(tmp_dir, 'bexhoma-sut-postgresql-1-2-restarts.json'), 'w') as f:
+            with open(os.path.join(tmp_dir, 'bexhoma-sut-postgresql-1-1784910886-2-restarts.json'), 'w') as f:
                 json.dump({'pod-a': '5'}, f)
             total, per_pod = report_writer._count_sut_restarts(Path(tmp_dir))
         self.assertEqual(total, 5, "cumulative restartCount across 2 runs must be maxed, not summed to 7")
