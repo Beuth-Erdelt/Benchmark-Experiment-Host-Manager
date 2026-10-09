@@ -5,9 +5,10 @@ run against (see ``docs/Design-Catalog-Contract.md``).
 
 This is the read-only half of that contract: nodes (with curated labels,
 their static allocatable/capacity resources, and how much of that is
-actually free right now, cluster-wide), storage classes, and a
+actually free right now, cluster-wide), storage classes, a
 namespace/cluster resource-limit summary relevant to validating a resolved
-experiment before it is run. It deliberately does not dump the raw
+experiment before it is run, and the cluster-wide hardware metrics that can
+be monitored. It deliberately does not dump the raw
 Kubernetes API response — only the subset of node/storage-class/limit data
 that matters for placing and sizing a benchmarking experiment.
 
@@ -56,8 +57,8 @@ from kubernetes.stream import stream as kubernetes_stream
 
 from bexhoma.spec import parse_memory_quantity
 
-#: Bump whenever environment.yml's top-level shape (nodes/excluded_nodes/
-#: storage_classes/resource_limits) changes -- this is the file's own
+#: Bump whenever environment.yml's top-level shape (nodes/occupancy_source/
+#: excluded_nodes/storage_classes/resource_limits/monitoring) changes -- this is the file's own
 #: source of truth, embedded directly at generation time, so unlike
 #: contract_catalog.yml/contract_result.yml there is no separate contract
 #: doc to drift out of sync with.

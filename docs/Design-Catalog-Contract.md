@@ -1133,8 +1133,9 @@ other a per-cluster snapshot, neither is schema.
 
 ## `environment.yml`: hardware baseline extension (`-xhw`)
 
-The read-only fields above (`nodes`, `excluded_nodes`, `storage_classes`,
-`resource_limits`) are always collected. `environment.py`'s `-xhw` flag adds
+The read-only fields (`nodes` with their occupancy, `occupancy_source`,
+`excluded_nodes`, `storage_classes`, `resource_limits`, `monitoring`) are
+always collected; see `docs/Environment.md` for each field. `environment.py`'s `-xhw` flag adds
 an opt-in, cluster-mutating step on top — a short benchmark sweep across the
 cluster's nodes, merged into the same `environment.yml`:
 

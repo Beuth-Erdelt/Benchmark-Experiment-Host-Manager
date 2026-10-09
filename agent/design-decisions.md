@@ -23,7 +23,8 @@ document. It is read-only from the agent's point of view.
 
 `environment.yml` is not a catalog at all. It is the set of physical facts about
 one particular cluster — which nodes exist, how much memory and CPU each has,
-which are tainted, which storage classes are declared. It is generated per
+how much of that other workloads have already reserved, which are tainted,
+which storage classes are declared, and which hardware metrics can be monitored. It is generated per
 cluster rather than written by hand, and it exists specifically to ground
 experiment designs in the actual machines rather than in assumptions a model
 inherited from its training data.
@@ -225,8 +226,9 @@ alone, and cluster time is spent only once the design side behaves.
 ## Build order
 
 1. Generate `environment.yml` from the live cluster. `bexhoma/environment.py` has
-   its own command-line entry point that connects, curates nodes, storage classes
-   and resource ceilings, and writes the file.
+   its own command-line entry point that connects, curates nodes with their
+   occupancy, storage classes, resource ceilings and monitoring metrics, and
+   writes the file.
 2. Wrap `validate_experiment.py` in the JSON verdict format.
 3. Build the design phase alone — prompt, tools, repair loop, event log — and run
    weak models against it offline until decision 10 is answered empirically.

@@ -115,7 +115,7 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 
 | Key | Description |
 |---|---|
-| `service_monitoring` | URL of the **cluster-level** Prometheus API (`/api/v1/` suffix required). The default points to the shared `prometheus` service in the `monitor` namespace. This is used for hardware metrics (CPU, memory, network, disk I/O). Replace it with your external or in-cluster URL when using another Prometheus installation. Bexhoma tests reachability at the start of each experiment. |
+| `service_monitoring` | URL of the **cluster-level** Prometheus API (`/api/v1/` suffix required). The default points to the shared `prometheus` service in the `monitor` namespace. This is used for hardware metrics (CPU, memory, network, disk I/O). Replace it with your external or in-cluster URL when using another Prometheus installation. Bexhoma tests reachability at the start of each experiment. `bexhoma environment create` also uses it, from inside the dashboard pod, to read node occupancy (via kube-state-metrics) and to check which hardware metrics have data, so it must be reachable from within the cluster (see [Environment](Environment.md)). |
 | `service_monitoring_application` | URL template for the **per-experiment** Prometheus that bexhoma installs itself (used for application-level metrics with `-ma`). The placeholders `{service}` and `{namespace}` are substituted automatically. Leave as-is unless you have a custom application exporter setup. |
 
 #### Timing adjustments

@@ -1,7 +1,11 @@
 # Plan: per-query monitoring selection in the agent contract (`observe.metrics`)
 
-Status: **not implemented, held as a plan** (2026-10-09). No code or contract
-changes have been made yet. Builds on `observe:` being re-enabled in catalog
+Status: **partly implemented** (2026-10-09). Done in `bexhoma/environment.py`
+(environment contract 1.2.0): node occupancy from Prometheus (section "Node
+occupancy from Prometheus") and the `monitoring:` section with the hardware
+metrics (`title`, `kind`, `active`, `required`, `available`, `source_sha256`).
+Not done: the refresh on agent start, the staleness check, application
+metrics in the catalog, `observe.metrics` and everything downstream. Builds on `observe:` being re-enabled in catalog
 contract 1.9.1.
 
 ## Goal
