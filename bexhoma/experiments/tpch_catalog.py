@@ -20,6 +20,7 @@ from typing import Any, Optional
 
 from bexhoma import spec
 from bexhoma.benchmarks.tpch import resolve_indexing_key
+from bexhoma.cli_args import format_metric_overrides
 from bexhoma.spec import ResolvedSystem, SpecError
 
 __all__ = [
@@ -280,6 +281,7 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
         argv.append("-mc")
     if observe.get("monitoring_app"):
         argv.append("-ma")
+    _append_flag(argv, "-mm", format_metric_overrides(observe.get("metrics") or {}))
 
     _append_flag(argv, "-rnn", placement.get("sut"))
     _append_flag(argv, "-rnl", placement.get("loading"))

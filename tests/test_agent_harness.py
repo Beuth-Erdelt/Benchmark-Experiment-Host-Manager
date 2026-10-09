@@ -1754,6 +1754,36 @@ resources:
         broken = _SPEC.replace("resources:", "observe:\n  monitoring_gpu: true\nresources:")
         self.assertIn("monitoring_gpu", self._rejection(broken))
 
+    def _with_metric_environment(self) -> None:
+        (self.root / "environment.yml").write_text(
+            _ENVIRONMENT + "monitoring:\n  hardware:\n"
+            "    total_gpu_util: {title: GPU, kind: gauge, active: false, required: false, available: true}\n"
+            "    total_cpu_util: {title: CPU, kind: gauge, active: true, required: true, available: true}\n"
+        )
+
+    def test_single_metrics_can_be_switched_per_experiment(self) -> None:
+        self._with_metric_environment()
+        spec = _SPEC.replace(
+            "resources:",
+            "observe:\n  monitoring_sut: true\n  metrics: {total_gpu_util: true}\nresources:")
+        self.workspace.write_file(self.path, spec)
+        self.assertTrue(self.workspace.validate(self.path)["valid"])
+
+    def test_metric_switch_is_checked_against_the_environment(self) -> None:
+        self._with_metric_environment()
+        for metrics, expected in (
+            ("{total_disk_magic: true}", "not a hardware metric"),
+            ("{total_cpu_util: false}", "required"),
+        ):
+            with self.subTest(metrics):
+                spec = _SPEC.replace(
+                    "resources:", f"observe:\n  monitoring_sut: true\n  metrics: {metrics}\nresources:")
+                self.assertIn(expected, self._rejection(spec))
+
+    def test_metric_switch_needs_hardware_monitoring(self) -> None:
+        spec = _SPEC.replace("resources:", "observe:\n  metrics: {total_gpu_util: true}\nresources:")
+        self.assertIn("monitoring_sut or observe.monitoring_cluster", self._rejection(spec))
+
     def test_malformed_nested_shape_returns_a_verdict(self) -> None:
         broken = yaml.safe_load(_SPEC)
         broken["workload"] = ["tpch"]

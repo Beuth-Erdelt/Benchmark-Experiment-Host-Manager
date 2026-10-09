@@ -209,7 +209,8 @@ class ExperimentBase():
         self.workload['optional_monitoring_components'] = []            # component types whose empty/zero CPU metrics are not a test failure
         self.monitoring_active = True                                   # Bool, tells if monitoring is active
         self.monitor_app_active = True                                  # Bool, tells if application-level metrics are monitored
-        self.prometheus_interval = "10s"                                # interval for Prometheus to fetch metrics
+        self.monitoring_metric_overrides = {}                           # dict of hardware metric key -> active, overriding cluster.config (-mm)
+        self.prometheus_interval = "10s"                               # interval for Prometheus to fetch metrics
         self.prometheus_timeout = "10s"                                 # timeout for Prometheus to fetch metrics
         self.loading_active = False                                     # Bool, tells if distributed loading is active (i.e., push instead of pull)
         self.loading_deactivated = False                                # Bool, tells if loading phase should be skipped
@@ -493,6 +494,10 @@ class ExperimentBase():
         monitoring = args.monitoring
         monitoring_cluster = args.monitoring_cluster
         monitoring_app = args.monitoring_app
+        self.set_monitoring_metric_overrides(
+            getattr(args, 'monitoring_metrics', None) or {},
+            monitoring_enabled=bool(monitoring or monitoring_cluster),
+        )
         # only for dbmsbenchmarker
         if 'num_run' in parameter:
             numRun = int(args.num_run)
@@ -575,6 +580,10 @@ class ExperimentBase():
         self.monitor_app_active = monitoring_app
         if monitoring_app:
             self.workload['info'] = self.workload['info']+"\nApplication metrics are monitored by sidecar containers."
+        if self.monitoring_metric_overrides:
+            switched = ", ".join(
+                f"{key} {'on' if active else 'off'}" for key, active in self.monitoring_metric_overrides.items())
+            self.workload['info'] = self.workload['info']+f"\nHardware metrics switched for this experiment: {switched}."
         # set resources for dbms
         self.set_resources(
             requests = {
@@ -1036,6 +1045,40 @@ class ExperimentBase():
                 }
             })
         self.monitoring_active = False
+    def set_monitoring_metric_overrides(self, overrides: dict, monitoring_enabled: bool = True) -> None:
+        """
+        Switch single cluster-wide hardware metrics on or off for this experiment (``-mm``).
+
+        Checked against ``cluster.config``'s ``monitor.metrics`` before anything
+        is deployed, so a typo or a renamed metric stops the run instead of
+        being silently ignored. :class:`~bexhoma.configurations.metrics.MetricsCollector`
+        applies the overrides when it copies the metric definitions into each
+        connection.
+
+        :param overrides: Requested ``active`` flag per metric key.
+        :param monitoring_enabled: Whether ``-m`` or ``-mc`` is set; overrides
+            without monitoring would have no effect.
+        :raises ValueError: On an unknown key, a required metric switched off,
+            or overrides without monitoring.
+        """
+        from bexhoma.environment import REQUIRED_HARDWARE_METRICS
+        if not overrides:
+            self.monitoring_metric_overrides = {}
+            return
+        if not monitoring_enabled:
+            raise ValueError("--monitoring-metrics needs --monitoring (-m) or --monitoring-cluster (-mc)")
+        known = self.cluster.config['credentials']['k8s'].get('monitor', {}).get('metrics', {})
+        unknown = sorted(set(overrides) - set(known))
+        if unknown:
+            raise ValueError(
+                f"--monitoring-metrics names metrics that cluster.config does not define: {unknown}. "
+                f"Defined: {sorted(known)}")
+        switched_off = sorted(key for key, active in overrides.items()
+                              if not active and key in REQUIRED_HARDWARE_METRICS)
+        if switched_off:
+            raise ValueError(
+                f"--monitoring-metrics cannot switch off required metrics: {switched_off}")
+        self.monitoring_metric_overrides = dict(overrides)
     def set_querymanagement_monitoring(self,
             numRun: int = 256,
             delay: int = 10,

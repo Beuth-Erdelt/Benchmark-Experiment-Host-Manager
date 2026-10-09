@@ -20,6 +20,11 @@ Three CLI flags control how deeply bexhoma monitors an experiment:
 `-ma` adds DBMS-internal statistics (buffer pool hits, query rates, replication lag, etc.) scraped from an exporter sidecar.
 `-ma` is currently in alpha status.
 
+Which hardware metrics are collected is decided by each metric's `active` flag in `cluster.config` (see [Config](Config.md)).
+`-mm` overrides that flag for a single experiment, e.g. `-mm total_gpu_util=on,total_network_rx=off`, and needs `-m` or `-mc`.
+Unknown keys stop the experiment before anything is deployed, and the four CPU/RAM metrics the summary reads (`total_cpu_util_s`, `total_cpu_util`, `total_cpu_memory`, `total_cpu_memory_cached`) cannot be switched off.
+`bexhoma environment create` lists the available keys under `monitoring.hardware` in `environment.yml` (see [Environment](Environment.md)); in an agent's `experiment.yml` the same switch is `observe.metrics`.
+
 ---
 
 ## Prometheus and cAdvisor Provisioning

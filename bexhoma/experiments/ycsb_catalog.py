@@ -24,6 +24,7 @@ from __future__ import annotations
 from typing import Any
 
 from bexhoma import spec
+from bexhoma.cli_args import format_metric_overrides
 from bexhoma.experiments.tpch_catalog import format_postgres_memory
 from bexhoma.spec import SpecError
 
@@ -165,6 +166,7 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
         argv.append("-mc")
     if observe.get("monitoring_app"):
         argv.append("-ma")
+    _append_flag(argv, "-mm", format_metric_overrides(observe.get("metrics") or {}))
 
     _append_flag(argv, "-rnn", placement.get("sut"))
     _append_flag(argv, "-rnl", placement.get("loading"))

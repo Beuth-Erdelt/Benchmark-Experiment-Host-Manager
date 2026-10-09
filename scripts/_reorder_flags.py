@@ -39,7 +39,7 @@ FLAG_ORDER = [
     # L: Extra features
     '-xbatch', '-xconn', '-xdt', '-xio', '-xkey', '-xlat', '-xli', '-xmet', '-xop', '-xsbs',
     # M: Monitoring
-    '-m', '-ma', '-mc',
+    '-m', '-ma', '-mc', '-mm',
     # N: Experiment control
     '-ms', '-sl', '-ss', '-t', '-tr',
     # O: SUT resources

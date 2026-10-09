@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.9.1"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.10.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -287,6 +287,18 @@ experiment_schema:
           when: "only takes effect together with monitoring_sut or
             monitoring_cluster, and only for systems that define an exporter
             (PostgreSQL and PgDuckDB in this catalog)"
+        metrics:
+          type: object
+          semantics: "switch single hardware metrics on or off for this
+            experiment, as {metric_key: true|false}, overriding each metric's
+            default active flag; keys, defaults and titles are listed in
+            environment.yml's monitoring.hardware, and metrics left out keep
+            their default"
+          when: "only with monitoring_sut or monitoring_cluster; switch on a
+            metric the hypothesis needs that is off by default, switch off one
+            that cannot matter. Metrics marked required: true cannot be
+            switched off, and metrics marked available: false cannot be
+            switched on (Prometheus has no data for them)"
     placement:
       type: object
       semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"

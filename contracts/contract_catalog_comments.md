@@ -93,6 +93,36 @@ choice per experiment made loading times incomparable across runs.
 reads the catalog default and emits `-nlp 8` explicitly when `pods` is
 omitted. Folded into 1.9.0 (not yet released) as an additive change.
 
+## `observe.metrics`: single hardware metrics per experiment (2026-10-09)
+
+`cluster.config` switches each monitoring query on or off with `active:`,
+but that applied to every experiment alike. `observe.metrics` lets an
+experiment override that flag per hardware metric, as
+`{metric_key: true|false}`.
+
+The vocabulary is not in the catalog: hardware metrics depend on the
+cluster's Prometheus, so they are listed in the generated `environment.yml`
+(`monitoring.hardware`, with `title`, `kind`, default `active`, `required`
+and `available`). This keeps the catalog small (the field costs about
+1,000 characters against the 56,000-character whole-file read limit) and
+cannot drift from `cluster.config`. Application metrics are not selectable
+yet; they belong under `systems.<name>` once the catalog is split.
+
+Rules, enforced in `spec.validate_experiment()` (shape) and
+`spec.validate_environment()` (keys): values are booleans; the field needs
+`monitoring_sut` or `monitoring_cluster`; keys must exist in
+`monitoring.hardware`; `required` metrics (the four CPU/RAM metrics the
+summary table and the `monitoring_component_cpu_nonzero` check read) cannot
+be switched off; metrics with `available: false` cannot be switched on.
+`build_argv()` passes the field as `-mm key=on,key=off`; the experiment
+checks the keys against `cluster.config` again before deploying, and
+`configurations/metrics.py` applies them to each connection's `active` flag,
+which dbmsbenchmarker's fetcher and bexhoma's evaluation already honour.
+
+This moved the version 1.9.1 -> 1.10.0 (minor: a new field the agent can
+set; nothing that validated before is rejected now), with
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
+
 ## `observe:` re-enabled (2026-10-09)
 
 The parked block below was pasted back unchanged and `"observe"` restored

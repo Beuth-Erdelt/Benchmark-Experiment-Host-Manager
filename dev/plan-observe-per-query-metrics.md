@@ -4,8 +4,13 @@ Status: **partly implemented** (2026-10-09). Done in `bexhoma/environment.py`
 (environment contract 1.2.0): node occupancy from Prometheus (section "Node
 occupancy from Prometheus") and the `monitoring:` section with the hardware
 metrics (`title`, `kind`, `active`, `required`, `available`, `source_sha256`).
-Not done: the refresh on agent start, the staleness check, application
-metrics in the catalog, `observe.metrics` and everything downstream. Builds on `observe:` being re-enabled in catalog
+Also done (catalog contract 1.10.0): `observe.metrics` for hardware metrics,
+validated in `spec.validate_experiment()`/`validate_environment()`, passed as
+`-mm key=on,key=off`, checked against `cluster.config` by the experiment and
+applied in `configurations/metrics.py`.
+Not done: the refresh on agent start, the staleness check (`source_sha256`
+is written but not compared), and application metrics in the catalog
+(waits for the catalog split). Builds on `observe:` being re-enabled in catalog
 contract 1.9.1.
 
 ## Goal

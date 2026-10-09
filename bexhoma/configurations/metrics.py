@@ -9,7 +9,25 @@ from bexhoma import missing_metrics
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
-__all__ = ['MetricsCollector']
+__all__ = ['MetricsCollector', 'apply_metric_override']
+
+
+def apply_metric_override(metricname: str, metricdata: dict, overrides: dict) -> dict:
+    """Copy one ``cluster.config`` metric definition, applying the experiment's ``active`` override.
+
+    dbmsbenchmarker's fetcher and bexhoma's evaluation both skip a metric whose
+    ``active`` is false, so this flag is all that decides whether it is collected.
+
+    :param metricname: Metric key in ``monitor.metrics``.
+    :param metricdata: The metric's definition from ``cluster.config``.
+    :param overrides: Experiment's ``monitoring_metric_overrides`` (key -> active).
+    :return: A copy of the definition, ``active`` replaced when overridden.
+    :rtype: dict
+    """
+    metric = metricdata.copy()
+    if metricname in overrides:
+        metric['active'] = overrides[metricname]
+    return metric
 
 
 class MetricsCollector:
@@ -176,6 +194,7 @@ class MetricsCollector:
                     'service_monitoring_application'].format(
                     service=monitoring_host,
                     namespace=cfg.experiment.cluster.contextdata['namespace'])
+            overrides = getattr(cfg.experiment, 'monitoring_metric_overrides', {})
             c['monitoring']['metrics'] = {}
             c['monitoring']['metrics_special'] = {}
             c['monitoring']['metrics_custom'] = {}
@@ -191,14 +210,16 @@ class MetricsCollector:
                         metrics_type = f"metrics_{name}"
                         c['monitoring'][metrics_type] = {}
                         for metricname, metricdata in config_K8s['monitor']['metrics'].items():
-                            c['monitoring'][metrics_type][metricname] = metricdata.copy()
+                            c['monitoring'][metrics_type][metricname] = apply_metric_override(
+                                metricname, metricdata, overrides)
                             c['monitoring'][metrics_type][metricname]['query'] = (
                                 cfg.set_metric_of_config(
                                     metric=c['monitoring'][metrics_type][metricname]['query'],
                                     host=node, gpuid=gpuid, schema=schema,
                                     database=database, component=name))
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
-                    c['monitoring']['metrics'][metricname] = metricdata.copy()
+                    c['monitoring']['metrics'][metricname] = apply_metric_override(
+                        metricname, metricdata, overrides)
                     c['monitoring']['metrics'][metricname]['query'] = (
                         cfg.set_metric_of_config_default(
                             metric=c['monitoring']['metrics'][metricname]['query'],
