@@ -282,7 +282,8 @@ harness lets the model do with them.
   - Any failed query withholds all claims. When the report has a completion
     table, claims are built from the complete phases instead, only if every
     level kept at least 2 complete repetitions; they carry `scope:
-    complete_phases_only` and the completion per level.
+    complete_phases_only` and the completion per level. Per-query timings
+    follow the same rule, from the complete-phases latency table.
   - YCSB summed throughput is checked against a common-duration approximation;
     above 20% excess the claim is withheld.
   - A failed monitoring check is scoped to its phases; query-failure checks to

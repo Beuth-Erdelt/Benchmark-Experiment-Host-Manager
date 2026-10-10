@@ -138,6 +138,29 @@ class CompletionSectionsTest(unittest.TestCase):
         self.assertEqual([(e.phase, e.text) for e in events], [("c-1-2", "queries failed: Q18 in 1 of 2 pods")])
 
 
+class CompleteLatencySectionTest(unittest.TestCase):
+    """Per-query latencies over the complete phases, only when some phase failed."""
+
+    def test_section_uses_only_complete_connections(self) -> None:
+        benchmark = _benchmark(pooled=["Q1"])
+        benchmark.evaluator.get_complete_connections.side_effect = DbmsBenchmarkerEvaluator.get_complete_connections
+        benchmark.evaluator.get_query_latencies.return_value = pd.DataFrame(
+            {"Title 1": [10.0], "Title 18": [20.0]}, index=["c-1-1-1-1"])
+        section = benchmark._build_complete_latency_section()
+        benchmark.evaluator.get_query_latencies.assert_called_once_with(
+            query_titles=True, dbms_filter=["c-1-1-1-1"])
+        self.assertEqual(section.heading, "Latency of Timer Execution [ms] (Complete Phases Only)")
+        self.assertEqual(list(section.dataframe.columns), ["c-1-1-1-1"])
+        self.assertIn("Left out: c-1-2", section.lines[-1])
+
+    def test_no_section_when_every_phase_is_complete(self) -> None:
+        benchmark = _benchmark(pooled=["Q1", "Q18"])
+        benchmark.evaluator.get_query_completion.return_value = _completion().assign(Q18=True)
+        benchmark.evaluator.get_complete_connections.side_effect = DbmsBenchmarkerEvaluator.get_complete_connections
+        self.assertIsNone(benchmark._build_complete_latency_section())
+        benchmark.evaluator.get_query_latencies.assert_not_called()
+
+
 class HealthSummaryCompletionTest(unittest.TestCase):
     """index.md points to the complete phases when some phase failed."""
 

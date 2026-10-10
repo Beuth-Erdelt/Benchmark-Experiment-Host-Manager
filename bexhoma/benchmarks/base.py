@@ -649,6 +649,41 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         ))
         return sections
 
+    def _build_complete_latency_section(self) -> Section | None:
+        """
+        Build ``### Latency of Timer Execution [ms] (Complete Phases Only)``.
+
+        The pooled latency table keeps only queries that succeeded in every
+        connection, so a failure anywhere removes a query's timings everywhere.
+        This table gives the same mean execution times over the connections of
+        the phases in which every pod completed every active query, so the
+        per-query behaviour of a partly failed run stays visible.
+
+        :return: The section, or ``None`` when every phase is complete (the
+            pooled table already says it all) or no phase is.
+        :rtype: Section | None
+        """
+        completion = self._query_completion()
+        if completion.empty:
+            return None
+        connections = self.evaluator.get_complete_connections(completion)
+        if not connections or len(connections) == len(completion):
+            return None
+        df = self.evaluator.get_query_latencies(query_titles=True, dbms_filter=connections)
+        if df is None or df.empty:
+            return None
+        df = df.sort_index().T.round(2)
+        df.index.names = ["Queries"]
+        complete_phases = sorted(set(completion.loc[connections, 'phase']))
+        incomplete = sorted(set(completion['phase']) - set(complete_phases))
+        note = (f"Mean execution time per query and connection, over the {len(complete_phases)} of "
+                f"{len(complete_phases) + len(incomplete)} phases in which every pod completed every "
+                f"active query. Left out: {', '.join(incomplete)} — see Query Completion per Phase.")
+        # No blank line after the heading: the table follows it directly, as in
+        # the pooled latency section.
+        return Section(heading="Latency of Timer Execution [ms] (Complete Phases Only)", level=3,
+                       blank_after_heading=False, dataframe=df, lines=["", note])
+
     def _failure_events(self) -> list[failure_timeline.FailureEvent]:
         """
         One failure event per phase in which some pod failed some query.
@@ -752,6 +787,9 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         else:
             latency_section.lines = self._results_notes(is_empty=True) or None
         sections.append(latency_section)
+        complete_latency_section = self._build_complete_latency_section()
+        if complete_latency_section is not None:
+            sections.append(complete_latency_section)
 
         errors_section = Section(heading="Errors (failed queries)", level=3)
         df_errors = self.evaluator.get_total_errors(query_titles=True)

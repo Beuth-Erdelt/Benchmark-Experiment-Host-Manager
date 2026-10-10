@@ -53,7 +53,8 @@ In order:
   - Per Phase (Complete Phases Only): the same metrics over the phases in
     which every pod completed every query, so the clean phases of a partly
     failed run still show;
-  - latency per query, errors with messages, warnings, EXPLAIN plans.
+  - latency per query, and the same over the complete phases only when some
+    phase is incomplete; errors with messages, warnings, EXPLAIN plans.
 - `monitoring.md`: CPU and RAM per component and phase, missing metrics with
   whether the zeros are expected, application metrics, and the full catalog of
   every collected metric.

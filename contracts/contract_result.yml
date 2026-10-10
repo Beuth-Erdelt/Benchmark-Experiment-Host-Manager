@@ -108,7 +108,7 @@ key_metrics_by_benchmark_type:
     entry_scripts: [tpch.py, tpcds.py]
     columns: ["Geo Times [s]", "Power@Size [~Q/h]", "Throughput@Size"]
     pooling: "Per Connection, Per Phase and the latency table count only queries that succeeded in every connection of the experiment; a note under each says which queries were left out, and why a table is empty"
-    partial_results: "report/benchmarking.md Query Completion per Phase (completed/pods per phase and query) and Per Phase (Complete Phases Only): the same columns, pooled only over phases in which every pod completed every active query"
+    partial_results: "report/benchmarking.md Query Completion per Phase (completed/pods per phase and query), Per Phase (Complete Phases Only) and Latency of Timer Execution [ms] (Complete Phases Only): the same metrics and per-query latencies, pooled only over phases in which every pod completed every active query; both written only when some phase is incomplete"
   ycsb:
     entry_scripts: [ycsb.py]
     columns: ["[OVERALL].Throughput(ops/sec)"]

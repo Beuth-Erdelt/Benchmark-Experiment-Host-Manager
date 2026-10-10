@@ -164,6 +164,7 @@ _METRIC_SUBSTRINGS = (
 _PER_PHASE = "#### Per Phase"
 _PER_PHASE_COMPLETE = "#### Per Phase (Complete Phases Only)"
 _QUERY_COMPLETION = "#### Query Completion per Phase"
+_LATENCY_COMPLETE = "### Latency of Timer Execution [ms] (Complete Phases Only)"
 #: Complete repetitions every level of a sweep, and every system of a ranking,
 #: needs before the assessor builds a claim from complete phases only. Policy,
 #: chosen conservative: one surviving repetition cannot show its level's
@@ -1406,26 +1407,15 @@ def _query_evidence(text: str) -> dict[str, Any]:
             "that missing queries would have the same ranking."
         ),
     }
-    phase_table = _markdown_table(text, _PER_PHASE)
-    phases = {}
-    if phase_table is not None and {"phase", "pod_count"}.issubset(phase_table[0]):
-        headers, rows = phase_table
-        for row in rows:
-            phase = _plain_markdown_cell(row[headers.index("phase")])
-            try:
-                concurrency = int(row[headers.index("pod_count")])
-            except ValueError:
-                return evidence
-            if concurrency <= 0 or len(phase.rsplit("-", 2)) != 3:
-                return evidence
-            phases[phase] = (phase.rsplit("-", 2)[0], concurrency)
-    else:
+    matrix = _completion_matrix(text)
+    phases = _phase_pods(text, _PER_PHASE)
+    if phases is None:
         # The pooled table is empty once every query failed somewhere; the
         # completion table still names every phase and its pods, which is
         # enough to place the failures.
-        matrix = _completion_matrix(text)
         if matrix is None:
             return evidence
+        phases = {}
         for phase, entry in matrix.items():
             if entry["pods"] <= 0 or len(phase.rsplit("-", 2)) != 3:
                 return evidence
@@ -1455,8 +1445,18 @@ def _query_evidence(text: str) -> dict[str, Any]:
     ]
 
     latency_table = _markdown_table(text, evidence["source_section"])
+    complete_only = False
     if latency_table is None:
-        return evidence
+        # The pooled latency table drops every query that failed anywhere. The
+        # complete-phases table keeps all of them, over the phases in which
+        # every pod completed every query; only those phases have columns.
+        complete_phases = _phase_pods(text, _PER_PHASE_COMPLETE)
+        latency_table = _markdown_table(text, _LATENCY_COMPLETE)
+        if matrix is None or not complete_phases or latency_table is None:
+            return evidence
+        complete_only = True
+        phases = complete_phases
+        evidence["source_section"] = _LATENCY_COMPLETE
     headers, rows = latency_table
     columns: dict[str, list[int]] = {}
     for position, header in enumerate(headers[1:], 1):
@@ -1470,7 +1470,8 @@ def _query_evidence(text: str) -> dict[str, Any]:
         return evidence
 
     contexts: dict[tuple[str, int], dict[str, Any]] = {}
-    failed_queries = {query for _, query in failures}
+    # Failures in left-out phases do not touch the timings of the complete ones.
+    failed_queries = {query for phase, query in failures if not complete_only or phase in phases}
     for row in rows:
         query = _query_number(row[0])
         if query is None:
@@ -1505,7 +1506,82 @@ def _query_evidence(text: str) -> dict[str, Any]:
         "and no recorded query error. Omitted rows are not evidence of success. "
         "Failure locations come from the Errors table; other validity checks still apply."
     )
+    if complete_only:
+        _scope_to_complete_phases(evidence, phases, matrix)
     return evidence
+
+
+def _phase_pods(text: str, heading: str) -> dict[str, tuple[str, int]] | None:
+    """Read each phase's configuration and pod count from a per-phase table.
+
+    :param text: The report's ``benchmarking.md`` page.
+    :param heading: The per-phase table to read.
+    :return: Phase to ``(configuration, pods)``, or ``None`` when the table is
+        missing, empty, or has a row that does not decode.
+    :rtype: dict[str, tuple[str, int]] | None
+    """
+    table = _markdown_table(text, heading)
+    if table is None or not {"phase", "pod_count"}.issubset(table[0]):
+        return None
+    headers, rows = table
+    phases = {}
+    for row in rows:
+        phase = _plain_markdown_cell(row[headers.index("phase")])
+        try:
+            pods = int(row[headers.index("pod_count")])
+        except ValueError:
+            return None
+        if pods <= 0 or len(phase.rsplit("-", 2)) != 3:
+            return None
+        phases[phase] = (phase.rsplit("-", 2)[0], pods)
+    return phases or None
+
+
+def _scope_to_complete_phases(
+    evidence: dict[str, Any],
+    phases: dict[str, tuple[str, int]],
+    matrix: dict[str, dict[str, Any]],
+) -> None:
+    """Restrict per-query evidence from complete phases, conservatively.
+
+    A configuration and concurrency keeps its timings only when at least
+    :data:`_MIN_COMPLETE_REPETITIONS` of its phases completed every query, and
+    each one carries how many of its phases completed.
+
+    :param evidence: The query evidence, changed in place.
+    :param phases: The complete phases, to ``(configuration, pods)``.
+    :param matrix: Output of :func:`_completion_matrix`.
+    """
+    completion: dict[tuple[str, int], list[int]] = {}
+    for phase, entry in matrix.items():
+        counts = completion.setdefault((phase.rsplit("-", 2)[0], entry["pods"]), [0, 0])
+        counts[0] += int(entry["complete"])
+        counts[1] += 1
+    repetitions: dict[tuple[str, int], int] = {}
+    for context in phases.values():
+        repetitions[context] = repetitions.get(context, 0) + 1
+    kept, thin = [], []
+    for entry in evidence["latency_by_context"]:
+        context = (entry["configuration"], entry["concurrency"])
+        complete, total = completion.get(context, [repetitions.get(context, 0)] * 2)
+        if repetitions.get(context, 0) < _MIN_COMPLETE_REPETITIONS:
+            thin.append({"configuration": context[0], "concurrency": context[1],
+                         "completion": f"{complete}/{total}"})
+            continue
+        kept.append({**entry, "completion": f"{complete}/{total}"})
+    evidence["latency_by_context"] = kept
+    evidence["evidence_scope"] = "complete_phases_only"
+    evidence["excluded_phases"] = sorted(phase for phase, entry in matrix.items() if not entry["complete"])
+    if thin:
+        evidence["thin_contexts"] = thin
+    evidence["reason"] = (
+        "Queries failed in some phases, so these timings come from the phases in which "
+        "every pod completed every query, and only where at least "
+        f"{_MIN_COMPLETE_REPETITIONS} such phases share a configuration and concurrency. "
+        "They describe the surviving runs; they are no evidence that the failed runs "
+        "would have looked the same. 'completion' says how many phases of each context "
+        "completed; report it beside the timings, and the failures as a finding."
+    )
 
 
 def _numeric_quantity(value: Any, factor: str) -> float | None:

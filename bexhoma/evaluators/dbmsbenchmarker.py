@@ -314,16 +314,27 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         """
         if df_completion is None:
             df_completion = self.get_query_completion()
-        if df_completion.empty:
+        connections = self.get_complete_connections(df_completion)
+        if not connections:
             return pd.DataFrame()
+        return self._reduce_per_phase(self.get_df_benchmarking(dbms_filter=connections), columns)
+    @staticmethod
+    def get_complete_connections(df_completion):
+        """
+        Returns the connections of the phases in which every pod completed every
+        active query.
+
+        :param df_completion: Output of :meth:`get_query_completion`.
+        :return: Connection names, in the order of ``df_completion``.
+        :rtype: list[str]
+        """
+        if df_completion is None or df_completion.empty:
+            return []
         queries = [column for column in df_completion.columns if column != 'phase']
         complete_pods = df_completion[queries].all(axis=1)
         phase_complete = complete_pods.groupby(df_completion['phase']).all()
         complete_phases = set(phase_complete[phase_complete].index)
-        connections = [c for c, phase in df_completion['phase'].items() if phase in complete_phases]
-        if not connections:
-            return pd.DataFrame()
-        return self._reduce_per_phase(self.get_df_benchmarking(dbms_filter=connections), columns)
+        return [c for c, phase in df_completion['phase'].items() if phase in complete_phases]
     def _reduce_per_phase(self, df, columns=['phase']):
         """
         Aggregates per-pod rows over parallel pods and keeps the per-phase columns.
@@ -591,18 +602,22 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             query_properties = self.evaluation.get_experiment_query_properties()
             df.index = df.index.map(map_index_to_queryname)
         return df.T
-    def get_query_latencies(self, query_titles=False):
+    def get_query_latencies(self, query_titles=False, dbms_filter=None):
         """
         Returns the mean execution latency per query and DBMS.
 
         :param query_titles: When ``True``, replaces query index labels with
                              human-readable titles from ``queries.config``.
         :type query_titles: bool
+        :param dbms_filter: Connection names to restrict to; the inspector then
+            keeps the queries every one of these connections completed, instead
+            of those every connection of the experiment completed.
         :return: DataFrame of mean latencies (ms) with queries as columns and DBMS as rows.
         :rtype: pandas.DataFrame
         """
         global query_properties
-        raw = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        raw = self.evaluation.get_aggregated_query_statistics(
+            type='latency', name='execution', dbms_filter=list(dbms_filter or []), query_aggregate='Mean')
         if raw is None:
             return None
         df = raw.T

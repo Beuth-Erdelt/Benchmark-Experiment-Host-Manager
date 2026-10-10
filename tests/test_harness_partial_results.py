@@ -64,12 +64,25 @@ def _report(incomplete: dict[str, int]) -> str:
             geo, throughput = (10.0, 100.0) if pods == 1 else (12.0, 180.0)
             complete_rows.append(
                 f"| {phase} | {phase} | {run} | {client} | {pods} | {geo} | {throughput} |")
+    complete_connections = [
+        f"pgduckdb-1-{run}-{client}-1-{pod}"
+        for run, client, pods in phases if not incomplete.get(f"pgduckdb-1-{run}-{client}")
+        for pod in range(1, pods + 1)
+    ]
+    latency = [
+        "### Latency of Timer Execution [ms] (Complete Phases Only)",
+        "| Queries | " + " | ".join(complete_connections) + " |",
+        "|:--|" + "--:|" * len(complete_connections),
+        f"| {_Q1} | " + " | ".join("100.0" if c.split("-")[3] == "1" else "150.0" for c in complete_connections) + " |",
+        f"| {_Q18} | " + " | ".join("200.0" if c.split("-")[3] == "1" else "400.0" for c in complete_connections) + " |",
+    ]
     lines = [
         "### Benchmarking", "", "#### Per Connection", "", "No rows: queries failed.", "",
         "#### Per Phase", "", "No rows: queries failed.", "",
     ] + completion + ["", "#### Per Phase (Complete Phases Only)", "",
                       "| | phase | experiment_run | client | pod_count | Geo Times [s] | Throughput@Size |",
                       "|:--|:--|--:|--:|--:|--:|--:|"] + complete_rows + [
+        "", "### Latency of Timer Execution [ms]", "No rows: queries failed.", ""] + latency + [
         "", "### Errors (failed queries)", "", f"| | {_Q1} | {_Q18} |", "|:--|--:|--:|"] + errors
     return "\n".join(lines) + "\n"
 
@@ -126,6 +139,34 @@ class CompletePhaseClaimsTest(unittest.TestCase):
             "phase": "pgduckdb-1-3-2", "configuration": "pgduckdb-1",
             "concurrency": 2, "query": 18, "errors": 1.0,
         }])
+
+
+class CompletePhaseQueryEvidenceTest(unittest.TestCase):
+    """Per-query timings come from the complete phases when the pooled table is empty."""
+
+    def test_timings_per_level_with_completion(self) -> None:
+        evidence = _assess({"pgduckdb-1-3-2": 1})["query_evidence"]
+        self.assertEqual(evidence["source_section"], "### Latency of Timer Execution [ms] (Complete Phases Only)")
+        self.assertEqual(evidence["evidence_scope"], "complete_phases_only")
+        self.assertEqual(evidence["queries"], [1, 18])
+        self.assertEqual(evidence["excluded_phases"], ["pgduckdb-1-3-2"])
+        by_level = {entry["concurrency"]: entry for entry in evidence["latency_by_context"]}
+        self.assertEqual(by_level[1]["completion"], "3/3")
+        self.assertEqual(by_level[2]["completion"], "2/3")
+        self.assertEqual(by_level[2]["queries"]["18"]["mean_ms"], 400.0)
+        self.assertEqual(by_level[2]["queries"]["18"]["repetitions"], 2)
+
+    def test_a_level_with_one_complete_repetition_is_dropped(self) -> None:
+        evidence = _assess({"pgduckdb-1-2-2": 1, "pgduckdb-1-3-2": 1})["query_evidence"]
+        self.assertEqual([entry["concurrency"] for entry in evidence["latency_by_context"]], [1])
+        self.assertEqual(evidence["thin_contexts"],
+                         [{"configuration": "pgduckdb-1", "concurrency": 2, "completion": "1/3"}])
+
+    def test_without_complete_latency_table_no_timings(self) -> None:
+        report = _report({"pgduckdb-1-3-2": 1}).replace("(Complete Phases Only)\n| Queries", "(Other)\n| Queries")
+        evidence = _assess({}, report)["query_evidence"]
+        self.assertEqual(evidence["latency_by_context"], [])
+        self.assertNotIn("evidence_scope", evidence)
 
 
 class PhaseLocalValidityTest(unittest.TestCase):
