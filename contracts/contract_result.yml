@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.8.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.9.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -92,6 +92,7 @@ provenance:
   sut:
     "bexhoma-sut-{configuration}-{code}-{experiment_run}.yml": "SUT Deployment manifest, one archived copy per experiment_run — the live object itself is restarted in place, not recreated, so copies can be identical"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.{container}.log": "SUT container stdout, one capture per experiment_run"
+    "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.{container}.previous.log": "stdout of the container instance that terminated, captured only for a restarted container — the running instance's log starts after the restart, so only this one says why it died; a container restarted several times keeps only the last terminated instance"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.describe.log": "kubectl describe pod, one capture per experiment_run; each container's Last State block (Reason, Exit Code, Finished) says why its latest restart happened, and its Mounts plus the pod's Volumes say whether its data directory survived that restart"
 
 versions:
@@ -106,6 +107,8 @@ key_metrics_by_benchmark_type:
   dbmsbenchmarker:
     entry_scripts: [tpch.py, tpcds.py]
     columns: ["Geo Times [s]", "Power@Size [~Q/h]", "Throughput@Size"]
+    pooling: "Per Connection, Per Phase and the latency table count only queries that succeeded in every connection of the experiment; a note under each says which queries were left out, and why a table is empty"
+    partial_results: "report/benchmarking.md Query Completion per Phase (completed/pods per phase and query) and Per Phase (Complete Phases Only): the same columns, pooled only over phases in which every pod completed every active query"
   ycsb:
     entry_scripts: [ycsb.py]
     columns: ["[OVERALL].Throughput(ops/sec)"]
@@ -233,7 +236,8 @@ answer_contract:
       instruction: "State the scientific hypothesis verdict as supported, refuted, inconclusive, or invalid; separately state pass/fail/skip counts and whether any FAILED row scopes or invalidates a metric reported below it."
       source: [agent_summary_contract.fields.verdict, verdict_shape]
       failure_causality:
-        instruction: "When any check failed, name the first failure as the root cause instead of adding failures up. Order failures by timestamp; errors that follow a SUT restart are its downstream effects, not independent findings."
+        instruction: "When any check failed, start from the first failure instead of adding failures up. report/index.md's Failure Timeline orders failures by when they began and places each in the phase that was running; it does not decide causes. Errors that follow a SUT restart are usually its downstream effects, not independent findings — check the evidence before attributing."
+        source: "report/index.md Failure Timeline: SUT restarts at their termination time, plus benchmark-specific failures (DBMSBenchmarker: per phase, the queries that failed in some pods, over that phase's time window)"
         downstream_of_restart:
           - "connection or I/O errors in the streams running when the container terminated"
           - "missing relations and every other error after the restart when sut_data_survived_restarts failed"
