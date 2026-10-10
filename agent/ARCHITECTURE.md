@@ -184,6 +184,20 @@ inventing a comparison. Failed monitoring checks are similarly traced to their
 zero or non-finite phase rows, so a monitoring-only defect cannot silently
 consume or invalidate unrelated performance evidence.
 
+A failed query normally withholds every shape and ranking, because the pooled
+per-phase table counts only queries that succeeded in every connection. When the
+report also carries a query completion table and a per-phase table over the
+phases that completed every query (DBMSBenchmarker, report schema 1.9.0), the
+claims are built from those complete phases instead, conservatively: only when
+every level of a sweep, and every system of a ranking, kept at least two complete
+repetitions. Each such claim is marked `complete_phases_only` and carries how many
+phases per level completed, and the record is refused until its validity scope
+names every incomplete phase. The SQL-error and pooled-metric checks are then
+located in the incomplete phases; every other failed check that is not
+monitoring-only still counts against the whole result. A record refused on the
+last turn gets a turn to repair it, at most as many times as the gate refuses
+before accepting a record incomplete.
+
 ## Capability boundary
 
 The model never receives a shell, Kubernetes client, network client, or general

@@ -407,6 +407,8 @@ def _converse(
     stage: str | None = None,
     require_done: bool = False,
     ended_on_pass: Callable[[list[tuple[str, dict[str, Any], dict[str, Any]]]], bool] | None = None,
+    repair_tool: str | None = None,
+    repair_turns: int = 0,
 ) -> tuple[str, int, list[tuple[str, dict[str, Any], dict[str, Any]]]]:
     """Drive the model until it stops calling tools, the phase is done, or turns run out.
 
@@ -433,10 +435,15 @@ def _converse(
         spent where no handover follows; ``True`` means the last attempt
         passed, so the closing notice says so instead of asking what was left
         unresolved.
+    :param repair_tool: The phase's record tool. A call to it refused on the
+        last turn earns one more turn to repair the record, up to
+        ``repair_turns`` times.
+    :param repair_turns: How many such extra turns the phase may grant.
     :return: The closing text, the turns used, and every tool call made.
     :rtype: tuple[str, int, list[tuple[str, dict, dict]]]
     """
     remaining = limit
+    repairs_left = repair_turns
     finished = False
     notified = False
     summary = ""
@@ -559,6 +566,18 @@ def _converse(
         # It gets that one turn, with the tools withdrawn because it is finished.
         if finished and turn == max_turns:
             max_turns += 1
+        # A record refused on the last turn would end the phase with nothing,
+        # although the refusal says exactly what to repair; a finished benchmark
+        # is lost for one malformed field. It gets a turn to repair the record,
+        # bounded so a model that cannot repair it does not run on.
+        elif (
+            not finished and turn == max_turns and repairs_left > 0
+            and any(call.name == repair_tool for call in reply.tool_calls)
+        ):
+            max_turns += 1
+            repairs_left -= 1
+            trajectory.record("repair_turn_granted", turn=turn,
+                              remaining=repairs_left, **stage_field)
 
     return summary, turn, events
 
@@ -1057,23 +1076,31 @@ def _checkable_result_claims(characterization: dict[str, Any]) -> dict[str, Any]
     already holds those and files them with the record, so making the model
     retype them would buy nothing and cost a repair round per slipped digit.
     """
+    # A claim built from complete phases only keeps that scope and its
+    # completion counts: the means alone would read as the whole result.
+    def scoped(result: dict[str, Any], claim: dict[str, Any]) -> dict[str, Any]:
+        if "scope" in result:
+            claim["scope"] = result["scope"]
+            claim["completion_by_level"] = result.get("completion_by_level", {})
+        return claim
+
     ordered = [
-        {
+        scoped(result, {
             "factor": result["factor"],
             "context": result["context"],
             "metric": result["metric"],
             "shape": result["shape"],
             "turning_level": result["turning_level"],
-        }
+        })
         for result in characterization.get("ordered_sweeps", [])
     ]
     categorical = [
-        {
+        scoped(result, {
             "factor": result["factor"],
             "context": result["context"],
             "metric": result["metric"],
             "ranking": result["ranking"],
-        }
+        })
         for result in characterization.get("categorical_comparisons", [])
     ]
     claims: dict[str, Any] = {
@@ -1407,6 +1434,24 @@ class _InterpretationGate:
             self._cited(path) for path in validity["evidence_paths"]
         }:
             return {"error": "validity evidence must cite the report index"}
+        # Claims built from complete phases only leave the failed phases out of
+        # every mean; a record that carries them must say which phases those are.
+        characterization = (self.comparison_quality or {}).get("result_characterization", {})
+        if characterization.get("scope") == "complete_phases_only" and (
+            characterization.get("ordered_sweeps") or characterization.get("categorical_comparisons")
+        ):
+            unnamed = [
+                entry["phase"] for entry in characterization.get("incomplete_phases", [])
+                if entry["phase"] not in validity["scope"]
+            ]
+            if unnamed:
+                return {
+                    "error": (
+                        "the assessed claims cover complete phases only; name every "
+                        "incomplete phase in validity.scope, exactly as written"
+                    ),
+                    "missing": unnamed,
+                }
         return None
 
     def _questions_error(self, arguments: dict[str, Any]) -> dict[str, Any] | None:
@@ -1594,12 +1639,16 @@ class _InterpretationGate:
         :rtype: dict[str, Any]
         """
         scope = self.validity_scope or {}
-        return {
+        figures = {
             "failed_checks": self.failed_checks,
             "affected_phases": scope.get("affected_phases", []),
             "performance_metrics_affected": scope.get(
                 "performance_metrics_affected", bool(self.failed_checks)),
         }
+        for field in ("complete_phases", "incomplete_phases"):
+            if field in scope:
+                figures[field] = scope[field]
+        return figures
 
 
 class InterpretationIncomplete(RuntimeError):
@@ -1699,7 +1748,11 @@ def _interpret_evidence(
         done_when=lambda name, result: name == "record_interpretation"
         and result.get("recorded") is True,
         tool_handler=handler, stage="evidence_interpretation",
-        require_done=True)
+        require_done=True,
+        # The gate accepts a record incomplete after this many refusals, so as
+        # many repair turns always reach an accepted record when the verdict holds.
+        repair_tool="record_interpretation",
+        repair_turns=_InterpretationGate.MAX_REPAIR_ROUNDS)
     if gate.comparison_quality:
         comparison_quality["details"] = gate.comparison_quality
     return (
