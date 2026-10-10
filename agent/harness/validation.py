@@ -1052,30 +1052,28 @@ def _verdict(
 def _check_storage_class(
     environment: dict[str, Any], experiment: dict[str, Any],
 ) -> dict[str, str] | None:
-    """Name the storage classes this cluster offers when the spec asks for another.
+    """Name the usable storage classes when the spec asks for another.
 
-    The shared resolver rejects an unavailable class without saying which ones
-    exist, which leaves an author guessing at a closed list it cannot see.
+    The cluster may list classes bexhoma cannot use, so only those
+    ``environment.yml`` marks usable count (:func:`spec.usable_storage_classes`).
+    Quoting them back saves the author guessing at a closed list.
 
     :param environment: The cluster descriptor.
     :param experiment: The specification being validated.
-    :return: An error entry, or ``None`` when the requested class exists.
+    :return: An error entry, or ``None`` when the requested class is usable.
     :rtype: dict[str, str] | None
     """
     requested = (experiment.get("resources") or {}).get("storage_class")
     if requested is None:
         return None
-    available = sorted(
-        entry["name"] for entry in environment.get("storage_classes", [])
-        if isinstance(entry, dict) and "name" in entry
-    )
+    available = spec.usable_storage_classes(environment)
     if requested in available:
         return None
     return {
         "stage": ENVIRONMENT_STAGE,
         "message": (
-            f"resources.storage_class {requested!r} is not offered by this cluster; "
-            f"it has {', '.join(available) or 'none'}. Omit the field entirely to "
+            f"resources.storage_class {requested!r} is not usable on this cluster; "
+            f"usable: {', '.join(available) or 'none'}. Omit the field entirely to "
             "take node-local storage instead, which every profile that lists null "
             "among its allowed classes permits."
         ),

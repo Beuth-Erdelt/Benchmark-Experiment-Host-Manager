@@ -522,10 +522,11 @@ class WorkspaceTest(unittest.TestCase):
         self.assertIn("must be a list of numbers",
                       verdict["errors"][0]["message"])
 
-    def test_an_unavailable_storage_class_names_the_ones_the_cluster_has(self) -> None:
+    def test_an_unavailable_storage_class_names_the_usable_ones(self) -> None:
         """A closed list the author cannot see has to be quoted back to them."""
         (self.root / "environment.yml").write_text(
-            _ENVIRONMENT + "storage_classes:\n- {name: ceph}\n- {name: local-hdd}\n")
+            _ENVIRONMENT + "storage_classes:\n- {name: cephcsi, usable: true}\n"
+            "- {name: shared, usable: true}\n- {name: ceph, usable: false}\n")
         self.workspace.write_file(
             self.path, _SPEC.replace("  storage: {size: 10Gi}",
                                      "  storage: {size: 10Gi}\n  storage_class: ssd"))
@@ -534,9 +535,25 @@ class WorkspaceTest(unittest.TestCase):
 
         self.assertFalse(verdict["valid"])
         message = verdict["errors"][0]["message"]
-        self.assertIn("ceph", message)
-        self.assertIn("local-hdd", message)
+        self.assertIn("cephcsi, shared", message)
+        self.assertNotIn("ceph,", message)
         self.assertIn("Omit the field", message)
+
+    def test_a_listed_but_unusable_storage_class_is_refused(self) -> None:
+        """The cluster may list a class bexhoma cannot provision on."""
+        (self.root / "environment.yml").write_text(
+            _ENVIRONMENT + "storage_classes:\n- {name: cephcsi, usable: true}\n"
+            "- {name: cephxfs, usable: false}\n")
+        # analytical-ssd's requires would refuse cephxfs before the cluster is asked.
+        self.workspace.write_file(
+            self.path, _SPEC.replace(", profile: analytical-ssd}", "}")
+                            .replace("  storage: {size: 10Gi}",
+                                     "  storage: {size: 10Gi}\n  storage_class: cephxfs"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        self.assertIn("'cephxfs' is not usable", verdict["errors"][0]["message"])
 
     def test_submit_requires_unchanged_validated_bytes(self) -> None:
         self._validate()

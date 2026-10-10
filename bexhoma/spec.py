@@ -54,6 +54,7 @@ __all__ = [
     "effective_post_load",
     "validate_experiment",
     "validate_environment",
+    "usable_storage_classes",
     "build_argv",
     "entry_script_for_workload",
     "build_command",
@@ -63,7 +64,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.10.0"
+CATALOG_CONTRACT_VERSION = "1.11.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -604,7 +605,7 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
     fits under the allocatable capacity of the ``placement.sut`` node (or the
     cluster-wide ``resource_limits`` ceiling, when no SUT node is pinned);
     when set, ``resources.storage_class`` names a storage class the
-    cluster actually has; and every ``observe.metrics`` key is a hardware
+    cluster marks usable (see :func:`usable_storage_classes`); and every ``observe.metrics`` key is a hardware
     metric in ``monitoring.hardware`` that has data in Prometheus.
 
     This is independent of :func:`validate_experiment`: that function checks
@@ -663,13 +664,34 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
 
     storage_class = resources.get("storage_class")
     if storage_class is not None:
-        known_storage_classes = {entry["name"] for entry in environment.get("storage_classes", [])}
-        if storage_class not in known_storage_classes:
+        usable = usable_storage_classes(environment)
+        if storage_class not in usable:
             raise SpecError(
-                f"resources.storage_class '{storage_class}' is not in environment.yml's storage_classes"
+                f"resources.storage_class '{storage_class}' is not a usable storage class in "
+                f"environment.yml; usable: {', '.join(usable) or 'none'}"
             )
 
     _validate_metrics(environment, (experiment.get("observe") or {}).get("metrics") or [])
+
+
+def usable_storage_classes(environment: dict[str, Any]) -> list[str]:
+    """Return the storage classes an experiment may put its SUT volume on.
+
+    The cluster may list classes bexhoma cannot use -- legacy provisioners,
+    classes meant for other workloads -- so ``environment.yml`` marks each one
+    ``usable``: declared in the cluster config, the only classes ``-rst``
+    accepts. A file written before that flag existed carries the same fact
+    as a non-null ``alias``.
+
+    :param environment: Parsed environment descriptor.
+    :return: Names of the usable classes, sorted.
+    :rtype: list[str]
+    """
+    return sorted(
+        entry["name"] for entry in environment.get("storage_classes", [])
+        if isinstance(entry, dict) and "name" in entry
+        and entry.get("usable", entry.get("alias") is not None)
+    )
 
 
 def _validate_metrics(environment: dict[str, Any], metrics: list[str]) -> None:

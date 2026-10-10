@@ -62,7 +62,7 @@ from bexhoma.spec import parse_memory_quantity
 #: source of truth, embedded directly at generation time, so unlike
 #: contract_catalog.yml/contract_result.yml there is no separate contract
 #: doc to drift out of sync with.
-ENVIRONMENT_CONTRACT_VERSION = "1.2.0"
+ENVIRONMENT_CONTRACT_VERSION = "1.3.0"
 
 #: RBAC users on a shared cluster are commonly granted node/storage-class
 #: read but not cluster-scoped pod listing (that would reveal every other
@@ -225,6 +225,10 @@ class StorageClassInfo:
     :ivar alias: The bexhoma-friendly alias (e.g. ``ssd``) mapping to this
         StorageClass, or ``None`` if it isn't one of the cluster's declared
         aliases.
+    :ivar usable: Whether bexhoma may put a SUT volume on this class: only
+        classes declared in the cluster config (``cluster.storage_classes``)
+        pass ``-rst``. The cluster may list others that are legacy or not
+        meant for benchmarking.
     :ivar provisioner: Volume provisioner.
     :ivar parameters: Provisioner-specific parameters.
     :ivar reclaim_policy: Reclaim policy (e.g. ``Delete``, ``Retain``).
@@ -232,6 +236,7 @@ class StorageClassInfo:
     """
     name: str
     alias: Optional[str] = None
+    usable: bool = False
     provisioner: str = ""
     parameters: dict[str, str] = field(default_factory=dict)
     reclaim_policy: str = ""
@@ -252,6 +257,7 @@ class StorageClassInfo:
         return cls(
             name=name,
             alias=aliases.get(name),
+            usable=name in aliases,
             provisioner=storage_class.provisioner or "",
             parameters=storage_class.parameters or {},
             reclaim_policy=storage_class.reclaim_policy or "",

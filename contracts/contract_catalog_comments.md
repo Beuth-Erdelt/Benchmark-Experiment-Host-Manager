@@ -93,6 +93,27 @@ choice per experiment made loading times incomparable across runs.
 reads the catalog default and emits `-nlp 8` explicitly when `pods` is
 omitted. Folded into 1.9.0 (not yet released) as an additive change.
 
+## Only usable storage classes (2026-10-10)
+
+`environment.yml` lists every `StorageClass` the cluster has, but bexhoma
+can only use the ones declared in the cluster config: `-rst` refuses the
+rest at run time. On the reference cluster that list includes `ceph` and
+`cephxfs`, which use Rook's legacy FlexVolume provisioner (no new volume
+since 2021), and `local-hdd`, which is not meant for SUT volumes; only
+`cephcsi` and `shared` are declared. Validation accepted all of them, so a
+spec naming `cephxfs` passed and only failed once submitted.
+
+`environment.yml` (environment contract 1.3.0) now marks each class
+`usable`, and `spec.validate_environment()` and the agent validator accept
+only usable classes, naming them in the error. A file generated before the
+flag carries the same fact as a non-null `alias`, which
+`spec.usable_storage_classes()` falls back to.
+
+This moved the version 1.10.0 -> 1.11.0 (minor, as for the
+`loading.split` removal: a spec that validated before is rejected now,
+though it would have failed at run time anyway), with
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
+
 ## `observe.metrics`: single hardware metrics per experiment (2026-10-09)
 
 `cluster.config` switches each monitoring query on or off with `active:`,
@@ -357,8 +378,9 @@ back to the base's description unless it declares its own — PgDuckDB does.
 `bexhoma/clusters.py::Kubernetes.get_available_storage_types()` and the
 `-rst`/`--request-storage-type` CLI flag. `None`/`''` (ephemeral) and
 `'ramdisk'` (in-memory) are always valid regardless of cluster; any other
-value must be one of the cluster's actual declared storage classes
-(`environment.yml`'s `storage_classes:`).
+value must be one of the storage classes declared in the cluster config
+(`credentials.k8s.context.<name>.storage_classes`), which `environment.yml`
+marks `usable: true` (see below).
 
 Note: `catalog_concepts.extends`/`.profile_ref`/`.requires`/`.arg_style`/
 `.knob_status` in `contract_catalog.yml` cover the mechanics above (and a

@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.10.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.11.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -357,8 +357,9 @@ experiment_schema:
         storage_class:
           type: str
           required: false
-          semantics: "must name one of environment.yml's storage_classes,
-            or be left unset entirely for ephemeral/node-local storage: no
+          semantics: "must name one of environment.yml's storage_classes
+            marked usable: true (the cluster may list others bexhoma cannot
+            use), or be left unset entirely for ephemeral/node-local storage: no
             PersistentVolumeClaim is provisioned, and the SUT gets whatever
             disk its scheduled node has attached -- typically fast, since
             there's no network-storage hop, but tied to that node's lifetime"
