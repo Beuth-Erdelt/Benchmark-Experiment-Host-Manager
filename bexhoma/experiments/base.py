@@ -416,6 +416,10 @@ class ExperimentBase():
         """
         Download a result file from the dashboard pod.
 
+        An empty ``filename`` downloads the whole experiment result folder,
+        packed into a single archive in the pod (see
+        :meth:`bexhoma.clusters.Kubernetes.download_folder`).
+
         :param filename: Name of the file relative to the experiment result folder.
         :return: Output of the download command, or empty string when no dashboard pod is available.
         """
@@ -425,8 +429,10 @@ class ExperimentBase():
                 self.pod_dashboard = pods[0]
             else:
                 return ""
+        if not filename:
+            return self.cluster.download_folder(folder_remote='/results/'+str(self.code), folder_local=self.path, pod=self.pod_dashboard)
         filename_local = self.path+'/'+filename
-        filename_remote = '/results/'+str(self.code)+'/.' if not filename else '/results/'+str(self.code)+'/'+filename
+        filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.download_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
                               parameter: str) -> list:

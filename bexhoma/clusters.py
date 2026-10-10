@@ -17,6 +17,7 @@ import subprocess
 import traceback
 import os
 import posixpath
+import tarfile
 import psutil
 import logging
 import socket
@@ -1652,6 +1653,68 @@ class Kubernetes():
             f'download_file failed after {max_retries} attempts: '
             f'{pod}:{filename_remote} -> {filename_local}'
         )
+
+    def download_folder(self, folder_remote, folder_local, pod, container="dashboard",
+                        max_retries: int = 3) -> str:
+        """
+        Download the contents of a directory in a Pod container as one archive.
+
+        ``kubectl cp`` of a directory sends every file through a single
+        streamed tar and pays a per-file cost on the local side, which makes
+        result folders with tens of thousands of small files slow enough to
+        run into connection limits of the cluster's API endpoint. Instead, the
+        directory is packed into one ``tar.gz`` inside the container, that
+        single file is copied with :meth:`download_file`, unpacked locally with
+        :mod:`tarfile` (so the same code works on Linux and Windows), and both
+        archives are removed afterwards. Existing local files are overwritten,
+        as with ``kubectl cp``.
+
+        If the archive cannot be created in the container (e.g. no space left
+        in ``/tmp``), the method falls back to a plain directory
+        ``kubectl cp``.
+
+        :param folder_remote: Source directory inside the container.
+        :param folder_local: Destination directory on the local machine.
+        :param pod: Source Pod name.
+        :param container: Source container name.  Defaults to ``dashboard``.
+        :param max_retries: Maximum number of copy attempts before raising.
+        :return: Output of the kubectl copy command.
+        :raises RuntimeError: If every copy attempt fails.
+        """
+        folder_remote = folder_remote.rstrip('/')
+        if folder_remote.endswith('/.'):
+            folder_remote = folder_remote[:-2]
+        archive_name = 'bexhoma-download-' + posixpath.basename(folder_remote) + '.tar.gz'
+        archive_remote = '/tmp/' + archive_name
+        os.makedirs(folder_local, exist_ok=True)
+        archive_local = os.path.join(folder_local, archive_name)
+        ok_marker = 'BEXHOMA_ARCHIVE_OK'
+        _, stdout, stderr = self.execute_command_in_pod(
+            command=f"tar czf {archive_remote} -C {folder_remote} . && echo {ok_marker}",
+            pod=pod, container=container)
+        if ok_marker not in stdout:
+            print(f"download_folder: packing {folder_remote} in pod {pod} failed, falling back to plain copy: {stderr.strip()}")
+            self.execute_command_in_pod(command=f"rm -f {archive_remote}", pod=pod, container=container)
+            return self.download_file(filename_remote=folder_remote + '/.', filename_local=folder_local,
+                                      pod=pod, container=container, max_retries=max_retries)
+        try:
+            result = self.download_file(filename_remote=archive_remote, filename_local=archive_local,
+                                        pod=pod, container=container, max_retries=max_retries)
+            with tarfile.open(archive_local, 'r:gz') as archive:
+                if hasattr(tarfile, 'data_filter'):
+                    archive.extractall(folder_local, filter='data')
+                else:
+                    root = os.path.realpath(folder_local)
+                    for member in archive.getmembers():
+                        target = os.path.realpath(os.path.join(root, member.name))
+                        if os.path.commonpath([root, target]) != root:
+                            raise RuntimeError(f'download_folder: unsafe path in archive: {member.name}')
+                    archive.extractall(folder_local)
+            return result
+        finally:
+            self.execute_command_in_pod(command=f"rm -f {archive_remote}", pod=pod, container=container)
+            if os.path.isfile(archive_local):
+                os.remove(archive_local)
 
     def check_dbms_connection(self, ip, port):
         """
