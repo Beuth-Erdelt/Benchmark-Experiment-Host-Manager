@@ -110,6 +110,24 @@ class RestartDetail:
     finished: str = ""
     data_volume: bool | None = None
     describe_file: str = ""
+    previous_log: str = ""
+
+
+def _previous_log_name(result_dir: Path, describe_file: str, container: str) -> str:
+    """
+    Return the stored ``--previous`` log of a container, if one was captured.
+
+    It shares the describe log's per-run pod label, so it is found by name:
+    ``<label>.describe.log`` pairs with ``<label>.<container>.previous.log``.
+
+    :param result_dir: The experiment's result folder.
+    :param describe_file: Filename of the describe log the detail came from.
+    :param container: The restarted container.
+    :return: The previous log's filename, or ``""`` if none was stored.
+    :rtype: str
+    """
+    name = describe_file.removesuffix(".describe.log") + f".{container}.previous.log"
+    return name if (result_dir / name).is_file() else ""
 
 
 def read_restart_counts(result_dir: Path) -> tuple[dict[str, int], dict[str, str]]:
@@ -278,6 +296,7 @@ def collect_restart_details(result_dir: Path) -> list[RestartDetail]:
                 finished=container.finished,
                 data_volume=has_data_volume(container, description.volume_types),
                 describe_file=describe_file,
+                previous_log=_previous_log_name(result_dir, describe_file, container.name),
             ))
     return details
 

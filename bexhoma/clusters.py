@@ -1708,20 +1708,40 @@ class Kubernetes():
         """
         return self.kubectl('describe job ' + jobname)
 
-    def pod_log(self, pod, container=''):
+    def pod_log(self, pod, container='', previous=False):
         """
         Return the ``kubectl logs --tail=-1`` output for a given Pod or container.
 
         :param pod: Name of the Pod.
         :param container: Container name within the Pod (optional).
+        :param previous: Return the log of the container's previous,
+            terminated instance (``--previous``) instead of the running one.
+            Only that log says why a restarted container died.
         :return: kubectl output string.
         """
         if container:
             fullcommand = 'logs ' + pod + ' --container=' + container
         else:
             fullcommand = 'logs ' + pod
+        if previous:
+            fullcommand = fullcommand + ' --previous'
         fullcommand = fullcommand + ' --tail=-1'
         return self.kubectl(fullcommand)
+
+    def get_pod_restart_counts(self, pod):
+        """
+        Return the restart count of every regular container in a Pod.
+
+        :param pod: Name of the Pod.
+        :return: Container name to ``restartCount``; empty if the Pod is gone.
+        """
+        names = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.containerStatuses[*].name}"')
+        counts = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.containerStatuses[*].restartCount}"')
+        names = names.split() if names else []
+        counts = counts.split() if counts else []
+        if len(names) != len(counts):
+            return {}
+        return {name: int(count) for name, count in zip(names, counts) if count.isdigit()}
 
     def get_pod_containers(self, pod):
         """
@@ -2725,7 +2745,7 @@ class Kubernetes():
         filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe.log"
         return os.path.isfile(filename_log)
 
-    def store_pod_log(self, pod_name, container='', number=None):
+    def store_pod_log(self, pod_name, container='', number=None, previous=False):
         """
         Fetch and persist ``kubectl logs`` output to the result folder.
 
@@ -2736,18 +2756,22 @@ class Kubernetes():
         :param container: Container name within the Pod (optional).
         :param number: Optional experiment-run index, spliced into the filename
             directly after the experiment code — see :meth:`_pod_label`.
+        :param previous: Store the log of the container's previous, terminated
+            instance as ``<label>.<container>.previous.log``. Only valid for a
+            container that has restarted — see :meth:`store_previous_pod_logs`.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         pod_label = self._pod_label(pod_name, number)
+        suffix = ".previous.log" if previous else ".log"
         if container:
-            filename_log = f"{resultfolder}/{self.code}/{pod_label}.{container}.log"
+            filename_log = f"{resultfolder}/{self.code}/{pod_label}.{container}{suffix}"
         else:
-            filename_log = f"{resultfolder}/{self.code}/{pod_label}.log"
+            filename_log = f"{resultfolder}/{self.code}/{pod_label}{suffix}"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:
                 self.logger.debug(f"{'Bexhoma':30s}: (try #{attempt}) stores pod log into {filename_log}")
-                stdout = self.pod_log(pod_name, container)
+                stdout = self.pod_log(pod_name, container, previous=previous)
                 if stdout is None:
                     print(f"{'Bexhoma':30s}: no data error for log {filename_log}")
                     attempt += 1
@@ -2757,6 +2781,22 @@ class Kubernetes():
                     return
                 else:
                     attempt += 1
+
+    def store_previous_pod_logs(self, pod_name, number=None):
+        """
+        Persist the previous-instance log of every container that restarted.
+
+        The running container's log starts after the restart, so it never says
+        why the container died; ``kubectl logs --previous`` does, until the
+        next restart replaces it. Containers that never restarted have no
+        previous instance and are skipped.
+
+        :param pod_name: Name of the Pod.
+        :param number: Optional experiment-run index, as for :meth:`store_pod_log`.
+        """
+        for container, restarts in self.get_pod_restart_counts(pod_name).items():
+            if restarts > 0:
+                self.store_pod_log(pod_name, container, number=number, previous=True)
 
     def pod_log_exists(self, pod_name, container=''):
         """

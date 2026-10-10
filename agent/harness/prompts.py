@@ -214,7 +214,10 @@ completion of the planned workload. Do not use whole-workload throughput to
 rank systems when the assessment marks it non-comparable. Likewise, when it
 lists `withheld_claims`, do not draw the withheld shape or ranking from the same
 figures in prose; `rate_aggregation` explains why, and the harness adds that
-qualification to your answer.
+qualification to your answer. When the characterisation's `scope` is
+`complete_phases_only`, its claims rest on the phases in which every pod
+completed every query: give each level's `completion_by_level` beside its
+mean, and name every incomplete phase in `validity.scope`.
 
 Shapes describe the series, not whether it is good news. A latency metric that
 rises throughout is getting worse, and the assessor names each metric's

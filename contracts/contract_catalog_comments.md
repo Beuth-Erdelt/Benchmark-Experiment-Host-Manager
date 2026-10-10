@@ -613,7 +613,7 @@ orphaned directory by wiring it back in without knowing why it was unused.
 
 ## See also
 
-- `docs/AgentWorkflow.md` — the end-to-end agent loop this file is the
+- `docs/Agent.md` — the end-to-end agent loop this file is the
   input half of: question → contracts → `experiment.yml` → validate → run →
   answer.
 - `docs/AgentCatalogContract.md` — prose/condensed-YAML version of this

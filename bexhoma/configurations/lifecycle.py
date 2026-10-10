@@ -421,6 +421,10 @@ scrape_configs:
                     cluster.store_pod_log(
                         pod_name=pod, container=container, number=number
                     )
+            if number is not None:
+                # A SUT that crashed during loading restarted empty; only the
+                # previous instance's log says why it crashed.
+                cluster.store_previous_pod_logs(pod_name=pod, number=number)
             if number is not None or not cluster.pod_description_exists(pod):
                 cluster.store_pod_description(pod_name=pod, number=number)
 

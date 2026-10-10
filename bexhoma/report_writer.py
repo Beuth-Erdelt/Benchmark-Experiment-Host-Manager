@@ -71,6 +71,7 @@ import pandas as pd
 import yaml
 
 from bexhoma import evaluators
+from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
@@ -81,7 +82,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.8.0"
+SCHEMA_VERSION = "1.9.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -155,7 +156,9 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     ("sut-logs", "SUT Container Logs", ("bexhoma-sut-*.log",),
      "stdout of each SUT container, one capture per experiment_run "
      "(`.dbms.log` is the DBMS process itself) — read for the literal error "
-     "text behind a failed or slow query."),
+     "text behind a failed or slow query. A restarted container's log starts "
+     "after the restart; `.<container>.previous.log` is the log of the "
+     "instance that died, the one that says why it crashed."),
     ("sut-restarts", "SUT Restart Counts", ("bexhoma-sut-*-restarts.json",),
      "Per-pod SUT container restart counts, one snapshot per experiment_run; "
      "restartCount is cumulative across runs, so aggregate by max per pod."),
@@ -225,7 +228,7 @@ quoting any number, not after:
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
 | `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured — dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
 | `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
-| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `benchmarking.md`'s Per Phase table |
+| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row — for DBMSBenchmarker usually because a query failed somewhere, which removes it from every row; the note under the Per Phase table says which | `benchmarking.md`'s Per Phase table, Query Completion per Phase, and Per Phase (Complete Phases Only) for the phases that still measured every query |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
 | `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros — their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason | `monitoring.md`'s Missing Metrics |
 
@@ -241,12 +244,18 @@ _INTERPRETATION_RULES_MD = """### Interpretation Rules
   `report/` folder (a different experiment code) as directly comparable
   without independently verifying equivalent conditions — cross-code
   comparison is what the `collectors` module is built for, not this report.
-- **Name the first failure, not the sum of failures.** Order failures by
-  timestamp and treat the earliest as the root cause. Errors that follow a
-  SUT restart (connection/I/O errors in the streams running at that moment,
-  missing relations afterwards) are its downstream effects. For a restart,
+- **Start from the first failure, not the sum of failures.** The Failure
+  Timeline above lists failures in the order they began and the phase each
+  happened in; begin with its first entry. Later failures may be its
+  consequences — e.g. after a restart without a data volume, every query
+  fails on missing relations — but the timeline only orders them; check the
+  evidence before calling one failure the cause of another. For a restart,
   state its reason and what was running when it happened: the round, the
   number of concurrent streams, and the query.
+- **Partial results are results.** When some phases failed, the phases that
+  completed still measure the system: use them, say which phases they are,
+  and report the failed ones as a finding of their own instead of discarding
+  the run.
 - **Report variance, not just point estimates.** Metric tables are already
   aggregated across parallel pods, but a sweep normally has multiple
   experiment-run/client repetitions. Summarize the range across those
@@ -730,6 +739,13 @@ def _build_health_summary_lines(
             lines.append("- SQL warnings: none")
         else:
             lines.append(f"- SQL warnings: {num_warnings} — see [benchmarking.md](benchmarking.md)'s Warnings subsection for the affected queries")
+    if 'phases_total' in extra_context:
+        complete, total = extra_context['phases_complete'], extra_context['phases_total']
+        line = f"- Phases in which every pod completed every query: {complete} of {total}"
+        if complete < total:
+            line += (" — see [benchmarking.md](benchmarking.md)'s Query Completion per Phase, and its "
+                     "Per Phase (Complete Phases Only) for their metrics")
+        lines.append(line)
     if missing is not None:
         unexpected = [entry for entry in missing if not entry.expected]
         expected = [entry for entry in missing if entry.expected]
@@ -803,6 +819,9 @@ def _build_connections_md_lines(
                 line = f"  * {sut_restarts.format_detail(detail)}"
                 if detail.describe_file:
                     line += f" ([{detail.describe_file}]({_relmd(result_dir / detail.describe_file, report_dir)}))"
+                if detail.previous_log:
+                    line += (f"; log of the crashed instance: [{detail.previous_log}]"
+                             f"({_relmd(result_dir / detail.previous_log, report_dir)})")
                 lines.append(line)
         lines.append("")
     by_configuration: dict[str, list[tuple[str, dict[str, str]]]] = {}
@@ -968,7 +987,7 @@ def write_markdown_report(
             benchmarking_all, connections_index,
             _provenance_lines(groups, ("benchmarker", "configs")),
         )
-        written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
+        written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, query completion per phase and metrics of the complete phases (DBMSBenchmarker), secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
 
     missing = None
     if experiment.monitoring_active or experiment.cluster.monitor_cluster_active:
@@ -1008,9 +1027,14 @@ def write_markdown_report(
     if key_metrics_section is not None:
         key_metrics_lines = _render_sections([key_metrics_section], connections_index)
 
+    timeline_lines = failure_timeline.build_timeline_lines(
+        failure_timeline.restart_events(restart_details) + list(extra_context.get('failure_events', [])),
+        df_connections, extra_context.get('phase_windows'),
+    )
+
     _write_index_md(
         report_dir, experiment, total_restarts, extra_context, written_sections,
-        key_metrics_lines, monitoring_summary_lines, restart_details, missing,
+        key_metrics_lines, monitoring_summary_lines, restart_details, missing, timeline_lines,
     )
 
 
@@ -1061,6 +1085,7 @@ def _write_index_md(
     key_metrics_lines: list[str], monitoring_summary_lines: list[str],
     restart_details: list[sut_restarts.RestartDetail] | None = None,
     missing: list[missing_metrics.MissingMetric] | None = None,
+    timeline_lines: list[str] | None = None,
 ) -> None:
     """
     Write ``index.md`` — the tier-1 entry point.
@@ -1068,8 +1093,8 @@ def _write_index_md(
     Content, in order: frontmatter; Workload identity; entry-point
     instruction; Report Structure (tier table); Naming Conventions;
     Validity-First Rules; ``### Tests``; Key Metrics; Monitoring (brief);
-    Health Summary; Interpretation Rules; links to whichever tier-2 files
-    were actually written.
+    Health Summary; Failure Timeline; Interpretation Rules; links to
+    whichever tier-2 files were actually written.
 
     The frontmatter's ``bexhoma_version`` is the installed
     ``bexhoma.__version__`` at *report-generation* time, not necessarily the
@@ -1104,6 +1129,8 @@ def _write_index_md(
         Health Summary.
     :param missing: Missing monitoring metrics, forwarded to the Health
         Summary; ``None`` when monitoring was not active.
+    :param timeline_lines: Pre-rendered ``### Failure Timeline`` block (see
+        :func:`failure_timeline.build_timeline_lines`), or ``None`` for none.
     """
     passed = sum(1 for p, _ in experiment._test_results if p is True)
     failed = sum(1 for p, _ in experiment._test_results if p is False)
@@ -1137,6 +1164,9 @@ def _write_index_md(
     lines.append("")
     lines.extend(_build_health_summary_lines(total_restarts, extra_context, restart_details, missing))
     lines.append("")
+    if timeline_lines:
+        lines.extend(timeline_lines)
+        lines.append("")
     lines.append(_INTERPRETATION_RULES_MD)
     if written_sections:
         lines.append("### Sections")
