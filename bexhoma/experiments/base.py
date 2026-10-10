@@ -32,6 +32,7 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
+from bexhoma.cli_args import split_storage_types
 from bexhoma import sut_restarts
 
 if TYPE_CHECKING:
@@ -141,6 +142,11 @@ class ExperimentBase():
     Settings are set generally.
     This class should be overloaded to define specific experiments.
     """
+    #: Whether this experiment's entry script sets the storage class per
+    #: configuration, so ``-rst`` may carry a comma list (see
+    #: :func:`bexhoma.cli_args.split_storage_types`).
+    supports_storage_sweep = False
+
     def __init__(self,
                  cluster,
                  code=None,
@@ -524,13 +530,22 @@ class ExperimentBase():
         cpu_type = str(args.request_cpu_type)
         gpu_type = str(args.request_gpu_type)
         gpus = str(args.request_gpu)
-        request_storage_type = args.request_storage_type
-        valid_storage_types = self.cluster.get_available_storage_types()
-        if request_storage_type not in valid_storage_types:
+        self.storage_types = split_storage_types(args.request_storage_type)
+        if len(self.storage_types) > 1 and not self.supports_storage_sweep:
             raise ValueError(
-                f"Invalid --request-storage-type {request_storage_type!r} for cluster context "
-                f"{self.cluster.context!r}. Valid values: {valid_storage_types}."
+                f"--request-storage-type {args.request_storage_type!r} is a list, but "
+                f"{type(self).__name__} cannot set the storage class per configuration."
             )
+        valid_storage_types = self.cluster.get_available_storage_types()
+        for storage_type in self.storage_types:
+            if storage_type not in valid_storage_types:
+                raise ValueError(
+                    f"Invalid --request-storage-type {storage_type!r} for cluster context "
+                    f"{self.cluster.context!r}. Valid values: {valid_storage_types}."
+                )
+        # a sweep sets each configuration's class itself; the experiment-wide
+        # default only reaches systems the entry script does not sweep
+        request_storage_type = self.storage_types[0]
         request_storage_size = args.request_storage_size
         request_storage_remove = args.request_storage_remove
         request_node_name = args.request_node_name
@@ -664,7 +679,12 @@ class ExperimentBase():
             self.workload['info'] = self.workload['info']+"\nEach query is repeated {} times.".format(numRun)
         if skip_loading:
             self.workload['info'] = self.workload['info']+"\nLoading is skipped."
-        if request_storage_type and request_storage_size:
+        if len(self.storage_types) > 1:
+            self.workload['info'] = self.workload['info']+"\nStorage is swept across configurations: {}, size {}.".format(
+                ", ".join(storage_type or "ephemeral" for storage_type in self.storage_types), request_storage_size or "unset")
+            if request_storage_remove:
+                self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
+        elif request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
             if request_storage_remove:
                 self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."

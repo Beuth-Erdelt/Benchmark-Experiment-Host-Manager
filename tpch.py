@@ -23,13 +23,14 @@ import datetime
 import subprocess
 import psutil
 import math
+import re
 
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
 
-def _resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list):
+def _resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list, storage_type_list=None):
     """Zip per-dimension resource CLI lists into one resource cell per swept value.
 
     Every list with more than one entry must share the same length; a
@@ -41,7 +42,11 @@ def _resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ra
     :param limit_cpu_list: Parsed ``-lc`` values.
     :param request_ram_list: Parsed ``-rr`` values.
     :param limit_ram_list: Parsed ``-lr`` values.
-    :return: List of ``{'cpu', 'cpu_limit', 'memory', 'memory_limit'}`` dicts, one per cell.
+    :param storage_type_list: Parsed ``-rst`` values
+        (:func:`bexhoma.cli_args.split_storage_types`), ``None`` for ephemeral;
+        omitted means one experiment-wide storage class.
+    :return: List of ``{'cpu', 'cpu_limit', 'memory', 'memory_limit', 'storage_type'}``
+        dicts, one per cell.
     :rtype: list[dict]
     :raises ValueError: When two lists both have more than one entry but different lengths.
     """
@@ -50,6 +55,7 @@ def _resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ra
         'cpu_limit': limit_cpu_list,
         'memory': request_ram_list,
         'memory_limit': limit_ram_list,
+        'storage_type': storage_type_list if storage_type_list is not None else [None],
     }
     num_cells = max((len(values) for values in lists.values() if len(values) > 1), default=1)
     for name, values in lists.items():
@@ -62,6 +68,38 @@ def _resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ra
         {name: (values[i] if len(values) > 1 else values[0]) for name, values in lists.items()}
         for i in range(num_cells)
     ]
+
+
+def _storage_suffix(storage_type):
+    """Name a cell's storage class for its ``storageConfiguration``.
+
+    A PVC is found again by name alone, without checking its class, so when
+    the class varies across cells it has to be part of the name: otherwise a
+    volume loaded on one backend could be reused for another, in this run or
+    a later one.
+
+    :param storage_type: The cell's storage class, ``None`` for ephemeral.
+    :return: A DNS-label-safe suffix such as ``cephcsi`` or ``ephemeral``.
+    :rtype: str
+    """
+    return re.sub(r'[^a-z0-9-]+', '-', (storage_type or 'ephemeral').lower()).strip('-')
+
+
+def _set_cell_storage(config, storage_configuration, cell, storage_varies):
+    """Give one resource cell its storage, and its own storage class in a sweep.
+
+    :param config: The cell's SUT configuration.
+    :param storage_configuration: Base ``storageConfiguration`` name for the cell.
+    :param cell: The cell from :func:`_resource_cells`.
+    :param storage_varies: Whether the storage class differs between cells.
+    """
+    if storage_varies:
+        config.set_storage(
+            storageConfiguration=f"{storage_configuration}-{_storage_suffix(cell['storage_type'])}",
+            storageClassName=cell['storage_type'],
+        )
+    else:
+        config.set_storage(storageConfiguration=storage_configuration)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -235,7 +273,11 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
         limit_cpu_list=experiment.get_parameter_as_list_str('limit_cpu'),
         request_ram_list=experiment.get_parameter_as_list_str('request_ram'),
         limit_ram_list=experiment.get_parameter_as_list_str('limit_ram'),
+        storage_type_list=experiment.storage_types,
     )
+    # -rst may sweep the storage class too (prepare_testbed() validated each
+    # entry); then every cell gets its own class and a PVC named after it
+    storage_varies = len({cell['storage_type'] for cell in resource_cells}) > 1
     # set node groups for components
     if aws:
         # set node labes for components
@@ -317,9 +359,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                                 requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
                                 limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
                                 )
-                            config.set_storage(
-                                storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)+(f'-{resource_suffix}' if resource_suffix else '')
-                                )
+                            _set_cell_storage(config,
+                                f'postgresql-{tenant}'+"-"+str(config.num_tenants)+(f'-{resource_suffix}' if resource_suffix else ''),
+                                cell, storage_varies)
                             if skip_loading:
                                 config.loading_deactivated = True
                             config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
@@ -354,13 +396,13 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                             limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
                             )
                         if config.tenant_per:
-                            config.set_storage(
-                                storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)+(f'-{resource_suffix}' if resource_suffix else '')
-                                )
+                            _set_cell_storage(config,
+                                'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)+(f'-{resource_suffix}' if resource_suffix else ''),
+                                cell, storage_varies)
                         else:
-                            config.set_storage(
-                                storageConfiguration = 'postgresql'+(f'-{resource_suffix}' if resource_suffix else '')
-                                )
+                            _set_cell_storage(config,
+                                'postgresql'+(f'-{resource_suffix}' if resource_suffix else ''),
+                                cell, storage_varies)
                         if skip_loading:
                             config.loading_deactivated = True
                         config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
@@ -423,9 +465,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                         requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
                         limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
                         )
-                    config.set_storage(
-                        storageConfiguration = 'PgDuckDB'+(f'-{resource_suffix}' if resource_suffix else '')
-                        )
+                    _set_cell_storage(config,
+                        'PgDuckDB'+(f'-{resource_suffix}' if resource_suffix else ''),
+                        cell, storage_varies)
                     config.sut_parameters = {
                         # read by deploymenttemplate-PgDuckDB.yml's postStart hook to decide
                         # whether to ALTER ROLE ... SET duckdb.force_execution

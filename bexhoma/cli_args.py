@@ -17,7 +17,41 @@ import os
 __all__ = [
     "make_base_parser", "resolve_scaling_factor",
     "parse_metric_overrides", "format_metric_overrides",
+    "split_storage_types", "format_storage_types",
 ]
+
+
+def split_storage_types(value) -> list:
+    """
+    Split ``-rst``'s value into one storage class per resource cell.
+
+    A value without a comma is one class for the whole experiment and keeps
+    its meaning unchanged (``None`` ephemeral, ``''``, ``'ramdisk'`` or a
+    class name). A comma list sweeps the storage class across configurations,
+    paired by position with the ``-rr``/``-lr``/``-rc``/``-lc`` lists; an
+    empty entry there means ephemeral node-local storage.
+
+    :param value: ``args.request_storage_type``.
+    :return: One storage class per cell, ``None`` for ephemeral.
+    :rtype: list[Optional[str]]
+    """
+    if value is None or "," not in value:
+        return [value]
+    return [entry.strip() or None for entry in value.split(",")]
+
+
+def format_storage_types(storage_types: list) -> str:
+    """
+    Format one storage class per cell as ``-rst``'s comma list.
+
+    The inverse of :func:`split_storage_types` for a sweep: ``None``
+    (ephemeral) becomes an empty entry.
+
+    :param storage_types: One storage class per cell, ``None`` for ephemeral.
+    :return: The flag value.
+    :rtype: str
+    """
+    return ",".join(storage_type or "" for storage_type in storage_types)
 
 #: Spellings accepted for one ``-mm key=value`` switch.
 _METRIC_SWITCH_VALUES = {"on": True, "true": True, "off": False, "false": False}

@@ -15,8 +15,12 @@ import copy
 import types
 import unittest
 
+import tpch
 from bexhoma import environment
 from bexhoma import spec as catalog_spec
+from bexhoma.cli_args import format_storage_types, split_storage_types
+from bexhoma.experiments.base import ExperimentBase
+from bexhoma.experiments.tpch import TpchExperiment
 from tests.test_ycsb_catalog import _BASE_SPEC
 
 
@@ -92,6 +96,76 @@ class ValidateEnvironmentTest(unittest.TestCase):
     def test_unknown_class_is_refused(self):
         with self.assertRaisesRegex(catalog_spec.SpecError, "'ssd' is not a usable"):
             catalog_spec.validate_environment(self._ENVIRONMENT, _with_storage_class('ssd'))
+
+
+class StorageTypeListTest(unittest.TestCase):
+    """``-rst`` keeps its single-value meaning and adds a comma list."""
+
+    def test_single_values_are_unchanged(self):
+        for value in (None, '', 'ramdisk', 'cephcsi'):
+            with self.subTest(value):
+                self.assertEqual(split_storage_types(value), [value])
+
+    def test_list_maps_empty_entries_to_ephemeral(self):
+        self.assertEqual(split_storage_types('cephcsi,shared,'), ['cephcsi', 'shared', None])
+
+    def test_format_round_trips_a_sweep(self):
+        storage_types = [None, 'cephcsi', 'shared']
+        self.assertEqual(split_storage_types(format_storage_types(storage_types)), storage_types)
+
+    def test_only_tpch_supports_a_sweep(self):
+        self.assertFalse(ExperimentBase.supports_storage_sweep)
+        self.assertTrue(TpchExperiment.supports_storage_sweep)
+
+
+class TpchStorageCellTest(unittest.TestCase):
+    """``tpch.py`` pairs the storage class with the other resource lists."""
+
+    def test_storage_sweep_makes_one_cell_per_class(self):
+        cells = tpch._resource_cells(['8'], ['8'], ['32Gi'], ['32Gi'], ['cephcsi', 'shared', None])
+        self.assertEqual([cell['storage_type'] for cell in cells], ['cephcsi', 'shared', None])
+        self.assertEqual({cell['memory'] for cell in cells}, {'32Gi'})
+
+    def test_storage_is_paired_with_memory_by_position(self):
+        cells = tpch._resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'], ['cephcsi', 'shared'])
+        self.assertEqual([(cell['memory'], cell['storage_type']) for cell in cells],
+                         [('32Gi', 'cephcsi'), ('64Gi', 'shared')])
+
+    def test_length_mismatch_is_refused(self):
+        with self.assertRaisesRegex(ValueError, 'must share one length'):
+            tpch._resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'], ['cephcsi', 'shared', None])
+
+    def test_without_storage_list_cells_are_unchanged(self):
+        cells = tpch._resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'])
+        self.assertEqual(len(cells), 2)
+        self.assertEqual({cell['storage_type'] for cell in cells}, {None})
+
+    def test_storage_suffix_is_a_dns_label(self):
+        self.assertEqual(tpch._storage_suffix('cephcsi'), 'cephcsi')
+        self.assertEqual(tpch._storage_suffix(None), 'ephemeral')
+        self.assertEqual(tpch._storage_suffix('Ceph_CSI'), 'ceph-csi')
+
+    def _configured(self, storage_type, storage_varies):
+        config = types.SimpleNamespace(storage={'storageClassName': 'cephcsi', 'storageSize': '50Gi'})
+        config.set_storage = lambda **kwargs: config.storage.update(kwargs)
+        tpch._set_cell_storage(config, 'postgresql-2', {'storage_type': storage_type}, storage_varies)
+        return config.storage
+
+    def test_sweep_cell_gets_its_class_and_a_volume_named_after_it(self):
+        storage = self._configured('shared', storage_varies=True)
+        self.assertEqual(storage['storageConfiguration'], 'postgresql-2-shared')
+        self.assertEqual(storage['storageClassName'], 'shared')
+        self.assertEqual(storage['storageSize'], '50Gi')
+
+    def test_ephemeral_sweep_cell_gets_no_volume(self):
+        storage = self._configured(None, storage_varies=True)
+        self.assertEqual(storage['storageConfiguration'], 'postgresql-2-ephemeral')
+        self.assertIsNone(storage['storageClassName'])
+
+    def test_without_sweep_the_experiment_class_stays(self):
+        storage = self._configured(None, storage_varies=False)
+        self.assertEqual(storage['storageConfiguration'], 'postgresql-2')
+        self.assertEqual(storage['storageClassName'], 'cephcsi')
 
 
 if __name__ == '__main__':

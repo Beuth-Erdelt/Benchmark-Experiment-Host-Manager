@@ -84,6 +84,9 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
     Extends :class:`DbmsBenchmarkerExperiment`.
     """
 
+    #: ``tpch.py`` sets PostgreSQL's and PgDuckDB's storage class per resource cell.
+    supports_storage_sweep = True
+
     def __init__(self,
                  cluster,
                  code=None,
