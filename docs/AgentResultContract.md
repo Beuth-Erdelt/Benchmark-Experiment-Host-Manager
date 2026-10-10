@@ -12,7 +12,7 @@ blocks embedded verbatim in every `report/index.md`
 `report/index.md` to interpret an actual run.
 
 ```yaml
-result_contract_version: "1.6.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
+result_contract_version: "1.8.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
                                     # bump tracks report_writer.py's own frontmatter/tier/layout changes
 
 entry_point:

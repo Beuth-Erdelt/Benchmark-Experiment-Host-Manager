@@ -115,7 +115,7 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 
 | Key | Description |
 |---|---|
-| `service_monitoring` | URL of the **cluster-level** Prometheus API (`/api/v1/` suffix required). The default points to the shared `prometheus` service in the `monitor` namespace. This is used for hardware metrics (CPU, memory, network, disk I/O). Replace it with your external or in-cluster URL when using another Prometheus installation. Bexhoma tests reachability at the start of each experiment. |
+| `service_monitoring` | URL of the **cluster-level** Prometheus API (`/api/v1/` suffix required). The default points to the shared `prometheus` service in the `monitor` namespace. This is used for hardware metrics (CPU, memory, network, disk I/O). Replace it with your external or in-cluster URL when using another Prometheus installation. Bexhoma tests reachability at the start of each experiment. `bexhoma environment create` also uses it, from inside the dashboard pod, to read node occupancy (via kube-state-metrics) and to check which hardware metrics have data, so it must be reachable from within the cluster (see [Environment](Environment.md)). |
 | `service_monitoring_application` | URL template for the **per-experiment** Prometheus that bexhoma installs itself (used for application-level metrics with `-ma`). The placeholders `{service}` and `{namespace}` are substituted automatically. Leave as-is unless you have a custom application exporter setup. |
 
 #### Timing adjustments
@@ -135,8 +135,8 @@ Each entry has:
     'type':   'cluster',    # 'cluster' = hardware metric; 'application' = DBMS-specific
     'active': True,         # False = skip this metric
     'metric': 'gauge',      # 'gauge' (mean), 'counter' (max−min delta), or 'ratio' (max)
-    'query':  '<promql>',   # PromQL; {configuration}, {experiment}, {host}, {gpuid} are substituted
-    'title':  'CPU Utilization',
+    'query':  '<promql>',   # PromQL; {configuration}, {experiment}, {host}, {gpuid}, {database}, {schema} are substituted
+    'title':  'CPU Utilization [CPUs]',   # unit in brackets: what the query's value is measured in
 },
 ```
 
@@ -148,9 +148,13 @@ Each entry has:
 | `metric` | `gauge` | Aggregated as mean over the interval |
 | `metric` | `counter` | Aggregated as max − min (delta) over the interval |
 | `metric` | `ratio` | Aggregated as max over the interval |
-| `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{host}`, `{gpuid}`, `{namespace}` |
+| `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{host}`, `{gpuid}`, `{database}`, `{schema}`; literal PromQL braces are written `{{ }}` |
+| `sparse` | `True` (optional) | The metric only has a Prometheus series while its value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit). No data then means 0, so the report lists the gap as expected instead of failing the "No monitoring metrics missing" test |
 
-The default set of hardware metrics covers CPU utilization, CPU throttle, memory (working set and cached), network RX/TX, filesystem read/write, I/O wait, and per-core variance.
+The default set of hardware metrics covers CPU utilization, CPU throttle, memory (working set and including page cache), network RX/TX, filesystem read/write, and, for the whole node rather than the container, I/O wait and per-core utilization (maximum and variance).
+Pick `metric` by what the query returns, not by the underlying series: a query that already applies `rate()` returns a value per second and is a `gauge`; only a query returning an ever-growing total is a `counter`.
+A title names the unit in brackets, and says "since Start" or "since Stats Reset" when the value is an average over the server's lifetime rather than over the phase.
+The filesystem metrics count the largest device per pod: cAdvisor reports a RAID device and each of its member disks, so summing over devices would count every read and write several times.
 GPU metrics (DCGM) are present but disabled by default (`active: False`).
 
 #### Named application metric sets
@@ -160,7 +164,7 @@ Each DBMS configuration (in `dockers`) references one of these sets by name via 
 
 | Name | Used by |
 |---|---|
-| `postgresql` | PostgreSQL, PGBouncer (SUT component) |
+| `postgresql` | PostgreSQL, PgDuckDB, PGBouncer (SUT component) |
 | `pgbouncer` | PGBouncer (pool component) |
 | `mysql` | MySQL |
 | `tidb` | TiDB (SQL layer) |
@@ -169,8 +173,8 @@ Each DBMS configuration (in `dockers`) references one of these sets by name via 
 | `yb-master` | YugabyteDB (master nodes) |
 | `yb-tserver` | YugabyteDB (tablet servers) |
 | `cockroachdb` | CockroachDB (worker nodes) |
-| `dragonfly` | Dragonfly |
-| `redis` | Redis |
+| `dragonfly` | Dragonfly, DragonflyCluster (worker nodes) |
+| `redis` | Redis (worker nodes) |
 
 Each named set follows the same structure as `metrics` above.
 See [Monitoring](Monitoring.md) for details on enabling and interpreting application metrics.

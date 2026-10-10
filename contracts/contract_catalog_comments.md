@@ -93,6 +93,72 @@ choice per experiment made loading times incomparable across runs.
 reads the catalog default and emits `-nlp 8` explicitly when `pods` is
 omitted. Folded into 1.9.0 (not yet released) as an additive change.
 
+## `observe.metrics`: single hardware metrics per experiment (2026-10-09)
+
+`cluster.config` switches each monitoring query on or off with `active:`,
+but that applied to every experiment alike. `observe.metrics` lets an
+experiment override that flag per hardware metric, as
+`{metric_key: true|false}`.
+
+The vocabulary is not in the catalog: hardware metrics depend on the
+cluster's Prometheus, so they are listed in the generated `environment.yml`
+(`monitoring.hardware`, with `title`, `kind`, default `active`, `required`
+and `available`). This keeps the catalog small (the field costs about
+1,000 characters against the 56,000-character whole-file read limit) and
+cannot drift from `cluster.config`. Application metrics are not selectable
+yet; they belong under `systems.<name>` once the catalog is split.
+
+Rules, enforced in `spec.validate_experiment()` (shape) and
+`spec.validate_environment()` (keys): values are booleans; the field needs
+`monitoring_sut` or `monitoring_cluster`; keys must exist in
+`monitoring.hardware`; `required` metrics (the four CPU/RAM metrics the
+summary table and the `monitoring_component_cpu_nonzero` check read) cannot
+be switched off; metrics with `available: false` cannot be switched on.
+`build_argv()` passes the field as `-mm key=on,key=off`; the experiment
+checks the keys against `cluster.config` again before deploying, and
+`configurations/metrics.py` applies them to each connection's `active` flag,
+which dbmsbenchmarker's fetcher and bexhoma's evaluation already honour.
+
+This moved the version 1.9.1 -> 1.10.0 (minor: a new field the agent can
+set; nothing that validated before is rejected now), with
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
+
+### Revised the same day: a required list of the metrics the hypothesis relies on
+
+In a first agent run the design left `observe.metrics` out and relied on the
+defaults. That was a sound choice, but nothing in the spec showed that it was
+a choice. Making every non-required metric opt-in would have forced one, at
+the price that a forgotten metric is lost for good and needs a rerun.
+Instead, `observe.metrics` is now a `list[str]` of the metrics the hypothesis
+relies on, and it is required exactly when `monitoring_sut` or
+`monitoring_cluster` is on. Listed metrics are switched on; unlisted ones
+keep their default, so the default set is still collected. The argument for
+the selection belongs in the hypothesis, not in a separate field; there is
+no check that the hypothesis mentions the listed metrics.
+
+A list cannot switch a metric off. That was not needed: metrics are queried
+from Prometheus after the run, so a default metric costs almost nothing, and
+switching one off can only lose data. Humans keep `-mm key=off`.
+`build_argv()` passes the list as `-mm key=on,...`, so the CLI, the
+experiment check and `configurations/metrics.py` are unchanged. The rules
+are: a non-empty list of strings when hardware monitoring is on, no list
+otherwise (`spec.validate_experiment()`); every key exists in
+`monitoring.hardware` and is not `available: false`
+(`spec.validate_environment()`).
+
+Folded into 1.10.0. Neither 1.9.1 nor 1.10.0 is released yet, and the
+released 1.9.0 has no `observe:` at all, so nothing that validates there
+is rejected now. Against the unreleased 1.9.1, a spec that turns on
+monitoring without listing metrics is rejected.
+
+## `observe:` re-enabled (2026-10-09)
+
+The parked block below was pasted back unchanged and `"observe"` restored
+to the section tuple in `_check_contract_shape`, so the agent sees and may
+set monitoring again. This moved the version 1.9.0 -> 1.9.1 (patch:
+additive; nothing that validated before is rejected now), with
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
+
 ## `observe:` parked while the agent is a prototype (2026-09-30)
 
 Monitoring is switched off for the agent while it is a prototype: the

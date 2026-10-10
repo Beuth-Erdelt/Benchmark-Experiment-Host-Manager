@@ -5,9 +5,10 @@ run against (see ``docs/Design-Catalog-Contract.md``).
 
 This is the read-only half of that contract: nodes (with curated labels,
 their static allocatable/capacity resources, and how much of that is
-actually free right now, cluster-wide), storage classes, and a
+actually free right now, cluster-wide), storage classes, a
 namespace/cluster resource-limit summary relevant to validating a resolved
-experiment before it is run. It deliberately does not dump the raw
+experiment before it is run, and the cluster-wide hardware metrics that can
+be monitored. It deliberately does not dump the raw
 Kubernetes API response — only the subset of node/storage-class/limit data
 that matters for placing and sizing a benchmarking experiment.
 
@@ -27,6 +28,12 @@ sockperf network test between nodes) is opt-in via ``-xhw`` on the CLI, or
 collectors above it is cluster-mutating (it deploys and tears down a short
 benchmark sweep), so it stays off by default.
 
+Free capacity is read from the cluster's Prometheus (kube-state-metrics)
+when ``cluster.config`` names one, queried from inside the dashboard pod
+since Prometheus is only reachable in-cluster; that needs no cluster-wide
+pod RBAC. Otherwise it falls back to listing pods through the Kubernetes
+API. Which source was used is recorded as ``occupancy_source``.
+
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -35,6 +42,10 @@ See LICENSE for details.
 from __future__ import annotations
 
 import datetime
+import hashlib
+import json
+import math
+import re
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
@@ -42,15 +53,16 @@ import kubernetes.client as kubernetes_client
 import kubernetes.config as kubernetes_config
 import yaml
 from kubernetes.client.rest import ApiException
+from kubernetes.stream import stream as kubernetes_stream
 
 from bexhoma.spec import parse_memory_quantity
 
-#: Bump whenever environment.yml's top-level shape (nodes/excluded_nodes/
-#: storage_classes/resource_limits) changes -- this is the file's own
+#: Bump whenever environment.yml's top-level shape (nodes/occupancy_source/
+#: excluded_nodes/storage_classes/resource_limits/monitoring) changes -- this is the file's own
 #: source of truth, embedded directly at generation time, so unlike
 #: contract_catalog.yml/contract_result.yml there is no separate contract
 #: doc to drift out of sync with.
-ENVIRONMENT_CONTRACT_VERSION = "1.0.0"
+ENVIRONMENT_CONTRACT_VERSION = "1.2.0"
 
 #: RBAC users on a shared cluster are commonly granted node/storage-class
 #: read but not cluster-scoped pod listing (that would reveal every other
@@ -65,6 +77,31 @@ _HTTP_FORBIDDEN = 403
 #: partway through on a cluster with many pods.
 _PAGE_SIZE = 500
 
+#: Values of ``occupancy_source``: where each node's free/requested/limits_pct came from.
+OCCUPANCY_PROMETHEUS = "prometheus"
+OCCUPANCY_KUBERNETES_API = "kubernetes_api"
+OCCUPANCY_UNAVAILABLE = "unavailable"
+
+#: Per-query cap for a Prometheus request issued from the dashboard pod.
+_PROMETHEUS_TIMEOUT_SECONDS = 20
+
+#: Pods that hold their resources: scheduled (Running) or about to start
+#: (Pending). Deduplicated per pod, so an HA Prometheus pair or two
+#: kube-state-metrics replicas do not count a pod twice.
+_PROMQL_ACTIVE_PODS = 'max by (namespace, pod) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)'
+
+#: Hardware metrics bexhoma itself reads: the CPU/RAM summary table
+#: (``experiments/base.py`` ``show_summary_monitoring_table``) and, for
+#: ``total_cpu_util_s``, the result contract's ``monitoring_component_cpu_nonzero``
+#: check. They must stay active whenever monitoring is on.
+REQUIRED_HARDWARE_METRICS = frozenset({
+    "total_cpu_util_s", "total_cpu_util", "total_cpu_memory", "total_cpu_memory_cached",
+})
+
+#: A series selector in a ``cluster.config`` query template: a name followed by
+#: its (format-escaped) label block.
+_SERIES_SELECTOR = re.compile(r"([A-Za-z_:][A-Za-z0-9_:]*)\s*\{")
+
 __all__ = [
     "ENVIRONMENT_CONTRACT_VERSION",
     "EnvironmentError",
@@ -72,6 +109,9 @@ __all__ = [
     "StorageClassInfo",
     "collect_nodes",
     "collect_node_usage",
+    "collect_node_usage_prometheus",
+    "collect_monitoring_metrics",
+    "REQUIRED_HARDWARE_METRICS",
     "collect_storage_classes",
     "collect_resource_limits",
     "build_environment",
@@ -126,6 +166,11 @@ class NodeInfo:
         empty until then. This is "room right now", distinct from
         ``allocatable``, which is a static per-node total that ignores
         whatever is already running.
+    :ivar requested: Summed resource requests of those same pods, as
+        Kubernetes quantity strings -- populated alongside ``free``.
+    :ivar limits_pct: Summed resource limits of those pods as a percentage
+        of ``allocatable`` (rounded); above 100 the node is overcommitted and
+        a pod can be squeezed even when ``free`` leaves room.
     :ivar hardware_baseline: This node's own CPU/RAM (sysbench) and
         container-local disk I/O (fio) results, keyed ``"cpu_mem"``/``"fio"``
         — populated by the opt-in ``-xhw`` sweep
@@ -142,6 +187,8 @@ class NodeInfo:
     container_runtime_version: str = ""
     architecture: str = ""
     free: dict[str, str] = field(default_factory=dict)
+    requested: dict[str, str] = field(default_factory=dict)
+    limits_pct: dict[str, int] = field(default_factory=dict)
     hardware_baseline: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
@@ -210,6 +257,15 @@ class StorageClassInfo:
             reclaim_policy=storage_class.reclaim_policy or "",
             volume_binding_mode=storage_class.volume_binding_mode or "",
         )
+
+
+def _progress(step: str, message: str) -> None:
+    """Print one progress line in bexhoma's ``{step:30s}: message`` console style.
+
+    :param step: What is being collected, e.g. ``"Nodes"``.
+    :param message: What is happening or was found.
+    """
+    print(f"{step:30s}: {message}", flush=True)
 
 
 def _curate_resource_quantities(quantities: dict[str, str]) -> dict[str, str]:
@@ -331,14 +387,15 @@ def collect_nodes(cluster: Any) -> tuple[list[NodeInfo], list[dict[str, Any]]]:
 _TERMINAL_POD_PHASES = ("Succeeded", "Failed")
 
 
-def _accumulate_pod_requests(pod_items: list[Any]) -> dict[str, dict[str, float]]:
-    """Sum resource requests of non-terminal, scheduled pods, grouped by node.
+def _accumulate_pod_requests(pod_items: list[Any], kind: str = "requests") -> dict[str, dict[str, float]]:
+    """Sum resource requests (or limits) of non-terminal, scheduled pods, grouped by node.
 
     Pure function — no Kubernetes API access — operating on already-fetched
     ``V1Pod`` items, so it can be exercised without a live cluster.
 
     :param pod_items: ``V1Pod`` objects, e.g. from ``list_pod_for_all_namespaces().items``.
-    :return: Mapping of node name to summed requests, keyed by resource name
+    :param kind: ``"requests"`` or ``"limits"`` -- which container resource map to sum.
+    :return: Mapping of node name to summed amounts, keyed by resource name
         (values in the units :func:`_quantity_to_number` returns).
     :rtype: dict[str, dict[str, float]]
     """
@@ -348,7 +405,7 @@ def _accumulate_pod_requests(pod_items: list[Any]) -> dict[str, dict[str, float]
             continue
         node_requests = requests_by_node.setdefault(pod.spec.node_name, {})
         for pod_container in pod.spec.containers or []:
-            requests = (pod_container.resources and pod_container.resources.requests) or {}
+            requests = (pod_container.resources and getattr(pod_container.resources, kind)) or {}
             for resource_name, quantity in requests.items():
                 node_requests[resource_name] = (
                     node_requests.get(resource_name, 0.0) + _quantity_to_number(resource_name, quantity)
@@ -376,8 +433,301 @@ def _compute_free_resources(allocatable: dict[str, str], used: dict[str, float])
     }
 
 
-def collect_node_usage(cluster: Any, nodes: list[NodeInfo]) -> None:
+def _compute_limits_pct(allocatable: dict[str, str], limits: dict[str, float]) -> dict[str, int]:
+    """Express summed limits as a rounded percentage of each allocatable resource.
+
+    Pure function. Resources with zero allocatable are left out (no meaningful ratio).
+
+    :param allocatable: A node's curated ``allocatable`` map.
+    :param limits: Summed limits for the same node, in :func:`_quantity_to_number` units.
+    :return: Percentage per resource.
+    :rtype: dict[str, int]
+    """
+    percentages = {}
+    for resource_name, allocatable_value in allocatable.items():
+        total = _quantity_to_number(resource_name, allocatable_value)
+        if total > 0:
+            percentages[resource_name] = int(round(100 * limits.get(resource_name, 0.0) / total))
+    return percentages
+
+
+def _apply_node_usage(
+    nodes: list[NodeInfo],
+    requests_by_node: dict[str, dict[str, float]],
+    limits_by_node: dict[str, dict[str, float]],
+) -> None:
+    """Set ``free``, ``requested`` and ``limits_pct`` on every node from summed amounts.
+
+    Pure function shared by both occupancy sources, so they produce the same shape.
+
+    :param nodes: Curated nodes, mutated in place.
+    :param requests_by_node: Summed requests per node, in :func:`_quantity_to_number` units.
+    :param limits_by_node: Summed limits per node, same units.
+    """
+    for node in nodes:
+        requested = requests_by_node.get(node.name, {})
+        node.free = _compute_free_resources(node.allocatable, requested)
+        node.requested = {
+            resource_name: _format_quantity(resource_name, requested.get(resource_name, 0.0))
+            for resource_name in node.allocatable
+        }
+        node.limits_pct = _compute_limits_pct(node.allocatable, limits_by_node.get(node.name, {}))
+
+
+def _kube_state_metrics_label(resource_name: str) -> str:
+    """Return the ``resource`` label kube-state-metrics uses for a Kubernetes resource name.
+
+    kube-state-metrics sanitizes resource names into Prometheus label values
+    (``nvidia.com/gpu`` -> ``nvidia_com_gpu``, ``ephemeral-storage`` ->
+    ``ephemeral_storage``).
+
+    :param resource_name: Kubernetes resource key, e.g. ``"nvidia.com/gpu"``.
+    :return: The sanitized label value.
+    :rtype: str
+    """
+    return re.sub(r"[^a-zA-Z0-9_]", "_", resource_name)
+
+
+def _prometheus_amounts_by_node(
+    result: list[dict[str, Any]], nodes: list[NodeInfo],
+) -> dict[str, dict[str, float]]:
+    """Map a ``sum by (node, resource)`` Prometheus result onto the nodes' allocatable keys.
+
+    Pure function. Series for nodes outside ``nodes`` (tainted, or a Pending
+    pod without a node yet) and for resources a node does not report as
+    allocatable are dropped. CPU comes in cores and is converted to
+    millicores; every other resource is already in bytes or a plain count.
+
+    :param result: ``data.result`` of an instant query.
+    :param nodes: Curated nodes whose ``allocatable`` keys define the vocabulary.
+    :return: Summed amounts per node, in :func:`_quantity_to_number` units.
+    :rtype: dict[str, dict[str, float]]
+    """
+    keys_by_node = {
+        node.name: {_kube_state_metrics_label(key): key for key in node.allocatable}
+        for node in nodes
+    }
+    amounts_by_node: dict[str, dict[str, float]] = {}
+    for series in result:
+        labels = series.get("metric", {})
+        resource_name = keys_by_node.get(labels.get("node"), {}).get(labels.get("resource"))
+        if resource_name is None:
+            continue
+        amount = float(series["value"][1])
+        if math.isnan(amount):
+            continue
+        if resource_name == "cpu":
+            amount *= 1000
+        node_amounts = amounts_by_node.setdefault(labels["node"], {})
+        node_amounts[resource_name] = node_amounts.get(resource_name, 0.0) + amount
+    return amounts_by_node
+
+
+def _prometheus_url(cluster: Any) -> Optional[str]:
+    """Return the cluster's Prometheus API base URL from ``cluster.config``, or ``None``.
+
+    Formatted the same way as ``Kubernetes.is_monitoring_healthy()``.
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance.
+    :return: URL ending in ``/api/v1/``, or ``None`` when no Prometheus is configured.
+    :rtype: Optional[str]
+    """
+    monitor = cluster.config.get("credentials", {}).get("k8s", {}).get("monitor", {})
+    if "service_monitoring" not in monitor:
+        return None
+    return monitor["service_monitoring"].format(namespace=cluster.namespace, service="monitoring")
+
+
+def _query_prometheus(cluster: Any, pod: str, url: str, query: str) -> list[dict[str, Any]]:
+    """Run an instant PromQL query from inside the dashboard pod.
+
+    Prometheus is only reachable in-cluster, so the request goes through
+    ``curl`` in the dashboard container. The command is passed as an argument
+    list over the exec API -- no shell -- so PromQL quoting survives on every
+    client OS.
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance (already connected).
+    :param pod: Dashboard pod name.
+    :param url: Prometheus API base URL, ending in ``/api/v1/``.
+    :param query: PromQL expression.
+    :return: ``data.result`` of the response.
+    :rtype: list[dict[str, Any]]
+    :raises EnvironmentError: When the response is not a successful Prometheus answer.
+    """
+    command = [
+        "curl", "-sS", "--max-time", str(_PROMETHEUS_TIMEOUT_SECONDS),
+        "-G", f"{url}query", "--data-urlencode", f"query={query}",
+    ]
+    # Read the raw stdout channel: with preloaded content the client
+    # deserializes JSON output and returns its Python repr instead.
+    client = kubernetes_stream(
+        cluster.v1core.connect_get_namespaced_pod_exec, pod, cluster.namespace,
+        container="dashboard", command=command,
+        stderr=True, stdin=False, stdout=True, tty=False, _preload_content=False,
+    )
+    try:
+        client.run_forever(timeout=_PROMETHEUS_TIMEOUT_SECONDS + 10)
+        output = client.read_stdout() or ""
+        errors = client.read_stderr() or ""
+    finally:
+        client.close()
+    try:
+        response = json.loads(output)
+    except ValueError as error:
+        raise EnvironmentError(f"Prometheus did not answer with JSON: {(errors or output)[:200]!r}") from error
+    if response.get("status") != "success":
+        raise EnvironmentError(f"Prometheus query failed: {response.get('error', response)}")
+    return response["data"]["result"]
+
+
+def collect_node_usage_prometheus(cluster: Any, nodes: list[NodeInfo]) -> bool:
+    """Populate node occupancy from the cluster's Prometheus (kube-state-metrics).
+
+    Needs no cluster-wide pod RBAC, unlike :func:`collect_node_usage`'s pod
+    listing. Gives up (returns ``False``, nodes untouched) when no Prometheus
+    is configured, no dashboard pod is running, kube-state-metrics is not
+    scraped, or any query fails -- the caller then falls back.
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance (already connected).
+    :param nodes: Curated, schedulable nodes (mutated in place).
+    :return: ``True`` when every node's occupancy was set from Prometheus.
+    :rtype: bool
+    """
+    url = _prometheus_url(cluster)
+    if not url:
+        _progress("Occupancy", "no Prometheus in cluster.config")
+        return False
+    pod = cluster.get_dashboard_pod_name()
+    if not pod:
+        print("WARN: no dashboard pod to reach Prometheus from - falling back to the pod listing")
+        return False
+    _progress("Occupancy", f"querying Prometheus {url} from pod {pod}")
+    try:
+        # An empty answer means kube-state-metrics is not scraped, which would
+        # otherwise read as "nothing requested anywhere".
+        if not _query_prometheus(cluster, pod, url, "count(kube_node_status_allocatable)"):
+            print("WARN: Prometheus has no kube-state-metrics - falling back to the pod listing")
+            return False
+        amounts = {}
+        for kind in ("requests", "limits"):
+            query = (
+                "sum by (node, resource) ("
+                f"(max by (namespace, pod, container, node, resource) (kube_pod_container_resource_{kind}))"
+                f" and on (namespace, pod) {_PROMQL_ACTIVE_PODS})"
+            )
+            amounts[kind] = _prometheus_amounts_by_node(_query_prometheus(cluster, pod, url, query), nodes)
+    except Exception as error:
+        print(f"WARN: could not read occupancy from Prometheus ({error}) - falling back to the pod listing")
+        return False
+    _apply_node_usage(nodes, amounts["requests"], amounts["limits"])
+    return True
+
+
+def _hardware_metric_definitions(cluster: Any) -> dict[str, dict[str, Any]]:
+    """Return ``cluster.config``'s cluster-wide (hardware) metric definitions.
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance.
+    :return: ``monitor.metrics`` as configured, empty when there is none.
+    :rtype: dict[str, dict[str, Any]]
+    """
+    monitor = cluster.config.get("credentials", {}).get("k8s", {}).get("monitor", {})
+    return monitor.get("metrics", {})
+
+
+def _metric_series_names(query: str) -> list[str]:
+    """Extract the Prometheus series names a ``cluster.config`` metric query selects.
+
+    Pure function. Only selectors with a label block count (``name{{...}}`` in
+    the ``str.format`` template), which every hardware query uses; function
+    names are followed by ``(`` and so never match.
+
+    :param query: A metric's ``query`` template.
+    :return: Distinct series names in order of appearance.
+    :rtype: list[str]
+    """
+    return list(dict.fromkeys(_SERIES_SELECTOR.findall(query)))
+
+
+def _metrics_source_sha256(definitions: dict[str, dict[str, Any]]) -> str:
+    """Fingerprint the metric definitions, to detect an environment.yml older than cluster.config.
+
+    :param definitions: ``monitor.metrics`` from ``cluster.config``.
+    :return: SHA-256 hex digest of the definitions in a canonical form.
+    :rtype: str
+    """
+    canonical = json.dumps(definitions, sort_keys=True, default=str)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _available_series(cluster: Any, series_names: list[str]) -> Optional[set[str]]:
+    """Return which of ``series_names`` the cluster's Prometheus holds right now.
+
+    One query for all names. ``None`` means it could not be checked (no
+    Prometheus, no dashboard pod, or the query failed), which is different
+    from "checked and absent".
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance (already connected).
+    :param series_names: Series names to look up.
+    :return: The names present, or ``None`` when unchecked.
+    :rtype: Optional[set[str]]
+    """
+    url = _prometheus_url(cluster)
+    pod = cluster.get_dashboard_pod_name() if url else ""
+    if not (url and pod and series_names):
+        return None
+    pattern = "|".join(re.escape(name) for name in series_names)
+    try:
+        result = _query_prometheus(cluster, pod, url, f'count by (__name__) ({{__name__=~"{pattern}"}})')
+    except Exception as error:
+        print(f"WARN: could not check metric availability in Prometheus ({error})")
+        return None
+    return {series.get("metric", {}).get("__name__") for series in result}
+
+
+def collect_monitoring_metrics(cluster: Any) -> dict[str, Any]:
+    """Describe the cluster-wide hardware metrics bexhoma can collect on this cluster.
+
+    Read from ``cluster.config``'s ``monitor.metrics``. Application metrics
+    are not listed: they depend on a system's exporter, not on the cluster,
+    and belong to the catalog. ``available`` says whether every series a
+    metric's query reads exists in Prometheus at generation time; it is left
+    out when that could not be checked.
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance (already connected).
+    :return: The ``monitoring`` section of ``environment.yml``.
+    :rtype: dict[str, Any]
+    """
+    definitions = _hardware_metric_definitions(cluster)
+    series_by_metric = {
+        key: _metric_series_names(str(definition.get("query", "")))
+        for key, definition in definitions.items()
+    }
+    available = _available_series(
+        cluster, list(dict.fromkeys(name for names in series_by_metric.values() for name in names))
+    )
+    hardware = {}
+    for key, definition in definitions.items():
+        entry = {
+            "title": definition.get("title", key),
+            "kind": definition.get("metric", ""),
+            "active": bool(definition.get("active", True)),
+            "required": key in REQUIRED_HARDWARE_METRICS,
+        }
+        if available is not None and series_by_metric[key]:
+            entry["available"] = all(name in available for name in series_by_metric[key])
+        hardware[key] = entry
+    return {
+        "source_sha256": _metrics_source_sha256(definitions),
+        "availability_checked": available is not None,
+        "hardware": hardware,
+    }
+
+
+def collect_node_usage(cluster: Any, nodes: list[NodeInfo]) -> str:
     """Populate each node's :attr:`NodeInfo.free` — allocatable minus in-use, cluster-wide.
+
+    Tries :func:`collect_node_usage_prometheus` first and only lists pods
+    through the Kubernetes API when that is not possible.
 
     Cluster-wide, not scoped to bexhoma's own pods: "free right now" needs to
     account for every workload competing for the same nodes, not just ones
@@ -391,8 +741,13 @@ def collect_node_usage(cluster: Any, nodes: list[NodeInfo]) -> None:
 
     :param cluster: A ``bexhoma.clusters.Kubernetes`` instance (already connected).
     :param nodes: Curated, schedulable nodes (mutated in place), as returned by :func:`collect_nodes`.
+    :return: The ``occupancy_source`` that was used (``OCCUPANCY_*``).
+    :rtype: str
     :raises EnvironmentError: When the Pod API can't be reached for a reason other than permissions.
     """
+    if collect_node_usage_prometheus(cluster, nodes):
+        return OCCUPANCY_PROMETHEUS
+    _progress("Occupancy", "listing pods cluster-wide through the Kubernetes API")
     # Paginated rather than one list_pod_for_all_namespaces() call: on a large,
     # busy cluster that single response can run into the hundreds of MB, and an
     # intermediate proxy between here and the API server has been observed to
@@ -417,13 +772,14 @@ def collect_node_usage(cluster: Any, nodes: list[NodeInfo]) -> None:
                 "(need cluster-scoped 'pods' list access) - skipping free-capacity "
                 "accounting; every node's 'free' will stay empty"
             )
-            return
+            return OCCUPANCY_UNAVAILABLE
         raise EnvironmentError(f"could not list pods for resource-usage accounting: {error}") from error
     except Exception as error:
         raise EnvironmentError(f"could not list pods for resource-usage accounting: {error}") from error
-    requests_by_node = _accumulate_pod_requests(pod_items)
-    for node in nodes:
-        node.free = _compute_free_resources(node.allocatable, requests_by_node.get(node.name, {}))
+    _apply_node_usage(
+        nodes, _accumulate_pod_requests(pod_items), _accumulate_pod_requests(pod_items, "limits")
+    )
+    return OCCUPANCY_KUBERNETES_API
 
 
 def collect_storage_classes(cluster: Any) -> list[StorageClassInfo]:
@@ -550,8 +906,25 @@ def build_environment(cluster: Any) -> dict[str, Any]:
     :return: The environment descriptor, ready for :func:`write_environment_yml`.
     :rtype: dict[str, Any]
     """
+    _progress("Cluster", f"context {cluster.context}, namespace {cluster.namespace}")
+    _progress("Nodes", "listing")
     nodes, excluded_nodes = collect_nodes(cluster)
-    collect_node_usage(cluster, nodes)
+    _progress("Nodes", f"{len(nodes)} schedulable, {len(excluded_nodes)} excluded (tainted)")
+    occupancy_source = collect_node_usage(cluster, nodes) or OCCUPANCY_UNAVAILABLE
+    _progress("Occupancy", f"source: {occupancy_source}")
+    _progress("Storage classes", "listing")
+    storage_classes = collect_storage_classes(cluster)
+    _progress("Storage classes", f"{len(storage_classes)} found")
+    _progress("Resource limits", "reading")
+    resource_limits = collect_resource_limits(cluster, nodes)
+    _progress("Monitoring metrics", "reading cluster.config and checking Prometheus")
+    monitoring = collect_monitoring_metrics(cluster)
+    hardware = monitoring["hardware"]
+    if monitoring["availability_checked"]:
+        found = sum(1 for metric in hardware.values() if metric.get("available"))
+        _progress("Monitoring metrics", f"{len(hardware)} hardware metrics, {found} with data in Prometheus")
+    else:
+        _progress("Monitoring metrics", f"{len(hardware)} hardware metrics, availability not checked")
     return {
         "environment_contract_version": ENVIRONMENT_CONTRACT_VERSION,
         "cluster": {
@@ -559,10 +932,12 @@ def build_environment(cluster: Any) -> dict[str, Any]:
             "namespace": cluster.namespace,
             "collected_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         },
+        "occupancy_source": occupancy_source,
         "nodes": [vars(node) for node in nodes],
         "excluded_nodes": excluded_nodes,
-        "storage_classes": [vars(storage_class) for storage_class in collect_storage_classes(cluster)],
-        "resource_limits": collect_resource_limits(cluster, nodes),
+        "storage_classes": [vars(storage_class) for storage_class in storage_classes],
+        "resource_limits": resource_limits,
+        "monitoring": monitoring,
     }
 
 
@@ -697,9 +1072,11 @@ def main(argv: Optional[list[str]] = None) -> None:
             for name in cli_args.hardware_baseline_storage_classes.split(",")
         ]
 
+    _progress("Cluster", "connecting")
     cli_cluster = clusters.Kubernetes(context=cli_args.context)
     cli_environment = build_environment(cli_cluster)
     if cli_args.hardware_baseline:
+        _progress("Hardware baseline", f"running sweep (up to {cli_args.hardware_baseline_timeout} min)")
         apply_hardware_baseline(
             cli_cluster, cli_environment,
             hardware_duration=cli_args.hardware_baseline_duration,
@@ -708,7 +1085,7 @@ def main(argv: Optional[list[str]] = None) -> None:
             timeout_minutes=cli_args.hardware_baseline_timeout,
         )
     write_environment_yml(cli_environment, cli_args.output)
-    print(f"wrote {cli_args.output}")
+    _progress("Environment", f"wrote {cli_args.output}")
 
 
 if __name__ == "__main__":

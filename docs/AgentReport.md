@@ -137,10 +137,24 @@ human-readable layer instead of the raw key itself. So every catalog row also
 carries a `component_title` column with that matching human-readable title,
 and every per-metric subsection heading is
 `` {metric title} (`{metric_key}`, {component} — {component_title}) `` — e.g.
-"CPU Throttle (`total_cpu_throttled`, benchmarking — Benchmarking phase: SUT
-deployment)". A metric for a specific phase/component is therefore findable
+"CPU Throttling Rate [s/s] (`total_cpu_throttled`, benchmarking — Benchmarking
+phase: SUT deployment)". A metric for a specific phase/component is therefore findable
 by searching either the raw key or its title, without needing to trace the
 key back through source code.
+
+### Missing Metrics (`monitoring.md`)
+
+dbmsbenchmarker stores zeros for a query Prometheus returned no data for and
+only logs `Metrics missing for <title> (<query>)`. `monitoring.md` opens with a
+Missing Metrics table built from those log lines (`source`, `title`,
+`connection`, `query`, `component`, `expected`), one row per gap even when
+both the dashboard pod and the benchmarker pod logged it. A non-empty
+`expected` names why the zeros are correct (`data pre-existing`, or
+`series exists only while non-zero` for metrics `cluster.config` marks
+`sparse`); an empty one means the zeros are not measurements. `index.md`'s
+Health Summary counts unexpected and expected gaps on separate lines, and the
+`No monitoring metrics missing` test fails only on unexpected ones (see
+[Monitoring](Monitoring.md#missing-metrics)).
 
 ---
 

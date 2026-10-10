@@ -63,7 +63,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.9.0"
+CATALOG_CONTRACT_VERSION = "1.10.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -98,6 +98,7 @@ _REQUIRED_HEADER_FIELDS = ("title", "hypothesis", "discriminates")
 #: Fallback ``arg_style`` for a knob/system that doesn't declare one.
 DEFAULT_ARG_STYLE = "pg-guc"
 _KNOB_TYPE_MEMORY = "memory"
+_KNOB_TYPE_INT = "int"
 
 
 class SpecError(Exception):
@@ -333,6 +334,10 @@ def resolve_system_definition(catalog: dict[str, Any], system_name: str) -> dict
 def _resolve_profile(catalog: dict[str, Any], definition: dict[str, Any], profile_name: str) -> dict[str, Any]:
     """Resolve a profile, following a ``ref:`` pointer to another system's profile if present.
 
+    A profile with a ``ref:`` may declare its own ``knobs:``/``derive:``/``requires:``
+    next to it; those are merged over the referenced profile's, so a system
+    keeps parity with the referenced profile and adds the knobs only it has.
+
     :param catalog: Parsed catalog.
     :param definition: Merged system definition the profile was requested on.
     :param profile_name: Profile name.
@@ -351,7 +356,11 @@ def _resolve_profile(catalog: dict[str, Any], definition: dict[str, Any], profil
     if not separator:
         raise SpecError(f"malformed profile ref {ref!r}, expected 'System.profiles.name'")
     ref_definition = resolve_system_definition(catalog, ref_system)
-    return _resolve_profile(catalog, ref_definition, ref_profile)
+    merged = dict(_resolve_profile(catalog, ref_definition, ref_profile))
+    for key in ("knobs", "derive", "requires"):
+        if key in profile:
+            merged[key] = {**merged.get(key, {}), **profile[key]}
+    return merged
 
 
 def resolve_system(
@@ -420,8 +429,11 @@ def resolve_system(
         }
         for knob_name, expression in profile.get("derive", {}).items():
             raw_value = evaluate_derive_expression(expression, derive_inputs)
-            if known_knobs.get(knob_name, {}).get("type") == _KNOB_TYPE_MEMORY:
+            knob_type = known_knobs.get(knob_name, {}).get("type")
+            if knob_type == _KNOB_TYPE_MEMORY:
                 values[knob_name] = memory_formatter(int(raw_value))
+            elif knob_type == _KNOB_TYPE_INT:
+                values[knob_name] = int(raw_value)
             else:
                 values[knob_name] = raw_value
 
@@ -471,7 +483,8 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     before anything else is resolved); the optional ``follow_up_of``, if
     present, is a string; the optional ``max_sut``/``max_sut_experiment``
     concurrent-SUT caps, if present, are non-negative integers (0 = no
-    limit); the workload exists; every named
+    limit); ``observe.metrics`` is a non-empty list of keys exactly when
+    hardware monitoring is switched on; the workload exists; every named
     system is in the workload's ``supports:`` list; and, for each system's
     *effective* post_load (its own ``systems[].post_load`` override — a
     selection choice — or else the shared ``loading.post_load`` default),
@@ -496,6 +509,20 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
         cap = experiment.get(cap_field)
         if cap is not None and (isinstance(cap, bool) or not isinstance(cap, int) or cap < 0):
             raise SpecError(f"'{cap_field}' must be a non-negative integer (0 = no limit)")
+
+    observe = experiment.get("observe") or {}
+    metrics = observe.get("metrics")
+    hardware_monitoring = observe.get("monitoring_sut") or observe.get("monitoring_cluster")
+    if metrics is not None:
+        if not isinstance(metrics, list) or not all(isinstance(key, str) for key in metrics):
+            raise SpecError("observe.metrics must be a list of hardware metric keys")
+        if not hardware_monitoring:
+            raise SpecError(
+                "observe.metrics only takes effect with observe.monitoring_sut or observe.monitoring_cluster")
+    if hardware_monitoring and not metrics:
+        raise SpecError(
+            "hardware monitoring is on, but observe.metrics names no metric; list the hardware "
+            "metrics the hypothesis relies on, even those that are active by default")
 
     workload_name = experiment["workload"]["name"]
     workloads = catalog.get("workloads", {})
@@ -576,8 +603,9 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
     ``resources.cpu``/``resources.memory`` sweep cell's ``request``/``limit``
     fits under the allocatable capacity of the ``placement.sut`` node (or the
     cluster-wide ``resource_limits`` ceiling, when no SUT node is pinned);
-    and, when set, ``resources.storage_class`` names a storage class the
-    cluster actually has.
+    when set, ``resources.storage_class`` names a storage class the
+    cluster actually has; and every ``observe.metrics`` key is a hardware
+    metric in ``monitoring.hardware`` that has data in Prometheus.
 
     This is independent of :func:`validate_experiment`: that function checks
     an experiment against what the catalog *permits*; this one checks it
@@ -640,6 +668,35 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
             raise SpecError(
                 f"resources.storage_class '{storage_class}' is not in environment.yml's storage_classes"
             )
+
+    _validate_metrics(environment, (experiment.get("observe") or {}).get("metrics") or [])
+
+
+def _validate_metrics(environment: dict[str, Any], metrics: list[str]) -> None:
+    """Check ``observe.metrics`` against ``environment.yml``'s ``monitoring.hardware``.
+
+    :param environment: Parsed environment descriptor.
+    :param metrics: The experiment's ``observe.metrics`` (keys to switch on).
+    :raises SpecError: When the environment has no metric list, a key is unknown,
+        or a metric has no data.
+    """
+    if not metrics:
+        return
+    hardware = (environment.get("monitoring") or {}).get("hardware")
+    if not hardware:
+        raise SpecError(
+            "observe.metrics is set, but environment.yml has no monitoring.hardware section; "
+            "regenerate it with 'bexhoma environment create'")
+    for key in metrics:
+        metric = hardware.get(key)
+        if metric is None:
+            raise SpecError(
+                f"observe.metrics: {key} is not a hardware metric in environment.yml's "
+                f"monitoring.hardware; known: {sorted(hardware)}")
+        if metric.get("available") is False:
+            raise SpecError(
+                f"observe.metrics: {key} has no data in Prometheus "
+                "(available: false when environment.yml was generated), so it would only collect empty readings")
 
 
 def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:

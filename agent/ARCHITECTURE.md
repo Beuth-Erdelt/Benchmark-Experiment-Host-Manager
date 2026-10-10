@@ -116,7 +116,7 @@ concluded.
 
 | Side | Authoritative artifacts | Guarantee |
 |---|---|---|
-| Design | `contracts/contract_catalog.yml`, `environment.yml` (from `bexhoma environment create`) | Legal schema, supported workloads/systems/knobs, experimental guidance, node and storage availability, resource ceilings |
+| Design | `contracts/contract_catalog.yml`, `environment.yml` (from `bexhoma environment create`) | Legal schema, supported workloads/systems/knobs, experimental guidance, node and storage availability, current node occupancy, resource ceilings, monitorable hardware metrics |
 | Result | Archived `contract_result.yml`, `report/index.md`, linked evidence and raw provenance | Result layout, validity checks, metric meanings, identifiers, versions, and interpretation rules |
 
 Prompts contain role, phase, tools, budgets, and stopping conditions. Domain and
@@ -359,8 +359,13 @@ that in-cluster context, and refreshes `environment.yml` before design. This
 removes the workstation and expiring interactive login from the lifecycle. Its
 role can mutate BeXhoma and model-server objects only in its namespace. A
 separate read-only cluster role exposes node, storage-class, and priority-class
-facts needed to build the bounded environment descriptor. The model itself has
-neither credential nor Kubernetes tool access.
+facts needed to build the bounded environment descriptor. That role cannot list
+pods cluster-wide, so node occupancy comes from the cluster's Prometheus,
+queried from the dashboard pod in the namespace; when no dashboard pod is
+running yet, the descriptor has no free capacity and node pins are refused.
+The `service_monitoring` URL in the `cluster.config` given to the Job must
+therefore be reachable inside the cluster. The model itself has neither
+credential nor Kubernetes tool access.
 
 The controller passes its own environment on unchanged, so the Job's environment
 block is where an in-cluster run chooses its model server (`AGENT_MODEL_SERVER`)

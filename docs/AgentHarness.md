@@ -108,6 +108,9 @@ inspects the current kubectl context; pass `-cx <context>` to choose another and
 `environment*.yml` rule), so each person keeps a private, current snapshot
 rather than sharing one. Regenerate it whenever the cluster changes: it carries
 a `collected_at` timestamp and goes stale the moment capacity moves after that.
+Besides node sizes it records how much each node has already reserved (read
+from Prometheus when `cluster.config` names one) and which hardware metrics
+can be monitored; see [Environment](Environment.md).
 
 The agent CLI and the lifecycle wrapper both read `environment.yml` from the
 working directory by default, so the commands below need no `--environment` flag

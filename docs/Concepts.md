@@ -149,7 +149,7 @@ A Redis-based message queue coordinates distributed loader and benchmarker pods,
 
 ### Monitoring
 
-Bexhoma integrates with Prometheus and cAdvisor to record hardware metrics (CPU, memory, network I/O) for each component during every benchmark phase.
+Bexhoma integrates with Prometheus and cAdvisor to record hardware metrics (CPU, memory, network and filesystem I/O, per-node CPU and I/O wait) for each component during every benchmark phase, and optionally DBMS-internal application metrics (see [Monitoring](Monitoring.md)).
 Monitoring can be scoped to the SUT only, or extended to all cluster components.
 Metrics are fetched after each phase and stored alongside benchmark results for joint analysis.
 

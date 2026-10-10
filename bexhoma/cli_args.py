@@ -14,7 +14,49 @@ import argparse
 import ast
 import os
 
-__all__ = ["make_base_parser", "resolve_scaling_factor"]
+__all__ = [
+    "make_base_parser", "resolve_scaling_factor",
+    "parse_metric_overrides", "format_metric_overrides",
+]
+
+#: Spellings accepted for one ``-mm key=value`` switch.
+_METRIC_SWITCH_VALUES = {"on": True, "true": True, "off": False, "false": False}
+
+
+def parse_metric_overrides(text: str) -> dict:
+    """
+    Parse ``-mm``'s ``key=on,key=off`` list into ``{metric_key: active}``.
+
+    Used as the argparse ``type`` of ``--monitoring-metrics``, so a malformed
+    entry is a usage error before anything is deployed.
+
+    :param text: Comma-separated ``key=on|off`` (``true``/``false`` also accepted).
+    :return: Requested ``active`` flag per metric key.
+    :rtype: dict[str, bool]
+    :raises argparse.ArgumentTypeError: On an entry that is not ``key=on|off``.
+    """
+    overrides = {}
+    for entry in text.split(","):
+        if not entry.strip():
+            continue
+        key, separator, value = entry.partition("=")
+        switch = _METRIC_SWITCH_VALUES.get(value.strip().lower())
+        if not separator or not key.strip() or switch is None:
+            raise argparse.ArgumentTypeError(
+                f"monitoring metric override {entry!r} must be key=on or key=off")
+        overrides[key.strip()] = switch
+    return overrides
+
+
+def format_metric_overrides(overrides: dict) -> str:
+    """
+    Format ``{metric_key: active}`` as ``-mm``'s ``key=on,key=off`` value.
+
+    :param overrides: Requested ``active`` flag per metric key.
+    :return: The flag value, empty when there are no overrides.
+    :rtype: str
+    """
+    return ",".join(f"{key}={'on' if active else 'off'}" for key, active in overrides.items())
 
 
 def resolve_scaling_factor(cluster, code, mode: str, cli_scaling_factor) -> str:
@@ -80,6 +122,7 @@ def make_base_parser():
     p.add_argument('-m',   '--monitoring', help='enable Prometheus monitoring for the SUT', action='store_true')
     p.add_argument('-ma',  '--monitoring-app', help='enable application-level metrics collection', action='store_true', default=False)
     p.add_argument('-mc',  '--monitoring-cluster', help='enable node-level monitoring for the entire cluster', action='store_true', default=False)
+    p.add_argument('-mm',  '--monitoring-metrics', help="switch single cluster-wide hardware metrics of cluster.config on or off for this experiment, overriding their 'active' flag, e.g. total_gpu_util=on,total_network_rx=off; needs -m or -mc", type=parse_metric_overrides, default={}, dest='monitoring_metrics')
     p.add_argument('-ms',  '--max-sut', help='maximum number of DBMS configurations to run in parallel cluster-wide (default: no limit)', default=None)
     p.add_argument('-mse', '--max-sut-experiment', help='maximum number of DBMS configurations in this experiment to run in parallel (default: no limit)', default=None)
     p.add_argument('-et',  '--experiment-timeout', help='maximum wall-clock duration of the experiment in minutes; when exceeded, the experiment is stopped and all its components are removed from the cluster (default: no limit)', type=int, default=None)

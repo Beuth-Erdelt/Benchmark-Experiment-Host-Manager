@@ -62,7 +62,11 @@ systems:
     profile: analytical-ssd  # same profile as PostgreSQL — this is what "parity" means for this pair
     override: {duckdb_force_execution: false}  # let pg_duckdb's own cost-based routing decide per query, as it would in real deployment
 
-observe: {monitoring_sut: true, monitoring_cluster: true, monitoring_app: true}
+observe:
+  monitoring_sut: true
+  monitoring_cluster: true
+  monitoring_app: true
+  metrics: [total_cpu_util, total_cpu_memory]
 
 placement:
   sut: cl-worker36

@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.9.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.10.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -68,11 +68,13 @@ catalog_concepts:
       physical_design: block, since that key is never merged"
   profile_ref:
     semantics: "a systems.<name>.profiles.<profile>.ref: 'System.profiles.name'
-      pointer resolves to that OTHER system's profile object directly (same
-      knobs:/derive:/requires:), instead of declaring its own knobs/derive"
+      pointer resolves to that OTHER system's profile object (same
+      knobs:/derive:/requires:); knobs:/derive:/requires: declared next to
+      the ref are merged on top, for knobs only this system has"
     when: "used for profile parity between systems -- e.g.
       PgDuckDB.profiles.analytical-ssd refs PostgreSQL.profiles.analytical-ssd,
-      so both resolve identical knob values from the same memory/cpu limits"
+      so both resolve identical knob values from the same memory/cpu limits,
+      and adds derive: for its own duckdb.* knobs"
   requires:
     semantics: "a profile's requires: {storage_class: [...]} lists which
       resources.storage_class values an experiment.yml using that profile
@@ -259,7 +261,47 @@ experiment_schema:
             resolve_physical_design_overrides() resolves the per-system
             selection separately and experiment.py applies it in-process via
             SutConfiguration.set_experiment(indexing=...) -- not through argv"
-    # observe: disabled while the agent is a prototype -- parked in contract_catalog_comments.md
+    observe:
+      type: object
+      when: "only relevant when the hypothesis needs hardware metrics (CPU
+        and memory use, and GPU use where present) or database-internal
+        statistics -- leave all three off otherwise. Readings only become
+        reliable after a few scrape intervals have accumulated: a phase
+        shorter than roughly 2-5 minutes can show 0/NaN readings rather than
+        a real signal, so keep rounds/query_repeats long enough for the phase
+        to clear this warm-up window if monitoring results matter"
+      fields:
+        monitoring_sut: {type: bool, semantics: "collect hardware metrics of
+          the system under test for this experiment"}
+        monitoring_cluster:
+          type: bool
+          semantics: "collect the same hardware metrics from a monitoring
+            installation that covers every node of the cluster; it is shared
+            by all experiments and reused if it is already running"
+          when: "use it instead of monitoring_sut when load outside the SUT
+            matters, e.g. on the benchmarker's node; turning on both is the
+            same as turning on monitoring_cluster alone"
+        monitoring_app:
+          type: bool
+          semantics: "attach the database's own metrics exporter to the SUT
+            and collect its internal statistics, such as connections, buffer
+            cache hits and lock waits"
+          when: "only takes effect together with monitoring_sut or
+            monitoring_cluster, and only for systems that define an exporter
+            (PostgreSQL and PgDuckDB in this catalog)"
+        metrics:
+          type: "list[str]"
+          semantics: "the hardware metrics the hypothesis relies on, as a list
+            of metric keys; each listed metric is switched on for this
+            experiment, and every metric left out keeps its default active
+            flag, so the default set is still collected. Keys, titles and
+            defaults are listed in environment.yml's monitoring.hardware"
+          when: "required whenever monitoring_sut or monitoring_cluster is on,
+            and only allowed then. List every metric the hypothesis relies on,
+            including those already active by default, and state in the
+            hypothesis what those readings are expected to show -- or that the
+            resource side is descriptive. Metrics marked available: false
+            cannot be listed (Prometheus has no data for them)"
     placement:
       type: object
       semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"
@@ -836,6 +878,13 @@ systems:
     deployment: bexhoma-deployment-pg-duck
     image: pgduckdb/pgduckdb:18-v1.1.1
     arg_style: pg-guc
+    memory_budget:
+      semantics: "PostgreSQL's memory_budget plus DuckDB's own: every
+        connection that runs a query in DuckDB gets its own DuckDB instance,
+        capped by duckdb.max_memory and not counted in work_mem. Worst case
+        ~ shared_buffers + S * duckdb.max_memory, S = largest
+        workload.rounds entry"
+      out_of_scope: "not checked; keep the estimate below the limit"
 
     engine:
       execution:   "vectorized executor; scans heap directly, does not use PostgreSQL indexes"
@@ -852,14 +901,31 @@ systems:
         default: false
         arg_style: env-var
         env_var: DUCKDB_FORCE_EXECUTION
-        why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"
-        when: "enable this whenever the hypothesis needs to guarantee that
-          DuckDB's execution engine is what ran, rather than trusting
-          pg_duckdb's own per-query cost-based routing to pick it. Left at
-          its default (false), pg_duckdb still decides for itself, query by
-          query, whether to route through DuckDB or PostgreSQL's own
-          executor. Set it true when the experiment needs certainty that
-          DuckDB's engine executed the query, not just that it was eligible to."
+        why: "pg_duckdb has no per-query engine choice: a query that reads
+          only PostgreSQL tables runs in
+          PostgreSQL's own executor unless this is true; DuckDB runs
+          automatically only for DuckDB-only features (DuckDB tables,
+          functions like read_parquet)"
+        when: "set it true whenever DuckDB is meant to execute queries on
+          PostgreSQL heap tables -- left false, those queries run in
+          PostgreSQL's executor with the extension idle"
+        out_of_scope: "true does not guarantee DuckDB ran: queries without
+          a FROM clause or touching pg_catalog stay in PostgreSQL, and a
+          query DuckDB cannot plan falls back to PostgreSQL silently. Only
+          EXPLAIN gives certainty -- a Custom Scan (DuckDBScan) node means
+          DuckDB executed it; use workload.params.store_explain when the
+          hypothesis depends on it"
+      duckdb.max_memory:
+        type: memory
+        default: 4GB
+        why: "memory cap of the DuckDB instance each connection gets, the
+          DuckDB counterpart of work_mem; PostgreSQL's memory knobs do not
+          bound it (see memory_budget)"
+      duckdb.threads:
+        type: int
+        default: -1
+        why: "DuckDB threads per connection; -1 means DuckDB's default, one
+          per detected core, which need not match resources.cpu.limit"
 
     physical_design:
       # explicitly re-declared, not inherited via extends -- see
@@ -874,3 +940,6 @@ systems:
     profiles:
       analytical-ssd:
         ref: PostgreSQL.profiles.analytical-ssd
+        derive:
+          duckdb.max_memory: "0.25 * memory_limit"
+          duckdb.threads:    "cpu_limit"

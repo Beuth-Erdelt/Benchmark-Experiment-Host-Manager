@@ -12,7 +12,7 @@ what it's allowed to ask for. Everything below is read directly from
 the current shape of a valid `experiment.yml`.
 
 ```yaml
-catalog_contract_version: "1.9.0"   # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.10.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:                    # vocabulary used throughout this file's own fields
   experimental_design:
@@ -97,7 +97,18 @@ experiment_schema:
     systems:    {type: list, item_fields: [name, profile, override, post_load],
                  semantics: "one resolved configuration per entry; benchmarked one at a time,
                              never concurrently -- see catalog_concepts.sut_isolation"}
-    # observe: parked while the agent is a prototype -- see contract_catalog_comments.md
+    observe:    {type: object, fields: [monitoring_sut, monitoring_cluster, monitoring_app, metrics],
+                 when: "only when the hypothesis needs hardware metrics or database-internal
+                        statistics; phases shorter than ~2-5 min can read 0/NaN (scrape warm-up)",
+                 monitoring_cluster: {when: "instead of monitoring_sut when load outside the SUT
+                                             matters; both on = monitoring_cluster alone"},
+                 monitoring_app: {when: "only with monitoring_sut or monitoring_cluster, and only
+                                         for systems with an exporter (PostgreSQL, PgDuckDB)"},
+                 metrics: {type: "list[str]", semantics: "hardware metric keys the hypothesis relies on;
+                                  listed ones are switched on, the rest keep their default; keys from
+                                  environment.yml monitoring.hardware",
+                           when: "required exactly when monitoring_sut or monitoring_cluster is on; list
+                                  defaults too; available: false ones cannot be listed"}}
     placement:  {type: object, fields: [sut, loading, benchmarking],
                  semantics: "each node named must exist, and not be tainted out, in environment.yml's nodes:",
                  when: "pinning sut is recommended (same hardware for all SUTs); pinning

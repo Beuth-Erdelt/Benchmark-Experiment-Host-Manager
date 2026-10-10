@@ -318,6 +318,7 @@ The template includes an extensive set of **commented-out** tuning knobs (memory
         'sut': {
             'metrics': 'postgresql',
             'blackbox': True,
+            'blackbox_target': 'postgres@localhost:5432/{database}?sslmode=disable',
         },
     },
 },

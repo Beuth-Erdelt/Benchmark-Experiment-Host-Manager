@@ -131,7 +131,9 @@ run will actually produce.
   well", "performs adequately" — is a statement of intent, and every possible run
   confirms it; terms like these need a criterion. Descriptive and exploratory
   objectives need not assert a hypothesis, but they have to say that they are
-  descriptive or exploratory.
+  descriptive or exploratory. Observation is part of the claim: a design that
+  monitors resources names the readings it relies on and says what they are
+  expected to show, or declares that this part is descriptive.
   [NIST, §5.3.1][nist-objectives]; [Ledgerwood 2018][ledgerwood]; [Jain, §2.1][jain-book]
 - **M1.2** **Application.** When the question is causal or diagnostic, name the
   rival explanations and the observations that would distinguish them. The point

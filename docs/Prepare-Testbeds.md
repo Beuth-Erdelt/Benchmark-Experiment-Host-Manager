@@ -73,7 +73,7 @@ The sections have consistent meaning across all benchmark types:
 | **Execution - Benchmarker** | `run` | CPU and RAM consumed by the driver pods during benchmarking |
 | **Tests** | all modes | Automated sanity checks — e.g., no zero throughput, no NaN metrics, workflow matches plan |
 
-A `TEST failed` line does not necessarily abort the experiment; it flags a condition worth investigating (e.g., a query error in TPC-DS Q90, or a monitoring gap). A `TEST skipped` line means the check was inconclusive rather than failing — e.g. a component with pre-existing data produces no CPU load, or a phase ran shorter than one Prometheus scrape interval so a CPU counter delta of 0 cannot be distinguished from a real gap.
+A `TEST failed` line does not necessarily abort the experiment; it flags a condition worth investigating (e.g., a query error in TPC-DS Q90, or a monitoring gap). A `TEST skipped` line means the check was inconclusive rather than failing — e.g. a component with pre-existing data produces no CPU load, a phase ran shorter than one Prometheus scrape interval so a CPU counter delta of 0 cannot be distinguished from a real gap, or every missing monitoring metric has an expected reason (see [Monitoring](Monitoring.md#missing-metrics)).
 
 ---
 

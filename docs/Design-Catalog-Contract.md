@@ -374,7 +374,7 @@ workloads:
     repetitions:  {type: int, default: 1, why: "how many times the whole round list repeats"}
     system_specific:
       PgDuckDB:
-        duckdb_force_execution: {type: bool, default: false, why: "force every query through DuckDB's execution engine rather than pg_duckdb's own cost-based routing"}
+        duckdb_force_execution: {type: bool, default: false, why: "run queries on PostgreSQL tables in DuckDB; pg_duckdb has no per-query engine choice, so left false they run in PostgreSQL's executor. Only EXPLAIN (a DuckDBScan node) proves DuckDB ran"}
     produces:
       per_query: {metric: latency, unit: ms, why: "DbmsBenchmarkerEvaluator.get_query_latencies(), one row per active query"}
       summary:   {metrics: [Power@Size, Throughput@Size, "Geo Times"], why: "get_summary_benchmark_per_phase(), geo-mean across queries — the level comparisons are actually made on"}
@@ -592,13 +592,17 @@ systems:
         default: false
         arg_style: env-var          # NOT a -c GUC — routes through bexhoma's sut_parameters, not patch_dbms_args()
         env_var: DUCKDB_FORCE_EXECUTION
-        why: "force every query through DuckDB execution rather than pg_duckdb's own cost-based routing"
+        why: "run queries on PostgreSQL tables in DuckDB; left false they run in PostgreSQL's executor (no per-query engine choice). True can still fall back silently -- only EXPLAIN (a DuckDBScan node) proves DuckDB ran"
+      duckdb.max_memory: {type: memory, default: 4GB, why: "per-connection DuckDB memory cap, outside work_mem"}
+      duckdb.threads:    {type: int, default: -1, why: "DuckDB threads per connection; -1 = one per detected core"}
     physical_design: {indexes: true, constraints: true, statistics: true, storage_format: [heap]}
     # storage_format: columnar (native `USING duckdb` tables) is not usable yet — blocked upstream
     # (github.com/duckdb/pg_duckdb#385); experiments/tpch/PgDuckDB/ is orphaned, tpch.py currently
     # points PgDuckDB at experiments/tpch/PostgreSQL/ instead. Do not list columnar as supported yet.
     profiles:
-      analytical-ssd: {ref: PostgreSQL.profiles.analytical-ssd}   # same profile object, both systems — this is what "parity" means
+      analytical-ssd:   # same profile object, both systems — this is what "parity" means — plus derive: for the duckdb.* knobs only PgDuckDB has
+        ref: PostgreSQL.profiles.analytical-ssd
+        derive: {duckdb.max_memory: "0.25 * memory_limit", duckdb.threads: "cpu_limit"}
 
   CedarDB:
     deployment: bexhoma-deployment-cedardb
@@ -788,7 +792,11 @@ systems:
     profile: analytical-ssd
     override: {duckdb_force_execution: false}
 
-observe: {monitoring_sut: true, monitoring_cluster: true, monitoring_app: true}
+observe:
+  monitoring_sut: true
+  monitoring_cluster: true
+  monitoring_app: true
+  metrics: [total_cpu_util, total_cpu_memory]
 
 placement:
   sut: node-group-sut
@@ -1133,8 +1141,9 @@ other a per-cluster snapshot, neither is schema.
 
 ## `environment.yml`: hardware baseline extension (`-xhw`)
 
-The read-only fields above (`nodes`, `excluded_nodes`, `storage_classes`,
-`resource_limits`) are always collected. `environment.py`'s `-xhw` flag adds
+The read-only fields (`nodes` with their occupancy, `occupancy_source`,
+`excluded_nodes`, `storage_classes`, `resource_limits`, `monitoring`) are
+always collected; see `docs/Environment.md` for each field. `environment.py`'s `-xhw` flag adds
 an opt-in, cluster-mutating step on top — a short benchmark sweep across the
 cluster's nodes, merged into the same `environment.yml`:
 

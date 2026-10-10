@@ -95,7 +95,7 @@ _READ_CHARACTER_LIMIT = 24_000
 _SECTION_CHARACTER_LIMIT = 12_000
 #: Contracts and specifications are semantic units: return them complete or
 #: reject them, never silently remove their tail.
-_AUTHORITATIVE_CHARACTER_LIMIT = 48_000
+_AUTHORITATIVE_CHARACTER_LIMIT = 56_000
 _AUTHORITATIVE_FILENAMES = {
     "contract_catalog.yml", "contract_result.yml", "handbook.md",
     "environment.yml", "experiment.yml", "submitted-experiment.yml",

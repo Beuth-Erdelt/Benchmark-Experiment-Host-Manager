@@ -162,13 +162,13 @@ Returns the benchmark-specific evaluator for the given experiment code. Used int
 ### Monitoring — Aggregated
 
 **`get_monitoring_aggregated_per_job(component='benchmarking')`**  
-Returns one row per benchmark job across all codes. Each metric column is reduced to a scalar using the metric-type aggregation rule (counter → sum of deltas, ratio → max, other → mean). Index is the code-prefixed job identifier.
+Returns one row per benchmark job across all codes. Each metric column is reduced to a scalar over the job's time series using the metric-type rule (counter → max − min, ratio → max, other → mean). Metric titles and the set of active metrics come from the first code's `connections.config`. Index is the code-prefixed job identifier.
 
 **`get_monitoring_aggregated_per_phase(component='benchmarking')`**  
-Returns one row per phase across all codes. Calls `get_monitoring_aggregated_per_job()` and further reduces by grouping on `(code, configuration, experiment_run, client)`, collapsing all parallel jobs within a phase. Aggregation rules: ratio → max, counter → sum, other → mean. Index is the code-prefixed phase identifier.
+Returns one row per phase across all codes. Calls `get_monitoring_aggregated_per_job()` and further reduces by grouping on `(code, configuration, experiment_run, client)`, collapsing all parallel jobs within a phase. Aggregation rules: ratio → max, counter → max, other → mean. Every monitoring query covers all pods of the job's configuration, so the parallel jobs of a phase (e.g. schema- or database-per-tenant tenants on one SUT) report copies of one measurement over concurrent windows; summing would count the same pods once per job. Index is the code-prefixed phase identifier.
 
 **`get_monitoring_aggregated_per_phase_multitenant(component='benchmarking')`**  
-Extends `get_monitoring_aggregated_per_job()` by grouping across tenants. Ratio metrics are reduced with `max`; counter metrics with `sum` (except *Total I/O Wait Time*, which uses `max`). Index is the underscore-joined group key.
+Extends `get_monitoring_aggregated_per_job()` by grouping across tenants, in two steps. Within one configuration (schema- or database-per-tenant: all tenants' jobs share one SUT) the rows are copies of one measurement: ratio and counter → `max`, other → `mean`. Across configurations (container-per-tenant: one SUT per tenant) the values belong to different SUTs: ratio → `max`, other → `sum` — except the node-level counter `io_wait_total` (*Node I/O Wait CPU Time*), which stays `max` because several SUTs can share a node. Index is the underscore-joined group key.
 
 ---
 
