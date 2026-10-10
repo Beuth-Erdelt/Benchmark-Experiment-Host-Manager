@@ -2713,6 +2713,16 @@ class ExperimentBase():
                         infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
+        # A volume found already loaded at experiment start skips loading and
+        # inherits its loading times from whichever experiment filled it.
+        # Results written before storage_reused was recorded say nothing.
+        recorded = [c for c in connections_sorted if 'storage_reused' in c]
+        if recorded:
+            reused = sorted({c.get('configuration', c['name']) for c in recorded if c['storage_reused']})
+            if reused:
+                print("\n### Reused Storage")
+                print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
+            self._record_test(not reused, "Loading measured in this experiment")
         result_dir = Path(resultfolder) / code
         restarts_files = sorted(result_dir.glob("bexhoma-sut-*-restarts.json"))
         if restarts_files:

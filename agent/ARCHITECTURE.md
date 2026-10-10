@@ -154,8 +154,9 @@ phase still requires a structured record.
 
 The interpretation assessor reads the archived `discriminates` declaration as
 the authoritative factor list. Concurrency, CPU, and memory become ordered
-series, split so every other declared factor stays fixed; system becomes a
-categorical ranking at each fixed context. Concurrency is counted in client
+series, split so every other declared factor stays fixed; system and
+storage_class (the storage backend, `ephemeral` for node-local disk) become
+categorical rankings at each fixed context. Concurrency is counted in client
 threads where the report totals them (YCSB) and in benchmarker pods otherwise.
 Rounds that report zero or NaN for a characterized metric measured nothing, so
 they are left out and listed. A phase rate that adds up several pods' own rates

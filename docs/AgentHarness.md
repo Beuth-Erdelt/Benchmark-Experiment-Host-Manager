@@ -231,11 +231,15 @@ harness lets the model do with them.
   It is refused when it uses only adequacy words ("handle", "acceptable",
   "scale well", …) with no direction, comparison or number.
 - CPU and memory `request` must equal `limit` (M2.3).
-- When both CPU and memory are declared factors, each must vary alone in some
-  pair of configurations (M2.1). The lists are paired by position, not crossed.
+- When two of CPU, memory and storage class are declared factors, each must
+  vary alone in some pair of configurations (M2.1). The lists are paired by
+  position, not crossed.
+- A declared `storage_class` factor needs fresh volumes:
+  `resources.storage.remove_existing: false` is refused, and an unpinned SUT
+  draws a warning.
 - An experiment that compares anything needs `repetitions` at least the
   workload's `minimum_for_conclusions` (TPC-H: 3), otherwise at least 2 (M5.1).
-- Against `environment.yml`: storage class exists; pinned nodes exist and are
+- Against `environment.yml`: every storage class is marked usable; pinned nodes exist and are
   not tainted out; resource ceilings hold; a pinned benchmarking node can host
   the benchmarker pods of the largest round.
 - Every verdict carries an estimate: number of runs and a declared-timeout
@@ -271,7 +275,7 @@ harness lets the model do with them.
   and its Tests, the result contract, and the handbook chapters `Navigation`,
   `M2`, `M3`, `M5`, `M7`, and must have run `assess_comparison_quality`.
 - The assessor, not the model, computes the claims: sweeps over concurrency,
-  CPU and memory, rankings of systems, query coverage, suspect repetitions,
+  CPU and memory, rankings of systems and storage classes, query coverage, suspect repetitions,
   validity scope. They are filed with the record; the model can only dispute
   them with a reason.
   - A sweep needs every declared level present. A step counts only when it

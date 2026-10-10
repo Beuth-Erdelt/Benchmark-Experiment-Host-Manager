@@ -78,8 +78,8 @@ catalog_concepts:
   requires:
     semantics: "a profile's requires: {storage_class: [...]} lists which
       resources.storage_class values an experiment.yml using that profile
-      may set; null in the list means leaving resources.storage_class unset
-      is also acceptable"
+      may set, checked per resource cell; null in the list means ephemeral
+      (unset or a null entry) is also acceptable"
     when: "only checked when a systems[] entry actually names a profile:
       that declares requires: -- a profile without requires: imposes no
       storage_class constraint at all"
@@ -154,7 +154,7 @@ experiment_schema:
     discriminates:
       type: "list[str]"
       required: true
-      values: [system, concurrency, cpu, memory]
+      values: [system, concurrency, cpu, memory, storage_class]
       semantics: "factor(s) the experiment isolates, e.g. [system] or [system, concurrency]"
     follow_up_of:
       type: str
@@ -346,25 +346,37 @@ experiment_schema:
           item_fields: {request: quantity, limit: quantity}
           semantics: "a single {request, limit} dict is shared by every system"
           when: "same sweep rule as cpu"
-          out_of_scope: "resources.cpu and resources.memory sweep lists of
-            different lengths (when both have more than one entry) -- must
-            share one length, or either may be a single shared dict
-            broadcast across every cell"
+          out_of_scope: "sweep lists (cpu, memory, storage_class) of different
+            lengths (when more than one has several entries) -- they are paired
+            by position, not crossed; a single entry is broadcast to every cell"
         storage:
           type: object
           fields:
             size: {type: quantity, required: false, semantics: "PersistentVolumeClaim size, or node-local disk request if storage_class is unset"}
+            remove_existing:
+              type: bool
+              required: false
+              semantics: "delete an existing volume of this experiment's
+                configurations before loading, so data loads into a fresh one.
+                Default true when storage_class is set; ignored without one"
+              why: "a volume left by an earlier run is otherwise reused: loading is
+                skipped and its loading times are inherited, not measured"
+              when: "false only to save loading time deliberately; refused when
+                storage_class is in discriminates"
         storage_class:
-          type: str
+          type: "str or null or list[str or null]"
           required: false
           semantics: "must name one of environment.yml's storage_classes
             marked usable: true (the cluster may list others bexhoma cannot
-            use), or be left unset entirely for ephemeral/node-local storage: no
+            use), or be null/unset for ephemeral/node-local storage: no
             PersistentVolumeClaim is provisioned, and the SUT gets whatever
             disk its scheduled node has attached -- typically fast, since
             there's no network-storage hop, but tied to that node's lifetime"
-          when: "a profile only constrains this choice when it declares
-            requires: {storage_class: [...]} -- see catalog_concepts.requires"
+          when: "a LIST sweeps the storage backend, same sweep rule as cpu
+            (null entries = ephemeral); declare storage_class in discriminates.
+            A profile constrains each cell only when it declares requires:
+            {storage_class: [...]} -- see catalog_concepts.requires"
+          out_of_scope: "ycsb accepts a single storage class only"
   quantity_format:
     semantics: "Kubernetes-style quantities, used by resources.cpu/memory/storage.size"
     memory_and_storage_size:

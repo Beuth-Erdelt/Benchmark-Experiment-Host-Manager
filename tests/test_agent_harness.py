@@ -1496,6 +1496,145 @@ resources:
              "cpu=2, memory=8Gi", "cpu=4, memory=8Gi"],
         )
 
+    def _storage_swept(self, storage_classes: str, declared: str = "storage_class",
+                       extra: str = "") -> str:
+        """Build a spec sweeping the storage class, without the profile that restricts it."""
+        return (
+            _SPEC
+            .replace(", profile: analytical-ssd}", "}")
+            .replace("[system, concurrency]", f"[system, concurrency, {declared}]")
+            .replace("  storage: {size: 10Gi}",
+                     f"  storage: {{size: 10Gi{extra}}}\n  storage_class: {storage_classes}")
+            + "placement: {sut: node-1}\n"
+        )
+
+    def _storage_environment(self) -> None:
+        """Describe a cluster with node-1 and the two usable network storage classes."""
+        (self.root / "environment.yml").write_text(
+            _ENVIRONMENT + "nodes:\n- {name: node-1, allocatable: {cpu: '64', memory: 128Gi}}\n"
+            "storage_classes:\n- {name: cephcsi, usable: true}\n- {name: shared, usable: true}\n"
+            "- {name: cephxfs, usable: false}\n")
+
+    def test_a_storage_sweep_resolves_one_configuration_per_backend(self) -> None:
+        """A storage list is a resource sweep like cpu and memory."""
+        self._storage_environment()
+        self.workspace.write_file(self.path, self._storage_swept("[cephcsi, shared, null]"))
+
+        result = self.workspace.validate(self.path)
+
+        self.assertTrue(result["valid"], result["errors"])
+        self.assertEqual(
+            result["estimate"]["configurations"],
+            ["cpu=4, memory=8Gi, storage_class=cephcsi",
+             "cpu=4, memory=8Gi, storage_class=shared",
+             "cpu=4, memory=8Gi, storage_class=ephemeral"],
+        )
+        # 2 systems x 3 backends x 2 rounds x 3 repetitions
+        self.assertEqual(result["estimate"]["runs"], 36)
+        self.assertNotIn("warnings", result)
+
+    def test_a_storage_sweep_must_be_declared(self) -> None:
+        self.workspace.write_file(
+            self.path,
+            self._storage_swept("[cephcsi, shared]").replace(
+                "[system, concurrency, storage_class]", "[system, concurrency]"),
+        )
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        self.assertIn("they differ on ['storage_class']", result["errors"][0]["message"])
+
+    def test_a_repeated_storage_class_is_not_a_factor(self) -> None:
+        """A list naming one backend only broadcasts it."""
+        self.workspace.write_file(self.path, self._storage_swept("[cephcsi, cephcsi]"))
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        self.assertIn("they differ on ['storage_class']", result["errors"][0]["message"])
+
+    def test_storage_swept_in_lockstep_with_memory_cannot_be_attributed(self) -> None:
+        spec_text = (
+            self._storage_swept("[cephcsi, shared]", "memory, storage_class")
+            .replace("memory: {request: 8Gi, limit: 8Gi}",
+                     "memory:\n    - {request: 4Gi, limit: 4Gi}\n    - {request: 8Gi, limit: 8Gi}")
+        )
+        self.workspace.write_file(self.path, spec_text)
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        message = result["errors"][0]["message"]
+        self.assertIn("no effect can be attributed to memory or storage_class", message)
+        self.assertIn("storage_class=cephcsi", message)
+
+    def test_a_storage_factor_refuses_reused_volumes(self) -> None:
+        self.workspace.write_file(
+            self.path, self._storage_swept("[cephcsi, shared]", extra=", remove_existing: false"))
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        self.assertIn("remove_existing is false", result["errors"][0]["message"])
+
+    def test_an_unpinned_storage_sweep_is_warned_about(self) -> None:
+        self._storage_environment()
+        self.workspace.write_file(
+            self.path,
+            self._storage_swept("[cephcsi, shared]").replace("placement: {sut: node-1}\n", ""),
+        )
+
+        result = self.workspace.validate(self.path)
+
+        self.assertTrue(result["valid"], result["errors"])
+        self.assertIn("placement.sut is unset", result["warnings"][0]["message"])
+
+    def test_every_swept_storage_class_must_be_usable(self) -> None:
+        self._storage_environment()
+        self.workspace.write_file(self.path, self._storage_swept("[cephcsi, cephxfs]"))
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        self.assertIn("'cephxfs' is not usable", result["errors"][0]["message"])
+
+    def test_characterization_ranks_storage_backends(self) -> None:
+        """Backends have no order, so they are ranked like systems, never fitted to a curve."""
+        report = self.root / "results" / "storage" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput@Size |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 100 |
+| postgresql-1-2-1 | 2 | 1 | 110 |
+| postgresql-2-1-1 | 1 | 1 | 300 |
+| postgresql-2-2-1 | 2 | 1 | 320 |
+| postgresql-3-1-1 | 1 | 1 | 200 |
+| postgresql-3-2-1 | 2 | 1 | 210 |
+""")
+        specification = """\
+discriminates: [storage_class]
+workload: {name: tpch, rounds: [1]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+  storage_class: [cephcsi, null, shared]
+"""
+
+        result = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]
+
+        self.assertEqual(result["unsupported_factors"], [])
+        self.assertEqual(result["ordered_sweeps"], [])
+        [claim] = result["categorical_comparisons"]
+        self.assertEqual(claim["factor"], "storage_class")
+        self.assertEqual(claim["ranking"], ["ephemeral", "shared", "cephcsi"])
+
     def test_cpu_only_sweep_has_distinct_resource_cell_identities(self) -> None:
         """Every CPU treatment must address a different runtime configuration."""
         experiment = yaml.safe_load(_SPEC)

@@ -654,6 +654,9 @@ class EvaluatorBase:
             for key, storagedata in c['storage'].items():
                 if not isinstance(storagedata, list) and not isinstance(storagedata, dict):
                     result[connection_id][f'sut_storage_{key}'] = storagedata
+        # absent in results written before it was recorded: unknown, not False
+        if 'storage_reused' in c:
+            result[connection_id]['storage_reused'] = bool(c['storage_reused'])
         if 'args' in c['hostsystem']:
             for arg in c['hostsystem']['args']:
                 if "=" in arg:

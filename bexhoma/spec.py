@@ -55,6 +55,8 @@ __all__ = [
     "validate_experiment",
     "validate_environment",
     "usable_storage_classes",
+    "storage_class_cells",
+    "removes_existing_storage",
     "build_argv",
     "entry_script_for_workload",
     "build_command",
@@ -511,6 +513,12 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
         if cap is not None and (isinstance(cap, bool) or not isinstance(cap, int) or cap < 0):
             raise SpecError(f"'{cap_field}' must be a non-negative integer (0 = no limit)")
 
+    resources = experiment.get("resources") or {}
+    storage_class_cells(resources)
+    remove_existing = (resources.get("storage") or {}).get("remove_existing")
+    if remove_existing is not None and not isinstance(remove_existing, bool):
+        raise SpecError("resources.storage.remove_existing must be true or false")
+
     observe = experiment.get("observe") or {}
     metrics = observe.get("metrics")
     hardware_monitoring = observe.get("monitoring_sut") or observe.get("monitoring_cluster")
@@ -662,16 +670,53 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
                     f"allocatable memory ({max_memory} bytes)"
                 )
 
-    storage_class = resources.get("storage_class")
-    if storage_class is not None:
-        usable = usable_storage_classes(environment)
-        if storage_class not in usable:
+    usable = usable_storage_classes(environment)
+    for storage_class in storage_class_cells(resources):
+        if storage_class is not None and storage_class not in usable:
             raise SpecError(
                 f"resources.storage_class '{storage_class}' is not a usable storage class in "
                 f"environment.yml; usable: {', '.join(usable) or 'none'}"
             )
 
     _validate_metrics(environment, (experiment.get("observe") or {}).get("metrics") or [])
+
+
+def storage_class_cells(resources: dict[str, Any]) -> list[Optional[str]]:
+    """Return ``resources.storage_class`` as one entry per listed cell.
+
+    A single value (or an absent field) is one entry, broadcast to every
+    resource cell like a single cpu/memory dict; a list sweeps the class,
+    paired by position with the cpu/memory lists. ``None`` means ephemeral
+    node-local storage.
+
+    :param resources: The experiment's ``resources:`` block.
+    :return: The listed storage classes, at least one.
+    :rtype: list[Optional[str]]
+    :raises SpecError: When the value is neither a class name, null, nor a
+        non-empty list of them.
+    """
+    value = resources.get("storage_class")
+    cells = value if isinstance(value, list) else [value]
+    if not cells or not all(cell is None or (isinstance(cell, str) and cell) for cell in cells):
+        raise SpecError(
+            "resources.storage_class must be a storage class name, null, or a non-empty list of them")
+    return cells
+
+
+def removes_existing_storage(resources: dict[str, Any]) -> bool:
+    """Whether the run deletes existing SUT volumes before loading (``-rsr``).
+
+    ``resources.storage.remove_existing`` defaults to true whenever some cell
+    asks for a storage class, so the run loads into a fresh volume and
+    measures its own loading; without a class there is no volume to remove.
+
+    :param resources: The experiment's ``resources:`` block.
+    :return: True when ``-rsr`` is to be emitted.
+    :rtype: bool
+    """
+    if not any(cell is not None for cell in storage_class_cells(resources)):
+        return False
+    return (resources.get("storage") or {}).get("remove_existing", True) is not False
 
 
 def usable_storage_classes(environment: dict[str, Any]) -> list[str]:

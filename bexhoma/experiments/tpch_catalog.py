@@ -20,7 +20,7 @@ from typing import Any, Optional
 
 from bexhoma import spec
 from bexhoma.benchmarks.tpch import resolve_indexing_key
-from bexhoma.cli_args import format_metric_overrides
+from bexhoma.cli_args import format_metric_overrides, format_storage_types
 from bexhoma.spec import ResolvedSystem, SpecError
 
 __all__ = [
@@ -185,11 +185,15 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     # tpch.py's own -rr/-lr/-rc/-lc comma-list handling one for one.
     cpu_cells = cpu if isinstance(cpu, list) else [cpu]
     memory_cells = memory if isinstance(memory, list) else [memory]
-    num_cells = max(len(cpu_cells), len(memory_cells))
-    if len(cpu_cells) not in (1, num_cells) or len(memory_cells) not in (1, num_cells):
+    # resources.storage_class sweeps the same way: one class per cell, paired by
+    # position, None meaning ephemeral -- mirrors tpch.py's -rst comma list
+    storage_class_cells = spec.storage_class_cells(resources)
+    num_cells = max(len(cpu_cells), len(memory_cells), len(storage_class_cells))
+    if any(len(cells) not in (1, num_cells) for cells in (cpu_cells, memory_cells, storage_class_cells)):
         raise SpecError(
-            "resources.cpu and resources.memory sweep lists must share one length: "
-            f"got {len(cpu_cells)} cpu entries and {len(memory_cells)} memory entries"
+            "resources.cpu, resources.memory and resources.storage_class sweep lists must share "
+            f"one length: got {len(cpu_cells)} cpu, {len(memory_cells)} memory and "
+            f"{len(storage_class_cells)} storage_class entries"
         )
 
     # one (system_spec, ResolvedSystem, configuration_name) triple per resolved cell;
@@ -209,7 +213,7 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
             resolve_inputs = {
                 "memory_limit": cell_memory.get("limit"),
                 "cpu_limit": cell_cpu.get("limit"),
-                "storage_class": resources.get("storage_class"),
+                "storage_class": _resource_cell(storage_class_cells, cell_index),
                 "scaling_factor": params.get("scaling_factor"),
             }
             resolved = spec.resolve_system(catalog, system_spec, resolve_inputs, memory_formatter=format_postgres_memory)
@@ -292,12 +296,16 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-rr", _join_cell_values(memory_cells, num_cells, "request"))
     _append_flag(argv, "-lr", _join_cell_values(memory_cells, num_cells, "limit"))
     _append_flag(argv, "-rss", storage.get("size"))
-
-    storage_classes = {resolved.storage_class for _, resolved, _ in resolved_cells if resolved.storage_class}
-    if len(storage_classes) > 1:
-        raise SpecError(f"resolved systems require conflicting storage classes: {sorted(storage_classes)}")
-    if storage_classes:
-        _append_flag(argv, "-rst", next(iter(storage_classes)))
+    # Emitted from resources itself, never from a profile's requires: --
+    # otherwise a class asked for without such a profile would silently run
+    # on ephemeral storage. A list becomes -rst's comma list, ephemeral cells
+    # as empty entries.
+    if len(storage_class_cells) > 1:
+        _append_flag(argv, "-rst", format_storage_types(storage_class_cells))
+    else:
+        _append_flag(argv, "-rst", storage_class_cells[0])
+    if spec.removes_existing_storage(resources):
+        argv.append("-rsr")
 
     for system_spec, resolved, configuration_name in resolved_cells:
         scope = f"@{configuration_name}" if configuration_name else ""

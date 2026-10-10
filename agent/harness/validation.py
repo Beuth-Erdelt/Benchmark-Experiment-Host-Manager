@@ -53,6 +53,7 @@ _INDEXED = re.compile(r"\[\d+\]")
 _KNOWN_TYPES = frozenset({
     "int", "str", "bool", "object", "list", "enum",
     "list[int]", "list[str]", "list[float]", "object or list[object]",
+    "str or null or list[str or null]",
     "float", "memory", "quantity", "duration",
 })
 
@@ -86,6 +87,9 @@ _COMPARATIVE_MARKERS = (
 
 _DEFAULT_ROUNDS = [1]
 _DEFAULT_REPETITIONS = 1
+#: The resources fields that sweep: lists paired by position, one entry per
+#: configuration, a single value broadcast to all of them.
+_SWEPT_RESOURCES = ("cpu", "memory", "storage_class")
 _GIBIBYTE_BYTES = 1024 ** 3
 
 #: The workload whose benchmarking phase splits a finite operation count across
@@ -169,6 +173,10 @@ def _check_value(value: Any, definition: Any, path: str) -> dict[str, str] | Non
         cells = value if isinstance(value, list) else [value]
         if not cells or any(not isinstance(cell, dict) for cell in cells):
             return _error(f"{path} must be an object or a non-empty list of objects")
+    if declared == "str or null or list[str or null]":
+        cells = value if isinstance(value, list) else [value]
+        if not cells or any(cell is not None and not isinstance(cell, str) for cell in cells):
+            return _error(f"{path} must be a string, null, or a non-empty list of them")
     return None
 
 
@@ -312,7 +320,7 @@ def _expansion(experiment: dict[str, Any]) -> _Expansion:
     """
     resources = experiment.get("resources") or {}
     # A sweep is a list of cells; anything else is a single fixed cell.
-    cells = [resources.get(resource) for resource in ("cpu", "memory")]
+    cells = [resources.get(resource) for resource in _SWEPT_RESOURCES]
     workload = experiment.get("workload") or {}
     return _Expansion(
         systems=len(experiment.get("systems") or []),
@@ -433,6 +441,11 @@ def _check_declared_factors(
     for resource in ("cpu", "memory"):
         if isinstance(resources.get(resource), list) and len(resources[resource]) > 1:
             varied.add(resource)
+    # A storage list varies the backend only when it names two of them; a list
+    # repeating one class just broadcasts it alongside another sweep.
+    storage_classes = resources.get("storage_class")
+    if isinstance(storage_classes, list) and len(set(storage_classes)) > 1:
+        varied.add("storage_class")
     if mismatch := varied.symmetric_difference(declared):
         message = ("M2.6: discriminates must name exactly the varied factors; "
                    f"declared {sorted(declared)}, varied {sorted(varied)}; "
@@ -444,7 +457,7 @@ def _check_declared_factors(
             message += (". This experiment runs a single treatment, so there is "
                         "nothing to isolate: add a second system the workload "
                         "supports, a second entry in rounds to vary concurrency, "
-                        "or a list of cpu or memory cells")
+                        "or a list of cpu, memory or storage_class cells")
         return {"stage": METHODOLOGY_STAGE, "message": message}
     return None
 
@@ -452,16 +465,18 @@ def _check_declared_factors(
 def resolved_configurations(experiment: dict[str, Any]) -> list[dict[str, Any]]:
     """Resolve the resource sweep into the configurations that will actually run.
 
-    ``resources.cpu`` and ``resources.memory`` are paired by position rather
-    than crossed: configuration *i* takes entry *i* of each list, and a single
-    entry is broadcast to every configuration. This mirrors the pairing
+    ``resources.cpu``, ``resources.memory`` and ``resources.storage_class``
+    are paired by position rather than crossed: configuration *i* takes entry
+    *i* of each list, and a single entry is broadcast to every configuration.
+    This mirrors the pairing
     :func:`bexhoma.experiments.tpch_catalog.build_tpch_argv` performs on the
     same specification, so what is reported here is what Bexhoma will run. A
-    design that means to cross the two has to enumerate the combinations
-    itself.
+    design that means to cross them has to enumerate the combinations itself.
 
     :param experiment: A loaded experiment.yml.
-    :return: One ``{"cpu": cell, "memory": cell}`` mapping per configuration.
+    :return: One ``{"cpu": cell, "memory": cell}`` mapping per configuration,
+        plus ``"storage_class"`` (a class name, ``None`` for ephemeral) when
+        the specification sets one.
     :rtype: list[dict[str, Any]]
     """
     resources = experiment.get("resources") or {}
@@ -469,6 +484,12 @@ def resolved_configurations(experiment: dict[str, Any]) -> list[dict[str, Any]]:
     for resource in ("cpu", "memory"):
         cells = resources.get(resource) or {}
         swept[resource] = cells if isinstance(cells, list) else [cells]
+    storage_classes = resources.get("storage_class")
+    if storage_classes is not None:
+        swept["storage_class"] = (
+            storage_classes if isinstance(storage_classes, list) and storage_classes
+            else [storage_classes]
+        )
     count = max(len(cells) for cells in swept.values())
     return [
         {
@@ -482,9 +503,19 @@ def resolved_configurations(experiment: dict[str, Any]) -> list[dict[str, Any]]:
 def _describe_configuration(configuration: dict[str, Any]) -> str:
     """Render one resolved configuration as a ``cpu=..., memory=...`` line."""
     return ", ".join(
-        f"{resource}={cell.get('limit', cell.get('request', 'unset'))}"
-        for resource, cell in configuration.items()
+        f"{resource}={_cell_label(cell)}" for resource, cell in configuration.items()
     )
+
+
+def _cell_label(cell: Any) -> str:
+    """Name one resource cell: a cpu/memory dict by its limit, a storage class by name."""
+    if isinstance(cell, dict):
+        return str(cell.get("limit", cell.get("request", "unset")))
+    return str(cell) if cell is not None else STORAGE_EPHEMERAL
+
+
+#: How an unset or null ``storage_class`` cell -- node-local storage -- is named.
+STORAGE_EPHEMERAL = "ephemeral"
 
 
 def _varies_alone(configurations: list[dict[str, Any]], factor: str) -> bool:
@@ -502,10 +533,10 @@ def _check_factor_attribution(experiment: dict[str, Any]) -> dict[str, str] | No
     ``system`` and ``concurrency`` are crossed with the resource sweep -- every
     system runs in every configuration, and every entry of ``workload.rounds``
     runs in every configuration -- so neither can move in lockstep with
-    anything else. Only ``cpu`` and ``memory`` share the position-paired sweep
-    of :func:`resolved_configurations`, so only they can be declared as
-    separate factors while varying together, which leaves a difference between
-    configurations attributable to neither.
+    anything else. Only ``cpu``, ``memory`` and ``storage_class`` share the
+    position-paired sweep of :func:`resolved_configurations`, so only they can
+    be declared as separate factors while varying together, which leaves a
+    difference between configurations attributable to neither.
 
     :param experiment: A loaded experiment.yml.
     :return: An error entry, or ``None`` when every declared factor is separable.
@@ -513,7 +544,7 @@ def _check_factor_attribution(experiment: dict[str, Any]) -> dict[str, str] | No
     """
     declared = [
         factor for factor in experiment.get("discriminates") or []
-        if factor in ("cpu", "memory")
+        if factor in _SWEPT_RESOURCES
     ]
     if len(declared) < 2:
         return None
@@ -532,8 +563,9 @@ def _check_factor_attribution(experiment: dict[str, Any]) -> dict[str, str] | No
         "stage": METHODOLOGY_STAGE,
         "message": (
             "M2.1: no effect can be attributed to "
-            f"{' or '.join(unattributable)}. resources.cpu and resources.memory "
-            "are paired by position, not crossed, so this specification resolves "
+            f"{' or '.join(unattributable)}. resources.cpu, resources.memory and "
+            "resources.storage_class are paired by position, not crossed, so this "
+            "specification resolves "
             f"to {len(configurations)} configuration(s):\n{listing}\n"
             f"No two of them differ in {' or '.join(unattributable)} alone, so a "
             "difference between them could equally be caused by the other "
@@ -543,6 +575,34 @@ def _check_factor_attribution(experiment: dict[str, Any]) -> dict[str, str] | No
             "changing every second entry, which resolves to the four "
             "configurations of a full factorial. Or sweep one resource in this "
             "experiment and the other in a follow-up."
+        ),
+    }
+
+
+def _check_fresh_storage(experiment: dict[str, Any]) -> dict[str, str] | None:
+    """Refuse reused volumes when the storage backend is the factor under test.
+
+    Loading onto each backend is part of what a storage comparison measures.
+    A reused volume skips loading and inherits loading times from whichever
+    run filled it, so ``remove_existing: false`` would compare one backend's
+    fresh load with another's inherited one.
+
+    :param experiment: A loaded experiment.yml.
+    :return: An error entry, or ``None``.
+    :rtype: dict[str, str] | None
+    """
+    if "storage_class" not in (experiment.get("discriminates") or []):
+        return None
+    storage = (experiment.get("resources") or {}).get("storage") or {}
+    if storage.get("remove_existing") is not False:
+        return None
+    return {
+        "stage": METHODOLOGY_STAGE,
+        "message": (
+            "storage_class is declared as a factor, but resources.storage."
+            "remove_existing is false: a reused volume skips loading and inherits "
+            "its loading times, so the backends would not be measured alike. "
+            "Remove the field (it defaults to true) or set it to true."
         ),
     }
 
@@ -975,9 +1035,40 @@ def _design_warnings(experiment: dict[str, Any]) -> list[dict[str, str]]:
     :return: Warnings in the shape of errors; empty when none apply.
     :rtype: list[dict[str, str]]
     """
+    warnings = _storage_placement_warnings(experiment)
     workload = experiment.get("workload")
     if not isinstance(workload, dict) or workload.get("name") != _SPLIT_WORK_WORKLOAD:
+        return warnings
+    return warnings + _split_work_warnings(experiment, workload)
+
+
+def _storage_placement_warnings(experiment: dict[str, Any]) -> list[dict[str, str]]:
+    """Warn when a storage comparison leaves the SUT node to the scheduler.
+
+    Network storage does not depend on the node, but an ephemeral cell uses the
+    scheduled node's own disk, and CPU and memory bandwidth differ by node too,
+    so unpinned cells may differ by node as well as by backend.
+    """
+    if "storage_class" not in (experiment.get("discriminates") or []):
         return []
+    placement = experiment.get("placement")
+    if isinstance(placement, dict) and placement.get("sut"):
+        return []
+    return [{
+        "stage": METHODOLOGY_STAGE,
+        "message": (
+            "storage_class is declared as a factor, but placement.sut is unset, "
+            "so the configurations may run on different nodes and differ in more "
+            "than their storage backend. Pin the SUT to one node. This is a "
+            "warning; the specification remains valid."
+        ),
+    }]
+
+
+def _split_work_warnings(
+    experiment: dict[str, Any], workload: dict[str, Any],
+) -> list[dict[str, str]]:
+    """Warn when a split-work round may end with pods finishing at different times."""
     params = workload.get("params")
     if isinstance(params, dict) and params.get("max_execution_time"):
         return []
@@ -1063,19 +1154,22 @@ def _check_storage_class(
     :return: An error entry, or ``None`` when the requested class is usable.
     :rtype: dict[str, str] | None
     """
-    requested = (experiment.get("resources") or {}).get("storage_class")
-    if requested is None:
+    try:
+        cells = spec.storage_class_cells(experiment.get("resources") or {})
+    except spec.SpecError:
         return None
     available = spec.usable_storage_classes(environment)
-    if requested in available:
+    unusable = [cell for cell in cells if cell is not None and cell not in available]
+    if not unusable:
         return None
+    requested = unusable[0]
     return {
         "stage": ENVIRONMENT_STAGE,
         "message": (
             f"resources.storage_class {requested!r} is not usable on this cluster; "
-            f"usable: {', '.join(available) or 'none'}. Omit the field entirely to "
-            "take node-local storage instead, which every profile that lists null "
-            "among its allowed classes permits."
+            f"usable: {', '.join(available) or 'none'}. Omit the field (or use a "
+            "null entry) to take node-local storage instead, which every profile "
+            "that lists null among its allowed classes permits."
         ),
     }
 
@@ -1131,6 +1225,7 @@ def validate_spec(
             _check_falsifiable_claim(experiment),
             _check_fixed_envelope(experiment),
             _check_factor_attribution(experiment),
+            _check_fresh_storage(experiment),
             _check_repetitions(catalog, experiment),
         ) if error is not None
     ]

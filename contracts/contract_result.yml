@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.9.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.10.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -144,6 +144,14 @@ validity:
     skipped_when: "there were no restarts, or no describe log explains them"
     why: "without such a volume the data lives in the container's writable layer, which a restart discards; the DBMS re-initializes an empty database while the pod still carries loaded=True, so bexhoma does not reload it"
     scopes: "every query of that configuration after the restart ran against an empty database; its SQL errors (relation ... does not exist) are consequences of the restart, not findings about the queries"
+  - id: loading_measured_in_experiment
+    kind: absolute
+    label: "Loading measured in this experiment"
+    checks: "no configuration found its persistent volume already loaded by an earlier experiment (connections.config's storage_reused); absent from results written before storage_reused was recorded"
+    why: "bexhoma reuses a loaded volume of the same name: loading is skipped and its loading times are copied from the volume's labels, so they describe the experiment that filled it. An experiment.yml prevents it with resources.storage.remove_existing (default true with a storage_class)"
+    reports:
+      where: "report/connections.md, per configuration: storage_reused, and the volume as sut_storage_storageClassName / sut_storage_storageConfiguration"
+    scopes: "loading times (time_load and its parts, Throughput [SF/h]) of the reused configurations; benchmarking metrics stay valid"
   - id: key_metric_present
     kind: absolute
     checks: "benchmark-type headline column(s) contain no 0/NaN — see key_metrics_by_benchmark_type"

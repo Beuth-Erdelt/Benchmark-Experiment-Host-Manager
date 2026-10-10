@@ -98,6 +98,7 @@ class MetricsCollector:
         pod_sut = cfg.pod_sut
         c['hostsystem'] = cfg.host.get_host_all()
         c['storage'] = cfg.storage
+        c['storage_reused'] = cfg.storage_reused
         # collect worker information
         c['worker'] = {}
         components = list(cfg.deployment_infos['statefulset'].keys())

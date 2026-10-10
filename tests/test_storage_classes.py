@@ -168,5 +168,148 @@ class TpchStorageCellTest(unittest.TestCase):
         self.assertEqual(storage['storageClassName'], 'cephcsi')
 
 
+_TPCH_SPEC = {
+    'mode': 'run',
+    'title': 'storage backends',
+    'hypothesis': 'ephemeral disk loads faster than network storage',
+    'discriminates': ['storage_class'],
+    'workload': {'name': 'tpch', 'params': {'scaling_factor': 10}, 'rounds': [1], 'repetitions': 3},
+    'loading': {'pods': 8},
+    'systems': [{'name': 'PostgreSQL'}],
+    'placement': {'sut': 'cl-worker13'},
+    'resources': {
+        'cpu': {'request': 8, 'limit': 8},
+        'memory': {'request': '8Gi', 'limit': '8Gi'},
+        'storage': {'size': '100Gi'},
+    },
+}
+
+
+def _flag(argv, flag):
+    return argv[argv.index(flag) + 1] if flag in argv else None
+
+
+class TpchArgvTest(unittest.TestCase):
+    """``build_tpch_argv`` emits ``-rst`` from resources, as a list when swept, and ``-rsr``."""
+
+    def setUp(self):
+        self.catalog = catalog_spec.load_catalog('contracts/contract_catalog.yml')
+
+    def _argv(self, storage_class=..., **storage):
+        spec = copy.deepcopy(_TPCH_SPEC)
+        if storage_class is not ...:
+            spec['resources']['storage_class'] = storage_class
+        spec['resources']['storage'].update(storage)
+        return catalog_spec.build_argv(self.catalog, spec)
+
+    def test_a_class_without_a_profile_reaches_tpch(self):
+        """It used to be emitted only from a profile's requires:, so this ran ephemeral."""
+        argv = self._argv('cephcsi')
+        self.assertEqual(_flag(argv, '-rst'), 'cephcsi')
+        self.assertIn('-rsr', argv)
+
+    def test_remove_existing_false_keeps_the_volume(self):
+        argv = self._argv('cephcsi', remove_existing=False)
+        self.assertEqual(_flag(argv, '-rst'), 'cephcsi')
+        self.assertNotIn('-rsr', argv)
+
+    def test_ephemeral_emits_neither_flag(self):
+        argv = self._argv()
+        self.assertNotIn('-rst', argv)
+        self.assertNotIn('-rsr', argv)
+
+    def test_a_sweep_becomes_a_comma_list_tpch_reads_back(self):
+        argv = self._argv(['cephcsi', 'shared', None])
+        self.assertEqual(_flag(argv, '-rst'), 'cephcsi,shared,')
+        self.assertIn('-rsr', argv)
+        args = tpch.build_parser().parse_args(argv)
+        self.assertEqual(split_storage_types(args.request_storage_type), ['cephcsi', 'shared', None])
+
+    def test_a_sweep_pairs_with_memory_by_position(self):
+        spec = copy.deepcopy(_TPCH_SPEC)
+        spec['resources']['memory'] = [{'request': '8Gi', 'limit': '8Gi'}, {'request': '16Gi', 'limit': '16Gi'}]
+        spec['resources']['storage_class'] = ['cephcsi', 'shared', None]
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'must share one length'):
+            catalog_spec.build_argv(self.catalog, spec)
+
+    def test_a_profile_requires_is_checked_per_cell(self):
+        spec = copy.deepcopy(_TPCH_SPEC)
+        spec['systems'] = [{'name': 'PostgreSQL', 'profile': 'analytical-ssd'}]
+        spec['resources']['storage_class'] = [None, 'cephcsi']
+        with self.assertRaisesRegex(catalog_spec.SpecError, "got 'cephcsi'"):
+            catalog_spec.build_argv(self.catalog, spec)
+
+    def test_ycsb_refuses_a_sweep_and_gets_fresh_volumes(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['resources']['storage_class'] = ['cephcsi', 'shared']
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'does not support storage sweeps'):
+            catalog_spec.build_argv(self.catalog, spec)
+        spec['resources']['storage_class'] = 'cephcsi'
+        argv = catalog_spec.build_argv(self.catalog, spec)
+        self.assertEqual(_flag(argv, '-rst'), 'cephcsi')
+        self.assertIn('-rsr', argv)
+
+
+class StorageShapeTest(unittest.TestCase):
+    """``spec.validate_experiment`` checks the shape of the storage fields."""
+
+    def setUp(self):
+        self.catalog = catalog_spec.load_catalog('contracts/contract_catalog.yml')
+
+    def test_malformed_storage_class_is_refused(self):
+        for value in (5, [], ['cephcsi', 3], ''):
+            spec = copy.deepcopy(_TPCH_SPEC)
+            spec['resources']['storage_class'] = value
+            with self.subTest(value), self.assertRaisesRegex(catalog_spec.SpecError, 'storage_class must be'):
+                catalog_spec.validate_experiment(self.catalog, spec)
+
+    def test_remove_existing_must_be_a_boolean(self):
+        spec = copy.deepcopy(_TPCH_SPEC)
+        spec['resources']['storage']['remove_existing'] = 'yes'
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'remove_existing must be true or false'):
+            catalog_spec.validate_experiment(self.catalog, spec)
+
+    def test_every_listed_class_is_checked_against_the_environment(self):
+        spec = _with_storage_class(['cephcsi', None, 'cephxfs'])
+        with self.assertRaisesRegex(catalog_spec.SpecError, "'cephxfs' is not a usable"):
+            catalog_spec.validate_environment(ValidateEnvironmentTest._ENVIRONMENT, spec)
+
+    def test_removes_existing_storage_defaults(self):
+        self.assertFalse(catalog_spec.removes_existing_storage({}))
+        self.assertFalse(catalog_spec.removes_existing_storage({'storage_class': [None, None]}))
+        self.assertTrue(catalog_spec.removes_existing_storage({'storage_class': [None, 'shared']}))
+        self.assertFalse(catalog_spec.removes_existing_storage(
+            {'storage_class': 'shared', 'storage': {'remove_existing': False}}))
+
+
+class StorageReusedTest(unittest.TestCase):
+    """A reused volume shows in the evaluated connections; older results stay unknown."""
+
+    def _row(self, **extra):
+        from bexhoma.evaluators.base import EvaluatorBase
+        connection = {
+            'name': 'postgresql-1-1-1-1', 'configuration': 'PostgreSQL-1', 'phase': 'postgresql-1-1-1',
+            'job': 'postgresql-1-1-1-1',
+            'parameter': {'code': '1', 'numExperiment': 1, 'client': 1, 'dockerimage': 'postgres',
+                          'parallelism': 1, 'num_worker': 0, 'connection_parameter': {}},
+            'hostsystem': {'datadisk': 0},
+            'time_loading': 10, 'time_schema': 1, 'time_generated': 0, 'time_ingested': 0, 'time_index': 0,
+            'storage': {'storageClassName': 'shared', 'storageConfiguration': 'postgresql-1-shared'},
+            **extra,
+        }
+        result = {}
+        evaluator = types.SimpleNamespace(get_terminals=lambda parameters: 0)
+        EvaluatorBase.add_connection_to_result(evaluator, connection, 'c', result)
+        return result['c']
+
+    def test_reuse_is_a_column(self):
+        row = self._row(storage_reused=True)
+        self.assertTrue(row['storage_reused'])
+        self.assertEqual(row['sut_storage_storageClassName'], 'shared')
+
+    def test_older_results_leave_it_unknown(self):
+        self.assertNotIn('storage_reused', self._row())
+
+
 if __name__ == '__main__':
     unittest.main()

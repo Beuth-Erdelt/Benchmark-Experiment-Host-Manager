@@ -93,6 +93,30 @@ choice per experiment made loading times incomparable across runs.
 reads the catalog default and emits `-nlp 8` explicitly when `pods` is
 omitted. Folded into 1.9.0 (not yet released) as an additive change.
 
+## Storage class sweeps and fresh volumes (2026-10-10)
+
+`resources.storage_class` may now be a list, swept like `cpu`/`memory`:
+paired by position, a single entry broadcast, null entries ephemeral. It is
+a factor of its own (`storage_class` in `discriminates`), ranked like
+`system` because backends have no order. A profile's `requires:` and the
+`storage_class` input of `derive:` are evaluated per cell. Only `tpch`
+sweeps it (`tpch.py` sets each configuration's class and names its volume
+after it); `ycsb` refuses a list.
+
+`resources.storage.remove_existing` maps to `-rsr`, which bexhoma had but
+the contract could not reach. Without it, a volume left by an earlier
+experiment is reused: loading is skipped and the loading times are copied
+from the volume's labels, invisibly. It defaults to true whenever a cell
+names a storage class, so an agent run measures its own loading; `false` is
+refused when `storage_class` is the factor under test. The result side
+records the reuse (`storage_reused`, result contract 1.10.0).
+
+Also fixed: `build_tpch_argv()` emitted `-rst` only from a profile's
+`requires:`, so a `storage_class` without such a profile silently ran on
+ephemeral storage. It is now emitted from `resources` itself.
+
+Folded into 1.11.0 (not yet released) as an additive change.
+
 ## Only usable storage classes (2026-10-10)
 
 `environment.yml` lists every `StorageClass` the cluster has, but bexhoma

@@ -168,6 +168,7 @@ class SutConfiguration:
         self.path_experiment_docker = self.docker                                #: Experiment subfolder matching the docker image name.
         self.connection_parameter = {}                                           #: Collects parameters that may be interesting for result evaluation.
         self.time_loading = 0                                                     #: Seconds taken for the initial data load.
+        self.storage_reused = False                                              #: True iff the SUT found a loaded volume from an earlier experiment, so loading was skipped and its times inherited.
         self.time_generating = 0                                                  #: Seconds taken for data generation.
         self.time_ingesting = 0                                                   #: Seconds taken for ingesting existing data.
         self.time_schema = 0                                                      #: Seconds taken for schema creation.

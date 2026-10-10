@@ -724,7 +724,8 @@ completion of the planned query set from speed on the common successful
 queries, marks whole-workload throughput non-comparable when a planned query
 errored, and surfaces unusually different repetitions as warnings. Independently
 of workload name, it uses the archived `discriminates` factors to compute
-ordered concurrency, CPU, and memory shapes and categorical system rankings.
+ordered concurrency, CPU, and memory shapes and categorical system and
+storage-class rankings.
 The harness files those computed claims beside the model's verdict. The model
 can dispute a claim with a reason; it does not have to copy the computed values
 back. Evidence checks establish that the cited files were read from this result,

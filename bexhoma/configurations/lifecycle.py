@@ -596,6 +596,11 @@ scrape_configs:
 
         def set_labels_from_loaded_pvc():
             if len(labels_on_existing_pvc) > 0:
+                # Found before this experiment loaded anything: the volume and its
+                # loading times come from an earlier experiment. A later run of
+                # this experiment finding its own volume is not a reuse.
+                if cfg.num_experiment_to_apply_done == 0 and not cfg.loading_finished:
+                    cfg.storage_reused = True
                 dep['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                 for label in labels_on_existing_pvc:
                     print("{:30s}: copied label {} = {}".format(

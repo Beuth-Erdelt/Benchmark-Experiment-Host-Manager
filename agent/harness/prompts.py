@@ -175,7 +175,7 @@ rather than inferring or approximating the count.
   suspicious repetitions, and checkable result claims. Its result
   characterisation follows the factors named by the archived experiment rather
   than the workload name: it describes ordered concurrency, CPU, and memory
-  sweeps and ranks categorical system comparisons wherever the summary table
+  sweeps and ranks categorical system and storage_class comparisons wherever the summary table
   exposes enough structure, once for every throughput and latency metric the
   table carries. Its `query_evidence` supplies compact per-query execution timings
   by configuration and actual concurrency, repetition ranges, and failure

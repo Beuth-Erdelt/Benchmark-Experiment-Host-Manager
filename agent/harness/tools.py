@@ -142,7 +142,10 @@ _SHAPE_NOISE_FLOOR = 0.05
 
 #: Factors the catalog lets an experiment isolate. Everything the contract can
 #: express is characterisable; anything else is refused at design time.
-_DISCRIMINATING_FACTORS = {"system", "concurrency", "cpu", "memory"}
+_DISCRIMINATING_FACTORS = {"system", "concurrency", "cpu", "memory", "storage_class"}
+#: Of those, the factors whose levels have no order: they are ranked at each
+#: fixed context, never fitted to a curve.
+_CATEGORICAL_FACTORS = ("system", "storage_class")
 
 #: Aggregate metrics worth characterising, by the direction that is an
 #: improvement. Exact names first, then substrings so a benchmarker this
@@ -1603,22 +1606,28 @@ def _numeric_quantity(value: Any, factor: str) -> float | None:
     return number * multiplier if multiplier is not None else None
 
 
-def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float]] | None:
-    """Return the CPU and memory values for each resolved resource cell."""
+def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float | str]] | None:
+    """Return the CPU and memory values, and the storage class, of each resolved resource cell.
+
+    The storage class is a categorical level: its name, or ``ephemeral`` for a
+    null entry or an unset field.
+    """
     resources = experiment.get("resources")
     if not isinstance(resources, dict):
         return None
     cpu = resources.get("cpu")
     memory = resources.get("memory")
+    storage = resources.get("storage_class")
     cpu_cells = cpu if isinstance(cpu, list) else [cpu]
     memory_cells = memory if isinstance(memory, list) else [memory]
-    cell_count = max(len(cpu_cells), len(memory_cells))
-    if len(cpu_cells) not in (1, cell_count) or len(memory_cells) not in (1, cell_count):
+    storage_cells = storage if isinstance(storage, list) and storage else [storage]
+    cell_count = max(len(cpu_cells), len(memory_cells), len(storage_cells))
+    if any(len(cells) not in (1, cell_count) for cells in (cpu_cells, memory_cells, storage_cells)):
         return None
 
     dimensions = []
     for index in range(cell_count):
-        values: dict[str, float] = {}
+        values: dict[str, float | str] = {}
         for factor, cells in (("cpu", cpu_cells), ("memory", memory_cells)):
             cell = cells[index if len(cells) > 1 else 0]
             if not isinstance(cell, dict):
@@ -1627,6 +1636,10 @@ def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float]] |
             if numeric is None:
                 return None
             values[factor] = numeric
+        storage_cell = storage_cells[index if len(storage_cells) > 1 else 0]
+        if storage_cell is not None and not isinstance(storage_cell, str):
+            return None
+        values["storage_class"] = storage_cell or validation.STORAGE_EPHEMERAL
         dimensions.append(values)
     return dimensions
 
@@ -1706,6 +1719,9 @@ def _configuration_resources(
     _, cell_index = decoded
     labels = {}
     for resource, cell in cells[cell_index].items():
+        if resource == "storage_class":
+            labels[resource] = cell or validation.STORAGE_EPHEMERAL
+            continue
         value = cell.get("limit", cell.get("request")) if isinstance(cell, dict) else None
         if value is None:
             return None
@@ -1824,9 +1840,14 @@ def _characterized_metrics(headers: list[str]) -> list[tuple[str, str]]:
 
 
 def _expected_levels(
-    factor: str, experiment: dict[str, Any], resource_cells: list[dict[str, float]],
-) -> set[float]:
-    """Return the levels the specification declared for one ordered factor."""
+    factor: str, experiment: dict[str, Any], resource_cells: list[dict[str, float | str]],
+) -> set[float | str]:
+    """Return the levels the specification declared for one factor."""
+    if factor == "system":
+        return {
+            system["name"] for system in experiment.get("systems", [])
+            if isinstance(system, dict) and isinstance(system.get("name"), str)
+        }
     if factor != "concurrency":
         return {cell[factor] for cell in resource_cells}
     workload = experiment.get("workload")
@@ -2138,23 +2159,26 @@ def _ordered_sweep_claims(
 
 
 def _categorical_claims(
+    factor: str,
     discriminates: list[str],
     experiment: dict[str, Any],
     observations: list[tuple[dict[str, str | float], dict[str, float]]],
+    resource_cells: list[dict[str, float | str]],
     metrics: list[tuple[str, str]],
 ) -> list[dict[str, Any]]:
-    """Rank the systems compared at each fixed context, once per metric."""
-    expected_systems = {
-        system["name"] for system in experiment.get("systems", [])
-        if isinstance(system, dict) and isinstance(system.get("name"), str)
-    }
-    peers = [item for item in discriminates if item != "system"]
+    """Rank the levels of one categorical factor at each fixed context, once per metric.
+
+    The levels have no order -- systems, storage backends -- so they are
+    ranked, never fitted to a curve.
+    """
+    expected_levels = _expected_levels(factor, experiment, resource_cells)
+    peers = [item for item in discriminates if item != factor]
     claims = []
     for context, measurements in sorted(
-        _group_by_context(observations, "system", peers).items(),
+        _group_by_context(observations, factor, peers).items(),
         key=lambda item: str(item[0]),
     ):
-        if len(measurements) < 2 or set(measurements) != expected_systems:
+        if len(measurements) < 2 or set(measurements) != expected_levels:
             continue
         for metric, direction in metrics:
             if any(
@@ -2162,30 +2186,30 @@ def _categorical_claims(
                 for repetitions in measurements.values() for values in repetitions
             ):
                 claims.append({
-                    "factor": "system", "context": dict(context), "metric": metric,
+                    "factor": factor, "context": dict(context), "metric": metric,
                     "withheld": True,
                 })
                 continue
             means = {
-                str(system): round(
+                str(level): round(
                     statistics.mean(values[metric] for values in repetitions), 2
                 )
-                for system, repetitions in measurements.items()
+                for level, repetitions in measurements.items()
             }
             # Best first, which for a latency metric is the smallest.
             better = -1 if direction == "higher_is_better" else 1
             claims.append({
-                "factor": "system",
+                "factor": factor,
                 "context": dict(context),
                 "metric": metric,
                 "direction": direction,
                 "ranking": sorted(
-                    means, key=lambda system: (better * means[system], system)
+                    means, key=lambda level: (better * means[level], level)
                 ),
                 "values": [
-                    {"level": system, "mean": means[system],
-                     "repetitions": len(measurements[system])}
-                    for system in sorted(means)
+                    {"level": level, "mean": means[level],
+                     "repetitions": len(measurements[level])}
+                    for level in sorted(means)
                 ],
             })
     return claims
@@ -2254,7 +2278,7 @@ def _shape_claims(
 
     unsupported = []
     ordered_sweeps = []
-    for factor in (item for item in discriminates if item != "system"):
+    for factor in (item for item in discriminates if item not in _CATEGORICAL_FACTORS):
         claims = _ordered_sweep_claims(
             factor, discriminates, experiment, observations, resource_cells, metrics
         )
@@ -2262,12 +2286,13 @@ def _shape_claims(
         if not claims:
             unsupported.append(factor)
     categorical = []
-    if "system" in discriminates:
-        categorical = _categorical_claims(
-            discriminates, experiment, observations, metrics
+    for factor in (item for item in _CATEGORICAL_FACTORS if item in discriminates):
+        claims = _categorical_claims(
+            factor, discriminates, experiment, observations, resource_cells, metrics
         )
-        if not categorical:
-            unsupported.append("system")
+        categorical.extend(claims)
+        if not claims:
+            unsupported.append(factor)
     # A round dropped because it measured nothing leaves no rate to mark, but a
     # pod-duration skew measured in it still speaks against the comparison it
     # belonged to; without this, the remaining rounds would form the very curve

@@ -35,6 +35,14 @@ Decode by counting dash-separated segments from the right.
 | Identifier | Shape | Example |
 |---|---|---|
 | configuration | `<system>-<n>` | `pgduckdb-1` |
+
+`<n>` is the resource cell: entry *n* of the `resources` sweep lists
+(`cpu`, `memory`, `storage_class`). `connections.md` names each
+configuration's storage as `sut_storage_storageClassName` (unset: ephemeral)
+and `sut_storage_storageConfiguration`.
+
+| Identifier | Shape | Example |
+|---|---|---|
 | phase | `<configuration>-<experiment_run>-<client>` | `pgduckdb-1-3-2` |
 | job | `<phase>-<benchmark_run>` | `pgduckdb-1-3-2-1` |
 | connection | `<job>-<pod>` | `pgduckdb-1-3-2-1-4` |
@@ -55,6 +63,7 @@ skipped row never does.
 | workflow as planned | submitted jobs or pods differ from the plan | comparisons across phases |
 | no SUT container restarts | a SUT container restarted | its configuration from the restart on |
 | SUT data survived restarts | a restarted SUT had no data volume | every later query of it ran on an empty database |
+| loading measured in this experiment | a configuration found its volume already loaded by an earlier experiment (`storage_reused` in `connections.md`) | its loading times, which are inherited; benchmarking stays valid |
 | key metric present | a headline metric is 0 or NaN | that metric |
 | no SQL errors (TPC-H) | a query failed | that query; the pooled totals |
 | all active queries in the totals (TPC-H) | a query failed in some connection and left the pooled totals | the pooled per-phase metrics |

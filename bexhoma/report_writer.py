@@ -82,7 +82,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.9.0"
+SCHEMA_VERSION = "1.10.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -224,6 +224,7 @@ quoting any number, not after:
 |---|---|---|
 | `No SUT container restarts` | Every metric of the restarted configuration from the restart's `Finished` time onward — the Health Summary names the termination reason (e.g. `OOMKilled`) | `connections.md`'s SUT Container Restarts |
 | `SUT data survived container restarts` | Every query of that configuration after the restart ran against a freshly initialized, empty database; its SQL errors (`relation … does not exist`, connection/I/O errors) are consequences of the restart, not findings about the queries | `connections.md`'s SUT Container Restarts |
+| `Loading measured in this experiment` | Loading times of the configurations whose `storage_reused` is `True`: their volume was already loaded by an earlier experiment, so loading was skipped and the times are inherited, not measured here — they enter no loading comparison. Benchmarking metrics stay valid | `connections.md`'s `storage_reused` and `sut_storage_*` |
 | `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
 | `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured — dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |

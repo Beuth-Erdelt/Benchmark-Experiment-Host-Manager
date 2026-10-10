@@ -110,6 +110,12 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     cpu_cell = _single_resource_cell(resources, "cpu")
     memory_cell = _single_resource_cell(resources, "memory")
     storage = resources.get("storage", {})
+    if isinstance(resources.get("storage_class"), list):
+        raise SpecError(
+            "resources.storage_class is a sweep list; the ycsb workload does not support "
+            "storage sweeps -- name a single storage class"
+        )
+    storage_class = spec.storage_class_cells(resources)[0]
 
     argv: list[str] = [experiment.get("mode", _DEFAULT_MODE)]
 
@@ -177,12 +183,14 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-rr", memory_cell.get("request"))
     _append_flag(argv, "-lr", memory_cell.get("limit"))
     _append_flag(argv, "-rss", storage.get("size"))
-    _append_flag(argv, "-rst", resources.get("storage_class"))
+    _append_flag(argv, "-rst", storage_class)
+    if spec.removes_existing_storage(resources):
+        argv.append("-rsr")
 
     resolve_inputs = {
         "memory_limit": memory_cell.get("limit"),
         "cpu_limit": cpu_cell.get("limit"),
-        "storage_class": resources.get("storage_class"),
+        "storage_class": storage_class,
         "scaling_factor": params.get("scaling_factor"),
     }
     for system_spec in system_specs:
