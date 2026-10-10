@@ -31,7 +31,7 @@ bexhoma source tree.
 
 ## See also
 
-- `docs/AgentWorkflow.md` — the end-to-end agent loop this file is the
+- `docs/Agent.md` — the end-to-end agent loop this file is the
   output half of: question → contracts → `experiment.yml` → validate → run →
   answer.
 - `docs/AgentResultContract.md` — prose version of this file, with worked

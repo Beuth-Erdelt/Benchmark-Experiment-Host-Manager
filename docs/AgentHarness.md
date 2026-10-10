@@ -1,667 +1,342 @@
-# Agent Harness: Running the Prototype
+# Agent Harness
 
-## What this is
+Options, model servers, deployment, and internals of the agent in `agent/`.
+For a first run, start at [Agent](Agent.md). The design rationale is in
+`agent/ARCHITECTURE.md`.
 
-[`AgentWorkflow.md`](AgentWorkflow.md) describes the loop that turns a
-benchmarking question into an evidence-backed answer: read the two contracts,
-build an `experiment.yml`, validate it without touching a cluster, run it, then
-read the tiered report and answer according to the result contract. This
-repository ships a program that performs that loop with a language model driving
-each step. It lives in the repository's `agent/` directory, and this page is the
-operator guide to running it, with a command for every stage.
+## Commands
 
-The harness is deliberately narrow. It demonstrates a *bounded autonomous
-experimenter*, meaning a language model that may only design, validate, submit,
-interpret, and follow up on experiments the catalog already allows, and that
-never receives a shell, a Kubernetes client, or general filesystem access. The
-implemented slice is TPC-H (the analytical decision-support benchmark) with
-PostgreSQL and PgDuckDB, and YCSB (a key-value workload) with PostgreSQL. The
-full annotated pipeline, the capability boundary, and the enforcement rules are
-in `agent/ARCHITECTURE.md`; the command reference is `agent/README.md`; this
-page merges the two into a task-by-task walkthrough for the documentation site.
-
-The pieces you will invoke:
-
-| Command | What it does |
+| Command | Does |
 |---|---|
-| `python -m agent.harness.agent` | One phase — `design`, `interpret`, or `baseline` — of one investigation. This is the model-facing agent itself. |
-| `python -m agent.harness.validate` | Dry-run validation of a hand-written `experiment.yml`, no model and no cluster. |
-| `python -m agent.lifecycle` | The local wrapper that chains the phases end to end, starting and stopping a self-hosted model server around each one. |
-| `agent/k8s/lifecycle-controller.yml` | The same chained loop as an unattended Kubernetes Job with in-cluster credentials. |
+| `bexhoma agent lifecycle` | a whole investigation: design, benchmark, interpretation, follow-ups; starts and stops the bundled model server |
+| `bexhoma agent design` | one design phase |
+| `bexhoma agent interpret` | one interpretation phase |
+| `bexhoma agent baseline` | the bare model's answer, without catalog, handbook or tools |
+| `bexhoma agent validate` | validate a hand-written `experiment.yml`; no model, no cluster |
 
-All four of the runnable ones are also reachable through the `bexhoma` CLI:
-`bexhoma agent design`, `bexhoma agent interpret`, `bexhoma agent baseline`,
-`bexhoma agent validate`, and `bexhoma agent lifecycle` each forward their
-remaining arguments unchanged to the module above, so the two forms are
-interchangeable and this page uses the `python -m ...` spelling throughout. The
-`bexhoma agent` command needs the same `agent` install extra and reports plainly
-when it is missing.
+`bexhoma agent <x>` forwards its arguments unchanged to `python -m
+agent.lifecycle` (lifecycle) or `python -m agent.harness.agent --phase <x>`
+(design, interpret, baseline) or `python -m agent.harness.validate`.
 
-## Six commands, start to finish
+## Configuration
 
-A fresh checkout reaches an answered question in six steps. Each is explained in
-full below; the wrapper in step 5 is the shortest path and the phase-by-phase
-commands after it are only needed when you want to drive the stages yourself.
+A command-line flag overrides an exported variable, which overrides `.env`.
 
-```sh
-# 1. install with the agent extra — an ordinary bexhoma install omits it
-python3 -m venv .venv && .venv/bin/pip install -e ".[agent]"
+| Variable | Flag | Default | Meaning |
+|---|---|---|---|
+| `AGENT_MODEL` | `--model` | – | model name the endpoint serves |
+| `AGENT_BASE_URL` | `--base-url` | `http://localhost:8001/v1` | OpenAI-compatible endpoint |
+| `AGENT_API_KEY` | `--api-key` | `EMPTY` | credential; `EMPTY` for a server that checks none |
+| `AGENT_INTERPRET_MODEL` | `--interpret-model` | `--model` | a different, usually stronger, model for interpretation |
+| `AGENT_MODEL_SERVER` | – | `bundled` | who owns the endpoint, see [Model servers](#model-servers) |
+| `AGENT_ENABLE_THINKING` | `--enable-thinking` | off | ask a hybrid reasoning model (Qwen3, GLM-4.5) for thinking mode |
+| `AGENT_EXTRA_BODY` | `--extra-body` (phase CLI only) | – | JSON added to every request, e.g. OpenRouter provider routing |
+| `AGENT_METHOD` | `--method` | `agent/handbook/handbook.md` | design handbook; empty means none (the ablation arm) |
+| `AGENT_BASELINE` | `--baseline` / `--no-baseline` | off | also answer with the bare model, as a separate investigation |
+| `AGENT_RESULTS` | `--results` | `resultfolder` of `cluster.config` | Bexhoma's result root |
+| `AGENT_ALLOW_PARALLEL_RUNS` | `--allow-parallel-runs` | off | submit while another agent experiment still runs |
+| `AGENT_CLUSTER_LOGIN` | – | – | command that renews cluster credentials just before submission; stopped after 120 s |
 
-# 2. point bexhoma at the cluster, then edit the copy
-cp k8s-cluster.config cluster.config
+The shipped `.env.example` sets `AGENT_BASELINE=1`, so a copied `.env` turns
+the baseline on.
 
-# 3. generate a fresh snapshot of the cluster the agent will design against
-.venv/bin/bexhoma environment create
+### `agent.lifecycle`
 
-# 4. choose the model endpoint, then edit the copy
-cp .env.example .env
+| Flag | Default | Meaning |
+|---|---|---|
+| `--task TEXT` / `--resume DIR` | required, one of | new question, or continue a submitted investigation |
+| `--followups N` | 1 | follow-up experiments allowed in the whole investigation |
+| `--attempts N` | 3 | validation calls per design or follow-up |
+| `--max-tokens N` | 16384 | tokens per reply, thinking included |
+| `--temperature T` | 0.0 | sampling temperature |
+| `--catalog PATH` | `contracts/contract_catalog.yml` | input contract |
+| `--environment PATH` | `environment.yml` | cluster snapshot; `""` skips placement checks (dry runs only) |
+| `--dry-run` | off | design and validate, never submit |
+| `--model-server-manifest PATH` | `MODEL_SERVER_MANIFEST` | vLLM manifest to deploy |
+| `--server-script PATH` | `agent/model_server.sh` (`.ps1` on Windows) | server switch |
+| `--server-start-attempts N` | 0 = until capacity | fail a stuck server start; use 3 on a new cluster |
+| `--server-retry-seconds S` | 60 | wait between start attempts |
+| `--poll-seconds S` | 30 | how often a running benchmark is checked |
+| `--benchmark-timeout-seconds S` | 0 = wait forever | give a benchmark up after S; failed benchmarks are cleaned up by experiment code |
+| `--unschedulable-timeout-seconds S` | 0 = wait forever | give a benchmark up once its pods were unschedulable for S |
+| `--root`, `--trajectories`, `--status`, `--inbox` | repository, `<results>/agent/…` | working locations |
 
-# 5. answer a question end to end: design, benchmark, interpretation, follow-up
-.venv/bin/python -m agent.lifecycle --task "<benchmark question>" --followups 1
+### `agent.harness.agent` (one phase)
 
-# 6. continue an investigation whose benchmark was already submitted
-.venv/bin/python -m agent.lifecycle --resume <result-folder>/agent/<run-id>
-```
+Takes the same model, endpoint, catalog, environment, method, location,
+`--attempts`, `--followups`, `--max-tokens`, `--temperature`, `--dry-run` and
+`--allow-parallel-runs` options, plus:
 
-The run prints the investigation directory it writes to and, at the end, the
-path of the final answer. To check the installation with no cluster at all, run
-the test suite shown under "Verification" at the end of this page.
-
-## 1 — Install with the agent extra
-
-The agent needs a client library for its OpenAI-compatible model server that
-ordinary bexhoma use does not, so a plain `pip install -e .` will not run it.
-Install the `agent` extra:
-
-```sh
-python3 -m venv .venv
-.venv/bin/pip install -e ".[agent]"
-```
-
-## 2 — Configure bexhoma for the cluster
-
-```sh
-cp k8s-cluster.config cluster.config   # then edit it
-```
-
-The agent reads this same file, and only for one thing: the `resultfolder` it
-declares, which decides where results and all investigation artifacts land. The
-agent and the benchmark therefore cannot disagree about that location. A
-relative `resultfolder` resolves against the repository. See the repository's
-main quick start and configuration guide for the rest of the file.
-
-## 3 — Snapshot the target cluster
-
-The design step is grounded in a description of the cluster as it is right now —
-which nodes exist, how much CPU and memory each can still allocate, which
-storage classes are available, what the namespace resource limits are. That
-description is a file the agent reads, not a contract, and it can only be
-produced by connecting to a live cluster. Generate your own:
+| Flag | Meaning |
+|---|---|
+| `--phase design\|interpret\|baseline` | which phase |
+| `--task TEXT` | the question; for interpret it defaults to the archived hypothesis |
+| `--run DIR` | continue this investigation (interpret) |
+| `--report PATH` | interpret exactly this `report/index.md`, without trajectory or status |
+| `--extra-body JSON` | request-body additions |
+| `--run-record FILE` | write the investigation directory here; used by the lifecycle |
 
 ```sh
-.venv/bin/bexhoma environment create
+bexhoma agent design    --task "<question>" --followups 1
+bexhoma agent interpret --run <resultfolder>/agent/<run-id> --followups 1
+bexhoma agent interpret --report <resultfolder>/<code>/report/index.md --followups 0
 ```
 
-`environment create` writes `environment.yml` in the working directory and
-inspects the current kubectl context; pass `-cx <context>` to choose another and
-`-o <path>` to write elsewhere. The file is ignored by git (the
-`environment*.yml` rule), so each person keeps a private, current snapshot
-rather than sharing one. Regenerate it whenever the cluster changes: it carries
-a `collected_at` timestamp and goes stale the moment capacity moves after that.
-Besides node sizes it records how much each node has already reserved (read
-from Prometheus when `cluster.config` names one) and which hardware metrics
-can be monitored; see [Environment](Environment.md).
+A `--report` interpretation can only read that one result and the files its
+report links to.
 
-The agent CLI and the lifecycle wrapper both read `environment.yml` from the
-working directory by default, so the commands below need no `--environment` flag
-once step 3 has run; pass `--environment <path>` only if you keep the file
-somewhere else, or `--environment ""` to skip the placement and
-resource-ceiling checks for a dry run. The standalone validator is the one
-exception — it always requires `--environment` — and its example below passes
-the flag explicitly.
-
-## 4 — Choose the model endpoint
-
-Three settings decide which server answers the agent. `AGENT_MODEL` is the name
-the server serves the model under, `AGENT_BASE_URL` is its OpenAI-compatible
-endpoint, and `AGENT_API_KEY` is the credential — the placeholder `EMPTY` for a
-server that checks none. Copy [`.env.example`](../.env.example) to `.env` in the
-repository root and edit it; both `python -m agent.harness.agent` and
-`agent/lifecycle.py` read that file at startup. It is ignored by git, so
-real keys stay out of the history.
-
-An exported shell variable overrides the file, and a command-line flag
-(`--model`, `--base-url`, `--api-key`) overrides both, so a single run can use a
-different server without editing anything.
-
-`.env.example` carries a ready block for each backend in use: the bundled vLLM
-server reached through a local port forward, the same server reached by its
-in-cluster service name, a local Ollama, OpenAI, Mistral, and OpenRouter.
-Ollama and Mistral serve the same protocol under a `/v1` path, so nothing but
-these three values changes.
-
-Two behaviours differ once you leave the self-hosted server. First, the agent
-resolves the configured model name against the endpoint's model list: an
-endpoint that advertises exactly one model may name it whatever it likes and the
-agent adopts that name, while an endpoint advertising several requires an exact
-match. Second, a metered API refuses a turn once a per-minute quota is reached
-where a self-hosted server would simply queue it, so a refused turn is retried
-with a widening wait before the phase gives up.
-
-`AGENT_ENABLE_THINKING` (or `--enable-thinking`), off by default, pins the
-served chat template's thinking mode on via `chat_template_kwargs`, vLLM's
-switch for a hybrid reasoning model such as GLM-4.5-Air or Qwen3. It is off
-unless set because a stricter endpoint could reject the unrecognised field.
-`AGENT_EXTRA_BODY` (or `--extra-body`) is a JSON object added to every request
-body, for fields an endpoint defines beyond the OpenAI API; it is recorded in
-each phase's `meta` event, so a trajectory shows which routing produced it. The
-lifecycle wrapper has no such flag, so there the setting comes from `.env` or an
-exported variable.
-
-One more setting, `AGENT_MODEL_SERVER`, decides who owns the endpoint:
-
-- `bundled` (the default): the lifecycle wrapper in step 5 starts and stops a
-  self-hosted vLLM server around every phase.
-- `external`: the endpoint is already there (a hosted API, or an Ollama on your
-  machine), so the wrapper only chains the phases and never touches a server.
-- `shared`: for several lifecycles running side by side (see
-  [Running two investigations at once](#running-two-investigations-at-once)).
-  Each starts the server if it is not running and reuses it if it is, but none
-  stops it. Unlike `bundled`, which releases the GPU the moment its one
-  benchmark starts, a lone `shared` lifecycle holds the GPU for its whole
-  benchmark wait too — nothing tells it another lifecycle might still need the
-  server, so only the pod's own idle watchdog (twenty minutes with no request)
-  gives it back. `shared` is for running several investigations at once, not a
-  drop-in replacement for `bundled` when running just one.
-
-Each block in `.env.example` already carries the right value. The agent CLI
-itself never starts a server in any case.
-
-### Using OpenRouter
-
-OpenRouter serves many models through one OpenAI-compatible endpoint, so the
-agent needs no GPU and no model server; the benchmarks still run on the
-cluster. Create a key at <https://openrouter.ai/keys>, copy `.env.example` to
-`.env` and uncomment its OpenRouter block:
+### `agent.harness.validate`
 
 ```sh
-AGENT_MODEL=google/gemma-4-31b-it
-AGENT_BASE_URL=https://openrouter.ai/api/v1
-AGENT_MODEL_SERVER=external
-AGENT_API_KEY=sk-or-v1-replace-with-your-key
-AGENT_EXTRA_BODY={"provider": {"order": ["crusoe"], "allow_fallbacks": false, "quantizations": ["bf16"]}, "reasoning": {"enabled": true}}
+bexhoma agent validate experiment.yml --environment environment.yml [--catalog PATH] [--indent 2]
 ```
 
-The last line pins one provider at full 16-bit precision, forbids falling back
-to another, and turns thinking on. Without it OpenRouter picks any provider, and
-some serve reduced-precision weights or lack the tool calls the agent needs.
-The full list of tested models, providers and `--max-tokens` values, and the
-in-cluster secret setup, are in [`agent/README.md`](../agent/README.md#using-openrouter).
+Prints the verdict the design agent receives: `valid`, `{stage, message}`
+errors, `environment_checked`, and an estimate of runs and declared-timeout
+budget. Exit code 0 when valid. `--environment` is required; `""` skips the
+placement checks and says so in the verdict. Needs no model and no `agent`
+extra.
 
-## 5 — The one-command lifecycle
+## Model servers
 
-[`agent/lifecycle.py`](../agent/lifecycle.py) chains every phase of one
-investigation. With `AGENT_MODEL_SERVER=bundled` it also starts the vLLM server
-for the model phases, stops it while the benchmark runs so the GPU is free,
-waits for the exact report, repeats the cycle for an approved follow-up, and
-leaves the server down after the final answer:
+`AGENT_MODEL_SERVER` decides who owns the endpoint:
 
-```sh
-AGENT_MODEL=qwen3.8-27b \
-.venv/bin/python -m agent.lifecycle \
-  --task "Is PgDuckDB faster than PostgreSQL on join-heavy TPC-H queries at SF10, and does that hold as concurrency rises?" \
-  --followups 1
-```
+- `bundled`: the lifecycle starts a vLLM Job on the cluster for each model
+  phase and stops it while the benchmark runs.
+- `external`: the endpoint already exists (hosted API, local Ollama); the
+  lifecycle never touches a server.
+- `shared`: several lifecycles run at once and share one server. Each starts it
+  if it is down; none stops it. The pod's idle watchdog releases the GPU after
+  20 minutes without a request.
 
-With `AGENT_MODEL_SERVER=external` in `.env` the same command drives a hosted
-API or a local Ollama end to end, with no server started or stopped along the
-way:
+With any endpoint, the agent resolves the model name against the endpoint's
+model list (an endpoint serving exactly one model may name it freely), and
+retries quota refusals with a growing wait.
 
-```sh
-.venv/bin/python -m agent.lifecycle --task "<benchmark question>"
-```
+**Bundled manifests** in `agent/k8s/`, selected with `--model-server-manifest`
+or `MODEL_SERVER_MANIFEST`. Edit the storage class and GPU node labels in the
+manifest for your cluster.
 
-`--followups N` is the budget for follow-up experiments: after interpreting a
-result, if the question is not fully resolved, the agent may author and submit
-one new experiment that continues it, and `N` caps how many times that can
-happen across the whole investigation. `--followups 0` interprets the first
-result and stops.
+| Manifest | Model | GPU | Temperature |
+|---|---|---|---|
+| `vllm-qwen38-27b.yml` (default) | Qwen3.8 27B | H200, B200 | 0 |
+| `vllm-glm45-air-int4.yml` | GLM-4.5-Air INT4 | H200, B200 | 0 |
+| `vllm-llama33-70b-int4.yml` | Llama-3.3-70B INT4 (one tool call per reply) | H100, H200, B200 | 0 |
+| `vllm-muse-glimmer-30b.yml` | Muse Glimmer 30B | H200, B200 | 0 |
+| `vllm-gemma4-31b.yml` | Gemma 4 31B | H200 | 0 |
+| `vllm-nex-n25-mini.yml` | Nex-N2.5-mini | H200, B200 | 0.7 |
+| `vllm-ornith-15-35b-a3b.yml` | Ornith-1.5-35B-A3B | H200, B200 | 0.6 |
 
-Useful flags:
+`agent/model_server.sh` (`.ps1` on Windows) reads:
 
-- `--interpret-model NAME` runs the interpretation phase on a different, usually
-  stronger model than the one that did the design.
-- `--server-start-attempts 3` makes a stuck model-server startup fail after
-  three tries instead of retrying until a shared GPU frees up. Use it when first
-  bringing the server up on a new cluster, so a misconfiguration surfaces as an
-  error rather than an indefinite wait.
-- `--benchmark-timeout-seconds S` gives an unattended run a deadline; the
-  default of zero waits for the report indefinitely. If the submitted benchmark
-  is definitively failed or has exited with no report, the wrapper invokes
-  bexhoma's experiment-scoped cleanup for that exact experiment code and leaves
-  shared monitoring and message-queue objects alone.
-- `--unschedulable-timeout-seconds S` gives a benchmark up, and removes it from
-  the cluster, once its Pods have been refused by the scheduler for S seconds.
-  The default of zero lets them pend indefinitely; the refusal is still logged.
-- `--dry-run` designs and validates but never submits.
+| Variable | Default | Meaning |
+|---|---|---|
+| `MODEL_SERVER_CONTEXT`, `MODEL_SERVER_NAMESPACE` | none, required | where the server runs; the namespace must match `cluster.config` |
+| `MODEL_SERVER_MANIFEST` | `k8s/vllm-qwen38-27b.yml` | manifest |
+| `MODEL_SERVER_JOB`, `MODEL_SERVER_SERVICE` | `bexhoma-agent-model` | object names |
+| `MODEL_SERVER_PORT` | 8001 | local port forward |
+| `MODEL_SERVER_BASE_URL` | `http://localhost:$PORT/v1` | endpoint |
+| `MODEL_SERVER_IN_CLUSTER` | 0 | 1 inside the cluster (no port forward) |
+| `MODEL_SERVER_SHARED` | 0 | 1 never stops; set by `AGENT_MODEL_SERVER=shared` |
+| `MODEL_SERVER_STOP_TIMEOUT_SECONDS` | 300 | wait for the Job to go |
+| `KUBE_LOGIN_SCRIPT` | – | login refresh before kubectl calls |
 
-After a terminal disconnect, resume an investigation that already submitted its
-experiment without submitting it again:
+`agent/model_server.sh down` releases the GPU at once. `IDLE_SHUTDOWN_SECONDS`
+in the manifest changes the watchdog window (0 disables it).
 
-```sh
-AGENT_MODEL=qwen3.8-27b \
-.venv/bin/python -m agent.lifecycle --resume <result-folder>/agent/<run-id>
-```
+**Hosted APIs.** `.env.example` has blocks for OpenRouter, OpenAI, Mistral,
+local Ollama and the BHT API. For OpenRouter, pin one full-precision provider
+through `AGENT_EXTRA_BODY`, as the block shows; otherwise OpenRouter may route
+to a reduced-precision provider or one without tool calls. Tested models and
+token limits are in `agent/README.md`.
 
-### The experiment design handbook and the ablation
+## Running in Kubernetes
 
-Before every design and every follow-up the agent reads an *experiment design
-handbook* — a document of methodological guidance on what makes a benchmark
-sound rather than merely legal. Its digest is recorded in the run's trajectory,
-and the few principles a machine can decide are enforced by the validator, which
-cites them by identifier. The shipped handbook is `agent/handbook/handbook.md`, and `AGENT_METHOD`
-in `.env` names it. Its appendix — the local agent interface and the full source
-list — lives beside it in `handbook_appendix.md`. The agent may read that file,
-but unlike the handbook's Navigation section it is not required reading.
-
-Each model conversation may receive a limited amount of file text. The harness
-sizes that allowance from the served context window minus `--max-tokens`: file
-text may fill 60% of the rest, at about 3.5 characters per token. A model with a
-131,072-token window gets about 240,000 characters at the default
-`--max-tokens 16384`, and about 137,000 at `--max-tokens 65536`. When the server
-does not publish its window, the allowance is 110,000 characters. Re-reading
-unchanged text already returned in the same conversation costs nothing.
-
-The other arm of the with/without comparison designs with no handbook at all.
-Switch it off by leaving `AGENT_METHOD` empty in `.env`, or for one run:
-
-```sh
-AGENT_METHOD= .venv/bin/python -m agent.lifecycle --task "<benchmark question>"
-```
-
-`--method PATH` on either the agent CLI or the wrapper overrides the file for a
-single run; any path that is not a file means no handbook.
-
-### The bare-model baseline
-
-With `--baseline` (or `AGENT_BASELINE=1`), before the design phase the wrapper also answers the question with the bare
-model — no catalog, no handbook, no tools — as its own separate investigation,
-so the full pipeline's answer can be read against what the model alone would
-have said. The baseline `answer.md` path is printed and linked from the design
-trajectory. It is off by default. The same phase
-runs on its own:
-
-```sh
-.venv/bin/python -m agent.harness.agent --phase baseline --task "<benchmark question>"
-```
-
-## 6 — Driving the phases by hand
-
-Each `python -m agent.harness.agent` invocation performs one durable phase and
-exits. All phases of one question share a single investigation directory and a
-single append-only trajectory.
-
-Design and submit:
-
-```sh
-.venv/bin/python -m agent.harness.agent \
-  --phase design \
-  --task "<benchmark question>" \
-  --model "<served model>" \
-  --base-url "<OpenAI-compatible endpoint>" \
-  --followups 1
-```
-
-After the emitted experiment code has a finished `report/index.md`, continue the
-same investigation by pointing `--run` at its directory:
-
-```sh
-.venv/bin/python -m agent.harness.agent \
-  --phase interpret \
-  --run <result-folder>/agent/<investigation-id> \
-  --model "<served model>" \
-  --base-url "<OpenAI-compatible endpoint>" \
-  --followups 1
-```
-
-Interpretation itself reads only the finished report, but a follow-up it authors
-is validated against the same `environment.yml`, so keep that file current.
-
-If interpretation submits a follow-up, wait for that report and run the same
-command again with the same `--run` path. Otherwise the investigation's
-top-level `answer.md` now holds the interpretation of that one result.
-
-To interpret a finished result with no local trajectory, status, or cluster
-configuration in play, point `--report` straight at its report index. This is
-the portable one-result form:
-
-```sh
-.venv/bin/python -m agent.harness.agent \
-  --phase interpret \
-  --report /path/to/results/<experiment-code>/report/index.md \
-  --task "<question this experiment tests>" \
-  --model "<served model>" \
-  --base-url "<OpenAI-compatible endpoint>" \
-  --followups 1
-```
-
-When `--task` is omitted here, the harness uses the archived experiment's
-hypothesis or title. Interpretation starts from that one report, follows only
-the local links inside it, and cannot read another experiment merely because it
-shares the same result root.
-
-`--dry-run` designs and validates without submitting. Design and `--run`
-continuation take the result root from `cluster.config` unless `--results` or
-`AGENT_RESULTS` overrides it; a standalone `--report` run derives the root from
-the report path when none is configured.
-
-## Validating an experiment you wrote yourself
-
-To check an `experiment.yml` you wrote by hand, with no model involved at all,
-call the validator directly:
-
-```sh
-.venv/bin/python -m agent.harness.validate experiment.yml \
-  --environment environment.yml \
-  --catalog contracts/contract_catalog.yml --indent 2
-```
-
-It prints the same structured verdict the design agent's `validate` tool
-receives — the `valid` flag, a list of `{stage, message}` errors, whether the
-environment was checked, and the expanded benchmark-phase count with a
-conservative declared-timeout budget — and exits 0 when the specification is
-valid, 1 otherwise. It touches no cluster, no model server, and no GPU: this
-module only reads the experiment, catalog, and environment files and never
-imports the model client, so it needs no served model, network access, or
-even the `agent` install extra. `--environment` is required on
-purpose; pass an empty string to skip the placement and resource-ceiling checks,
-and the verdict then records that it did so in its `environment_checked` field.
-
-This is a stricter superset of the repository's plain
-[`validate_experiment.py`](../validate_experiment.py), covered in
-[`AgentWorkflow.md`](AgentWorkflow.md)'s step 4: both
-resolve the experiment against the catalog and check placement/resources
-against `environment.yml`, but this one also enforces the experiment design
-handbook's decidable principles and reports the run-count/timeout estimate
-below. Reach for the plain validator for a quick catalog/placement check with
-no extra install; reach for this one when the result must pass the same gate
-the design agent's own `validate` tool enforces.
-
-[`dev/catalog/experiment.yml`](../dev/catalog/experiment.yml) is a maintained,
-runnable example: a two-system PostgreSQL-versus-PgDuckDB sweep across
-concurrency and memory pressure, with a header comment tracing each field back
-to the phrase in the question that produced it. Copy it, edit it, and validate
-your copy before running anything.
-
-The declared-timeout budget assumes every active query reaches its per-query
-deadline, so it is a cost ceiling for comparing designs, not a prediction of
-elapsed time. When a follow-up decision leaves only particular queries
-unresolved, follow-up authoring is required to use that same `active_queries`
-subset; a full-workload follow-up stays possible but its decision must state why
-the broader cost is scientifically necessary.
-
-## What interpretation checks before it trusts the model
-
-Interpretation runs a deterministic quality and result assessment before it
-accepts any conclusion the model states. Where per-query data exists it
-separates completion of the planned query set from speed on the queries that
-succeeded everywhere, marks whole-workload throughput non-comparable when a
-planned query errored, and flags unusually different repetitions as warnings.
-Independently of the workload name, it reads the archived `discriminates`
-factors — the axes the experiment set out to vary — and computes the ordered
-concurrency, CPU, and memory shapes and the categorical system rankings itself.
-The harness files those computed claims beside the model's verdict. The model
-can dispute a claim with a reason; it does not have to copy the computed values
-back. Evidence checks establish that the cited files were read from this result,
-not that their contents support the conclusion. Failed monitoring checks carry
-the exact affected phases and whether the performance metrics remain usable.
-
-## What a run writes
-
-Investigations are written under the `agent/` subdirectory of the result folder
-`cluster.config` declares, beside the benchmark results themselves, so the
-checkout keeps no run artifacts of its own. Override the location with
-`--trajectories`. Two directories sit there as siblings of the investigations:
-`inbox/`, where the design and follow-up agents draft specifications before
-validating them, and `status/`, the registry of `<experiment-code>.json` files
-behind the resume logic. Override them with `--inbox` and `--status`.
-A status file says `running` from submission until the lifecycle sees the
-report, when it becomes `finished`, or sees the benchmark's process exit
-without one, when it becomes `failed`. A benchmark the lifecycle gives up on
-or stops waiting for keeps `running`, because its bexhoma process may still
-be using the cluster.
-
-The design step first creates a timestamp-only working directory. Once it
-produces a valid experiment, the harness renames the directory to
-`<result-folder>/agent/<timestamp>-sf<scale>-<model>/` — for example
-`20260827T111847490995-sf2-qwen3.8-27b` — so the scale factor and served model
-are visible without opening anything. An incomplete design stays timestamp-only
-because it has no trustworthy scale factor. Every later interpretation and
-follow-up appends to the same directory:
-
-- `trajectory.jsonl` — the append-only record of every phase: prompts,
-  reasoning, tool calls, stages, hashes, budgets, and outcomes;
-- `task.txt` — the original question;
-- `phases/<number>-<phase>/` — the immutable submitted specification, the
-  validation inputs, and the bexhoma log for that phase, when it submitted an
-  experiment;
-- `reports/<number>-<phase>.md` — each phase's own written account;
-- `reports/<number>-<phase>-reasoning.md` — that phase's model-authored
-  turn-by-turn reasoning, rendered verbatim from the trajectory;
-- `answer.md` — written only after the final interpretation, containing its
-  one-result answer according to the archived result contract.
-
-Each submitted result folder also archives the exact experiment, input catalog,
-result contract, and environment descriptor used to validate it. After a
-successful interpretation it gains `agent_summary.yml`: the experiment code, its
-`follow_up_of` parent, the hypothesis, the scientific verdict, the technical
-validity, and the unresolved next question, with evidence paths relative to that
-folder so the lineage stays portable. An interpretation the harness accepted
-incomplete, after repeated refusals of its record, also carries
-`incomplete_record`, naming the parts that were left out. A result whose summed
-throughput the harness could not vouch for also carries
-`measurement_restriction`, the qualification it appended to the answer.
-Follow-up authoring receives only these compact summaries of its ancestors,
-never their full reports or metrics.
-
-## Running two investigations at once
-
-An agent-started run takes an exclusive lock on the result folder, so a second
-run refuses to submit while the first is still benchmarking. That is a
-measurement policy, not a filesystem limit: two benchmarks sharing a cluster
-measure each other. Pass `--allow-parallel-runs` to submit anyway; the run
-records in its trajectory that it did so, and you should pin the two
-investigations to different nodes with a `placement:` block first, or the
-numbers will describe the interference rather than the systems.
-
-Both runs can share one inbox: a draft name another run already holds is saved
-under the next free counter (`name_01.yml`, `name_02.yml`, ...) instead of
-overwriting it.
-
-To run several complete investigations at once, start one lifecycle per shell
-with a shared model server and parallel runs allowed:
-
-```sh
-AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 1>"
-AGENT_MODEL_SERVER=shared python agent/lifecycle.py --allow-parallel-runs --task "<question 2>"
-```
-
-`AGENT_ALLOW_PARALLEL_RUNS=1` in `.env` does the same as the flag, and all
-shells must use the same manifest. The first lifecycle to need the model starts
-it, the others reuse it, and nobody stops it: the pod's idle watchdog releases
-the GPU once no lifecycle has sent a request for a while, and the next one that
-needs the model starts it again.
-
-## Self-hosted model server
-
-[`agent/k8s/vllm-qwen38-27b.yml`](../agent/k8s/vllm-qwen38-27b.yml) and
-[`agent/model_server.sh`](../agent/model_server.sh) (with [`agent/model_server.ps1`](../agent/model_server.ps1)
-as its PowerShell port for Windows) run a vLLM server on the cluster
-as a Job, so a finished server removes itself.
-They are a convenience, not part of the pipeline — any OpenAI-compatible
-endpoint works. If you use them, four values are specific to the cluster they
-were written for and must be set for yours: the kubeconfig context and namespace
-(exported as `MODEL_SERVER_CONTEXT` and `MODEL_SERVER_NAMESPACE`; neither has a
-default, since a stranger's cluster name or namespace would otherwise silently
-redirect every kubectl call the switch makes — and `MODEL_SERVER_NAMESPACE` is
-also the one the switch writes into the kube context itself), the optional
-login refresh script (`KUBE_LOGIN_SCRIPT`, empty by default; an ordinary
-kubeconfig that never expires needs none), and the storage class and GPU node
-labels, which are edited directly in the manifest. Getting the GPU labels wrong
-leaves the pod unschedulable and startup waits for capacity by design, so pass
-`--server-start-attempts 3` the first time and check `kubectl describe pod` if
-it stalls.
-
-[`agent/k8s/`](../agent/k8s/) holds manifests for other models. Select one with
-`MODEL_SERVER_MANIFEST=<path>` or `agent/lifecycle.py --model-server-manifest <path>`;
-each manifest's header comments give its sizing reasons. Nex and Ornith loop at
-the harness default temperature of 0, so run them at the temperature listed.
-Per-model details are in [`agent/README.md`](../agent/README.md#self-hosted-model-server).
-
-| Manifest | Model | GPU node | Temperature | Notes |
-|---|---|---|---|---|
-| `vllm-qwen38-27b.yml` | Qwen3.8 27B | H200 or B200 | default | the default |
-| `vllm-glm45-air-int4.yml` | GLM-4.5-Air INT4 | H200 or B200 (not H100) | default | quantized here from the full model |
-| `vllm-llama33-70b-int4.yml` | Llama-3.3-70B INT4 | H100, H200 or B200 | default | one tool call kept per reply |
-| `vllm-muse-glimmer-30b.yml` | Muse Glimmer 30B | H200 or B200 | default | first start downloads ~60 GB |
-| `vllm-gemma4-31b.yml` | Gemma 4 31B | prefers H200 | default | not yet served self-hosted |
-| `vllm-nex-n25-mini.yml` | Nex-N2.5-mini | prefers H200, or B200 | 0.7 | not on OpenRouter |
-| `vllm-ornith-15-35b-a3b.yml` | Ornith-1.5-35B-A3B | prefers H200, or B200 | 0.6 | not on OpenRouter |
-
-The pod carries its own idle watchdog: it releases the GPU once twenty minutes
-pass with no request, so a phase run by hand does not strand a GPU node. Set
-`IDLE_SHUTDOWN_SECONDS` in the manifest to change that window, or `0` to keep
-the server up until something deletes it. `agent/model_server.sh down` hands the
-GPU back immediately.
-
-## Autonomous Kubernetes lifecycle
-
-For an unattended investigation, use the Kubernetes Job in
-[`agent/k8s/lifecycle-controller.yml`](../agent/k8s/lifecycle-controller.yml). A
-Job rather than a bare Pod so Kubernetes restarts the controller after a node or
-process failure; a persistent volume holds its trajectory, status, and results.
-On restart the controller resumes the newest durable submission through the
-ordinary `--resume` path instead of designing and submitting again.
-
-Build and publish the image from the repository root:
+`agent/k8s/lifecycle-controller.yml` runs the lifecycle as a Job with its own
+service account and a persistent volume for trajectories, status and results.
+After a restart it resumes the newest submission instead of submitting again.
 
 ```sh
 docker build -f agent/Dockerfile.lifecycle -t <registry>/bexhoma-agent:<tag> .
 docker push <registry>/bexhoma-agent:<tag>
+kubectl -n <ns> create configmap agent-lifecycle-input \
+  --from-file=cluster.config=cluster.config --from-file=task.txt=task.txt
+kubectl -n <ns> apply -f agent/k8s/lifecycle-controller.yml
+kubectl -n <ns> logs -f job/<job-name>
 ```
 
-Put the question alone in `task.txt`, then create the inputs as a ConfigMap:
+Before applying, edit in the manifest: the image, the Job name and
+`AGENT_LIFECYCLE_ID` (same new value), the ClusterRoleBinding subject
+namespace, the state PVC storage class, and the model server's storage and GPU
+labels. The Job's environment sets `AGENT_MODEL_SERVER`, `AGENT_METHOD`,
+`AGENT_FOLLOWUPS`, `AGENT_ATTEMPTS` and `AGENT_MAX_TOKENS`; `AGENT_ROOT`,
+`AGENT_STATE_ROOT`, `AGENT_INPUT_DIRECTORY` and `AGENT_TASK_FILE` only change
+with the volume mounts.
+
+## Parallel investigations
+
+An agent-started benchmark holds a lock on the result root, so a second
+investigation refuses to submit while the first one runs: two benchmarks on one
+cluster measure each other. To run several anyway, pin them to different nodes
+with `placement:` and start each with
 
 ```sh
-kubectl -n <namespace> create configmap agent-lifecycle-input \
-  --from-file=cluster.config=cluster.config \
-  --from-file=task.txt=task.txt
+AGENT_MODEL_SERVER=shared bexhoma agent lifecycle --allow-parallel-runs --task "<question>"
 ```
 
-Before applying the manifest, edit its explicit portability values: the
-controller image placeholder, the Job name and `AGENT_LIFECYCLE_ID` (the same
-new investigation name for both), the ClusterRoleBinding subject namespace (from
-`replace-me` to the target namespace — this read-only cluster permission lets
-the environment refresh list nodes, storage classes, and priority classes), and
-the lifecycle-state PVC storage class plus the same model-server storage and
-GPU-label choices as above. Then:
+All shells must use the same manifest. A draft name already taken in the shared
+inbox is saved as `name_01.yml`, `name_02.yml`, …
+
+## Internals
+
+### Phases and budgets
+
+| Phase | Context | Turn budget | Tools |
+|---|---|---|---|
+| design | fresh | 6 × attempts + 2 | `read_file`, `write_file`, `validate`, `submit` |
+| interpret | fresh | 24 + 2, plus up to 4 repair turns | `read_file`, `assess_comparison_quality`, `record_interpretation` |
+| follow-up authoring | fresh | 6 × attempts + 2 | as design |
+| baseline | fresh | 4 | none |
+
+- A reply with only reasoning (no tool call, no answer) is nudged; three in a
+  row end the phase.
+- File text per context is capped at 60% of (context window − `--max-tokens`),
+  at about 3.5 characters per token, or 110,000 characters when the server does
+  not publish its window. Rereading unchanged text is free.
+- A Markdown file over 24,000 characters can only be read by section (at most
+  12,000 characters per read, continued by offset). Contracts and
+  specifications are returned whole, up to 56,000 characters, or refused.
+
+### Rules the harness adds
+
+These are enforced by the harness itself. The contracts say what is legal and
+claimable; the handbook says what is sound; the rules below say what the
+harness lets the model do with them.
+
+**Design**
+
+- Before writing a specification the context must read the catalog, the
+  environment, and the handbook's `## Navigation` chapter.
+- Drafts can only be written into the inbox, as `.yml` or `.yaml`.
+- `validate` may be called `--attempts` times. When the budget is spent, tools
+  are withdrawn, except `submit` when the last validation passed.
+- `--dry-run` removes `submit` from the tool list.
+
+**Validation**, beyond the catalog's own schema:
+
+- Every structural problem is reported in one verdict, not one per attempt.
+- `discriminates` must name exactly the factors the experiment varies (M2.6).
+  An experiment varying nothing is refused.
+- The hypothesis must name an outcome a measurement could contradict (M1.1).
+  It is refused when it uses only adequacy words ("handle", "acceptable",
+  "scale well", …) with no direction, comparison or number.
+- CPU and memory `request` must equal `limit` (M2.3).
+- When both CPU and memory are declared factors, each must vary alone in some
+  pair of configurations (M2.1). The lists are paired by position, not crossed.
+- An experiment that compares anything needs `repetitions` at least the
+  workload's `minimum_for_conclusions` (TPC-H: 3), otherwise at least 2 (M5.1).
+- Against `environment.yml`: storage class exists; pinned nodes exist and are
+  not tainted out; resource ceilings hold; a pinned benchmarking node can host
+  the benchmarker pods of the largest round.
+- Every verdict carries an estimate: number of runs and a declared-timeout
+  budget, which assumes every query hits its timeout.
+
+**Submission**
+
+- Only the exact bytes that passed a full validation (catalog and environment)
+  can be submitted, and only while catalog and environment are unchanged.
+- A lock on the result root refuses a second agent-started benchmark while one
+  runs, unless parallel runs are allowed.
+- `AGENT_CLUSTER_LOGIN` runs first; a failure or a hang stops the submission.
+- The experiment, catalog, result contract and environment are archived in the
+  result folder; Bexhoma runs detached, so the agent can exit.
+
+**Follow-up authoring**
+
+- Runs in a fresh context that must reread catalog, environment and handbook.
+- Receives the interpretation, the decision, and ancestors' `agent_summary.yml`
+  only, never their reports.
+- `follow_up_of` must equal the parent's experiment code.
+- At least one execution-relevant field must change (everything except title,
+  hypothesis, discriminates, follow_up_of). An approved independent repeat
+  must change none of them.
+- When the decision names `target_queries`, `active_queries` must equal them.
+
+**Interpretation**
+
+- Reads start at the report index, the archived `experiment.yml`, the result
+  contract and the handbook; any other file becomes readable only once a page
+  already read links to it.
+- Before a verdict can be recorded, the context must have read the report index
+  and its Tests, the result contract, and the handbook chapters `Navigation`,
+  `M2`, `M3`, `M5`, `M7`, and must have run `assess_comparison_quality`.
+- The assessor, not the model, computes the claims: sweeps over concurrency,
+  CPU and memory, rankings of systems, query coverage, suspect repetitions,
+  validity scope. They are filed with the record; the model can only dispute
+  them with a reason.
+  - A sweep needs every declared level present. A step counts only when it
+    exceeds both levels' standard errors (with a 5% noise floor), so shapes are
+    descriptive, not significance tests.
+  - Rounds with 0 or NaN in a metric measured nothing and are excluded.
+  - A repetition 3× away from its peers' median is flagged, never dropped.
+  - Any failed query withholds all claims. When the report has a completion
+    table, claims are built from the complete phases instead, only if every
+    level kept at least 2 complete repetitions; they carry `scope:
+    complete_phases_only` and the completion per level.
+  - YCSB summed throughput is checked against a common-duration approximation;
+    above 20% excess the claim is withheld.
+  - A failed monitoring check is scoped to its phases; query-failure checks to
+    the incomplete phases; every other failed check counts against the whole
+    result.
+- The record is checked: verdict status and conclusion; every cited path read
+  and inside this result; a validity scope when checks failed, naming every
+  incomplete phase when complete-phase claims are used; one assessment per
+  explicit question ("settled" needs supported evidence and nothing missing);
+  a consistent finish-or-follow-up decision.
+- A refused record gets the reason back. After 4 refusals it is accepted
+  incomplete: failing parts are dropped and no follow-up starts. A refusal on
+  the last turn earns a repair turn.
+
+**Answer**
+
+- The harness appends its own qualifications to the answer: withheld summed
+  throughput, and an incomplete record.
+- It writes `agent_summary.yml` into the result folder: code, parent,
+  hypothesis, verdict, technical validity, unresolved question, and any
+  qualification.
+
+### What a run writes
+
+```
+<resultfolder>/agent/
+  <timestamp>-sf<scale>-<model>/       one investigation; renamed once a design validates
+    task.txt                           the question
+    trajectory.jsonl                   every prompt, reply, tool call, budget and outcome
+    phases/<n>-<phase>/                submitted specification, validation inputs, bexhoma.log
+    reports/<n>-<phase>.md             each phase's account
+    reports/<n>-<phase>-reasoning.md   the model's reasoning, verbatim
+    answer.md                          the final answer
+  inbox/                               drafts
+  status/<code>.json                   running | finished | failed, for resume
+<resultfolder>/<code>/agent_summary.yml
+```
+
+A benchmark the lifecycle gave up on stays `running`, since its process may
+still use the cluster.
+
+### Replay on another cluster
+
+The maintained examples pin nodes by name. Elsewhere, keep the original file
+for auditing, or copy it, replace `placement` with nodes from the new
+`environment.yml` (or drop it), and revalidate. Or ask the original question
+again and let the agent design for the new cluster. This working tree also
+carries local `nodeSelector` edits in some Kubernetes templates; they must not
+ship.
+
+### Verification
 
 ```sh
-kubectl -n <namespace> apply -f agent/k8s/lifecycle-controller.yml
-kubectl -n <namespace> logs -f job/<job-name>
+python -m unittest tests.test_agent_harness tests.test_agent_query_evidence tests.test_harness_partial_results
 ```
 
-The controller authenticates as its own service account, so it does not depend
-on a workstation's expiring login, and its write authority is limited to the one
-namespace. The Job's environment block is where an in-cluster run picks its
-model server (`AGENT_MODEL_SERVER`) and its handbook (`AGENT_METHOD`), exactly as
-`.env` does locally. `AGENT_FOLLOWUPS`, `AGENT_ATTEMPTS` and `AGENT_MAX_TOKENS`
-set the follow-up budget, the validation attempts per design and the per-reply
-token ceiling; the last two keep the lifecycle's own defaults when left unset. The language model still receives only the catalog,
-environment, result contract, and phase tools — never Kubernetes or terminal
-access.
-
-## Replay on another cluster
-
-The maintained examples pin `sut`, `loading`, and `benchmarking` to a local node
-name. On another cluster there is usually no node by that name, so its validator
-correctly rejects the unchanged file. There are three replay levels:
-
-1. **Audit the original run.** Keep the submitted file unchanged beside its
-   archived environment and result evidence; it records exactly what ran.
-2. **Repeat the design elsewhere.** Copy the specification, replace each
-   `placement` value with a node from the target's freshly generated
-   environment (or omit `placement` and let the target scheduler choose), and
-   revalidate before submitting. This changes deployment binding only, not the
-   workload, treatment, resources, rounds, or repetitions.
-3. **Let the agent adapt the design.** Generate the target environment and ask
-   the original question again; the agent chooses legal placement from that
-   descriptor and produces a new auditable specification.
-
-This working tree also carries local `nodeSelector` edits in several Kubernetes
-templates that force this test cluster onto one node. They must not ship in a
-portable release — removing `placement` from the YAML is not enough while those
-template overrides remain.
-
-## Reference: flags and environment
-
-A flag overrides the environment, and the environment overrides `.env`. Flags
-with no environment form are marked with a dash.
-
-| Flag | Environment | Meaning |
-|---|---|---|
-| `--interpret-model` | `AGENT_INTERPRET_MODEL` | model for the interpretation phase; defaults to `--model`, so the verdict can run on a stronger model than the design |
-| `--attempts` | `AGENT_ATTEMPTS` | validation calls allowed per authoring phase (default 3: one first attempt plus two repairs) |
-| `--followups` | `AGENT_FOLLOWUPS` | follow-up budget; the Job defaults to 1 |
-| `--poll-seconds` | — | how often the lifecycle polls a running benchmark (default 30) |
-| `--server-retry-seconds` | — | wait between model-server start retries (default 60) |
-| `--server-start-attempts` | — | model-server start attempts; 0 retries until capacity returns |
-| `--run-record` | — | file a phase writes its investigation directory into; set by the lifecycle wrapper so concurrent agents find their own directory |
-
-`agent/model_server.sh` reads these variables, all optional except the
-namespace:
-
-| Variable | Default | Meaning |
-|---|---|---|
-| `MODEL_SERVER_MANIFEST` | `k8s/vllm-qwen38-27b.yml` | manifest to deploy |
-| `MODEL_SERVER_JOB`, `MODEL_SERVER_SERVICE` | `bexhoma-agent-model` | Job and Service names |
-| `MODEL_SERVER_PORT` | `8001` | local port for the port forward |
-| `MODEL_SERVER_BASE_URL` | `http://localhost:$PORT/v1` | endpoint the agent is pointed at |
-| `MODEL_SERVER_IN_CLUSTER` | `0` | `1` when running inside the cluster |
-| `MODEL_SERVER_SHARED` | `0` | `1` never stops the server; set by `AGENT_MODEL_SERVER=shared` |
-| `MODEL_SERVER_STOP_TIMEOUT_SECONDS` | `300` | wait for the Job to disappear on stop |
-
-`AGENT_CLUSTER_LOGIN` names a command the harness runs to refresh the cluster
-credential just before an experiment is submitted, because a design phase can run
-for hours and outlast a login that was valid at launch. A command that hangs is
-stopped after 120 seconds.
-
-The in-cluster controller Job also reads `AGENT_ROOT` (default `/opt/bexhoma`),
-`AGENT_STATE_ROOT` (`/state`), `AGENT_INPUT_DIRECTORY` (`/input`) and
-`AGENT_TASK_FILE` (`<input>/task.txt`). Change them only when mounting the
-volumes elsewhere.
-
-## Verification
-
-```sh
-.venv/bin/python -m pytest \
-  tests/test_agent_harness.py \
-  tests/test_agent_lifecycle.py \
-  tests/test_agent_query_evidence.py -q
-```
-
-Neither test needs a cluster or a model server.
-
-## See also
-
-- [`AgentWorkflow.md`](AgentWorkflow.md) — the question-to-answer loop this
-  harness automates.
-- [`AgentCatalogContract.md`](AgentCatalogContract.md) — what a valid
-  `experiment.yml` may contain.
-- [`AgentResultContract.md`](AgentResultContract.md) — what a finished run's
-  result folder holds, and how to answer from it.
-- [`AgentReport.md`](AgentReport.md) — the tiered report the interpretation
-  phase reads.
-- `agent/ARCHITECTURE.md` — the full annotated pipeline, capability boundary,
-  enforcement rules, and known limits.
-- `agent/README.md` — the terse command reference.
+No cluster and no model server are needed.

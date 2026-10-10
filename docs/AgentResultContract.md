@@ -1,336 +1,102 @@
-# Result Folder Output Contract
+# Result Contract
 
-A pre-run reference for an agent (or human) that needs to know, **before
-submitting an experiment**, exactly what will exist in the result folder
-afterwards, what it will be named, and which files are safe to treat as
-ground truth versus which are only a rendered convenience.
+[`contracts/contract_result.yml`](../contracts/contract_result.yml) says what a
+finished experiment's result folder contains, how its names decode, which
+checks decide whether a number can be trusted, and how an answer is shaped. Its
+version equals the report's `schema_version`. Its rationale is in
+`contracts/contract_result_comments.md`.
 
-This is the contract version of [`AgentReport.md`](AgentReport.md) (which
-explains the tiered-report *design*) and of the naming/validity/interpretation
-blocks embedded verbatim in every `report/index.md`
-(`bexhoma/report_writer.py`) — read this file to plan; read the generated
-`report/index.md` to interpret an actual run.
+## Result folder
 
-```yaml
-result_contract_version: "1.9.0"   # == bexhoma.report_writer.SCHEMA_VERSION;
-                                    # bump tracks report_writer.py's own frontmatter/tier/layout changes
-
-entry_point:
-  with_report:    report/index.md  # only exists if the run passed -rp/--report
-  without_report: connections.config, queries.config   # always exist once benchmarking started; read these directly
-
-structure:
-  result_dir: "{resultfolder}/{code}/"
-  experiment_code: unix-timestamp        # `code`: seconds, generated at experiment start;
-                                          # unique + monotonically increasing, but NOT evidence
-                                          # two codes ran under comparable conditions
-  configuration:  "<system>-<n>"                                       # e.g. postgresql-1 (lowercased when
-                                                                        # embedded in phase/job/connection below;
-                                                                        # original case, e.g. "PostgreSQL-1", when
-                                                                        # shown standalone, e.g. connections.config)
-  phase:          "<configuration>-<experiment_run>-<client>"          # drops benchmark_run, pod
-  job:            "<configuration>-<experiment_run>-<client>-<benchmark_run>"  # drops pod
-  connection:     "<configuration>-<experiment_run>-<client>-<benchmark_run>-<pod>"
-  # decode any identifier by counting dash-separated segments from the right
-
-tiers:                                  # only "with_report" tiers 1-2 are new files; tier 3 is always the raw folder
-  1_answers:   {glob: "report/index.md"}
-  2_evidence:  {glob: "report/{workflow,loading,benchmarking,monitoring,connections}.md"}
-                                          # each written only if that phase was active
-  3_diagnosis: {glob: "report/files.md", result_dir: "*"}
-                                          # see provenance: below; report/files.md links every raw file once,
-                                          # one section per kind; tier-2 "### Provenance" footers link those sections
-
-provenance:                              # pre-existing files, never written or modified by the report
-  connections:  {"connections.config": "repr() list of every connection dict (identity, params, timings)",
-                 "{job}.config":        "durable single-connection backup, survives dashboard rewrites;
-                                         named by the job identifier, shared by every driver pod of that job",
-                 "queries.config":      "SF/type/duration/defaultParameters/benchmark_sequence/workflow_planned"}
-  workflow:     {"bexhoma-experiment-dict-{configuration}-{code}.json":
-                                         "the loader/benchmarker plan submitted for that configuration
-                                          (exact round/entry layout), written once at experiment start",
-                 "*.yml / *.yaml (minus the input-provenance filenames below)":
-                                         "rendered K8s Job/Deployment/Service manifests actually submitted;
-                                          every image: field is a concrete tag, BEXHOMA_PACKAGE_VERSION
-                                          already substituted — the authoritative source for image versions",
-                 "experiment.yml / experiment.yaml, contract_catalog.yml, contract_result.yml,
-                  catalog.yaml, environment.yml (whichever exist)":
-                                         "the input(s) this run was actually built from, not a K8s manifest —
-                                          a YAML-driven run (experiment.py) copies the experiment.yml/.yaml it
-                                          was given, plus (catalog-driven only) the contract_catalog.yml/
-                                          contract_result.yml pair that governed it, or (self-specified only)
-                                          any catalog:/environment: pointer files the spec named; a hand-typed
-                                          python tpch.py ... invocation writes none of these",
-                 "{pod-name}.describe.log": "kubectl describe pod: scheduling/image-pull/restart/OOMKill and
-                                              node-readiness events for that specific Pod object (a NodeNotReady
-                                              on the SUT's node withdraws its service endpoint, so new
-                                              connections are refused while the process itself keeps running)",
-                 "{job-name}.describe.job.log": "kubectl describe job (loading/generator jobs only; .job.log,
-                                              not .describe.log, so it globs apart from per-pod describes):
-                                              the Job's own Events list every Pod it ever spawned over
-                                              its full lifetime, including a failed one replaced under
-                                              backoffLimit — evidence that survives even after the failed Pod
-                                              object itself has been garbage-collected and dropped out of the
-                                              per-pod *.describe.log set above"}
-  loading:      {"*-loading-*.sql.log / *-loading-*.sh.log": "rendered script SOURCE despite the .log suffix",
-                 "*-loading-*.stdout.log": "stdout of that script",
-                 "*-loading-*.stderr.log": "stderr — check first on a silent loading failure",
-                 "*-loading-*.datagenerator.log": "stdout of one loading pod's data-generation init container",
-                 "*-loading-*.sensor.log": "stdout of one loading pod's loading container — the per-table client
-                                            command actually issued and what it returned (a row count on success,
-                                            a client error otherwise), one file per pod; the tier-3 evidence that
-                                            exposes a partially loaded database (see Known gaps)"}
-  benchmarking: {"bexhoma-benchmarker-*.log":            "raw per-pod benchmarker/driver stdout",
-                 "bexhoma-benchmarker.*.all.df.pickle":  "cached parsed+aggregated DataFrame",
-                 "queries.config":                        "literal SQL text — DBMSBenchmarker-family (TPC-H/TPC-DS) only"}
-  monitoring:   {"query_{component}_metric_{key}.csv":   "wide format: one column per connection, one row per Prometheus scrape;
-                                                            {component} (e.g. loading/benchmarking/loader/benchmarker/datagenerator)
-                                                            is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency,
-                                                            not bexhoma's to rename freely — see monitoring.md's component_title
-                                                            column for the human-readable pairing"}
-  restarts:     {"bexhoma-sut-{configuration}-{code}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one snapshot per experiment_run; aggregate by max per pod (restartCount is cumulative across runs, same pod, not recreated), not by summing every file"}
-  sut_logs:     {"bexhoma-sut-{configuration}-{code}-{experiment_run}.yml":                    "SUT Deployment manifest — one archived copy per experiment_run, even when identical to the previous run's, since the live Deployment itself is restarted in place rather than recreated",
-                 "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.{container}.log":  "SUT container stdout, one capture per experiment_run",
-                 "bexhoma-sut-{configuration}-{code}-{experiment_run}-{pod-hash}-{pod-suffix}.describe.log":     "kubectl describe pod, one capture per experiment_run"}
-                 # see "Result-folder filenames vs. report identifiers" below for the one remaining
-                 # asymmetry: the live k8s object's own name has no experiment_run segment, even
-                 # though every filename on disk (including its own archived manifest) does
-
-versions:                                # see Known gaps below for what's genuinely still missing
-  images: recorded_as_tag_not_digest     # every submitted manifest's image: field is a concrete tag
-                                          # (provenance.workflow *.yml); connections.config's own
-                                          # `dockerimage` field mirrors the SUT's resolved tag too;
-                                          # no sha256 digest either way, so a re-pushed tag is invisible
-  bexhoma: recorded_directly_and_via_image_tag
-                                          # report/index.md frontmatter's bexhoma_version field records
-                                          # the installed bexhoma.__version__ at report-generation time
-                                          # (can differ from the version that actually ran the experiment
-                                          # if -rp/--report is applied later, e.g. `bexhoma summary -e
-                                          # <code> -rp`, after an upgrade); for the submission-time version,
-                                          # BEXHOMA_PACKAGE_VERSION in every bexhoma/* image tag is
-                                          # substituted with the real installed version before the
-                                          # manifest is written to the result folder
-                                          # (clusters.py::create_object_from_file()) and can't drift later
-  dbmsbenchmarker: not_recorded          # baked into the bexhoma/benchmarker_dbmsbenchmarker image,
-                                          # whose tag tracks bexhoma's own version, not
-                                          # dbmsbenchmarker's — genuinely not recoverable
-
-validity:                                # from experiment._test_results -> report/index.md "### Tests" table
-  - id: workflow_as_planned              # planned (queries.config's workflow_planned) == actual submitted jobs/pods
-    kind: absolute
-  - id: no_sut_container_restarts        # bexhoma-sut-*-restarts.json sums to 0; reports each restarted
-    kind: absolute                       # container's reason (OOMKilled, ...), exit code, finish time and
-                                          # data volume, read from its describe log's Last State block
-  - id: sut_data_survived_restarts       # every restarted SUT container keeps its data directory on a mounted
-    kind: absolute                       # volume; without one it restarts EMPTY and every later query errors
-                                          # because of that; SKIPPED when there were no restarts
-  - id: key_metric_present               # benchmark-type headline column(s) contain no 0/NaN — see table below
-    kind: absolute
-  - id: no_sql_errors                    # DBMSBenchmarker-family (TPC-H/TPC-DS) only
-    kind: absolute
-  - id: no_sql_warnings                  # = no result-set mismatch WITHIN one driver process; DBMSBenchmarker-family only
-    kind: absolute                       # one pod = one process = one connection, so at numRun=1 it compares nothing
-  - id: monitoring_component_cpu_nonzero # per monitored component; SKIPPED (not failed) when phase < 1 scrape interval
-    kind: absolute
-  - id: explain_captured_for_all_queries # DBMSBenchmarker-family only: every active query has an EXPLAIN captured
-    kind: absolute                       # for at least one connection; SKIPPED (not failed) when -se/--store-explain
-                                          # was not used, so nothing was captured at all
-  - id: loaded_data_complete             # NOT IMPLEMENTED — see Known gaps
-    kind: absolute
-  - id: cross_experiment_comparison      # NOT IMPLEMENTED — see Known gaps
-    kind: comparative
-  verdict: {passed: int, failed: int, skipped: int}   # index.md frontmatter overall_status;
-                                                        # only a FAILED row scopes/invalidates metrics below it — skipped never does
-
-answer_contract:                         # how to structure the final written answer, once the above has been read
-  hypothesis:
-    source_file: experiment.yml          # <result_dir>/experiment.yml; fields: title, hypothesis, discriminates, follow_up_of
-    present_when: catalog-driven run     # `python experiment.py run <file>.yml` copies it in at run start
-    absent_when: direct entry-script run # e.g. `python tpch.py run -dbms ...` never had a catalog file to copy —
-                                          # state "no hypothesis recorded", don't reconstruct one from workload params
-    also_copied: [contract_catalog.yml, contract_result.yml]  # frozen at run time, may differ from the repo's current copies
-  steps:
-    - {id: hypothesis, instruction: "restate the question, quoting experiment.yml's hypothesis verbatim when present"}
-    - {id: verdict,     instruction: "hypothesis verdict (supported/refuted/inconclusive/invalid), then pass/fail/skip counts; note any FAILED row scoping a metric below it", source: [agent_summary_contract.fields.verdict, verdict_shape],
-       failure_causality: "name the FIRST failure (by timestamp) as root cause; errors after a SUT restart are its downstream effects; for a restart state its reason and the round/streams/query running when it happened"}
-    - {id: evidence,    instruction: "cite the specific tier-1/tier-2 file and value behind every claim", source: tiers}
-    - {id: follow_up,   instruction: "if unresolved, propose a new experiment.yml with follow_up_of set to this run's experiment_code", source: "experiment.yml discriminates/follow_up_of, else known_gaps.cross_experiment_comparison"}
-
-agent_summary_contract:               # optional agent extension; written by the agent harness, never by BeXhoma
-  version: "1.0.0"
-  output_file: "<result_dir>/agent_summary.yml"
-  present_when: "the optional agent harness has successfully interpreted this result"
-  absent_when:  "not interpreted by the harness — BeXhoma alone never creates this file"
-  purpose: "portable, compact lineage memory for authoring a later follow-up without loading ancestor reports or trajectories"
-  interpretation_scope: "the verdict is derived from THIS experiment alone; ancestor summaries are never evidence for interpreting it"
-  fields:
-    agent_summary_version: {type: str, const: "1.0.0"}
-    experiment_code:       {type: str, source: structure.experiment_code}
-    follow_up_of:          {type: "str|null", source: experiment.yml.follow_up_of}
-    hypothesis:            {type: "str|null", source: experiment.yml.hypothesis}
-    verdict:               {status: "enum [supported, refuted, inconclusive, invalid] — scientific disposition, distinct from verdict_shape's mechanical counts",
-                            conclusion: "str — compact finding from the one-result interpretation",
-                            evidence_paths: "list[str] — paths relative to this result directory"}
-    technical_validity:    {failed_checks: "int, source: index.md frontmatter overall_status.failed",
-                            scope: "str — which conclusions the failed checks affect; empty when none failed"}
-    unresolved_question:   {type: str, semantics: "the one question selected for a follow-up; empty when interpretation finishes"}
-  lineage_use: "follow follow_up_of through sibling result directories and read only agent_summary.yml from each
-                ancestor, oldest first; stop at a missing, malformed, mismatched, or cyclic record"
+```
+<resultfolder>/<code>/
+  report/index.md            tier 1: start here (only with -rp; always for experiment.py)
+  report/{workflow,loading,benchmarking,monitoring,connections}.md
+                             tier 2: evidence, each only if that phase ran
+  report/files.md            tier 3: links every raw file below, once
+  experiment.yml, contract_catalog.yml, contract_result.yml, environment.yml
+                             inputs of a catalog-driven run, copied at start
+  connections.config, queries.config, <job>.config
+                             what ran; read these when there is no report
+  *.yml                      Kubernetes manifests as submitted (concrete image tags)
+  *-loading-*.{sql,sh,stdout,stderr,sensor,datagenerator}.log
+  bexhoma-benchmarker-*.log, query_<component>_metric_<key>.csv
+  bexhoma-sut-*.{<container>,describe}.log, *.<container>.previous.log, *-restarts.json
+  agent_summary.yml          written by the agent harness only
 ```
 
----
+`<code>` is the start time in Unix seconds: unique and increasing, but not
+evidence that two codes ran under comparable conditions.
 
-## Naming legend, as a decoding rule
+## Identifiers
 
-Every identifier is a positional dash-concatenation — decode by counting
-segments from the right, no lookup table needed:
+Decode by counting dash-separated segments from the right.
 
-| Term | Meaning | Example |
+| Identifier | Shape | Example |
 |---|---|---|
-| `configuration` | SUT instance name (original case when shown standalone, e.g. `PostgreSQL-1`) | `PostgreSQL-1` |
-| `experiment_run` | Repeat counter for the whole experiment (`-nc`) | `2` |
-| `client` | 1-based index of the benchmark phase/round within a run (`-ne`) | `3` |
-| `phase` | `<configuration>-<experiment_run>-<client>`, lowercased | `postgresql-1-2-3` |
-| `benchmark_run` | 1-based index of a parallel benchmark job within a round (query stream vs. refresh stream, etc.) | `1` |
-| `job` | `<phase>-<benchmark_run>`, lowercased | `postgresql-1-2-3-1` |
-| `pod` | 1-based index of a driver pod within a job | `1` |
-| `connection` | `<job>-<pod>`, lowercased | `postgresql-1-2-3-1-1` |
+| configuration | `<system>-<n>` | `pgduckdb-1` |
+| phase | `<configuration>-<experiment_run>-<client>` | `pgduckdb-1-3-2` |
+| job | `<phase>-<benchmark_run>` | `pgduckdb-1-3-2-1` |
+| connection | `<job>-<pod>` | `pgduckdb-1-3-2-1-4` |
 
-`code` (the result folder's own directory name) is a Unix epoch timestamp
-in seconds, assigned once at experiment start — unique and monotonically
-increasing, but comparing two different `code`s as "the same conditions"
-requires independently verifying that (see Interpretation Rules in every
-`index.md`).
+`experiment_run` counts repetitions, `client` the phases (rounds) within one,
+`benchmark_run` parallel jobs in a phase, `pod` driver pods in a job. File
+names follow `<app>-<component>-<configuration>-<code>[-<run>[-<client>[-<benchmark_run>]]]`,
+plus a Kubernetes pod suffix where the file belongs to one pod; decode them from
+`<code>`.
 
-## Result-folder filenames vs. report identifiers
+## Validity checks
 
-The table above decodes identifiers *inside* the report (table indexes,
-`connections.md` anchors). Filenames actually on disk — manifests, logs,
-`.describe.log` — follow a related but distinct convention:
-`<app>-<component>-<configuration>-<code>[-<experiment_run>[-<client>[-<benchmark_run>]]]`,
-optionally followed by Kubernetes' own pod-hash/random suffix on files tied
-to one specific pod, e.g.
-`bexhoma-benchmarker-postgresql-1-1784910886-1-1-1-qp9nt.dbmsbenchmarker.log`.
-Decode these the same way — count from `code`, not from the right — since a
-trailing Kubernetes pod suffix (a hash plus 5 random characters) isn't part
-of the schema and can't be told apart from it by position alone.
+`index.md`'s Tests table. Only a failed row restricts what can be claimed; a
+skipped row never does.
 
-**The SUT Deployment's own k8s identity is the one asymmetric case — but its
-filenames are not.** The live Deployment object is restarted in place across
-every `-nc` repeat rather than recreated, so its `metadata.name` (and the
-service/pod names derived from it) stay identical run after run, with no
-`experiment_run` segment. Every *filename* related to it, however, is
-experiment_run-scoped like everything else: its manifest is archived as
-`bexhoma-sut-{configuration}-{code}-{experiment_run}.yml` — a fresh copy
-written every run (even when byte-identical to the previous run's, since the
-Deployment spec didn't change), not just its `.log`/`.describe.log` captures
-(`bexhoma-sut-postgresql-1-1784910886-3-7bd45c7b95-pwzkz.dbms.log`). So an
-agent decoding filenames never needs a special case for the SUT — only code
-that resolves a filename back to *which live k8s object* it came from needs
-to know that several manifest files can point at the same, still-running
-Deployment.
-
-## Whether `report/` exists at all
-
-`report/*.md` is **not** written by default. It only exists when the run
-passed `-rp`/`--report` (any entry script, or `bexhoma summary -e <code> -rp`
-run later against the same result folder — no live cluster connection
-needed either way). An agent that has not confirmed `-rp` was used must plan
-to read the raw files listed under `provenance:` above directly — start from
-`connections.config` (what ran) and `queries.config` (workload identity +
-`workflow_planned`), rather than assuming `report/index.md` exists.
-
-## Key metric per benchmark type
-
-The `key_metric_present` validity check and `report/index.md`'s Key Metrics
-block both test the same column(s), one set per benchmark type — this is the
-column an agent should treat as "the" headline number:
-
-| Benchmark type | Entry script | Key metric column(s) |
+| Check | Fails when | Restricts |
 |---|---|---|
-| DBMSBenchmarker (TPC-H/TPC-DS) | `tpch.py`, `tpcds.py` | `Geo Times [s]`, `Power@Size [~Q/h]`, `Throughput@Size` |
-| YCSB | `ycsb.py` | `[OVERALL].Throughput(ops/sec)` (loading and benchmarking phase, tested separately) |
-| HammerDB TPC-C | `hammerdb.py` | `NOPM` |
-| Benchbase | `benchbase.py` | `Throughput (requests/second)` |
-| Hardware (fio/sysbench/sockperf/netperf) | `hardware.py` | IOPS / CPU events-per-sec / message rate / transaction rate, per active probe |
+| workflow as planned | submitted jobs or pods differ from the plan | comparisons across phases |
+| no SUT container restarts | a SUT container restarted | its configuration from the restart on |
+| SUT data survived restarts | a restarted SUT had no data volume | every later query of it ran on an empty database |
+| key metric present | a headline metric is 0 or NaN | that metric |
+| no SQL errors (TPC-H) | a query failed | that query; the pooled totals |
+| all active queries in the totals (TPC-H) | a query failed in some connection and left the pooled totals | the pooled per-phase metrics |
+| no SQL warnings (TPC-H) | result sets differ inside one driver process | correctness of those queries |
+| component CPU non-zero | monitoring read 0 or NaN (skipped for phases shorter than a scrape) | monitoring data only |
+| no monitoring metrics missing | Prometheus returned no data, filled with zeros (skipped when every gap is expected) | those metrics |
+| EXPLAIN captured (TPC-H) | an active query has no plan (skipped without `store_explain`) | evidence of which engine ran |
 
-## Known gaps versus an idealized contract
+Headline metrics: TPC-H `Geo Times [s]`, `Power@Size [~Q/h]`,
+`Throughput@Size`; YCSB `[OVERALL].Throughput(ops/sec)`; HammerDB `NOPM`;
+Benchbase `Throughput (requests/second)`.
 
-- **Image tags are recorded; digests are not, and `dbmsbenchmarker`'s own
-  version isn't either.** Every manifest actually submitted to the cluster
-  — SUT deployment, loader/generator/benchmarker jobs, monitoring sidecars —
-  is written into the result folder by `clusters.py::create_object_from_file()`
-  *after* its `BEXHOMA_PACKAGE_VERSION` placeholder is substituted with the
-  real installed bexhoma version, so every `image:` field in
-  `provenance.workflow`'s `*.yml` files is a concrete tag (e.g.
-  `postgres:18.3`, `bexhoma/benchmarker_dbmsbenchmarker:0.9.8`,
-  `gcr.io/cadvisor/cadvisor:v0.47.0`) — this is the source an agent should
-  read for versions, not `connections.config`'s `dockerimage` field alone
-  (which does carry the SUT's own resolved tag once the SUT has started,
-  via `configurations/benchmarking.py:127`, but is a narrower single-image
-  view). What's still genuinely missing: a **sha256 digest** (a tag can be
-  re-pushed to point at different bytes) and the **`dbmsbenchmarker`
-  package version** specifically — it's baked inside the
-  `bexhoma/benchmarker_dbmsbenchmarker` image, whose own tag tracks
-  bexhoma's version, not dbmsbenchmarker's.
-- **No comparative/historical validity check.** Every validity test is
-  *absolute* (pass/fail/skip against this run's own data); there is no
-  archived-corridor or cross-run regression check. "Compare only within this
-  experiment code" (see every `index.md`'s Interpretation Rules) is a rule an
-  agent must apply itself — nothing in the result folder does it automatically.
-  `contract_catalog.yml`'s `experiment_schema.fields.follow_up_of` lets an
-  experiment.yml record which prior experiment code it follows up on. The
-  optional agent harness writes one compact `agent_summary.yml` after
-  interpreting a result, supplies those summaries to later follow-up authoring,
-  validates that a newly authored follow-up names the current code, and requires
-  an execution-relevant change. It still does not compare ancestor metrics or
-  treat their summaries as evidence for the current result. BeXhoma itself does
-  not enforce these conditions or write the summary.
-- **Nothing verifies that the data actually loaded.** A loading phase counts as
-  successful when its Kubernetes Job exits 0; no row count, table size or
-  ingested-volume check exists in tier 1 or 2, and the per-table loader scripts
-  report success unconditionally — they inspect neither the client's exit status
-  nor its output. A database that is missing whole tables, because a node or
-  service blip refused new connections part-way through the load, therefore
-  passes every check: the metric columns stay non-zero, a query over an empty
-  table returns an empty result quickly rather than erroring, and
-  `no_sql_warnings` cannot see it. The evidence exists, but only in tier 3:
-  the post-load statistics script's `*.stderr.log` carries `ANALYZE VERBOSE`'s
-  live row count per table, its `*.stdout.log` prints the reference-table counts
-  that script selects (TPC-H expects `nation=25`, `region=5`), and each loader
-  pod's `*.sensor.log` shows one row-count line per table — replaced by a client
-  connection error for any table that never made it. `benchmarking.md`
-  corroborates: a repetition whose per-query latency collapses by orders of
-  magnitude on exactly the queries that touch the missing tables.
-- **`no_sql_warnings` never compared two systems.** The driver compares a result
-  set against the first one *the same process* stored — across a query's
-  `numRun` repetitions on one connection, and across connections only when one
-  process drives several. BeXhoma gives every benchmarking pod its own process
-  and exactly one connection, so at `numRun=1` nothing is compared at all. A
-  PASS is not evidence that two configurations, two phases or two
-  `experiment_run`s returned the same rows.
-- **Per-system post_load selection isn't a queryable field.** A catalog-driven
-  experiment can choose, per named system, whether indexes/constraints/
-  statistics were applied after loading (`contract_catalog.yml`'s
-  `systems[].post_load` — see
-  [`AgentCatalogContract.md`](AgentCatalogContract.md)'s catalog concepts).
-  `connections.config`/`queries.config` record *which* SUT ran,
-  not *which post-load steps* it received — an agent has to fall back to
-  tier-3's `*-loading-*.sql.log` (the rendered DDL source, per
-  `provenance.loading` above) and check for `CREATE INDEX`/constraint/`ANALYZE`
-  statements itself.
+## Answer contract
 
-## See also
+1. **Hypothesis**: quote `experiment.yml`'s hypothesis; without that file, say
+   no hypothesis was recorded.
+2. **Verdict**: supported, refuted, inconclusive or invalid, then the
+   pass/fail/skip counts. Start from the first failure in the report's Failure
+   Timeline; the order is evidence, not a diagnosis.
+3. **Evidence**: cite the file and value behind every claim.
+4. **Follow-up**: if unresolved, propose an `experiment.yml` with
+   `follow_up_of` set to this code.
 
-- [`AgentWorkflow.md`](AgentWorkflow.md) — the end-to-end loop this contract
-  is one half of: question → contracts → `experiment.yml` → validate → run →
-  answer.
-- [`AgentCatalogContract.md`](AgentCatalogContract.md) — the input-side
-  counterpart: what a valid `experiment.yml` may contain.
-- [`AgentReport.md`](AgentReport.md) — design rationale for the tiered report,
-  `index.md`'s eleven sections, the Full Metric Catalog.
-- `bexhoma/report_writer.py` module docstring — the same output contract,
-  embedded next to the code that implements it.
-- `bexhoma/experiments/README.md` §9 — full `show_summary()` call graph,
-  per-benchmark-type evaluator/column details, result-folder file naming for
-  every benchmarker type (§7).
+`agent_summary.yml` holds the agent's compact verdict for lineage: code,
+`follow_up_of`, hypothesis, verdict with evidence paths, failed-check count
+and scope, unresolved question. A later follow-up reads only these summaries
+of its ancestors, never their reports.
+
+## Known gaps
+
+- Image tags are recorded, digests are not; dbmsbenchmarker's own version is not.
+- No check compares experiments; compare only within one code.
+- Nothing verifies that data loaded completely. A table that failed to load
+  shows only in tier 3: each loader pod's `*.sensor.log` and the statistics
+  script's row counts.
+- `no_sql_warnings` compares result sets only within one driver process; a
+  pass says nothing about agreement between systems or runs.
+- Which `post_load` steps a system received is visible only in
+  `*-loading-*.sql.log`.
+
+## The contract
+
+```{literalinclude} ../contracts/contract_result.yml
+:language: yaml
+```
