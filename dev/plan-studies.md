@@ -369,6 +369,25 @@ Recording and limits:
    zero-experiment outcome, "existing evidence suffices". With context-only
    citations, the agent cannot verify such an answer itself, so it is not part
    of the first increment.
+2. **Planned multi-experiment studies with harness comparison?** Today a study
+   is a chain: each follow-up is chosen after the previous result, and numbers
+   are never compared across experiments. Some questions need several
+   experiments that differ in one setting only, for example a storage backend
+   comparison for PostgreSQL TPC-H. There `resources.storage_class` is a
+   single value and not a declared factor, so one experiment cannot cover it.
+   Supporting that would take:
+   - a design phase that authors a set of sibling experiments up front, with
+     the varied setting named;
+   - a harness check that the siblings differ only in that setting;
+   - a harness-computed comparison across the sibling reports, like
+     `assess_comparison_quality` within one report.
+
+   This goes beyond the deferred anchor check, which compares one overlapping
+   level of a declared factor. The smaller alternative is a contract change
+   that makes the setting a factor inside one experiment (a `storage_class`
+   sweep list and `storage_class` in `discriminates`; see
+   `dev/plan-storage-class-sweep.md`). Prefer that while the question fits
+   into one experiment.
 
 ## Implementation sketch
 
