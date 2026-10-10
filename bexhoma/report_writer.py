@@ -155,7 +155,9 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     ("sut-logs", "SUT Container Logs", ("bexhoma-sut-*.log",),
      "stdout of each SUT container, one capture per experiment_run "
      "(`.dbms.log` is the DBMS process itself) — read for the literal error "
-     "text behind a failed or slow query."),
+     "text behind a failed or slow query. A restarted container's log starts "
+     "after the restart; `.<container>.previous.log` is the log of the "
+     "instance that died, the one that says why it crashed."),
     ("sut-restarts", "SUT Restart Counts", ("bexhoma-sut-*-restarts.json",),
      "Per-pod SUT container restart counts, one snapshot per experiment_run; "
      "restartCount is cumulative across runs, so aggregate by max per pod."),
@@ -803,6 +805,9 @@ def _build_connections_md_lines(
                 line = f"  * {sut_restarts.format_detail(detail)}"
                 if detail.describe_file:
                     line += f" ([{detail.describe_file}]({_relmd(result_dir / detail.describe_file, report_dir)}))"
+                if detail.previous_log:
+                    line += (f"; log of the crashed instance: [{detail.previous_log}]"
+                             f"({_relmd(result_dir / detail.previous_log, report_dir)})")
                 lines.append(line)
         lines.append("")
     by_configuration: dict[str, list[tuple[str, dict[str, str]]]] = {}

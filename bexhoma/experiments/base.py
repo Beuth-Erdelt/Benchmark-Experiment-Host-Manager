@@ -2010,6 +2010,7 @@ class ExperimentBase():
                                 for pod in pods:
                                     for container in config.deployment_infos['deployment'][deployment]['containers']:
                                         self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1)
                                     if not self.cluster.pod_description_exists(pod_name=pod):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
@@ -2022,6 +2023,7 @@ class ExperimentBase():
                                 for pod in pods:
                                     for container in config.deployment_infos['statefulset'][statefulset]['containers']:
                                         self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1)
                                     if not self.cluster.pod_description_exists(pod_name=pod):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
