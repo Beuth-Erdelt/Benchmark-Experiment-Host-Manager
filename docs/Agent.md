@@ -71,7 +71,7 @@ without submitting again:
 | `agent/handbook/handbook.md` | what makes an experiment sound | guidance, optional |
 
 Everything else the harness enforces on its own is listed in
-[Agent Harness](AgentHarness.md#rules-the-harness-adds).
+[Agent Harness](AgentHarness.md), section *Rules the harness adds*.
 
 ## Doing it by hand
 

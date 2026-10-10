@@ -28,7 +28,7 @@ A command-line flag overrides an exported variable, which overrides `.env`.
 | `AGENT_BASE_URL` | `--base-url` | `http://localhost:8001/v1` | OpenAI-compatible endpoint |
 | `AGENT_API_KEY` | `--api-key` | `EMPTY` | credential; `EMPTY` for a server that checks none |
 | `AGENT_INTERPRET_MODEL` | `--interpret-model` | `--model` | a different, usually stronger, model for interpretation |
-| `AGENT_MODEL_SERVER` | – | `bundled` | who owns the endpoint, see [Model servers](#model-servers) |
+| `AGENT_MODEL_SERVER` | – | `bundled` | who owns the endpoint, see *Model servers* below |
 | `AGENT_ENABLE_THINKING` | `--enable-thinking` | off | ask a hybrid reasoning model (Qwen3, GLM-4.5) for thinking mode |
 | `AGENT_EXTRA_BODY` | `--extra-body` (phase CLI only) | – | JSON added to every request, e.g. OpenRouter provider routing |
 | `AGENT_METHOD` | `--method` | `agent/handbook/handbook.md` | design handbook; empty means none (the ablation arm) |

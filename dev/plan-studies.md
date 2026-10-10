@@ -93,6 +93,9 @@ In scope: M0–M6 of the implementation sketch.
 Later: M7 rerun (operator, then model), M8 model-proposed withdrawal, and the
 anchor check.
 
+Not part of this plan: exporting a run for publication (issue #795) is a
+separate, decoupled extension in `dev/plan-publish-bundle.md`.
+
 ## Data shapes
 
 ### `study.yml`
