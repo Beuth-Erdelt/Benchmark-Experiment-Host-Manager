@@ -10,6 +10,7 @@ import shutil
 from typing import List, Optional, Tuple
 
 from bexhoma import experiments
+from bexhoma.cli_args import storage_suffix
 
 from .benchmarking import BenchmarkRunner
 from .host import HostProbe
@@ -734,10 +735,7 @@ class SutConfiguration:
         :return: Worker name template string.
         :rtype: str
         """
-        if self.storage['storageConfiguration']:
-            storageConfiguration = self.storage['storageConfiguration']
-        else:
-            storageConfiguration = self.configuration
+        storageConfiguration = self.get_storage_configuration()
         if self.worker_name_app or self.worker_name_component:
             effective_app = self.worker_name_app or self.appname
             effective_component = self.worker_name_component or component
@@ -1078,6 +1076,30 @@ class SutConfiguration:
         if 'storageConfiguration' not in self.storage:
             self.storage['storageConfiguration'] = ''
         return True
+
+    def get_storage_configuration(self) -> str:
+        """Return the name that identifies this configuration's volumes.
+
+        It is ``storageConfiguration`` (the configuration name when unset),
+        followed by the storage class when the SUT gets a volume of a named
+        class, e.g. ``postgresql-cephcsi``. A volume is found again by this
+        name alone, so the class has to be part of it: otherwise data loaded
+        on one backend would be reused on another. Ephemeral storage, the
+        cluster's default class (``''``) and ``ramdisk`` add nothing. A name
+        that already ends with the class is kept as it is.
+
+        :return: Name used for the SUT's PVC, its ``configuration`` label and
+            the worker StatefulSets.
+        :rtype: str
+        """
+        storage_configuration = self.storage.get('storageConfiguration') or self.configuration
+        storage_class = self.storage.get('storageClassName')
+        if not storage_class or storage_class == 'ramdisk':
+            return storage_configuration
+        suffix = storage_suffix(storage_class)
+        if storage_configuration.lower().endswith(f'-{suffix}'):
+            return storage_configuration
+        return f'{storage_configuration}-{suffix}'
 
     def use_ephemeral_storage(self) -> bool:
         """Return True iff ephemeral-storage resources should be requested for the SUT.

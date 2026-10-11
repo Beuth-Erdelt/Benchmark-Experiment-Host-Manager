@@ -515,10 +515,8 @@ scrape_configs:
             configuration = cfg.configuration
         if len(experiment) == 0:
             experiment = cfg.code
-        if cfg.storage['storageConfiguration']:
-            storageConfiguration = cfg.storage['storageConfiguration']
-        else:
-            storageConfiguration = configuration
+        # names the volumes, including their storage class (see get_storage_configuration)
+        storageConfiguration = cfg.get_storage_configuration()
         use_ramdisk = cfg.use_ramdisk()
         cfg.volume_per_tenant = cfg.experiment.multi_tenant_volume
 
@@ -572,6 +570,20 @@ scrape_configs:
                     pvcs_remaining = cfg.experiment.cluster.get_pvc(pvc=pvc)
                 print("{:30s}: storage {} is gone".format(configuration, pvc))
 
+        def check_storage_class_of_existing_pvc(volume):
+            # The class is part of the volume name (get_storage_configuration),
+            # so a mismatch means a volume named by hand or by an older
+            # bexhoma: reusing it would load into, or measure, another backend.
+            # The cluster's default class ('') cannot be compared.
+            requested = cfg.storage.get('storageClassName')
+            if not requested:
+                return
+            found = cfg.experiment.cluster.get_pvc_storage_class(volume)
+            if found is not None and found != requested:
+                raise ValueError(
+                    f"{configuration}: existing storage {volume} is on storage class {found!r}, "
+                    f"but {requested!r} is requested; remove it (-rsr) or request {found!r}")
+
         def get_labels_from_loaded_pvc():
             if use_storage and not use_ramdisk and not should_we_remove_pvcs():
                 list_of_pvc = cfg.get_list_of_pvc()
@@ -581,6 +593,7 @@ scrape_configs:
                 cfg.logger.debug(pvcs_labels)
                 if len(pvcs_labels) > 0:
                     print("{:30s}: storage {} exists".format(configuration, volume))
+                    check_storage_class_of_existing_pvc(volume)
                     pvc_labels = pvcs_labels[0]
                     copy_labels = [
                         'loaded', 'schema', 'data', 'index',
@@ -1382,10 +1395,7 @@ scrape_configs:
         else:
             use_storage = cfg.use_storage()
             if use_storage:
-                if cfg.storage['storageConfiguration']:
-                    storageConfiguration = cfg.storage['storageConfiguration']
-                else:
-                    storageConfiguration = configuration
+                storageConfiguration = cfg.get_storage_configuration()
                 name_pvc = cfg.generate_component_name(
                     app=app, component='storage',
                     experiment=cfg.storage_label, configuration=storageConfiguration)

@@ -1054,8 +1054,9 @@ class ExperimentBase():
           when the DBMS has one configuration, ``{configuration}-{cell}`` when
           it has several (e.g. a loading-pods sweep or one per tenant);
         * alias ``{docker}@{cell}`` or ``{configuration}@{cell}`` likewise;
-        * storage ``{storageConfiguration}-{cell}``, plus the class when it
-          varies (:func:`bexhoma.cli_args.set_cell_storage`).
+        * storage ``{storageConfiguration}-{cell}`` on the cell's class; the
+          volume name gets the class appended when the volume is named
+          (``SutConfiguration.get_storage_configuration()``).
 
         A configuration whose SUT bexhoma does not manage (``resource_sweep``
         false, or a fixed ``sut_service_name``) is kept once with the
@@ -1066,7 +1067,6 @@ class ExperimentBase():
         if len(cells) <= 1 or getattr(self, '_resource_cells_expanded', False):
             return
         self._resource_cells_expanded = True
-        storage_varies = len({cell['storage_type'] for cell in cells}) > 1
 
         def sweeps(config):
             return config.resource_sweep and not config.sut_service_name
@@ -1091,7 +1091,7 @@ class ExperimentBase():
                     requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
                     limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
                     )
-                set_cell_storage(clone, f'{base_storage}-{cell_number}', cell, storage_varies)
+                set_cell_storage(clone, f'{base_storage}-{cell_number}', cell)
                 self.configurations.append(clone)
 
     def add_benchmark(self, benchmark) -> None:

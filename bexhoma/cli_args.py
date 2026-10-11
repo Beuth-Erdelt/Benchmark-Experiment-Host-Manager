@@ -98,36 +98,35 @@ def format_storage_types(storage_types: list) -> str:
 
 def storage_suffix(storage_type) -> str:
     """
-    Name a cell's storage class for its ``storageConfiguration``.
+    Name a storage class as part of a volume name.
 
-    A PVC is found again by name alone, without checking its class, so when
-    the class varies across cells it has to be part of the name: otherwise a
-    volume loaded on one backend could be reused for another, in this run or
-    a later one.
+    A PVC is found again by name alone, so the class is part of it (see
+    :meth:`bexhoma.configurations.base.SutConfiguration.get_storage_configuration`):
+    otherwise a volume loaded on one backend could be reused for another, in
+    this run or a later one.
 
-    :param storage_type: The cell's storage class, ``None`` for ephemeral.
+    :param storage_type: The storage class, ``None`` for ephemeral.
     :return: A DNS-label-safe suffix such as ``cephcsi`` or ``ephemeral``.
     :rtype: str
     """
     return re.sub(r'[^a-z0-9-]+', '-', (storage_type or 'ephemeral').lower()).strip('-')
 
 
-def set_cell_storage(config, storage_configuration, cell, storage_varies) -> None:
+def set_cell_storage(config, storage_configuration, cell) -> None:
     """
-    Give one resource cell its storage, and its own storage class in a sweep.
+    Give one resource cell its own volume name and storage class.
+
+    The class is added to the volume name when the volume is named
+    (``get_storage_configuration()``), not here.
 
     :param config: The cell's SUT configuration.
-    :param storage_configuration: Base ``storageConfiguration`` name for the cell.
-    :param cell: The cell, a dict with at least ``storage_type``.
-    :param storage_varies: Whether the storage class differs between cells.
+    :param storage_configuration: ``storageConfiguration`` name for the cell.
+    :param cell: The cell, a dict with at least ``storage_type`` (``None`` for ephemeral).
     """
-    if storage_varies:
-        config.set_storage(
-            storageConfiguration=f"{storage_configuration}-{storage_suffix(cell['storage_type'])}",
-            storageClassName=cell['storage_type'],
-        )
-    else:
-        config.set_storage(storageConfiguration=storage_configuration)
+    config.set_storage(
+        storageConfiguration=storage_configuration,
+        storageClassName=cell['storage_type'],
+    )
 
 #: Spellings accepted for one ``-mm key=value`` switch.
 _METRIC_SWITCH_VALUES = {"on": True, "true": True, "off": False, "false": False}

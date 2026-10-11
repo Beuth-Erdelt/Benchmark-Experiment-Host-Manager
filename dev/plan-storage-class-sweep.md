@@ -90,7 +90,10 @@ covers `-rst`.
    cpu/memory).
 5. **`storage_class` is categorical.** The assessor ranks its levels at each
    fixed context, like `system`, and never builds an ordered sweep over it.
-6. **PVC identity includes the class.** When the storage class varies across
+6. **PVC identity includes the class.** (Superseded 2026-10-11: every volume
+   name now carries its class, sweep or not, via
+   `SutConfiguration.get_storage_configuration()`, and reuse of a volume on
+   another class is refused.) When the storage class varies across
    cells, each cell's `storageConfiguration` gets the class as a suffix
    (`postgresql-{cell}-{class}`), so a PVC loaded on one backend is never
    reused for another, in this run or a later one.

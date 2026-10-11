@@ -453,6 +453,15 @@ value must be one of the storage classes declared in the cluster config
 (`credentials.k8s.context.<name>.storage_classes`), which `environment.yml`
 marks `usable: true` (see below).
 
+A volume is found again by its name alone, so since 2026-10-11 the name
+always carries the class: `SutConfiguration.get_storage_configuration()`
+appends it to `storageConfiguration` (`postgresql-cephcsi`) for the SUT
+PVC, its `configuration` label and the worker StatefulSets. Ephemeral,
+`''` (the cluster default) and `ramdisk` add nothing. As a second guard,
+`start_sut()` refuses to reuse an existing volume whose class differs from
+the requested one. Volumes named before this change are no longer found:
+the next run loads again, and the old PVCs have to be removed by hand.
+
 Note: `catalog_concepts.extends`/`.profile_ref`/`.requires`/`.arg_style`/
 `.knob_status` in `contract_catalog.yml` cover the mechanics above (and a
 few more: `extends:`/`ref:` merge semantics, `arg_style` GUC-vs-env-var

@@ -147,27 +147,39 @@ class TpchStorageCellTest(unittest.TestCase):
         self.assertEqual(tpch._storage_suffix(None), 'ephemeral')
         self.assertEqual(tpch._storage_suffix('Ceph_CSI'), 'ceph-csi')
 
-    def _configured(self, storage_type, storage_varies):
+    def test_cell_gets_its_class(self):
         config = types.SimpleNamespace(storage={'storageClassName': 'cephcsi', 'storageSize': '50Gi'})
         config.set_storage = lambda **kwargs: config.storage.update(kwargs)
-        tpch._set_cell_storage(config, 'postgresql-2', {'storage_type': storage_type}, storage_varies)
-        return config.storage
+        tpch._set_cell_storage(config, 'postgresql-2', {'storage_type': 'shared'})
+        self.assertEqual(config.storage, {
+            'storageConfiguration': 'postgresql-2', 'storageClassName': 'shared', 'storageSize': '50Gi'})
 
-    def test_sweep_cell_gets_its_class_and_a_volume_named_after_it(self):
-        storage = self._configured('shared', storage_varies=True)
-        self.assertEqual(storage['storageConfiguration'], 'postgresql-2-shared')
-        self.assertEqual(storage['storageClassName'], 'shared')
-        self.assertEqual(storage['storageSize'], '50Gi')
 
-    def test_ephemeral_sweep_cell_gets_no_volume(self):
-        storage = self._configured(None, storage_varies=True)
-        self.assertEqual(storage['storageConfiguration'], 'postgresql-2-ephemeral')
-        self.assertIsNone(storage['storageClassName'])
+class VolumeNameTest(unittest.TestCase):
+    """A volume's name always carries its storage class, so it is never reused on another one."""
 
-    def test_without_sweep_the_experiment_class_stays(self):
-        storage = self._configured(None, storage_varies=False)
-        self.assertEqual(storage['storageConfiguration'], 'postgresql-2')
-        self.assertEqual(storage['storageClassName'], 'cephcsi')
+    @staticmethod
+    def _name(storage_class, storage_configuration='postgresql', configuration='PostgreSQL-1'):
+        from bexhoma.configurations.base import SutConfiguration
+        config = types.SimpleNamespace(
+            configuration=configuration,
+            storage={'storageConfiguration': storage_configuration, 'storageClassName': storage_class})
+        return SutConfiguration.get_storage_configuration(config)
+
+    def test_a_named_class_is_appended(self):
+        self.assertEqual(self._name('cephcsi'), 'postgresql-cephcsi')
+        self.assertEqual(self._name('Ceph_CSI'), 'postgresql-ceph-csi')
+
+    def test_no_volume_or_the_default_class_adds_nothing(self):
+        for storage_class in (None, '', 'ramdisk'):
+            with self.subTest(storage_class):
+                self.assertEqual(self._name(storage_class), 'postgresql')
+
+    def test_unset_name_falls_back_to_the_configuration(self):
+        self.assertEqual(self._name('shared', storage_configuration=''), 'PostgreSQL-1-shared')
+
+    def test_a_name_that_already_carries_the_class_is_kept(self):
+        self.assertEqual(self._name('cephcsi', storage_configuration='hw-node-cephcsi'), 'hw-node-cephcsi')
 
 
 _TPCH_SPEC = {

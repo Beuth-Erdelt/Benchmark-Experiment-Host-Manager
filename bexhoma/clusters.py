@@ -946,6 +946,28 @@ class Kubernetes():
                 self.wait(2)
                 return self.pvc_exists(name=name)
 
+    def get_pvc_storage_class(self, name):
+        """
+        Return the storage class a PVC was provisioned on.
+
+        :param name: Name of the PVC.
+        :return: Its ``spec.storageClassName``, or ``None`` if the PVC does not
+            exist (HTTP 404) or names no class.
+        """
+        self.logger.debug('Kubernetes.get_pvc_storage_class()')
+        try:
+            pvc = self.v1core.read_namespaced_persistent_volume_claim(
+                namespace=self.namespace, name=name
+            )
+            return pvc.spec.storage_class_name
+        except ApiException as e:
+            if e.status == 404:
+                return None
+            print(f"Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: {e}\n")
+            self.cluster_access()
+            self.wait(2)
+            return self.get_pvc_storage_class(name=name)
+
     def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
         """
         Return label dicts of PVCs matching the given selectors.

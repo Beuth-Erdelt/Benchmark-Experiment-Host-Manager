@@ -95,11 +95,11 @@ class TpchSweepTest(_SweepTestBase):
     def test_storage_sweep_sets_the_class_per_cell(self):
         configs = self._expanded('-dbms', 'MonetDB', '-rst', 'cephcsi,shared,', '-rss', '50Gi')
         self.assertEqual(
-            [(name, config.storage['storageClassName'], config.storage['storageConfiguration'])
+            [(name, config.storage['storageClassName'], config.get_storage_configuration())
              for name, config in sorted(configs.items())],
             [('MonetDB-1', 'cephcsi', 'monetdb-1-cephcsi'),
              ('MonetDB-2', 'shared', 'monetdb-2-shared'),
-             ('MonetDB-3', None, 'monetdb-3-ephemeral')])
+             ('MonetDB-3', None, 'monetdb-3')])
         self.assertEqual({config.storage['storageSize'] for config in configs.values()}, {'50Gi'})
 
     def test_clones_do_not_share_state(self):
@@ -171,6 +171,7 @@ class YcsbSweepTest(_SweepTestBase):
         self.assertEqual(configs['MySQL-1'].resources['limits']['cpu'], '4')
         self.assertEqual(configs['MySQL-2'].storage['storageConfiguration'], 'mysql-2')
         self.assertEqual(configs['MySQL-2'].storage['storageClassName'], 'cephcsi')
+        self.assertEqual(configs['MySQL-2'].get_storage_configuration(), 'mysql-2-cephcsi')
 
     def test_catalog_scopes_name_the_expanded_configurations(self):
         """The ``--set`` scopes ``build_ycsb_argv`` emits land on real cells."""
