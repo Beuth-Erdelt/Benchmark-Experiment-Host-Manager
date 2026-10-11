@@ -31,7 +31,7 @@ class TpccExperiment(MixedExperiment):
     pre-populates the experiment dict template with HammerDB-specific job templates.
     """
 
-    #: ``hammerdb.py`` sets PostgreSQL's storage class per configuration.
+    #: Every DBMS may be swept across CPU, RAM and storage class.
     supports_storage_sweep = True
 
     def __init__(self,

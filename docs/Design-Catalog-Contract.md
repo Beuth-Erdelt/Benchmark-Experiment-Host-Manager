@@ -904,14 +904,18 @@ scalar = shared" idiom
 Two things had to change below `spec.py` for this to actually run, not
 just parse:
 
-1. **`tpch.py`** parses `-rr`/`-lr`/`-rc`/`-lc` as comma-separated lists
-   (`_resource_cells()`) and, for each DBMS already named in `-dbms`, loops
-   over the resulting cells, calling `config.set_resources(...)` per cell —
-   `SutConfiguration.set_resources()` already applied per-configuration
-   resources correctly before this change; only the CLI/entry-script loop
-   that calls it once per cell was missing. Each cell also gets its own
-   `configuration=` name (`{docker}-{1-based cell position}`) and storage
-   identity, so concurrent cells don't collide on the same PVC.
+1. **The entry scripts** accept `-rr`/`-lr`/`-rc`/`-lc`/`-rst` as
+   comma-separated lists (`bexhoma.cli_args.resource_cells()`, called by
+   `ExperimentBase.prepare_testbed()`). Originally only `tpch.py` looped over
+   the cells, for PostgreSQL and PgDuckDB; since 2026-10-11
+   `ExperimentBase.expand_resource_cells()` (called by `process()`) clones
+   every configuration of `tpch.py`, `tpcds.py`, `ycsb.py`, `hammerdb.py`
+   and `benchbase.py` once per cell, calling `config.set_resources(...)` and
+   the cell's storage class on each clone. Each cell gets its own
+   configuration name (`{docker}-{1-based cell position}`, or
+   `{configuration}-{cell}` when one DBMS has several configurations) and
+   storage identity, so concurrent cells don't collide on the same PVC. A
+   SUT bexhoma does not deploy (DatabaseService, YugabyteDB) is kept once.
 2. **The `--set` mechanism was experiment-global**, applied identically to
    every configuration matching a `deployment[NAME]` selector — two
    `PostgreSQL` cells would both receive whichever `shared_buffers` value

@@ -10,7 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
-from bexhoma.cli_args import make_base_parser, resolve_scaling_factor, storage_suffix, set_cell_storage
+from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -132,7 +132,8 @@ if __name__ == '__main__':
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
-    storage_varies = len(set(experiment.storage_types)) > 1
+    # -rc/-lc/-rr/-lr/-rst may each carry a comma list: experiment.process()
+    # then clones every configuration below once per resource cell
     # set node groups for components
     if aws:
         # set node labes for components
@@ -176,47 +177,44 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                # -rst may sweep the storage class (prepare_testbed() validated
-                # each entry); then every class gets its own configuration and
-                # a PVC named after it
-                for storage_type in experiment.storage_types:
-                    #, configuration=config_name
-                    alias = f'PostgreSQL@{storage_suffix(storage_type)}' if storage_varies else 'DBMS D'
-                    config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias=alias)
-                    # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
-                    # to produce a consistent, cold-cache starting state.
-                    config.set_benchmark_resetscript(['reset-tpcc.sql'])
-                    set_cell_storage(config, 'postgresql', {'storage_type': storage_type}, storage_varies)
-                    config.set_loading_parameters(
-                        HAMMERDB_TYPE = "postgresql",
-                        HAMMERDB_VUSERS = loading_threads_per_pod,
-                    )
-                    config.set_loading(parallel=1, num_pods=1)
-                    executor_list = []
-                    for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                        HAMMERDB_TYPE = "postgresql",
-                                        HAMMERDB_VUSERS = benchmarking_threads_per_pod,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
+                #, configuration=config_name
+                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS D')
+                # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
+                # to produce a consistent, cold-cache starting state.
+                config.set_benchmark_resetscript(['reset-tpcc.sql'])
+                config.set_storage(
+                    storageConfiguration = 'postgresql'
+                )
+                config.set_loading_parameters(
+                    HAMMERDB_TYPE = "postgresql",
+                    HAMMERDB_VUSERS = loading_threads_per_pod,
+                )
+                config.set_loading(parallel=1, num_pods=1)
+                executor_list = []
+                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
+                    for benchmarking_threads in num_benchmarking_threads:
+                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                            for num_executor in list_clients:
+                                benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                """
+                                print("benchmarking_target", benchmarking_target)
+                                print("benchmarking_pods", benchmarking_pods)
+                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
+                                print("benchmarking_threads", benchmarking_threads)
+                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
+                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
+                                """
+                                executor_list.append(benchmarking_pods_scaled)
+                                config.add_benchmarking_parameters(
+                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
+                                    HAMMERDB_TYPE = "postgresql",
+                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,
+                                    )
+                #print(executor_list)
+                config.add_benchmark_list(executor_list)
             if ("MySQL" in args.dbms or len(args.dbms) == 0):
                 # MySQL
                 name_format = 'MySQL-{cluster}-{users}-{pods}'

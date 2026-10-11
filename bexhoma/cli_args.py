@@ -19,8 +19,48 @@ __all__ = [
     "make_base_parser", "resolve_scaling_factor",
     "parse_metric_overrides", "format_metric_overrides",
     "split_storage_types", "format_storage_types",
-    "storage_suffix", "set_cell_storage",
+    "storage_suffix", "set_cell_storage", "resource_cells",
 ]
+
+
+def resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list, storage_type_list=None):
+    """Zip per-dimension resource CLI lists into one resource cell per swept value.
+
+    Every list with more than one entry must share the same length; a
+    single-entry list is broadcast (repeated) to that length. This lets
+    e.g. ``-rr 32Gi,64Gi -lr 32Gi,64Gi`` sweep RAM across two configurations
+    per DBMS while ``-rc``/``-lc`` stay one shared CPU value for both.
+
+    :param request_cpu_list: Parsed ``-rc`` values.
+    :param limit_cpu_list: Parsed ``-lc`` values.
+    :param request_ram_list: Parsed ``-rr`` values.
+    :param limit_ram_list: Parsed ``-lr`` values.
+    :param storage_type_list: Parsed ``-rst`` values
+        (:func:`split_storage_types`), ``None`` for ephemeral;
+        omitted means one experiment-wide storage class.
+    :return: List of ``{'cpu', 'cpu_limit', 'memory', 'memory_limit', 'storage_type'}``
+        dicts, one per cell.
+    :rtype: list[dict]
+    :raises ValueError: When two lists both have more than one entry but different lengths.
+    """
+    lists = {
+        'cpu': request_cpu_list,
+        'cpu_limit': limit_cpu_list,
+        'memory': request_ram_list,
+        'memory_limit': limit_ram_list,
+        'storage_type': storage_type_list if storage_type_list is not None else [None],
+    }
+    num_cells = max((len(values) for values in lists.values() if len(values) > 1), default=1)
+    for name, values in lists.items():
+        if len(values) > 1 and len(values) != num_cells:
+            raise ValueError(
+                f"resource sweep lists must share one length: '{name}' has {len(values)} "
+                f"entries, expected 1 or {num_cells}"
+            )
+    return [
+        {name: (values[i] if len(values) > 1 else values[0]) for name, values in lists.items()}
+        for i in range(num_cells)
+    ]
 
 
 def split_storage_types(value) -> list:
@@ -215,7 +255,7 @@ def make_base_parser():
     p.add_argument('-rct', '--request-cpu-type', help='require SUT node to carry label cpu=<value>', default='')
     p.add_argument('-rg',  '--request-gpu', help='number of GPUs to request for the SUT pod', default=1)
     p.add_argument('-rgt', '--request-gpu-type', help='require SUT node to carry label gpu=<value>', default='')
-    p.add_argument('-rst', '--request-storage-type', help="storage class for the SUT persistent volume ('' or unset = ephemeral, 'ramdisk' = in-memory; other values must be declared for the active cluster context, see cluster config 'storage_classes'); tpch.py and hammerdb.py accept a comma list to sweep the class across PostgreSQL configurations, an empty entry meaning ephemeral", default=None)
+    p.add_argument('-rst', '--request-storage-type', help="storage class for the SUT persistent volume ('' or unset = ephemeral, 'ramdisk' = in-memory; other values must be declared for the active cluster context, see cluster config 'storage_classes'); comma-separated to sweep the class, one configuration per entry and paired by position with -rc/-lc/-rr/-lr, an empty entry meaning ephemeral", default=None)
     p.add_argument('-rss', '--request-storage-size', help='size of the SUT persistent volume (e.g. 10Gi)', default='')
     p.add_argument('-rsr', '--request-storage-remove', help='delete any existing PVC for the SUT before starting', action='store_true', default=False)
     p.add_argument('-rnn', '--request-node-name', help='pin the SUT pod to this Kubernetes node', default=None, nargs='?', const=None)

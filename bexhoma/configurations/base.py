@@ -206,6 +206,7 @@ class SutConfiguration:
         self.current_benchmark_start = 0                                         #: Unix timestamp when the current benchmark run started.
         self.volumeid = ""                                                       #: Identifier of the persistent volume claimed by this configuration.
         self.max_sut_dbms = None                                                 #: Max SUT pods of this DBMS type (config.docker) allowed in the cluster at once; None means no limit.
+        self.resource_sweep = True                                               #: False keeps this configuration once in a -rc/-lc/-rr/-lr/-rst sweep, e.g. for a database service outside of K8s.
         # Worker naming overrides (replace monkey-patching in entry scripts)
         self.worker_name_app = ''                                                #: App label override for get_worker_name(); empty means use self.appname.
         self.worker_name_component = ''                                          #: Component label override for get_worker_name(); empty means use the method argument.

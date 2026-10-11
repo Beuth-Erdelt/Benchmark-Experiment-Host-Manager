@@ -114,7 +114,7 @@ class StorageTypeListTest(unittest.TestCase):
         storage_types = [None, 'cephcsi', 'shared']
         self.assertEqual(split_storage_types(format_storage_types(storage_types)), storage_types)
 
-    def test_only_tpch_and_hammerdb_support_a_sweep(self):
+    def test_the_database_workloads_support_a_sweep(self):
         self.assertFalse(ExperimentBase.supports_storage_sweep)
         self.assertTrue(TpchExperiment.supports_storage_sweep)
         self.assertTrue(TpccExperiment.supports_storage_sweep)
