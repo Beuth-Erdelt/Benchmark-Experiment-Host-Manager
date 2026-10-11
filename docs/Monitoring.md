@@ -16,7 +16,7 @@ Three CLI flags control how deeply bexhoma monitors an experiment:
 | `-mc` | All components | cAdvisor DaemonSet on every node + per-experiment Prometheus |
 | `-ma` | Application metrics | DBMS-specific exporter sidecar (e.g., pgexporter) + same Prometheus |
 
-`-m` and `-mc` cover hardware metrics (CPU, memory, network, disk).
+`-m` and `-mc` cover hardware metrics (CPU, memory, network, disk). Network and disk metrics need a preinstalled Prometheus whose exporters report them: the cAdvisor bexhoma installs itself runs with `--disable_metrics disk,network,...` (see below).
 `-ma` adds DBMS-internal statistics (buffer pool hits, query rates, replication lag, etc.) scraped from an exporter sidecar.
 `-ma` is currently in alpha status.
 
@@ -81,6 +81,7 @@ Hardware metrics come from cAdvisor (per container), node-exporter (per node) an
 
 Node-level metrics describe the whole node the SUT runs on, including other workloads on it, not only the SUT container.
 The filesystem metrics take the largest device per pod because cAdvisor reports a RAID device and each of its member disks; summing over devices would count every read and write several times.
+They count block-device I/O: a volume on a network filesystem (e.g. CephFS, NFS) does its I/O over the network, so it shows in the network metrics instead, and filesystem metrics compare storage backends fairly only when all of them are block devices.
 
 Metrics marked as disabled (`active: False` in `cluster.config`) are present in the configuration but skipped during collection.
 To enable them, set `active: True` on the relevant entries, or switch them per experiment with `-mm`.

@@ -263,8 +263,9 @@ experiment_schema:
             SutConfiguration.set_experiment(indexing=...) -- not through argv"
     observe:
       type: object
-      when: "only relevant when the hypothesis needs hardware metrics (CPU
-        and memory use, and GPU use where present) or database-internal
+      when: "only relevant when the hypothesis needs hardware metrics (those
+        environment.yml's monitoring.hardware lists, e.g. CPU, memory,
+        filesystem and network I/O, I/O wait, GPU) or database-internal
         statistics -- leave all three off otherwise. Readings only become
         reliable after a few scrape intervals have accumulated: a phase
         shorter than roughly 2-5 minutes can show 0/NaN readings rather than
@@ -302,6 +303,15 @@ experiment_schema:
             hypothesis what those readings are expected to show -- or that the
             resource side is descriptive. Metrics marked available: false
             cannot be listed (Prometheus has no data for them)"
+          out_of_scope: "available: true only says the cluster's Prometheus
+            holds the series somewhere, not that it will cover this
+            experiment: when bexhoma has to install its own collector, that
+            collector reports no disk or network metrics. A metric covers the
+            SUT container, its pod or its whole node, as its title says; a
+            node-level reading includes every other workload on that node.
+            Container filesystem metrics count block-device I/O, so I/O to a
+            network filesystem may show as network traffic instead -- they
+            compare storage backends fairly only when all are block devices"
     placement:
       type: object
       semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"

@@ -76,8 +76,10 @@ alone.
 The new wording deliberately says what is measured, not how it is collected.
 An earlier draft described SUT monitoring as sidecar containers, which is no
 longer how bexhoma collects it; naming the mechanism is what makes such text
-go stale. "Hardware metrics" deliberately omits disk and network, because
-the metric collector bexhoma deploys is configured to skip both.
+go stale. "Hardware metrics" deliberately omitted disk and network, because
+the metric collector bexhoma deploys is configured to skip both. Corrected
+on 2026-10-10 (see below): a cluster with its own monitoring does report
+them.
 
 The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
 fields corrected and conditions added; nothing that validated before is
@@ -92,6 +94,32 @@ choice per experiment made loading times incomparable across runs.
 `tpch.py`'s own `-nlp` default stays 1, so `tpch_catalog.build_tpch_argv()`
 reads the catalog default and emits `-nlp 8` explicitly when `pods` is
 omitted. Folded into 1.9.0 (not yet released) as an additive change.
+
+## Which hardware metrics an experiment can rely on (2026-10-10)
+
+`observe.when` named only CPU, memory and GPU, which was true for the
+collector bexhoma installs itself (cAdvisor with `--disable_metrics
+disk,network,...`) but not for a cluster whose own Prometheus is used: there
+the filesystem, network and I/O-wait metrics in `cluster.config` have data,
+and `environment.yml` marks them available. The list now points at
+`monitoring.hardware` instead of naming metrics.
+
+`observe.metrics.out_of_scope` states three limits that hold on any
+cluster and matter as soon as metrics back a claim:
+
+- `available: true` is checked against the cluster's Prometheus at
+  generation time (`environment.py::collect_monitoring_metrics`, any series
+  of that name), so it says nothing about the collector a run installs, or
+  about this experiment's pods.
+- Metrics differ in scope: container, pod or node. Node-level ones (I/O
+  wait, per-core utilisation) include other workloads, which is easy to miss
+  because the key does not say it; the title in `cluster.config` does.
+- Container filesystem metrics are block-device counters. A volume on a
+  network filesystem does its I/O over the network, so comparing storage
+  backends on these metrics is fair only when every backend is a block
+  device.
+
+Wording only; no field changed. Folded into 1.11.0 (not yet released).
 
 ## Storage class sweeps and fresh volumes (2026-10-10)
 
