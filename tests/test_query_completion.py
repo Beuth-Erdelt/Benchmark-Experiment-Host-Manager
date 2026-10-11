@@ -50,6 +50,15 @@ class EvaluatorCompletionTest(unittest.TestCase):
         completion = _evaluator().get_query_completion()
         pd.testing.assert_frame_equal(completion, _completion())
 
+    def test_failed_run_after_successful_run_is_not_complete(self) -> None:
+        # DBMSBenchmarker counts Q1 of c-1-1-1-1 as successful (one run succeeded),
+        # but another run of it failed: the Errors table lists it, so it is not complete.
+        evaluator = _evaluator()
+        evaluator.get_total_errors.return_value = pd.DataFrame(
+            {"Q1": [True, False, False], "Q18": [False, False, True]}, index=list(_PHASES))
+        completion = evaluator.get_query_completion()
+        pd.testing.assert_frame_equal(completion, _completion().assign(Q1=[False, True, True]))
+
     def test_completion_per_phase_counts_pods(self) -> None:
         counts = DbmsBenchmarkerEvaluator.get_query_completion_per_phase(_evaluator(), _completion())
         self.assertEqual(counts.loc["c-1-2"].to_dict(), {"pods": 2, "Q1": 2, "Q18": 1})
@@ -105,7 +114,25 @@ class ResultsNotesTest(unittest.TestCase):
         self.assertIn("cover 1 of 2 active queries", note)
 
     def test_full_pool_needs_no_note(self) -> None:
-        self.assertEqual(_benchmark(pooled=["Q1", "Q18"])._results_notes(is_empty=False), [])
+        benchmark = _benchmark(pooled=["Q1", "Q18"])
+        benchmark.evaluator.get_query_completion.return_value = _completion().assign(Q18=True)
+        self.assertEqual(benchmark._results_notes(is_empty=False), [])
+
+    def test_pooled_query_with_failed_runs_is_named(self) -> None:
+        # Q18 stays pooled (no connection failed every run), yet one pod failed a run.
+        note = _benchmark(pooled=["Q1", "Q18"])._results_notes(is_empty=False)[0]
+        self.assertNotIn("These totals cover", note)
+        self.assertIn("Included although some of their runs failed (Q18 failed in 1 of 3 connections)", note)
+        self.assertIn("See Query Completion per Phase", note)
+
+    def test_left_out_and_partial_share_one_note(self) -> None:
+        benchmark = _benchmark(pooled=["Q18"])
+        benchmark.evaluator.get_query_completion.return_value = _completion().assign(Q1=[True, False, True])
+        note = benchmark._results_notes(is_empty=False)[0]
+        self.assertIn("cover 1 of 2 active queries", note)
+        self.assertIn("(Q1 failed in 1 of 3 connections)", note)
+        self.assertIn("Included although some of their runs failed (Q18 failed in 1 of 3 connections)", note)
+        self.assertEqual(note.count("See Query Completion per Phase"), 1)
 
     def test_note_follows_a_table_after_a_blank_line(self) -> None:
         benchmark = _benchmark(pooled=["Q1"])
@@ -159,6 +186,37 @@ class CompleteLatencySectionTest(unittest.TestCase):
         benchmark.evaluator.get_complete_connections.side_effect = DbmsBenchmarkerEvaluator.get_complete_connections
         self.assertIsNone(benchmark._build_complete_latency_section())
         benchmark.evaluator.get_query_latencies.assert_not_called()
+
+
+class ThroughputTest(unittest.TestCase):
+    """Throughput@Size counts every successful run, not each query once."""
+
+    @staticmethod
+    def _pods(**extra) -> pd.DataFrame:
+        return pd.DataFrame({
+            "configuration": ["c", "c"], "phase": ["c-1-1", "c-1-1"], "job": ["c-1-1-1", "c-1-1-1"],
+            "connection": ["c-1-1-1-1", "c-1-1-1-2"], "experiment_run": [1, 1], "client": [1, 1],
+            "benchmark_run": [1, 1], "code": [1, 1], "pod_count": [1, 1], "SF": [10.0, 10.0],
+            "num_of_queries": [3, 3], "time [s]": [100.0, 200.0], "Geo Times [s]": [1.0, 1.0],
+            "Power@Size [~Q/h]": [1.0, 1.0], "Throughput@Size": [0.0, 0.0], "tenant_id": [-1, -1], **extra,
+        }, index=["c-1-1-1-1", "c-1-1-1-2"])
+
+    @staticmethod
+    def _aggregate(df: pd.DataFrame) -> pd.Series:
+        evaluator = DbmsBenchmarkerEvaluator.__new__(DbmsBenchmarkerEvaluator)
+        evaluator.evaluation = mock.Mock()
+        evaluator.evaluation.get_aggregated_query_statistics.return_value = None
+        return evaluator.benchmarking_aggregate_by_parallel_pods(df).iloc[0]
+
+    def test_runs_are_counted(self) -> None:
+        # 3 queries x 2 runs per pod, one run of the second pod failed: 6 + 5 executions.
+        row = self._aggregate(self._pods(num_of_executions=[6, 5]))
+        self.assertEqual(row["num_of_executions"], 11)
+        self.assertAlmostEqual(row["Throughput@Size"], 11 * 3600. / 200. * 10, places=2)
+
+    def test_frames_without_executions_fall_back_to_queries(self) -> None:
+        row = self._aggregate(self._pods())
+        self.assertAlmostEqual(row["Throughput@Size"], 6 * 3600. / 200. * 10, places=2)
 
 
 class HealthSummaryCompletionTest(unittest.TestCase):
