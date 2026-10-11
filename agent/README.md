@@ -94,6 +94,23 @@ of this guide uses the `python -m ...` form, which is exactly equivalent.
    .venv/bin/bexhoma environment create
    ```
 
+   Optionally add a hardware baseline, so the agent sees measured CPU, RAM,
+   disk and network speeds instead of only specifications. It deploys short
+   benchmark pods on every node, so it changes the cluster and takes minutes
+   rather than seconds. `-xhwsc` also measures each named storage class on a
+   throwaway volume, which is worth doing before a question about storage
+   backends; name classes the descriptor marks `usable`. `-xhwt` raises the
+   default 10-minute cap for larger clusters:
+
+   ```sh
+   .venv/bin/bexhoma environment create -xhw -xhwsc <class>,<class> -xhwt 30
+   ```
+
+   Add `-cx <context>` when the current kubectl context is not the target
+   cluster. See [Environment](../docs/Environment.md) for every field and
+   option. The in-cluster controller regenerates the descriptor without a
+   baseline before each design, so a baseline is only available to local runs.
+
 The active catalog is `contracts/contract_catalog.yml`. The current prototype
 supports TPC-H with PostgreSQL and PgDuckDB, and YCSB with PostgreSQL.
 
