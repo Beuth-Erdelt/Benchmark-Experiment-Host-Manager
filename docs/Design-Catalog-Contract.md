@@ -1161,8 +1161,13 @@ cluster's nodes, merged into the same `environment.yml`:
   round-robin all-pairs matrix (`N-1` rounds for `N` nodes, not the naive
   `O(N²)`). Results land in a top-level `network_matrix`, keyed
   `"{origin}->{target}"`.
+- `-xhwsc` sweeps fio once per named StorageClass, on one node; the result
+  goes to that class's `storage_classes` entry as `hardware_baseline`, with
+  `measured_from` naming the node.
 - Always torn down (`try`/`finally` around the sweep); a failure degrades to
   a partial/empty result rather than aborting the rest of `environment.yml`.
+  `hardware_baseline_status` (`complete`, `timeout_minutes`, `missing`)
+  says whether the result is partial, e.g. after the `-xhwt` cap was hit.
 - CLI reference and worked examples: `docs/Environment.md`.
 
 ## Open questions

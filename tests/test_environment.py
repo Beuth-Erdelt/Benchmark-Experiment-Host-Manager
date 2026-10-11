@@ -32,6 +32,49 @@ class BuildEnvironmentVersionFieldTest(unittest.TestCase):
         self.assertEqual(result['occupancy_source'], environment.OCCUPANCY_UNAVAILABLE)
 
 
+class ApplyHardwareBaselineTest(unittest.TestCase):
+    """apply_hardware_baseline() merges per-node and per-storage-class results
+    and records whether the sweep collected everything it scheduled."""
+
+    def _apply(self, result) -> dict:
+        from bexhoma import hardware_baseline
+        environment_dict = {
+            'nodes': [{'name': 'n1'}, {'name': 'n2'}],
+            'storage_classes': [{'name': 'cephcsi'}, {'name': 'local-hdd'}],
+        }
+        with mock.patch.object(hardware_baseline, 'run_hardware_baseline', return_value=result):
+            environment.apply_hardware_baseline(mock.Mock(), environment_dict, timeout_minutes=30)
+        return environment_dict
+
+    def test_storage_class_result_lands_on_the_storage_class_entry(self) -> None:
+        from bexhoma import hardware_baseline
+        result = hardware_baseline.HardwareBaselineResult(
+            code='c',
+            per_node={'n1': {'cpu_mem': {}, 'fio': {}}, 'n2': {'cpu_mem': {}, 'fio': {}}},
+            storage_classes={'cephcsi': {'measured_from': 'n1', 'fio': {'hardware_fio_read_iops': 7.8}}},
+        )
+        merged = self._apply(result)
+        cephcsi, local_hdd = merged['storage_classes']
+        self.assertEqual(cephcsi['hardware_baseline']['measured_from'], 'n1')
+        self.assertEqual(cephcsi['hardware_baseline']['fio']['hardware_fio_read_iops'], 7.8)
+        self.assertNotIn('hardware_baseline', local_hdd)
+        self.assertEqual(set(merged['nodes'][0]['hardware_baseline']), {'cpu_mem', 'fio'})
+        self.assertEqual(merged['hardware_baseline_status'],
+                         {'complete': True, 'timeout_minutes': 30, 'missing': []})
+
+    def test_incomplete_sweep_is_marked(self) -> None:
+        from bexhoma import hardware_baseline
+        result = hardware_baseline.HardwareBaselineResult(
+            code='c', per_node={'n1': {'cpu_mem': {}}}, failed_nodes=['n2'],
+            missing=['nodes.n1.fio', 'nodes.n2.cpu_mem', 'nodes.n2.fio'],
+        )
+        merged = self._apply(result)
+        status = merged['hardware_baseline_status']
+        self.assertFalse(status['complete'])
+        self.assertEqual(status['missing'], ['nodes.n1.fio', 'nodes.n2.cpu_mem', 'nodes.n2.fio'])
+        self.assertEqual(merged['hardware_baseline_failed_nodes'], ['n2'])
+
+
 def _node(name: str = 'node-1') -> environment.NodeInfo:
     return environment.NodeInfo(
         name=name,

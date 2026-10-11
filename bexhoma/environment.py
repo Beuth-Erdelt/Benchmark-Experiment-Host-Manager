@@ -62,7 +62,7 @@ from bexhoma.spec import parse_memory_quantity
 #: source of truth, embedded directly at generation time, so unlike
 #: contract_catalog.yml/contract_result.yml there is no separate contract
 #: doc to drift out of sync with.
-ENVIRONMENT_CONTRACT_VERSION = "1.3.0"
+ENVIRONMENT_CONTRACT_VERSION = "1.4.0"
 
 #: RBAC users on a shared cluster are commonly granted node/storage-class
 #: read but not cluster-scoped pod listing (that would reveal every other
@@ -959,10 +959,14 @@ def apply_hardware_baseline(
 ) -> None:
     """Run the opt-in hardware baseline sweep and merge its results into ``environment``.
 
-    Mutates ``environment["nodes"]`` in place (setting each node dict's
-    ``"hardware_baseline"`` entry) and adds a top-level ``"network_matrix"``
-    key. Only nodes already present in ``environment["nodes"]`` are swept —
-    tainted nodes were already excluded by :func:`collect_nodes`.
+    Mutates ``environment["nodes"]`` and ``environment["storage_classes"]``
+    in place (setting each swept entry's ``"hardware_baseline"``) and adds
+    the top-level ``"network_matrix"`` and ``"hardware_baseline_status"``
+    keys. ``hardware_baseline_status.complete`` is false, with the missing
+    results listed, when the sweep timed out or a round failed: the results
+    present are then only part of what was scheduled. Only nodes already
+    present in ``environment["nodes"]`` are swept — tainted nodes were
+    already excluded by :func:`collect_nodes`.
 
     Deliberately does not raise on sweep failure: a broken hardware baseline
     must not prevent ``environment.yml`` from being written at all, matching
@@ -978,10 +982,10 @@ def apply_hardware_baseline(
     :param storage_classes: Extra StorageClasses to additionally run the fio
         round against, e.g. ``[None, 'cephcsi']`` — see
         :func:`bexhoma.hardware_baseline.run_hardware_baseline`. Each named
-        class is only swept once, on a single node, so only that one node's
-        ``hardware_baseline`` dict gets an extra ``"fio:<name>"`` entry;
-        every node's ``hardware_baseline`` still gets the always-present
-        ``"fio"`` (ephemeral) entry.
+        class is only swept once, on a single node; its result goes to that
+        class's ``storage_classes`` entry as ``hardware_baseline``, with
+        ``measured_from`` naming the node. Every node's ``hardware_baseline``
+        still gets the always-present ``"fio"`` (ephemeral) entry.
     :param timeout_minutes: Wall-clock cap for the whole sweep.
     """
     from bexhoma import hardware_baseline
@@ -999,9 +1003,20 @@ def apply_hardware_baseline(
     for node in environment["nodes"]:
         if node["name"] in result.per_node:
             node["hardware_baseline"] = result.per_node[node["name"]]
+    for storage_class in environment.get("storage_classes", []):
+        if storage_class["name"] in result.storage_classes:
+            storage_class["hardware_baseline"] = result.storage_classes[storage_class["name"]]
     environment["network_matrix"] = result.network_matrix
     if result.failed_nodes:
         environment["hardware_baseline_failed_nodes"] = result.failed_nodes
+    environment["hardware_baseline_status"] = {
+        "complete": not result.missing,
+        "timeout_minutes": timeout_minutes,
+        "missing": result.missing,
+    }
+    if result.missing:
+        print(f"WARN: hardware baseline incomplete: {len(result.missing)} scheduled results missing "
+              f"(sweep timed out or rounds failed); see hardware_baseline_status in environment.yml")
 
 
 def write_environment_yml(environment: dict[str, Any], path: str) -> None:
