@@ -78,8 +78,12 @@ Hardware metrics come from cAdvisor (per container), node-exporter (per node) an
 | Per-core utilisation | `max_core_util` busiest core in % (`ratio`), `core_variance` variance of the per-core busy share in %² (`ratio`) | node |
 | I/O wait | `io_wait_pct` share of busy CPU time spent in I/O wait in % (`ratio`), `io_wait_total` I/O wait CPU seconds (`counter`) | node |
 | GPU (DCGM) | `total_gpu_util` %, `total_gpu_power` W, `total_gpu_memory` MiB, each summed over the pod's GPUs (`gauge`) — disabled by default | GPU |
+| Ceph pool | `ceph_pool_write` / `ceph_pool_read` MiB, `ceph_pool_write_ops` / `ceph_pool_read_ops` operations (`counter`), all clients of the pool | Ceph pool |
+| Ceph volume | `ceph_volume_write` / `ceph_volume_read` MiB, `ceph_volume_write_ops` / `ceph_volume_read_ops` operations (`counter`), `ceph_volume_write_latency` / `ceph_volume_read_latency` ms as Ceph sees it (`gauge`) | the SUT's own RBD volume(s) |
+| Ceph other volumes | `ceph_others_write_rate` MiB/s, `ceph_others_write_ops_rate` / `ceph_others_read_ops_rate` operations/s (`gauge`), every other volume in the same pool | Ceph pool |
 
 Node-level metrics describe the whole node the SUT runs on, including other workloads on it, not only the SUT container.
+The Ceph metrics are explained in [Ceph storage metrics](#ceph-storage-metrics) below.
 The filesystem metrics take the largest device per pod because cAdvisor reports a RAID device and each of its member disks; summing over devices would count every read and write several times.
 They count block-device I/O: a volume on a network filesystem (e.g. CephFS, NFS) does its I/O over the network, so it shows in the network metrics instead, and filesystem metrics compare storage backends fairly only when all of them are block devices.
 
@@ -116,6 +120,12 @@ Bexhoma substitutes the following placeholders at runtime before sending the que
 | `{gpuid}` | Pipe-separated list of GPU UUIDs present in the SUT pod |
 | `{database}` | The database name (the tenant's database in database-per-tenant mode) |
 | `{schema}` | The schema name (the tenant's schema in schema-per-tenant mode) |
+| `{storage_class}` | The StorageClass of the configuration's PVC (the cluster default resolved when `-rst ''`) |
+| `{pool}` | The Ceph pool behind that StorageClass (`parameters.pool` of a Ceph CSI class) |
+| `{rbd_images}` | The RBD images behind the configuration's PVCs, as a regex alternation (`csi-vol-a\|csi-vol-b`) |
+
+The three storage placeholders are filled once per configuration after the SUT is deployed, and only when some query uses them.
+When one cannot be filled, every metric that uses it is switched off for that configuration (see below), so it is neither fetched with an empty label nor reported as missing.
 
 Because bexhoma uses Python's `str.format()` for substitution, literal PromQL label selector braces `{}` must be written as `{{}}` in the config:
 
@@ -138,6 +148,42 @@ Bexhoma automatically produces parallel queries for other container roles by sub
 | Benchmarker driver | `dbmsbenchmarker` |
 
 This means a single metric definition covers all components without requiring separate query entries for each.
+
+---
+
+## Ceph Storage Metrics
+
+When the SUT's volume lives on Ceph, the Ceph manager's Prometheus exporter tells what happened on the storage side during each phase: the SUT's own volume, every other volume in the same pool, and the pool as a whole.
+The cluster and its Ceph pools are normally shared and busy, so load from other volumes is the usual operating condition, not a fault.
+It matters for an interpretation when it differs between the configurations or phases being compared.
+In a sweep that compares a Ceph class with node-local or in-memory storage, exposure to the shared pool is part of what distinguishes the storage backends, not a confounder between them.
+
+### Where they apply
+
+The metrics need Ceph CSI storage. On other storage they are switched off per configuration, and the configuration's `storage_monitoring` record in `connections.config` says why:
+
+| Storage (`-rst`) | Pool metrics | Volume and other-volume metrics |
+|---|---|---|
+| none (ephemeral), `ramdisk` | off, no Kubernetes call | off |
+| Ceph RBD class (e.g. `cephcsi`, `nvme`), also as the cluster default `''` | on | on |
+| CephFS class (e.g. `shared`) | on | off: CephFS has no per-volume statistics |
+| other provisioner, legacy Rook FlexVolume class | off | off |
+| StorageClass unreadable, PVC without a bound RBD image | as far as resolved | off |
+| Prometheus has no Ceph series for the pool, or could not be asked | off | off |
+
+Bexhoma checks once per pool, through the dashboard pod, whether Prometheus reports the pool (`ceph_pool_metadata`) and keeps per-image statistics for it (`ceph_rbd_write_bytes`).
+A metric that is off for one configuration still appears for the others: in a storage-class sweep over `nvme` and `ramdisk`, `monitoring.md` shows the `nvme` values and `n/a (ramdisk: no Ceph volume)` for the other configuration.
+
+`environment.yml` records per storage class which Ceph metrics it supports (`ceph`), and per metric what it `needs` (`ceph_pool` or `ceph_volume`).
+An experiment that lists such a metric in `observe.metrics` is refused when none of its storage classes can serve it.
+
+### Reading them
+
+* **This SUT** (`ceph_volume_*`) counts the SUT's own volume(s). A new image appears in the exporter after a short delay with its counter already including the earlier writes, and the query reports 0 until then, so a phase's increase is complete once the image is listed.
+* **Other volumes** (`ceph_others_*`) are rates averaged over the phase, because volumes appear and disappear while a phase runs. Other pools on the same disks are not counted.
+* **All clients** (`ceph_pool_*`) is the whole pool. It does not reconcile exactly with the sum of the volumes; compare volumes with volumes.
+* The exporter's counters lag the I/O by about 1–2 minutes, which matters most for phases shorter than about 5 minutes.
+* Across configurations of one experiment, pool and other-volume values take the maximum instead of the sum, because the configurations share the pool.
 
 ---
 

@@ -52,6 +52,11 @@ tiers:
     files: ["report/workflow.md", "report/loading.md", "report/benchmarking.md", "report/monitoring.md", "report/connections.md"]
     read_when: "an actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase"
     note: "each written only if that phase was active"
+    ceph_storage:
+      where: "report/monitoring.md Ceph Storage (per component: one row per configuration), report/connections.md storage_monitoring_* per configuration"
+      present_when: "the cluster config defines Ceph storage metrics and hardware monitoring was on; per configuration only when its storage is Ceph (connections.md storage_monitoring_reason says why not, e.g. ephemeral, ramdisk, CephFS has no per-volume statistics); such a configuration shows n/a, never 0"
+      semantics: "This SUT = the configuration's own RBD volume(s) as Ceph saw them; Other Volumes = mean rate of every other volume in the same Ceph pool over the phase; All Clients = the whole pool. Other pools on the same disks are not counted; the exporter lags the I/O by about 1-2 minutes"
+      reading_rule: "descriptive only, no validity check reads it: the pool is shared and normally busy, so load from other volumes is the usual operating condition, not a fault. It matters for a comparison when it differs between the configurations or phases being compared; between a Ceph class and node-local or in-memory storage it is part of what distinguishes the backends, not a confounder"
   3_diagnosis:
     files: ["report/files.md", "<result_dir>/*"]
     read_when: "tier 2's aggregated tables don't resolve the question"

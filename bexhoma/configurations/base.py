@@ -9,7 +9,7 @@ import re
 import shutil
 from typing import List, Optional, Tuple
 
-from bexhoma import experiments
+from bexhoma import ceph_storage, experiments
 from bexhoma.cli_args import storage_suffix
 
 from .benchmarking import BenchmarkRunner
@@ -170,6 +170,7 @@ class SutConfiguration:
         self.connection_parameter = {}                                           #: Collects parameters that may be interesting for result evaluation.
         self.time_loading = 0                                                     #: Seconds taken for the initial data load.
         self.storage_reused = False                                              #: True iff the SUT found a loaded volume from an earlier experiment, so loading was skipped and its times inherited.
+        self.storage_monitoring = None                                           #: Storage placeholders for Ceph monitoring (see resolve_storage_monitoring()), resolved once after deployment.
         self.time_generating = 0                                                  #: Seconds taken for data generation.
         self.time_ingesting = 0                                                   #: Seconds taken for ingesting existing data.
         self.time_schema = 0                                                      #: Seconds taken for schema creation.
@@ -855,6 +856,7 @@ class SutConfiguration:
             experiment=self.get_experiment_name(),
             schema=schema,
             database=database,
+            **self.storage_placeholder_values(),
         )
 
     def set_metric_of_config(
@@ -886,7 +888,8 @@ class SutConfiguration:
             metric = metric.replace(', container="dbms"', '')
             metric = metric.replace(', container_label_io_kubernetes_container_name="dbms"', '')
             return metric.format(
-                host=host, gpuid=gpuid, configuration=component, experiment='')
+                host=host, gpuid=gpuid, configuration=component, experiment='',
+                **self.storage_placeholder_values())
         if self.num_worker > 0:
             if len(component) == 0:
                 components = list(self.deployment_infos['statefulset'].keys())
@@ -896,11 +899,13 @@ class SutConfiguration:
                 configuration = '(' + '|'.join(names_of_workers) + ')'
                 return metric.format(
                     host=host, gpuid=gpuid, configuration=configuration,
-                    experiment="", schema=schema, database=database)
+                    experiment="", schema=schema, database=database,
+                    **self.storage_placeholder_values())
             name_worker = self.get_worker_name(component=component)
             return metric.format(
                 host=host, gpuid=gpuid, configuration=name_worker,
-                experiment="", schema=schema, database=database)
+                experiment="", schema=schema, database=database,
+                **self.storage_placeholder_values())
         experiment_name = self.get_experiment_name()
         self.logger.debug(
             f"set_metric_of_config_default({metric}, {host}, {gpuid}, "
@@ -1052,6 +1057,92 @@ class SutConfiguration:
                 if 'pvc' in statefulset:
                     list_of_pvc.extend(statefulset['pvc'])
         return list_of_pvc
+
+    def resolve_storage_monitoring(self) -> dict:
+        """Resolve the storage placeholders of monitoring queries, once.
+
+        Fills ``{storage_class}``, ``{pool}`` and ``{rbd_images}`` from this
+        configuration's volumes (see :mod:`bexhoma.ceph_storage`). Ephemeral
+        and ``ramdisk`` storage make no API call. Never raises: whatever
+        cannot be resolved stays empty and ``reason`` says why, so the metrics
+        that need it are switched off. Call it only after the SUT is
+        deployed, when its PVCs exist.
+
+        :return: The ``storage_monitoring`` record, also kept on the configuration.
+        :rtype: dict
+        """
+        if getattr(self, 'storage_monitoring', None) is not None:
+            return self.storage_monitoring
+        storage_class = self.storage.get('storageClassName') if self.storage else None
+        if storage_class is None:
+            record = ceph_storage.storage_monitoring_record(reason='ephemeral storage: no Ceph volume')
+        elif storage_class == 'ramdisk':
+            record = ceph_storage.storage_monitoring_record(reason='ramdisk: no Ceph volume')
+        else:
+            record = self._resolve_ceph_storage(storage_class)
+        self.storage_monitoring = record
+        return record
+
+    def _resolve_ceph_storage(self, configured_class: str) -> dict:
+        """Look up class, pool, RBD images and Prometheus support of this configuration's PVCs.
+
+        :param configured_class: ``storageClassName`` as configured (``''`` is
+            the cluster's default class).
+        :return: The ``storage_monitoring`` record.
+        :rtype: dict
+        """
+        cluster = self.experiment.cluster
+        pvcs = self.get_list_of_pvc()
+        storage_class = configured_class
+        if pvcs:
+            storage_class = cluster.get_pvc_storage_class(pvcs[0]) or configured_class
+        if not storage_class:
+            return ceph_storage.storage_monitoring_record(reason='no PVC found to resolve the default storage class')
+        info = cluster.get_storage_class_info(storage_class)
+        provisioner, pool, kind = info.get('provisioner', ''), info.get('pool', ''), info.get('kind', '')
+        if not info:
+            return ceph_storage.storage_monitoring_record(
+                storage_class, reason=f'StorageClass {storage_class} could not be read')
+        if not pool:
+            return ceph_storage.storage_monitoring_record(
+                storage_class, provisioner, reason=f'{provisioner or "unknown provisioner"} is not a Ceph CSI provisioner')
+        images = ''
+        if kind == 'rbd':
+            images = ceph_storage.rbd_images_pattern(
+                [image for image in (cluster.get_pvc_rbd_image(pvc) for pvc in pvcs) if image])
+        support = cluster.get_ceph_metrics_support(pool)
+        if support is None:
+            return ceph_storage.storage_monitoring_record(
+                storage_class, provisioner, pool, kind, images,
+                pool_metrics=None, volume_metrics=None,
+                reason='Prometheus could not be asked for Ceph metrics')
+        pool_metrics = support['pool_metrics']
+        volume_metrics = pool_metrics and support['volume_metrics'] and bool(images)
+        reasons = []
+        if not pool_metrics:
+            reasons.append(f'Prometheus has no Ceph metrics for pool {pool}')
+        elif kind != 'rbd':
+            reasons.append(f'{kind}: no per-volume statistics')
+        elif not support['volume_metrics']:
+            reasons.append(f'Prometheus has no per-image statistics for pool {pool}')
+        elif not images:
+            reasons.append('no RBD image found for the PVCs ' + ', '.join(pvcs) if pvcs else 'no PVC found')
+        return ceph_storage.storage_monitoring_record(
+            storage_class, provisioner, pool, kind, images,
+            pool_metrics=pool_metrics, volume_metrics=volume_metrics, reason='; '.join(reasons))
+
+    def storage_placeholder_values(self) -> dict:
+        """Return the storage placeholder values for monitoring queries.
+
+        Empty strings until :meth:`resolve_storage_monitoring` has run, so a
+        query using them is switched off rather than formatted with a guess.
+
+        :return: ``{'storage_class': ..., 'pool': ..., 'rbd_images': ...}``.
+        :rtype: dict
+        """
+        record = getattr(self, 'storage_monitoring', None)
+        placeholders = (record or {}).get('placeholders', {})
+        return {name: placeholders.get(name, '') for name in ceph_storage.STORAGE_PLACEHOLDERS}
 
     def use_ramdisk(self) -> bool:
         """Return True iff the storage class is ``'ramdisk'``.

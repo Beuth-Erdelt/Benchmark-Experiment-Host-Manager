@@ -39,7 +39,15 @@ Decode by counting dash-separated segments from the right.
 `<n>` is the resource cell: entry *n* of the `resources` sweep lists
 (`cpu`, `memory`, `storage_class`). `connections.md` names each
 configuration's storage as `sut_storage_storageClassName` (unset: ephemeral)
-and `sut_storage_storageConfiguration`.
+and `sut_storage_storageConfiguration`. When the cluster config defines Ceph
+storage metrics, `storage_monitoring_*` adds the Ceph pool and volume behind
+it, or in `storage_monitoring_reason` why there are none (ephemeral, `ramdisk`,
+CephFS without per-volume statistics, no Ceph metrics in Prometheus).
+`monitoring.md`'s Ceph Storage tables show, per phase, the SUT's own volume,
+the other volumes in its pool and the pool as a whole; a configuration
+without them reads `n/a`. They are descriptive: the pool is shared and
+normally busy, and load from other volumes matters for a comparison only
+when it differs between the compared configurations or phases.
 
 | Identifier | Shape | Example |
 |---|---|---|

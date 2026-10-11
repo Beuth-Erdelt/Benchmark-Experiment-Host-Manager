@@ -4,12 +4,12 @@ from __future__ import annotations
 import copy
 from typing import TYPE_CHECKING
 
-from bexhoma import missing_metrics
+from bexhoma import ceph_storage, missing_metrics
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
-__all__ = ['MetricsCollector', 'apply_metric_override']
+__all__ = ['MetricsCollector', 'apply_metric_override', 'switch_off_unresolved', 'uses_storage_placeholders']
 
 
 def apply_metric_override(metricname: str, metricdata: dict, overrides: dict) -> dict:
@@ -28,6 +28,42 @@ def apply_metric_override(metricname: str, metricdata: dict, overrides: dict) ->
     if metricname in overrides:
         metric['active'] = overrides[metricname]
     return metric
+
+
+def switch_off_unresolved(metric: dict, values: dict) -> dict:
+    """Switch a metric off when its query needs a storage placeholder that is empty.
+
+    Applied after :func:`apply_metric_override`, so an experiment cannot
+    switch on a metric its storage cannot serve (e.g. a Ceph volume metric on
+    ``ramdisk``). The metric is then skipped, not fetched with an empty label
+    and not reported as missing.
+
+    :param metric: A metric definition, query still a template (modified in place).
+    :param values: Storage placeholder values (``storage_class``, ``pool``, ``rbd_images``).
+    :return: ``metric``.
+    :rtype: dict
+    """
+    unresolved = ceph_storage.unresolved_placeholders(str(metric.get('query', '')), values)
+    if unresolved:
+        metric['active'] = False
+        metric['inactive_reason'] = 'storage placeholder unresolved: ' + ', '.join(unresolved)
+    return metric
+
+
+def uses_storage_placeholders(monitor: dict) -> bool:
+    """Whether any metric template in ``cluster.config``'s ``monitor`` section uses a storage placeholder.
+
+    :param monitor: ``credentials.k8s.monitor``.
+    :return: True when storage placeholders have to be resolved.
+    :rtype: bool
+    """
+    templates = list((monitor.get('metrics') or {}).values())
+    for section in monitor.values():
+        if isinstance(section, dict) and isinstance(section.get('metrics'), dict):
+            templates.extend(section['metrics'].values())
+    return any(
+        ceph_storage.query_placeholders(str(template.get('query', ''))) & set(ceph_storage.STORAGE_PLACEHOLDERS)
+        for template in templates if isinstance(template, dict))
 
 
 class MetricsCollector:
@@ -199,6 +235,12 @@ class MetricsCollector:
             c['monitoring']['metrics'] = {}
             c['monitoring']['metrics_special'] = {}
             c['monitoring']['metrics_custom'] = {}
+            # storage placeholders ({storage_class}, {pool}, {rbd_images}) are
+            # only looked up when some query uses them; the SUT and its PVCs
+            # exist by now
+            if uses_storage_placeholders(config_K8s['monitor']):
+                c['storage_monitoring'] = cfg.resolve_storage_monitoring()
+            storage_values = cfg.storage_placeholder_values()
             if 'metrics' in config_K8s['monitor']:
                 if 'deployment' in cfg.deployment_infos:
                     for name, deployment in cfg.deployment_infos['deployment'].items():
@@ -211,16 +253,16 @@ class MetricsCollector:
                         metrics_type = f"metrics_{name}"
                         c['monitoring'][metrics_type] = {}
                         for metricname, metricdata in config_K8s['monitor']['metrics'].items():
-                            c['monitoring'][metrics_type][metricname] = apply_metric_override(
-                                metricname, metricdata, overrides)
+                            c['monitoring'][metrics_type][metricname] = switch_off_unresolved(
+                                apply_metric_override(metricname, metricdata, overrides), storage_values)
                             c['monitoring'][metrics_type][metricname]['query'] = (
                                 cfg.set_metric_of_config(
                                     metric=c['monitoring'][metrics_type][metricname]['query'],
                                     host=node, gpuid=gpuid, schema=schema,
                                     database=database, component=name))
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
-                    c['monitoring']['metrics'][metricname] = apply_metric_override(
-                        metricname, metricdata, overrides)
+                    c['monitoring']['metrics'][metricname] = switch_off_unresolved(
+                        apply_metric_override(metricname, metricdata, overrides), storage_values)
                     c['monitoring']['metrics'][metricname]['query'] = (
                         cfg.set_metric_of_config_default(
                             metric=c['monitoring']['metrics'][metricname]['query'],
@@ -236,7 +278,8 @@ class MetricsCollector:
                         metrics_template = config_K8s['monitor'][application_metrics_name][
                             'metrics'].copy()
                         for metricname, metricdata in metrics_template.items():
-                            c['monitoring']['metrics'][metricname] = metricdata.copy()
+                            c['monitoring']['metrics'][metricname] = switch_off_unresolved(
+                                metricdata.copy(), storage_values)
                             c['monitoring']['metrics'][metricname]['component'] = component
                             c['monitoring']['metrics'][metricname]['query'] = (
                                 cfg.set_metric_of_config_default(
@@ -246,7 +289,8 @@ class MetricsCollector:
                             for name, statefulset in cfg.deployment_infos['statefulset'].items():
                                 metrics_type = f"metrics_{name}"
                                 for metricname, metricdata in metrics_template.items():
-                                    c['monitoring'][metrics_type][metricname] = metricdata.copy()
+                                    c['monitoring'][metrics_type][metricname] = switch_off_unresolved(
+                                        metricdata.copy(), storage_values)
                                     c['monitoring'][metrics_type][metricname]['component'] = component
                                     c['monitoring'][metrics_type][metricname]['query'] = (
                                         cfg.set_metric_of_config(

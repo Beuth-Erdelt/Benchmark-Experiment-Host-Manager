@@ -33,6 +33,7 @@ from urllib3.util.retry import Retry
 
 from dbmsbenchmarker import *
 from .__version__ import __version__
+from . import ceph_storage
 
 import platform
 
@@ -292,6 +293,11 @@ class Kubernetes():
         self.v1core = None
         self.v1apps = None
         self.v1batches = None
+        self.v1storage = None
+        # Ceph monitoring lookups, cached per run (see get_storage_class_info()
+        # and get_ceph_metrics_support())
+        self._storage_class_info = {}
+        self._ceph_metrics_support = {}
 
         # Context metadata defaults; overwritten below if a context is found
         self.yamlfolder = yamlfolder
@@ -359,8 +365,8 @@ class Kubernetes():
         """
         Initialise Kubernetes API clients using the configured context.
 
-        Sets ``self.v1core``, ``self.v1apps``, and ``self.v1batches``.
-        Prints a warning if the cluster cannot be reached.
+        Sets ``self.v1core``, ``self.v1apps``, ``self.v1batches`` and
+        ``self.v1storage``. Prints a warning if the cluster cannot be reached.
         """
         self.logger.debug(f'Kubernetes.cluster_access({self.context})')
         try:
@@ -368,6 +374,7 @@ class Kubernetes():
             self.v1core = kubernetes_client.CoreV1Api(api_client=self._new_api_client())
             self.v1apps = kubernetes_client.AppsV1Api(api_client=self._new_api_client())
             self.v1batches = kubernetes_client.BatchV1Api(api_client=self._new_api_client())
+            self.v1storage = kubernetes_client.StorageV1Api(api_client=self._new_api_client())
         except Exception:
             print("WARN: Could not connect to Kubernetes")
 
@@ -967,6 +974,104 @@ class Kubernetes():
             self.cluster_access()
             self.wait(2)
             return self.get_pvc_storage_class(name=name)
+
+    def get_storage_class_info(self, name):
+        """
+        Return a StorageClass's provisioner and, for Ceph CSI, its pool.
+
+        Used to fill the ``{pool}`` monitoring placeholder. Never raises and
+        never retries: any API error (missing class, no permission) is a
+        warning and an empty result, so monitoring is switched off instead of
+        failing the run. Cached per class.
+
+        :param name: StorageClass name.
+        :return: ``{'provisioner', 'pool', 'kind'}`` (``kind`` is ``'rbd'``,
+            ``'cephfs'`` or ``''``), or ``{}`` when the class cannot be read.
+        :rtype: dict
+        """
+        self.logger.debug('Kubernetes.get_storage_class_info()')
+        if not name:
+            return {}
+        if name in self._storage_class_info:
+            return self._storage_class_info[name]
+        info = {}
+        try:
+            if self.v1storage is None:
+                self.v1storage = kubernetes_client.StorageV1Api(api_client=self._new_api_client())
+            storage_class = self.v1storage.read_storage_class(name=name)
+            pool, kind = ceph_storage.ceph_pool_of(storage_class.provisioner, storage_class.parameters)
+            info = {'provisioner': storage_class.provisioner or '', 'pool': pool, 'kind': kind}
+        except Exception as e:
+            status = getattr(e, 'status', None)
+            print(f"WARN: could not read StorageClass {name} for storage monitoring "
+                  f"({status if status is not None else e})")
+        self._storage_class_info[name] = info
+        return info
+
+    def get_pvc_rbd_image(self, name):
+        """
+        Return the Ceph RBD image behind a PVC.
+
+        Follows PVC ``spec.volumeName`` to the PV's
+        ``spec.csi.volumeAttributes.imageName``. Never raises: an unbound PVC,
+        a PV that is not CSI, a missing ``imageName`` (e.g. CephFS) or an API
+        error give ``None``.
+
+        :param name: PVC name in the current namespace.
+        :return: Image name (``csi-vol-<uuid>``), or ``None``.
+        :rtype: str or None
+        """
+        self.logger.debug('Kubernetes.get_pvc_rbd_image()')
+        try:
+            pvc = self.v1core.read_namespaced_persistent_volume_claim(namespace=self.namespace, name=name)
+            volume_name = pvc.spec.volume_name
+            if not volume_name:
+                return None
+            pv = self.v1core.read_persistent_volume(name=volume_name)
+        except Exception as e:
+            status = getattr(e, 'status', None)
+            print(f"WARN: could not read the volume of PVC {name} for storage monitoring "
+                  f"({status if status is not None else e})")
+            return None
+        csi = pv.spec.csi if pv.spec is not None else None
+        image = (csi.volume_attributes or {}).get('imageName') if csi is not None else None
+        return image if ceph_storage.is_valid_image_name(image) else None
+
+    def get_ceph_metrics_support(self, pool):
+        """
+        Check once per pool whether Prometheus has the pool's Ceph metrics.
+
+        Two instant queries through the dashboard pod: does the Ceph exporter
+        report the pool (``ceph_pool_metadata``), and does it keep per-image
+        RBD statistics for it (``ceph_rbd_write_bytes``)? A cluster without
+        Ceph metrics thereby switches the Ceph monitoring metrics off instead
+        of logging them as missing. Cached per pool.
+
+        :param pool: Ceph pool name.
+        :return: ``{'pool_metrics': bool, 'volume_metrics': bool}``, or ``None``
+            when Prometheus could not be asked.
+        :rtype: dict or None
+        """
+        self.logger.debug('Kubernetes.get_ceph_metrics_support()')
+        if pool in self._ceph_metrics_support:
+            return self._ceph_metrics_support[pool]
+        # reuses environment.yml's Prometheus access (curl in the dashboard pod)
+        from bexhoma import environment
+        support = None
+        url = environment._prometheus_url(self)
+        pod = self.get_dashboard_pod_name() if url else ''
+        if url and pod:
+            try:
+                pools = environment._query_prometheus(self, pod, url, ceph_storage.promql_pool_check([pool]))
+                volumes = environment._query_prometheus(self, pod, url, ceph_storage.promql_volume_check([pool]))
+                support = {
+                    'pool_metrics': any(series.get('metric', {}).get('name') == pool for series in pools),
+                    'volume_metrics': any(series.get('metric', {}).get('pool') == pool for series in volumes),
+                }
+            except Exception as e:
+                print(f"WARN: could not check Ceph metrics of pool {pool} in Prometheus ({e})")
+        self._ceph_metrics_support[pool] = support
+        return support
 
     def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
         """

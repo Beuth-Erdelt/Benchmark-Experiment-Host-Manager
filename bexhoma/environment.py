@@ -55,6 +55,7 @@ import yaml
 from kubernetes.client.rest import ApiException
 from kubernetes.stream import stream as kubernetes_stream
 
+from bexhoma import ceph_storage
 from bexhoma.spec import parse_memory_quantity
 
 #: Bump whenever environment.yml's top-level shape (nodes/occupancy_source/
@@ -62,7 +63,7 @@ from bexhoma.spec import parse_memory_quantity
 #: source of truth, embedded directly at generation time, so unlike
 #: contract_catalog.yml/contract_result.yml there is no separate contract
 #: doc to drift out of sync with.
-ENVIRONMENT_CONTRACT_VERSION = "1.4.0"
+ENVIRONMENT_CONTRACT_VERSION = "1.5.0"
 
 #: RBAC users on a shared cluster are commonly granted node/storage-class
 #: read but not cluster-scoped pod listing (that would reveal every other
@@ -113,6 +114,7 @@ __all__ = [
     "collect_monitoring_metrics",
     "REQUIRED_HARDWARE_METRICS",
     "collect_storage_classes",
+    "apply_ceph_metrics_support",
     "collect_resource_limits",
     "build_environment",
     "apply_hardware_baseline",
@@ -233,6 +235,11 @@ class StorageClassInfo:
     :ivar parameters: Provisioner-specific parameters.
     :ivar reclaim_policy: Reclaim policy (e.g. ``Delete``, ``Retain``).
     :ivar volume_binding_mode: Volume binding mode.
+    :ivar ceph: For a Ceph CSI class, ``{pool, kind}`` (``kind`` is ``rbd`` or
+        ``cephfs``), plus ``pool_metrics``/``volume_metrics`` once
+        :func:`apply_ceph_metrics_support` could ask Prometheus: whether the
+        Ceph monitoring metrics (``needs: ceph_pool``/``ceph_volume``) can be
+        collected for a SUT volume on this class. ``None`` for other classes.
     """
     name: str
     alias: Optional[str] = None
@@ -241,6 +248,7 @@ class StorageClassInfo:
     parameters: dict[str, str] = field(default_factory=dict)
     reclaim_policy: str = ""
     volume_binding_mode: str = ""
+    ceph: Optional[dict[str, Any]] = None
 
     @classmethod
     def from_v1storageclass(cls, storage_class: Any, aliases: dict[str, str]) -> "StorageClassInfo":
@@ -254,6 +262,7 @@ class StorageClassInfo:
         :rtype: StorageClassInfo
         """
         name = storage_class.metadata.name
+        pool, kind = ceph_storage.ceph_pool_of(storage_class.provisioner or "", storage_class.parameters)
         return cls(
             name=name,
             alias=aliases.get(name),
@@ -262,6 +271,7 @@ class StorageClassInfo:
             parameters=storage_class.parameters or {},
             reclaim_policy=storage_class.reclaim_policy or "",
             volume_binding_mode=storage_class.volume_binding_mode or "",
+            ceph={"pool": pool, "kind": kind} if pool else None,
         )
 
 
@@ -719,6 +729,9 @@ def collect_monitoring_metrics(cluster: Any) -> dict[str, Any]:
             "active": bool(definition.get("active", True)),
             "required": key in REQUIRED_HARDWARE_METRICS,
         }
+        needs = ceph_storage.metric_needs(str(definition.get("query", "")))
+        if needs:
+            entry["needs"] = needs
         if available is not None and series_by_metric[key]:
             entry["available"] = all(name in available for name in series_by_metric[key])
         hardware[key] = entry
@@ -817,6 +830,46 @@ def collect_storage_classes(cluster: Any) -> list[StorageClassInfo]:
     except Exception as error:
         raise EnvironmentError(f"could not list storage classes: {error}") from error
     return [StorageClassInfo.from_v1storageclass(item, aliases) for item in api_response.items]
+
+
+def apply_ceph_metrics_support(cluster: Any, storage_classes: list[StorageClassInfo]) -> Optional[bool]:
+    """Record per Ceph storage class whether its Ceph monitoring metrics have data.
+
+    Two queries for all pools at once (see :mod:`bexhoma.ceph_storage`): the
+    pools the Ceph exporter reports, and the pools with per-image RBD
+    statistics. Sets ``ceph.pool_metrics`` and ``ceph.volume_metrics`` (only
+    RBD classes can have the latter). Leaves them out when Prometheus could not
+    be asked, so "unknown" is not mistaken for "absent".
+
+    :param cluster: A ``bexhoma.clusters.Kubernetes`` instance (already connected).
+    :param storage_classes: Curated storage classes (mutated in place).
+    :return: ``True`` when checked, ``False`` when it could not be checked,
+        ``None`` when no class is backed by Ceph.
+    :rtype: Optional[bool]
+    """
+    pools = sorted({storage_class.ceph["pool"] for storage_class in storage_classes if storage_class.ceph})
+    if not pools:
+        return None
+    url = _prometheus_url(cluster)
+    pod = cluster.get_dashboard_pod_name() if url else ""
+    if not (url and pod):
+        return False
+    try:
+        reported = {series.get("metric", {}).get("name")
+                    for series in _query_prometheus(cluster, pod, url, ceph_storage.promql_pool_check(pools))}
+        per_image = {series.get("metric", {}).get("pool")
+                     for series in _query_prometheus(cluster, pod, url, ceph_storage.promql_volume_check(pools))}
+    except Exception as error:
+        print(f"WARN: could not check Ceph metrics in Prometheus ({error})")
+        return False
+    for storage_class in storage_classes:
+        if not storage_class.ceph:
+            continue
+        pool = storage_class.ceph["pool"]
+        storage_class.ceph["pool_metrics"] = pool in reported
+        storage_class.ceph["volume_metrics"] = (
+            pool in reported and storage_class.ceph["kind"] == "rbd" and pool in per_image)
+    return True
 
 
 def _derive_resource_limits_from_nodes(nodes: list[NodeInfo]) -> dict[str, Any]:
@@ -921,6 +974,14 @@ def build_environment(cluster: Any) -> dict[str, Any]:
     _progress("Storage classes", "listing")
     storage_classes = collect_storage_classes(cluster)
     _progress("Storage classes", f"{len(storage_classes)} found")
+    ceph_checked = apply_ceph_metrics_support(cluster, storage_classes)
+    if ceph_checked is not None:
+        ceph_classes = [storage_class for storage_class in storage_classes if storage_class.ceph]
+        if ceph_checked:
+            with_metrics = sum(1 for storage_class in ceph_classes if storage_class.ceph.get("pool_metrics"))
+            _progress("Storage classes", f"{len(ceph_classes)} on Ceph, {with_metrics} with Ceph metrics in Prometheus")
+        else:
+            _progress("Storage classes", f"{len(ceph_classes)} on Ceph, Ceph metrics not checked")
     _progress("Resource limits", "reading")
     resource_limits = collect_resource_limits(cluster, nodes)
     _progress("Monitoring metrics", "reading cluster.config and checking Prometheus")

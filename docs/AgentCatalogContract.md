@@ -61,7 +61,10 @@ maintained, runnable example, annotated field by field.
 - `duckdb_force_execution: true` makes DuckDB execute every query; `false`
   lets pg_duckdb decide per query, which is not the same as "PostgreSQL only".
 - `observe.metrics` lists the hardware metrics the hypothesis relies on;
-  required exactly when SUT or cluster monitoring is on.
+  required exactly when SUT or cluster monitoring is on. The `ceph_*` metrics
+  (the SUT's Ceph volume, the other volumes in its pool, the whole pool) need
+  a Ceph storage class in at least one `storage_class` cell, as
+  `environment.yml`'s `needs` and `ceph` entries say; other cells show `n/a`.
 
 ## Known gaps
 

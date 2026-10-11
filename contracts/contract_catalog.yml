@@ -302,7 +302,10 @@ experiment_schema:
             including those already active by default, and state in the
             hypothesis what those readings are expected to show -- or that the
             resource side is descriptive. Metrics marked available: false
-            cannot be listed (Prometheus has no data for them)"
+            cannot be listed (Prometheus has no data for them). A metric with
+            needs: ceph_pool or ceph_volume needs at least one storage_class
+            whose environment.yml entry has a matching ceph block (ceph_volume:
+            kind rbd); other cells show it as n/a"
           out_of_scope: "available: true only says the cluster's Prometheus
             holds the series somewhere, not that it will cover this
             experiment: when bexhoma has to install its own collector, that
@@ -311,7 +314,14 @@ experiment_schema:
             node-level reading includes every other workload on that node.
             Container filesystem metrics count block-device I/O, so I/O to a
             network filesystem may show as network traffic instead -- they
-            compare storage backends fairly only when all are block devices"
+            compare storage backends fairly only when all are block devices.
+            The ceph_* metrics cover Ceph, not the container: the SUT's own
+            volume (ceph_volume_*), every other volume in its pool
+            (ceph_others_*) and the whole pool (ceph_pool_*), lagging the I/O
+            by 1-2 minutes; other pools on the same disks are not counted. The
+            pool is shared and normally busy: load from other volumes is the
+            operating condition, a confounder only where it differs between
+            compared configurations or phases"
     placement:
       type: object
       semantics: "each node named here must exist, and not be tainted out, in environment.yml's nodes:"

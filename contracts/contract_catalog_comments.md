@@ -140,6 +140,27 @@ builder cannot predict for its scoped `--set` operations.
 
 Folded into 1.11.0 (not yet released) as an additive change.
 
+## Ceph storage metrics in `observe.metrics` (2026-10-11)
+
+`cluster.config` gained metrics for the Ceph side of the SUT's volume: its
+own RBD volume, the other volumes in its pool, and the pool as a whole
+(`dev/plan-ceph-pool-metrics.md`, `docs/Monitoring.md`). They are hardware
+metrics like the others, so they reach the catalog only through
+`environment.yml`: each carries `needs: ceph_pool` or `ceph_volume`, and each
+Ceph storage class a `ceph` block saying which of them it can serve. A
+listed metric that no `storage_class` cell can serve is refused, because
+bexhoma would switch it off for every configuration and a metric the
+hypothesis relies on would silently never be collected. In a sweep it is
+enough that one cell serves it; the others show `n/a`.
+
+They are descriptive and not a validity check: the reference cluster's Ceph
+pools are always in use by others, and a check that treated that as a fault
+would flag almost every run. The `out_of_scope` text says what they cover
+and when load from other volumes matters (when it differs between compared
+cells).
+
+Folded into 1.11.0 (not yet released) as an additive change.
+
 ## Storage class sweeps and fresh volumes (2026-10-10)
 
 `resources.storage_class` may now be a list, swept like `cpu`/`memory`:

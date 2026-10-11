@@ -678,7 +678,8 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
                 f"environment.yml; usable: {', '.join(usable) or 'none'}"
             )
 
-    _validate_metrics(environment, (experiment.get("observe") or {}).get("metrics") or [])
+    _validate_metrics(environment, (experiment.get("observe") or {}).get("metrics") or [],
+                      storage_class_cells(resources))
 
 
 def storage_class_cells(resources: dict[str, Any]) -> list[Optional[str]]:
@@ -739,13 +740,52 @@ def usable_storage_classes(environment: dict[str, Any]) -> list[str]:
     )
 
 
-def _validate_metrics(environment: dict[str, Any], metrics: list[str]) -> None:
+def _storage_misses_need(environment: dict[str, Any], storage_class: Optional[str], needs: str) -> str:
+    """Why a storage cell cannot serve a metric with ``needs``, or ``""`` when it can.
+
+    Bexhoma switches such a metric off for that configuration at run time
+    (``bexhoma.ceph_storage``). Support that ``environment.yml`` could not
+    check counts as possible.
+
+    :param environment: Parsed environment descriptor.
+    :param storage_class: One ``resources.storage_class`` cell (``None`` = ephemeral).
+    :param needs: ``ceph_pool`` or ``ceph_volume``.
+    :return: The reason, empty when the cell can serve it.
+    :rtype: str
+    """
+    if storage_class is None:
+        return "ephemeral storage has no Ceph volume"
+    entry = next((entry for entry in environment.get("storage_classes", [])
+                  if isinstance(entry, dict) and entry.get("name") == storage_class), None)
+    ceph = (entry or {}).get("ceph")
+    if not ceph:
+        return f"{storage_class} is not a Ceph storage class"
+    if ceph.get("pool_metrics") is False:
+        return f"Prometheus has no Ceph metrics for {storage_class}'s pool {ceph.get('pool')}"
+    if needs == "ceph_volume":
+        if ceph.get("kind") != "rbd":
+            return f"{storage_class} is {ceph.get('kind') or 'not RBD'}, which has no per-volume statistics"
+        if ceph.get("volume_metrics") is False:
+            return f"Prometheus has no per-volume statistics for {storage_class}'s pool {ceph.get('pool')}"
+    return ""
+
+
+def _validate_metrics(environment: dict[str, Any], metrics: list[str],
+                      storage_cells: Optional[list[Optional[str]]] = None) -> None:
     """Check ``observe.metrics`` against ``environment.yml``'s ``monitoring.hardware``.
+
+    A metric that ``needs`` Ceph storage (``ceph_pool``/``ceph_volume``) must
+    be servable by at least one of the experiment's storage cells; in a
+    storage-class sweep the other cells simply report it as not applicable.
+    Otherwise bexhoma would switch it off for every configuration, and a
+    metric the hypothesis relies on would silently never be collected.
 
     :param environment: Parsed environment descriptor.
     :param metrics: The experiment's ``observe.metrics`` (keys to switch on).
+    :param storage_cells: The experiment's ``resources.storage_class`` cells;
+        ``None`` skips the storage check.
     :raises SpecError: When the environment has no metric list, a key is unknown,
-        or a metric has no data.
+        a metric has no data, or no storage cell can serve a metric.
     """
     if not metrics:
         return
@@ -764,6 +804,14 @@ def _validate_metrics(environment: dict[str, Any], metrics: list[str]) -> None:
             raise SpecError(
                 f"observe.metrics: {key} has no data in Prometheus "
                 "(available: false when environment.yml was generated), so it would only collect empty readings")
+        needs = metric.get("needs")
+        if needs and storage_cells is not None:
+            reasons = [_storage_misses_need(environment, cell, needs) for cell in storage_cells]
+            if all(reasons):
+                raise SpecError(
+                    f"observe.metrics: {key} needs a Ceph storage class ({needs}), and no "
+                    f"resources.storage_class cell provides one: {'; '.join(dict.fromkeys(reasons))}. "
+                    "It would be switched off for every configuration")
 
 
 def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:
