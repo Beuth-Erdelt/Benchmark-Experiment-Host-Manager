@@ -43,6 +43,12 @@ import platform
 #: instead of failing outright. See https://github.com/kubernetes/kubectl/issues/1425.
 KUBECTL_CP_INTERNAL_RETRIES = 20
 
+#: Ceiling on packing a result folder into an archive inside a pod, in
+#: seconds (see Kubernetes.download_folder). A read on a network file system
+#: such as CephFS can hang indefinitely; ``tar`` is then killed instead of
+#: blocking the experiment forever.
+ARCHIVE_TIMEOUT_SECONDS = 600
+
 #: Hard ceiling on one kubectl() subprocess call, in seconds. Unlike the
 #: Kubernetes Python client (see CLUSTER_API_TIMEOUT_SECONDS below), a shelled
 #: -out ``kubectl`` call had no timeout at all: a connection the API server
@@ -1655,7 +1661,7 @@ class Kubernetes():
         )
 
     def download_folder(self, folder_remote, folder_local, pod, container="dashboard",
-                        max_retries: int = 3) -> str:
+                        max_retries: int = 3, archive_timeout: int = ARCHIVE_TIMEOUT_SECONDS) -> str:
         """
         Download the contents of a directory in a Pod container as one archive.
 
@@ -1669,8 +1675,11 @@ class Kubernetes():
         archives are removed afterwards. Existing local files are overwritten,
         as with ``kubectl cp``.
 
-        If the archive cannot be created in the container (e.g. no space left
-        in ``/tmp``), the method falls back to a plain directory
+        Packing is killed after ``archive_timeout`` seconds, since a read on
+        the network file system behind the folder can hang indefinitely. A
+        timeout raises ``RuntimeError``: a plain ``kubectl cp`` would read the
+        same files and hang as well. If packing fails for another reason (e.g.
+        no space left in ``/tmp``), the method falls back to a plain directory
         ``kubectl cp``.
 
         :param folder_remote: Source directory inside the container.
@@ -1678,8 +1687,9 @@ class Kubernetes():
         :param pod: Source Pod name.
         :param container: Source container name.  Defaults to ``dashboard``.
         :param max_retries: Maximum number of copy attempts before raising.
+        :param archive_timeout: Seconds after which packing is killed.
         :return: Output of the kubectl copy command.
-        :raises RuntimeError: If every copy attempt fails.
+        :raises RuntimeError: If packing times out or every copy attempt fails.
         """
         folder_remote = folder_remote.rstrip('/')
         if folder_remote.endswith('/.'):
@@ -1689,12 +1699,21 @@ class Kubernetes():
         os.makedirs(folder_local, exist_ok=True)
         archive_local = os.path.join(folder_local, archive_name)
         ok_marker = 'BEXHOMA_ARCHIVE_OK'
+        # The exit status of timeout is not read back: a $? in the command
+        # would be expanded by the local shell on Linux but not on Windows.
+        # Elapsed time tells a timeout apart from other failures instead.
+        start = time.monotonic()
         _, stdout, stderr = self.execute_command_in_pod(
-            command=f"tar czf {archive_remote} -C {folder_remote} . && echo {ok_marker}",
+            command=f"timeout -s KILL {archive_timeout} tar czf {archive_remote} -C {folder_remote} . && echo {ok_marker}",
             pod=pod, container=container)
         if ok_marker not in stdout:
-            print(f"download_folder: packing {folder_remote} in pod {pod} failed, falling back to plain copy: {stderr.strip()}")
             self.execute_command_in_pod(command=f"rm -f {archive_remote}", pod=pod, container=container)
+            if time.monotonic() - start >= archive_timeout:
+                raise RuntimeError(
+                    f'download_folder: packing {folder_remote} in pod {pod} did not finish within '
+                    f'{archive_timeout}s; a read on the volume behind it probably hangs'
+                )
+            print(f"download_folder: packing {folder_remote} in pod {pod} failed, falling back to plain copy: {stderr.strip()}")
             return self.download_file(filename_remote=folder_remote + '/.', filename_local=folder_local,
                                       pod=pod, container=container, max_retries=max_retries)
         try:
