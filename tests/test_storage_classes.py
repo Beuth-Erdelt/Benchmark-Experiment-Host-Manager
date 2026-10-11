@@ -21,6 +21,7 @@ from bexhoma import spec as catalog_spec
 from bexhoma.cli_args import format_storage_types, split_storage_types
 from bexhoma.experiments.base import ExperimentBase
 from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.experiments.tpcc import TpccExperiment
 from tests.test_ycsb_catalog import _BASE_SPEC
 
 
@@ -113,9 +114,10 @@ class StorageTypeListTest(unittest.TestCase):
         storage_types = [None, 'cephcsi', 'shared']
         self.assertEqual(split_storage_types(format_storage_types(storage_types)), storage_types)
 
-    def test_only_tpch_supports_a_sweep(self):
+    def test_only_tpch_and_hammerdb_support_a_sweep(self):
         self.assertFalse(ExperimentBase.supports_storage_sweep)
         self.assertTrue(TpchExperiment.supports_storage_sweep)
+        self.assertTrue(TpccExperiment.supports_storage_sweep)
 
 
 class TpchStorageCellTest(unittest.TestCase):

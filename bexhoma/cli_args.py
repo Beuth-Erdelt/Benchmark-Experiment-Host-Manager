@@ -13,11 +13,13 @@ See LICENSE for details.
 import argparse
 import ast
 import os
+import re
 
 __all__ = [
     "make_base_parser", "resolve_scaling_factor",
     "parse_metric_overrides", "format_metric_overrides",
     "split_storage_types", "format_storage_types",
+    "storage_suffix", "set_cell_storage",
 ]
 
 
@@ -52,6 +54,40 @@ def format_storage_types(storage_types: list) -> str:
     :rtype: str
     """
     return ",".join(storage_type or "" for storage_type in storage_types)
+
+
+def storage_suffix(storage_type) -> str:
+    """
+    Name a cell's storage class for its ``storageConfiguration``.
+
+    A PVC is found again by name alone, without checking its class, so when
+    the class varies across cells it has to be part of the name: otherwise a
+    volume loaded on one backend could be reused for another, in this run or
+    a later one.
+
+    :param storage_type: The cell's storage class, ``None`` for ephemeral.
+    :return: A DNS-label-safe suffix such as ``cephcsi`` or ``ephemeral``.
+    :rtype: str
+    """
+    return re.sub(r'[^a-z0-9-]+', '-', (storage_type or 'ephemeral').lower()).strip('-')
+
+
+def set_cell_storage(config, storage_configuration, cell, storage_varies) -> None:
+    """
+    Give one resource cell its storage, and its own storage class in a sweep.
+
+    :param config: The cell's SUT configuration.
+    :param storage_configuration: Base ``storageConfiguration`` name for the cell.
+    :param cell: The cell, a dict with at least ``storage_type``.
+    :param storage_varies: Whether the storage class differs between cells.
+    """
+    if storage_varies:
+        config.set_storage(
+            storageConfiguration=f"{storage_configuration}-{storage_suffix(cell['storage_type'])}",
+            storageClassName=cell['storage_type'],
+        )
+    else:
+        config.set_storage(storageConfiguration=storage_configuration)
 
 #: Spellings accepted for one ``-mm key=value`` switch.
 _METRIC_SWITCH_VALUES = {"on": True, "true": True, "off": False, "false": False}
@@ -179,7 +215,7 @@ def make_base_parser():
     p.add_argument('-rct', '--request-cpu-type', help='require SUT node to carry label cpu=<value>', default='')
     p.add_argument('-rg',  '--request-gpu', help='number of GPUs to request for the SUT pod', default=1)
     p.add_argument('-rgt', '--request-gpu-type', help='require SUT node to carry label gpu=<value>', default='')
-    p.add_argument('-rst', '--request-storage-type', help="storage class for the SUT persistent volume ('' or unset = ephemeral, 'ramdisk' = in-memory; other values must be declared for the active cluster context, see cluster config 'storage_classes')", default=None)
+    p.add_argument('-rst', '--request-storage-type', help="storage class for the SUT persistent volume ('' or unset = ephemeral, 'ramdisk' = in-memory; other values must be declared for the active cluster context, see cluster config 'storage_classes'); tpch.py and hammerdb.py accept a comma list to sweep the class across PostgreSQL configurations, an empty entry meaning ephemeral", default=None)
     p.add_argument('-rss', '--request-storage-size', help='size of the SUT persistent volume (e.g. 10Gi)', default='')
     p.add_argument('-rsr', '--request-storage-remove', help='delete any existing PVC for the SUT before starting', action='store_true', default=False)
     p.add_argument('-rnn', '--request-node-name', help='pin the SUT pod to this Kubernetes node', default=None, nargs='?', const=None)

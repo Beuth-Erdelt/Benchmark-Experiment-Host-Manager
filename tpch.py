@@ -13,6 +13,7 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
+from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -68,38 +69,6 @@ def _resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ra
         {name: (values[i] if len(values) > 1 else values[0]) for name, values in lists.items()}
         for i in range(num_cells)
     ]
-
-
-def _storage_suffix(storage_type):
-    """Name a cell's storage class for its ``storageConfiguration``.
-
-    A PVC is found again by name alone, without checking its class, so when
-    the class varies across cells it has to be part of the name: otherwise a
-    volume loaded on one backend could be reused for another, in this run or
-    a later one.
-
-    :param storage_type: The cell's storage class, ``None`` for ephemeral.
-    :return: A DNS-label-safe suffix such as ``cephcsi`` or ``ephemeral``.
-    :rtype: str
-    """
-    return re.sub(r'[^a-z0-9-]+', '-', (storage_type or 'ephemeral').lower()).strip('-')
-
-
-def _set_cell_storage(config, storage_configuration, cell, storage_varies):
-    """Give one resource cell its storage, and its own storage class in a sweep.
-
-    :param config: The cell's SUT configuration.
-    :param storage_configuration: Base ``storageConfiguration`` name for the cell.
-    :param cell: The cell from :func:`_resource_cells`.
-    :param storage_varies: Whether the storage class differs between cells.
-    """
-    if storage_varies:
-        config.set_storage(
-            storageConfiguration=f"{storage_configuration}-{_storage_suffix(cell['storage_type'])}",
-            storageClassName=cell['storage_type'],
-        )
-    else:
-        config.set_storage(storageConfiguration=storage_configuration)
 
 
 def build_parser() -> argparse.ArgumentParser:
