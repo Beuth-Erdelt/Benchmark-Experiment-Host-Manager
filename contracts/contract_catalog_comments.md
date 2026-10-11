@@ -121,6 +121,25 @@ cluster and matter as soon as metrics back a claim:
 
 Wording only; no field changed. Folded into 1.11.0 (not yet released).
 
+## YCSB accepts resource sweeps (2026-10-11)
+
+`ycsb` now takes `resources.cpu`, `resources.memory` and
+`resources.storage_class` lists like `tpch`: paired by position, one
+configuration per (system, cell), knobs derived per cell and scoped to
+`PostgreSQL-{cell}`. Both builders share `resource_sweep()`,
+`resolve_resource_cells()` and `append_resource_flags()` in
+`bexhoma/experiments/tpch_catalog.py`; on the bexhoma side,
+`ExperimentBase.expand_resource_cells()` clones every configuration per cell
+for every workload. The `out_of_scope` "ycsb accepts a single storage class
+only" is gone.
+
+One combination is refused: a sweep together with several
+`loading_target_factors`. `ycsb.py` builds one configuration per factor,
+and the sweep then names their cells after a process-wide counter, which the
+builder cannot predict for its scoped `--set` operations.
+
+Folded into 1.11.0 (not yet released) as an additive change.
+
 ## Storage class sweeps and fresh volumes (2026-10-10)
 
 `resources.storage_class` may now be a list, swept like `cpu`/`memory`:

@@ -11,7 +11,8 @@ which turns it into a ``ycsb.py`` argument vector. These tests check that:
 * the contract's default-1 SUT isolation is applied (``-mse``), same
   as the tpch builder;
 * a profile's resolved knobs become ``--set`` deployment patches;
-* an unsupported system and a resources: sweep are rejected.
+* a resources: sweep becomes comma lists with per-cell scoped knobs;
+* an unsupported system is rejected.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -149,15 +150,57 @@ class BuildYcsbArgvTest(unittest.TestCase):
         with self.assertRaises(catalog_spec.SpecError):
             self._argv(systems=[{'name': 'Redis'}])
 
-    def test_resource_sweep_rejected(self):
-        with self.assertRaises(catalog_spec.SpecError):
-            self._argv(resources={
+    def test_memory_sweep_becomes_comma_lists(self):
+        argv = self._argv(resources={
+            'cpu': {'request': 8, 'limit': 8},
+            'memory': [
+                {'request': '32Gi', 'limit': '32Gi'},
+                {'request': '16Gi', 'limit': '16Gi'},
+            ],
+        })
+        args = ycsb.build_parser().parse_args(argv)
+        self.assertEqual(args.request_ram, '32Gi,16Gi')
+        self.assertEqual(args.limit_ram, '32Gi,16Gi')
+        self.assertEqual(args.request_cpu, '8,8')
+
+    def test_sweep_scopes_derived_knobs_per_cell(self):
+        argv = self._argv(
+            systems=[{'name': 'PostgreSQL', 'profile': 'analytical-ssd'}],
+            resources={
                 'cpu': {'request': 8, 'limit': 8},
                 'memory': [
                     {'request': '32Gi', 'limit': '32Gi'},
                     {'request': '16Gi', 'limit': '16Gi'},
                 ],
             })
+        shared_buffers = {
+            patch.split('.container')[0].split('@')[1]: patch.split('=')[1]
+            for i, token in enumerate(argv) if token == '--set'
+            for patch in [argv[i + 1]] if '.shared_buffers=' in patch
+        }
+        self.assertEqual(sorted(shared_buffers), ['PostgreSQL-1', 'PostgreSQL-2'])
+        self.assertNotEqual(shared_buffers['PostgreSQL-1'], shared_buffers['PostgreSQL-2'])
+
+    def test_storage_sweep_becomes_a_comma_list(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['resources']['storage_class'] = ['cephcsi', None]
+        argv = catalog_spec.build_argv(self.catalog, spec)
+        self.assertEqual(_flag_value(argv, '-rst'), 'cephcsi,')
+        self.assertIn('-rsr', argv)
+
+    def test_sweep_lists_of_different_lengths_are_rejected(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['resources']['memory'] = [{'request': '8Gi', 'limit': '8Gi'}, {'request': '16Gi', 'limit': '16Gi'}]
+        spec['resources']['storage_class'] = ['cephcsi', 'shared', None]
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'must share one length'):
+            catalog_spec.build_argv(self.catalog, spec)
+
+    def test_sweep_with_several_loading_target_factors_is_rejected(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['workload']['params']['loading_target_factors'] = [1, 2]
+        spec['resources']['memory'] = [{'request': '8Gi', 'limit': '8Gi'}, {'request': '16Gi', 'limit': '16Gi'}]
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'loading_target_factors'):
+            catalog_spec.build_argv(self.catalog, spec)
 
     def test_optional_blocks_may_be_absent(self):
         spec = copy.deepcopy(_BASE_SPEC)

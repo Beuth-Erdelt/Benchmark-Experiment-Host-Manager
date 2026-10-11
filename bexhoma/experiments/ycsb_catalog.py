@@ -11,8 +11,9 @@ in the generic engine. Mirrors :mod:`bexhoma.experiments.tpch_catalog`.
 Scope: the catalog trims ``workloads.ycsb`` to ``supports: [PostgreSQL]`` (see
 ``contracts/contract_catalog.yml``), so this builder only has to translate the
 PostgreSQL case. It has no post_load / physical-design step -- YCSB manages
-its own schema -- and no resource sweep: ``resources.cpu``/``resources.memory``
-must each be a single ``{request, limit}`` dict.
+its own schema. Resource sweeps (``resources.cpu``/``memory``/``storage_class``
+lists) are translated exactly as for ``tpch``, through the shared helpers in
+:mod:`bexhoma.experiments.tpch_catalog`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -25,7 +26,7 @@ from typing import Any
 
 from bexhoma import spec
 from bexhoma.cli_args import format_metric_overrides
-from bexhoma.experiments.tpch_catalog import format_postgres_memory
+from bexhoma.experiments.tpch_catalog import append_resource_flags, resolve_resource_cells, resource_sweep
 from bexhoma.spec import SpecError
 
 __all__ = ["build_ycsb_argv"]
@@ -61,25 +62,6 @@ def _comma(values: Any) -> str | None:
     return str(values)
 
 
-def _single_resource_cell(resources: dict[str, Any], key: str) -> dict[str, Any]:
-    """Return the single ``{request, limit}`` dict for ``resources[key]``.
-
-    :param resources: The experiment's ``resources:`` block.
-    :param key: ``"cpu"`` or ``"memory"``.
-    :return: The ``{request, limit}`` dict (``{}`` when the key is absent).
-    :rtype: dict[str, Any]
-    :raises SpecError: When the value is a list -- a resource sweep, which the
-        ``ycsb`` argv builder does not translate yet.
-    """
-    cell = resources.get(key, {})
-    if isinstance(cell, list):
-        raise SpecError(
-            f"resources.{key} is a sweep list; the ycsb workload does not support "
-            f"resource sweeps yet -- use a single {{request, limit}} dict"
-        )
-    return cell or {}
-
-
 def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:
     """Translate a resolved experiment.yml into a ``ycsb.py`` argument vector.
 
@@ -107,15 +89,19 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     placement = experiment.get("placement", {})
     system_specs = experiment.get("systems", [])
 
-    cpu_cell = _single_resource_cell(resources, "cpu")
-    memory_cell = _single_resource_cell(resources, "memory")
-    storage = resources.get("storage", {})
-    if isinstance(resources.get("storage_class"), list):
+    num_cells = resource_sweep(resources)[3]
+    # ycsb.py builds one configuration per loading target factor; a resource
+    # sweep then clones each of them, named {configuration}-{cell} after a
+    # process-wide counter, so the per-cell --set scopes below could not name them
+    loading_target_factors = params.get("loading_target_factors")
+    if num_cells > 1 and isinstance(loading_target_factors, list) and len(loading_target_factors) > 1:
         raise SpecError(
-            "resources.storage_class is a sweep list; the ycsb workload does not support "
-            "storage sweeps -- name a single storage class"
+            "a resources sweep cannot be combined with several "
+            "workload.params.loading_target_factors -- sweep one of them per experiment"
         )
-    storage_class = spec.storage_class_cells(resources)[0]
+    # one (system_spec, ResolvedSystem, configuration_name) triple per
+    # (system, resource cell) pair, named as ycsb.py's cells will be
+    resolved_cells = resolve_resource_cells(catalog, experiment)
 
     argv: list[str] = [experiment.get("mode", _DEFAULT_MODE)]
 
@@ -178,30 +164,15 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-rnl", placement.get("loading"))
     _append_flag(argv, "-rnb", placement.get("benchmarking"))
 
-    _append_flag(argv, "-rc", cpu_cell.get("request"))
-    _append_flag(argv, "-lc", cpu_cell.get("limit"))
-    _append_flag(argv, "-rr", memory_cell.get("request"))
-    _append_flag(argv, "-lr", memory_cell.get("limit"))
-    _append_flag(argv, "-rss", storage.get("size"))
-    _append_flag(argv, "-rst", storage_class)
-    if spec.removes_existing_storage(resources):
-        argv.append("-rsr")
+    append_resource_flags(argv, resources)
 
-    resolve_inputs = {
-        "memory_limit": memory_cell.get("limit"),
-        "cpu_limit": cpu_cell.get("limit"),
-        "storage_class": storage_class,
-        "scaling_factor": params.get("scaling_factor"),
-    }
-    for system_spec in system_specs:
-        resolved = spec.resolve_system(
-            catalog, system_spec, resolve_inputs, memory_formatter=format_postgres_memory
-        )
+    for system_spec, resolved, configuration_name in resolved_cells:
+        scope = f"@{configuration_name}" if configuration_name else ""
         for knob in resolved.knobs.values():
             if knob.arg_style == spec.DEFAULT_ARG_STYLE:
                 argv.extend([
                     "--set",
-                    f"deployment[{resolved.deployment}].container[dbms].{knob.name}={knob.value}",
+                    f"deployment[{resolved.deployment}]{scope}.container[dbms].{knob.name}={knob.value}",
                 ])
             else:
                 raise SpecError(

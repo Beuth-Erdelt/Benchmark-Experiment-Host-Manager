@@ -241,11 +241,12 @@ class TpchArgvTest(unittest.TestCase):
         with self.assertRaisesRegex(catalog_spec.SpecError, "got 'cephcsi'"):
             catalog_spec.build_argv(self.catalog, spec)
 
-    def test_ycsb_refuses_a_sweep_and_gets_fresh_volumes(self):
+    def test_ycsb_sweeps_and_gets_fresh_volumes(self):
         spec = copy.deepcopy(_BASE_SPEC)
         spec['resources']['storage_class'] = ['cephcsi', 'shared']
-        with self.assertRaisesRegex(catalog_spec.SpecError, 'does not support storage sweeps'):
-            catalog_spec.build_argv(self.catalog, spec)
+        argv = catalog_spec.build_argv(self.catalog, spec)
+        self.assertEqual(_flag(argv, '-rst'), 'cephcsi,shared')
+        self.assertIn('-rsr', argv)
         spec['resources']['storage_class'] = 'cephcsi'
         argv = catalog_spec.build_argv(self.catalog, spec)
         self.assertEqual(_flag(argv, '-rst'), 'cephcsi')

@@ -386,7 +386,6 @@ experiment_schema:
             (null entries = ephemeral); declare storage_class in discriminates.
             A profile constrains each cell only when it declares requires:
             {storage_class: [...]} -- see catalog_concepts.requires"
-          out_of_scope: "ycsb accepts a single storage class only"
   quantity_format:
     semantics: "Kubernetes-style quantities, used by resources.cpu/memory/storage.size"
     memory_and_storage_size:
@@ -695,6 +694,8 @@ workloads:
         default: [1]
         why: "multipliers on target_base for the loading phase; one loader sweep
           cell per entry"
+        out_of_scope: "several entries together with a resources sweep (cpu,
+          memory or storage_class lists) -- sweep one of them per experiment"
       benchmarking_target_factors:
         type: list[float]
         default: [1]

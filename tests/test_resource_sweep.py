@@ -172,6 +172,25 @@ class YcsbSweepTest(_SweepTestBase):
         self.assertEqual(configs['MySQL-2'].storage['storageConfiguration'], 'mysql-2')
         self.assertEqual(configs['MySQL-2'].storage['storageClassName'], 'cephcsi')
 
+    def test_catalog_scopes_name_the_expanded_configurations(self):
+        """The ``--set`` scopes ``build_ycsb_argv`` emits land on real cells."""
+        import copy
+        import re
+        from bexhoma import spec as catalog_spec
+        from tests.test_ycsb_catalog import _BASE_SPEC
+        spec = copy.deepcopy(_BASE_SPEC)
+        del spec['observe']  # the stub cluster has no monitoring config
+        spec['systems'] = [{'name': 'PostgreSQL', 'profile': 'analytical-ssd'}]
+        spec['resources']['memory'] = [{'request': '16Gi', 'limit': '16Gi'}, {'request': '32Gi', 'limit': '32Gi'}]
+        spec['resources']['storage_class'] = None
+        argv = catalog_spec.build_argv(catalog_spec.load_catalog('contracts/contract_catalog.yml'), spec)
+        scopes = {match.group(1) for token in argv for match in [re.search(r'@([A-Za-z0-9-]+)\.container', token)] if match}
+        self.module.run(self.module.build_parser().parse_args(argv))
+        self.captured.expand_resource_cells()
+        names = {config.configuration for config in self.captured.configurations}
+        self.assertEqual(scopes, {'PostgreSQL-1', 'PostgreSQL-2'})
+        self.assertEqual(names, scopes)
+
 
 class SupportTest(unittest.TestCase):
     """Only experiments that opt in accept a sweep."""
