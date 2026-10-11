@@ -158,8 +158,11 @@ series, split so every other declared factor stays fixed; system and
 storage_class (the storage backend, `ephemeral` for node-local disk) become
 categorical rankings at each fixed context. Concurrency is counted in client
 threads where the report totals them (YCSB) and in benchmarker pods otherwise.
-Rounds that report zero or NaN for a characterized metric measured nothing, so
-they are left out and listed. A phase rate that adds up several pods' own rates
+A round that reports zero or NaN for a characterized metric did not measure it,
+so it is left out of that metric's shapes and rankings and listed; it still
+counts for the metrics it did measure (a benchmarker without a latency profile
+still measured its throughput). A round that measured none of them is left out
+entirely. A phase rate that adds up several pods' own rates
 (YCSB's overall throughput) is first compared with the pods' work spread over
 the longest pod duration. When the sum exceeds that by more than 20%, or the
 per-pod rows needed to check it are missing or unusable, no shape or ranking is

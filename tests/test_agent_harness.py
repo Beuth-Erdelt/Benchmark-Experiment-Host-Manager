@@ -886,6 +886,48 @@ resources:
             ["postgresql-1-1-1", "postgresql-1-1-2", "postgresql-1-1-3"],
         )
 
+    def test_a_round_without_latency_still_counts_for_throughput(self) -> None:
+        """A benchmarker that wrote no latency profile still measured its throughput."""
+        report = self.root / "results" / "no-profile" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput | Latency [ms] |
+|:--|--:|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 100 | 2 |
+| postgresql-1-1-2 | 1 | 2 | 200 | nan |
+| postgresql-1-1-3 | 1 | 4 | 300 | 6 |
+| postgresql-1-2-1 | 2 | 1 | 102 | 2 |
+| postgresql-1-2-2 | 2 | 2 | 204 | 4 |
+| postgresql-1-2-3 | 2 | 4 | 306 | 6 |
+""")
+        specification = """\
+discriminates: [concurrency]
+workload: {name: any-benchmarker, rounds: [1, 2, 4]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        result = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]
+
+        repetitions = {
+            claim["metric"]: [value["repetitions"] for value in claim["values"]]
+            for claim in result["ordered_sweeps"]
+        }
+        self.assertEqual(
+            repetitions, {"Throughput": [2, 2, 2], "Latency [ms]": [2, 1, 2]}
+        )
+        self.assertEqual(result["excluded_phases"], [])
+        self.assertEqual(
+            result["partially_excluded_phases"],
+            {"postgresql-1-1-2": ["Latency [ms]"]},
+        )
+
     def test_concurrency_levels_count_client_threads_not_pods(self) -> None:
         """A YCSB pod runs several clients, so its sweep is labelled in clients."""
         report = self.root / "results" / "threads" / "report" / "benchmarking.md"
@@ -1032,7 +1074,8 @@ resources:
         report.parent.mkdir(parents=True)
         throughput = "[OVERALL].Throughput(ops/sec)"
         # Run 1's two-pod round ran its pods for unequal times and also reports
-        # no latency, so it is dropped as failed; run 2's two-pod round was even.
+        # no latency, so it is dropped from the latency series; run 2's two-pod
+        # round was even.
         phases = _FALSE_PEAK_PHASES.replace(
             "| postgresql-1-1-2 | 1 | 2 | 3000 | 400 |",
             "| postgresql-1-1-2 | 1 | 2 | 3000 | 0 |",
@@ -1048,7 +1091,11 @@ resources:
         result = self.workspace.assess_comparison_quality(str(report), _FALSE_PEAK_SPEC)
 
         characterization = result["result_characterization"]
-        self.assertEqual(characterization["excluded_phases"], ["postgresql-1-1-2"])
+        self.assertEqual(characterization["excluded_phases"], [])
+        self.assertEqual(
+            characterization["partially_excluded_phases"],
+            {"postgresql-1-1-2": ["[READ].99thPercentileLatency(us)"]},
+        )
         self.assertEqual(
             characterization["withheld_claims"],
             [{"factor": "concurrency", "context": {}, "metric": throughput}],

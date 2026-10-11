@@ -2020,15 +2020,19 @@ def _decode_observations(
 ) -> tuple[
     list[tuple[dict[str, str | float], dict[str, float]]],
     dict[str, dict[str, str | float]],
+    dict[str, tuple[dict[str, str | float], list[str]]],
 ]:
     """Decode each report row into its factor coordinates and metric values.
 
     :param withheld_phases: Phases whose summed rate failed its aggregation
         check; that metric is marked NaN so no claim is built on it.
-    :return: The observations, and the phases left out because they measured
-        nothing, each with its factor coordinates.
+    :return: The observations, each holding only the metrics its round
+        measured; the phases left out because they measured nothing, each with
+        its factor coordinates; and the phases that measured some metrics but
+        not others, each with its factor coordinates and the metrics it lacks.
     :rtype: tuple[list[tuple[dict[str, str | float], dict[str, float]]],
-        dict[str, dict[str, str | float]]]
+        dict[str, dict[str, str | float]],
+        dict[str, tuple[dict[str, str | float], list[str]]]]
     """
     # A YCSB pod runs several client threads and its report totals them per
     # round; a TPC-H pod is a single stream, so there the pod count is the
@@ -2038,6 +2042,7 @@ def _decode_observations(
     positions.update({metric: headers.index(metric) for metric, _ in metrics})
     observations = []
     excluded = {}
+    partial = {}
     for row in rows:
         phase = _plain_markdown_cell(row[positions["phase"]])
         dimensions = _configuration_dimensions(
@@ -2051,17 +2056,28 @@ def _decode_observations(
         except ValueError:
             continue
         # None of these metrics can be zero in a round that ran, so a zero or NaN
-        # means it measured nothing (the report's "contains 0 or NaN" checks
-        # fail on it). Averaged in, it would drown the real level differences.
-        if any(not math.isfinite(value) or value <= 0 for value in values.values()):
+        # means that metric was not measured (the report's "contains 0 or NaN"
+        # checks fail on it). Averaged in, it would drown the real level
+        # differences. It is dropped for that metric alone: a benchmarker that
+        # wrote no latency profile still measured its throughput.
+        missing = [
+            metric for metric, value in values.items()
+            if not math.isfinite(value) or value <= 0
+        ]
+        if len(missing) == len(values):
             excluded[phase] = dimensions
             continue
+        if missing:
+            partial[phase] = (dimensions, missing)
+            values = {
+                metric: value for metric, value in values.items() if metric not in missing
+            }
         # Marked rather than dropped: leaving the phase out would let the
         # remaining levels form a different, equally unsupported curve.
         if phase in withheld_phases and _SUMMED_RATE in values:
             values[_SUMMED_RATE] = math.nan
         observations.append((dimensions, values))
-    return observations, excluded
+    return observations, excluded, partial
 
 
 def _group_by_context(
@@ -2102,10 +2118,13 @@ def _ordered_sweep_claims(
         if len(levels) < 2 or set(levels) != expected_levels:
             continue
         for metric, direction in metrics:
+            # Rounds that did not measure this metric hold no value for it.
             per_level = {
-                level: [values[metric] for values in repetitions]
+                level: [values[metric] for values in repetitions if metric in values]
                 for level, repetitions in levels.items()
             }
+            if not all(per_level.values()):
+                continue
             if any(math.isnan(value) for values in per_level.values() for value in values):
                 claims.append({
                     "factor": factor, "context": dict(context), "metric": metric,
@@ -2181,21 +2200,24 @@ def _categorical_claims(
         if len(measurements) < 2 or set(measurements) != expected_levels:
             continue
         for metric, direction in metrics:
-            if any(
-                math.isnan(values[metric])
-                for repetitions in measurements.values() for values in repetitions
-            ):
+            # Rounds that did not measure this metric hold no value for it.
+            per_level = {
+                level: [values[metric] for values in repetitions if metric in values]
+                for level, repetitions in measurements.items()
+            }
+            if not all(per_level.values()):
+                continue
+            if any(math.isnan(value) for values in per_level.values() for value in values):
                 claims.append({
                     "factor": factor, "context": dict(context), "metric": metric,
                     "withheld": True,
                 })
                 continue
             means = {
-                str(level): round(
-                    statistics.mean(values[metric] for values in repetitions), 2
-                )
-                for level, repetitions in measurements.items()
+                str(level): round(statistics.mean(values), 2)
+                for level, values in per_level.items()
             }
+            repetitions = {str(level): len(values) for level, values in per_level.items()}
             # Best first, which for a latency metric is the smallest.
             better = -1 if direction == "higher_is_better" else 1
             claims.append({
@@ -2208,7 +2230,7 @@ def _categorical_claims(
                 ),
                 "values": [
                     {"level": level, "mean": means[level],
-                     "repetitions": len(measurements[level])}
+                     "repetitions": repetitions[level]}
                     for level in sorted(means)
                 ],
             })
@@ -2272,7 +2294,7 @@ def _shape_claims(
     metrics = _characterized_metrics(headers)
     if not metrics or not {"phase", "pod_count"}.issubset(headers):
         return _unsupported(discriminates)
-    observations, excluded = _decode_observations(
+    observations, excluded, partial = _decode_observations(
         experiment, headers, rows, metrics, resource_cells, withheld_phases
     )
 
@@ -2293,13 +2315,16 @@ def _shape_claims(
         categorical.extend(claims)
         if not claims:
             unsupported.append(factor)
-    # A round dropped because it measured nothing leaves no rate to mark, but a
-    # pod-duration skew measured in it still speaks against the comparison it
-    # belonged to; without this, the remaining rounds would form the very curve
-    # the check withheld.
+    # A round whose rate was dropped because it was not measured leaves no rate
+    # to mark, but a pod-duration skew measured in it still speaks against the
+    # comparison it belonged to; without this, the remaining rounds would form
+    # the very curve the check withheld.
     dropped_skews = [
         dimensions for phase, dimensions in excluded.items()
         if phase in discrepant_phases
+    ] + [
+        dimensions for phase, (dimensions, missing) in partial.items()
+        if phase in discrepant_phases and _SUMMED_RATE in missing
     ]
     for claim in ordered_sweeps + categorical:
         if claim["metric"] == _SUMMED_RATE and any(
@@ -2330,9 +2355,20 @@ def _shape_claims(
         )
     if excluded:
         characterization["exclusion_reason"] = (
-            "These rounds reported zero or NaN for a characterised metric, so they "
-            "measured nothing and are left out of every shape and ranking here. "
-            "Disclose them; only the remaining rounds count as repetitions."
+            "These rounds reported zero or NaN for every characterised metric, so "
+            "they measured nothing and are left out of every shape and ranking "
+            "here. Disclose them; only the remaining rounds count as repetitions."
+        )
+    if partial:
+        characterization["partially_excluded_phases"] = {
+            phase: missing for phase, (_, missing) in partial.items()
+        }
+        characterization["partial_exclusion_reason"] = (
+            "These rounds reported zero or NaN for the listed metrics only, e.g. "
+            "a benchmarker that wrote no latency profile. They are left out of "
+            "the shapes and rankings of those metrics and count as repetitions "
+            "for the others. Disclose them; a metric that reads 0 or NaN in the "
+            "report was not measured, it is not a measured zero."
         )
     return characterization
 
