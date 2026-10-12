@@ -180,7 +180,191 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         """
         self.load_inspector()
         return super().test_results()
-    def get_df_benchmarking(self):
+    @staticmethod
+    def _phase_of_connection(connection_data):
+        """
+        Returns the phase identifier of one connection.
+
+        :param connection_data: The inspector's ``connectiondata`` dict.
+        :return: ``<configuration>-<experiment_run>-<client>``: the job name
+                 (``orig_name``) without its trailing benchmark_run segment.
+        :rtype: str
+        """
+        orig_name = connection_data['orig_name']
+        benchmark_run_num = str(int(connection_data['parameter'].get('numBenchmark', 0) or 0))
+        if benchmark_run_num and orig_name.endswith('-' + benchmark_run_num):
+            return orig_name[:-len('-' + benchmark_run_num)]
+        return orig_name
+    def get_connection_phases(self):
+        """
+        Returns the phase of every connection that belongs to this benchmark.
+
+        :return: Connection name to phase identifier, in the inspector's order.
+        :rtype: dict[str, str]
+        """
+        if self.evaluation is None:
+            self.load_inspector()
+        if self.evaluation is None:
+            return {}
+        phases = {}
+        for connection in self.evaluation.benchmarks.dbms.values():
+            connection_data = connection.connectiondata
+            configuration = connection_data.get('configuration', '-')
+            client_num = int(connection_data['parameter']['client'])
+            benchmark_run = int(connection_data['parameter'].get('numBenchmark', 0) or 0)
+            if self.is_own_benchmark(configuration, client_num, benchmark_run):
+                phases[connection_data['name']] = self._phase_of_connection(connection_data)
+        return phases
+    def get_phase_windows(self):
+        """
+        Returns when each phase of this benchmark ran, from DBMSBenchmarker's
+        own per-connection start and end times.
+
+        :return: Phase identifier to ``(begin, end)`` as naive local
+                 datetimes; phases without timing data are left out.
+        :rtype: dict[str, tuple[datetime, datetime]]
+        """
+        windows = {}
+        for connection, phase in self.get_connection_phases().items():
+            times = self.evaluation.get_experiment_connection_properties(connection).get('times', {})
+            total = times.get('total', {}).get(connection, {})
+            if 'time_start' not in total or 'time_end' not in total:
+                continue
+            begin = datetime.fromtimestamp(total['time_start'])
+            end = datetime.fromtimestamp(total['time_end'])
+            if phase in windows:
+                begin, end = min(begin, windows[phase][0]), max(end, windows[phase][1])
+            windows[phase] = (begin, end)
+        return windows
+    def get_pooled_queries(self):
+        """
+        Returns the queries the experiment-wide totals are computed over.
+
+        DBMSBenchmarker folds a query into Geo Times, Power@Size,
+        Throughput@Size and the latency table only if every active connection
+        of the experiment completed it, so one failure anywhere removes the
+        query from every connection's totals.
+
+        :return: Query labels (``'Q1'``, ...) in that pool.
+        :rtype: list[str]
+        """
+        if self.evaluation is None:
+            return []
+        return ['Q{}'.format(i + 1) for i in self.evaluation.get_survey_successful(timername='run')]
+    def get_query_completion(self):
+        """
+        Returns which active query each connection of this benchmark completed.
+
+        A connection completed a query only if DBMSBenchmarker counts it as
+        successful (see :meth:`get_pooled_queries`) and no run of it failed.
+        DBMSBenchmarker alone drops a query only when every run failed, so a
+        pod whose first run succeeded and second run failed would count as
+        complete while the Errors table lists it.
+
+        :return: Boolean DataFrame, one row per connection, one column per
+                 active query (``'Q1'``, ...); a ``phase`` column first.
+        :rtype: pandas.DataFrame
+        """
+        phases = self.get_connection_phases()
+        if not phases:
+            return pd.DataFrame()
+        df_errors = self.get_total_errors()
+        active_queries = list(df_errors.columns)
+        rows = {}
+        for connection, phase in phases.items():
+            successful = {
+                'Q{}'.format(i + 1)
+                for i in self.evaluation.get_survey_successful(timername='run', dbms_filter=[connection])
+            }
+            failed = (set(df_errors.columns[df_errors.loc[connection].astype(bool)])
+                      if connection in df_errors.index else set())
+            rows[connection] = {'phase': phase,
+                                **{query: query in successful and query not in failed for query in active_queries}}
+        df = pd.DataFrame.from_dict(rows, orient='index')
+        return df.reindex(index=natural_sort(df.index))
+    def get_query_completion_per_phase(self, df_completion=None):
+        """
+        Returns, per phase and query, how many pods completed the query.
+
+        :param df_completion: Output of :meth:`get_query_completion`, to avoid
+            computing it twice; computed when ``None``.
+        :return: DataFrame indexed by phase with a ``pods`` column followed by
+                 one completed-pod count per active query (``'Q1'``, ...).
+        :rtype: pandas.DataFrame
+        """
+        if df_completion is None:
+            df_completion = self.get_query_completion()
+        if df_completion.empty:
+            return pd.DataFrame()
+        grouped = df_completion.groupby('phase')
+        df = grouped.sum().astype(int)
+        df.insert(0, 'pods', grouped.size())
+        return df.reindex(index=natural_sort(df.index))
+    def get_summary_benchmark_per_phase_complete(self, df_completion=None, columns=['phase']):
+        """
+        Returns per-phase results for the phases in which every pod completed
+        every active query.
+
+        The pooled per-phase table loses every query that failed anywhere in
+        the experiment, and is empty once each query failed somewhere. This
+        table keeps the pooled definition but restricts the pool to the
+        complete phases: they share the full set of active queries, so their
+        rows stay comparable with each other.
+
+        :param df_completion: Output of :meth:`get_query_completion`, to avoid
+            computing it twice; computed when ``None``.
+        :param columns: Grouping columns, as for
+            :meth:`benchmarking_aggregate_by_parallel_pods`.
+        :return: DataFrame shaped like :meth:`get_summary_benchmark_per_phase`,
+                 or an empty DataFrame when no phase is complete.
+        :rtype: pandas.DataFrame
+        """
+        if df_completion is None:
+            df_completion = self.get_query_completion()
+        connections = self.get_complete_connections(df_completion)
+        if not connections:
+            return pd.DataFrame()
+        return self._reduce_per_phase(self.get_df_benchmarking(dbms_filter=connections), columns)
+    @staticmethod
+    def get_complete_connections(df_completion):
+        """
+        Returns the connections of the phases in which every pod completed every
+        active query.
+
+        :param df_completion: Output of :meth:`get_query_completion`.
+        :return: Connection names, in the order of ``df_completion``.
+        :rtype: list[str]
+        """
+        if df_completion is None or df_completion.empty:
+            return []
+        queries = [column for column in df_completion.columns if column != 'phase']
+        complete_pods = df_completion[queries].all(axis=1)
+        phase_complete = complete_pods.groupby(df_completion['phase']).all()
+        complete_phases = set(phase_complete[phase_complete].index)
+        return [c for c, phase in df_completion['phase'].items() if phase in complete_phases]
+    def _reduce_per_phase(self, df, columns=['phase']):
+        """
+        Aggregates per-pod rows over parallel pods and keeps the per-phase columns.
+
+        :param df: Output of :meth:`get_df_benchmarking`.
+        :param columns: Grouping columns for :meth:`benchmarking_aggregate_by_parallel_pods`.
+        :return: The reduced per-phase DataFrame, or an empty one for empty input.
+        :rtype: pandas.DataFrame
+        """
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df.fillna(0, inplace=True)
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=columns).round(2)
+            df_aggregated = df_aggregated.reindex(index=natural_sort(df_aggregated.index))
+            df_aggregated_reduced = df_aggregated.copy()
+            df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
+        return df_aggregated_reduced
+    def get_df_benchmarking(self, dbms_filter=None):
         """
         Returns the DataFrame containing all benchmarking-phase results.
 
@@ -189,6 +373,10 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         Includes ``tenant_id`` read from the ``BEXHOMA_TENANT_ID`` loading parameter
         (``-1`` when absent).
 
+        :param dbms_filter: Connection names to restrict the result to. The
+            inspector then pools the successful-query set over these
+            connections only, instead of over every connection of the
+            experiment. ``None`` keeps the experiment-wide pool.
         :return: DataFrame with one row per connection/pod, or empty DataFrame on failure.
         :rtype: pandas.DataFrame
         """
@@ -196,21 +384,28 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             self.load_inspector()
         if self.evaluation is None:
             return pd.DataFrame()
+        dbms_filter = list(dbms_filter or [])
         global query_properties
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
-        df_stats = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        df_stats = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', dbms_filter=dbms_filter, query_aggregate='Mean')
         if df_stats is not None:
             df_stats = df_stats.sort_index().T.round(2)
             df_stats.index = df_stats.index.map(map_index_to_queryname)
             num_of_queries = len(df_stats.index)
-        df = self.evaluation.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
+        # Successful runs per connection, over the pooled queries: the inspector
+        # stores a failed run as 0 and its 'n' counts only the non-zero ones.
+        executions = pd.Series(dtype=float)
+        df_runs = self.evaluation.get_aggregated_query_statistics(type='timer', name='run', dbms_filter=dbms_filter, query_aggregate='n')
+        if df_runs is not None and not df_runs.empty:
+            executions = df_runs.sum(axis=1)
+        df = self.evaluation.get_aggregated_experiment_statistics(type='timer', name='execution', dbms_filter=dbms_filter, query_aggregate='Median', total_aggregate='Geo')
         df = (df / 1000.0).sort_index().astype('float')
         if df.empty:
             return pd.DataFrame()
         df['Power@Size [~Q/h]'] = float(parameter.defaultParameters['SF']) * 3600. / df
         df_power = df.copy()
-        df = self.evaluation.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
+        df = self.evaluation.get_aggregated_experiment_statistics(type='timer', name='run', dbms_filter=dbms_filter, query_aggregate='Median', total_aggregate='Geo')
         df = (df / 1000.0).sort_index()
         df.columns = ['Geo Times [s]']
         df_geo_mean_runtime = df.copy()
@@ -223,6 +418,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             configuration = connection_data.get('configuration', '-')
             benchmark_run_num = str(int(connection_data['parameter'].get('numBenchmark', 0) or 0))
             client_num = int(connection_data['parameter']['client'])
+            if dbms_filter and conn_name not in dbms_filter:
+                continue
             if not self.is_own_benchmark(configuration, client_num, int(benchmark_run_num or 0)):
                 # connections.config is shared across every benchmarker entry of this
                 # configuration's round, so it also carries connections belonging to a
@@ -233,10 +430,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
                 # library about a connection it doesn't understand (mirrors the
                 # is_own_benchmark() filtering LogEvaluator already does for its own logs).
                 continue
-            if benchmark_run_num and orig_name.endswith('-' + benchmark_run_num):
-                phase_id = orig_name[:-len('-' + benchmark_run_num)]
-            else:
-                phase_id = orig_name
+            phase_id = self._phase_of_connection(connection_data)
             connection_props = self.evaluation.get_experiment_connection_properties(conn_name)
             df_row = pd.DataFrame(index=[conn_name])
             df_row['phase'] = phase_id
@@ -268,6 +462,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             if 'time_end' not in connection_props['times']['total'][conn_name]:
                 return pd.DataFrame()
             df_row['benchmark_end'] = connection_props['times']['total'][conn_name]['time_end']
+            df_row['num_of_executions'] = int(executions.get(conn_name, 0))
             df_timing_rows = pd.concat([df_timing_rows, df_row])
         df_timing = df_timing_rows.sort_index()
         group_keys = ['configuration', 'connection', 'phase', 'job', 'SF', 'experiment_run', 'client', 'benchmark_run']
@@ -278,8 +473,11 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         df_benchmark['tenant_id'] = df_timing.groupby(group_keys)['tenant_id'].first()
         df_benchmark['SF2'] = df_benchmark.index.get_level_values('SF')
         df_benchmark['num_of_queries'] = num_of_queries
+        # Every successful run counts, so the metric does not shrink when each
+        # query runs more than once per stream, and failed runs are not credited.
+        df_benchmark['num_of_executions'] = df_timing.groupby(group_keys)['num_of_executions'].sum()
         df_benchmark['Throughput@Size'] = (
-            num_of_queries * 3600. * df_benchmark['pod_count'] / df_benchmark['time [s]'] * df_benchmark['SF2']
+            df_benchmark['num_of_executions'] * 3600. / df_benchmark['time [s]'] * df_benchmark['SF2']
         ).round(2)
         df_benchmark = df_benchmark.reset_index(level=group_keys)
         df_benchmark = df_benchmark.set_index("connection", drop=False)
@@ -291,8 +489,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         df['code'] = self.evaluation.code
         df = df.sort_values(['experiment_run', 'client'])
         _columns = ['code', 'configuration', 'phase', 'job', 'connection', 'experiment_run', 'client',
-                    'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
-                    'Power@Size [~Q/h]', 'Throughput@Size', 'tenant_id', 'pod']
+                    'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'num_of_executions', 'time [s]',
+                    'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'tenant_id', 'pod']
         df = df[[c for c in _columns if c in df.columns]]
         return df
     def benchmarking_set_datatypes(self, df):
@@ -354,6 +552,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             num_of_queries = len(df_stats.index)
         df_aggregated = pd.DataFrame()
         has_tenant_id = 'tenant_id' in df.columns
+        # Frames pickled before num_of_executions existed count each query once.
+        has_executions = 'num_of_executions' in df.columns
         for group_key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
                 'connection': 'max',
@@ -372,6 +572,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             }
             if has_tenant_id:
                 aggregate['tenant_id'] = 'min'
+            if has_executions:
+                aggregate['num_of_executions'] = 'sum'
             dict_grp = {
                 'configuration': grp['configuration'].iloc[0],
                 'experiment_run': grp['experiment_run'].iloc[0],
@@ -382,11 +584,12 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             group_key_str = "_".join(map(str, group_key))
             df_grp = pd.DataFrame(dict_grp, index=[group_key_str])
             df_aggregated = pd.concat([df_aggregated, df_grp])
-        df_aggregated['Throughput@Size'] = (df_aggregated['num_of_queries']*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
+        count = 'num_of_executions' if has_executions else 'num_of_queries'
+        df_aggregated['Throughput@Size'] = (df_aggregated[count]*3600./df_aggregated['time [s]']*df_aggregated['SF']).round(2)
         df_aggregated['pod'] = "-"
         _columns = ['code', 'configuration', 'phase', 'job', 'connection', 'experiment_run', 'client',
-                    'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'time [s]', 'Geo Times [s]',
-                    'Power@Size [~Q/h]', 'Throughput@Size', 'tenant_id', 'pod']
+                    'benchmark_run', 'pod_count', 'SF', 'num_of_queries', 'num_of_executions', 'time [s]',
+                    'Geo Times [s]', 'Power@Size [~Q/h]', 'Throughput@Size', 'tenant_id', 'pod']
         df_aggregated = df_aggregated[[c for c in _columns if c in df_aggregated.columns]]
         return df_aggregated
     def get_total_warnings(self, query_titles=False):
@@ -421,18 +624,22 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             query_properties = self.evaluation.get_experiment_query_properties()
             df.index = df.index.map(map_index_to_queryname)
         return df.T
-    def get_query_latencies(self, query_titles=False):
+    def get_query_latencies(self, query_titles=False, dbms_filter=None):
         """
         Returns the mean execution latency per query and DBMS.
 
         :param query_titles: When ``True``, replaces query index labels with
                              human-readable titles from ``queries.config``.
         :type query_titles: bool
+        :param dbms_filter: Connection names to restrict to; the inspector then
+            keeps the queries every one of these connections completed, instead
+            of those every connection of the experiment completed.
         :return: DataFrame of mean latencies (ms) with queries as columns and DBMS as rows.
         :rtype: pandas.DataFrame
         """
         global query_properties
-        raw = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
+        raw = self.evaluation.get_aggregated_query_statistics(
+            type='latency', name='execution', dbms_filter=list(dbms_filter or []), query_aggregate='Mean')
         if raw is None:
             return None
         df = raw.T
@@ -455,20 +662,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
-        df = self.get_df_benchmarking()
-        df_aggregated_reduced = pd.DataFrame()
-        if not df.empty:
-            df.fillna(0, inplace=True)
-            df_plot = self.benchmarking_set_datatypes(df)
-            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot).round(2)
-            df_aggregated = df_aggregated.reindex(index=natural_sort(df_aggregated.index))
-            df_aggregated_reduced = df_aggregated.copy()
-            df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
-        return df_aggregated_reduced
+        return self._reduce_per_phase(self.get_df_benchmarking())
     def get_summary_benchmark_per_phase_multitenant(self):
         """
         Returns benchmarking results aggregated per phase and tenant, one row per ``(phase, tenant_id)``.
@@ -481,20 +675,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
-        df = self.get_df_benchmarking()
-        df_aggregated_reduced = pd.DataFrame()
-        if not df.empty:
-            df.fillna(0, inplace=True)
-            df_plot = self.benchmarking_set_datatypes(df)
-            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id']).round(2)
-            df_aggregated = df_aggregated.reindex(index=natural_sort(df_aggregated.index))
-            df_aggregated_reduced = df_aggregated.copy()
-            df_aggregated_reduced.drop('code', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('connection', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
-            df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
-        return df_aggregated_reduced
+        return self._reduce_per_phase(self.get_df_benchmarking(), columns=['phase', 'tenant_id'])
     def get_summary_benchmark_per_connection(self):
         """
         Returns benchmarking results with one row per pod.

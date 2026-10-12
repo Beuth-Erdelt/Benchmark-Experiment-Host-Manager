@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.8.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.10.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -52,6 +52,11 @@ tiers:
     files: ["report/workflow.md", "report/loading.md", "report/benchmarking.md", "report/monitoring.md", "report/connections.md"]
     read_when: "an actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase"
     note: "each written only if that phase was active"
+    ceph_storage:
+      where: "report/monitoring.md Ceph Storage (per component: one row per configuration), report/connections.md storage_monitoring_* per configuration"
+      present_when: "the cluster config defines Ceph storage metrics and hardware monitoring was on; per configuration only when its storage is Ceph (connections.md storage_monitoring_reason says why not, e.g. ephemeral, ramdisk, CephFS has no per-volume statistics); such a configuration shows n/a, never 0"
+      semantics: "This SUT = the configuration's own RBD volume(s) as Ceph saw them; Other Volumes = mean rate of every other volume in the same Ceph pool over the phase; All Clients = the whole pool. Other pools on the same disks are not counted; the exporter lags the I/O by about 1-2 minutes"
+      reading_rule: "descriptive only, no validity check reads it: the pool is shared and normally busy, so load from other volumes is the usual operating condition, not a fault. It matters for a comparison when it differs between the configurations or phases being compared; between a Ceph class and node-local or in-memory storage it is part of what distinguishes the backends, not a confounder"
   3_diagnosis:
     files: ["report/files.md", "<result_dir>/*"]
     read_when: "tier 2's aggregated tables don't resolve the question"
@@ -92,6 +97,7 @@ provenance:
   sut:
     "bexhoma-sut-{configuration}-{code}-{experiment_run}.yml": "SUT Deployment manifest, one archived copy per experiment_run — the live object itself is restarted in place, not recreated, so copies can be identical"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.{container}.log": "SUT container stdout, one capture per experiment_run"
+    "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.{container}.previous.log": "stdout of the container instance that terminated, captured only for a restarted container — the running instance's log starts after the restart, so only this one says why it died; a container restarted several times keeps only the last terminated instance"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.describe.log": "kubectl describe pod, one capture per experiment_run; each container's Last State block (Reason, Exit Code, Finished) says why its latest restart happened, and its Mounts plus the pod's Volumes say whether its data directory survived that restart"
 
 versions:
@@ -106,6 +112,8 @@ key_metrics_by_benchmark_type:
   dbmsbenchmarker:
     entry_scripts: [tpch.py, tpcds.py]
     columns: ["Geo Times [s]", "Power@Size [~Q/h]", "Throughput@Size"]
+    pooling: "Per Connection, Per Phase and the latency table count only queries that succeeded in every connection of the experiment; a note under each says which queries were left out, and why a table is empty"
+    partial_results: "report/benchmarking.md Query Completion per Phase (completed/pods per phase and query), Per Phase (Complete Phases Only) and Latency of Timer Execution [ms] (Complete Phases Only): the same metrics and per-query latencies, pooled only over phases in which every pod completed every active query; both written only when some phase is incomplete"
   ycsb:
     entry_scripts: [ycsb.py]
     columns: ["[OVERALL].Throughput(ops/sec)"]
@@ -141,6 +149,14 @@ validity:
     skipped_when: "there were no restarts, or no describe log explains them"
     why: "without such a volume the data lives in the container's writable layer, which a restart discards; the DBMS re-initializes an empty database while the pod still carries loaded=True, so bexhoma does not reload it"
     scopes: "every query of that configuration after the restart ran against an empty database; its SQL errors (relation ... does not exist) are consequences of the restart, not findings about the queries"
+  - id: loading_measured_in_experiment
+    kind: absolute
+    label: "Loading measured in this experiment"
+    checks: "no configuration found its persistent volume already loaded by an earlier experiment (connections.config's storage_reused); absent from results written before storage_reused was recorded"
+    why: "bexhoma reuses a loaded volume of the same name: loading is skipped and its loading times are copied from the volume's labels, so they describe the experiment that filled it. An experiment.yml prevents it with resources.storage.remove_existing (default true with a storage_class)"
+    reports:
+      where: "report/connections.md, per configuration: storage_reused, and the volume as sut_storage_storageClassName / sut_storage_storageConfiguration"
+    scopes: "loading times (time_load and its parts, Throughput [SF/h]) of the reused configurations; benchmarking metrics stay valid"
   - id: key_metric_present
     kind: absolute
     checks: "benchmark-type headline column(s) contain no 0/NaN — see key_metrics_by_benchmark_type"
@@ -233,7 +249,8 @@ answer_contract:
       instruction: "State the scientific hypothesis verdict as supported, refuted, inconclusive, or invalid; separately state pass/fail/skip counts and whether any FAILED row scopes or invalidates a metric reported below it."
       source: [agent_summary_contract.fields.verdict, verdict_shape]
       failure_causality:
-        instruction: "When any check failed, name the first failure as the root cause instead of adding failures up. Order failures by timestamp; errors that follow a SUT restart are its downstream effects, not independent findings."
+        instruction: "When any check failed, start from the first failure instead of adding failures up. report/index.md's Failure Timeline orders failures by when they began and places each in the phase that was running; it does not decide causes. Errors that follow a SUT restart are usually its downstream effects, not independent findings — check the evidence before attributing."
+        source: "report/index.md Failure Timeline: SUT restarts at their termination time, plus benchmark-specific failures (DBMSBenchmarker: per phase, the queries that failed in some pods, over that phase's time window)"
         downstream_of_restart:
           - "connection or I/O errors in the streams running when the container terminated"
           - "missing relations and every other error after the restart when sut_data_survived_restarts failed"

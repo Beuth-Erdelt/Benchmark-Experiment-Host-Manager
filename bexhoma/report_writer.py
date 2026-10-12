@@ -71,6 +71,7 @@ import pandas as pd
 import yaml
 
 from bexhoma import evaluators
+from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
@@ -81,7 +82,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.8.0"
+SCHEMA_VERSION = "1.10.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -155,7 +156,9 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     ("sut-logs", "SUT Container Logs", ("bexhoma-sut-*.log",),
      "stdout of each SUT container, one capture per experiment_run "
      "(`.dbms.log` is the DBMS process itself) — read for the literal error "
-     "text behind a failed or slow query."),
+     "text behind a failed or slow query. A restarted container's log starts "
+     "after the restart; `.<container>.previous.log` is the log of the "
+     "instance that died, the one that says why it crashed."),
     ("sut-restarts", "SUT Restart Counts", ("bexhoma-sut-*-restarts.json",),
      "Per-pod SUT container restart counts, one snapshot per experiment_run; "
      "restartCount is cumulative across runs, so aggregate by max per pod."),
@@ -221,11 +224,12 @@ quoting any number, not after:
 |---|---|---|
 | `No SUT container restarts` | Every metric of the restarted configuration from the restart's `Finished` time onward — the Health Summary names the termination reason (e.g. `OOMKilled`) | `connections.md`'s SUT Container Restarts |
 | `SUT data survived container restarts` | Every query of that configuration after the restart ran against a freshly initialized, empty database; its SQL errors (`relation … does not exist`, connection/I/O errors) are consequences of the restart, not findings about the queries | `connections.md`'s SUT Container Restarts |
+| `Loading measured in this experiment` | Loading times of the configurations whose `storage_reused` is `True`: their volume was already loaded by an earlier experiment, so loading was skipped and the times are inherited, not measured here — they enter no loading comparison. Benchmarking metrics stay valid | `connections.md`'s `storage_reused` and `sut_storage_*` |
 | `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
 | `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured — dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
 | `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
-| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row | `benchmarking.md`'s Per Phase table |
+| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row — for DBMSBenchmarker usually because a query failed somewhere, which removes it from every row; the note under the Per Phase table says which | `benchmarking.md`'s Per Phase table, Query Completion per Phase, and Per Phase (Complete Phases Only) for the phases that still measured every query |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
 | `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros — their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason | `monitoring.md`'s Missing Metrics |
 
@@ -241,12 +245,18 @@ _INTERPRETATION_RULES_MD = """### Interpretation Rules
   `report/` folder (a different experiment code) as directly comparable
   without independently verifying equivalent conditions — cross-code
   comparison is what the `collectors` module is built for, not this report.
-- **Name the first failure, not the sum of failures.** Order failures by
-  timestamp and treat the earliest as the root cause. Errors that follow a
-  SUT restart (connection/I/O errors in the streams running at that moment,
-  missing relations afterwards) are its downstream effects. For a restart,
+- **Start from the first failure, not the sum of failures.** The Failure
+  Timeline above lists failures in the order they began and the phase each
+  happened in; begin with its first entry. Later failures may be its
+  consequences — e.g. after a restart without a data volume, every query
+  fails on missing relations — but the timeline only orders them; check the
+  evidence before calling one failure the cause of another. For a restart,
   state its reason and what was running when it happened: the round, the
   number of concurrent streams, and the query.
+- **Partial results are results.** When some phases failed, the phases that
+  completed still measure the system: use them, say which phases they are,
+  and report the failed ones as a finding of their own instead of discarding
+  the run.
 - **Report variance, not just point estimates.** Metric tables are already
   aggregated across parallel pods, but a sweep normally has multiple
   experiment-run/client repetitions. Summarize the range across those
@@ -481,8 +491,14 @@ def _count_sut_restarts(result_dir: Path) -> tuple[int, dict[str, str]]:
 
 def _get_metric_definitions(connections_sorted: list[dict]) -> dict[str, dict]:
     """
-    Read metric metadata (title/active/type/aggregation-kind) from the first
-    connection that carries a ``monitoring.metrics`` block.
+    Read metric metadata (title/active/type/aggregation-kind) from the
+    connections' ``monitoring.metrics`` blocks.
+
+    Title, type and kind come from the first connection that defines a
+    metric. ``active`` is true when any connection has the metric active: it
+    can be off for one configuration only (e.g. a Ceph volume metric for a
+    ``ramdisk`` configuration in a storage-class sweep), and must still be
+    reported for the others.
 
     Mirrors :meth:`bexhoma.collectors.base.get_metrics`'s field selection, but
     scoped to a single experiment's already-in-memory ``connections_sorted``
@@ -493,19 +509,30 @@ def _get_metric_definitions(connections_sorted: list[dict]) -> dict[str, dict]:
     :return: Map of metric key to its ``title``/``active``/``type``/``metric`` fields.
     :rtype: dict[str, dict]
     """
+    definitions: dict[str, dict] = {}
     for conn in connections_sorted:
-        metrics = conn.get('monitoring', {}).get('metrics')
-        if metrics:
-            return {
-                key: {
-                    'title': metric.get('title', key),
-                    'active': metric.get('active', True),
-                    'type': metric.get('type', 'cluster'),
-                    'metric': metric.get('metric', ''),
-                }
-                for key, metric in metrics.items()
+        for key, metric in (conn.get('monitoring', {}).get('metrics') or {}).items():
+            if key in definitions:
+                if _metric_is_active(metric) and not _metric_is_active(definitions[key]):
+                    definitions[key]['active'] = metric.get('active', True)
+                continue
+            definitions[key] = {
+                'title': metric.get('title', key),
+                'active': metric.get('active', True),
+                'type': metric.get('type', 'cluster'),
+                'metric': metric.get('metric', ''),
             }
-    return {}
+    return definitions
+
+
+def _metric_is_active(metric: dict) -> bool:
+    """
+    Whether a metric definition is active (``active`` may be a bool or ``'True'``/``'False'``).
+
+    :param metric: A metric definition.
+    :rtype: bool
+    """
+    return str(metric.get('active', True)).strip().lower() != 'false'
 
 
 def _build_monitoring_sections(
@@ -568,6 +595,10 @@ def _build_monitoring_sections(
             sections.append(Section(heading=f"Application Metrics: {title}", level=3, dataframe=metrics, link_connections=True))
 
     metric_defs = _get_metric_definitions(connections_sorted)
+    ceph_section = _build_ceph_storage_section(
+        evaluator, connections_sorted, metric_defs, monitoring_components)
+    if ceph_section is not None:
+        sections.append(ceph_section)
     catalog_rows = []
     catalog_value_sections = []
     for component, component_title in monitoring_components.items():
@@ -575,14 +606,11 @@ def _build_monitoring_sections(
             df = evaluator.get_monitoring_metric(metric=metric_key, component=component)
             if df.empty:
                 continue
-            if meta['metric'] == 'counter':
-                aggregated = df.max().sort_index() - df.min().sort_index()
-            elif meta['metric'] == 'ratio':
-                aggregated = df.max().sort_index()
-            else:
-                aggregated = df.mean().sort_index()
+            aggregated = _aggregate_metric(df, meta['metric'])
             df_cleaned = pd.DataFrame(aggregated)
             df_cleaned.columns = [meta['title']]
+            df_cleaned = _add_not_applicable(
+                df_cleaned, _inactive_connections(connections_sorted, metric_key))
             df_cleaned = df_cleaned.reindex(index=evaluators.natural_sort(df_cleaned.index))
             df_cleaned.index.names = ["DBMS"]
             catalog_rows.append({
@@ -600,6 +628,130 @@ def _build_monitoring_sections(
             children=catalog_value_sections,
         ))
     return sections
+
+
+def _aggregate_metric(df: pd.DataFrame, kind: str) -> pd.Series:
+    """
+    Reduce one metric's per-scrape values to one value per connection.
+
+    Counters by ``max - min``, ratios by ``max``, everything else by ``mean``
+    (NaN samples, e.g. a latency while the volume is idle, are skipped).
+
+    :param df: One column per connection, one row per Prometheus scrape.
+    :param kind: The metric's ``metric`` field (``counter``, ``ratio``, ``gauge``).
+    :return: One value per connection, sorted by connection.
+    :rtype: pandas.Series
+    """
+    if kind == 'counter':
+        return df.max().sort_index() - df.min().sort_index()
+    if kind == 'ratio':
+        return df.max().sort_index()
+    return df.mean().sort_index()
+
+
+def _inactive_connections(connections_sorted: list[dict], metric_key: str) -> dict[str, str]:
+    """
+    Connections that have a metric switched off, with the reason.
+
+    A metric can be off for one configuration only, e.g. a Ceph storage
+    metric for a ``ramdisk`` configuration in a storage-class sweep. Such a
+    configuration has no values, and the report says so instead of dropping it.
+
+    :param connections_sorted: Connection dicts as read by ``show_summary_header()``.
+    :param metric_key: Key of the metric in ``monitoring.metrics``.
+    :return: Map of connection name to the reason (the ``storage_monitoring``
+        reason, else the metric's ``inactive_reason``, else ``switched off``).
+    :rtype: dict[str, str]
+    """
+    reasons = {}
+    for conn in connections_sorted:
+        metric = (conn.get('monitoring', {}).get('metrics') or {}).get(metric_key)
+        if metric is None or _metric_is_active(metric):
+            continue
+        reasons[conn['name']] = ((conn.get('storage_monitoring') or {}).get('reason')
+                                 or metric.get('inactive_reason') or 'switched off')
+    return reasons
+
+
+def _add_not_applicable(df: pd.DataFrame, inactive: dict[str, str]) -> pd.DataFrame:
+    """
+    Add an ``n/a (reason)`` row for each connection that has the metric switched off.
+
+    :param df: One row per connection, the metric's columns.
+    :param inactive: Output of :func:`_inactive_connections`.
+    :return: ``df`` with the extra rows (object dtype where any were added).
+    :rtype: pandas.DataFrame
+    """
+    missing = {name: reason for name, reason in inactive.items() if name not in df.index}
+    if not missing:
+        return df
+    rows = pd.DataFrame(
+        {column: [f"n/a ({reason})" for reason in missing.values()] for column in df.columns},
+        index=list(missing))
+    return pd.concat([df.astype(object), rows])
+
+
+#: Metrics shown in ``monitoring.md``'s Ceph Storage tables, in this order:
+#: the SUT's own volume, the other volumes in its pool, the whole pool.
+_CEPH_STORAGE_METRICS = (
+    'ceph_volume_write', 'ceph_volume_write_ops', 'ceph_volume_write_latency',
+    'ceph_volume_read', 'ceph_volume_read_ops', 'ceph_volume_read_latency',
+    'ceph_others_write_rate', 'ceph_others_write_ops_rate', 'ceph_others_read_ops_rate',
+    'ceph_pool_write', 'ceph_pool_write_ops', 'ceph_pool_read', 'ceph_pool_read_ops',
+)
+
+
+def _build_ceph_storage_section(
+    evaluator, connections_sorted: list[dict], metric_defs: dict[str, dict],
+    monitoring_components: dict[str, str],
+) -> Section | None:
+    """
+    Build ``monitoring.md``'s Ceph Storage section: per component, one row per
+    configuration with its own volume, the other volumes in its pool, and the
+    pool as a whole. Descriptive only -- no check reads it.
+
+    :param evaluator: The primary benchmark's evaluator.
+    :param connections_sorted: Connection dicts as read by ``show_summary_header()``.
+    :param metric_defs: Output of :func:`_get_metric_definitions`.
+    :param monitoring_components: Component key to title.
+    :return: The section, or ``None`` when no Ceph storage metric was collected.
+    :rtype: Section | None
+    """
+    keys = [key for key in _CEPH_STORAGE_METRICS
+            if key in metric_defs and _metric_is_active(metric_defs[key])]
+    if not keys:
+        return None
+    children = []
+    for component, component_title in monitoring_components.items():
+        columns = []
+        for key in keys:
+            df = evaluator.get_monitoring_metric(metric=key, component=component)
+            if df.empty:
+                continue
+            column = pd.DataFrame(_aggregate_metric(df, metric_defs[key]['metric']))
+            column.columns = [metric_defs[key]['title']]
+            columns.append(_add_not_applicable(column, _inactive_connections(connections_sorted, key)))
+        if not columns:
+            continue
+        df_storage = pd.concat(columns, axis=1)
+        df_storage = df_storage.apply(
+            lambda column: column.map(lambda value: round(value, 2) if isinstance(value, float) else value))
+        df_storage = df_storage.reindex(index=evaluators.natural_sort(df_storage.index))
+        df_storage.index.names = ["DBMS"]
+        children.append(Section(heading=component_title, level=4, dataframe=df_storage, link_connections=True))
+    if not children:
+        return None
+    return Section(
+        heading="Ceph Storage", level=3, children=children,
+        lines=["Per phase and configuration: the SUT's own Ceph volume (\"This SUT\"), every other "
+               "volume in the same pool (\"Other Volumes\", mean rate over the phase), and the pool as a "
+               "whole (\"All Clients\"). The pool is shared and normally busy, so load from other volumes "
+               "is the usual operating condition, not a fault; it matters for a comparison when it "
+               "differs between the configurations or phases being compared. Other pools on the same "
+               "disks are not counted. The Ceph exporter's counters lag the I/O by about 1-2 minutes. "
+               "`n/a` means the configuration's storage has no such metric (see `storage_monitoring_reason` "
+               "in connections.md)."],
+    )
 
 
 def _build_monitoring_summary_lines(monitoring_sections: list[Section]) -> list[str]:
@@ -730,6 +882,13 @@ def _build_health_summary_lines(
             lines.append("- SQL warnings: none")
         else:
             lines.append(f"- SQL warnings: {num_warnings} — see [benchmarking.md](benchmarking.md)'s Warnings subsection for the affected queries")
+    if 'phases_total' in extra_context:
+        complete, total = extra_context['phases_complete'], extra_context['phases_total']
+        line = f"- Phases in which every pod completed every query: {complete} of {total}"
+        if complete < total:
+            line += (" — see [benchmarking.md](benchmarking.md)'s Query Completion per Phase, and its "
+                     "Per Phase (Complete Phases Only) for their metrics")
+        lines.append(line)
     if missing is not None:
         unexpected = [entry for entry in missing if not entry.expected]
         expected = [entry for entry in missing if entry.expected]
@@ -803,6 +962,9 @@ def _build_connections_md_lines(
                 line = f"  * {sut_restarts.format_detail(detail)}"
                 if detail.describe_file:
                     line += f" ([{detail.describe_file}]({_relmd(result_dir / detail.describe_file, report_dir)}))"
+                if detail.previous_log:
+                    line += (f"; log of the crashed instance: [{detail.previous_log}]"
+                             f"({_relmd(result_dir / detail.previous_log, report_dir)})")
                 lines.append(line)
         lines.append("")
     by_configuration: dict[str, list[tuple[str, dict[str, str]]]] = {}
@@ -968,7 +1130,7 @@ def write_markdown_report(
             benchmarking_all, connections_index,
             _provenance_lines(groups, ("benchmarker", "configs")),
         )
-        written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
+        written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, query completion per phase and metrics of the complete phases (DBMSBenchmarker), secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
 
     missing = None
     if experiment.monitoring_active or experiment.cluster.monitor_cluster_active:
@@ -984,7 +1146,7 @@ def write_markdown_report(
             "SUT CPU/RAM/application monitoring, and the full catalog of every collected metric.",
             monitoring_sections, connections_index, _provenance_lines(groups, ("monitoring", "metrics-fetch")),
         )
-        written_sections.append({"title": "Monitoring", "file": "monitoring.md", "description": "CPU/RAM/application metrics plus the full metric catalog (all configured Prometheus metrics, not just the curated few)."})
+        written_sections.append({"title": "Monitoring", "file": "monitoring.md", "description": "CPU/RAM/application metrics, Ceph storage when the SUT's volume is on Ceph, plus the full metric catalog (all configured Prometheus metrics, not just the curated few)."})
 
     total_restarts, restarts_per_pod = _count_sut_restarts(result_dir)
     restart_details = sut_restarts.collect_restart_details(result_dir)
@@ -1008,9 +1170,14 @@ def write_markdown_report(
     if key_metrics_section is not None:
         key_metrics_lines = _render_sections([key_metrics_section], connections_index)
 
+    timeline_lines = failure_timeline.build_timeline_lines(
+        failure_timeline.restart_events(restart_details) + list(extra_context.get('failure_events', [])),
+        df_connections, extra_context.get('phase_windows'),
+    )
+
     _write_index_md(
         report_dir, experiment, total_restarts, extra_context, written_sections,
-        key_metrics_lines, monitoring_summary_lines, restart_details, missing,
+        key_metrics_lines, monitoring_summary_lines, restart_details, missing, timeline_lines,
     )
 
 
@@ -1061,6 +1228,7 @@ def _write_index_md(
     key_metrics_lines: list[str], monitoring_summary_lines: list[str],
     restart_details: list[sut_restarts.RestartDetail] | None = None,
     missing: list[missing_metrics.MissingMetric] | None = None,
+    timeline_lines: list[str] | None = None,
 ) -> None:
     """
     Write ``index.md`` — the tier-1 entry point.
@@ -1068,8 +1236,8 @@ def _write_index_md(
     Content, in order: frontmatter; Workload identity; entry-point
     instruction; Report Structure (tier table); Naming Conventions;
     Validity-First Rules; ``### Tests``; Key Metrics; Monitoring (brief);
-    Health Summary; Interpretation Rules; links to whichever tier-2 files
-    were actually written.
+    Health Summary; Failure Timeline; Interpretation Rules; links to
+    whichever tier-2 files were actually written.
 
     The frontmatter's ``bexhoma_version`` is the installed
     ``bexhoma.__version__`` at *report-generation* time, not necessarily the
@@ -1104,6 +1272,8 @@ def _write_index_md(
         Health Summary.
     :param missing: Missing monitoring metrics, forwarded to the Health
         Summary; ``None`` when monitoring was not active.
+    :param timeline_lines: Pre-rendered ``### Failure Timeline`` block (see
+        :func:`failure_timeline.build_timeline_lines`), or ``None`` for none.
     """
     passed = sum(1 for p, _ in experiment._test_results if p is True)
     failed = sum(1 for p, _ in experiment._test_results if p is False)
@@ -1137,6 +1307,9 @@ def _write_index_md(
     lines.append("")
     lines.extend(_build_health_summary_lines(total_restarts, extra_context, restart_details, missing))
     lines.append("")
+    if timeline_lines:
+        lines.extend(timeline_lines)
+        lines.append("")
     lines.append(_INTERPRETATION_RULES_MD)
     if written_sections:
         lines.append("### Sections")

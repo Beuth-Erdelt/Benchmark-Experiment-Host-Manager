@@ -17,6 +17,7 @@ import subprocess
 import traceback
 import os
 import posixpath
+import tarfile
 import psutil
 import logging
 import socket
@@ -32,6 +33,7 @@ from urllib3.util.retry import Retry
 
 from dbmsbenchmarker import *
 from .__version__ import __version__
+from . import ceph_storage
 
 import platform
 
@@ -41,6 +43,12 @@ import platform
 #: ``--retries`` makes kubectl resume the tar stream at the last byte offset
 #: instead of failing outright. See https://github.com/kubernetes/kubectl/issues/1425.
 KUBECTL_CP_INTERNAL_RETRIES = 20
+
+#: Ceiling on packing a result folder into an archive inside a pod, in
+#: seconds (see Kubernetes.download_folder). A read on a network file system
+#: such as CephFS can hang indefinitely; ``tar`` is then killed instead of
+#: blocking the experiment forever.
+ARCHIVE_TIMEOUT_SECONDS = 600
 
 #: Hard ceiling on one kubectl() subprocess call, in seconds. Unlike the
 #: Kubernetes Python client (see CLUSTER_API_TIMEOUT_SECONDS below), a shelled
@@ -285,6 +293,11 @@ class Kubernetes():
         self.v1core = None
         self.v1apps = None
         self.v1batches = None
+        self.v1storage = None
+        # Ceph monitoring lookups, cached per run (see get_storage_class_info()
+        # and get_ceph_metrics_support())
+        self._storage_class_info = {}
+        self._ceph_metrics_support = {}
 
         # Context metadata defaults; overwritten below if a context is found
         self.yamlfolder = yamlfolder
@@ -352,8 +365,8 @@ class Kubernetes():
         """
         Initialise Kubernetes API clients using the configured context.
 
-        Sets ``self.v1core``, ``self.v1apps``, and ``self.v1batches``.
-        Prints a warning if the cluster cannot be reached.
+        Sets ``self.v1core``, ``self.v1apps``, ``self.v1batches`` and
+        ``self.v1storage``. Prints a warning if the cluster cannot be reached.
         """
         self.logger.debug(f'Kubernetes.cluster_access({self.context})')
         try:
@@ -361,6 +374,7 @@ class Kubernetes():
             self.v1core = kubernetes_client.CoreV1Api(api_client=self._new_api_client())
             self.v1apps = kubernetes_client.AppsV1Api(api_client=self._new_api_client())
             self.v1batches = kubernetes_client.BatchV1Api(api_client=self._new_api_client())
+            self.v1storage = kubernetes_client.StorageV1Api(api_client=self._new_api_client())
         except Exception:
             print("WARN: Could not connect to Kubernetes")
 
@@ -938,6 +952,126 @@ class Kubernetes():
                 self.cluster_access()
                 self.wait(2)
                 return self.pvc_exists(name=name)
+
+    def get_pvc_storage_class(self, name):
+        """
+        Return the storage class a PVC was provisioned on.
+
+        :param name: Name of the PVC.
+        :return: Its ``spec.storageClassName``, or ``None`` if the PVC does not
+            exist (HTTP 404) or names no class.
+        """
+        self.logger.debug('Kubernetes.get_pvc_storage_class()')
+        try:
+            pvc = self.v1core.read_namespaced_persistent_volume_claim(
+                namespace=self.namespace, name=name
+            )
+            return pvc.spec.storage_class_name
+        except ApiException as e:
+            if e.status == 404:
+                return None
+            print(f"Exception when calling CoreV1Api->read_namespaced_persistent_volume_claim: {e}\n")
+            self.cluster_access()
+            self.wait(2)
+            return self.get_pvc_storage_class(name=name)
+
+    def get_storage_class_info(self, name):
+        """
+        Return a StorageClass's provisioner and, for Ceph CSI, its pool.
+
+        Used to fill the ``{pool}`` monitoring placeholder. Never raises and
+        never retries: any API error (missing class, no permission) is a
+        warning and an empty result, so monitoring is switched off instead of
+        failing the run. Cached per class.
+
+        :param name: StorageClass name.
+        :return: ``{'provisioner', 'pool', 'kind'}`` (``kind`` is ``'rbd'``,
+            ``'cephfs'`` or ``''``), or ``{}`` when the class cannot be read.
+        :rtype: dict
+        """
+        self.logger.debug('Kubernetes.get_storage_class_info()')
+        if not name:
+            return {}
+        if name in self._storage_class_info:
+            return self._storage_class_info[name]
+        info = {}
+        try:
+            if self.v1storage is None:
+                self.v1storage = kubernetes_client.StorageV1Api(api_client=self._new_api_client())
+            storage_class = self.v1storage.read_storage_class(name=name)
+            pool, kind = ceph_storage.ceph_pool_of(storage_class.provisioner, storage_class.parameters)
+            info = {'provisioner': storage_class.provisioner or '', 'pool': pool, 'kind': kind}
+        except Exception as e:
+            status = getattr(e, 'status', None)
+            print(f"WARN: could not read StorageClass {name} for storage monitoring "
+                  f"({status if status is not None else e})")
+        self._storage_class_info[name] = info
+        return info
+
+    def get_pvc_rbd_image(self, name):
+        """
+        Return the Ceph RBD image behind a PVC.
+
+        Follows PVC ``spec.volumeName`` to the PV's
+        ``spec.csi.volumeAttributes.imageName``. Never raises: an unbound PVC,
+        a PV that is not CSI, a missing ``imageName`` (e.g. CephFS) or an API
+        error give ``None``.
+
+        :param name: PVC name in the current namespace.
+        :return: Image name (``csi-vol-<uuid>``), or ``None``.
+        :rtype: str or None
+        """
+        self.logger.debug('Kubernetes.get_pvc_rbd_image()')
+        try:
+            pvc = self.v1core.read_namespaced_persistent_volume_claim(namespace=self.namespace, name=name)
+            volume_name = pvc.spec.volume_name
+            if not volume_name:
+                return None
+            pv = self.v1core.read_persistent_volume(name=volume_name)
+        except Exception as e:
+            status = getattr(e, 'status', None)
+            print(f"WARN: could not read the volume of PVC {name} for storage monitoring "
+                  f"({status if status is not None else e})")
+            return None
+        csi = pv.spec.csi if pv.spec is not None else None
+        image = (csi.volume_attributes or {}).get('imageName') if csi is not None else None
+        return image if ceph_storage.is_valid_image_name(image) else None
+
+    def get_ceph_metrics_support(self, pool):
+        """
+        Check once per pool whether Prometheus has the pool's Ceph metrics.
+
+        Two instant queries through the dashboard pod: does the Ceph exporter
+        report the pool (``ceph_pool_metadata``), and does it keep per-image
+        RBD statistics for it (``ceph_rbd_write_bytes``)? A cluster without
+        Ceph metrics thereby switches the Ceph monitoring metrics off instead
+        of logging them as missing. Cached per pool.
+
+        :param pool: Ceph pool name.
+        :return: ``{'pool_metrics': bool, 'volume_metrics': bool}``, or ``None``
+            when Prometheus could not be asked.
+        :rtype: dict or None
+        """
+        self.logger.debug('Kubernetes.get_ceph_metrics_support()')
+        if pool in self._ceph_metrics_support:
+            return self._ceph_metrics_support[pool]
+        # reuses environment.yml's Prometheus access (curl in the dashboard pod)
+        from bexhoma import environment
+        support = None
+        url = environment._prometheus_url(self)
+        pod = self.get_dashboard_pod_name() if url else ''
+        if url and pod:
+            try:
+                pools = environment._query_prometheus(self, pod, url, ceph_storage.promql_pool_check([pool]))
+                volumes = environment._query_prometheus(self, pod, url, ceph_storage.promql_volume_check([pool]))
+                support = {
+                    'pool_metrics': any(series.get('metric', {}).get('name') == pool for series in pools),
+                    'volume_metrics': any(series.get('metric', {}).get('pool') == pool for series in volumes),
+                }
+            except Exception as e:
+                print(f"WARN: could not check Ceph metrics of pool {pool} in Prometheus ({e})")
+        self._ceph_metrics_support[pool] = support
+        return support
 
     def get_pvc_labels(self, app='', component='', experiment='', configuration='', pvc=''):
         """
@@ -1653,6 +1787,81 @@ class Kubernetes():
             f'{pod}:{filename_remote} -> {filename_local}'
         )
 
+    def download_folder(self, folder_remote, folder_local, pod, container="dashboard",
+                        max_retries: int = 3, archive_timeout: int = ARCHIVE_TIMEOUT_SECONDS) -> str:
+        """
+        Download the contents of a directory in a Pod container as one archive.
+
+        ``kubectl cp`` of a directory sends every file through a single
+        streamed tar and pays a per-file cost on the local side, which makes
+        result folders with tens of thousands of small files slow enough to
+        run into connection limits of the cluster's API endpoint. Instead, the
+        directory is packed into one ``tar.gz`` inside the container, that
+        single file is copied with :meth:`download_file`, unpacked locally with
+        :mod:`tarfile` (so the same code works on Linux and Windows), and both
+        archives are removed afterwards. Existing local files are overwritten,
+        as with ``kubectl cp``.
+
+        Packing is killed after ``archive_timeout`` seconds, since a read on
+        the network file system behind the folder can hang indefinitely. A
+        timeout raises ``RuntimeError``: a plain ``kubectl cp`` would read the
+        same files and hang as well. If packing fails for another reason (e.g.
+        no space left in ``/tmp``), the method falls back to a plain directory
+        ``kubectl cp``.
+
+        :param folder_remote: Source directory inside the container.
+        :param folder_local: Destination directory on the local machine.
+        :param pod: Source Pod name.
+        :param container: Source container name.  Defaults to ``dashboard``.
+        :param max_retries: Maximum number of copy attempts before raising.
+        :param archive_timeout: Seconds after which packing is killed.
+        :return: Output of the kubectl copy command.
+        :raises RuntimeError: If packing times out or every copy attempt fails.
+        """
+        folder_remote = folder_remote.rstrip('/')
+        if folder_remote.endswith('/.'):
+            folder_remote = folder_remote[:-2]
+        archive_name = 'bexhoma-download-' + posixpath.basename(folder_remote) + '.tar.gz'
+        archive_remote = '/tmp/' + archive_name
+        os.makedirs(folder_local, exist_ok=True)
+        archive_local = os.path.join(folder_local, archive_name)
+        ok_marker = 'BEXHOMA_ARCHIVE_OK'
+        # The exit status of timeout is not read back: a $? in the command
+        # would be expanded by the local shell on Linux but not on Windows.
+        # Elapsed time tells a timeout apart from other failures instead.
+        start = time.monotonic()
+        _, stdout, stderr = self.execute_command_in_pod(
+            command=f"timeout -s KILL {archive_timeout} tar czf {archive_remote} -C {folder_remote} . && echo {ok_marker}",
+            pod=pod, container=container)
+        if ok_marker not in stdout:
+            self.execute_command_in_pod(command=f"rm -f {archive_remote}", pod=pod, container=container)
+            if time.monotonic() - start >= archive_timeout:
+                raise RuntimeError(
+                    f'download_folder: packing {folder_remote} in pod {pod} did not finish within '
+                    f'{archive_timeout}s; a read on the volume behind it probably hangs'
+                )
+            print(f"download_folder: packing {folder_remote} in pod {pod} failed, falling back to plain copy: {stderr.strip()}")
+            return self.download_file(filename_remote=folder_remote + '/.', filename_local=folder_local,
+                                      pod=pod, container=container, max_retries=max_retries)
+        try:
+            result = self.download_file(filename_remote=archive_remote, filename_local=archive_local,
+                                        pod=pod, container=container, max_retries=max_retries)
+            with tarfile.open(archive_local, 'r:gz') as archive:
+                if hasattr(tarfile, 'data_filter'):
+                    archive.extractall(folder_local, filter='data')
+                else:
+                    root = os.path.realpath(folder_local)
+                    for member in archive.getmembers():
+                        target = os.path.realpath(os.path.join(root, member.name))
+                        if os.path.commonpath([root, target]) != root:
+                            raise RuntimeError(f'download_folder: unsafe path in archive: {member.name}')
+                    archive.extractall(folder_local)
+            return result
+        finally:
+            self.execute_command_in_pod(command=f"rm -f {archive_remote}", pod=pod, container=container)
+            if os.path.isfile(archive_local):
+                os.remove(archive_local)
+
     def check_dbms_connection(self, ip, port):
         """
         Test whether a TCP connection to ``ip:port`` can be established.
@@ -1708,20 +1917,40 @@ class Kubernetes():
         """
         return self.kubectl('describe job ' + jobname)
 
-    def pod_log(self, pod, container=''):
+    def pod_log(self, pod, container='', previous=False):
         """
         Return the ``kubectl logs --tail=-1`` output for a given Pod or container.
 
         :param pod: Name of the Pod.
         :param container: Container name within the Pod (optional).
+        :param previous: Return the log of the container's previous,
+            terminated instance (``--previous``) instead of the running one.
+            Only that log says why a restarted container died.
         :return: kubectl output string.
         """
         if container:
             fullcommand = 'logs ' + pod + ' --container=' + container
         else:
             fullcommand = 'logs ' + pod
+        if previous:
+            fullcommand = fullcommand + ' --previous'
         fullcommand = fullcommand + ' --tail=-1'
         return self.kubectl(fullcommand)
+
+    def get_pod_restart_counts(self, pod):
+        """
+        Return the restart count of every regular container in a Pod.
+
+        :param pod: Name of the Pod.
+        :return: Container name to ``restartCount``; empty if the Pod is gone.
+        """
+        names = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.containerStatuses[*].name}"')
+        counts = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.containerStatuses[*].restartCount}"')
+        names = names.split() if names else []
+        counts = counts.split() if counts else []
+        if len(names) != len(counts):
+            return {}
+        return {name: int(count) for name, count in zip(names, counts) if count.isdigit()}
 
     def get_pod_containers(self, pod):
         """
@@ -2725,7 +2954,7 @@ class Kubernetes():
         filename_log = f"{resultfolder}/{self.code}/{pod_name}.describe.log"
         return os.path.isfile(filename_log)
 
-    def store_pod_log(self, pod_name, container='', number=None):
+    def store_pod_log(self, pod_name, container='', number=None, previous=False):
         """
         Fetch and persist ``kubectl logs`` output to the result folder.
 
@@ -2736,18 +2965,22 @@ class Kubernetes():
         :param container: Container name within the Pod (optional).
         :param number: Optional experiment-run index, spliced into the filename
             directly after the experiment code — see :meth:`_pod_label`.
+        :param previous: Store the log of the container's previous, terminated
+            instance as ``<label>.<container>.previous.log``. Only valid for a
+            container that has restarted — see :meth:`store_previous_pod_logs`.
         """
         resultfolder = self.config['benchmarker']['resultfolder'].replace("\\", "/").replace("C:", "")
         pod_label = self._pod_label(pod_name, number)
+        suffix = ".previous.log" if previous else ".log"
         if container:
-            filename_log = f"{resultfolder}/{self.code}/{pod_label}.{container}.log"
+            filename_log = f"{resultfolder}/{self.code}/{pod_label}.{container}{suffix}"
         else:
-            filename_log = f"{resultfolder}/{self.code}/{pod_label}.log"
+            filename_log = f"{resultfolder}/{self.code}/{pod_label}{suffix}"
         if not os.path.isfile(filename_log):
             attempt = 1
             while attempt < 10:
                 self.logger.debug(f"{'Bexhoma':30s}: (try #{attempt}) stores pod log into {filename_log}")
-                stdout = self.pod_log(pod_name, container)
+                stdout = self.pod_log(pod_name, container, previous=previous)
                 if stdout is None:
                     print(f"{'Bexhoma':30s}: no data error for log {filename_log}")
                     attempt += 1
@@ -2757,6 +2990,22 @@ class Kubernetes():
                     return
                 else:
                     attempt += 1
+
+    def store_previous_pod_logs(self, pod_name, number=None):
+        """
+        Persist the previous-instance log of every container that restarted.
+
+        The running container's log starts after the restart, so it never says
+        why the container died; ``kubectl logs --previous`` does, until the
+        next restart replaces it. Containers that never restarted have no
+        previous instance and are skipped.
+
+        :param pod_name: Name of the Pod.
+        :param number: Optional experiment-run index, as for :meth:`store_pod_log`.
+        """
+        for container, restarts in self.get_pod_restart_counts(pod_name).items():
+            if restarts > 0:
+                self.store_pod_log(pod_name, container, number=number, previous=True)
 
     def pod_log_exists(self, pod_name, container=''):
         """

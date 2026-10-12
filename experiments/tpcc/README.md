@@ -40,7 +40,7 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 
 | Folder | Schema / DB | Constraints | Notes |
 |---|---|---|---|
-| `PostgreSQL` | `public` | Inline PK; no FK | `checkschema-tpcc.sql` runs `VACUUM ANALYZE` and reports pg_settings |
+| `PostgreSQL` | `public` | Inline PK; no FK | Data lives in database `tpcc` (HammerDB `pg_dbase`); `checkschema-tpcc.sql` and `reset-tpcc.sql` `\connect tpcc` first. `checkschema-tpcc.sql` runs `VACUUM ANALYZE` and reports pg_settings, table statistics and sizes |
 | `MariaDB` | `tpcc` | Inline PK + FK | InnoDB; `IDENTIFIED WITH mysql_native_password BY 'root'` |
 | `MySQL` | `tpcc` | Inline PK + FK | InnoDB; MEMORY engine for warehouse; zero-date mode |
 | `CockroachDB` | `public` | `PRIMARY KEY USING HASH`; no FK | `ALTER TABLE … CONFIGURE ZONE USING num_replicas = {num_worker_replicas}` |

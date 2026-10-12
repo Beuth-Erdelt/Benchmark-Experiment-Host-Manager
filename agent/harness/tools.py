@@ -142,7 +142,10 @@ _SHAPE_NOISE_FLOOR = 0.05
 
 #: Factors the catalog lets an experiment isolate. Everything the contract can
 #: express is characterisable; anything else is refused at design time.
-_DISCRIMINATING_FACTORS = {"system", "concurrency", "cpu", "memory"}
+_DISCRIMINATING_FACTORS = {"system", "concurrency", "cpu", "memory", "storage_class"}
+#: Of those, the factors whose levels have no order: they are ranked at each
+#: fixed context, never fitted to a curve.
+_CATEGORICAL_FACTORS = ("system", "storage_class")
 
 #: Aggregate metrics worth characterising, by the direction that is an
 #: improvement. Exact names first, then substrings so a benchmarker this
@@ -157,6 +160,20 @@ _METRIC_SUBSTRINGS = (
 
 #: A phase rate the report forms by adding up its pods' own rates (YCSB), and the
 #: per-pod duration each of those rates was measured over.
+#: Report headings the assessor reads its per-phase evidence from. The pooled
+#: table counts only queries that succeeded in every connection; the other two
+#: (DBMSBenchmarker, report schema 1.9.0) say which phase completed which query,
+#: and give the pooled metrics over the phases that completed all of them.
+_PER_PHASE = "#### Per Phase"
+_PER_PHASE_COMPLETE = "#### Per Phase (Complete Phases Only)"
+_QUERY_COMPLETION = "#### Query Completion per Phase"
+_LATENCY_COMPLETE = "### Latency of Timer Execution [ms] (Complete Phases Only)"
+#: Complete repetitions every level of a sweep, and every system of a ranking,
+#: needs before the assessor builds a claim from complete phases only. Policy,
+#: chosen conservative: one surviving repetition cannot show its level's
+#: noise, and a level that kept only one of its runs mostly failed.
+_MIN_COMPLETE_REPETITIONS = 2
+
 _SUMMED_RATE = "[OVERALL].Throughput(ops/sec)"
 _POD_DURATION_MS = "[OVERALL].RunTime(ms)"
 _MILLISECONDS_PER_SECOND = 1000.0
@@ -1152,7 +1169,7 @@ def _query_number(value: str) -> int | None:
 
 def _phase_quality(text: str) -> tuple[set[str], list[dict[str, Any]]]:
     """Return configurations and suspicious aggregate-latency repetitions."""
-    table = _markdown_table(text, "#### Per Phase")
+    table = _markdown_table(text, _PER_PHASE) or _markdown_table(text, _PER_PHASE_COMPLETE)
     if table is None:
         return set(), []
     headers, rows = table
@@ -1230,6 +1247,149 @@ def _error_coverage(text: str) -> tuple[set[int], dict[str, set[int]], int]:
     return set(query_columns.values()), errors, total
 
 
+def _completion_matrix(text: str) -> dict[str, dict[str, Any]] | None:
+    """Parse the report's per-phase query completion.
+
+    :param text: The report's ``benchmarking.md`` page.
+    :return: Phase to its pod count, whether every pod completed every query,
+        and the queries some pod failed; ``None`` when the report has no
+        completion table (an older report, or a non-DBMSBenchmarker workload).
+    :rtype: dict[str, dict[str, Any]] | None
+    """
+    table = _markdown_table(text, _QUERY_COMPLETION)
+    if table is None or not {"phase", "pods", "complete"}.issubset(table[0]):
+        return None
+    headers, rows = table
+    query_columns = [
+        index for index, header in enumerate(headers)
+        if header not in {"phase", "pods", "complete"}
+    ]
+    matrix: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        try:
+            pods = int(row[headers.index("pods")])
+        except ValueError:
+            continue
+        failed = []
+        for index in query_columns:
+            completed, _, total = row[index].partition("/")
+            if not (completed.strip().isdigit() and total.strip().isdigit()):
+                continue
+            if int(completed) < int(total):
+                failed.append(headers[index])
+        matrix[_plain_markdown_cell(row[headers.index("phase")])] = {
+            "pods": pods,
+            "complete": row[headers.index("complete")].strip().casefold() == "yes",
+            "failed_queries": failed,
+        }
+    return matrix or None
+
+
+def _completion_by_level(
+    matrix: dict[str, dict[str, Any]],
+    experiment: dict[str, Any],
+    resource_cells: list[dict[str, float]],
+    factor: str,
+    context: dict[str, Any],
+) -> dict[str, str]:
+    """Count, per level of one factor, how many phases completed every query.
+
+    :param matrix: Output of :func:`_completion_matrix`.
+    :param experiment: The archived experiment.yml.
+    :param resource_cells: Output of :func:`_resource_dimensions`.
+    :param factor: The factor the claim varies.
+    :param context: The peer factors the claim holds fixed.
+    :return: Level (as text) to ``"complete/total"`` phases.
+    :rtype: dict[str, str]
+    """
+    tally: dict[Any, list[int]] = {}
+    for phase, entry in matrix.items():
+        dimensions = _configuration_dimensions(phase.rsplit("-", 2)[0], experiment, resource_cells)
+        if dimensions is None:
+            continue
+        dimensions["concurrency"] = float(entry["pods"])
+        if factor not in dimensions or any(dimensions.get(peer) != value for peer, value in context.items()):
+            continue
+        counts = tally.setdefault(dimensions[factor], [0, 0])
+        counts[0] += int(entry["complete"])
+        counts[1] += 1
+    return {
+        (f"{level:g}" if isinstance(level, float) else str(level)): f"{complete}/{total}"
+        for level, (complete, total) in sorted(tally.items(), key=lambda item: str(item[0]))
+    }
+
+
+def _complete_phase_claims(
+    text: str, specification: str | None, matrix: dict[str, dict[str, Any]],
+) -> dict[str, Any] | None:
+    """Build claims from the phases that completed every query, conservatively.
+
+    The pooled per-phase table loses every query that failed anywhere, so any
+    failure clears its claims. The complete-phases table keeps the full query
+    set over fewer phases. A claim is built from it only when every level of a
+    sweep, and every system of a ranking, kept at least
+    :data:`_MIN_COMPLETE_REPETITIONS` complete repetitions; each claim carries
+    how many phases per level completed, so its means never travel without
+    the failures they leave out.
+
+    :param text: The report's ``benchmarking.md`` page.
+    :param specification: The archived ``experiment.yml``.
+    :param matrix: Output of :func:`_completion_matrix`.
+    :return: The characterisation over complete phases, or ``None`` when the
+        report or specification cannot support one.
+    :rtype: dict[str, Any] | None
+    """
+    experiment = _loaded_specification(specification)
+    resource_cells = _resource_dimensions(experiment) if experiment else None
+    if resource_cells is None or _markdown_table(text, _PER_PHASE_COMPLETE) is None:
+        return None
+    characterization = _shape_claims(text, specification, heading=_PER_PHASE_COMPLETE)
+    thin: set[str] = set()
+    kept: dict[str, list[dict[str, Any]]] = {"ordered_sweeps": [], "categorical_comparisons": []}
+    for kind in kept:
+        for claim in characterization.get(kind, []):
+            if claim.get("withheld") or any(
+                value["repetitions"] < _MIN_COMPLETE_REPETITIONS for value in claim["values"]
+            ):
+                thin.add(claim["factor"])
+                continue
+            claim["scope"] = "complete_phases_only"
+            claim["completion_by_level"] = _completion_by_level(
+                matrix, experiment, resource_cells, claim["factor"], claim["context"])
+            kept[kind].append(claim)
+    # A factor is supported only when none of its claims was too thin to build.
+    for kind in kept:
+        kept[kind] = [claim for claim in kept[kind] if claim["factor"] not in thin]
+    characterization.update(kept)
+    characterization["unsupported_factors"] = sorted(
+        set(characterization.get("unsupported_factors", [])) | thin)
+    incomplete = sorted(phase for phase, entry in matrix.items() if not entry["complete"])
+    characterization["scope"] = "complete_phases_only"
+    characterization["excluded_phases"] = sorted(
+        set(characterization.get("excluded_phases", [])) | set(incomplete))
+    characterization["incomplete_phases"] = [
+        {"phase": phase, "failed_queries": matrix[phase]["failed_queries"]}
+        for phase in incomplete
+    ]
+    characterization["scope_reason"] = (
+        "Queries failed in some phases, so the pooled per-phase table cannot carry "
+        "these claims. They are built from the phases in which every pod completed "
+        "every query, which share one query set, and only where every level kept at "
+        f"least {_MIN_COMPLETE_REPETITIONS} complete repetitions. completion_by_level "
+        "says how many phases per level completed: a level whose runs partly failed "
+        "is measured only by its surviving runs, so report its failures beside its "
+        "mean. Name the incomplete phases in the validity scope; their failures are "
+        "a finding of their own."
+    )
+    if thin:
+        characterization["thin_reason"] = (
+            f"Fewer than {_MIN_COMPLETE_REPETITIONS} complete repetitions at some "
+            "level or system, so no claim is built for these factors: "
+            + ", ".join(sorted(thin))
+        )
+    return characterization
+
+
 def _query_evidence(text: str) -> dict[str, Any]:
     """Summarize complete query rows by configuration and actual concurrency."""
     evidence: dict[str, Any] = {
@@ -1250,20 +1410,19 @@ def _query_evidence(text: str) -> dict[str, Any]:
             "that missing queries would have the same ranking."
         ),
     }
-    phase_table = _markdown_table(text, "#### Per Phase")
-    if phase_table is None or not {"phase", "pod_count"}.issubset(phase_table[0]):
-        return evidence
-    headers, rows = phase_table
-    phases = {}
-    for row in rows:
-        phase = _plain_markdown_cell(row[headers.index("phase")])
-        try:
-            concurrency = int(row[headers.index("pod_count")])
-        except ValueError:
+    matrix = _completion_matrix(text)
+    phases = _phase_pods(text, _PER_PHASE)
+    if phases is None:
+        # The pooled table is empty once every query failed somewhere; the
+        # completion table still names every phase and its pods, which is
+        # enough to place the failures.
+        if matrix is None:
             return evidence
-        if concurrency <= 0 or len(phase.rsplit("-", 2)) != 3:
-            return evidence
-        phases[phase] = (phase.rsplit("-", 2)[0], concurrency)
+        phases = {}
+        for phase, entry in matrix.items():
+            if entry["pods"] <= 0 or len(phase.rsplit("-", 2)) != 3:
+                return evidence
+            phases[phase] = (phase.rsplit("-", 2)[0], entry["pods"])
 
     # Keep failures localized; configuration-wide coverage cannot say which load failed.
     error_headers, error_rows = _markdown_table(text, "### Errors (failed queries)") or ([], [])
@@ -1289,8 +1448,18 @@ def _query_evidence(text: str) -> dict[str, Any]:
     ]
 
     latency_table = _markdown_table(text, evidence["source_section"])
+    complete_only = False
     if latency_table is None:
-        return evidence
+        # The pooled latency table drops every query that failed anywhere. The
+        # complete-phases table keeps all of them, over the phases in which
+        # every pod completed every query; only those phases have columns.
+        complete_phases = _phase_pods(text, _PER_PHASE_COMPLETE)
+        latency_table = _markdown_table(text, _LATENCY_COMPLETE)
+        if matrix is None or not complete_phases or latency_table is None:
+            return evidence
+        complete_only = True
+        phases = complete_phases
+        evidence["source_section"] = _LATENCY_COMPLETE
     headers, rows = latency_table
     columns: dict[str, list[int]] = {}
     for position, header in enumerate(headers[1:], 1):
@@ -1304,7 +1473,8 @@ def _query_evidence(text: str) -> dict[str, Any]:
         return evidence
 
     contexts: dict[tuple[str, int], dict[str, Any]] = {}
-    failed_queries = {query for _, query in failures}
+    # Failures in left-out phases do not touch the timings of the complete ones.
+    failed_queries = {query for phase, query in failures if not complete_only or phase in phases}
     for row in rows:
         query = _query_number(row[0])
         if query is None:
@@ -1339,7 +1509,82 @@ def _query_evidence(text: str) -> dict[str, Any]:
         "and no recorded query error. Omitted rows are not evidence of success. "
         "Failure locations come from the Errors table; other validity checks still apply."
     )
+    if complete_only:
+        _scope_to_complete_phases(evidence, phases, matrix)
     return evidence
+
+
+def _phase_pods(text: str, heading: str) -> dict[str, tuple[str, int]] | None:
+    """Read each phase's configuration and pod count from a per-phase table.
+
+    :param text: The report's ``benchmarking.md`` page.
+    :param heading: The per-phase table to read.
+    :return: Phase to ``(configuration, pods)``, or ``None`` when the table is
+        missing, empty, or has a row that does not decode.
+    :rtype: dict[str, tuple[str, int]] | None
+    """
+    table = _markdown_table(text, heading)
+    if table is None or not {"phase", "pod_count"}.issubset(table[0]):
+        return None
+    headers, rows = table
+    phases = {}
+    for row in rows:
+        phase = _plain_markdown_cell(row[headers.index("phase")])
+        try:
+            pods = int(row[headers.index("pod_count")])
+        except ValueError:
+            return None
+        if pods <= 0 or len(phase.rsplit("-", 2)) != 3:
+            return None
+        phases[phase] = (phase.rsplit("-", 2)[0], pods)
+    return phases or None
+
+
+def _scope_to_complete_phases(
+    evidence: dict[str, Any],
+    phases: dict[str, tuple[str, int]],
+    matrix: dict[str, dict[str, Any]],
+) -> None:
+    """Restrict per-query evidence from complete phases, conservatively.
+
+    A configuration and concurrency keeps its timings only when at least
+    :data:`_MIN_COMPLETE_REPETITIONS` of its phases completed every query, and
+    each one carries how many of its phases completed.
+
+    :param evidence: The query evidence, changed in place.
+    :param phases: The complete phases, to ``(configuration, pods)``.
+    :param matrix: Output of :func:`_completion_matrix`.
+    """
+    completion: dict[tuple[str, int], list[int]] = {}
+    for phase, entry in matrix.items():
+        counts = completion.setdefault((phase.rsplit("-", 2)[0], entry["pods"]), [0, 0])
+        counts[0] += int(entry["complete"])
+        counts[1] += 1
+    repetitions: dict[tuple[str, int], int] = {}
+    for context in phases.values():
+        repetitions[context] = repetitions.get(context, 0) + 1
+    kept, thin = [], []
+    for entry in evidence["latency_by_context"]:
+        context = (entry["configuration"], entry["concurrency"])
+        complete, total = completion.get(context, [repetitions.get(context, 0)] * 2)
+        if repetitions.get(context, 0) < _MIN_COMPLETE_REPETITIONS:
+            thin.append({"configuration": context[0], "concurrency": context[1],
+                         "completion": f"{complete}/{total}"})
+            continue
+        kept.append({**entry, "completion": f"{complete}/{total}"})
+    evidence["latency_by_context"] = kept
+    evidence["evidence_scope"] = "complete_phases_only"
+    evidence["excluded_phases"] = sorted(phase for phase, entry in matrix.items() if not entry["complete"])
+    if thin:
+        evidence["thin_contexts"] = thin
+    evidence["reason"] = (
+        "Queries failed in some phases, so these timings come from the phases in which "
+        "every pod completed every query, and only where at least "
+        f"{_MIN_COMPLETE_REPETITIONS} such phases share a configuration and concurrency. "
+        "They describe the surviving runs; they are no evidence that the failed runs "
+        "would have looked the same. 'completion' says how many phases of each context "
+        "completed; report it beside the timings, and the failures as a finding."
+    )
 
 
 def _numeric_quantity(value: Any, factor: str) -> float | None:
@@ -1361,22 +1606,28 @@ def _numeric_quantity(value: Any, factor: str) -> float | None:
     return number * multiplier if multiplier is not None else None
 
 
-def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float]] | None:
-    """Return the CPU and memory values for each resolved resource cell."""
+def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float | str]] | None:
+    """Return the CPU and memory values, and the storage class, of each resolved resource cell.
+
+    The storage class is a categorical level: its name, or ``ephemeral`` for a
+    null entry or an unset field.
+    """
     resources = experiment.get("resources")
     if not isinstance(resources, dict):
         return None
     cpu = resources.get("cpu")
     memory = resources.get("memory")
+    storage = resources.get("storage_class")
     cpu_cells = cpu if isinstance(cpu, list) else [cpu]
     memory_cells = memory if isinstance(memory, list) else [memory]
-    cell_count = max(len(cpu_cells), len(memory_cells))
-    if len(cpu_cells) not in (1, cell_count) or len(memory_cells) not in (1, cell_count):
+    storage_cells = storage if isinstance(storage, list) and storage else [storage]
+    cell_count = max(len(cpu_cells), len(memory_cells), len(storage_cells))
+    if any(len(cells) not in (1, cell_count) for cells in (cpu_cells, memory_cells, storage_cells)):
         return None
 
     dimensions = []
     for index in range(cell_count):
-        values: dict[str, float] = {}
+        values: dict[str, float | str] = {}
         for factor, cells in (("cpu", cpu_cells), ("memory", memory_cells)):
             cell = cells[index if len(cells) > 1 else 0]
             if not isinstance(cell, dict):
@@ -1385,6 +1636,10 @@ def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float]] |
             if numeric is None:
                 return None
             values[factor] = numeric
+        storage_cell = storage_cells[index if len(storage_cells) > 1 else 0]
+        if storage_cell is not None and not isinstance(storage_cell, str):
+            return None
+        values["storage_class"] = storage_cell or validation.STORAGE_EPHEMERAL
         dimensions.append(values)
     return dimensions
 
@@ -1464,6 +1719,9 @@ def _configuration_resources(
     _, cell_index = decoded
     labels = {}
     for resource, cell in cells[cell_index].items():
+        if resource == "storage_class":
+            labels[resource] = cell or validation.STORAGE_EPHEMERAL
+            continue
         value = cell.get("limit", cell.get("request")) if isinstance(cell, dict) else None
         if value is None:
             return None
@@ -1582,9 +1840,14 @@ def _characterized_metrics(headers: list[str]) -> list[tuple[str, str]]:
 
 
 def _expected_levels(
-    factor: str, experiment: dict[str, Any], resource_cells: list[dict[str, float]],
-) -> set[float]:
-    """Return the levels the specification declared for one ordered factor."""
+    factor: str, experiment: dict[str, Any], resource_cells: list[dict[str, float | str]],
+) -> set[float | str]:
+    """Return the levels the specification declared for one factor."""
+    if factor == "system":
+        return {
+            system["name"] for system in experiment.get("systems", [])
+            if isinstance(system, dict) and isinstance(system.get("name"), str)
+        }
     if factor != "concurrency":
         return {cell[factor] for cell in resource_cells}
     workload = experiment.get("workload")
@@ -1757,15 +2020,19 @@ def _decode_observations(
 ) -> tuple[
     list[tuple[dict[str, str | float], dict[str, float]]],
     dict[str, dict[str, str | float]],
+    dict[str, tuple[dict[str, str | float], list[str]]],
 ]:
     """Decode each report row into its factor coordinates and metric values.
 
     :param withheld_phases: Phases whose summed rate failed its aggregation
         check; that metric is marked NaN so no claim is built on it.
-    :return: The observations, and the phases left out because they measured
-        nothing, each with its factor coordinates.
+    :return: The observations, each holding only the metrics its round
+        measured; the phases left out because they measured nothing, each with
+        its factor coordinates; and the phases that measured some metrics but
+        not others, each with its factor coordinates and the metrics it lacks.
     :rtype: tuple[list[tuple[dict[str, str | float], dict[str, float]]],
-        dict[str, dict[str, str | float]]]
+        dict[str, dict[str, str | float]],
+        dict[str, tuple[dict[str, str | float], list[str]]]]
     """
     # A YCSB pod runs several client threads and its report totals them per
     # round; a TPC-H pod is a single stream, so there the pod count is the
@@ -1775,6 +2042,7 @@ def _decode_observations(
     positions.update({metric: headers.index(metric) for metric, _ in metrics})
     observations = []
     excluded = {}
+    partial = {}
     for row in rows:
         phase = _plain_markdown_cell(row[positions["phase"]])
         dimensions = _configuration_dimensions(
@@ -1788,17 +2056,28 @@ def _decode_observations(
         except ValueError:
             continue
         # None of these metrics can be zero in a round that ran, so a zero or NaN
-        # means it measured nothing (the report's "contains 0 or NaN" checks
-        # fail on it). Averaged in, it would drown the real level differences.
-        if any(not math.isfinite(value) or value <= 0 for value in values.values()):
+        # means that metric was not measured (the report's "contains 0 or NaN"
+        # checks fail on it). Averaged in, it would drown the real level
+        # differences. It is dropped for that metric alone: a benchmarker that
+        # wrote no latency profile still measured its throughput.
+        missing = [
+            metric for metric, value in values.items()
+            if not math.isfinite(value) or value <= 0
+        ]
+        if len(missing) == len(values):
             excluded[phase] = dimensions
             continue
+        if missing:
+            partial[phase] = (dimensions, missing)
+            values = {
+                metric: value for metric, value in values.items() if metric not in missing
+            }
         # Marked rather than dropped: leaving the phase out would let the
         # remaining levels form a different, equally unsupported curve.
         if phase in withheld_phases and _SUMMED_RATE in values:
             values[_SUMMED_RATE] = math.nan
         observations.append((dimensions, values))
-    return observations, excluded
+    return observations, excluded, partial
 
 
 def _group_by_context(
@@ -1839,10 +2118,13 @@ def _ordered_sweep_claims(
         if len(levels) < 2 or set(levels) != expected_levels:
             continue
         for metric, direction in metrics:
+            # Rounds that did not measure this metric hold no value for it.
             per_level = {
-                level: [values[metric] for values in repetitions]
+                level: [values[metric] for values in repetitions if metric in values]
                 for level, repetitions in levels.items()
             }
+            if not all(per_level.values()):
+                continue
             if any(math.isnan(value) for values in per_level.values() for value in values):
                 claims.append({
                     "factor": factor, "context": dict(context), "metric": metric,
@@ -1873,6 +2155,7 @@ def _ordered_sweep_claims(
                             max(per_level[level]) - min(per_level[level]), 2
                         ),
                         "resolution": round(noise, 2),
+                        "repetitions": len(per_level[level]),
                         "highest_level_ratio": (
                             round(highest_mean / mean, 3) if mean else None
                         ),
@@ -1895,53 +2178,60 @@ def _ordered_sweep_claims(
 
 
 def _categorical_claims(
+    factor: str,
     discriminates: list[str],
     experiment: dict[str, Any],
     observations: list[tuple[dict[str, str | float], dict[str, float]]],
+    resource_cells: list[dict[str, float | str]],
     metrics: list[tuple[str, str]],
 ) -> list[dict[str, Any]]:
-    """Rank the systems compared at each fixed context, once per metric."""
-    expected_systems = {
-        system["name"] for system in experiment.get("systems", [])
-        if isinstance(system, dict) and isinstance(system.get("name"), str)
-    }
-    peers = [item for item in discriminates if item != "system"]
+    """Rank the levels of one categorical factor at each fixed context, once per metric.
+
+    The levels have no order -- systems, storage backends -- so they are
+    ranked, never fitted to a curve.
+    """
+    expected_levels = _expected_levels(factor, experiment, resource_cells)
+    peers = [item for item in discriminates if item != factor]
     claims = []
     for context, measurements in sorted(
-        _group_by_context(observations, "system", peers).items(),
+        _group_by_context(observations, factor, peers).items(),
         key=lambda item: str(item[0]),
     ):
-        if len(measurements) < 2 or set(measurements) != expected_systems:
+        if len(measurements) < 2 or set(measurements) != expected_levels:
             continue
         for metric, direction in metrics:
-            if any(
-                math.isnan(values[metric])
-                for repetitions in measurements.values() for values in repetitions
-            ):
+            # Rounds that did not measure this metric hold no value for it.
+            per_level = {
+                level: [values[metric] for values in repetitions if metric in values]
+                for level, repetitions in measurements.items()
+            }
+            if not all(per_level.values()):
+                continue
+            if any(math.isnan(value) for values in per_level.values() for value in values):
                 claims.append({
-                    "factor": "system", "context": dict(context), "metric": metric,
+                    "factor": factor, "context": dict(context), "metric": metric,
                     "withheld": True,
                 })
                 continue
             means = {
-                str(system): round(
-                    statistics.mean(values[metric] for values in repetitions), 2
-                )
-                for system, repetitions in measurements.items()
+                str(level): round(statistics.mean(values), 2)
+                for level, values in per_level.items()
             }
+            repetitions = {str(level): len(values) for level, values in per_level.items()}
             # Best first, which for a latency metric is the smallest.
             better = -1 if direction == "higher_is_better" else 1
             claims.append({
-                "factor": "system",
+                "factor": factor,
                 "context": dict(context),
                 "metric": metric,
                 "direction": direction,
                 "ranking": sorted(
-                    means, key=lambda system: (better * means[system], system)
+                    means, key=lambda level: (better * means[level], level)
                 ),
                 "values": [
-                    {"level": system, "mean": means[system]}
-                    for system in sorted(means)
+                    {"level": level, "mean": means[level],
+                     "repetitions": repetitions[level]}
+                    for level in sorted(means)
                 ],
             })
     return claims
@@ -1971,12 +2261,14 @@ def _shape_claims(
     specification: str | None,
     withheld_phases: frozenset[str] = frozenset(),
     discrepant_phases: frozenset[str] = frozenset(),
+    heading: str = _PER_PHASE,
 ) -> dict[str, Any]:
     """Build typed claims from the factors the archived specification varied.
 
     :param text: The report's ``benchmarking.md`` page.
     :param specification: The archived ``experiment.yml``, when it is available.
     :param withheld_phases: Phases whose summed rate failed its aggregation check.
+    :param heading: The per-phase table the claims are built from.
     :param discrepant_phases: Those of them whose pods were measured running for
         materially different times.
     :return: Ordered sweeps, categorical comparisons, the claims withheld because
@@ -1994,7 +2286,7 @@ def _shape_claims(
     ):
         return _unsupported("discriminates is absent or unsupported")
 
-    table = _markdown_table(text, "#### Per Phase")
+    table = _markdown_table(text, heading)
     resource_cells = _resource_dimensions(experiment)
     if table is None or resource_cells is None:
         return _unsupported(discriminates)
@@ -2002,13 +2294,13 @@ def _shape_claims(
     metrics = _characterized_metrics(headers)
     if not metrics or not {"phase", "pod_count"}.issubset(headers):
         return _unsupported(discriminates)
-    observations, excluded = _decode_observations(
+    observations, excluded, partial = _decode_observations(
         experiment, headers, rows, metrics, resource_cells, withheld_phases
     )
 
     unsupported = []
     ordered_sweeps = []
-    for factor in (item for item in discriminates if item != "system"):
+    for factor in (item for item in discriminates if item not in _CATEGORICAL_FACTORS):
         claims = _ordered_sweep_claims(
             factor, discriminates, experiment, observations, resource_cells, metrics
         )
@@ -2016,19 +2308,23 @@ def _shape_claims(
         if not claims:
             unsupported.append(factor)
     categorical = []
-    if "system" in discriminates:
-        categorical = _categorical_claims(
-            discriminates, experiment, observations, metrics
+    for factor in (item for item in _CATEGORICAL_FACTORS if item in discriminates):
+        claims = _categorical_claims(
+            factor, discriminates, experiment, observations, resource_cells, metrics
         )
-        if not categorical:
-            unsupported.append("system")
-    # A round dropped because it measured nothing leaves no rate to mark, but a
-    # pod-duration skew measured in it still speaks against the comparison it
-    # belonged to; without this, the remaining rounds would form the very curve
-    # the check withheld.
+        categorical.extend(claims)
+        if not claims:
+            unsupported.append(factor)
+    # A round whose rate was dropped because it was not measured leaves no rate
+    # to mark, but a pod-duration skew measured in it still speaks against the
+    # comparison it belonged to; without this, the remaining rounds would form
+    # the very curve the check withheld.
     dropped_skews = [
         dimensions for phase, dimensions in excluded.items()
         if phase in discrepant_phases
+    ] + [
+        dimensions for phase, (dimensions, missing) in partial.items()
+        if phase in discrepant_phases and _SUMMED_RATE in missing
     ]
     for claim in ordered_sweeps + categorical:
         if claim["metric"] == _SUMMED_RATE and any(
@@ -2059,24 +2355,56 @@ def _shape_claims(
         )
     if excluded:
         characterization["exclusion_reason"] = (
-            "These rounds reported zero or NaN for a characterised metric, so they "
-            "measured nothing and are left out of every shape and ranking here. "
-            "Disclose them; only the remaining rounds count as repetitions."
+            "These rounds reported zero or NaN for every characterised metric, so "
+            "they measured nothing and are left out of every shape and ranking "
+            "here. Disclose them; only the remaining rounds count as repetitions."
+        )
+    if partial:
+        characterization["partially_excluded_phases"] = {
+            phase: missing for phase, (_, missing) in partial.items()
+        }
+        characterization["partial_exclusion_reason"] = (
+            "These rounds reported zero or NaN for the listed metrics only, e.g. "
+            "a benchmarker that wrote no latency profile. They are left out of "
+            "the shapes and rankings of those metrics and count as repetitions "
+            "for the others. Disclose them; a metric that reads 0 or NaN in the "
+            "report was not measured, it is not a measured zero."
         )
     return characterization
 
 
+#: Failed-check labels that query failures cause. With a completion table they
+#: are located in the phases that did not complete every query. Matching
+#: Bexhoma's English labels is deliberate coupling, as for monitoring below: a
+#: label this misses keeps the safe, unlocated answer.
+_QUERY_FAILURE_LABELS = (
+    re.compile(r"^SQL errors$"),
+    re.compile(r"^(Geo Times \[s\]|Power@Size \[~Q/h\]|Throughput@Size) contains 0 or NaN$"),
+    re.compile(r"^Some active queries missing from the totals\b"),
+)
+
+
 def _validity_scope(
     report_text: str | None, benchmarking_text: str, monitoring_text: str | None,
+    matrix: dict[str, dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Locate the phases and performance metrics touched by failed checks."""
-    benchmark_table = _markdown_table(benchmarking_text, "#### Per Phase")
+    """Locate the phases and performance metrics touched by failed checks.
+
+    :param matrix: Output of :func:`_completion_matrix`, when the report has
+        one; it locates query-failure checks in the incomplete phases. Every
+        other failed check that is not monitoring-only still counts against
+        the whole result.
+    """
+    benchmark_table = _markdown_table(benchmarking_text, _PER_PHASE)
     benchmark_phases: set[str] = set()
     if benchmark_table is not None and "phase" in benchmark_table[0]:
         position = benchmark_table[0].index("phase")
         benchmark_phases = {
             _plain_markdown_cell(row[position]) for row in benchmark_table[1]
         }
+    if matrix:
+        benchmark_phases |= set(matrix)
+    incomplete = sorted(phase for phase, entry in (matrix or {}).items() if not entry["complete"])
 
     tests = _markdown_table(report_text or "", "### Tests")
     failed_labels = []
@@ -2103,6 +2431,15 @@ def _validity_scope(
         match = monitoring_pattern.fullmatch(label.strip())
         if match is None:
             monitoring_only = False
+            if matrix and any(pattern.search(label.strip()) for pattern in _QUERY_FAILURE_LABELS):
+                affected_phases.update(incomplete)
+                details.append({
+                    "failed_check": label,
+                    "affected_phases": incomplete,
+                    "scope": "query failures in these phases; benchmarking.md's "
+                             "Query Completion per Phase lists the queries",
+                })
+                continue
             details.append({"failed_check": label, "affected_phases": []})
             continue
         heading = f"### {match.group(1)}: {match.group(2)}"
@@ -2123,7 +2460,7 @@ def _validity_scope(
             "affected_phases": sorted(phases),
             "scope": "monitoring data only",
         })
-    return {
+    scope = {
         "failed_checks": len(failed_labels),
         "benchmark_phase_count": len(benchmark_phases),
         "affected_phase_count": len(affected_phases),
@@ -2131,6 +2468,10 @@ def _validity_scope(
         "performance_metrics_affected": bool(failed_labels) and not monitoring_only,
         "details": details,
     }
+    if matrix:
+        scope["complete_phases"] = sorted(set(matrix) - set(incomplete))
+        scope["incomplete_phases"] = incomplete
+    return scope
 
 
 def _assess_comparison_quality(
@@ -2154,7 +2495,16 @@ def _assess_comparison_quality(
             if entry["material_discrepancy"]
         ),
     )
-    if error_count:
+    matrix = _completion_matrix(text)
+    complete_claims = (
+        _complete_phase_claims(text, specification, matrix)
+        if error_count and matrix else None
+    )
+    if complete_claims is not None and (
+        complete_claims["ordered_sweeps"] or complete_claims["categorical_comparisons"]
+    ):
+        characterization = complete_claims
+    elif error_count:
         invalid_factors = {
             claim["factor"] for claim in characterization["ordered_sweeps"]
         }
@@ -2174,10 +2524,17 @@ def _assess_comparison_quality(
             "that every phase failed. Empty typed claims do not license the same "
             "unsupported claims in prose."
         )
+        if complete_claims is not None:
+            characterization["unusable_reason"] += (
+                " The complete phases do not support a claim either: "
+                + complete_claims.get(
+                    "thin_reason", "they do not cover every level of a varied factor.")
+            )
     has_query_comparison = bool(planned_queries or configurations)
     if (
         not has_query_comparison
-        and _markdown_table(text, "#### Per Phase") is None
+        and _markdown_table(text, _PER_PHASE) is None
+        and _markdown_table(text, _PER_PHASE_COMPLETE) is None
         and not characterization["ordered_sweeps"]
         and not characterization["categorical_comparisons"]
     ):
@@ -2238,7 +2595,7 @@ def _assess_comparison_quality(
         ),
         "result_characterization": characterization,
         "rate_aggregation": aggregation,
-        "validity_scope": _validity_scope(report_text, text, monitoring_text),
+        "validity_scope": _validity_scope(report_text, text, monitoring_text, matrix),
     }
 
 

@@ -13,10 +13,12 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import pandas as pd
 
 from bexhoma import report_writer, sut_restarts
+from bexhoma.clusters import Kubernetes
 
 _POD = "bexhoma-sut-postgresql-1-123-6b87f4bbb5-l9sr2"
 
@@ -184,6 +186,54 @@ class ReportRestartDetailTest(unittest.TestCase):
         self.assertIn("dbms: OOMKilled (exit 137)", lines[pod_index + 1])
         self.assertIn("on-disk state was lost", lines[pod_index + 1])
         self.assertIn("](../bexhoma-sut-", lines[pod_index + 1])
+        self.assertNotIn("crashed instance", lines[pod_index + 1])
+
+    def test_connections_md_links_previous_log(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            report_dir = result_dir / "report"
+            report_dir.mkdir()
+            _write_result(result_dir, "1 0", _describe())
+            previous_log = f"bexhoma-sut-postgresql-1-123-1-{_POD[-16:]}.dbms.previous.log"
+            (result_dir / previous_log).write_text("PANIC: could not write to file\n")
+            details = sut_restarts.collect_restart_details(result_dir)
+            lines = report_writer._build_connections_md_lines(
+                pd.DataFrame(), result_dir, report_dir, {_POD: "1 0"}, details,
+            )
+        self.assertEqual(details[0].previous_log, previous_log)
+        pod_index = lines.index(f"* {_POD}: 1 0")
+        self.assertIn(f"crashed instance: [{previous_log}](../{previous_log})", lines[pod_index + 1])
+
+
+class PreviousPodLogTest(unittest.TestCase):
+    """Only a restarted container has a previous instance whose log is fetched."""
+
+    def _cluster(self) -> Kubernetes:
+        cluster = Kubernetes.__new__(Kubernetes)
+        cluster.kubectl = mock.Mock()
+        return cluster
+
+    def test_pod_log_previous_flag(self) -> None:
+        cluster = self._cluster()
+        cluster.pod_log("sut-pod", "dbms", previous=True)
+        cluster.kubectl.assert_called_once_with("logs sut-pod --container=dbms --previous --tail=-1")
+
+    def test_restart_counts_per_container(self) -> None:
+        cluster = self._cluster()
+        cluster.kubectl.side_effect = ["dbms monitor-application", "1 0"]
+        self.assertEqual(cluster.get_pod_restart_counts("sut-pod"), {"dbms": 1, "monitor-application": 0})
+
+    def test_restart_counts_of_vanished_pod(self) -> None:
+        cluster = self._cluster()
+        cluster.kubectl.return_value = None
+        self.assertEqual(cluster.get_pod_restart_counts("sut-pod"), {})
+
+    def test_stores_only_restarted_containers(self) -> None:
+        cluster = self._cluster()
+        cluster.get_pod_restart_counts = mock.Mock(return_value={"dbms": 1, "monitor-application": 0})
+        cluster.store_pod_log = mock.Mock()
+        cluster.store_previous_pod_logs("sut-pod", number=3)
+        cluster.store_pod_log.assert_called_once_with("sut-pod", "dbms", number=3, previous=True)
 
 
 if __name__ == "__main__":

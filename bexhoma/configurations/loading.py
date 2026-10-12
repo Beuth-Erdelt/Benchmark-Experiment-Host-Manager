@@ -414,10 +414,7 @@ class LoadingCoordinator:
         :rtype: str
         """
         cfg = self._config
-        if cfg.storage['storageConfiguration']:
-            storageConfiguration = cfg.storage['storageConfiguration']
-        else:
-            storageConfiguration = cfg.configuration
+        storageConfiguration = cfg.get_storage_configuration()
         name_pvc = cfg.generate_component_name(
             app=cfg.appname, component='storage',
             experiment=cfg.storage_label, configuration=storageConfiguration)

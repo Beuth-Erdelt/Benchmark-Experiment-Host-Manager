@@ -24,6 +24,8 @@ import re
 import pandas as pd
 import json
 import ast
+import copy
+from collections import Counter
 from types import SimpleNamespace
 from importlib.metadata import version
 from pathlib import Path
@@ -32,6 +34,7 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
+from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage
 from bexhoma import sut_restarts
 
 if TYPE_CHECKING:
@@ -141,6 +144,11 @@ class ExperimentBase():
     Settings are set generally.
     This class should be overloaded to define specific experiments.
     """
+    #: Whether ``-rc/-lc/-rr/-lr/-rst`` may carry a comma list for this
+    #: experiment, so :meth:`expand_resource_cells` sweeps every DBMS
+    #: configuration across them (see :func:`bexhoma.cli_args.resource_cells`).
+    supports_storage_sweep = False
+
     def __init__(self,
                  cluster,
                  code=None,
@@ -233,6 +241,8 @@ class ExperimentBase():
         # k8s:
         self.namespace = self.cluster.namespace                         # name of the K8s namespace to use
         self.configurations = []                                        # list of configurations (i.e., dbms to test)
+        self.storage_types = [None]                                     # storage class per resource cell, None = ephemeral (set from -rst)
+        self.resource_cells = []                                        # one dict per swept resource cell (set from -rc/-lc/-rr/-lr/-rst)
         self.storage_label = ''                                         # label to mark persistent storage with (so that they can be matched to experiment)
         self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
         self.evaluator = evaluators.LogEvaluator(                               # set evaluator for experiment - default uses base
@@ -250,6 +260,7 @@ class ExperimentBase():
         Dispatches to the appropriate workflow branch (start, load, summary,
         or the default full benchmark run) and prints timing information.
         """
+        self.expand_resource_cells()
         # should results be tested for validity?
         test_result = self.args.test_result
         if self.args.mode == 'start':
@@ -410,6 +421,10 @@ class ExperimentBase():
         """
         Download a result file from the dashboard pod.
 
+        An empty ``filename`` downloads the whole experiment result folder,
+        packed into a single archive in the pod (see
+        :meth:`bexhoma.clusters.Kubernetes.download_folder`).
+
         :param filename: Name of the file relative to the experiment result folder.
         :return: Output of the download command, or empty string when no dashboard pod is available.
         """
@@ -419,8 +434,10 @@ class ExperimentBase():
                 self.pod_dashboard = pods[0]
             else:
                 return ""
+        if not filename:
+            return self.cluster.download_folder(folder_remote='/results/'+str(self.code), folder_local=self.path, pod=self.pod_dashboard)
         filename_local = self.path+'/'+filename
-        filename_remote = '/results/'+str(self.code)+'/.' if not filename else '/results/'+str(self.code)+'/'+filename
+        filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.download_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
                               parameter: str) -> list:
@@ -517,20 +534,38 @@ class ExperimentBase():
         num_pooling_pods = self.get_parameter_as_list('num_pooling_pods')
         num_pooling_in = self.get_parameter_as_list('num_pooling_in')
         num_pooling_out = self.get_parameter_as_list('num_pooling_out')
-        cpu = str(args.request_cpu)
-        memory = str(args.request_ram)
-        cpu_limit = str(args.limit_cpu)
-        memory_limit = str(args.limit_ram)
         cpu_type = str(args.request_cpu_type)
         gpu_type = str(args.request_gpu_type)
         gpus = str(args.request_gpu)
-        request_storage_type = args.request_storage_type
-        valid_storage_types = self.cluster.get_available_storage_types()
-        if request_storage_type not in valid_storage_types:
+        self.storage_types = split_storage_types(args.request_storage_type)
+        # -rc/-lc/-rr/-lr/-rst may each carry a comma list; one cell per swept
+        # setting, expanded per configuration by expand_resource_cells()
+        self.resource_cells = resource_cells(
+            request_cpu_list=self.get_parameter_as_list_str('request_cpu') or [str(args.request_cpu)],
+            limit_cpu_list=self.get_parameter_as_list_str('limit_cpu') or [str(args.limit_cpu)],
+            request_ram_list=self.get_parameter_as_list_str('request_ram') or [str(args.request_ram)],
+            limit_ram_list=self.get_parameter_as_list_str('limit_ram') or [str(args.limit_ram)],
+            storage_type_list=self.storage_types,
+        )
+        if len(self.resource_cells) > 1 and not self.supports_storage_sweep:
             raise ValueError(
-                f"Invalid --request-storage-type {request_storage_type!r} for cluster context "
-                f"{self.cluster.context!r}. Valid values: {valid_storage_types}."
+                f"-rc/-lc/-rr/-lr/-rst carry a list, but {type(self).__name__} "
+                f"cannot sweep resources across configurations."
             )
+        valid_storage_types = self.cluster.get_available_storage_types()
+        for storage_type in self.storage_types:
+            if storage_type not in valid_storage_types:
+                raise ValueError(
+                    f"Invalid --request-storage-type {storage_type!r} for cluster context "
+                    f"{self.cluster.context!r}. Valid values: {valid_storage_types}."
+                )
+        # a sweep sets each configuration's resources and class itself; the
+        # experiment-wide default is the first cell, so it is always valid
+        cpu = self.resource_cells[0]['cpu']
+        memory = self.resource_cells[0]['memory']
+        cpu_limit = self.resource_cells[0]['cpu_limit']
+        memory_limit = self.resource_cells[0]['memory_limit']
+        request_storage_type = self.storage_types[0]
         request_storage_size = args.request_storage_size
         request_storage_remove = args.request_storage_remove
         request_node_name = args.request_node_name
@@ -664,7 +699,18 @@ class ExperimentBase():
             self.workload['info'] = self.workload['info']+"\nEach query is repeated {} times.".format(numRun)
         if skip_loading:
             self.workload['info'] = self.workload['info']+"\nLoading is skipped."
-        if request_storage_type and request_storage_size:
+        if len({(cell['cpu'], cell['cpu_limit'], cell['memory'], cell['memory_limit']) for cell in self.resource_cells}) > 1:
+            self.workload['info'] = self.workload['info']+"\nResources are swept across {} configurations per DBMS: {}.".format(
+                len(self.resource_cells), "; ".join(
+                    "{}: CPU {}/{}, RAM {}/{}".format(
+                        number, cell['cpu'], cell['cpu_limit'], cell['memory'], cell['memory_limit'])
+                    for number, cell in enumerate(self.resource_cells, start=1)))
+        if len(self.storage_types) > 1:
+            self.workload['info'] = self.workload['info']+"\nStorage is swept across configurations: {}, size {}.".format(
+                ", ".join(storage_type or "ephemeral" for storage_type in self.storage_types), request_storage_size or "unset")
+            if request_storage_remove:
+                self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
+        elif request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
             if request_storage_remove:
                 self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
@@ -993,6 +1039,60 @@ class ExperimentBase():
         :param configuration: Configuration object
         """
         self.configurations.append(configuration)
+
+    def expand_resource_cells(self) -> None:
+        """
+        Turn every configuration into one configuration per resource cell.
+
+        Entry scripts build each DBMS once; when ``-rc/-lc/-rr/-lr/-rst``
+        carry comma lists (see :func:`bexhoma.cli_args.resource_cells`), this
+        clones each configuration per cell, so every DBMS of every workload is
+        swept the same way. Each cell gets its own identity, so cells never
+        share pods or a PVC:
+
+        * name ``{docker}-{cell}`` (``PostgreSQL-1``, ``PostgreSQL-2``, ...)
+          when the DBMS has one configuration, ``{configuration}-{cell}`` when
+          it has several (e.g. a loading-pods sweep or one per tenant);
+        * alias ``{docker}@{cell}`` or ``{configuration}@{cell}`` likewise;
+        * storage ``{storageConfiguration}-{cell}`` on the cell's class; the
+          volume name gets the class appended when the volume is named
+          (``SutConfiguration.get_storage_configuration()``).
+
+        A configuration whose SUT bexhoma does not manage (``resource_sweep``
+        false, or a fixed ``sut_service_name``) is kept once with the
+        experiment-wide default, the first cell. Called by :meth:`process`;
+        a second call does nothing.
+        """
+        cells = self.resource_cells
+        if len(cells) <= 1 or getattr(self, '_resource_cells_expanded', False):
+            return
+        self._resource_cells_expanded = True
+
+        def sweeps(config):
+            return config.resource_sweep and not config.sut_service_name
+
+        originals = list(self.configurations)
+        per_docker = Counter(config.docker for config in originals if sweeps(config))
+        self.configurations = []
+        for config in originals:
+            if not sweeps(config):
+                print("{:30s}: SUT is not managed by bexhoma, not swept across resources".format(config.configuration))
+                self.configurations.append(config)
+                continue
+            base_name = config.docker if per_docker[config.docker] == 1 else config.configuration
+            base_storage = config.storage.get('storageConfiguration') or config.configuration
+            # clone the untouched original before the first cell changes it;
+            # the experiment (and the cluster behind it) stays shared
+            clones = [config] + [copy.deepcopy(config, memo={id(self): self}) for _ in cells[1:]]
+            for cell_number, (cell, clone) in enumerate(zip(cells, clones), start=1):
+                clone.configuration = f'{base_name}-{cell_number}'
+                clone.alias = f'{base_name}@{cell_number}'
+                clone.set_resources(
+                    requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
+                    limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
+                    )
+                set_cell_storage(clone, f'{base_storage}-{cell_number}', cell)
+                self.configurations.append(clone)
 
     def add_benchmark(self, benchmark) -> None:
         """
@@ -2010,6 +2110,7 @@ class ExperimentBase():
                                 for pod in pods:
                                     for container in config.deployment_infos['deployment'][deployment]['containers']:
                                         self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1)
                                     if not self.cluster.pod_description_exists(pod_name=pod):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
@@ -2022,6 +2123,7 @@ class ExperimentBase():
                                 for pod in pods:
                                     for container in config.deployment_infos['statefulset'][statefulset]['containers']:
                                         self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1)
                                     if not self.cluster.pod_description_exists(pod_name=pod):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
@@ -2691,6 +2793,16 @@ class ExperimentBase():
                         infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
+        # A volume found already loaded at experiment start skips loading and
+        # inherits its loading times from whichever experiment filled it.
+        # Results written before storage_reused was recorded say nothing.
+        recorded = [c for c in connections_sorted if 'storage_reused' in c]
+        if recorded:
+            reused = sorted({c.get('configuration', c['name']) for c in recorded if c['storage_reused']})
+            if reused:
+                print("\n### Reused Storage")
+                print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
+            self._record_test(not reused, "Loading measured in this experiment")
         result_dir = Path(resultfolder) / code
         restarts_files = sorted(result_dir.glob("bexhoma-sut-*-restarts.json"))
         if restarts_files:

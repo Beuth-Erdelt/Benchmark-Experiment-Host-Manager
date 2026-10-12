@@ -113,6 +113,9 @@ class LoadingFailureTest(unittest.TestCase):
             def store_pod_log(self, pod_name, container="", number=None):
                 calls.append(("pod-log", f"{pod_name}:{container}"))
 
+            def store_previous_pod_logs(self, pod_name, number=None):
+                calls.append(("previous-pod-log", pod_name))
+
             def store_pod_description(self, pod_name, number=None):
                 calls.append(("pod-description", pod_name))
 
@@ -142,6 +145,8 @@ class LoadingFailureTest(unittest.TestCase):
         ))
         self.assertIn(("pod-log", "loader-pod:loader"), calls)
         self.assertIn(("pod-log", "sut-pod:loader"), calls)
+        self.assertIn(("previous-pod-log", "sut-pod"), calls)
+        self.assertNotIn(("previous-pod-log", "loader-pod"), calls)
         self.assertIn(("job-description", "loader-job"), calls)
 
     def test_failed_loader_pod_is_captured_while_its_job_may_retry(self) -> None:

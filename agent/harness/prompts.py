@@ -175,7 +175,7 @@ rather than inferring or approximating the count.
   suspicious repetitions, and checkable result claims. Its result
   characterisation follows the factors named by the archived experiment rather
   than the workload name: it describes ordered concurrency, CPU, and memory
-  sweeps and ranks categorical system comparisons wherever the summary table
+  sweeps and ranks categorical system and storage_class comparisons wherever the summary table
   exposes enough structure, once for every throughput and latency metric the
   table carries. Its `query_evidence` supplies compact per-query execution timings
   by configuration and actual concurrency, repetition ranges, and failure
@@ -214,7 +214,10 @@ completion of the planned workload. Do not use whole-workload throughput to
 rank systems when the assessment marks it non-comparable. Likewise, when it
 lists `withheld_claims`, do not draw the withheld shape or ranking from the same
 figures in prose; `rate_aggregation` explains why, and the harness adds that
-qualification to your answer.
+qualification to your answer. When the characterisation's `scope` is
+`complete_phases_only`, its claims rest on the phases in which every pod
+completed every query: give each level's `completion_by_level` beside its
+mean, and name every incomplete phase in `validity.scope`.
 
 Shapes describe the series, not whether it is good news. A latency metric that
 rises throughout is getting worse, and the assessor names each metric's
@@ -376,7 +379,10 @@ _METHOD_MISSING = (
 #: How the environment descriptor is described when one exists for this cluster.
 _ENVIRONMENT_AVAILABLE = (
     "{path} -- the cluster you actually have: which nodes exist, what capacity "
-    "each has, and which storage classes are available. Do not expect to receive all of the node's resources."
+    "each has, and which storage classes are available. Do not expect to receive all of the node's resources. "
+    "Measured hardware speeds, where present, are under each node's and storage class's "
+    "hardware_baseline; if hardware_baseline_status.complete is false, the entries listed "
+    "in missing were not measured."
     #"Placement and resource "
     #"requests must fit it. Nodes that cannot be used are listed separately, with "
     #"a reason, and naming one will be rejected."

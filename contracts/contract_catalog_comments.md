@@ -76,8 +76,10 @@ alone.
 The new wording deliberately says what is measured, not how it is collected.
 An earlier draft described SUT monitoring as sidecar containers, which is no
 longer how bexhoma collects it; naming the mechanism is what makes such text
-go stale. "Hardware metrics" deliberately omits disk and network, because
-the metric collector bexhoma deploys is configured to skip both.
+go stale. "Hardware metrics" deliberately omitted disk and network, because
+the metric collector bexhoma deploys is configured to skip both. Corrected
+on 2026-10-10 (see below): a cluster with its own monitoring does report
+them.
 
 The block moved the version 1.5.1 -> 1.6.0 (minor: meaning of existing
 fields corrected and conditions added; nothing that validated before is
@@ -92,6 +94,117 @@ choice per experiment made loading times incomparable across runs.
 `tpch.py`'s own `-nlp` default stays 1, so `tpch_catalog.build_tpch_argv()`
 reads the catalog default and emits `-nlp 8` explicitly when `pods` is
 omitted. Folded into 1.9.0 (not yet released) as an additive change.
+
+## Which hardware metrics an experiment can rely on (2026-10-10)
+
+`observe.when` named only CPU, memory and GPU, which was true for the
+collector bexhoma installs itself (cAdvisor with `--disable_metrics
+disk,network,...`) but not for a cluster whose own Prometheus is used: there
+the filesystem, network and I/O-wait metrics in `cluster.config` have data,
+and `environment.yml` marks them available. The list now points at
+`monitoring.hardware` instead of naming metrics.
+
+`observe.metrics.out_of_scope` states three limits that hold on any
+cluster and matter as soon as metrics back a claim:
+
+- `available: true` is checked against the cluster's Prometheus at
+  generation time (`environment.py::collect_monitoring_metrics`, any series
+  of that name), so it says nothing about the collector a run installs, or
+  about this experiment's pods.
+- Metrics differ in scope: container, pod or node. Node-level ones (I/O
+  wait, per-core utilisation) include other workloads, which is easy to miss
+  because the key does not say it; the title in `cluster.config` does.
+- Container filesystem metrics are block-device counters. A volume on a
+  network filesystem does its I/O over the network, so comparing storage
+  backends on these metrics is fair only when every backend is a block
+  device.
+
+Wording only; no field changed. Folded into 1.11.0 (not yet released).
+
+## YCSB accepts resource sweeps (2026-10-11)
+
+`ycsb` now takes `resources.cpu`, `resources.memory` and
+`resources.storage_class` lists like `tpch`: paired by position, one
+configuration per (system, cell), knobs derived per cell and scoped to
+`PostgreSQL-{cell}`. Both builders share `resource_sweep()`,
+`resolve_resource_cells()` and `append_resource_flags()` in
+`bexhoma/experiments/tpch_catalog.py`; on the bexhoma side,
+`ExperimentBase.expand_resource_cells()` clones every configuration per cell
+for every workload. The `out_of_scope` "ycsb accepts a single storage class
+only" is gone.
+
+One combination is refused: a sweep together with several
+`loading_target_factors`. `ycsb.py` builds one configuration per factor,
+and the sweep then names their cells after a process-wide counter, which the
+builder cannot predict for its scoped `--set` operations.
+
+Folded into 1.11.0 (not yet released) as an additive change.
+
+## Ceph storage metrics in `observe.metrics` (2026-10-11)
+
+`cluster.config` gained metrics for the Ceph side of the SUT's volume: its
+own RBD volume, the other volumes in its pool, and the pool as a whole
+(`dev/plan-ceph-pool-metrics.md`, `docs/Monitoring.md`). They are hardware
+metrics like the others, so they reach the catalog only through
+`environment.yml`: each carries `needs: ceph_pool` or `ceph_volume`, and each
+Ceph storage class a `ceph` block saying which of them it can serve. A
+listed metric that no `storage_class` cell can serve is refused, because
+bexhoma would switch it off for every configuration and a metric the
+hypothesis relies on would silently never be collected. In a sweep it is
+enough that one cell serves it; the others show `n/a`.
+
+They are descriptive and not a validity check: the reference cluster's Ceph
+pools are always in use by others, and a check that treated that as a fault
+would flag almost every run. The `out_of_scope` text says what they cover
+and when load from other volumes matters (when it differs between compared
+cells).
+
+Folded into 1.11.0 (not yet released) as an additive change.
+
+## Storage class sweeps and fresh volumes (2026-10-10)
+
+`resources.storage_class` may now be a list, swept like `cpu`/`memory`:
+paired by position, a single entry broadcast, null entries ephemeral. It is
+a factor of its own (`storage_class` in `discriminates`), ranked like
+`system` because backends have no order. A profile's `requires:` and the
+`storage_class` input of `derive:` are evaluated per cell. Only `tpch`
+sweeps it (`tpch.py` sets each configuration's class and names its volume
+after it); `ycsb` refuses a list.
+
+`resources.storage.remove_existing` maps to `-rsr`, which bexhoma had but
+the contract could not reach. Without it, a volume left by an earlier
+experiment is reused: loading is skipped and the loading times are copied
+from the volume's labels, invisibly. It defaults to true whenever a cell
+names a storage class, so an agent run measures its own loading; `false` is
+refused when `storage_class` is the factor under test. The result side
+records the reuse (`storage_reused`, result contract 1.10.0).
+
+Also fixed: `build_tpch_argv()` emitted `-rst` only from a profile's
+`requires:`, so a `storage_class` without such a profile silently ran on
+ephemeral storage. It is now emitted from `resources` itself.
+
+Folded into 1.11.0 (not yet released) as an additive change.
+
+## Only usable storage classes (2026-10-10)
+
+`environment.yml` lists every `StorageClass` the cluster has, but bexhoma
+can only use the ones declared in the cluster config: `-rst` refuses the
+rest at run time. On the reference cluster that list includes `ceph` and
+`cephxfs`, which use Rook's legacy FlexVolume provisioner (no new volume
+since 2021), and `local-hdd`, which is not meant for SUT volumes; only
+`cephcsi` and `shared` are declared. Validation accepted all of them, so a
+spec naming `cephxfs` passed and only failed once submitted.
+
+`environment.yml` (environment contract 1.3.0) now marks each class
+`usable`, and `spec.validate_environment()` and the agent validator accept
+only usable classes, naming them in the error. A file generated before the
+flag carries the same fact as a non-null `alias`, which
+`spec.usable_storage_classes()` falls back to.
+
+This moved the version 1.10.0 -> 1.11.0 (minor, as for the
+`loading.split` removal: a spec that validated before is rejected now,
+though it would have failed at run time anyway), with
+`spec.CATALOG_CONTRACT_VERSION` kept in lockstep.
 
 ## `observe.metrics`: single hardware metrics per experiment (2026-10-09)
 
@@ -357,8 +470,18 @@ back to the base's description unless it declares its own — PgDuckDB does.
 `bexhoma/clusters.py::Kubernetes.get_available_storage_types()` and the
 `-rst`/`--request-storage-type` CLI flag. `None`/`''` (ephemeral) and
 `'ramdisk'` (in-memory) are always valid regardless of cluster; any other
-value must be one of the cluster's actual declared storage classes
-(`environment.yml`'s `storage_classes:`).
+value must be one of the storage classes declared in the cluster config
+(`credentials.k8s.context.<name>.storage_classes`), which `environment.yml`
+marks `usable: true` (see below).
+
+A volume is found again by its name alone, so since 2026-10-11 the name
+always carries the class: `SutConfiguration.get_storage_configuration()`
+appends it to `storageConfiguration` (`postgresql-cephcsi`) for the SUT
+PVC, its `configuration` label and the worker StatefulSets. Ephemeral,
+`''` (the cluster default) and `ramdisk` add nothing. As a second guard,
+`start_sut()` refuses to reuse an existing volume whose class differs from
+the requested one. Volumes named before this change are no longer found:
+the next run loads again, and the old PVCs have to be removed by hand.
 
 Note: `catalog_concepts.extends`/`.profile_ref`/`.requires`/`.arg_style`/
 `.knob_status` in `contract_catalog.yml` cover the mechanics above (and a
@@ -613,7 +736,7 @@ orphaned directory by wiring it back in without knowing why it was unused.
 
 ## See also
 
-- `docs/AgentWorkflow.md` — the end-to-end agent loop this file is the
+- `docs/Agent.md` — the end-to-end agent loop this file is the
   input half of: question → contracts → `experiment.yml` → validate → run →
   answer.
 - `docs/AgentCatalogContract.md` — prose/condensed-YAML version of this

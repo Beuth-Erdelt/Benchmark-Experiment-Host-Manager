@@ -470,7 +470,8 @@ from the inspector's connection data.  Index is the DBMS name.
 Returns a combined DataFrame of throughput and timing metrics:
 
 * `Power@Size [~Q/h]` — power metric (derived from geometric-mean execution time)
-* `Throughput@Size` — throughput metric
+* `num_of_executions` — successful runs of the pooled queries (failed runs are not counted)
+* `Throughput@Size` — throughput metric, `num_of_executions * 3600 * SF / time [s]`
 * `time [s]` — wall-clock benchmark duration (derived from `benchmark_start`/`benchmark_end` timestamps)
 * `pod_count` — number of parallel pods
 

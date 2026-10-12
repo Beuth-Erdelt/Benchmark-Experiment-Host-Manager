@@ -28,7 +28,20 @@ from dbmsbenchmarker import parameter, inspector
 
 from bexhoma import evaluators
 
-__all__ = ["CollectorBase", "get_non_constant"]
+__all__ = ["CollectorBase", "get_non_constant", "metric_is_active"]
+
+
+def metric_is_active(metric):
+    """
+    Whether a metric definition from ``connections.config`` is active.
+
+    ``active`` defaults to true and may be a bool or the string ``'True'``/``'False'``.
+
+    :param metric: A metric definition.
+    :type metric: dict
+    :rtype: bool
+    """
+    return str(metric.get('active', True)).strip().lower() != 'false'
 
 
 def get_non_constant(df):
@@ -251,14 +264,22 @@ class CollectorBase:
             df_performance = pd.concat([df_performance, df_aggregated])
         return df_performance
 
-    #: Counters measured for the whole node rather than per container: SUTs of
-    #: different configurations can share a node and then report the same node
-    #: value, so summing them across configurations would count the node twice.
-    NODE_LEVEL_COUNTERS = ('io_wait_total',)
+    #: Metrics measured for something several configurations share rather than
+    #: per container, so summing them across configurations would count the
+    #: same value twice: the whole node (SUTs of different configurations can
+    #: share one), the Ceph pool behind a storage class, and the other volumes
+    #: in that pool. Across configurations they take ``max``, whatever their kind.
+    SHARED_METRICS = (
+        'io_wait_total',
+        'ceph_pool_write', 'ceph_pool_write_ops', 'ceph_pool_read', 'ceph_pool_read_ops',
+        'ceph_others_write_rate', 'ceph_others_write_ops_rate', 'ceph_others_read_ops_rate',
+    )
+    #: Former name of :attr:`SHARED_METRICS`.
+    NODE_LEVEL_COUNTERS = SHARED_METRICS
 
     def _node_level_counter_titles(self) -> list:
         """
-        Titles of the node-level counters, as this experiment's metrics define them.
+        Titles of the shared metrics (:attr:`SHARED_METRICS`), as this experiment's metrics define them.
 
         Looked up by metric key, so results recorded under an older title keep
         their ``max`` reduction.
@@ -268,7 +289,7 @@ class CollectorBase:
         """
         if self.df_metrics is None or self.df_metrics.empty:
             return []
-        return [self.df_metrics.loc[key, 'title'] for key in self.NODE_LEVEL_COUNTERS
+        return [self.df_metrics.loc[key, 'title'] for key in self.SHARED_METRICS
                 if key in self.df_metrics.index]
 
     def get_monitoring_aggregated_per_phase_multitenant(self, type="benchmarking"):
@@ -283,9 +304,9 @@ class CollectorBase:
            tenants) all measure the same pods over concurrent windows, so their rows are
            copies of one measurement: ratio and counter → ``max``, others → ``mean``.
         2. Across configurations (container-per-tenant: one SUT per tenant) the values
-           belong to different SUTs: ratio → ``max``, others → ``sum``. Node-level
-           counters (see :meth:`_node_level_counter_titles`) stay ``max``, because
-           several SUTs can share a node.
+           belong to different SUTs: ratio → ``max``, others → ``sum``. Shared
+           metrics (see :attr:`SHARED_METRICS`) stay ``max``, because several SUTs
+           can share a node or a Ceph pool.
 
         :param type: Component type forwarded to :meth:`get_monitoring_aggregated_per_job`.
         :type type: str
@@ -301,6 +322,7 @@ class CollectorBase:
             col: 'max' if kind in ('ratio', 'counter') else 'mean' for col, kind in kinds.items()
         }
         across_configurations = {col: 'max' if kind == 'ratio' else 'sum' for col, kind in kinds.items()}
+        # shared metrics of any kind (counters and the Ceph "other volumes" gauges)
         for title in self._node_level_counter_titles():
             if title in across_configurations:
                 across_configurations[title] = 'max'
@@ -352,6 +374,11 @@ class CollectorBase:
         Sets ``self.with_monitoring = False`` and returns an empty DataFrame when
         no ``'metrics'`` key is found in the first connection's monitoring block.
 
+        A metric counts as active when any connection has it active: a metric
+        can be off for one configuration only (e.g. a Ceph volume metric for a
+        ``ramdisk`` configuration in a storage-class sweep), and must still be
+        reported for the others.
+
         :param evaluation: Evaluator instance. Defaults to the first code's evaluator.
         :type evaluation: object
         :return: DataFrame of metric metadata indexed by metric key.
@@ -369,6 +396,8 @@ class CollectorBase:
                 return pd.DataFrame()
             for metric_key, metric in conn['monitoring']['metrics'].items():
                 if metric_key in metrics_dict:
+                    if metric_is_active(metric) and not metric_is_active(metrics_dict[metric_key]):
+                        metrics_dict[metric_key]['active'] = metric.get('active', 'True')
                     continue
                 metrics_dict[metric_key] = {
                     'title': metric['title'],
