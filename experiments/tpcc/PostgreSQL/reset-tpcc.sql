@@ -10,7 +10,11 @@
 --          page/tuple counts as NOTICEs, which psql sends to stderr. The
 --          pg_stat_reset* calls zero the cumulative activity counters so
 --          the upcoming round's stats aren't mixed with earlier rounds.
+--          bexhoma runs this script against the default database (postgres),
+--          but HammerDB loads TPC-C into database tpcc (pg_dbase in
+--          images/hammerdb/benchmarker/benchmarker.sh), so switch there first.
 
+\connect tpcc
 \timing on
 CHECKPOINT;
 VACUUM VERBOSE ANALYZE customer;
