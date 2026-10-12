@@ -1,11 +1,20 @@
 # Plan: `resources.storage_class` as a sweep list
 
-Status: **planned, nothing implemented** (2026-10-10).
+Status: **implemented** (2026-10-10, branch `feature/storage-class-sweep`):
+M0, M0b, M1–M5. Catalog contract 1.11.0, result contract 1.10.0. Not yet
+run against the cluster. Deviations from the sketch below: the handbook got
+no new guideline (M4.1/M4.2 already cover storage regimes); the result side
+records `storage_reused` per connection and a validity test
+`Loading measured in this experiment` instead of a `known_gaps` entry.
 
 ## Goal
 
-One TPC-H experiment compares storage backends for one system, for example
-PostgreSQL on `ceph`, `cephxfs`, `local-hdd` and ephemeral node-local disk.
+One TPC-H experiment compares storage backends for one system. On the
+reference cluster that is PostgreSQL on `cephcsi` (Ceph RBD block), `shared`
+(CephFS) and ephemeral node-local disk: the only classes the cluster config
+declares, and the only ones `environment.yml` marks `usable` (done
+2026-10-10, catalog 1.11.0 / environment 1.3.0; `ceph` and `cephxfs` use
+Rook's legacy FlexVolume provisioner, `local-hdd` is not for SUT volumes).
 The agent declares the factor, the validator checks it, Bexhoma runs one SUT
 configuration per backend, and `assess_comparison_quality` ranks the backends
 deterministically. This is the smaller alternative named in
@@ -81,7 +90,10 @@ covers `-rst`.
    cpu/memory).
 5. **`storage_class` is categorical.** The assessor ranks its levels at each
    fixed context, like `system`, and never builds an ordered sweep over it.
-6. **PVC identity includes the class.** When the storage class varies across
+6. **PVC identity includes the class.** (Superseded 2026-10-11: every volume
+   name now carries its class, sweep or not, via
+   `SutConfiguration.get_storage_configuration()`, and reuse of a volume on
+   another class is refused.) When the storage class varies across
    cells, each cell's `storageConfiguration` gets the class as a suffix
    (`postgresql-{cell}-{class}`), so a PVC loaded on one backend is never
    reused for another, in this run or a later one.
@@ -186,7 +198,7 @@ TPC-H and YCSB.
 - `bexhoma/spec.py`:
   - `validate_experiment`: shape check (scalar, null or list of them).
   - `validate_environment`: check every non-null entry against
-    `environment.yml`'s `storage_classes`.
+    `usable_storage_classes(environment)`.
 - `tpch_catalog.py::build_tpch_argv`:
   - include storage in `num_cells` and the length check;
   - pass the cell's class to `resolve_system` (so `requires` and `derive`
@@ -202,8 +214,8 @@ TPC-H and YCSB.
 ### M3 — agent validation
 
 - `agent/harness/validation.py`:
-  - `_check_storage_class`: check each entry, keep the message that lists the
-    cluster's classes.
+  - `_check_storage_class`: check each entry against
+    `spec.usable_storage_classes`, keep the message that lists them.
   - `_check_declared_factors`: a list with more than one distinct entry adds
     `storage_class` to `varied`; extend the "nothing to isolate" hint.
   - `resolved_configurations` / `_describe_configuration`: add the
@@ -258,11 +270,13 @@ TPC-H and YCSB.
   persistent storage reload its data, which is slow at large scaling factors.
   This is deliberate for agent runs; operators who want reuse set `false` and
   get a result that says the loading was inherited.
-- **`WaitForFirstConsumer` classes** (`local-hdd`) bind to the node the SUT
-  first lands on. With `placement.sut` set, every cell stays on that node,
-  which is what a fair comparison wants; without it, cells may land on
-  different nodes. Consider a methodology warning when `storage_class` is
-  declared and `placement.sut` is unset.
+- **Placement.** Network storage (`cephcsi`, `shared`) does not bind to a
+  node, but ephemeral cells use the scheduled node's own disk, so cells may
+  differ by node as well as by backend. Consider a methodology warning when
+  `storage_class` is declared and `placement.sut` is unset. (Static
+  `WaitForFirstConsumer` classes like `local-hdd`, and their reclaim
+  behaviour under `remove_existing`, are out of scope while they are not
+  usable.)
 - **Profiles with `requires`**, such as `analytical-ssd` (`[ssd, null]`),
   reject most sweeps by design. Profile knobs like `random_page_cost` are
   tuned per backend, so a sweep under one fixed profile tests "profile X on

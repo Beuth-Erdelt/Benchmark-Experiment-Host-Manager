@@ -132,6 +132,8 @@ if __name__ == '__main__':
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
+    # -rc/-lc/-rr/-lr/-rst may each carry a comma list: experiment.process()
+    # then clones every configuration below once per resource cell
     # set node groups for components
     if aws:
         # set node labes for components

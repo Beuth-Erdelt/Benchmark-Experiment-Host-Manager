@@ -360,6 +360,18 @@ echo "/results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.
 # cat /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
 echo "/tmp/hdbxtprofile.log"
 cat /tmp/hdbxtprofile.log
+# Without a profile the report has no latency, and stdout only says
+# "Vuser 1:FINISHED FAILED". /results is not persisted for this job, so show
+# the error lines of HammerDB's own log here. Result lines are left out and
+# "Error " is lowercased, so the evaluator neither double-counts results nor
+# errors that stdout already has.
+if [ "$HAMMERDB_TIMEPROFILE" = "true" ] && [ ! -s /tmp/hdbxtprofile.log ] && [ -f /tmp/hammerdb.log ]; then
+    echo "No time profile written; error lines of /tmp/hammerdb.log:"
+    grep -i -E "error|exception|fail|can't|invalid|timeout" /tmp/hammerdb.log \
+        | grep -v -E "TEST RESULT|Active Virtual|SUMMARY OF" \
+        | tail -n 50 \
+        | sed -e 's/Error /error /g' -e 's/^/hammerdb.log: /'
+fi
 
 ######################## Show timing information ###################
 echo "Benchmarking done"

@@ -654,6 +654,14 @@ class EvaluatorBase:
             for key, storagedata in c['storage'].items():
                 if not isinstance(storagedata, list) and not isinstance(storagedata, dict):
                     result[connection_id][f'sut_storage_{key}'] = storagedata
+        # absent in results written before it was recorded: unknown, not False
+        if 'storage_reused' in c:
+            result[connection_id]['storage_reused'] = bool(c['storage_reused'])
+        # present only when cluster.config has metrics with storage placeholders
+        if 'storage_monitoring' in c:
+            for key, value in c['storage_monitoring'].items():
+                if not isinstance(value, (list, dict)):
+                    result[connection_id][f'storage_monitoring_{key}'] = value
         if 'args' in c['hostsystem']:
             for arg in c['hostsystem']['args']:
                 if "=" in arg:

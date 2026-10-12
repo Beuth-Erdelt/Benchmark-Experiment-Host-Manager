@@ -84,6 +84,9 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
     Extends :class:`DbmsBenchmarkerExperiment`.
     """
 
+    #: Every DBMS may be swept across CPU, RAM and storage class.
+    supports_storage_sweep = True
+
     def __init__(self,
                  cluster,
                  code=None,

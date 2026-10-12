@@ -119,20 +119,25 @@ class HardwareBaselineResult:
     :ivar per_node: Node name to its own CPU/RAM/fio result rows. Always has
         ``"cpu_mem"`` (sysbench) and ``"fio"`` (the always-on fio round
         against the node's own container-local/ephemeral storage) once the
-        sweep succeeds for that node. The single node the sweep happened to
-        run named-storage-class rounds on (see :func:`run_hardware_baseline`'s
-        ``storage_classes`` parameter) additionally gets one
-        ``"fio:<storage_class>"`` entry per named class (e.g.
-        ``"fio:cephcsi"``), measuring fio against a throwaway
-        PersistentVolumeClaim provisioned from that StorageClass instead;
-        every other node's ``per_node`` entry has no such key.
+        sweep succeeds for that node.
+    :ivar storage_classes: StorageClass name to
+        ``{"measured_from": <node>, "fio": <row>}`` for each named class
+        swept (see :func:`run_hardware_baseline`'s ``storage_classes``
+        parameter). Kept apart from ``per_node``: the measurement describes
+        the class, not the one node its throwaway PVC happened to be mounted on.
     :ivar network_matrix: ``"{origin}->{target}"`` to that round's sockperf result dict.
     :ivar failed_nodes: Node names that produced no usable result at all.
+    :ivar missing: Every scheduled result that was not collected, as a path
+        into ``environment.yml`` (``nodes.<node>.fio``,
+        ``storage_classes.<class>.fio``, ``network_matrix.<origin>-><target>``).
+        Non-empty when the sweep timed out or a round failed; empty means complete.
     """
     code: str
     per_node: dict[str, dict[str, Any]] = field(default_factory=dict)
+    storage_classes: dict[str, dict[str, Any]] = field(default_factory=dict)
     network_matrix: dict[str, dict[str, Any]] = field(default_factory=dict)
     failed_nodes: list[str] = field(default_factory=list)
+    missing: list[str] = field(default_factory=list)
 
 
 def _sanitize_dns_label(value: str, max_length: int) -> str:
@@ -168,16 +173,38 @@ def _sanitize_storage_class_id(storage_class: str) -> str:
     return _sanitize_dns_label(storage_class, _MAX_STORAGE_CLASS_ID_LENGTH)
 
 
-def _fio_result_key(storage_class: Optional[str]) -> str:
-    """Result-dict key a fio round's row is stored under, in ``per_node[node]``.
+def _find_missing_results(
+    node_names: list[str],
+    network_targets: dict[str, list[Optional[str]]],
+    storage_classes: list[str],
+    result: HardwareBaselineResult,
+) -> list[str]:
+    """List every scheduled result the sweep did not collect.
 
-    :param storage_class: ``None`` for the always-on ephemeral round (kept as
-        the pre-existing ``"fio"`` key for backward compatibility), or a
-        StorageClass name for an extra sweep.
-    :return: ``"fio"`` or ``"fio:<storage_class>"``.
-    :rtype: str
+    The experiment's ``--experiment-timeout`` tears the sweep down without
+    raising, so a timed-out sweep can only be told apart from a complete one
+    by comparing what was scheduled with what was collected.
+
+    :param node_names: Nodes the sweep ran on.
+    :param network_targets: Per-node network round targets (``None`` = self-test).
+    :param storage_classes: Named StorageClasses swept.
+    :param result: Collected results.
+    :return: Paths into ``environment.yml`` of the missing results, in schedule order.
+    :rtype: list[str]
     """
-    return "fio" if storage_class is None else f"fio:{storage_class}"
+    missing = []
+    for node in node_names:
+        for key in ("cpu_mem", "fio"):
+            if key not in result.per_node.get(node, {}):
+                missing.append(f"nodes.{node}.{key}")
+    for storage_class in storage_classes:
+        if "fio" not in result.storage_classes.get(storage_class, {}):
+            missing.append(f"storage_classes.{storage_class}.fio")
+    for node in node_names:
+        for target in network_targets.get(node, []):
+            if target is not None and f"{node}->{target}" not in result.network_matrix:
+                missing.append(f"network_matrix.{node}->{target}")
+    return missing
 
 
 def _validate_storage_classes(storage_classes: Optional[list[Optional[str]]]) -> list[str]:
@@ -349,7 +376,7 @@ def run_hardware_baseline(
         comparison point without multiplying PVC-provisioning risk by the
         node count. Results land in the returned
         :class:`HardwareBaselineResult` under
-        ``per_node[<that node>]["fio:<name>"]``.
+        ``storage_classes[<name>]``, with ``measured_from`` naming that node.
         A ``None`` entry is accepted for readability but otherwise ignored --
         the plain, ephemeral-storage fio round (``per_node[node]["fio"]``)
         always runs, once per node, regardless of this parameter, exactly as
@@ -463,6 +490,7 @@ def run_hardware_baseline(
         cluster, experiment, configs_by_node, network_targets, result,
         storage_class_configs=storage_class_configs)
     result.failed_nodes = [node for node in node_names if node not in result.per_node]
+    result.missing = _find_missing_results(node_names, network_targets, extra_storage_classes, result)
     return result
 
 
@@ -553,8 +581,8 @@ def _collect_results(
             node, storage_class = storage_class_match
             row_dict = row.to_dict()
             row_dict["hardware_type"] = "fio"
-            result.per_node.setdefault(node, {})[_fio_result_key(storage_class)] = (
-                _drop_other_tool_columns(row_dict, "fio"))
+            result.storage_classes[storage_class] = {
+                "measured_from": node, "fio": _drop_other_tool_columns(row_dict, "fio")}
             continue
         node = configuration_to_node.get(configuration)
         if node is None:
@@ -573,7 +601,7 @@ def _collect_results(
             result.per_node.setdefault(node, {})["cpu_mem"] = _drop_other_tool_columns(row_dict, "sysbench")
         elif client == _FIO_BASELINE_ROUND:
             row_dict["hardware_type"] = "fio"
-            result.per_node.setdefault(node, {})[_fio_result_key(None)] = _drop_other_tool_columns(row_dict, "fio")
+            result.per_node.setdefault(node, {})["fio"] = _drop_other_tool_columns(row_dict, "fio")
         elif client >= _FIRST_NETWORK_ROUND:
             targets = network_targets.get(node, [])
             target_index = client - _FIRST_NETWORK_ROUND

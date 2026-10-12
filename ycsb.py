@@ -650,6 +650,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='DatabaseService', alias='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
+                    config.resource_sweep = False # resources and storage are not set by bexhoma
                     if skip_loading:
                         config.loading_deactivated = True
                     config.set_storage(

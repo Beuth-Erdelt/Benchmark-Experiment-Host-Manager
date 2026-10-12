@@ -152,14 +152,37 @@ class SanitizeStorageClassIdTest(unittest.TestCase):
         self.assertLessEqual(len(result), hardware_baseline._MAX_STORAGE_CLASS_ID_LENGTH)
 
 
-class FioResultKeyTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline._fio_result_key`."""
+class FindMissingResultsTest(unittest.TestCase):
+    """Tests for :func:`bexhoma.hardware_baseline._find_missing_results`."""
 
-    def test_none_is_the_plain_fio_key(self) -> None:
-        self.assertEqual(hardware_baseline._fio_result_key(None), 'fio')
+    def test_complete_sweep_has_nothing_missing(self) -> None:
+        result = hardware_baseline.HardwareBaselineResult(
+            code='c',
+            per_node={'n1': {'cpu_mem': {}, 'fio': {}}, 'n2': {'cpu_mem': {}, 'fio': {}}},
+            storage_classes={'cephcsi': {'measured_from': 'n1', 'fio': {}}},
+            network_matrix={'n2->n1': {}},
+        )
+        missing = hardware_baseline._find_missing_results(
+            ['n1', 'n2'], {'n1': [None], 'n2': ['n1']}, ['cephcsi'], result)
+        self.assertEqual(missing, [])
 
-    def test_named_class_is_namespaced(self) -> None:
-        self.assertEqual(hardware_baseline._fio_result_key('cephcsi'), 'fio:cephcsi')
+    def test_timed_out_sweep_lists_every_uncollected_result(self) -> None:
+        """Mirrors a real timed-out run: only round 1 and the single-round
+        storage-class sweeps finished before teardown."""
+        result = hardware_baseline.HardwareBaselineResult(
+            code='c',
+            per_node={'n1': {'cpu_mem': {}}, 'n2': {'cpu_mem': {}}},
+            storage_classes={'cephcsi': {'measured_from': 'n1', 'fio': {}}},
+        )
+        missing = hardware_baseline._find_missing_results(
+            ['n1', 'n2'], {'n1': [None], 'n2': ['n1']}, ['cephcsi', 'shared'], result)
+        self.assertEqual(missing, [
+            'nodes.n1.fio', 'nodes.n2.fio', 'storage_classes.shared.fio', 'network_matrix.n2->n1'])
+
+    def test_node_without_any_result_misses_both_rounds(self) -> None:
+        result = hardware_baseline.HardwareBaselineResult(code='c')
+        missing = hardware_baseline._find_missing_results(['n1'], {'n1': []}, [], result)
+        self.assertEqual(missing, ['nodes.n1.cpu_mem', 'nodes.n1.fio'])
 
 
 class ValidateStorageClassesTest(unittest.TestCase):
@@ -517,7 +540,7 @@ class CollectResultsTest(unittest.TestCase):
             storage_class_configs=storage_class_configs)
         return result
 
-    def test_named_storage_class_round_is_stored_under_its_own_namespaced_key(self) -> None:
+    def test_named_storage_class_round_is_stored_under_the_class_not_the_node(self) -> None:
         df = pd.DataFrame([
             {
                 'configuration': 'hw-n1', 'client': 1, 'hardware_type': 'sysbench', 'value': 1,
@@ -535,7 +558,9 @@ class CollectResultsTest(unittest.TestCase):
         result = self._collect_with_storage_classes(df, configs_by_node, {'n1': []}, storage_class_configs)
         self.assertEqual(result.per_node['n1']['cpu_mem']['value'], 1)
         self.assertEqual(result.per_node['n1']['fio']['value'], 2)
-        self.assertEqual(result.per_node['n1']['fio:cephcsi']['hardware_fio_read_iops'], 5000.0)
+        self.assertEqual(set(result.per_node['n1']), {'cpu_mem', 'fio'})
+        self.assertEqual(result.storage_classes['cephcsi']['measured_from'], 'n1')
+        self.assertEqual(result.storage_classes['cephcsi']['fio']['hardware_fio_read_iops'], 5000.0)
 
     def test_multiple_named_storage_classes_land_under_distinct_keys(self) -> None:
         df = pd.DataFrame([
@@ -550,8 +575,8 @@ class CollectResultsTest(unittest.TestCase):
             }
         }
         result = self._collect_with_storage_classes(df, configs_by_node, {'n1': []}, storage_class_configs)
-        self.assertEqual(result.per_node['n1']['fio:cephcsi']['hardware_fio_read_iops'], 1.0)
-        self.assertEqual(result.per_node['n1']['fio:local-hdd']['hardware_fio_read_iops'], 2.0)
+        self.assertEqual(result.storage_classes['cephcsi']['fio']['hardware_fio_read_iops'], 1.0)
+        self.assertEqual(result.storage_classes['local-hdd']['fio']['hardware_fio_read_iops'], 2.0)
 
     def test_storage_class_round_drops_other_tools_zero_filled_columns(self) -> None:
         df = pd.DataFrame([
@@ -563,7 +588,7 @@ class CollectResultsTest(unittest.TestCase):
         configs_by_node = {'n1': SimpleNamespace(configuration='hw-n1')}
         storage_class_configs = {'n1': {'cephcsi': SimpleNamespace(configuration='hw-n1-cephcsi')}}
         result = self._collect_with_storage_classes(df, configs_by_node, {'n1': []}, storage_class_configs)
-        fio_cephcsi = result.per_node['n1']['fio:cephcsi']
+        fio_cephcsi = result.storage_classes['cephcsi']['fio']
         self.assertEqual(fio_cephcsi['hardware_fio_read_iops'], 3000.0)
         self.assertNotIn('hardware_sysbench_cpu_events_per_sec', fio_cephcsi)
 

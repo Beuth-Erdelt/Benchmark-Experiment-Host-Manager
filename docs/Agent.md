@@ -15,7 +15,7 @@ Implemented scope: TPC-H with PostgreSQL and PgDuckDB, and YCSB with PostgreSQL.
 | A Kubernetes cluster and a working `kubectl` context | Bexhoma runs the benchmarks there | see [Config](Config.md) |
 | `cluster.config` | Bexhoma's settings; the agent reads its `resultfolder` | `cp k8s-cluster.config cluster.config`, then edit |
 | The `agent` install extra | the model client is not part of a plain install | `pip install -e ".[agent]"` |
-| `environment.yml` | what the cluster has right now: nodes, free capacity, storage classes, monitorable metrics | `bexhoma environment create`; rerun after cluster changes |
+| `environment.yml` | what the cluster has right now: nodes, free capacity, storage classes, monitorable metrics | `bexhoma environment create`; rerun after cluster changes. Optionally add `-xhw` (and `-xhwsc <class>,...` for storage classes) to include measured hardware speeds; this deploys short benchmark pods, see [Environment](Environment.md) |
 | A model endpoint | the model that designs and interprets | either a GPU node (H200 or B200) for the bundled vLLM server, or any OpenAI-compatible API |
 | `.env` | which endpoint, which handbook | `cp .env.example .env`, uncomment one block |
 

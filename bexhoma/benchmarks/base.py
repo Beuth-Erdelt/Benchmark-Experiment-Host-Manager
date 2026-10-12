@@ -577,8 +577,14 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         narrows every row, and a failure of each query somewhere leaves the
         tables empty with no visible reason.
 
+        DBMSBenchmarker leaves a query out only when some connection failed
+        every run of it, so a query with failed runs elsewhere stays in the
+        totals. The note names those too; otherwise the totals silently
+        disagree with Query Completion per Phase.
+
         :param is_empty: Whether the table the note is attached to has no rows.
-        :return: One explanatory line, or none when nothing was left out.
+        :return: One explanatory line, or none when every pooled query
+                 succeeded everywhere and nothing was left out.
         :rtype: list[str]
         """
         completion = self._query_completion()
@@ -587,20 +593,36 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         active = [column for column in completion.columns if column != 'phase']
         pooled = self.evaluator.get_pooled_queries()
         left_out = [query for query in active if query not in pooled]
-        if not left_out or (is_empty and pooled):
+        partial = [query for query in active if query in pooled and not completion[query].all()]
+        if is_empty and pooled:
             return []
-        failed = "; ".join(
-            f"{query} failed in {int((~completion[query]).sum())} of {len(completion)} connections"
-            for query in left_out
-        )
+
+        def failed(queries: list[str]) -> str:
+            return "; ".join(
+                f"{query} failed in {int((~completion[query]).sum())} of {len(completion)} connections"
+                for query in queries
+            )
         see = ("See Query Completion per Phase for where, and Per Phase (Complete Phases Only) "
                "for the phases that completed every query.")
         if is_empty:
+            if not left_out:
+                return []
             return [f"No rows: these totals count only queries that succeeded in every connection of "
-                    f"this experiment, and no query did ({failed}). {see}"]
-        return [f"These totals cover {len(pooled)} of {len(active)} active queries: only queries that "
+                    f"this experiment, and no query did ({failed(left_out)}). {see}"]
+        sentences = []
+        if left_out:
+            sentences.append(
+                f"These totals cover {len(pooled)} of {len(active)} active queries: only queries that "
                 f"succeeded in every connection of this experiment count, so the others are left out of "
-                f"every row ({failed}). {see}"]
+                f"every row ({failed(left_out)}).")
+        if partial:
+            sentences.append(
+                f"Included although some of their runs failed ({failed(partial)}): each such connection "
+                f"still had a successful run of the query; its failed runs count neither in the timings "
+                f"nor in Throughput@Size.")
+        if not sentences:
+            return []
+        return [" ".join(sentences + [see])]
 
     def _build_completion_sections(self, is_multitenant: bool) -> list[Section]:
         """

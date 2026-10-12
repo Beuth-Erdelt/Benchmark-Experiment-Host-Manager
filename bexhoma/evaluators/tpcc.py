@@ -30,6 +30,35 @@ from .logger import LogEvaluator
 
 __all__ = ["TpccEvaluator"]
 
+#: Columns parsed from HammerDB's time profile (besides every ``* [ms]`` one).
+#: A pod without a profile has none of them; they stay NaN instead of being
+#: zero-filled, since a latency of 0 ms would read like a real measurement.
+_PROFILE_COLUMNS = {'CALLS', 'SD', 'RATIO'}
+
+
+def _is_profile_column(column) -> bool:
+    return column in _PROFILE_COLUMNS or str(column).endswith(' [ms]')
+
+
+def _fill_missing_counts(df):
+    """
+    Zero-fill missing values in place, except in time-profile columns.
+
+    :param df: Raw TPC-C benchmarking DataFrame.
+    :type df: pandas.DataFrame
+    """
+    columns = [column for column in df.columns if not _is_profile_column(column)]
+    df[columns] = df[columns].fillna(0)
+
+
+def _max_all(series):
+    # NaN when any pod has no profile: the phase's worst latency is unknown.
+    return series.max(skipna=False)
+
+
+def _mean_all(series):
+    return series.mean(skipna=False)
+
 
 class TpccEvaluator(LogEvaluator):
     """
@@ -291,14 +320,14 @@ class TpccEvaluator(LogEvaluator):
                     'TPM':'mean',
                     'efficiency':'min',
                     'dbms':'max',
-                    'CALLS':'max',
-                    'MIN [ms]':'max',
-                    'AVG [ms]':'mean',
-                    'MAX [ms]':'max',
-                    'TOTAL [ms]':'max',
-                    'P99 [ms]':'max',
-                    'P95 [ms]':'max',
-                    'P50 [ms]':'max',
+                    'CALLS':_max_all,
+                    'MIN [ms]':_max_all,
+                    'AVG [ms]':_mean_all,
+                    'MAX [ms]':_max_all,
+                    'TOTAL [ms]':_max_all,
+                    'P99 [ms]':_max_all,
+                    'P95 [ms]':_max_all,
+                    'P50 [ms]':_max_all,
                     'tenant_id': 'min',
                 }
             else:
@@ -359,7 +388,7 @@ class TpccEvaluator(LogEvaluator):
             columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
         else:
             columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
-        df.fillna(0, inplace=True)
+        _fill_missing_counts(df)
         df_plot = self.benchmarking_set_datatypes(df)
         df_plot_filtered = pd.DataFrame()
         for col in columns:
@@ -385,7 +414,7 @@ class TpccEvaluator(LogEvaluator):
         df = self.get_df_benchmarking()
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
-            df.fillna(0, inplace=True)
+            _fill_missing_counts(df)
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
@@ -416,7 +445,7 @@ class TpccEvaluator(LogEvaluator):
         df = self.get_df_benchmarking()
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
-            df.fillna(0, inplace=True)
+            _fill_missing_counts(df)
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'pod_count']).round(2)

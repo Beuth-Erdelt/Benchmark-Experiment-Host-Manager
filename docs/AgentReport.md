@@ -56,8 +56,11 @@ In order:
   - latency per query, and the same over the complete phases only when some
     phase is incomplete; errors with messages, warnings, EXPLAIN plans.
 - `monitoring.md`: CPU and RAM per component and phase, missing metrics with
-  whether the zeros are expected, application metrics, and the full catalog of
-  every collected metric.
+  whether the zeros are expected, Ceph Storage (the SUT's own volume, the
+  other volumes in its pool and the pool as a whole, when the storage is
+  Ceph), application metrics, and the full catalog of every collected
+  metric. A configuration whose storage has no such metric shows `n/a` and
+  the reason.
 - `connections.md`: SUT restarts with reason, exit code, data volume and links
   to the describe log and the crashed instance's log; then the parameters of
   every connection, each listed once where it stops varying (all connections,

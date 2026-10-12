@@ -20,12 +20,15 @@ from typing import Any, Optional
 
 from bexhoma import spec
 from bexhoma.benchmarks.tpch import resolve_indexing_key
-from bexhoma.cli_args import format_metric_overrides
+from bexhoma.cli_args import format_metric_overrides, format_storage_types
 from bexhoma.spec import ResolvedSystem, SpecError
 
 __all__ = [
     "format_postgres_memory",
     "resolve_physical_design_overrides",
+    "resource_sweep",
+    "resolve_resource_cells",
+    "append_resource_flags",
     "build_tpch_argv",
 ]
 
@@ -129,6 +132,100 @@ def _join_cell_values(cells: list[dict[str, Any]], num_cells: int, key: str) -> 
     return ",".join(str(value) for value in values)
 
 
+def resource_sweep(resources: dict[str, Any]) -> tuple[list, list, list, int]:
+    """Split ``resources`` into its cpu, memory and storage-class cells.
+
+    ``resources.cpu`` / ``resources.memory`` may each be a single
+    ``{request, limit}`` dict (shared by every system, no sweep) or a list of
+    them, and ``resources.storage_class`` a single class or a list, ``None``
+    meaning ephemeral. Lists are paired by position, a single entry is
+    broadcast -- mirrors the entry scripts' ``-rr``/``-lr``/``-rc``/``-lc``/``-rst``
+    comma lists (:func:`bexhoma.cli_args.resource_cells`) one for one.
+
+    :param resources: The experiment's ``resources:`` block.
+    :return: ``(cpu_cells, memory_cells, storage_class_cells, num_cells)``.
+    :rtype: tuple[list, list, list, int]
+    :raises SpecError: When two lists with several entries differ in length.
+    """
+    cpu = resources.get("cpu", {})
+    memory = resources.get("memory", {})
+    cpu_cells = cpu if isinstance(cpu, list) else [cpu]
+    memory_cells = memory if isinstance(memory, list) else [memory]
+    storage_class_cells = spec.storage_class_cells(resources)
+    num_cells = max(len(cpu_cells), len(memory_cells), len(storage_class_cells))
+    if any(len(cells) not in (1, num_cells) for cells in (cpu_cells, memory_cells, storage_class_cells)):
+        raise SpecError(
+            "resources.cpu, resources.memory and resources.storage_class sweep lists must share "
+            f"one length: got {len(cpu_cells)} cpu, {len(memory_cells)} memory and "
+            f"{len(storage_class_cells)} storage_class entries"
+        )
+    return cpu_cells, memory_cells, storage_class_cells, num_cells
+
+
+def resolve_resource_cells(
+    catalog: dict[str, Any], experiment: dict[str, Any],
+) -> list[tuple[dict[str, Any], ResolvedSystem, str]]:
+    """Resolve every system once per resource cell.
+
+    :param catalog: Parsed catalog.
+    :param experiment: Parsed experiment spec.
+    :return: One ``(system_spec, ResolvedSystem, configuration_name)`` triple
+        per (system, cell) pair. ``configuration_name`` is ``""`` (unscoped)
+        when there is only one cell, otherwise the name
+        :meth:`~bexhoma.experiments.base.ExperimentBase.expand_resource_cells`
+        gives that cell: ``"{system}-{1-based cell position}"``. A position,
+        not a resource value -- two cells can share a memory request while
+        differing in limit or CPU, and a value-based name would collide. The
+        entry scripts expand their cells in the same order (the comma-list
+        order :func:`append_resource_flags` emits), so cell N here is cell N
+        there and scoped ``--set`` operations land on the right configuration
+        (see ``parse_set_arg``'s ``@CONFIG`` scope).
+    :rtype: list[tuple[dict, ResolvedSystem, str]]
+    :raises SpecError: On resolution failure, e.g. a cell a profile's
+        ``requires:`` does not allow.
+    """
+    cpu_cells, memory_cells, storage_class_cells, num_cells = resource_sweep(experiment.get("resources", {}))
+    scaling_factor = experiment["workload"].get("params", {}).get("scaling_factor")
+    resolved_cells = []
+    for system_spec in experiment.get("systems", []):
+        for cell_index in range(num_cells):
+            resolve_inputs = {
+                "memory_limit": _resource_cell(memory_cells, cell_index).get("limit"),
+                "cpu_limit": _resource_cell(cpu_cells, cell_index).get("limit"),
+                "storage_class": _resource_cell(storage_class_cells, cell_index),
+                "scaling_factor": scaling_factor,
+            }
+            resolved = spec.resolve_system(catalog, system_spec, resolve_inputs, memory_formatter=format_postgres_memory)
+            configuration_name = f"{system_spec['name']}-{cell_index + 1}" if num_cells > 1 else ""
+            resolved_cells.append((system_spec, resolved, configuration_name))
+    return resolved_cells
+
+
+def append_resource_flags(argv: list[str], resources: dict[str, Any]) -> None:
+    """Append ``-rc/-lc/-rr/-lr/-rss/-rst/-rsr`` for ``resources``, as comma lists when swept.
+
+    ``-rst`` is emitted from ``resources`` itself, never from a profile's
+    ``requires:`` -- otherwise a class asked for without such a profile would
+    silently run on ephemeral storage. A storage-class list becomes ``-rst``'s
+    comma list, ephemeral cells as empty entries.
+
+    :param argv: Argument vector being built, mutated in place.
+    :param resources: The experiment's ``resources:`` block.
+    """
+    cpu_cells, memory_cells, storage_class_cells, num_cells = resource_sweep(resources)
+    _append_flag(argv, "-rc", _join_cell_values(cpu_cells, num_cells, "request"))
+    _append_flag(argv, "-lc", _join_cell_values(cpu_cells, num_cells, "limit"))
+    _append_flag(argv, "-rr", _join_cell_values(memory_cells, num_cells, "request"))
+    _append_flag(argv, "-lr", _join_cell_values(memory_cells, num_cells, "limit"))
+    _append_flag(argv, "-rss", resources.get("storage", {}).get("size"))
+    if len(storage_class_cells) > 1:
+        _append_flag(argv, "-rst", format_storage_types(storage_class_cells))
+    else:
+        _append_flag(argv, "-rst", storage_class_cells[0])
+    if spec.removes_existing_storage(resources):
+        argv.append("-rsr")
+
+
 def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:
     """Translate a resolved experiment.yml into a ``tpch.py`` argument vector.
 
@@ -175,48 +272,9 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     else:
         post_load = effective_post_loads[0] if effective_post_loads else shared_post_load
 
-    cpu = resources.get("cpu", {})
-    memory = resources.get("memory", {})
-    storage = resources.get("storage", {})
-    # resources.cpu / resources.memory may each be a single {request, limit} dict
-    # (today's shape: shared by every system, no sweep) or a list of them (a
-    # resource sweep: every system in `systems:` is crossed against every list
-    # entry, one resolved configuration per (system, cell) pair) -- mirrors
-    # tpch.py's own -rr/-lr/-rc/-lc comma-list handling one for one.
-    cpu_cells = cpu if isinstance(cpu, list) else [cpu]
-    memory_cells = memory if isinstance(memory, list) else [memory]
-    num_cells = max(len(cpu_cells), len(memory_cells))
-    if len(cpu_cells) not in (1, num_cells) or len(memory_cells) not in (1, num_cells):
-        raise SpecError(
-            "resources.cpu and resources.memory sweep lists must share one length: "
-            f"got {len(cpu_cells)} cpu entries and {len(memory_cells)} memory entries"
-        )
-
-    # one (system_spec, ResolvedSystem, configuration_name) triple per resolved cell;
-    # configuration_name is "" (unscoped) when there is only one cell, otherwise it
-    # must match the configuration name tpch.py's own resource-sweep loop will give
-    # that cell: "{system}-{1-based cell position}". A position, not a resource
-    # value -- two cells can share a memory request while differing in limit or
-    # CPU, and a value-based name would collide. tpch.py iterates its cells in the
-    # same order (the -rr/-lr/-rc/-lc list order this builder emits below), so
-    # cell N here is cell N there and the --set operations land on the right
-    # configuration (see parse_set_arg's @CONFIG scope).
-    resolved_cells: list[tuple[dict[str, Any], ResolvedSystem, str]] = []
-    for system_spec in system_specs:
-        for cell_index in range(num_cells):
-            cell_cpu = _resource_cell(cpu_cells, cell_index)
-            cell_memory = _resource_cell(memory_cells, cell_index)
-            resolve_inputs = {
-                "memory_limit": cell_memory.get("limit"),
-                "cpu_limit": cell_cpu.get("limit"),
-                "storage_class": resources.get("storage_class"),
-                "scaling_factor": params.get("scaling_factor"),
-            }
-            resolved = spec.resolve_system(catalog, system_spec, resolve_inputs, memory_formatter=format_postgres_memory)
-            configuration_name = (
-                f"{system_spec['name']}-{cell_index + 1}" if num_cells > 1 else ""
-            )
-            resolved_cells.append((system_spec, resolved, configuration_name))
+    # one (system_spec, ResolvedSystem, configuration_name) triple per
+    # (system, resource cell) pair, see resolve_resource_cells()
+    resolved_cells = resolve_resource_cells(catalog, experiment)
 
     argv: list[str] = [experiment.get("mode", _DEFAULT_MODE)]
 
@@ -287,17 +345,7 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-rnl", placement.get("loading"))
     _append_flag(argv, "-rnb", placement.get("benchmarking"))
 
-    _append_flag(argv, "-rc", _join_cell_values(cpu_cells, num_cells, "request"))
-    _append_flag(argv, "-lc", _join_cell_values(cpu_cells, num_cells, "limit"))
-    _append_flag(argv, "-rr", _join_cell_values(memory_cells, num_cells, "request"))
-    _append_flag(argv, "-lr", _join_cell_values(memory_cells, num_cells, "limit"))
-    _append_flag(argv, "-rss", storage.get("size"))
-
-    storage_classes = {resolved.storage_class for _, resolved, _ in resolved_cells if resolved.storage_class}
-    if len(storage_classes) > 1:
-        raise SpecError(f"resolved systems require conflicting storage classes: {sorted(storage_classes)}")
-    if storage_classes:
-        _append_flag(argv, "-rst", next(iter(storage_classes)))
+    append_resource_flags(argv, resources)
 
     for system_spec, resolved, configuration_name in resolved_cells:
         scope = f"@{configuration_name}" if configuration_name else ""

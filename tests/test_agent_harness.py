@@ -522,10 +522,11 @@ class WorkspaceTest(unittest.TestCase):
         self.assertIn("must be a list of numbers",
                       verdict["errors"][0]["message"])
 
-    def test_an_unavailable_storage_class_names_the_ones_the_cluster_has(self) -> None:
+    def test_an_unavailable_storage_class_names_the_usable_ones(self) -> None:
         """A closed list the author cannot see has to be quoted back to them."""
         (self.root / "environment.yml").write_text(
-            _ENVIRONMENT + "storage_classes:\n- {name: ceph}\n- {name: local-hdd}\n")
+            _ENVIRONMENT + "storage_classes:\n- {name: cephcsi, usable: true}\n"
+            "- {name: shared, usable: true}\n- {name: ceph, usable: false}\n")
         self.workspace.write_file(
             self.path, _SPEC.replace("  storage: {size: 10Gi}",
                                      "  storage: {size: 10Gi}\n  storage_class: ssd"))
@@ -534,9 +535,25 @@ class WorkspaceTest(unittest.TestCase):
 
         self.assertFalse(verdict["valid"])
         message = verdict["errors"][0]["message"]
-        self.assertIn("ceph", message)
-        self.assertIn("local-hdd", message)
+        self.assertIn("cephcsi, shared", message)
+        self.assertNotIn("ceph,", message)
         self.assertIn("Omit the field", message)
+
+    def test_a_listed_but_unusable_storage_class_is_refused(self) -> None:
+        """The cluster may list a class bexhoma cannot provision on."""
+        (self.root / "environment.yml").write_text(
+            _ENVIRONMENT + "storage_classes:\n- {name: cephcsi, usable: true}\n"
+            "- {name: cephxfs, usable: false}\n")
+        # analytical-ssd's requires would refuse cephxfs before the cluster is asked.
+        self.workspace.write_file(
+            self.path, _SPEC.replace(", profile: analytical-ssd}", "}")
+                            .replace("  storage: {size: 10Gi}",
+                                     "  storage: {size: 10Gi}\n  storage_class: cephxfs"))
+
+        verdict = self.workspace.validate(self.path)
+
+        self.assertFalse(verdict["valid"])
+        self.assertIn("'cephxfs' is not usable", verdict["errors"][0]["message"])
 
     def test_submit_requires_unchanged_validated_bytes(self) -> None:
         self._validate()
@@ -869,6 +886,48 @@ resources:
             ["postgresql-1-1-1", "postgresql-1-1-2", "postgresql-1-1-3"],
         )
 
+    def test_a_round_without_latency_still_counts_for_throughput(self) -> None:
+        """A benchmarker that wrote no latency profile still measured its throughput."""
+        report = self.root / "results" / "no-profile" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput | Latency [ms] |
+|:--|--:|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 100 | 2 |
+| postgresql-1-1-2 | 1 | 2 | 200 | nan |
+| postgresql-1-1-3 | 1 | 4 | 300 | 6 |
+| postgresql-1-2-1 | 2 | 1 | 102 | 2 |
+| postgresql-1-2-2 | 2 | 2 | 204 | 4 |
+| postgresql-1-2-3 | 2 | 4 | 306 | 6 |
+""")
+        specification = """\
+discriminates: [concurrency]
+workload: {name: any-benchmarker, rounds: [1, 2, 4]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+"""
+
+        result = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]
+
+        repetitions = {
+            claim["metric"]: [value["repetitions"] for value in claim["values"]]
+            for claim in result["ordered_sweeps"]
+        }
+        self.assertEqual(
+            repetitions, {"Throughput": [2, 2, 2], "Latency [ms]": [2, 1, 2]}
+        )
+        self.assertEqual(result["excluded_phases"], [])
+        self.assertEqual(
+            result["partially_excluded_phases"],
+            {"postgresql-1-1-2": ["Latency [ms]"]},
+        )
+
     def test_concurrency_levels_count_client_threads_not_pods(self) -> None:
         """A YCSB pod runs several clients, so its sweep is labelled in clients."""
         report = self.root / "results" / "threads" / "report" / "benchmarking.md"
@@ -1015,7 +1074,8 @@ resources:
         report.parent.mkdir(parents=True)
         throughput = "[OVERALL].Throughput(ops/sec)"
         # Run 1's two-pod round ran its pods for unequal times and also reports
-        # no latency, so it is dropped as failed; run 2's two-pod round was even.
+        # no latency, so it is dropped from the latency series; run 2's two-pod
+        # round was even.
         phases = _FALSE_PEAK_PHASES.replace(
             "| postgresql-1-1-2 | 1 | 2 | 3000 | 400 |",
             "| postgresql-1-1-2 | 1 | 2 | 3000 | 0 |",
@@ -1031,7 +1091,11 @@ resources:
         result = self.workspace.assess_comparison_quality(str(report), _FALSE_PEAK_SPEC)
 
         characterization = result["result_characterization"]
-        self.assertEqual(characterization["excluded_phases"], ["postgresql-1-1-2"])
+        self.assertEqual(characterization["excluded_phases"], [])
+        self.assertEqual(
+            characterization["partially_excluded_phases"],
+            {"postgresql-1-1-2": ["[READ].99thPercentileLatency(us)"]},
+        )
         self.assertEqual(
             characterization["withheld_claims"],
             [{"factor": "concurrency", "context": {}, "metric": throughput}],
@@ -1478,6 +1542,145 @@ resources:
             ["cpu=2, memory=4Gi", "cpu=4, memory=4Gi",
              "cpu=2, memory=8Gi", "cpu=4, memory=8Gi"],
         )
+
+    def _storage_swept(self, storage_classes: str, declared: str = "storage_class",
+                       extra: str = "") -> str:
+        """Build a spec sweeping the storage class, without the profile that restricts it."""
+        return (
+            _SPEC
+            .replace(", profile: analytical-ssd}", "}")
+            .replace("[system, concurrency]", f"[system, concurrency, {declared}]")
+            .replace("  storage: {size: 10Gi}",
+                     f"  storage: {{size: 10Gi{extra}}}\n  storage_class: {storage_classes}")
+            + "placement: {sut: node-1}\n"
+        )
+
+    def _storage_environment(self) -> None:
+        """Describe a cluster with node-1 and the two usable network storage classes."""
+        (self.root / "environment.yml").write_text(
+            _ENVIRONMENT + "nodes:\n- {name: node-1, allocatable: {cpu: '64', memory: 128Gi}}\n"
+            "storage_classes:\n- {name: cephcsi, usable: true}\n- {name: shared, usable: true}\n"
+            "- {name: cephxfs, usable: false}\n")
+
+    def test_a_storage_sweep_resolves_one_configuration_per_backend(self) -> None:
+        """A storage list is a resource sweep like cpu and memory."""
+        self._storage_environment()
+        self.workspace.write_file(self.path, self._storage_swept("[cephcsi, shared, null]"))
+
+        result = self.workspace.validate(self.path)
+
+        self.assertTrue(result["valid"], result["errors"])
+        self.assertEqual(
+            result["estimate"]["configurations"],
+            ["cpu=4, memory=8Gi, storage_class=cephcsi",
+             "cpu=4, memory=8Gi, storage_class=shared",
+             "cpu=4, memory=8Gi, storage_class=ephemeral"],
+        )
+        # 2 systems x 3 backends x 2 rounds x 3 repetitions
+        self.assertEqual(result["estimate"]["runs"], 36)
+        self.assertNotIn("warnings", result)
+
+    def test_a_storage_sweep_must_be_declared(self) -> None:
+        self.workspace.write_file(
+            self.path,
+            self._storage_swept("[cephcsi, shared]").replace(
+                "[system, concurrency, storage_class]", "[system, concurrency]"),
+        )
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        self.assertIn("they differ on ['storage_class']", result["errors"][0]["message"])
+
+    def test_a_repeated_storage_class_is_not_a_factor(self) -> None:
+        """A list naming one backend only broadcasts it."""
+        self.workspace.write_file(self.path, self._storage_swept("[cephcsi, cephcsi]"))
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        self.assertIn("they differ on ['storage_class']", result["errors"][0]["message"])
+
+    def test_storage_swept_in_lockstep_with_memory_cannot_be_attributed(self) -> None:
+        spec_text = (
+            self._storage_swept("[cephcsi, shared]", "memory, storage_class")
+            .replace("memory: {request: 8Gi, limit: 8Gi}",
+                     "memory:\n    - {request: 4Gi, limit: 4Gi}\n    - {request: 8Gi, limit: 8Gi}")
+        )
+        self.workspace.write_file(self.path, spec_text)
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        message = result["errors"][0]["message"]
+        self.assertIn("no effect can be attributed to memory or storage_class", message)
+        self.assertIn("storage_class=cephcsi", message)
+
+    def test_a_storage_factor_refuses_reused_volumes(self) -> None:
+        self.workspace.write_file(
+            self.path, self._storage_swept("[cephcsi, shared]", extra=", remove_existing: false"))
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        self.assertIn("remove_existing is false", result["errors"][0]["message"])
+
+    def test_an_unpinned_storage_sweep_is_warned_about(self) -> None:
+        self._storage_environment()
+        self.workspace.write_file(
+            self.path,
+            self._storage_swept("[cephcsi, shared]").replace("placement: {sut: node-1}\n", ""),
+        )
+
+        result = self.workspace.validate(self.path)
+
+        self.assertTrue(result["valid"], result["errors"])
+        self.assertIn("placement.sut is unset", result["warnings"][0]["message"])
+
+    def test_every_swept_storage_class_must_be_usable(self) -> None:
+        self._storage_environment()
+        self.workspace.write_file(self.path, self._storage_swept("[cephcsi, cephxfs]"))
+
+        result = self.workspace.validate(self.path)
+
+        self.assertFalse(result["valid"])
+        self.assertIn("'cephxfs' is not usable", result["errors"][0]["message"])
+
+    def test_characterization_ranks_storage_backends(self) -> None:
+        """Backends have no order, so they are ranked like systems, never fitted to a curve."""
+        report = self.root / "results" / "storage" / "report" / "benchmarking.md"
+        report.parent.mkdir(parents=True)
+        report.write_text("""\
+#### Per Phase
+
+| phase | experiment_run | pod_count | Throughput@Size |
+|:--|--:|--:|--:|
+| postgresql-1-1-1 | 1 | 1 | 100 |
+| postgresql-1-2-1 | 2 | 1 | 110 |
+| postgresql-2-1-1 | 1 | 1 | 300 |
+| postgresql-2-2-1 | 2 | 1 | 320 |
+| postgresql-3-1-1 | 1 | 1 | 200 |
+| postgresql-3-2-1 | 2 | 1 | 210 |
+""")
+        specification = """\
+discriminates: [storage_class]
+workload: {name: tpch, rounds: [1]}
+systems: [{name: PostgreSQL}]
+resources:
+  cpu: {request: 2, limit: 2}
+  memory: {request: 4Gi, limit: 4Gi}
+  storage_class: [cephcsi, null, shared]
+"""
+
+        result = self.workspace.assess_comparison_quality(
+            str(report), specification
+        )["result_characterization"]
+
+        self.assertEqual(result["unsupported_factors"], [])
+        self.assertEqual(result["ordered_sweeps"], [])
+        [claim] = result["categorical_comparisons"]
+        self.assertEqual(claim["factor"], "storage_class")
+        self.assertEqual(claim["ranking"], ["ephemeral", "shared", "cephcsi"])
 
     def test_cpu_only_sweep_has_distinct_resource_cell_identities(self) -> None:
         """Every CPU treatment must address a different runtime configuration."""

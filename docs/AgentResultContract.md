@@ -35,6 +35,22 @@ Decode by counting dash-separated segments from the right.
 | Identifier | Shape | Example |
 |---|---|---|
 | configuration | `<system>-<n>` | `pgduckdb-1` |
+
+`<n>` is the resource cell: entry *n* of the `resources` sweep lists
+(`cpu`, `memory`, `storage_class`). `connections.md` names each
+configuration's storage as `sut_storage_storageClassName` (unset: ephemeral)
+and `sut_storage_storageConfiguration`. When the cluster config defines Ceph
+storage metrics, `storage_monitoring_*` adds the Ceph pool and volume behind
+it, or in `storage_monitoring_reason` why there are none (ephemeral, `ramdisk`,
+CephFS without per-volume statistics, no Ceph metrics in Prometheus).
+`monitoring.md`'s Ceph Storage tables show, per phase, the SUT's own volume,
+the other volumes in its pool and the pool as a whole; a configuration
+without them reads `n/a`. They are descriptive: the pool is shared and
+normally busy, and load from other volumes matters for a comparison only
+when it differs between the compared configurations or phases.
+
+| Identifier | Shape | Example |
+|---|---|---|
 | phase | `<configuration>-<experiment_run>-<client>` | `pgduckdb-1-3-2` |
 | job | `<phase>-<benchmark_run>` | `pgduckdb-1-3-2-1` |
 | connection | `<job>-<pod>` | `pgduckdb-1-3-2-1-4` |
@@ -55,6 +71,7 @@ skipped row never does.
 | workflow as planned | submitted jobs or pods differ from the plan | comparisons across phases |
 | no SUT container restarts | a SUT container restarted | its configuration from the restart on |
 | SUT data survived restarts | a restarted SUT had no data volume | every later query of it ran on an empty database |
+| loading measured in this experiment | a configuration found its volume already loaded by an earlier experiment (`storage_reused` in `connections.md`) | its loading times, which are inherited; benchmarking stays valid |
 | key metric present | a headline metric is 0 or NaN | that metric |
 | no SQL errors (TPC-H) | a query failed | that query; the pooled totals |
 | all active queries in the totals (TPC-H) | a query failed in some connection and left the pooled totals | the pooled per-phase metrics |

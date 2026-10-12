@@ -142,7 +142,10 @@ _SHAPE_NOISE_FLOOR = 0.05
 
 #: Factors the catalog lets an experiment isolate. Everything the contract can
 #: express is characterisable; anything else is refused at design time.
-_DISCRIMINATING_FACTORS = {"system", "concurrency", "cpu", "memory"}
+_DISCRIMINATING_FACTORS = {"system", "concurrency", "cpu", "memory", "storage_class"}
+#: Of those, the factors whose levels have no order: they are ranked at each
+#: fixed context, never fitted to a curve.
+_CATEGORICAL_FACTORS = ("system", "storage_class")
 
 #: Aggregate metrics worth characterising, by the direction that is an
 #: improvement. Exact names first, then substrings so a benchmarker this
@@ -1603,22 +1606,28 @@ def _numeric_quantity(value: Any, factor: str) -> float | None:
     return number * multiplier if multiplier is not None else None
 
 
-def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float]] | None:
-    """Return the CPU and memory values for each resolved resource cell."""
+def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float | str]] | None:
+    """Return the CPU and memory values, and the storage class, of each resolved resource cell.
+
+    The storage class is a categorical level: its name, or ``ephemeral`` for a
+    null entry or an unset field.
+    """
     resources = experiment.get("resources")
     if not isinstance(resources, dict):
         return None
     cpu = resources.get("cpu")
     memory = resources.get("memory")
+    storage = resources.get("storage_class")
     cpu_cells = cpu if isinstance(cpu, list) else [cpu]
     memory_cells = memory if isinstance(memory, list) else [memory]
-    cell_count = max(len(cpu_cells), len(memory_cells))
-    if len(cpu_cells) not in (1, cell_count) or len(memory_cells) not in (1, cell_count):
+    storage_cells = storage if isinstance(storage, list) and storage else [storage]
+    cell_count = max(len(cpu_cells), len(memory_cells), len(storage_cells))
+    if any(len(cells) not in (1, cell_count) for cells in (cpu_cells, memory_cells, storage_cells)):
         return None
 
     dimensions = []
     for index in range(cell_count):
-        values: dict[str, float] = {}
+        values: dict[str, float | str] = {}
         for factor, cells in (("cpu", cpu_cells), ("memory", memory_cells)):
             cell = cells[index if len(cells) > 1 else 0]
             if not isinstance(cell, dict):
@@ -1627,6 +1636,10 @@ def _resource_dimensions(experiment: dict[str, Any]) -> list[dict[str, float]] |
             if numeric is None:
                 return None
             values[factor] = numeric
+        storage_cell = storage_cells[index if len(storage_cells) > 1 else 0]
+        if storage_cell is not None and not isinstance(storage_cell, str):
+            return None
+        values["storage_class"] = storage_cell or validation.STORAGE_EPHEMERAL
         dimensions.append(values)
     return dimensions
 
@@ -1706,6 +1719,9 @@ def _configuration_resources(
     _, cell_index = decoded
     labels = {}
     for resource, cell in cells[cell_index].items():
+        if resource == "storage_class":
+            labels[resource] = cell or validation.STORAGE_EPHEMERAL
+            continue
         value = cell.get("limit", cell.get("request")) if isinstance(cell, dict) else None
         if value is None:
             return None
@@ -1824,9 +1840,14 @@ def _characterized_metrics(headers: list[str]) -> list[tuple[str, str]]:
 
 
 def _expected_levels(
-    factor: str, experiment: dict[str, Any], resource_cells: list[dict[str, float]],
-) -> set[float]:
-    """Return the levels the specification declared for one ordered factor."""
+    factor: str, experiment: dict[str, Any], resource_cells: list[dict[str, float | str]],
+) -> set[float | str]:
+    """Return the levels the specification declared for one factor."""
+    if factor == "system":
+        return {
+            system["name"] for system in experiment.get("systems", [])
+            if isinstance(system, dict) and isinstance(system.get("name"), str)
+        }
     if factor != "concurrency":
         return {cell[factor] for cell in resource_cells}
     workload = experiment.get("workload")
@@ -1999,15 +2020,19 @@ def _decode_observations(
 ) -> tuple[
     list[tuple[dict[str, str | float], dict[str, float]]],
     dict[str, dict[str, str | float]],
+    dict[str, tuple[dict[str, str | float], list[str]]],
 ]:
     """Decode each report row into its factor coordinates and metric values.
 
     :param withheld_phases: Phases whose summed rate failed its aggregation
         check; that metric is marked NaN so no claim is built on it.
-    :return: The observations, and the phases left out because they measured
-        nothing, each with its factor coordinates.
+    :return: The observations, each holding only the metrics its round
+        measured; the phases left out because they measured nothing, each with
+        its factor coordinates; and the phases that measured some metrics but
+        not others, each with its factor coordinates and the metrics it lacks.
     :rtype: tuple[list[tuple[dict[str, str | float], dict[str, float]]],
-        dict[str, dict[str, str | float]]]
+        dict[str, dict[str, str | float]],
+        dict[str, tuple[dict[str, str | float], list[str]]]]
     """
     # A YCSB pod runs several client threads and its report totals them per
     # round; a TPC-H pod is a single stream, so there the pod count is the
@@ -2017,6 +2042,7 @@ def _decode_observations(
     positions.update({metric: headers.index(metric) for metric, _ in metrics})
     observations = []
     excluded = {}
+    partial = {}
     for row in rows:
         phase = _plain_markdown_cell(row[positions["phase"]])
         dimensions = _configuration_dimensions(
@@ -2030,17 +2056,28 @@ def _decode_observations(
         except ValueError:
             continue
         # None of these metrics can be zero in a round that ran, so a zero or NaN
-        # means it measured nothing (the report's "contains 0 or NaN" checks
-        # fail on it). Averaged in, it would drown the real level differences.
-        if any(not math.isfinite(value) or value <= 0 for value in values.values()):
+        # means that metric was not measured (the report's "contains 0 or NaN"
+        # checks fail on it). Averaged in, it would drown the real level
+        # differences. It is dropped for that metric alone: a benchmarker that
+        # wrote no latency profile still measured its throughput.
+        missing = [
+            metric for metric, value in values.items()
+            if not math.isfinite(value) or value <= 0
+        ]
+        if len(missing) == len(values):
             excluded[phase] = dimensions
             continue
+        if missing:
+            partial[phase] = (dimensions, missing)
+            values = {
+                metric: value for metric, value in values.items() if metric not in missing
+            }
         # Marked rather than dropped: leaving the phase out would let the
         # remaining levels form a different, equally unsupported curve.
         if phase in withheld_phases and _SUMMED_RATE in values:
             values[_SUMMED_RATE] = math.nan
         observations.append((dimensions, values))
-    return observations, excluded
+    return observations, excluded, partial
 
 
 def _group_by_context(
@@ -2081,10 +2118,13 @@ def _ordered_sweep_claims(
         if len(levels) < 2 or set(levels) != expected_levels:
             continue
         for metric, direction in metrics:
+            # Rounds that did not measure this metric hold no value for it.
             per_level = {
-                level: [values[metric] for values in repetitions]
+                level: [values[metric] for values in repetitions if metric in values]
                 for level, repetitions in levels.items()
             }
+            if not all(per_level.values()):
+                continue
             if any(math.isnan(value) for values in per_level.values() for value in values):
                 claims.append({
                     "factor": factor, "context": dict(context), "metric": metric,
@@ -2138,54 +2178,60 @@ def _ordered_sweep_claims(
 
 
 def _categorical_claims(
+    factor: str,
     discriminates: list[str],
     experiment: dict[str, Any],
     observations: list[tuple[dict[str, str | float], dict[str, float]]],
+    resource_cells: list[dict[str, float | str]],
     metrics: list[tuple[str, str]],
 ) -> list[dict[str, Any]]:
-    """Rank the systems compared at each fixed context, once per metric."""
-    expected_systems = {
-        system["name"] for system in experiment.get("systems", [])
-        if isinstance(system, dict) and isinstance(system.get("name"), str)
-    }
-    peers = [item for item in discriminates if item != "system"]
+    """Rank the levels of one categorical factor at each fixed context, once per metric.
+
+    The levels have no order -- systems, storage backends -- so they are
+    ranked, never fitted to a curve.
+    """
+    expected_levels = _expected_levels(factor, experiment, resource_cells)
+    peers = [item for item in discriminates if item != factor]
     claims = []
     for context, measurements in sorted(
-        _group_by_context(observations, "system", peers).items(),
+        _group_by_context(observations, factor, peers).items(),
         key=lambda item: str(item[0]),
     ):
-        if len(measurements) < 2 or set(measurements) != expected_systems:
+        if len(measurements) < 2 or set(measurements) != expected_levels:
             continue
         for metric, direction in metrics:
-            if any(
-                math.isnan(values[metric])
-                for repetitions in measurements.values() for values in repetitions
-            ):
+            # Rounds that did not measure this metric hold no value for it.
+            per_level = {
+                level: [values[metric] for values in repetitions if metric in values]
+                for level, repetitions in measurements.items()
+            }
+            if not all(per_level.values()):
+                continue
+            if any(math.isnan(value) for values in per_level.values() for value in values):
                 claims.append({
-                    "factor": "system", "context": dict(context), "metric": metric,
+                    "factor": factor, "context": dict(context), "metric": metric,
                     "withheld": True,
                 })
                 continue
             means = {
-                str(system): round(
-                    statistics.mean(values[metric] for values in repetitions), 2
-                )
-                for system, repetitions in measurements.items()
+                str(level): round(statistics.mean(values), 2)
+                for level, values in per_level.items()
             }
+            repetitions = {str(level): len(values) for level, values in per_level.items()}
             # Best first, which for a latency metric is the smallest.
             better = -1 if direction == "higher_is_better" else 1
             claims.append({
-                "factor": "system",
+                "factor": factor,
                 "context": dict(context),
                 "metric": metric,
                 "direction": direction,
                 "ranking": sorted(
-                    means, key=lambda system: (better * means[system], system)
+                    means, key=lambda level: (better * means[level], level)
                 ),
                 "values": [
-                    {"level": system, "mean": means[system],
-                     "repetitions": len(measurements[system])}
-                    for system in sorted(means)
+                    {"level": level, "mean": means[level],
+                     "repetitions": repetitions[level]}
+                    for level in sorted(means)
                 ],
             })
     return claims
@@ -2248,13 +2294,13 @@ def _shape_claims(
     metrics = _characterized_metrics(headers)
     if not metrics or not {"phase", "pod_count"}.issubset(headers):
         return _unsupported(discriminates)
-    observations, excluded = _decode_observations(
+    observations, excluded, partial = _decode_observations(
         experiment, headers, rows, metrics, resource_cells, withheld_phases
     )
 
     unsupported = []
     ordered_sweeps = []
-    for factor in (item for item in discriminates if item != "system"):
+    for factor in (item for item in discriminates if item not in _CATEGORICAL_FACTORS):
         claims = _ordered_sweep_claims(
             factor, discriminates, experiment, observations, resource_cells, metrics
         )
@@ -2262,19 +2308,23 @@ def _shape_claims(
         if not claims:
             unsupported.append(factor)
     categorical = []
-    if "system" in discriminates:
-        categorical = _categorical_claims(
-            discriminates, experiment, observations, metrics
+    for factor in (item for item in _CATEGORICAL_FACTORS if item in discriminates):
+        claims = _categorical_claims(
+            factor, discriminates, experiment, observations, resource_cells, metrics
         )
-        if not categorical:
-            unsupported.append("system")
-    # A round dropped because it measured nothing leaves no rate to mark, but a
-    # pod-duration skew measured in it still speaks against the comparison it
-    # belonged to; without this, the remaining rounds would form the very curve
-    # the check withheld.
+        categorical.extend(claims)
+        if not claims:
+            unsupported.append(factor)
+    # A round whose rate was dropped because it was not measured leaves no rate
+    # to mark, but a pod-duration skew measured in it still speaks against the
+    # comparison it belonged to; without this, the remaining rounds would form
+    # the very curve the check withheld.
     dropped_skews = [
         dimensions for phase, dimensions in excluded.items()
         if phase in discrepant_phases
+    ] + [
+        dimensions for phase, (dimensions, missing) in partial.items()
+        if phase in discrepant_phases and _SUMMED_RATE in missing
     ]
     for claim in ordered_sweeps + categorical:
         if claim["metric"] == _SUMMED_RATE and any(
@@ -2305,9 +2355,20 @@ def _shape_claims(
         )
     if excluded:
         characterization["exclusion_reason"] = (
-            "These rounds reported zero or NaN for a characterised metric, so they "
-            "measured nothing and are left out of every shape and ranking here. "
-            "Disclose them; only the remaining rounds count as repetitions."
+            "These rounds reported zero or NaN for every characterised metric, so "
+            "they measured nothing and are left out of every shape and ranking "
+            "here. Disclose them; only the remaining rounds count as repetitions."
+        )
+    if partial:
+        characterization["partially_excluded_phases"] = {
+            phase: missing for phase, (_, missing) in partial.items()
+        }
+        characterization["partial_exclusion_reason"] = (
+            "These rounds reported zero or NaN for the listed metrics only, e.g. "
+            "a benchmarker that wrote no latency profile. They are left out of "
+            "the shapes and rankings of those metrics and count as repetitions "
+            "for the others. Disclose them; a metric that reads 0 or NaN in the "
+            "report was not measured, it is not a measured zero."
         )
     return characterization
 

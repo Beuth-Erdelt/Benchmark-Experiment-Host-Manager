@@ -54,6 +54,9 @@ __all__ = [
     "effective_post_load",
     "validate_experiment",
     "validate_environment",
+    "usable_storage_classes",
+    "storage_class_cells",
+    "removes_existing_storage",
     "build_argv",
     "entry_script_for_workload",
     "build_command",
@@ -63,7 +66,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.10.0"
+CATALOG_CONTRACT_VERSION = "1.11.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -510,6 +513,12 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
         if cap is not None and (isinstance(cap, bool) or not isinstance(cap, int) or cap < 0):
             raise SpecError(f"'{cap_field}' must be a non-negative integer (0 = no limit)")
 
+    resources = experiment.get("resources") or {}
+    storage_class_cells(resources)
+    remove_existing = (resources.get("storage") or {}).get("remove_existing")
+    if remove_existing is not None and not isinstance(remove_existing, bool):
+        raise SpecError("resources.storage.remove_existing must be true or false")
+
     observe = experiment.get("observe") or {}
     metrics = observe.get("metrics")
     hardware_monitoring = observe.get("monitoring_sut") or observe.get("monitoring_cluster")
@@ -604,7 +613,7 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
     fits under the allocatable capacity of the ``placement.sut`` node (or the
     cluster-wide ``resource_limits`` ceiling, when no SUT node is pinned);
     when set, ``resources.storage_class`` names a storage class the
-    cluster actually has; and every ``observe.metrics`` key is a hardware
+    cluster marks usable (see :func:`usable_storage_classes`); and every ``observe.metrics`` key is a hardware
     metric in ``monitoring.hardware`` that has data in Prometheus.
 
     This is independent of :func:`validate_experiment`: that function checks
@@ -661,24 +670,122 @@ def validate_environment(environment: dict[str, Any], experiment: dict[str, Any]
                     f"allocatable memory ({max_memory} bytes)"
                 )
 
-    storage_class = resources.get("storage_class")
-    if storage_class is not None:
-        known_storage_classes = {entry["name"] for entry in environment.get("storage_classes", [])}
-        if storage_class not in known_storage_classes:
+    usable = usable_storage_classes(environment)
+    for storage_class in storage_class_cells(resources):
+        if storage_class is not None and storage_class not in usable:
             raise SpecError(
-                f"resources.storage_class '{storage_class}' is not in environment.yml's storage_classes"
+                f"resources.storage_class '{storage_class}' is not a usable storage class in "
+                f"environment.yml; usable: {', '.join(usable) or 'none'}"
             )
 
-    _validate_metrics(environment, (experiment.get("observe") or {}).get("metrics") or [])
+    _validate_metrics(environment, (experiment.get("observe") or {}).get("metrics") or [],
+                      storage_class_cells(resources))
 
 
-def _validate_metrics(environment: dict[str, Any], metrics: list[str]) -> None:
+def storage_class_cells(resources: dict[str, Any]) -> list[Optional[str]]:
+    """Return ``resources.storage_class`` as one entry per listed cell.
+
+    A single value (or an absent field) is one entry, broadcast to every
+    resource cell like a single cpu/memory dict; a list sweeps the class,
+    paired by position with the cpu/memory lists. ``None`` means ephemeral
+    node-local storage.
+
+    :param resources: The experiment's ``resources:`` block.
+    :return: The listed storage classes, at least one.
+    :rtype: list[Optional[str]]
+    :raises SpecError: When the value is neither a class name, null, nor a
+        non-empty list of them.
+    """
+    value = resources.get("storage_class")
+    cells = value if isinstance(value, list) else [value]
+    if not cells or not all(cell is None or (isinstance(cell, str) and cell) for cell in cells):
+        raise SpecError(
+            "resources.storage_class must be a storage class name, null, or a non-empty list of them")
+    return cells
+
+
+def removes_existing_storage(resources: dict[str, Any]) -> bool:
+    """Whether the run deletes existing SUT volumes before loading (``-rsr``).
+
+    ``resources.storage.remove_existing`` defaults to true whenever some cell
+    asks for a storage class, so the run loads into a fresh volume and
+    measures its own loading; without a class there is no volume to remove.
+
+    :param resources: The experiment's ``resources:`` block.
+    :return: True when ``-rsr`` is to be emitted.
+    :rtype: bool
+    """
+    if not any(cell is not None for cell in storage_class_cells(resources)):
+        return False
+    return (resources.get("storage") or {}).get("remove_existing", True) is not False
+
+
+def usable_storage_classes(environment: dict[str, Any]) -> list[str]:
+    """Return the storage classes an experiment may put its SUT volume on.
+
+    The cluster may list classes bexhoma cannot use -- legacy provisioners,
+    classes meant for other workloads -- so ``environment.yml`` marks each one
+    ``usable``: declared in the cluster config, the only classes ``-rst``
+    accepts. A file written before that flag existed carries the same fact
+    as a non-null ``alias``.
+
+    :param environment: Parsed environment descriptor.
+    :return: Names of the usable classes, sorted.
+    :rtype: list[str]
+    """
+    return sorted(
+        entry["name"] for entry in environment.get("storage_classes", [])
+        if isinstance(entry, dict) and "name" in entry
+        and entry.get("usable", entry.get("alias") is not None)
+    )
+
+
+def _storage_misses_need(environment: dict[str, Any], storage_class: Optional[str], needs: str) -> str:
+    """Why a storage cell cannot serve a metric with ``needs``, or ``""`` when it can.
+
+    Bexhoma switches such a metric off for that configuration at run time
+    (``bexhoma.ceph_storage``). Support that ``environment.yml`` could not
+    check counts as possible.
+
+    :param environment: Parsed environment descriptor.
+    :param storage_class: One ``resources.storage_class`` cell (``None`` = ephemeral).
+    :param needs: ``ceph_pool`` or ``ceph_volume``.
+    :return: The reason, empty when the cell can serve it.
+    :rtype: str
+    """
+    if storage_class is None:
+        return "ephemeral storage has no Ceph volume"
+    entry = next((entry for entry in environment.get("storage_classes", [])
+                  if isinstance(entry, dict) and entry.get("name") == storage_class), None)
+    ceph = (entry or {}).get("ceph")
+    if not ceph:
+        return f"{storage_class} is not a Ceph storage class"
+    if ceph.get("pool_metrics") is False:
+        return f"Prometheus has no Ceph metrics for {storage_class}'s pool {ceph.get('pool')}"
+    if needs == "ceph_volume":
+        if ceph.get("kind") != "rbd":
+            return f"{storage_class} is {ceph.get('kind') or 'not RBD'}, which has no per-volume statistics"
+        if ceph.get("volume_metrics") is False:
+            return f"Prometheus has no per-volume statistics for {storage_class}'s pool {ceph.get('pool')}"
+    return ""
+
+
+def _validate_metrics(environment: dict[str, Any], metrics: list[str],
+                      storage_cells: Optional[list[Optional[str]]] = None) -> None:
     """Check ``observe.metrics`` against ``environment.yml``'s ``monitoring.hardware``.
+
+    A metric that ``needs`` Ceph storage (``ceph_pool``/``ceph_volume``) must
+    be servable by at least one of the experiment's storage cells; in a
+    storage-class sweep the other cells simply report it as not applicable.
+    Otherwise bexhoma would switch it off for every configuration, and a
+    metric the hypothesis relies on would silently never be collected.
 
     :param environment: Parsed environment descriptor.
     :param metrics: The experiment's ``observe.metrics`` (keys to switch on).
+    :param storage_cells: The experiment's ``resources.storage_class`` cells;
+        ``None`` skips the storage check.
     :raises SpecError: When the environment has no metric list, a key is unknown,
-        or a metric has no data.
+        a metric has no data, or no storage cell can serve a metric.
     """
     if not metrics:
         return
@@ -697,6 +804,14 @@ def _validate_metrics(environment: dict[str, Any], metrics: list[str]) -> None:
             raise SpecError(
                 f"observe.metrics: {key} has no data in Prometheus "
                 "(available: false when environment.yml was generated), so it would only collect empty readings")
+        needs = metric.get("needs")
+        if needs and storage_cells is not None:
+            reasons = [_storage_misses_need(environment, cell, needs) for cell in storage_cells]
+            if all(reasons):
+                raise SpecError(
+                    f"observe.metrics: {key} needs a Ceph storage class ({needs}), and no "
+                    f"resources.storage_class cell provides one: {'; '.join(dict.fromkeys(reasons))}. "
+                    "It would be switched off for every configuration")
 
 
 def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:
