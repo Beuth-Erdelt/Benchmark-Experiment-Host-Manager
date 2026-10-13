@@ -15,6 +15,8 @@ import copy
 import types
 import unittest
 
+import pandas as pd
+
 import tpch
 from bexhoma import environment
 from bexhoma import spec as catalog_spec
@@ -264,6 +266,27 @@ class TpchArgvTest(unittest.TestCase):
         self.assertEqual(_flag(argv, '-rst'), 'cephcsi')
         self.assertIn('-rsr', argv)
 
+    def test_remove_per_repetition_reaches_tpch(self):
+        argv = self._argv('cephcsi', remove_per_repetition=True)
+        self.assertIn('-rsr', argv)
+        self.assertIn('-rsrp', argv)
+        args = tpch.build_parser().parse_args(argv)
+        self.assertTrue(args.request_storage_remove_per_repetition)
+
+    def test_remove_per_repetition_is_off_by_default(self):
+        argv = self._argv('cephcsi')
+        self.assertNotIn('-rsrp', argv)
+        self.assertFalse(tpch.build_parser().parse_args(argv).request_storage_remove_per_repetition)
+
+    def test_remove_per_repetition_needs_a_volume(self):
+        self.assertNotIn('-rsrp', self._argv(remove_per_repetition=True))
+
+    def test_ycsb_gets_remove_per_repetition(self):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['resources']['storage_class'] = 'cephcsi'
+        spec['resources'].setdefault('storage', {})['remove_per_repetition'] = True
+        self.assertIn('-rsrp', catalog_spec.build_argv(self.catalog, spec))
+
 
 class StorageShapeTest(unittest.TestCase):
     """``spec.validate_experiment`` checks the shape of the storage fields."""
@@ -283,6 +306,25 @@ class StorageShapeTest(unittest.TestCase):
         spec['resources']['storage']['remove_existing'] = 'yes'
         with self.assertRaisesRegex(catalog_spec.SpecError, 'remove_existing must be true or false'):
             catalog_spec.validate_experiment(self.catalog, spec)
+
+    def test_remove_per_repetition_must_be_a_boolean(self):
+        spec = copy.deepcopy(_TPCH_SPEC)
+        spec['resources']['storage']['remove_per_repetition'] = 'yes'
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'remove_per_repetition must be true or false'):
+            catalog_spec.validate_experiment(self.catalog, spec)
+
+    def test_remove_per_repetition_contradicts_keeping_the_volume(self):
+        spec = copy.deepcopy(_TPCH_SPEC)
+        spec['resources']['storage'].update(remove_existing=False, remove_per_repetition=True)
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'remove_existing is false'):
+            catalog_spec.validate_experiment(self.catalog, spec)
+
+    def test_removes_storage_per_repetition_defaults(self):
+        self.assertFalse(catalog_spec.removes_storage_per_repetition({'storage_class': 'shared'}))
+        self.assertFalse(catalog_spec.removes_storage_per_repetition(
+            {'storage': {'remove_per_repetition': True}}))
+        self.assertTrue(catalog_spec.removes_storage_per_repetition(
+            {'storage_class': [None, 'shared'], 'storage': {'remove_per_repetition': True}}))
 
     def test_every_listed_class_is_checked_against_the_environment(self):
         spec = _with_storage_class(['cephcsi', None, 'cephxfs'])
@@ -324,6 +366,52 @@ class StorageReusedTest(unittest.TestCase):
 
     def test_older_results_leave_it_unknown(self):
         self.assertNotIn('storage_reused', self._row())
+
+    def test_inherited_loading_is_a_column(self):
+        self.assertTrue(self._row(loading_inherited=True)['loading_inherited'])
+        self.assertNotIn('loading_inherited', self._row())
+
+    def test_inherited_loading_reaches_the_per_run_table(self):
+        from bexhoma.evaluators.base import EvaluatorBase
+        rows = {}
+        for run, inherited in ((1, False), (2, True)):
+            row = self._row(loading_inherited=inherited)
+            row['experiment_run'] = run
+            rows[f'c{run}'] = row
+        evaluator = types.SimpleNamespace(
+            get_workload=lambda: {'defaultParameters': {'SF': '1'}},
+            get_connections_of_experiment=lambda: pd.DataFrame(rows).T)
+        evaluator.get_loading_per_connection = lambda: EvaluatorBase.get_loading_per_connection(evaluator)
+        df = EvaluatorBase.get_loading_per_run(evaluator)
+        self.assertEqual(df.set_index('experiment_run')['loading_inherited'].to_dict(), {1: False, 2: True})
+
+
+class RemovesStorageNowTest(unittest.TestCase):
+    """``-rsr`` deletes the SUT's PVCs before the first repetition, ``-rsrp`` before every one."""
+
+    def _removes(self, done, loading_finished=False, **args):
+        from bexhoma.configurations.base import SutConfiguration
+        cfg = types.SimpleNamespace(
+            loading_finished=loading_finished, num_experiment_to_apply_done=done,
+            experiment=types.SimpleNamespace(args_dict=args))
+        return SutConfiguration.removes_storage_now(cfg)
+
+    def test_rsr_only_before_the_first_repetition(self):
+        self.assertTrue(self._removes(0, request_storage_remove=True))
+        self.assertFalse(self._removes(1, request_storage_remove=True))
+
+    def test_rsrp_before_every_repetition(self):
+        for done in (0, 1, 2):
+            with self.subTest(done):
+                self.assertTrue(self._removes(done, request_storage_remove_per_repetition=True))
+
+    def test_never_once_loaded(self):
+        self.assertFalse(self._removes(0, loading_finished=True, request_storage_remove=True,
+                                       request_storage_remove_per_repetition=True))
+
+    def test_parsers_without_the_flag(self):
+        self.assertFalse(self._removes(0))
+        self.assertTrue(self._removes(0, request_storage_remove=True))
 
 
 if __name__ == '__main__':

@@ -657,6 +657,8 @@ class EvaluatorBase:
         # absent in results written before it was recorded: unknown, not False
         if 'storage_reused' in c:
             result[connection_id]['storage_reused'] = bool(c['storage_reused'])
+        if 'loading_inherited' in c:
+            result[connection_id]['loading_inherited'] = bool(c['loading_inherited'])
         # present only when cluster.config has metrics with storage placeholders
         if 'storage_monitoring' in c:
             for key, value in c['storage_monitoring'].items():
@@ -792,6 +794,10 @@ class EvaluatorBase:
             'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'terminals',
             'tenant_id', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
+        # True: this repetition did not load, its times are copied from the
+        # volume. Absent in results written before it was recorded.
+        if 'loading_inherited' in df.columns:
+            selected_cols.append('loading_inherited')
         return df[selected_cols].copy()
     def get_loading_per_run(self):
         """

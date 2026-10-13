@@ -553,13 +553,8 @@ scrape_configs:
                 dep['metadata']['labels'][label_key] = str(label_value)
             return dep
 
-        def should_we_remove_pvcs():
-            return (not cfg.loading_finished
-                    and cfg.experiment.args_dict['request_storage_remove']
-                    and cfg.num_experiment_to_apply_done == 0)
-
         def reset_and_remove_pvc(pvc):
-            if should_we_remove_pvcs:
+            if cfg.removes_storage_now():
                 print("{:30s}: storage {} should be removed".format(configuration, pvc))
                 cfg.experiment.cluster.delete_pvc(pvc)
                 cfg.wait(10)
@@ -585,7 +580,7 @@ scrape_configs:
                     f"but {requested!r} is requested; remove it (-rsr) or request {found!r}")
 
         def get_labels_from_loaded_pvc():
-            if use_storage and not use_ramdisk and not should_we_remove_pvcs():
+            if use_storage and not use_ramdisk and not cfg.removes_storage_now():
                 list_of_pvc = cfg.get_list_of_pvc()
                 print("{:30s}: list of pvcs {}".format(cfg.configuration, list_of_pvc))
                 volume = list_of_pvc[0]
@@ -614,6 +609,9 @@ scrape_configs:
                 # this experiment finding its own volume is not a reuse.
                 if cfg.num_experiment_to_apply_done == 0 and not cfg.loading_finished:
                     cfg.storage_reused = True
+                # Either way this repetition does not load: its loading times
+                # are copied, not measured.
+                cfg.loading_inherited = True
                 dep['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                 for label in labels_on_existing_pvc:
                     print("{:30s}: copied label {} = {}".format(
@@ -835,9 +833,7 @@ scrape_configs:
                         app=app, component='storage',
                         experiment=cfg.storage_label, configuration=storageConfiguration)
                     if len(pvcs) > 0:
-                        if (not cfg.loading_finished
-                                and cfg.experiment.args_dict['request_storage_remove']
-                                and cfg.num_experiment_to_apply_done == 0):
+                        if cfg.removes_storage_now():
                             reset_and_remove_pvc(name_pvc)
                         else:
                             del result[key]
@@ -849,9 +845,7 @@ scrape_configs:
                             dep_tenant['metadata']['name'] + "-" + str(i))
                         result.append(dep_tenant)
                         tenant_pvc_name = dep_tenant['metadata']['name']
-                        if (not cfg.loading_finished
-                                and cfg.experiment.args_dict['request_storage_remove']
-                                and cfg.num_experiment_to_apply_done == 0):
+                        if cfg.removes_storage_now():
                             reset_and_remove_pvc(tenant_pvc_name)
             ########################################
             # Kind=StatefulSet
@@ -993,10 +987,7 @@ scrape_configs:
                             list_of_workers_pvcs.append(worker_full_name)
                         cfg.deployment_infos['statefulset'][statefulset_type]['pvc'] = (
                             list_of_workers_pvcs)
-                        remove_old_pvcs = (
-                            not cfg.loading_finished
-                            and cfg.experiment.args_dict['request_storage_remove']
-                            and cfg.num_experiment_to_apply_done == 0)
+                        remove_old_pvcs = cfg.removes_storage_now()
                         old_pvc_exist = False
                         for statefulset_name_pvc in list_of_workers_pvcs:
                             pvc_exists = cfg.experiment.cluster.pvc_exists(statefulset_name_pvc)

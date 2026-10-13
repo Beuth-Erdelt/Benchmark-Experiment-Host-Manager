@@ -135,6 +135,7 @@ class MetricsCollector:
         c['hostsystem'] = cfg.host.get_host_all()
         c['storage'] = cfg.storage
         c['storage_reused'] = cfg.storage_reused
+        c['loading_inherited'] = cfg.loading_inherited
         # collect worker information
         c['worker'] = {}
         components = list(cfg.deployment_infos['statefulset'].keys())

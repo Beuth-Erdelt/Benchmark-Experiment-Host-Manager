@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.11.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.12.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -383,6 +383,22 @@ experiment_schema:
                 skipped and its loading times are inherited, not measured"
               when: "false only to save loading time deliberately; refused when
                 storage_class is in discriminates"
+            remove_per_repetition:
+              type: bool
+              required: false
+              semantics: "delete the volume before every repetition, not only
+                before the first, so each repetition loads into a fresh volume.
+                Implies remove_existing. Default false; ignored without
+                storage_class"
+              why: "by default repetitions 2..n keep the volume of repetition 1:
+                loading is skipped and its loading times are copied, so loading
+                is measured once and later repetitions run on a volume that
+                earlier repetitions already wrote to"
+              when: "the hypothesis is about loading, or about how a fresh volume
+                behaves (layout, cache, compaction state), and needs one such
+                sample per repetition. Costs one load per repetition: runtime
+                grows by the loading time x (repetitions - 1). Refused together
+                with remove_existing: false"
         storage_class:
           type: "str or null or list[str or null]"
           required: false

@@ -57,6 +57,7 @@ __all__ = [
     "usable_storage_classes",
     "storage_class_cells",
     "removes_existing_storage",
+    "removes_storage_per_repetition",
     "build_argv",
     "entry_script_for_workload",
     "build_command",
@@ -66,7 +67,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.11.0"
+CATALOG_CONTRACT_VERSION = "1.12.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -515,9 +516,15 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
 
     resources = experiment.get("resources") or {}
     storage_class_cells(resources)
-    remove_existing = (resources.get("storage") or {}).get("remove_existing")
-    if remove_existing is not None and not isinstance(remove_existing, bool):
-        raise SpecError("resources.storage.remove_existing must be true or false")
+    for remove_field in ("remove_existing", "remove_per_repetition"):
+        remove_value = (resources.get("storage") or {}).get(remove_field)
+        if remove_value is not None and not isinstance(remove_value, bool):
+            raise SpecError(f"resources.storage.{remove_field} must be true or false")
+    storage = resources.get("storage") or {}
+    if storage.get("remove_per_repetition") is True and storage.get("remove_existing") is False:
+        raise SpecError(
+            "resources.storage.remove_per_repetition deletes the volume before every "
+            "repetition, including the first, but remove_existing is false; drop one of them")
 
     observe = experiment.get("observe") or {}
     metrics = observe.get("metrics")
@@ -718,6 +725,21 @@ def removes_existing_storage(resources: dict[str, Any]) -> bool:
     if not any(cell is not None for cell in storage_class_cells(resources)):
         return False
     return (resources.get("storage") or {}).get("remove_existing", True) is not False
+
+
+def removes_storage_per_repetition(resources: dict[str, Any]) -> bool:
+    """Whether the run deletes the SUT volumes before every repetition (``-rsrp``).
+
+    ``resources.storage.remove_per_repetition`` defaults to false; without a
+    storage class there is no volume to remove.
+
+    :param resources: The experiment's ``resources:`` block.
+    :return: True when ``-rsrp`` is to be emitted.
+    :rtype: bool
+    """
+    if not any(cell is not None for cell in storage_class_cells(resources)):
+        return False
+    return (resources.get("storage") or {}).get("remove_per_repetition", False) is True
 
 
 def usable_storage_classes(environment: dict[str, Any]) -> list[str]:

@@ -568,6 +568,8 @@ class ExperimentBase():
         request_storage_type = self.storage_types[0]
         request_storage_size = args.request_storage_size
         request_storage_remove = args.request_storage_remove
+        # entry scripts with their own parser may not know -rsrp
+        request_storage_remove_per_repetition = getattr(args, 'request_storage_remove_per_repetition', False)
         request_node_name = args.request_node_name
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
@@ -708,11 +710,15 @@ class ExperimentBase():
         if len(self.storage_types) > 1:
             self.workload['info'] = self.workload['info']+"\nStorage is swept across configurations: {}, size {}.".format(
                 ", ".join(storage_type or "ephemeral" for storage_type in self.storage_types), request_storage_size or "unset")
-            if request_storage_remove:
+            if request_storage_remove_per_repetition:
+                self.workload['info'] = self.workload['info']+" Persistent storage is removed before every repetition."
+            elif request_storage_remove:
                 self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
         elif request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
-            if request_storage_remove:
+            if request_storage_remove_per_repetition:
+                self.workload['info'] = self.workload['info']+" Persistent storage is removed before every repetition."
+            elif request_storage_remove:
                 self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
         elif request_storage_size and request_storage_type is None:
             self.workload['info'] = self.workload['info']+"\nDatabase uses ephemeral storage of size {}.".format(request_storage_size)
@@ -2803,6 +2809,16 @@ class ExperimentBase():
                 print("\n### Reused Storage")
                 print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
             self._record_test(not reused, "Loading measured in this experiment")
+        # A repetition that finds the volume of an earlier repetition loaded
+        # skips loading too (without -rsrp). Informational: its loading times
+        # are copies, so they are no further sample of loading.
+        inherited = sorted({
+            "{}-{}".format(c.get('configuration', c['name']), c.get('parameter', {}).get('numExperiment', '?'))
+            for c in connections_sorted
+            if c.get('loading_inherited') and not c.get('storage_reused')})
+        if inherited:
+            print("\n### Inherited Loading")
+            print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
         result_dir = Path(resultfolder) / code
         restarts_files = sorted(result_dir.glob("bexhoma-sut-*-restarts.json"))
         if restarts_files:

@@ -202,7 +202,7 @@ def resolve_resource_cells(
 
 
 def append_resource_flags(argv: list[str], resources: dict[str, Any]) -> None:
-    """Append ``-rc/-lc/-rr/-lr/-rss/-rst/-rsr`` for ``resources``, as comma lists when swept.
+    """Append ``-rc/-lc/-rr/-lr/-rss/-rst/-rsr/-rsrp`` for ``resources``, as comma lists when swept.
 
     ``-rst`` is emitted from ``resources`` itself, never from a profile's
     ``requires:`` -- otherwise a class asked for without such a profile would
@@ -224,6 +224,8 @@ def append_resource_flags(argv: list[str], resources: dict[str, Any]) -> None:
         _append_flag(argv, "-rst", storage_class_cells[0])
     if spec.removes_existing_storage(resources):
         argv.append("-rsr")
+    if spec.removes_storage_per_repetition(resources):
+        argv.append("-rsrp")
 
 
 def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:

@@ -185,6 +185,23 @@ ephemeral storage. It is now emitted from `resources` itself.
 
 Folded into 1.11.0 (not yet released) as an additive change.
 
+## Fresh volume per repetition (2026-10-13)
+
+`-rsr` deletes a volume only before the first repetition. Repetitions 2..n
+keep it: loading is skipped and the loading times of repetition 1 are
+copied. `resources.storage.remove_per_repetition` maps to the new `-rsrp`,
+which deletes the volume before every repetition, so each one loads into a
+fresh volume, as on ephemeral storage. It defaults to false (it costs one
+load per repetition) and is refused together with `remove_existing: false`,
+which it contradicts.
+
+On the result side, `loading_inherited` (result contract 1.11.0) marks each
+repetition that did not load, whatever the reason, so copied loading times
+can be told apart from measured ones.
+
+This moved the version 1.11.0 -> 1.12.0 (minor: a new optional field; 1.11.0
+is released in v0.11.3).
+
 ## Only usable storage classes (2026-10-10)
 
 `environment.yml` lists every `StorageClass` the cluster has, but bexhoma

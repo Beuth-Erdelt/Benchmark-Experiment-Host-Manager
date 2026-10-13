@@ -80,6 +80,12 @@ skipped row never does.
 | no monitoring metrics missing | Prometheus returned no data, filled with zeros (skipped when every gap is expected) | those metrics |
 | EXPLAIN captured (TPC-H) | an active query has no plan (skipped without `store_explain`) | evidence of which engine ran |
 
+Not a check: `loading_inherited` (in `connections.md` and the loading Per
+Run table) marks a repetition that found its volume already loaded, by an
+earlier experiment or an earlier repetition. Its loading times are copies;
+leave them out of loading statistics across repetitions. Repetitions load
+every time on ephemeral storage or with `resources.storage.remove_per_repetition`.
+
 Headline metrics: TPC-H `Geo Times [s]`, `Power@Size [~Q/h]`,
 `Throughput@Size`; YCSB `[OVERALL].Throughput(ops/sec)`; HammerDB `NOPM`;
 Benchbase `Throughput (requests/second)`.
