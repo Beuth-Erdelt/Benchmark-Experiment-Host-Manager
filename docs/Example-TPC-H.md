@@ -301,86 +301,215 @@ The Dockerfiles for the components can be found in https://github.com/Beuth-Erde
 You maybe want to adjust some of the parameters that are set in the file: `python tpch.py -h`
 
 ```bash
-usage: tpch.py [-h] [-aws] [-dbms {PostgreSQL,MonetDB,MySQL,MariaDB}] [-xlit LIMIT_IMPORT_TABLE] [-db] [-cx CONTEXT] [-e EXPERIMENT] [-m] [-mc] [-ms MAX_SUT] [-xdt] [-xqr NUM_RUN] [-nc NUM_CONFIG]
-               [-ne NUM_QUERY_EXECUTORS] [-xnls NUM_LOADING_SPLIT] [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS] [-nbt NUM_BENCHMARKING_THREADS] [-sf SCALING_FACTOR]
-               [-t TIMEOUT] [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE] [-rst {None,,local-hdd,shared}] [-rss REQUEST_STORAGE_SIZE]
-               [-rnn REQUEST_NODE_NAME] [-rnl REQUEST_NODE_LOADING] [-rnb REQUEST_NODE_BENCHMARKING] [-tr] [-xii] [-xic] [-xis] [-xrcp] [-xshq]
+usage: tpch.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
+               [-e EXPERIMENT] [-m] [-ma] [-mc] [-mm MONITORING_METRICS]
+               [-ms MAX_SUT] [-mse MAX_SUT_EXPERIMENT]
+               [-et EXPERIMENT_TIMEOUT] [-lt LOADING_TIMEOUT] [-nc NUM_CONFIG]
+               [-ne NUM_QUERY_EXECUTORS] [-nw NUM_WORKER]
+               [-nwr NUM_WORKER_REPLICAS] [-nws NUM_WORKER_SHARDS]
+               [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
+               [-nbp NUM_BENCHMARKING_PODS] [-nbt NUM_BENCHMARKING_THREADS]
+               [-sf SCALING_FACTOR] [-t TIMEOUT] [-lr LIMIT_RAM]
+               [-lc LIMIT_CPU] [-rr REQUEST_RAM] [-rc REQUEST_CPU]
+               [-rct REQUEST_CPU_TYPE] [-rg REQUEST_GPU]
+               [-rgt REQUEST_GPU_TYPE] [-rst REQUEST_STORAGE_TYPE]
+               [-rss REQUEST_STORAGE_SIZE] [-rsr] [-rsrp]
+               [-rnn [REQUEST_NODE_NAME]] [-rnl [REQUEST_NODE_LOADING]]
+               [-rnb [REQUEST_NODE_BENCHMARKING]]
+               [-rnp [REQUEST_NODE_POOLING]] [-mtn MULTI_TENANT_NUM]
+               [-mtb MULTI_TENANT_BY] [-mtv] [-tr] [-rp] [--set SETS]
+               [-dbms [{PostgreSQL,MonetDB,MySQL,MariaDB,DatabaseService,Citus,CedarDB,PgDuckDB} ...]]
+               [-xlit LIMIT_IMPORT_TABLE] [-xdt] [-xqr NUM_RUN]
+               [-xnls NUM_LOADING_SPLIT] [-xii] [-xic] [-xis] [-xcol] [-xrcp]
+               [-xshq] [-xrs NUM_REFRESH_STREAMS]
+               [-xrso NUM_REFRESH_STREAM_OFFSET] [-xaq ACTIVE_QUERIES] [-xdfe]
+               [-xve] [-xse]
                {profiling,run,start,load,empty,summary}
 
-Performs a TPC-H experiment. Data is generated and imported into a DBMS from a distributed filesystem (shared disk).
+Run TPC-H benchmark queries against a DBMS in Kubernetes. Data is generated on
+a shared distributed filesystem and loaded in parallel. Supports optional
+index, constraint, and statistics creation; multi-stream query ordering.
 
 positional arguments:
   {profiling,run,start,load,empty,summary}
-                        profile the import or run the TPC-H queries
+                        experiment phase: profile import, run queries, start
+                        SUT only, load data, empty tables, or summarize
+                        results
 
 options:
   -h, --help            show this help message and exit
-  -aws, --aws           fix components to node groups at AWS
-  -dbms {PostgreSQL,MonetDB,MySQL,MariaDB}, --dbms {PostgreSQL,MonetDB,MySQL,MariaDB}
-                        DBMS
-  -xlit LIMIT_IMPORT_TABLE, --limit-import-table LIMIT_IMPORT_TABLE
-                        limit import to one table, name of this table
-  -db, --debug          dump debug informations
-  -cx CONTEXT, --context CONTEXT
-                        context of Kubernetes (for a multi cluster environment), default is current context
-  -e EXPERIMENT, --experiment EXPERIMENT
-                        sets experiment code for continuing started experiment
-  -m, --monitoring      activates monitoring
+  -aws, --aws           pin components to AWS EKS node groups
+  -db, --debug          enable debug logging
+  -sl, --skip-loading   skip data loading and start benchmarking immediately
+  -ss, --skip-shutdown  keep SUT pods running after the experiment finishes
+  -ar, --activate-reset
+                        activate configured reset scripts (e.g.
+                        CHECKPOINT/VACUUM) when set on a benchmarker entry;
+                        off by default
+  -cx, --context CONTEXT
+                        kubectl context to use (default: current context)
+  -e, --experiment EXPERIMENT
+                        resume an existing experiment by its code
+  -m, --monitoring      enable Prometheus monitoring for the SUT
+  -ma, --monitoring-app
+                        enable application-level metrics collection
   -mc, --monitoring-cluster
-                        activates monitoring for all nodes of cluster
-  -ms MAX_SUT, --max-sut MAX_SUT
-                        maximum number of parallel DBMS configurations, default is no limit
-  -xdt, --datatransfer   activates transfer of data per query (not only execution)
-  -xqr NUM_RUN, --num-run NUM_RUN
-                        number of runs per query
-  -nc NUM_CONFIG, --num-config NUM_CONFIG
-                        number of runs per configuration
-  -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
-                        comma separated list of number of parallel clients
-  -xnls NUM_LOADING_SPLIT, --num-loading-split NUM_LOADING_SPLIT
-                        portion of loaders that should run in parallel
-  -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
-                        total number of loaders per configuration
-  -nlt NUM_LOADING_THREADS, --num-loading-threads NUM_LOADING_THREADS
-                        total number of threads per loading process
-  -nbp NUM_BENCHMARKING_PODS, --num-benchmarking-pods NUM_BENCHMARKING_PODS
-                        comma separated list of number of benchmarkers per configuration
-  -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
-                        total number of threads per benchmarking process
-  -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
-                        scaling factor (SF)
-  -t TIMEOUT, --timeout TIMEOUT
-                        timeout for a run of a query
-  -rr REQUEST_RAM, --request-ram REQUEST_RAM
-                        request ram for sut, default 16Gi
-  -rc REQUEST_CPU, --request-cpu REQUEST_CPU
-                        request cpus for sut, default 4
-  -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
-                        request node for sut to have node label cpu=
-  -rg REQUEST_GPU, --request-gpu REQUEST_GPU
-                        request number of gpus for sut
-  -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
-                        request node for sut to have node label gpu=
-  -rst {None,,local-hdd,shared}, --request-storage-type {None,,local-hdd,shared}
-                        request persistent storage of certain type
-  -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
-                        request persistent storage of certain size
-  -rnn REQUEST_NODE_NAME, --request-node-name REQUEST_NODE_NAME
-                        request a specific node for sut
-  -rnl REQUEST_NODE_LOADING, --request-node-loading REQUEST_NODE_LOADING
-                        request a specific node for loading pods
-  -rnb REQUEST_NODE_BENCHMARKING, --request-node-benchmarking REQUEST_NODE_BENCHMARKING
-                        request a specific node for benchmarking pods
-  -tr, --test-result    test if result fulfills some basic requirements
-  -xii, --init-indexes   adds indexes to tables after ingestion
-  -xic, --init-constraints
-                        adds constraints to tables after ingestion
-  -xis, --init-statistics
-                        recomputes statistics of tables after ingestion
-  -xrcp, --recreate-parameter
-                        recreate parameter for randomized queries
-  -xshq, --shuffle-queries
-                        have different orderings per stream
+                        enable node-level monitoring for the entire cluster
+  -mm, --monitoring-metrics MONITORING_METRICS
+                        switch single cluster-wide hardware metrics of
+                        cluster.config on or off for this experiment,
+                        overriding their 'active' flag, e.g.
+                        total_gpu_util=on,total_network_rx=off; needs -m or
+                        -mc
+  -ms, --max-sut MAX_SUT
+                        maximum number of DBMS configurations to run in
+                        parallel cluster-wide (default: no limit)
+  -mse, --max-sut-experiment MAX_SUT_EXPERIMENT
+                        maximum number of DBMS configurations in this
+                        experiment to run in parallel (default: no limit)
+  -et, --experiment-timeout EXPERIMENT_TIMEOUT
+                        maximum wall-clock duration of the experiment in
+                        minutes; when exceeded, the experiment is stopped and
+                        all its components are removed from the cluster
+                        (default: no limit)
+  -lt, --loading-timeout LOADING_TIMEOUT
+                        maximum loading duration per configuration in minutes;
+                        captures diagnostics and removes the experiment when
+                        exceeded (default: no limit)
+  -nc, --num-config NUM_CONFIG
+                        number of experiment repetitions per configuration
+  -ne, --num-query-executors NUM_QUERY_EXECUTORS
+                        comma-separated list of parallel client counts to
+                        sweep
+  -nw, --num-worker NUM_WORKER
+                        number of worker nodes for distributed DBMS
+  -nwr, --num-worker-replicas NUM_WORKER_REPLICAS
+                        number of replicas per worker node
+  -nws, --num-worker-shards NUM_WORKER_SHARDS
+                        number of shards per worker node
+  -nlp, --num-loading-pods NUM_LOADING_PODS
+                        comma-separated list of total loader pod counts
+  -nlt, --num-loading-threads NUM_LOADING_THREADS
+                        comma-separated list of total loader threads (split
+                        across pods)
+  -nbp, --num-benchmarking-pods NUM_BENCHMARKING_PODS
+                        comma-separated list of benchmarker pod counts
+  -nbt, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
+                        total benchmarking threads, split evenly across pods
+  -sf, --scaling-factor SCALING_FACTOR
+                        scaling factor controlling dataset size
+  -t, --timeout TIMEOUT
+                        per-query timeout in seconds
+  -lr, --limit-ram LIMIT_RAM
+                        RAM limit for the SUT and worker pods (e.g. 64Gi; 0 =
+                        no limit); comma-separated to sweep several settings
+                        (e.g. 32Gi,64Gi), one configuration per entry
+  -lc, --limit-cpu LIMIT_CPU
+                        CPU limit for the SUT and worker pods (e.g. 4; 0 = no
+                        limit); comma-separated to sweep, must then match the
+                        length of any other swept resource list
+  -rr, --request-ram REQUEST_RAM
+                        RAM request for the SUT and worker pods (e.g. 16Gi);
+                        comma-separated to sweep several settings (e.g.
+                        32Gi,64Gi), one configuration per entry
+  -rc, --request-cpu REQUEST_CPU
+                        CPU request for the SUT and worker pods (e.g. 4);
+                        comma-separated to sweep, must then match the length
+                        of any other swept resource list
+  -rct, --request-cpu-type REQUEST_CPU_TYPE
+                        require SUT node to carry label cpu=<value>
+  -rg, --request-gpu REQUEST_GPU
+                        number of GPUs to request for the SUT pod
+  -rgt, --request-gpu-type REQUEST_GPU_TYPE
+                        require SUT node to carry label gpu=<value>
+  -rst, --request-storage-type REQUEST_STORAGE_TYPE
+                        storage class for the SUT persistent volume ('' or
+                        unset = ephemeral, 'ramdisk' = in-memory; other values
+                        must be declared for the active cluster context, see
+                        cluster config 'storage_classes'); comma-separated to
+                        sweep the class, one configuration per entry and
+                        paired by position with -rc/-lc/-rr/-lr, an empty
+                        entry meaning ephemeral
+  -rss, --request-storage-size REQUEST_STORAGE_SIZE
+                        size of the SUT persistent volume (e.g. 10Gi)
+  -rsr, --request-storage-remove
+                        delete any existing PVC for the SUT before starting
+  -rsrp, --request-storage-remove-per-repetition
+                        delete the PVC of the SUT before every repetition
+                        (-nc), so each repetition loads into a fresh volume;
+                        implies -rsr
+  -rnn, --request-node-name [REQUEST_NODE_NAME]
+                        pin the SUT pod to this Kubernetes node
+  -rnl, --request-node-loading [REQUEST_NODE_LOADING]
+                        pin loader pods to this Kubernetes node
+  -rnb, --request-node-benchmarking [REQUEST_NODE_BENCHMARKING]
+                        pin benchmarker pods to this Kubernetes node
+  -rnp, --request-node-pooling [REQUEST_NODE_POOLING]
+                        pin pooling pods to this Kubernetes node
+  -mtn, --multi-tenant-num MULTI_TENANT_NUM
+                        number of tenants for multi-tenant experiments
+  -mtb, --multi-tenant-by MULTI_TENANT_BY
+                        tenancy granularity: schema, database, or container
+  -mtv, --multi-tenant-volume
+                        allocate a separate persistent volume per tenant
+  -tr, --test-result    validate that results meet basic correctness
+                        requirements
+  -rp, --report         also write a tiered Markdown summary report
+                        (report/index.md + detail files) to the result folder
+  --set SETS            override a deployment parameter, e.g. deployment[sut].
+                        container[dbms].max_worker_processes=128
+  -dbms, --dbms [{PostgreSQL,MonetDB,MySQL,MariaDB,DatabaseService,Citus,CedarDB,PgDuckDB} ...]
+                        one or more DBMS engines to test
+  -xlit, --xlimit-import-table LIMIT_IMPORT_TABLE
+                        import only this table (useful for partial re-loads)
+  -xdt, --xdata-transfer
+                        also measure data transfer volume per query
+  -xqr, --xnum-query-runs NUM_RUN
+                        number of times to repeat each query
+  -xnls, --xnum-loading-split NUM_LOADING_SPLIT
+                        number of parallel loader batches (total loaders ÷
+                        this = batch size)
+  -xii, --xinit-indexes
+                        create indexes on all tables after loading
+  -xic, --xinit-constraints
+                        add primary-key and foreign-key constraints after
+                        loading
+  -xis, --xinit-statistics
+                        run ANALYZE / UPDATE STATISTICS after loading
+  -xcol, --xinit-columns
+                        use columnar storage (Citus only)
+  -xrcp, --xrecreate-parameter
+                        regenerate random query parameters for each stream
+  -xshq, --xshuffle-queries
+                        shuffle query execution order independently per stream
+  -xrs, --xnum-refresh-streams NUM_REFRESH_STREAMS
+                        enable a TPC-H RF1/RF2 refresh stream running in
+                        parallel with the query streams; value is the number
+                        of RF1+RF2 pairs applied per benchmarking round (set
+                        equal to the number of parallel query streams for a
+                        spec-compliant throughput test; 0 = disabled)
+  -xrso, --xrefresh-stream-offset NUM_REFRESH_STREAM_OFFSET
+                        start the refresh stream at set OFFSET+1, so that sets
+                        1..OFFSET are skipped (use to continue from a previous
+                        run without re-applying already-applied sets)
+  -xaq, --xactive-queries ACTIVE_QUERIES
+                        comma-separated 1-based query numbers to run, e.g.
+                        3,5,6,7 (all other queries are set inactive in the
+                        query config uploaded to the cluster; unset = run all
+                        queries as defined in the query config file)
+  -xdfe, --xduckdb-force-execution
+                        run queries on PostgreSQL tables in pg_duckdb's DuckDB
+                        engine (PgDuckDB only); off by default, so they run in
+                        PostgreSQL's own executor
+  -xve, --xverbose-explain
+                        run and print configured EXPLAIN statements after each
+                        benchmark query (requires an 'explain' key in the DBMS
+                        connection's JDBC config)
+  -xse, --xstore-explain
+                        run configured EXPLAIN statements after the first run
+                        of each benchmark query and store the result in the
+                        protocol (requires an 'explain' key in the DBMS
+                        connection's JDBC config)
 ```
 
 ## Monitoring
@@ -1032,6 +1161,9 @@ No warnings
 
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
+`-rsr` removes the volume only before the first repetition (`-nc`); the second repetition finds it loaded, skips loading and copies the loading times (`loading_inherited` in the connections).
+Use `-rsrp` instead to remove the volume before every repetition, so each repetition loads into a fresh volume and measures its own loading.
+See [Concepts](Concepts.html) for details.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 
 

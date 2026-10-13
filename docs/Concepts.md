@@ -131,6 +131,12 @@ For distributed DBMS (e.g., Citus, CockroachDB, YugabyteDB), additional **worker
 
 Data is stored in a dedicated PVC whose name encodes the DBMS, benchmark, and scale factor (e.g., `bexhoma-storage-postgresql-tpch-10`).
 Volumes are **reused** across experiments: once data is loaded it is not re-imported unless explicitly requested, saving time for large scale factors.
+The same holds for the repetitions of one experiment (`-nc`): repetition 2 and later find the volume of repetition 1, skip loading and copy its loading times.
+
+* `-rsr` deletes an existing volume before the first repetition, so the experiment loads once into a fresh volume.
+* `-rsrp` deletes it before every repetition, so each repetition loads into a fresh volume and measures its own loading, as with ephemeral storage. This costs one load per repetition.
+
+A repetition that skipped loading carries `loading_inherited = True` in its connection and in the loading table of the summary; its loading times are copies, not measurements.
 
 ### Loaders
 
