@@ -389,6 +389,164 @@ Recording and limits:
    `dev/plan-storage-class-sweep.md`). Prefer that while the question fits
    into one experiment.
 
+   A second concrete case (2026-10-13): HammerDB at 16 vs. 32 virtual users,
+   each level on a fresh volume. Today this is possible only as two
+   experiments (`-nbt 16` and `-nbt 32`, each with `-rsrp`), merged by
+   `collectors.tpcc(path, [code_16, code_32])` for the operator. The agent
+   cannot do it:
+   - the catalog has no `hammerdb` workload;
+   - the two codes are siblings, and their numbers are never compared.
+
+   In one experiment, `-nbt 16,32` gives two rounds on the same volume. The
+   second round then runs on data the first one changed. `-rsrp`
+   (`dev/plan-storage-remove-per-repetition.md`) gives a fresh volume per
+   repetition, not per round. The preferred alternative here is again to
+   keep the factor inside one experiment:
+   - a `hammerdb` workload in the catalog, with virtual users as rounds;
+   - a fresh volume (a reload) before every round.
+
+## Pattern: staged optimization (2026-10-13)
+
+A study varies one factor, picks its optimal level, and then varies a second
+factor with the first held at that level. Example: a fio sweep, first the
+queue depth at a fixed block size, then the block size at the chosen queue
+depth.
+
+- **It fits the chain model.** Experiment 2 is a follow-up of experiment 1.
+  It does not compare its numbers with experiment 1; it uses one conclusion
+  of experiment 1, the chosen level, as a fixed setting. This is not open
+  decision 2.
+- **Prefer one experiment when affordable.** `hardware.py` crosses its fio
+  lists (`-xfid 1,4,16,64 -xfbs 4k,16k,64k,1M` runs all 16 combinations in
+  one experiment), which shows interactions and keeps every comparison inside
+  one code. Staging pays off when the full grid is too large.
+
+Methodological rules for the design and follow-up prompts:
+- **Interaction.** The optimum of the first factor may depend on the second.
+  Experiment 2 varies the first factor again around its chosen level (e.g.
+  `-xfid 8,16,32`), or a confirmation run follows.
+- **Criterion before the run.** "Optimal" is fixed in the hypothesis: maximum
+  throughput, a latency bound (e.g. p99 < 1 ms), or the knee of the curve.
+- **Noise.** Repetitions, and a rule for when two levels count as equal.
+
+What the agent needs:
+1. **A `hardware` workload in the catalog** (only `tpch` and `ycsb` exist).
+2. **A structured chosen level.** Today the follow-up author sees the parent's
+   level only as prose in the verdict conclusion. Add to `agent_summary.yml`
+   (with M2, version 1.1.0):
+
+   ```yaml
+   selected:                       # absent when the experiment selects nothing
+     fio_iodepth: 16
+     criterion: "max IOPS with p99 < 1 ms"
+   ```
+
+   It is written from `record_interpretation`, and must be one of the levels
+   in the `design` block.
+3. **Validation of the follow-up.** A follow-up whose parent has `selected`
+   either holds that factor at the selected level, or declares it a factor
+   again (the interaction check above). Anything else is refused.
+4. **The answer names its sources.** "Queue depth 16 (<code 1>), block size
+   64k given queue depth 16 (<code 2>)": conclusions are chained, numbers are
+   not compared.
+
+## Pattern: reference measurement (2026-10-13)
+
+A study measures disk speed (fio) and network speed (sockperf), then a DBMS,
+and relates the DBMS result to the hardware: "the DBMS reaches X % of the
+volume's write IOPS", "commit latency is about N network round trips".
+
+- **Not a chain and not siblings.** Numbers of *different* metrics are
+  related across experiments. As three separate experiments this is not
+  allowed (numbers are never compared across experiments), and it does not
+  fit open decision 2 either, which compares one metric across experiments
+  that differ in one setting.
+
+### What works today: `environment.yml`
+
+- `bexhoma environment create -xhw` runs the hardware baseline
+  (`bexhoma/hardware_baseline.py`):
+  - sysbench and fio on each node's local disk;
+  - fio on a throwaway PVC of each named storage class;
+  - optionally sockperf between nodes.
+
+  The results go into `hardware_baseline` per node and per storage class, and
+  `network_matrix` (`bexhoma/environment.py::apply_hardware_baseline`).
+- The design prompt already points to these speeds
+  (`prompts.py::_ENVIRONMENT_AVAILABLE`).
+- `tools.py::_stage_provenance` copies `environment.yml` into the result
+  folder at submission, so interpretation can read it inside the current
+  result folder.
+- The DBMS experiment measures its own use of disk and network (`-m`/`-mc`,
+  Ceph pool metrics).
+
+So "capacity X, used Y" fits into one result folder, with the hardware
+speeds as facts about the cluster, not as an experiment.
+
+Limits:
+- **Different conditions:** the baseline is short (default size 256M) with
+  fixed fio settings, not the DBMS's I/O pattern (e.g. WAL: 8k writes with
+  fsync).
+- **Different time:** measured when `environment.yml` was created, not during
+  the run. The cluster is shared and the Ceph pool load changes.
+- **Contract gap:** `contract_result.yml` describes the archived
+  `environment.yml` only as "cluster descriptor used for validation". See
+  the next subsection.
+
+### Decision: interpretation may read `environment.yml`
+
+Good idea, with rules. The archived `environment.yml` is inside the result
+folder, so the interpretation gate already allows it; what is missing is a
+contract rule for what it may support.
+
+Why: a verdict that explains a result needs the hardware behind it (CPU
+model and cores, RAM, kernel, storage backend and replication, network
+latency). Without it, the model guesses or leaves the explanation out.
+
+Rules, in `contract_result.yml` (`provenance.agent_inputs` and a new
+`interpretation_context` entry):
+1. **Snapshot from design time.** `environment.yml` describes the cluster
+   when the experiment was designed, not when it ran.
+2. **Run-time facts win.** For the nodes the run used, `connections.config`
+   `hostsystem` (CPU, RAM, GPU, node, host system, disk) and the
+   `*.describe.log` files are measured at run time. Where they disagree with
+   `environment.yml`, the run-time value counts, and the difference is worth
+   reporting.
+3. **What it may support:**
+   - static facts (hardware, kernel, runtime, storage class provisioner and
+     Ceph pool) as context for an explanation;
+   - `hardware_baseline` and `network_matrix` as reference values, always
+     with their date, size and settings;
+   - not occupancy (`free`, `requested`, `limits_pct`): stale by run time.
+4. **Explanation, not evidence.** A claim built on environment facts ("CPU
+   bound: 32 streams on 32 cores") is labelled an explanation. The verdict on
+   the hypothesis rests on the result's own measurements.
+5. **Only the nodes the run used.** The interpretation reads the entries of
+   the nodes named in the describe logs (SUT, loaders, benchmarkers), not the
+   whole file. This keeps the read budget small and matches the publish
+   bundle, which keeps only used nodes (`dev/plan-publish-bundle.md`).
+
+To do:
+- the contract entries above, and `docs/AgentResultContract.md`;
+- one sentence in the interpretation prompt: where the archived
+  `environment.yml` is and what it may support;
+- `hardware_baseline_status` (complete, missing) is passed on: a missing
+  entry is reported as not measured, never estimated;
+- a test that the interpretation gate accepts the archived `environment.yml`
+  as an evidence path.
+
+### Matched measurements
+
+When fio must match the DBMS's I/O pattern, the baseline is not enough.
+Two routes:
+- **Inside one experiment (preferred):** a hardware round on the same node
+  and volume as the DBMS, in the same code. Bexhoma has mixed experiments
+  (several benchmarks in one code); whether hardware + DBMS on the same PVC
+  works is not checked yet.
+- **Reference experiments across codes:** needs its own comparability check
+  (same node, same storage class, close time window, declared fio settings).
+  This is a different check from open decision 2, and the large route.
+
 ## Implementation sketch
 
 Each milestone ships with its tests and docs and leaves the pipeline working.
