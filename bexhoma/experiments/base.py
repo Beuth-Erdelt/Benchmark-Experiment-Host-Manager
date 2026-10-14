@@ -93,6 +93,9 @@ SECONDS_PER_MINUTE = 60
 #: itself, once started, has no limit.
 BENCHMARK_START_TIMEOUT_MINUTES = 15
 
+#: Container waiting reasons that mean a loading pod cannot pull its image.
+IMAGE_PULL_WAITING_REASONS = frozenset({'ErrImagePull', 'ImagePullBackOff'})
+
 def parse_set_arg(s: str) -> Tuple[dict, str]:
     """
     Parse a single ``--set`` argument of the form ``<selector>=<value>``.
@@ -252,6 +255,7 @@ class ExperimentBase():
         self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary
         self._runtime_test_results: list[tuple[bool, str]] = []          # failures detected before show_summary rebuilds its test list
         self._benchmark_rounds_starting: dict[str, tuple[str, datetime]] = {}  # configuration → (round counter key, submission time) until all round pods started
+        self._image_pull_waits_seen: set[str] = set()                    # loading pods already reported as waiting for their image
         self.set_eval_parameters(code = self.code)
     def process(self) -> None:
         """
@@ -1663,6 +1667,34 @@ class ExperimentBase():
         self.remove_experiment()
         return True
 
+    def _note_image_pull_waits(self, config: "SutConfiguration") -> None:
+        """Record a failed test when a loading pod of an active load waits for its image.
+
+        The load is not aborted (the pull may still succeed), but the wait
+        counts into this repetition's loading times, so they are flagged.
+        Each pod is reported once.
+
+        :param config: Configuration whose loading pods are checked.
+        """
+        if not config.loading_started or config.loading_finished:
+            return
+        pods = self.cluster.get_job_pods(
+            app=config.appname, component='loading', experiment=config.code,
+            configuration=config.configuration) or []
+        for pod in pods:
+            if pod in self._image_pull_waits_seen:
+                continue
+            reasons = [reason for reason in self.cluster.get_pod_waiting_reasons(pod)
+                       if reason in IMAGE_PULL_WAITING_REASONS]
+            if not reasons:
+                continue
+            self._image_pull_waits_seen.add(pod)
+            reason = (f"Loading pod {pod} of {config.configuration} waits for its image "
+                      f"({', '.join(sorted(set(reasons)))}); loading times of repetition "
+                      f"{config.num_experiment_to_apply_done + 1} include that wait")
+            print(f"{config.configuration:30s}: {reason}")
+            self._runtime_test_results.append((False, reason))
+
     def _benchmark_start_abort_reason(
         self,
         config: "SutConfiguration",
@@ -1731,6 +1763,26 @@ class ExperimentBase():
             self.cluster.delete_job_pods(jobname=pod)
         del self._benchmark_rounds_starting[config.configuration]
         return True
+
+    @staticmethod
+    def _leaves_sut_running(config, stop_after_starting: bool, stop_after_benchmarking: bool) -> bool:
+        """Whether this repetition of a configuration ends with its SUT left running.
+
+        Only the last repetition may (``-m load``, ``--skip-shutdown``); earlier
+        ones stop and restart the SUT like any run, so ``-nc`` is honoured.
+        ``-m start`` stops before loading and never repeats.
+
+        :param config: The configuration whose repetition has run all its benchmarks.
+        :param stop_after_starting: As in :meth:`work_benchmark_list`.
+        :param stop_after_benchmarking: As in :meth:`work_benchmark_list`.
+        :return: True to keep the SUT, False to stop it (and start the next repetition, if any).
+        :rtype: bool
+        """
+        if not stop_after_benchmarking:
+            return False
+        if stop_after_starting:
+            return True
+        return config.num_experiment_to_apply_done + 1 >= config.num_experiment_to_apply
 
     def work_benchmark_list(self, intervals: int = 30, stop_after_starting: bool = False, stop_after_loading: bool = False, stop_after_benchmarking: bool = False) -> None:
         """
@@ -1824,6 +1876,7 @@ class ExperimentBase():
                 config.loader.check()
                 if self._abort_loading_if_needed(config, datetime.utcnow()):
                     return
+                self._note_image_pull_waits(config)
                 # start loading
                 if not config.loading_started:
                     # check if monitoring has started
@@ -2106,7 +2159,7 @@ class ExperimentBase():
                         _benchmark_just_submitted = True
                     else:
                         # no list element left
-                        if not stop_after_benchmarking:
+                        if not self._leaves_sut_running(config, stop_after_starting, stop_after_benchmarking):
                             print("{:30s}: can be stopped".format(config.configuration))
                             app = self.cluster.appname
                             pod_restarts: dict[str, dict] = {}
@@ -2305,7 +2358,7 @@ class ExperimentBase():
                     # repetition was just processed, _still_has_benchmarks is False
                     # (client counter not yet reset) but another repetition is pending.
                     # Keep the loop running so the else block can fire next iteration.
-                    if not stop_after_benchmarking and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                    if not stop_after_starting and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
                         self.cluster.logger.debug("{} more repetitions pending: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
                         do = True
                     if stop_after_starting:

@@ -47,6 +47,8 @@ def load_data_asynch(
     :param service_name: Service name injected into ``loadData`` as ``{service_name}``.
     :param time_offset: Previously elapsed seconds added to the total.
     :param time_start_int: Unix timestamp of when loading started (0 = compute now).
+        Only written as ``time_loading_start``; ``time_<script_type>`` and the
+        part of ``time_loading`` added here are timed from this phase's own start.
     :param script_type: Label key written to pod/PVC (``'schema'``, ``'index'``, ``'tenants'``).
     :param namespace: Kubernetes namespace injected into ``loadData``.
     :param num_tenants: Total number of tenants; 0 means single-tenant mode.
@@ -89,15 +91,19 @@ def load_data_asynch(
             return stdout.decode('utf-8')
 
     time_scriptgroup_start = default_timer()
+    # This phase is timed from its own start; time_loading_start is when the
+    # whole load started (earlier phases pass it in), kept as a label only.
+    # time_offset already holds the earlier phases' durations.
+    time_now = str(datetime.now())
+    time_phase_start = int(datetime.timestamp(
+        datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
     if time_start_int == 0:
-        now = datetime.utcnow()
-        time_now = str(datetime.now())
-        time_loading_start = int(datetime.timestamp(
-            datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
+        time_loading_start = time_phase_start
     else:
         time_loading_start = int(time_start_int)
     logger.debug("#### time_scriptgroup_start: " + str(time_scriptgroup_start))
     logger.debug("#### time_loading_start: " + str(time_loading_start))
+    logger.debug("#### time_phase_start: " + str(time_phase_start))
     logger.debug("#### time_loading before scripts: " + str(time_offset))
     # mark pod as loading started
     labels = dict()
@@ -106,6 +112,8 @@ def load_data_asynch(
     if (num_tenants > 0 and id_tenant == 0) or num_tenants == 0:
         logger.debug(f"#### First tenant {id_tenant} logs starting time")
         labels['time_loading_start'] = time_loading_start
+        # no time_ prefix: pod labels time_* are read back as script times
+        labels['loading_phase_start'] = time_phase_start
         labels['num_tenants_ready'] = 0
     fullcommand = 'label pods ' + pod_sut + ' --overwrite '
     for key, value in labels.items():
@@ -186,6 +194,8 @@ def load_data_asynch(
             logger.debug(f"#### Found labels {id_tenant}: {labels_pod}")
             if 'time_loading_start' in labels_pod:
                 time_loading_start = int(labels_pod['time_loading_start'])
+            if 'loading_phase_start' in labels_pod:
+                time_phase_start = int(labels_pod['loading_phase_start'])
             if 'num_tenants_ready' in labels_pod:
                 num_tenants_ready = int(labels_pod['num_tenants_ready'])
             logger.debug(
@@ -198,14 +208,14 @@ def load_data_asynch(
     time_now = str(datetime.now())
     time_loading_end = int(datetime.timestamp(
         datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
-    time_loading = time_loading_end - time_loading_start + time_offset
+    time_phase = time_loading_end - time_phase_start
+    time_loading = time_phase + time_offset
     logger.debug("#### time_scriptgroup_end: " + str(time_scriptgroup_end))
     logger.debug("#### time_loading_end: " + str(time_loading_end))
     logger.debug("#### time_loading after scripts: " + str(time_loading))
     labels = dict()
     labels['num_tenants_ready'] = id_tenant + 1
-    labels['time_{script_type}'.format(script_type=script_type)] = (
-        time_loading_end - time_loading_start)
+    labels['time_{script_type}'.format(script_type=script_type)] = time_phase
     labels['time_loading_end'] = time_loading_end
     if (num_tenants > 0 and id_tenant == num_tenants - 1) or num_tenants == 0:
         logger.debug(f"#### Last tenant {id_tenant} marks loading as finished")

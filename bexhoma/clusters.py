@@ -1952,6 +1952,19 @@ class Kubernetes():
             return {}
         return {name: int(count) for name, count in zip(names, counts) if count.isdigit()}
 
+    def get_pod_waiting_reasons(self, pod):
+        """
+        Return why containers of a Pod are waiting (e.g. ``ImagePullBackOff``).
+
+        :param pod: Name of the Pod.
+        :return: Waiting reasons of init and regular containers; empty if none wait or the Pod is gone.
+        """
+        reasons = []
+        for statuses in ('initContainerStatuses', 'containerStatuses'):
+            output = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.' + statuses + '[*].state.waiting.reason}"')
+            reasons.extend(output.split() if output else [])
+        return reasons
+
     def get_pod_containers(self, pod):
         """
         Return the names of all containers and init-containers in a Pod.
