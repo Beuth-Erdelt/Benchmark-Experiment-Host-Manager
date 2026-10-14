@@ -2199,6 +2199,11 @@ class ExperimentBase():
                     else:
                         # no list element left
                         if not self._leaves_sut_running(config, stop_after_starting, stop_after_benchmarking):
+                            if getattr(getattr(self, 'args', None), 'mode', None) == 'load':
+                                # load-only: no benchmarker job ever runs, so register the connection,
+                                # create /results/{code}, upload configs and fetch loading metrics here
+                                connection = (config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-1').lower()
+                                config.runner.run_pod(connection=connection, configuration=config.configuration, client='1', parallelism=1, only_prepare=True)
                             print("{:30s}: can be stopped".format(config.configuration))
                             app = self.cluster.appname
                             pod_restarts: dict[str, dict] = {}
