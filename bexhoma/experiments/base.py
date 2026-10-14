@@ -2109,7 +2109,7 @@ class ExperimentBase():
                         if not stop_after_benchmarking:
                             print("{:30s}: can be stopped".format(config.configuration))
                             app = self.cluster.appname
-                            sut_restarts: dict[str, str] = {}
+                            pod_restarts: dict[str, str] = {}
                             deployments = list(config.deployment_infos['deployment'].keys())
                             for deployment in deployments:
                                 pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
@@ -2121,7 +2121,7 @@ class ExperimentBase():
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
-                                    sut_restarts[pod] = restarts
+                                    pod_restarts[pod] = restarts
                                     summary = sut_restarts.format_restart_summary(restarts, self.cluster.get_pod_restart_counts(pod))
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
                             statefulsets = list(config.deployment_infos['statefulset'].keys())
@@ -2135,14 +2135,14 @@ class ExperimentBase():
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
-                                    sut_restarts[pod] = restarts
+                                    pod_restarts[pod] = restarts
                                     summary = sut_restarts.format_restart_summary(restarts, self.cluster.get_pod_restart_counts(pod))
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
                             experiment_run = str(config.num_experiment_to_apply_done + 1)
                             restarts_filename = self.result_filename_local(
                                 f"bexhoma-sut-{config.configuration}-{self.code}-{experiment_run}-restarts.json".lower())
                             with open(restarts_filename, 'w') as _f:
-                                json.dump(sut_restarts, _f, indent=2)
+                                json.dump(pod_restarts, _f, indent=2)
                             config.lifecycle.stop_sut()
                             config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                             if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
