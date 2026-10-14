@@ -81,6 +81,13 @@ than inheriting whatever an earlier command left behind. The PVC name is fixed a
 the whole page (not scoped by experiment code), so fio commands must never be run concurrently
 against the same SUT.
 
+To compare storage backends in one experiment, give `-rst` a comma-separated list, e.g.
+`-rst nvme,cephcsi,` (the empty last entry is the SUT's ephemeral storage). Each class gets its own
+SUT (`Hardware-1`, `Hardware-2`, ...) with its own volume, and every fio round runs against each of
+them. As in the other benchmarks, `-rc/-lc/-rr/-lr` may carry lists of the same length, paired by
+position with `-rst`. Add `-ms 1` so the SUTs run one after another and do not compete for the
+network or the storage cluster.
+
 ### Examples
 
 #### 1. Queue-depth sweep
