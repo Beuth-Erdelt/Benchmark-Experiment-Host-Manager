@@ -266,6 +266,7 @@ class SutConfiguration:
         self.loading_after_time = None
         self.loading_finished = False
         self.loading_inherited = False
+        self.storage_monitoring = None
         self.client = 1
         self.is_sut_ready = False
         self.are_worker_ready = False
