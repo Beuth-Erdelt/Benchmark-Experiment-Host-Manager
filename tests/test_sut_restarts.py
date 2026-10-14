@@ -118,6 +118,13 @@ class RestartCountsTest(unittest.TestCase):
         self.assertEqual(sut_restarts.clean_restart_counts(self._KLOG), "")
         self.assertEqual(sut_restarts.clean_restart_counts(None), "")
 
+    def test_summary_breaks_down_only_on_restarts(self) -> None:
+        summary = sut_restarts.format_restart_summary
+        self.assertEqual(summary("0 0", {"dbms": 0, "exporter": 0}), "0")
+        self.assertEqual(summary("2 0", {"dbms": 2, "exporter": 0}), "2 (dbms=2, exporter=0)")
+        self.assertEqual(summary("1 2", {}), "3")
+        self.assertEqual(summary("", {}), "unknown")
+
     def test_read_tolerates_polluted_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             result_dir = Path(tmp_dir)

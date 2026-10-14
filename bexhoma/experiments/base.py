@@ -2122,7 +2122,8 @@ class ExperimentBase():
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
                                     sut_restarts[pod] = restarts
-                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                                    summary = sut_restarts.format_restart_summary(restarts, self.cluster.get_pod_restart_counts(pod))
+                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
                             statefulsets = list(config.deployment_infos['statefulset'].keys())
                             for statefulset in statefulsets:
                                 pods = config.get_worker_pods(component=statefulset)
@@ -2135,7 +2136,8 @@ class ExperimentBase():
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
                                     sut_restarts[pod] = restarts
-                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                                    summary = sut_restarts.format_restart_summary(restarts, self.cluster.get_pod_restart_counts(pod))
+                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
                             experiment_run = str(config.num_experiment_to_apply_done + 1)
                             restarts_filename = self.result_filename_local(
                                 f"bexhoma-sut-{config.configuration}-{self.code}-{experiment_run}-restarts.json".lower())

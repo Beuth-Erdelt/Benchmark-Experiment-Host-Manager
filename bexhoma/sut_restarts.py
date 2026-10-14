@@ -68,6 +68,31 @@ def clean_restart_counts(output: str | None) -> str:
     return counts
 
 
+def format_restart_summary(counts: str, per_container: dict[str, int]) -> str:
+    """
+    Summarize a pod's restarts for the log line printed after benchmarking.
+
+    The total alone in the normal case; with a per-container breakdown when
+    something restarted, so the log names the container that crashed.
+
+    :param counts: Space-separated restart counts, see :func:`clean_restart_counts`.
+    :param per_container: Container name to restart count; empty if unknown.
+    :return: E.g. ``"0"`` or ``"2 (dbms=2, exporter=0)"``; ``"unknown"`` if
+        neither source has counts.
+    :rtype: str
+    """
+    if per_container:
+        total = sum(per_container.values())
+    elif counts:
+        total = sum(int(count) for count in counts.split())
+    else:
+        return "unknown"
+    if total == 0 or not per_container:
+        return str(total)
+    breakdown = ", ".join(f"{name}={count}" for name, count in per_container.items())
+    return f"{total} ({breakdown})"
+
+
 @dataclass
 class ContainerState:
     """Restart-relevant state of one container, parsed from a describe log."""

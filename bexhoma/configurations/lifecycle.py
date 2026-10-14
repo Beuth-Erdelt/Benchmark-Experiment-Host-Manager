@@ -1381,6 +1381,9 @@ scrape_configs:
             experiment = cfg.code
         cfg.logger.debug(
             f"stop_sut component={component} experiment={experiment} configuration={configuration}")
+        # Before the SUT goes away: loading diagnostics also capture the SUT pods.
+        if cfg.experiment.loading_active:
+            self.stop_loading()
         if len(cfg.storage) > 0 and 'keep' in cfg.storage and cfg.storage['keep']:
             pass
         else:
@@ -1414,8 +1417,6 @@ scrape_configs:
             cfg.experiment.cluster.delete_service(service)
         if cfg.experiment.monitoring_active:
             self.stop_monitoring()
-        if cfg.experiment.loading_active:
-            self.stop_loading()
         if component == 'sut':
             if 'deployment' in cfg.deployment_infos:
                 list_of_worker_components = list(cfg.deployment_infos['deployment'].keys())
