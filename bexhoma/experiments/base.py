@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
-from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage
+from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut
 from bexhoma import sut_restarts
 
 if TYPE_CHECKING:
@@ -192,6 +192,7 @@ class ExperimentBase():
         self.pod_dashboard = ""                                         # name of the dashboard pod
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
+        self.keep_sut = False                                           # keep each configuration's last SUT running at the end (-ks/-ss, resolved in prepare_testbed)
         self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
         self.max_loading_minutes: Optional[int] = None                   # abort a configuration that remains in loading after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
@@ -309,7 +310,7 @@ class ExperimentBase():
             start = default_timer()
             start_datetime = str(datetime.now())
             # run workflow
-            self.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True)
+            self.work_benchmark_list(stop_after_benchmarking=self.keep_sut, stop_after_loading=True)
             # total time of experiment
             end = default_timer()
             end_datetime = str(datetime.now())
@@ -332,7 +333,7 @@ class ExperimentBase():
             # (e.g. during cube building on resume) still leaves it in queries.config
             self.store_workflow_results()
             # run workflow
-            self.work_benchmark_list(stop_after_benchmarking=self.args.skip_shutdown)
+            self.work_benchmark_list(stop_after_benchmarking=self.keep_sut)
             # total time of experiment
             end = default_timer()
             end_datetime = str(datetime.now())
@@ -579,7 +580,9 @@ class ExperimentBase():
         request_node_benchmarking = args.request_node_benchmarking
         request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
-        skip_shutdown = args.skip_shutdown
+        # entry scripts with their own parser may not know -ks
+        self.keep_sut = resolve_keep_sut(
+            mode, getattr(args, 'keep_sut', 'auto'), getattr(args, 'skip_shutdown', False))
         test_result = args.test_result
         num_worker = int(args.num_worker)
         num_worker_replicas = int(args.num_worker_replicas)
@@ -750,8 +753,10 @@ class ExperimentBase():
             self.workload['info'] = self.workload['info']+"\nExperiment is aborted and removed from the cluster after {} minutes.".format(self.max_experiment_minutes)
         if self.max_loading_minutes is not None:
             self.workload['info'] = self.workload['info']+"\nEach configuration has a loading timeout of {} minutes; diagnostics are captured before teardown.".format(self.max_loading_minutes)
-        if skip_shutdown:
-            self.workload['info'] = self.workload['info']+"\nSUT pods are kept running after the experiment finishes."
+        if self.keep_sut:
+            self.workload['info'] = self.workload['info']+"\nThe SUT of each configuration's last repetition is kept running after the experiment finishes, unless another configuration waits for its slot."
+        elif mode == 'load':
+            self.workload['info'] = self.workload['info']+"\nSUT pods are stopped after loading."
         if test_result:
             self.workload['info'] = self.workload['info']+"\nResults are validated against basic correctness requirements."
         if len(self.dbms_args) > 0:
@@ -1764,13 +1769,38 @@ class ExperimentBase():
         del self._benchmark_rounds_starting[config.configuration]
         return True
 
-    @staticmethod
-    def _leaves_sut_running(config, stop_after_starting: bool, stop_after_benchmarking: bool) -> bool:
+    def _waits_for_slot(self, config) -> Optional[str]:
+        """Name a configuration of this experiment that waits for the SUT slot ``config`` holds.
+
+        It has not started its SUT yet, is not done, and a cap counts both
+        SUTs: ``-mse`` (this experiment), ``-ms`` (cluster-wide), or the
+        ``max_sut_dbms`` of its own DBMS when both run the same one. Keeping
+        ``config``'s SUT would then make it wait forever.
+
+        :param config: The configuration about to keep its SUT.
+        :return: The waiting configuration's name, or None.
+        :rtype: str or None
+        """
+        experiment_cap = self.max_sut is not None or self.cluster.max_sut is not None
+        for other in self.configurations:
+            if other is config or other.experiment_done:
+                continue
+            dbms_cap = other.max_sut_dbms is not None and other.docker == config.docker
+            if not (experiment_cap or dbms_cap):
+                continue
+            if not other.status.sut_exists():
+                return other.configuration
+        return None
+
+    def _leaves_sut_running(self, config, stop_after_starting: bool, stop_after_benchmarking: bool) -> bool:
         """Whether this repetition of a configuration ends with its SUT left running.
 
-        Only the last repetition may (``-m load``, ``--skip-shutdown``); earlier
-        ones stop and restart the SUT like any run, so ``-nc`` is honoured.
-        ``-m start`` stops before loading and never repeats.
+        Only the last repetition may (``-ks yes``, the default in modes load
+        and start); earlier ones stop and restart the SUT like any run, so
+        ``-nc`` is honoured. ``-m start`` stops before loading and never
+        repeats. A SUT another configuration waits for is stopped instead of
+        kept (see :meth:`_waits_for_slot`), so under a cap only the last
+        configurations to finish keep theirs.
 
         :param config: The configuration whose repetition has run all its benchmarks.
         :param stop_after_starting: As in :meth:`work_benchmark_list`.
@@ -1780,9 +1810,18 @@ class ExperimentBase():
         """
         if not stop_after_benchmarking:
             return False
-        if stop_after_starting:
-            return True
-        return config.num_experiment_to_apply_done + 1 >= config.num_experiment_to_apply
+        if not stop_after_starting and config.num_experiment_to_apply_done + 1 < config.num_experiment_to_apply:
+            return False
+        waiting = self._waits_for_slot(config)
+        if waiting is not None:
+            print("{:30s}: stopped instead of kept, {} waits for its slot".format(config.configuration, waiting))
+            self.workload.setdefault('sut_stopped', {})[config.configuration] = (
+                f"stopped instead of kept: {waiting} waited for its slot")
+            if stop_after_starting:
+                # -m start never repeats: the stop below must not start it again
+                config.num_experiment_to_apply_done = config.num_experiment_to_apply - 1
+            return False
+        return True
 
     def work_benchmark_list(self, intervals: int = 30, stop_after_starting: bool = False, stop_after_loading: bool = False, stop_after_benchmarking: bool = False) -> None:
         """
@@ -2782,11 +2821,14 @@ class ExperimentBase():
                 print("* Error: "+error)
                 for message in messages:
                     print("  * "+message)
-        if 'sut_service' in self.workload:
+        if 'sut_service' in self.workload or 'sut_stopped' in self.workload:
             print("\n### Services")
-            for c in sorted(self.workload['sut_service']):
+            for c in sorted(self.workload.get('sut_service', {})):
                 print(c)
                 print("* {}".format(self.generate_port_forward(self.workload['sut_service'][c])))
+            for c in sorted(self.workload.get('sut_stopped', {})):
+                print(c)
+                print("* {}".format(self.workload['sut_stopped'][c]))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())

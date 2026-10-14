@@ -202,6 +202,18 @@ can be told apart from measured ones.
 This moved the version 1.11.0 -> 1.12.0 (minor: a new optional field; 1.11.0
 is released in v0.11.3).
 
+## SUTs are removed at the end, `load` included (2026-10-15)
+
+`load` and `start` used to keep each configuration's last SUT running, and
+nothing could stop that. Under `max_sut_experiment: 1` (the default) a sweep
+or several systems in `load` then hung: the kept SUT held the one slot and
+the next configuration waited forever. Bexhoma now has `-ks/--keep-sut
+{auto,yes,no}` and never keeps a SUT another configuration waits for. The
+translators emit `-ks no` for every mode but `start`: an agent cannot use a
+SUT left running, and a kept SUT occupies the node of the next experiment.
+The `mode` field says so. No new field, so folded into 1.12.0 (not yet
+released).
+
 ## Only usable storage classes (2026-10-10)
 
 `environment.yml` lists every `StorageClass` the cluster has, but bexhoma

@@ -253,7 +253,11 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                 # ── Phase 5: All benchmarks done — stop or repeat ─────────
 
                 ELSE:  # no more benchmark entries remain
-                    IF NOT stop_after_benchmarking:
+                    # _leaves_sut_running(): keep only if stop_after_benchmarking
+                    # (-ks yes; default in load/start), this is the last repetition
+                    # (or mode start), and no other configuration waits for the
+                    # slot under -ms/-mse/max_sut_dbms (else stop and record why)
+                    IF NOT _leaves_sut_running(config):
                         print "can be stopped"
                         # Collect SUT pod logs and descriptions.
                         FOR each deployment pod:
@@ -278,7 +282,7 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                         ELSE:
                             config.experiment_done = True
 
-                    ELSE:  # stop_after_benchmarking=True: leave SUT up
+                    ELSE:  # keep the SUT of the last repetition
                         print "can be stopped, but we leave it running"
                         generate and print port-forward command
                         IF this was the first client and more repetitions remain:

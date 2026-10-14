@@ -1,4 +1,4 @@
-"""Tests for loading-phase timing, repetitions of SUT-keeping modes and image-pull waits."""
+"""Tests for loading-phase timing and image-pull waits (keeping SUTs: test_keep_sut)."""
 from __future__ import annotations
 
 from datetime import datetime
@@ -78,25 +78,6 @@ class LoadDataAsynchTimingTest(unittest.TestCase):
         start_labels = [c for c in commands if 'label pods' in c][0]
         self.assertIn(f'time_loading_start={load_start}', start_labels)
         self.assertIn(f'loading_phase_start={load_start}', start_labels)
-
-
-class LeavesSutRunningTest(unittest.TestCase):
-    """Modes that keep the SUT running still run every repetition."""
-
-    def test_only_the_last_repetition_keeps_the_sut(self) -> None:
-        config = SimpleNamespace(num_experiment_to_apply=3, num_experiment_to_apply_done=0)
-        decide = ExperimentBase._leaves_sut_running
-        # -m load / --skip-shutdown
-        self.assertFalse(decide(config, False, True))
-        config.num_experiment_to_apply_done = 1
-        self.assertFalse(decide(config, False, True))
-        config.num_experiment_to_apply_done = 2
-        self.assertTrue(decide(config, False, True))
-        # normal run: never kept
-        self.assertFalse(decide(config, False, False))
-        # -m start: kept at once
-        config.num_experiment_to_apply_done = 0
-        self.assertTrue(decide(config, True, True))
 
 
 class ImagePullWaitTest(unittest.TestCase):

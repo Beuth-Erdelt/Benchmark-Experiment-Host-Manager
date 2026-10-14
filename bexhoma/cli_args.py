@@ -20,7 +20,38 @@ __all__ = [
     "parse_metric_overrides", "format_metric_overrides",
     "split_storage_types", "format_storage_types",
     "storage_suffix", "set_cell_storage", "resource_cells",
+    "KEEP_SUT_CHOICES", "resolve_keep_sut",
 ]
+
+#: Values of ``-ks/--keep-sut``.
+KEEP_SUT_CHOICES = ('auto', 'yes', 'no')
+
+#: Modes whose SUTs ``--keep-sut auto`` keeps: they exist to leave a running SUT behind.
+_MODES_KEEPING_SUT = ('load', 'start')
+
+
+def resolve_keep_sut(mode: str, keep_sut: str = 'auto', skip_shutdown: bool = False) -> bool:
+    """Decide whether each configuration's last SUT is kept running at the end.
+
+    :param mode: The experiment mode (``run``, ``load``, ``start``, ...).
+    :param keep_sut: ``-ks/--keep-sut``: ``auto``, ``yes`` or ``no``.
+    :param skip_shutdown: ``-ss/--skip-shutdown``, an alias for ``--keep-sut yes``.
+    :return: True to keep the SUTs.
+    :rtype: bool
+    :raises ValueError: For ``-ss`` with ``--keep-sut no``, an unknown value,
+        or ``start`` with ``--keep-sut no`` (it would start SUTs only to stop them).
+    """
+    if keep_sut not in KEEP_SUT_CHOICES:
+        raise ValueError(f"--keep-sut must be one of {', '.join(KEEP_SUT_CHOICES)}, not {keep_sut!r}")
+    if skip_shutdown:
+        if keep_sut == 'no':
+            raise ValueError("-ss/--skip-shutdown keeps the SUTs, --keep-sut no stops them: use one")
+        keep_sut = 'yes'
+    if keep_sut == 'auto':
+        return mode in _MODES_KEEPING_SUT
+    if keep_sut == 'no' and mode == 'start':
+        raise ValueError("mode start only starts the SUTs; --keep-sut no would stop them right away")
+    return keep_sut == 'yes'
 
 
 def resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list, storage_type_list=None):
@@ -224,7 +255,8 @@ def make_base_parser():
     p.add_argument('-aws', '--aws', help='pin components to AWS EKS node groups', action='store_true', default=False)
     p.add_argument('-db',  '--debug', help='enable debug logging', action='store_true')
     p.add_argument('-sl',  '--skip-loading', help='skip data loading and start benchmarking immediately', action='store_true', default=False)
-    p.add_argument('-ss',  '--skip-shutdown', help='keep SUT pods running after the experiment finishes', action='store_true', default=False)
+    p.add_argument('-ss',  '--skip-shutdown', help='keep SUT pods running after the experiment finishes; same as --keep-sut yes', action='store_true', default=False)
+    p.add_argument('-ks',  '--keep-sut', help="keep the SUT of each configuration's last repetition running at the end: auto (default) keeps it in modes load and start and stops it otherwise; yes keeps it, no stops it. A kept SUT that another configuration waits for (-ms/-mse) is stopped", choices=KEEP_SUT_CHOICES, default='auto')
     p.add_argument('-ar',  '--activate-reset', help='activate configured reset scripts (e.g. CHECKPOINT/VACUUM) when set on a benchmarker entry; off by default', action='store_true', default=False)
     p.add_argument('-cx',  '--context', help='kubectl context to use (default: current context)', default=None)
     p.add_argument('-e',   '--experiment', help='resume an existing experiment by its code', default=None)

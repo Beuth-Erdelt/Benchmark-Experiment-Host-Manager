@@ -143,6 +143,10 @@ experiment_schema:
       type: enum
       values: [run, profiling, start, load, empty, summary]
       default: run
+      semantics: "every mode but start removes each SUT when its configuration
+        is done, load included; the loaded data stays on a persistent volume
+        (resources.storage_class), where a later run finds it unless
+        remove_existing is set. start leaves its SUTs running."
     title:
       type: str
       required: true
