@@ -101,8 +101,9 @@ then
 		# data is not split into parts
 		destination_raw=/data/tpch/SF$SF
 	fi
+	# *tbl* also matches the split files (customer.tbl.2) of children > 1
 	shopt -s nullglob
-	existing_tbl_files=("$destination_raw"/*.tbl)
+	existing_tbl_files=("$destination_raw"/*tbl*)
 	shopt -u nullglob
 	if [ -d "$destination_raw" ] && [ ${#existing_tbl_files[@]} -gt 0 ]; then
 		### raw folder exists and contains generated .tbl files ###
@@ -197,9 +198,21 @@ if test $BEXHOMA_NUM_PODS -gt 1
 then
 	echo "./dbgen -s $SF -S $BEXHOMA_CHILD -C $BEXHOMA_NUM_PODS"
 	time ./dbgen -s $SF -S $BEXHOMA_CHILD -C $BEXHOMA_NUM_PODS
+	DBGEN_RC=$?
 else
 	echo "./dbgen -s $SF"
 	time ./dbgen -s $SF
+	DBGEN_RC=$?
+fi
+
+######################## Fail if generation failed ###################
+# Only reached when generating: existing data exits above
+shopt -s nullglob
+generated_tbl_files=("$destination_raw"/*tbl*)
+shopt -u nullglob
+if [ $DBGEN_RC -ne 0 ] || [ ${#generated_tbl_files[@]} -eq 0 ]; then
+	echo "FATAL: dbgen failed (exit code $DBGEN_RC, ${#generated_tbl_files[@]} files in $destination_raw)"
+	exit 1
 fi
 
 #time /tmp/dsdgen -dir /tmp/tpcds/ -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -verbose -RNGSEED $RNGSEED

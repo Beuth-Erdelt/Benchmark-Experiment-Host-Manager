@@ -63,6 +63,14 @@ cp /tmp/dists.dss ./dists.dss
 # Existing sets are overwritten with identical deterministic content — harmless.
 echo "./dbgen -s $SF -U $LAST_SET"
 time ./dbgen -s $SF -U $LAST_SET
+DBGEN_RC=$?
+
+######################## Fail if generation failed ########################
+# Only reached when generating: existing sets exit above
+if [ $DBGEN_RC -ne 0 ] || [ ! -f "$destination_raw/delete.$LAST_SET" ]; then
+    echo "FATAL: dbgen failed (exit code $DBGEN_RC, delete.$LAST_SET missing in $destination_raw)"
+    exit 1
+fi
 
 ######################## Remove last character per line ###################
 if test $TRANSFORM_RAW_DATA -gt 0
