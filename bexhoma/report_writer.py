@@ -482,11 +482,12 @@ def _count_sut_restarts(result_dir: Path) -> tuple[int, dict[str, str]]:
 
     :param result_dir: The experiment's result folder.
     :return: Tuple of the total restart count across all pods, and a dict
-             mapping pod name to its raw per-container restart-count string.
+             mapping pod name to its restart summary as the run log prints
+             it (see :func:`sut_restarts.format_restart_summary`).
     :rtype: tuple[int, dict[str, str]]
     """
-    per_pod_total, per_pod = sut_restarts.read_restart_counts(result_dir)
-    return sum(per_pod_total.values()), per_pod
+    per_pod_total, _ = sut_restarts.read_restart_counts(result_dir)
+    return sum(per_pod_total.values()), sut_restarts.read_restart_summaries(result_dir)
 
 
 def _get_metric_definitions(connections_sorted: list[dict]) -> dict[str, dict]:
@@ -942,7 +943,8 @@ def _build_connections_md_lines(
     :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
     :param result_dir: The experiment's result folder.
     :param report_dir: The ``report/`` directory.
-    :param restarts_per_pod: Pod name to raw restart-count string, from
+    :param restarts_per_pod: Pod name to restart summary (``0``, or the total
+        with a per-container breakdown), from
         :func:`_count_sut_restarts`.
     :param restart_details: Output of
         :func:`sut_restarts.collect_restart_details`; one nested line per

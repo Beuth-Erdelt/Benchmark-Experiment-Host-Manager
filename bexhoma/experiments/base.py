@@ -2109,7 +2109,7 @@ class ExperimentBase():
                         if not stop_after_benchmarking:
                             print("{:30s}: can be stopped".format(config.configuration))
                             app = self.cluster.appname
-                            pod_restarts: dict[str, str] = {}
+                            pod_restarts: dict[str, dict] = {}
                             deployments = list(config.deployment_infos['deployment'].keys())
                             for deployment in deployments:
                                 pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
@@ -2121,8 +2121,9 @@ class ExperimentBase():
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
-                                    pod_restarts[pod] = restarts
-                                    summary = sut_restarts.format_restart_summary(restarts, self.cluster.get_pod_restart_counts(pod))
+                                    per_container = self.cluster.get_pod_restart_counts(pod)
+                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(restarts, per_container)
+                                    summary = sut_restarts.format_restart_summary(restarts, per_container)
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
                             statefulsets = list(config.deployment_infos['statefulset'].keys())
                             for statefulset in statefulsets:
@@ -2135,8 +2136,9 @@ class ExperimentBase():
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
-                                    pod_restarts[pod] = restarts
-                                    summary = sut_restarts.format_restart_summary(restarts, self.cluster.get_pod_restart_counts(pod))
+                                    per_container = self.cluster.get_pod_restart_counts(pod)
+                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(restarts, per_container)
+                                    summary = sut_restarts.format_restart_summary(restarts, per_container)
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
                             experiment_run = str(config.num_experiment_to_apply_done + 1)
                             restarts_filename = self.result_filename_local(
@@ -2827,10 +2829,11 @@ class ExperimentBase():
             print("\n### SUT Container Restarts")
             # Aggregated by max per pod, not summed across files -- see
             # sut_restarts.read_restart_counts().
-            per_pod_total, per_pod_counts = sut_restarts.read_restart_counts(result_dir)
+            per_pod_total, _ = sut_restarts.read_restart_counts(result_dir)
+            per_pod_summary = sut_restarts.read_restart_summaries(result_dir)
             restart_details = sut_restarts.collect_restart_details(result_dir)
-            for pod, counts in per_pod_counts.items():
-                print(f"* {pod}: {counts}")
+            for pod, summary in per_pod_summary.items():
+                print(f"* {pod}: {summary}")
                 for detail in restart_details:
                     if detail.pod == pod:
                         print(f"  * {sut_restarts.format_detail(detail)}")

@@ -93,7 +93,7 @@ provenance:
     "query_{component}_metric_{key}.csv": "wide format: one column per connection, one row per Prometheus scrape; {component} is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency (e.g. loading, benchmarking, loader, benchmarker, datagenerator) plus any registered application component"
     "bexhoma-metrics-{connection}-{component_type}.log": "output of each Prometheus fetch bexhoma ran in the dashboard pod; a `Metrics missing for <title> (<query>)` line marks a metric that returned no data"
   restarts:
-    "bexhoma-sut-{configuration}-{code}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one archived snapshot per experiment_run; restartCount is cumulative across runs (same pod, not recreated), so aggregate by max per pod, not by summing every file"
+    "bexhoma-sut-{configuration}-{code}-{experiment_run}-restarts.json": "per-pod SUT container restart counts ({pod: {counts: '<space-separated counts>', containers: {<container>: <count>}}}; older files map pod to the counts string only), one archived snapshot per experiment_run; restartCount is cumulative across runs (same pod, not recreated), so aggregate by max per pod, not by summing every file"
   sut:
     "bexhoma-sut-{configuration}-{code}-{experiment_run}.yml": "SUT Deployment manifest, one archived copy per experiment_run — the live object itself is restarted in place, not recreated, so copies can be identical"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.{container}.log": "SUT container stdout, one capture per experiment_run"

@@ -155,6 +155,49 @@ def _previous_log_name(result_dir: Path, describe_file: str, container: str) -> 
     return name if (result_dir / name).is_file() else ""
 
 
+def restart_snapshot_entry(counts: str, per_container: dict[str, int]) -> dict:
+    """
+    Build one pod's entry of a ``bexhoma-sut-*-restarts.json`` snapshot.
+
+    :param counts: Space-separated restart counts, see :func:`clean_restart_counts`.
+    :param per_container: Container name to restart count; empty if unknown.
+    :return: ``{"counts": counts, "containers": per_container}``.
+    :rtype: dict
+    """
+    return {"counts": counts, "containers": dict(per_container)}
+
+
+def _read_snapshots(result_dir: Path) -> dict[str, tuple[int, str, dict[str, int]]]:
+    """
+    Aggregate every ``bexhoma-sut-*-restarts.json`` snapshot by max per pod.
+
+    A pod's entry is either the raw count string (snapshots written before
+    per-container counts were stored) or :func:`restart_snapshot_entry`.
+
+    :param result_dir: The experiment's result folder.
+    :return: Pod name to (total, raw count string, container name to count)
+             of the snapshot chosen; the container map is empty when unknown.
+    :rtype: dict[str, tuple[int, str, dict[str, int]]]
+    """
+    per_pod: dict[str, tuple[int, str, dict[str, int]]] = {}
+    for restarts_file in sorted(result_dir.glob("bexhoma-sut-*-restarts.json")):
+        with open(restarts_file) as handle:
+            pod_restarts: dict = json.load(handle)
+        for pod, entry in pod_restarts.items():
+            if isinstance(entry, dict):
+                counts = entry.get("counts") or ""
+                containers = {str(k): int(v) for k, v in (entry.get("containers") or {}).items()}
+            else:
+                counts, containers = entry, {}
+            # Snapshots written before clean_restart_counts() existed may
+            # still carry kubectl warning lines.
+            counts = clean_restart_counts(counts)
+            pod_total = sum(containers.values()) if containers else sum(int(x) for x in counts.split())
+            if pod not in per_pod or pod_total > per_pod[pod][0]:
+                per_pod[pod] = (pod_total, counts, containers)
+    return per_pod
+
+
 def read_restart_counts(result_dir: Path) -> tuple[dict[str, int], dict[str, str]]:
     """
     Aggregate every ``bexhoma-sut-*-restarts.json`` snapshot by max per pod.
@@ -164,20 +207,23 @@ def read_restart_counts(result_dir: Path) -> tuple[dict[str, int], dict[str, str
              per-container restart-count string of the snapshot chosen).
     :rtype: tuple[dict[str, int], dict[str, str]]
     """
-    per_pod_total: dict[str, int] = {}
-    per_pod_raw: dict[str, str] = {}
-    for restarts_file in sorted(result_dir.glob("bexhoma-sut-*-restarts.json")):
-        with open(restarts_file) as handle:
-            pod_restarts: dict[str, str] = json.load(handle)
-        for pod, counts in pod_restarts.items():
-            # Snapshots written before clean_restart_counts() existed may
-            # still carry kubectl warning lines.
-            counts = clean_restart_counts(counts)
-            pod_total = sum(int(x) for x in counts.split())
-            if pod not in per_pod_total or pod_total > per_pod_total[pod]:
-                per_pod_total[pod] = pod_total
-                per_pod_raw[pod] = counts
-    return per_pod_total, per_pod_raw
+    per_pod = _read_snapshots(result_dir)
+    return ({pod: total for pod, (total, _, _) in per_pod.items()},
+            {pod: counts for pod, (_, counts, _) in per_pod.items()})
+
+
+def read_restart_summaries(result_dir: Path) -> dict[str, str]:
+    """
+    Summarize each pod's restarts as the run log does, see
+    :func:`format_restart_summary`: ``"0"``, or the total with a
+    per-container breakdown when something restarted.
+
+    :param result_dir: The experiment's result folder.
+    :return: Pod name to summary string.
+    :rtype: dict[str, str]
+    """
+    return {pod: format_restart_summary(counts, containers)
+            for pod, (_, counts, containers) in _read_snapshots(result_dir).items()}
 
 
 def parse_describe_log(text: str) -> PodDescription:
