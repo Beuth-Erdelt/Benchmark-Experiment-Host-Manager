@@ -919,6 +919,9 @@ scrape_configs:
                         if 'volumeMounts' in container:
                             for j, vol in enumerate(container['volumeMounts']):
                                 if vol['name'] == 'bxw':
+                                    # where the worker keeps its data, with or without
+                                    # a pvc: HostProbe measures it there (datadisk)
+                                    cfg.deployment_infos['statefulset'][statefulset_type]['data_path'] = vol['mountPath']
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                                     elif not use_ramdisk:
@@ -1160,6 +1163,10 @@ scrape_configs:
                         if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
                             for j, vol in reversed(list(enumerate(container['volumeMounts']))):
                                 if vol['name'] == 'benchmark-storage-volume':
+                                    if not cfg.volume_per_tenant:
+                                        # where the SUT keeps its data, with or without a
+                                        # pvc: HostProbe measures it there (datadisk)
+                                        cfg.deployment_infos['deployment'][deployment_type]['data_path'] = vol['mountPath']
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
                                         continue
