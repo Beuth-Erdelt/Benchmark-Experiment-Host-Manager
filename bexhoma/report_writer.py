@@ -711,9 +711,10 @@ def _build_ceph_storage_section(
     monitoring_components: dict[str, str],
 ) -> Section | None:
     """
-    Build ``monitoring.md``'s Ceph Storage section: per component, one row per
-    configuration with its own volume, the other volumes in its pool, and the
-    pool as a whole. Descriptive only -- no check reads it.
+    Build ``monitoring.md``'s Ceph Storage section: per SUT component (loading
+    and benchmarking phase), one row per configuration with its own volume, the
+    other volumes in its pool, and the pool as a whole. Descriptive only -- no
+    check reads it.
 
     :param evaluator: The primary benchmark's evaluator.
     :param connections_sorted: Connection dicts as read by ``show_summary_header()``.
@@ -728,6 +729,9 @@ def _build_ceph_storage_section(
         return None
     children = []
     for component, component_title in monitoring_components.items():
+        if not component.endswith(('loading', 'benchmarking')):
+            # the Ceph metrics describe the SUT's volume; a client component would repeat the SUT's numbers
+            continue
         columns = []
         for key in keys:
             df = evaluator.get_monitoring_metric(metric=key, component=component)

@@ -117,6 +117,24 @@ class CollectMissingMetricsTest(unittest.TestCase):
             ("benchmarking", "CPU Memory"): "",
         })
 
+    def test_sparse_components_only_excuse_the_listed_components(self) -> None:
+        connections = [{"name": "pg", "monitoring": {"metrics": {
+            "memory": {"title": "CPU Memory", "sparse_components": ["loader", "benchmarker"]},
+        }}}]
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            (result_dir / "connections.config").write_text(repr(connections))
+            for component in ("loader", "benchmarker", "loading", "benchmarking"):
+                (result_dir / missing_metrics.fetch_log_name("pg-1", component)).write_text(_LINE)
+            missing = missing_metrics.collect_missing_metrics(result_dir)
+        expected = {entry.component: entry.expected for entry in missing}
+        self.assertEqual(expected, {
+            "loader": missing_metrics.EXPECTED_SPARSE,
+            "benchmarker": missing_metrics.EXPECTED_SPARSE,
+            "loading": "",
+            "benchmarking": "",
+        })
+
     def test_fetch_logs_have_their_own_files_md_group(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             result_dir = Path(tmp_dir)

@@ -20,7 +20,9 @@ is reported once. Some gaps are expected and carry the reason in
 generator then exits before the first scrape), and a metric that
 ``cluster.config`` marks ``sparse`` because its series only exists while the
 value is non-zero (e.g. backends waiting on locks, or CPU throttling of a
-container without a CPU limit), so no data means 0.
+container without a CPU limit), so no data means 0. ``sparse_components``
+marks a metric sparse only for the listed component types (e.g. the
+filesystem I/O of client containers that may never touch disk).
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -162,24 +164,35 @@ def parse_missing_metrics(text: str, source: str = "") -> list[MissingMetric]:
     return list(found)
 
 
-def _sparse_titles(result_dir: Path) -> set[str]:
-    """Titles of the metrics the run's ``connections.config`` marks ``sparse``.
+def _sparse_titles(result_dir: Path) -> tuple[set[str], set[tuple[str, str]]]:
+    """Metrics the run's ``connections.config`` marks sparse.
+
+    ``sparse`` marks a metric sparse for every component, ``sparse_components``
+    only for the listed component types (e.g. client containers whose
+    filesystem series only appears once they do disk I/O).
 
     :param result_dir: The experiment's result folder.
-    :return: Metric titles, empty when the file is missing or unreadable.
-    :rtype: set[str]
+    :return: Titles sparse everywhere, and ``(title, component)`` pairs sparse
+        only for that component; both empty when the file is missing or unreadable.
+    :rtype: tuple[set[str], set[tuple[str, str]]]
     """
     try:
         connections = ast.literal_eval((Path(result_dir) / "connections.config").read_text(encoding="utf-8"))
     except (OSError, SyntaxError, ValueError):
-        return set()
+        return set(), set()
     titles = set()
+    pairs = set()
     for connection in connections if isinstance(connections, list) else []:
         for key, metrics in connection.get("monitoring", {}).items():
             if key.startswith("metrics") and isinstance(metrics, dict):
-                titles.update(metric.get("title") for metric in metrics.values()
-                              if isinstance(metric, dict) and metric.get("sparse"))
-    return titles
+                for metric in metrics.values():
+                    if not isinstance(metric, dict):
+                        continue
+                    if metric.get("sparse"):
+                        titles.add(metric.get("title"))
+                    pairs.update((metric.get("title"), component)
+                                 for component in metric.get("sparse_components") or ())
+    return titles, pairs
 
 
 def collect_missing_metrics(
@@ -201,7 +214,7 @@ def collect_missing_metrics(
     """
     files = sorted({path for pattern in _LOG_PATTERNS for path in Path(result_dir).glob(pattern)})
     optional = set(optional_components)
-    sparse = _sparse_titles(result_dir)
+    sparse, sparse_components = _sparse_titles(result_dir)
     missing: dict[tuple[str, str, str], MissingMetric] = {}
     for path in files:
         try:
@@ -211,7 +224,7 @@ def collect_missing_metrics(
         for entry in parse_missing_metrics(text, path.name):
             if entry.component in optional:
                 entry = replace(entry, expected=EXPECTED_DATA_PREEXISTING)
-            elif entry.title in sparse:
+            elif entry.title in sparse or (entry.title, entry.component) in sparse_components:
                 entry = replace(entry, expected=EXPECTED_SPARSE)
             missing.setdefault((entry.title, entry.connection, entry.query, entry.component), entry)
     # A DBMSBenchmarker pod names its connection with the client appended
