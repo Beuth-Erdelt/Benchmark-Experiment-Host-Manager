@@ -692,10 +692,11 @@ workloads:
     params:
       workload:
         type: enum
-        values: [a, b, c, d, e, f]
+        values: [a, b, c, c2, d, e, f]
         required: true
         why: "YCSB access-pattern mix: a=read/update 50/50, b=read-mostly 95/5,
-          c=read-only, d=read-latest (insert + read newest), e=short scans,
+          c=read-only, c2=read-only with uniform request distribution (no hot
+          set that the cache absorbs), d=read-latest (insert + read newest), e=short scans,
           f=read-modify-write. Sets YCSB_WORKLOAD."
       scaling_factor:
         type: int
