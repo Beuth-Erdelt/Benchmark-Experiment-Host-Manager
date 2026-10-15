@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.11.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.12.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -143,6 +143,10 @@ experiment_schema:
       type: enum
       values: [run, profiling, start, load, empty, summary]
       default: run
+      semantics: "every mode but start removes each SUT when its configuration
+        is done, load included; the loaded data stays on a persistent volume
+        (resources.storage_class), where a later run finds it unless
+        remove_existing is set. start leaves its SUTs running."
     title:
       type: str
       required: true
@@ -383,6 +387,22 @@ experiment_schema:
                 skipped and its loading times are inherited, not measured"
               when: "false only to save loading time deliberately; refused when
                 storage_class is in discriminates"
+            remove_per_repetition:
+              type: bool
+              required: false
+              semantics: "delete the volume before every repetition, not only
+                before the first, so each repetition loads into a fresh volume.
+                Implies remove_existing. Default false; ignored without
+                storage_class"
+              why: "by default repetitions 2..n keep the volume of repetition 1:
+                loading is skipped and its loading times are copied, so loading
+                is measured once and later repetitions run on a volume that
+                earlier repetitions already wrote to"
+              when: "the hypothesis is about loading, or about how a fresh volume
+                behaves (layout, cache, compaction state), and needs one such
+                sample per repetition. Costs one load per repetition: runtime
+                grows by the loading time x (repetitions - 1). Refused together
+                with remove_existing: false"
         storage_class:
           type: "str or null or list[str or null]"
           required: false
@@ -672,10 +692,11 @@ workloads:
     params:
       workload:
         type: enum
-        values: [a, b, c, d, e, f]
+        values: [a, b, c, c2, d, e, f]
         required: true
         why: "YCSB access-pattern mix: a=read/update 50/50, b=read-mostly 95/5,
-          c=read-only, d=read-latest (insert + read newest), e=short scans,
+          c=read-only, c2=read-only with uniform request distribution (no hot
+          set that the cache absorbs), d=read-latest (insert + read newest), e=short scans,
           f=read-modify-write. Sets YCSB_WORKLOAD."
       scaling_factor:
         type: int

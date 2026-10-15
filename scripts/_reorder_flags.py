@@ -45,7 +45,7 @@ FLAG_ORDER = [
     # O: SUT resources
     '-lc', '-lr', '-rc', '-rr',
     '-rct', '-rg', '-rgt',
-    '-rsr', '-rss', '-rst',
+    '-rsr', '-rsrp', '-rss', '-rst',
     # P: Multi-tenancy
     '-mtb', '-mtn', '-mtv',
     # Q: Node pinning

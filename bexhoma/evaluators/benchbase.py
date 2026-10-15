@@ -153,6 +153,27 @@ class BenchbaseEvaluator(LogEvaluator):
             print(e)
             print(traceback.format_exc())
             return df_header
+    def drop_rows_without_results(self, df):
+        """
+        Removes rows of pods that left no benchbase result.
+
+        :meth:`log_to_df` returns only the header columns when a pod's log
+        holds no result JSON (e.g. the DBMS refused the connection). Those
+        rows cannot be typed by :meth:`benchmarking_set_datatypes`, so the
+        summary leaves them out and names them instead.
+
+        :param df: DataFrame of raw benchmarking results.
+        :type df: pandas.DataFrame
+        :return: DataFrame with only the rows that carry results.
+        :rtype: pandas.DataFrame
+        """
+        if 'scalefactor' in df.columns:
+            has_result = df['scalefactor'].notna()
+        else:
+            has_result = pd.Series(False, index=df.index)
+        for pod in df.loc[~has_result, 'pod'] if 'pod' in df.columns else []:
+            print("no benchbase results for pod {}, left out of the summary".format(pod))
+        return df[has_result]
     def benchmarking_set_datatypes(self, df):
         """
         Casts all benchmarking result columns to their appropriate data types.
@@ -448,11 +469,11 @@ class BenchbaseEvaluator(LogEvaluator):
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
-        df = self.get_df_benchmarking()
+        df = self.drop_rows_without_results(self.get_df_benchmarking())
         if df.empty:
             return pd.DataFrame()
         columns = ["phase", "job", "experiment_run","terminals","target","client","benchmark_run", "child", "tenant_id", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
-        df.fillna(0, inplace=True)
+        df = df.fillna(0)
         df_plot = self.benchmarking_set_datatypes(df)
         df_plot_filtered = pd.DataFrame()
         for col in columns:
@@ -475,10 +496,10 @@ class BenchbaseEvaluator(LogEvaluator):
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
-        df = self.get_df_benchmarking()
+        df = self.drop_rows_without_results(self.get_df_benchmarking())
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
-            df.fillna(0, inplace=True)
+            df = df.fillna(0)
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
@@ -501,10 +522,10 @@ class BenchbaseEvaluator(LogEvaluator):
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
-        df = self.get_df_benchmarking()
+        df = self.drop_rows_without_results(self.get_df_benchmarking())
         df_aggregated_reduced = pd.DataFrame()
         if not df.empty:
-            df.fillna(0, inplace=True)
+            df = df.fillna(0)
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'target', 'pod_count']).round(2)

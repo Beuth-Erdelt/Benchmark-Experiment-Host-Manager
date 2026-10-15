@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.10.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.11.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -93,7 +93,7 @@ provenance:
     "query_{component}_metric_{key}.csv": "wide format: one column per connection, one row per Prometheus scrape; {component} is a fixed vocabulary owned by the vendored dbmsbenchmarker dependency (e.g. loading, benchmarking, loader, benchmarker, datagenerator) plus any registered application component"
     "bexhoma-metrics-{connection}-{component_type}.log": "output of each Prometheus fetch bexhoma ran in the dashboard pod; a `Metrics missing for <title> (<query>)` line marks a metric that returned no data"
   restarts:
-    "bexhoma-sut-{configuration}-{code}-{experiment_run}-restarts.json": "per-pod SUT container restart counts, one archived snapshot per experiment_run; restartCount is cumulative across runs (same pod, not recreated), so aggregate by max per pod, not by summing every file"
+    "bexhoma-sut-{configuration}-{code}-{experiment_run}-restarts.json": "per-pod SUT container restart counts ({pod: {counts: '<space-separated counts>', containers: {<container>: <count>}}}; older files map pod to the counts string only), one archived snapshot per experiment_run; restartCount is cumulative across runs (same pod, not recreated), so aggregate by max per pod, not by summing every file"
   sut:
     "bexhoma-sut-{configuration}-{code}-{experiment_run}.yml": "SUT Deployment manifest, one archived copy per experiment_run — the live object itself is restarted in place, not recreated, so copies can be identical"
     "bexhoma-sut-{configuration}-{code}-{experiment_run}-*.{container}.log": "SUT container stdout, one capture per experiment_run"
@@ -153,10 +153,16 @@ validity:
     kind: absolute
     label: "Loading measured in this experiment"
     checks: "no configuration found its persistent volume already loaded by an earlier experiment (connections.config's storage_reused); absent from results written before storage_reused was recorded"
+    skipped_when: "a configuration reused a volume an earlier experiment had loaded; the label then reads 'Loading measured in this experiment (storage reused, loading times inherited: <configurations>)'. Reuse is deliberate (the volume was not removed), so it is not a failure, but the scope below still applies to the listed configurations"
     why: "bexhoma reuses a loaded volume of the same name: loading is skipped and its loading times are copied from the volume's labels, so they describe the experiment that filled it. An experiment.yml prevents it with resources.storage.remove_existing (default true with a storage_class)"
     reports:
       where: "report/connections.md, per configuration: storage_reused, and the volume as sut_storage_storageClassName / sut_storage_storageConfiguration"
     scopes: "loading times (time_load and its parts, Throughput [SF/h]) of the reused configurations; benchmarking metrics stay valid"
+    repetitions:
+      semantics: "not part of the check: connections.config's loading_inherited is true for each repetition that found its volume already loaded -- by an earlier experiment (then storage_reused is true too) or by an earlier repetition of this experiment; absent from results written before it was recorded"
+      why: "with a persistent volume, repetitions 2..n keep the volume of repetition 1 unless the experiment sets resources.storage.remove_per_repetition (-rsrp): loading is skipped and its loading times are copied, so they are no further measurement of loading. Ephemeral storage and remove_per_repetition load in every repetition"
+      where: "report/connections.md per connection, and the loading Per Run table (TPC-H, Benchbase, TPC-C) as column loading_inherited; YCSB lists only repetitions that loaded"
+      scopes: "loading statistics across repetitions (mean, spread) use only rows with loading_inherited false; benchmarking metrics stay valid"
   - id: key_metric_present
     kind: absolute
     checks: "benchmark-type headline column(s) contain no 0/NaN — see key_metrics_by_benchmark_type"

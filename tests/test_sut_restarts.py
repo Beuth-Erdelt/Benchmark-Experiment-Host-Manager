@@ -79,7 +79,7 @@ def _describe(pod: str = _POD, with_pvc: bool = False) -> str:
     return _DESCRIBE_TEMPLATE.format(pod=pod, extra_mount=extra_mount, extra_volume=extra_volume)
 
 
-def _write_result(result_dir: Path, restarts: str, describe_text: str | None) -> None:
+def _write_result(result_dir: Path, restarts: str | dict, describe_text: str | None) -> None:
     (result_dir / "bexhoma-sut-postgresql-1-1784910886-1-restarts.json").write_text(json.dumps({_POD: restarts}))
     if describe_text is not None:
         (result_dir / f"bexhoma-sut-postgresql-1-123-1-{_POD[-16:]}.describe.log").write_text(describe_text)
@@ -118,11 +118,31 @@ class RestartCountsTest(unittest.TestCase):
         self.assertEqual(sut_restarts.clean_restart_counts(self._KLOG), "")
         self.assertEqual(sut_restarts.clean_restart_counts(None), "")
 
+    def test_summary_breaks_down_only_on_restarts(self) -> None:
+        summary = sut_restarts.format_restart_summary
+        self.assertEqual(summary("0 0", {"dbms": 0, "exporter": 0}), "0")
+        self.assertEqual(summary("2 0", {"dbms": 2, "exporter": 0}), "2 (dbms=2, exporter=0)")
+        self.assertEqual(summary("1 2", {}), "3")
+        self.assertEqual(summary("", {}), "unknown")
+
     def test_read_tolerates_polluted_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             result_dir = Path(tmp_dir)
             _write_result(result_dir, self._KLOG + "1 0", None)
             self.assertEqual(sut_restarts.read_restart_counts(result_dir), ({_POD: 1}, {_POD: "1 0"}))
+
+    def test_summaries_match_run_log(self) -> None:
+        cases = [
+            ("0 0", "0"),
+            (sut_restarts.restart_snapshot_entry("0 0", {"dbms": 0, "exporter": 0}), "0"),
+            (sut_restarts.restart_snapshot_entry("2 0", {"dbms": 2, "exporter": 0}), "2 (dbms=2, exporter=0)"),
+            ("1 2", "3"),
+        ]
+        for entry, expected in cases:
+            with self.subTest(entry=entry), tempfile.TemporaryDirectory() as tmp_dir:
+                result_dir = Path(tmp_dir)
+                _write_result(result_dir, entry, None)
+                self.assertEqual(sut_restarts.read_restart_summaries(result_dir), {_POD: expected})
 
 
 class CollectRestartDetailsTest(unittest.TestCase):

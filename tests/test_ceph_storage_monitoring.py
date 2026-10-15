@@ -395,6 +395,21 @@ class MixedSweepTest(unittest.TestCase):
         self.assertEqual(table.loc["PostgreSQL-ramdisk", "Ceph Volume Write, This SUT [MiB]"],
                          "n/a (ramdisk: no Ceph volume)")
 
+    def test_ceph_storage_section_only_for_sut_components(self) -> None:
+        connections = self._connections(True)
+        definitions = report_writer._get_metric_definitions(connections)
+        series = pd.DataFrame({"PostgreSQL-nvme": [100.0, 160.0]})
+        evaluator = types.SimpleNamespace(get_monitoring_metric=lambda metric, component: series.copy())
+        section = report_writer._build_ceph_storage_section(evaluator, connections, definitions, {
+            "loading": "Loading phase: SUT deployment",
+            "datagenerator": "Loading phase: component data generator",
+            "loader": "Loading phase: component loader",
+            "workerloading": "Loading phase: component worker",
+            "benchmarker": "Benchmarking phase: component benchmarker",
+        })
+        self.assertEqual([child.heading for child in section.children],
+                         ["Loading phase: SUT deployment", "Loading phase: component worker"])
+
     def test_no_section_without_ceph_metrics(self) -> None:
         connections = [_connection("a", False, "ephemeral storage: no Ceph volume")]
         definitions = report_writer._get_metric_definitions(connections)

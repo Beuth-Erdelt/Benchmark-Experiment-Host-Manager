@@ -236,7 +236,9 @@ harness lets the model do with them.
   position, not crossed.
 - A declared `storage_class` factor needs fresh volumes:
   `resources.storage.remove_existing: false` is refused, and an unpinned SUT
-  draws a warning.
+  draws a warning. By default only the first repetition loads into a fresh
+  volume; `resources.storage.remove_per_repetition: true` reloads in every
+  repetition (and is refused together with `remove_existing: false`).
 - An experiment that compares anything needs `repetitions` at least the
   workload's `minimum_for_conclusions` (TPC-H: 3), otherwise at least 2 (M5.1).
 - Against `environment.yml`: every storage class is marked usable; pinned nodes exist and are

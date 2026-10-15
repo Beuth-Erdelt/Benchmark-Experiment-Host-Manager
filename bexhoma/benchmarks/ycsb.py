@@ -87,6 +87,7 @@ class YCSB(Benchmark):
             experiment.set_workload(
                 name=f'YCSB Data Loading SF={SF}',
                 info='This imports YCSB data sets.',
+                intro='Load data and do not run a benchmark.',
                 type='ycsb',
                 defaultParameters={'SF': SF},
             )

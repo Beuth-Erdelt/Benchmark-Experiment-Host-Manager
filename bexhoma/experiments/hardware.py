@@ -37,6 +37,10 @@ class HardwareExperiment(MixedExperiment):
     job template. Extends :class:`MixedExperiment`.
     """
 
+    #: The SUT may be swept across CPU, RAM and storage class, e.g. fio on
+    #: ``-rst nvme,cephcsi,`` (the empty entry is ephemeral storage).
+    supports_storage_sweep = True
+
     def __init__(self,
                  cluster,
                  code=None,

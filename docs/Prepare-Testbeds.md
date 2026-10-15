@@ -35,6 +35,22 @@ Every benchmark script (`ycsb.py`, `benchbase.py`, `hammerdb.py`, `tpch.py`, `tp
 Data volumes are identified by DBMS, benchmark, and scale factor.
 If a volume already exists and is marked as loaded, the `load` step is skipped automatically in `run` mode — the data is reused.
 
+### Keeping or stopping the SUT
+
+`-ks/--keep-sut {auto,yes,no}` decides whether the SUT of each configuration's last repetition is left running at the end:
+
+| Value | `run` | `load` | `start` |
+|---|---|---|---|
+| `auto` (default) | stopped | kept | kept |
+| `yes` (or `-ss/--skip-shutdown`) | kept | kept | kept |
+| `no` | stopped | stopped | refused (start only starts SUTs) |
+
+Earlier repetitions (`-nc`) always stop and restart their SUT.
+Use `load -ks no` to measure loading only, e.g. bulk-write throughput per storage class (`-rst nvme,cephcsi -rsrp -nc 3`); the data stays on the volume, where a later `run` without `-rsr` finds it.
+
+A kept SUT never blocks the experiment: when a cap (`-ms`, `-mse`, or a per-DBMS limit) leaves no room for a configuration that still has to start, the finished SUT is stopped instead, and the summary's "Services" section says so. With `-ms 1` and several configurations, only the last one to finish stays running.
+Experiments run by the agent harness always stop their SUTs (except in `start`).
+
 ---
 
 ## Environment Variables

@@ -91,6 +91,7 @@ class TPCC(Benchmark):
             experiment.set_workload(
                 name=f'HammerDB Data Loading SF={SF} (warehouses for TPC-C)',
                 info='This imports TPC-C data sets.',
+                intro='Load data and do not run a benchmark.',
                 type='tpcc',
                 defaultParameters={'SF': SF},
             )

@@ -287,6 +287,58 @@ class SutManifestPerRunTest(unittest.TestCase):
         self.assertEqual(name_run1, name_run2)
 
 
+class StorageRemovedPerRepetitionTest(SutManifestPerRunTest):
+    """start_sut() deletes a loaded PVC of the SUT: with -rsr only in the first
+    repetition, with -rsrp in every one. A kept PVC marks the repetition's
+    loading as inherited."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.cfg.storage = {'storageClassName': 'shared', 'storageSize': '10Gi', 'keep': True}
+        self.cfg.wait = lambda *a, **kw: None
+        self.deleted: list = []
+        self.existing = True
+
+        def get_pvc(*a, pvc='', **kw):
+            # the PVC exists until delete_pvc() removes it
+            return ['volume'] if self.existing else []
+
+        def delete_pvc(name):
+            self.deleted.append(name)
+            self.existing = False
+
+        self.stub_cluster.get_pvc = get_pvc
+        self.stub_cluster.delete_pvc = delete_pvc
+        self.stub_cluster.get_pvc_labels = lambda *a, **kw: (
+            [{'loaded': 'True', 'time_loading': '42'}] if self.existing else [])
+        self.stub_cluster.get_pvc_storage_class = lambda *a, **kw: 'shared'
+
+    def _start_repetition(self, done: int, **flags) -> None:
+        self.experiment.args_dict.update(flags)
+        self.existing = True
+        self.deleted.clear()
+        self.cfg.num_experiment_to_apply_done = done
+        self.cfg.reset_sut()
+        self.cfg.lifecycle.start_sut()
+
+    def test_rsr_keeps_the_volume_after_the_first_repetition(self) -> None:
+        self._start_repetition(0, request_storage_remove=True)
+        self.assertEqual(len(self.deleted), 1)
+        self.assertFalse(self.cfg.loading_inherited)
+        self._start_repetition(1, request_storage_remove=True)
+        self.assertEqual(self.deleted, [])
+        self.assertTrue(self.cfg.loading_inherited)
+        self.assertFalse(self.cfg.storage_reused, "a volume of an earlier repetition is no reuse")
+
+    def test_rsrp_removes_the_volume_in_every_repetition(self) -> None:
+        for done in (0, 1, 2):
+            with self.subTest(done):
+                self._start_repetition(
+                    done, request_storage_remove=False, request_storage_remove_per_repetition=True)
+                self.assertEqual(len(self.deleted), 1)
+                self.assertFalse(self.cfg.loading_inherited)
+
+
 class SutRestartsPerRunTest(unittest.TestCase):
     """bexhoma-sut-*-restarts.json is archived one-per-experiment_run like the
     manifest, but restartCount is cumulative across runs (same pod, not

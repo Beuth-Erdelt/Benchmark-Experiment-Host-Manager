@@ -74,6 +74,7 @@ from bexhoma import evaluators
 from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
+from bexhoma.monitoring_math import counter_total
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
 
@@ -82,7 +83,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.10.0"
+SCHEMA_VERSION = "1.11.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -224,7 +225,6 @@ quoting any number, not after:
 |---|---|---|
 | `No SUT container restarts` | Every metric of the restarted configuration from the restart's `Finished` time onward — the Health Summary names the termination reason (e.g. `OOMKilled`) | `connections.md`'s SUT Container Restarts |
 | `SUT data survived container restarts` | Every query of that configuration after the restart ran against a freshly initialized, empty database; its SQL errors (`relation … does not exist`, connection/I/O errors) are consequences of the restart, not findings about the queries | `connections.md`'s SUT Container Restarts |
-| `Loading measured in this experiment` | Loading times of the configurations whose `storage_reused` is `True`: their volume was already loaded by an earlier experiment, so loading was skipped and the times are inherited, not measured here — they enter no loading comparison. Benchmarking metrics stay valid | `connections.md`'s `storage_reused` and `sut_storage_*` |
 | `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
 | `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured — dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
@@ -236,6 +236,17 @@ quoting any number, not after:
 A **skipped** test (e.g. monitoring skipped because data was pre-existing, or
 a phase shorter than the Prometheus scrape interval) does not invalidate
 anything — only a **failed** row does.
+
+One skipped test still says something about the numbers:
+`Loading measured in this experiment (storage reused, …)` lists the
+configurations whose volume an earlier experiment had already loaded. Reusing
+it is deliberate (the experiment did not remove its volumes), so loading was
+skipped: their loading times are inherited from that experiment, not measured
+here, and enter no loading comparison. Benchmarking metrics stay valid. The
+same holds for a repetition whose `loading_inherited` is `True` (it found the
+volume of an earlier repetition loaded): its loading times are copies and
+enter no loading statistic across repetitions. Check `connections.md`'s
+`storage_reused`, `loading_inherited` and `sut_storage_*`.
 """
 
 _INTERPRETATION_RULES_MD = """### Interpretation Rules
@@ -482,11 +493,12 @@ def _count_sut_restarts(result_dir: Path) -> tuple[int, dict[str, str]]:
 
     :param result_dir: The experiment's result folder.
     :return: Tuple of the total restart count across all pods, and a dict
-             mapping pod name to its raw per-container restart-count string.
+             mapping pod name to its restart summary as the run log prints
+             it (see :func:`sut_restarts.format_restart_summary`).
     :rtype: tuple[int, dict[str, str]]
     """
-    per_pod_total, per_pod = sut_restarts.read_restart_counts(result_dir)
-    return sum(per_pod_total.values()), per_pod
+    per_pod_total, _ = sut_restarts.read_restart_counts(result_dir)
+    return sum(per_pod_total.values()), sut_restarts.read_restart_summaries(result_dir)
 
 
 def _get_metric_definitions(connections_sorted: list[dict]) -> dict[str, dict]:
@@ -606,7 +618,7 @@ def _build_monitoring_sections(
             df = evaluator.get_monitoring_metric(metric=metric_key, component=component)
             if df.empty:
                 continue
-            aggregated = _aggregate_metric(df, meta['metric'])
+            aggregated = _aggregate_metric(df, meta['metric'], component)
             df_cleaned = pd.DataFrame(aggregated)
             df_cleaned.columns = [meta['title']]
             df_cleaned = _add_not_applicable(
@@ -630,20 +642,23 @@ def _build_monitoring_sections(
     return sections
 
 
-def _aggregate_metric(df: pd.DataFrame, kind: str) -> pd.Series:
+def _aggregate_metric(df: pd.DataFrame, kind: str, component: str) -> pd.Series:
     """
     Reduce one metric's per-scrape values to one value per connection.
 
-    Counters by ``max - min``, ratios by ``max``, everything else by ``mean``
-    (NaN samples, e.g. a latency while the volume is idle, are skipped).
+    Counters by :func:`bexhoma.monitoring_math.counter_total` (their growth on
+    the SUT side, where ``max - min`` would count a dead pod still in the sum),
+    ratios by ``max``, everything else by ``mean`` (NaN samples, e.g. a latency
+    while the volume is idle, are skipped).
 
     :param df: One column per connection, one row per Prometheus scrape.
     :param kind: The metric's ``metric`` field (``counter``, ``ratio``, ``gauge``).
+    :param component: The monitoring component the values belong to.
     :return: One value per connection, sorted by connection.
     :rtype: pandas.Series
     """
     if kind == 'counter':
-        return df.max().sort_index() - df.min().sort_index()
+        return counter_total(df, component)
     if kind == 'ratio':
         return df.max().sort_index()
     return df.mean().sort_index()
@@ -706,9 +721,10 @@ def _build_ceph_storage_section(
     monitoring_components: dict[str, str],
 ) -> Section | None:
     """
-    Build ``monitoring.md``'s Ceph Storage section: per component, one row per
-    configuration with its own volume, the other volumes in its pool, and the
-    pool as a whole. Descriptive only -- no check reads it.
+    Build ``monitoring.md``'s Ceph Storage section: per SUT component (loading
+    and benchmarking phase), one row per configuration with its own volume, the
+    other volumes in its pool, and the pool as a whole. Descriptive only -- no
+    check reads it.
 
     :param evaluator: The primary benchmark's evaluator.
     :param connections_sorted: Connection dicts as read by ``show_summary_header()``.
@@ -723,12 +739,15 @@ def _build_ceph_storage_section(
         return None
     children = []
     for component, component_title in monitoring_components.items():
+        if not component.endswith(('loading', 'benchmarking')):
+            # the Ceph metrics describe the SUT's volume; a client component would repeat the SUT's numbers
+            continue
         columns = []
         for key in keys:
             df = evaluator.get_monitoring_metric(metric=key, component=component)
             if df.empty:
                 continue
-            column = pd.DataFrame(_aggregate_metric(df, metric_defs[key]['metric']))
+            column = pd.DataFrame(_aggregate_metric(df, metric_defs[key]['metric'], component))
             column.columns = [metric_defs[key]['title']]
             columns.append(_add_not_applicable(column, _inactive_connections(connections_sorted, key)))
         if not columns:
@@ -942,7 +961,8 @@ def _build_connections_md_lines(
     :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
     :param result_dir: The experiment's result folder.
     :param report_dir: The ``report/`` directory.
-    :param restarts_per_pod: Pod name to raw restart-count string, from
+    :param restarts_per_pod: Pod name to restart summary (``0``, or the total
+        with a per-container breakdown), from
         :func:`_count_sut_restarts`.
     :param restart_details: Output of
         :func:`sut_restarts.collect_restart_details`; one nested line per

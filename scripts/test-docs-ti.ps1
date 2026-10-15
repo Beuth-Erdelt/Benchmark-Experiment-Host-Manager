@@ -52,6 +52,71 @@ bexhoma ycsb `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB  sf=1  nbp=1"
 
 
+#### YCSB PVC (Example-TiDB.md)
+bexhoma ycsb `
+  -dbms TiDB                    <# DBMS under test #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 1                       <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 1                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -xnsr 3                       <# number of TiDB server (SQL frontend) replicas #> `
+  -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD (Placement Driver) nodes #> `
+  -nwr 3                        <# replication factor #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes (PD and TiKV) #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb_2.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB storage  sf=1  nbp=1  nc=2"
+
+
+#### YCSB Monitoring with Application Metrics (Example-TiDB.md)
+bexhoma ycsb `
+  -dbms TiDB                    <# DBMS under test #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 1                       <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 1                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -xnsr 3                       <# number of TiDB server (SQL frontend) replicas #> `
+  -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD (Placement Driver) nodes #> `
+  -nwr 3                        <# replication factor #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ma                           <# collect application-level metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb_3.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB monitoring  sf=1  nbp=1"
+
+
 bexhoma benchbase `
   -dbms TiDB                    <# DBMS under test #> `
   -sf 16                        <# scaling factor (controls database size) #> `
@@ -74,6 +139,33 @@ bexhoma benchbase `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
+
+
+bexhoma benchbase `
+  -dbms TiDB                    <# DBMS under test #> `
+  -sf 16                        <# scaling factor (controls database size) #> `
+  -xsd 5                        <# benchmark duration in minutes #> `
+  -xtb 1024                     <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
+  -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 16                       <# threads per benchmarking pod #> `
+  -nc 2                         <# number of repeated runs per configuration (2nd reuses the volumes) #> `
+  -xnsr 3                       <# number of TiDB server (SQL frontend) replicas #> `
+  -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD (Placement Driver) nodes #> `
+  -nwr 3                        <# replication factor #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes (PD and TiKV) #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb_2.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"
 
 
 ###########################################

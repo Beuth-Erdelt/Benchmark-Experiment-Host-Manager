@@ -135,6 +135,7 @@ class MetricsCollector:
         c['hostsystem'] = cfg.host.get_host_all()
         c['storage'] = cfg.storage
         c['storage_reused'] = cfg.storage_reused
+        c['loading_inherited'] = cfg.loading_inherited
         # collect worker information
         c['worker'] = {}
         components = list(cfg.deployment_infos['statefulset'].keys())
@@ -145,7 +146,7 @@ class MetricsCollector:
                 cfg.pod_sut = pod
                 print("{:30s}: distributed system - get host info for worker {}".format(
                     cfg.configuration, pod))
-                worker_infos = cfg.host.get_host_all()
+                worker_infos = cfg.host.get_host_all(component=component, kind='statefulset')
                 worker_infos['args'] = cfg.deployment_infos['statefulset'][component]['args']
                 c['worker'][component].append(worker_infos)
         # additional Deployment-based components (e.g. pool), excluding sut itself
@@ -160,7 +161,7 @@ class MetricsCollector:
                 cfg.pod_sut = pod
                 print("{:30s}: distributed system - get host info for worker {}".format(
                     cfg.configuration, pod))
-                worker_infos = cfg.host.get_host_all()
+                worker_infos = cfg.host.get_host_all(component=component, kind='deployment')
                 c['worker'][component].append(worker_infos)
         c['sut'] = []
         pods = cfg.experiment.cluster.get_pods(

@@ -170,6 +170,7 @@ class SutConfiguration:
         self.connection_parameter = {}                                           #: Collects parameters that may be interesting for result evaluation.
         self.time_loading = 0                                                     #: Seconds taken for the initial data load.
         self.storage_reused = False                                              #: True iff the SUT found a loaded volume from an earlier experiment, so loading was skipped and its times inherited.
+        self.loading_inherited = False                                           #: True iff this repetition found a loaded volume (of this or an earlier experiment), so it did not load and its loading times are copied.
         self.storage_monitoring = None                                           #: Storage placeholders for Ceph monitoring (see resolve_storage_monitoring()), resolved once after deployment.
         self.time_generating = 0                                                  #: Seconds taken for data generation.
         self.time_ingesting = 0                                                   #: Seconds taken for ingesting existing data.
@@ -264,11 +265,31 @@ class SutConfiguration:
         self.loading_started_at = None
         self.loading_after_time = None
         self.loading_finished = False
+        self.loading_inherited = False
+        self.storage_monitoring = None
         self.client = 1
         self.is_sut_ready = False
         self.are_worker_ready = False
         self.tenant_ready_to_load = False
         self.tenant_started_to_load = False
+
+    def removes_storage_now(self) -> bool:
+        """Whether starting the SUT now deletes its existing PVCs first.
+
+        ``-rsr`` deletes them before the first repetition only,
+        ``-rsrp`` before every repetition (``-nc``). Never once loading has
+        finished: the volume then holds this repetition's data.
+
+        :return: True if existing PVCs of the SUT are to be deleted.
+        :rtype: bool
+        """
+        if self.loading_finished:
+            return False
+        # entry scripts with their own parser may not know -rsrp
+        args = self.experiment.args_dict
+        if args.get('request_storage_remove_per_repetition'):
+            return True
+        return bool(args.get('request_storage_remove')) and self.num_experiment_to_apply_done == 0
 
     # ------------------------------------------------------------------
     # Benchmark sequence

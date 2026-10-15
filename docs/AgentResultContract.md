@@ -64,14 +64,16 @@ plus a Kubernetes pod suffix where the file belongs to one pod; decode them from
 ## Validity checks
 
 `index.md`'s Tests table. Only a failed row restricts what can be claimed; a
-skipped row never does.
+skipped row never does, with one exception: loading measured in this
+experiment is skipped, not failed, when a configuration reused a loaded volume,
+and its loading times are still inherited (see the table).
 
 | Check | Fails when | Restricts |
 |---|---|---|
 | workflow as planned | submitted jobs or pods differ from the plan | comparisons across phases |
 | no SUT container restarts | a SUT container restarted | its configuration from the restart on |
 | SUT data survived restarts | a restarted SUT had no data volume | every later query of it ran on an empty database |
-| loading measured in this experiment | a configuration found its volume already loaded by an earlier experiment (`storage_reused` in `connections.md`) | its loading times, which are inherited; benchmarking stays valid |
+| loading measured in this experiment | never fails; **skipped** with `(storage reused, loading times inherited: …)` when a configuration found its volume already loaded by an earlier experiment (`storage_reused` in `connections.md`) | the listed configurations' loading times, which are inherited; benchmarking stays valid |
 | key metric present | a headline metric is 0 or NaN | that metric |
 | no SQL errors (TPC-H) | a query failed | that query; the pooled totals |
 | all active queries in the totals (TPC-H) | a query failed in some connection and left the pooled totals | the pooled per-phase metrics |
@@ -79,6 +81,12 @@ skipped row never does.
 | component CPU non-zero | monitoring read 0 or NaN (skipped for phases shorter than a scrape) | monitoring data only |
 | no monitoring metrics missing | Prometheus returned no data, filled with zeros (skipped when every gap is expected) | those metrics |
 | EXPLAIN captured (TPC-H) | an active query has no plan (skipped without `store_explain`) | evidence of which engine ran |
+
+Not a check: `loading_inherited` (in `connections.md` and the loading Per
+Run table) marks a repetition that found its volume already loaded, by an
+earlier experiment or an earlier repetition. Its loading times are copies;
+leave them out of loading statistics across repetitions. Repetitions load
+every time on ephemeral storage or with `resources.storage.remove_per_repetition`.
 
 Headline metrics: TPC-H `Geo Times [s]`, `Power@Size [~Q/h]`,
 `Throughput@Size`; YCSB `[OVERALL].Throughput(ops/sec)`; HammerDB `NOPM`;

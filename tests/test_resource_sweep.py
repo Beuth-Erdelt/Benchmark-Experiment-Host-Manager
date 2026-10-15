@@ -13,6 +13,12 @@ Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import ast
+import collections
+import contextlib
+import io
+import runpy
+import sys
 import tempfile
 import unittest
 from unittest import mock
@@ -196,14 +202,117 @@ class YcsbSweepTest(_SweepTestBase):
 class SupportTest(unittest.TestCase):
     """Only experiments that opt in accept a sweep."""
 
-    def test_the_database_workloads_opt_in(self):
+    def test_the_workloads_opt_in(self):
         from bexhoma.experiments.tpcds import TpcdsExperiment
         from bexhoma.experiments.tpcc import TpccExperiment
         from bexhoma.experiments.benchbase import BenchbaseExperiment
+        from bexhoma.experiments.hardware import HardwareExperiment
         self.assertFalse(ExperimentBase.supports_storage_sweep)
-        for experiment_class in (TpchExperiment, TpcdsExperiment, YcsbExperiment, TpccExperiment, BenchbaseExperiment):
+        for experiment_class in (TpchExperiment, TpcdsExperiment, YcsbExperiment, TpccExperiment,
+                                 BenchbaseExperiment, HardwareExperiment):
             with self.subTest(experiment_class.__name__):
                 self.assertTrue(experiment_class.supports_storage_sweep)
+
+
+class _AnyVolumes(dict):
+    """``cluster.volumes`` that knows every volume, each with every init script (empty)."""
+
+    def __missing__(self, key):
+        self[key] = {'id': key, 'initscripts': collections.defaultdict(list)}
+        return self[key]
+
+
+class _AnyDockers(dict):
+    """``cluster.dockers`` that knows every DBMS."""
+
+    def __missing__(self, key):
+        self[key] = {}
+        return self[key]
+
+
+def _dbms_choices(script: str) -> list:
+    """Return the ``choices`` of the entry script's ``-dbms`` argument."""
+    with open(script, encoding='utf-8') as file:
+        tree = ast.parse(file.read())
+    for node in ast.walk(tree):
+        if (isinstance(node, ast.Call) and getattr(node.func, 'attr', '') == 'add_argument'
+                and any(isinstance(arg, ast.Constant) and arg.value == '-dbms' for arg in node.args)):
+            return next(ast.literal_eval(kw.value) for kw in node.keywords if kw.arg == 'choices')
+    raise AssertionError(f'{script} has no -dbms choices')
+
+
+class EntryScriptSweepTest(unittest.TestCase):
+    """Every entry script sweeps every DBMS it deploys across ``-rst``.
+
+    Runs the real scripts (most have no ``run()`` to call) with all their
+    ``-dbms`` choices against a stub cluster, ``process()`` patched to expand
+    the cells as it would.
+    """
+
+    #: DBMS whose SUT bexhoma does not deploy: kept once, not swept.
+    UNMANAGED = {'DatabaseService', 'YugabyteDB'}
+
+    def run_script(self, script: str, *argv: str) -> list:
+        tmp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp_dir.cleanup)
+        cluster = _SweepStubCluster(resultfolder=tmp_dir.name)
+        cluster.storage_classes = ['cephcsi', 'nvme']
+        cluster.volumes = _AnyVolumes(cluster.volumes)
+        cluster.dockers = _AnyDockers(cluster.dockers)
+        captured = []
+
+        def capture(experiment_self):
+            experiment_self.expand_resource_cells()
+            captured.append(experiment_self)
+
+        command = [script, 'run', '-dbms', *_dbms_choices(script),
+                   '-rst', 'cephcsi,nvme', '-rss', '10Gi', *argv]
+        with (
+            mock.patch('bexhoma.clusters.Kubernetes', return_value=cluster),
+            mock.patch.object(ExperimentBase, 'process', capture),
+            mock.patch.object(sys, 'argv', command),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            try:
+                runpy.run_path(script, run_name='__main__')
+            except SystemExit as exit_:
+                self.assertIn(exit_.code, (None, 0))
+        self.assertEqual(len(captured), 1, f'{script} did not reach process()')
+        return captured[0].configurations
+
+    def assert_swept(self, configurations: list) -> None:
+        swept = [config for config in configurations if config.docker not in self.UNMANAGED]
+        self.assertTrue(swept)
+        for config in swept:
+            self.assertTrue(config.resource_sweep, config.configuration)
+        cells = collections.defaultdict(list)
+        for config in swept:
+            original, _, cell = config.configuration.rpartition('-')
+            cells[original].append((cell, config.storage['storageClassName']))
+        for original, found in cells.items():
+            with self.subTest(original):
+                self.assertEqual(sorted(found), [('1', 'cephcsi'), ('2', 'nvme')])
+        volumes = [config.get_storage_configuration() for config in swept
+                   if config.docker != 'PGBouncer']  # the pool shares its PostgreSQL's volume
+        self.assertEqual(len(volumes), len(set(volumes)), volumes)
+        for config in configurations:
+            if config.docker in self.UNMANAGED:
+                self.assertFalse(sweeps_resources(config), config.configuration)
+
+    def test_every_dbms_of_every_benchmark_is_swept(self):
+        for script in ('tpch.py', 'tpcds.py', 'ycsb.py', 'benchbase.py', 'hammerdb.py', 'hardware.py'):
+            with self.subTest(script):
+                self.assert_swept(self.run_script(script))
+
+    def test_hardware_tenants_are_swept_each(self):
+        configurations = self.run_script('hardware.py', '-mtn', '2', '-mtb', 'container')
+        self.assertEqual(len(configurations), 4)
+        self.assert_swept(configurations)
+
+
+def sweeps_resources(config) -> bool:
+    """Mirror ``expand_resource_cells``' test of whether bexhoma manages a configuration's SUT."""
+    return config.resource_sweep and not config.sut_service_name
 
 
 if __name__ == '__main__':

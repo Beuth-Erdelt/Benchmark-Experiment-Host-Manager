@@ -66,6 +66,7 @@ class TPCDS(DBMSBenchmarkerBenchmark):
             experiment.set_workload(
                 name=f'TPC-DS Data Loading SF={SF}',
                 info='This imports TPC-DS data sets.',
+                intro='Load data and do not run a benchmark.',
                 type='tpcds',
                 defaultParameters={'SF': SF},
             )
@@ -96,7 +97,10 @@ class TPCDS(DBMSBenchmarkerBenchmark):
         experiment.loading_active = True
         experiment.use_distributed_datasource = True
         if experiment.loading_is_active():
-            experiment.workload['info'] += f"\nTPC-DS (SF={SF}) data is loaded and benchmark is executed."
+            if experiment.benchmarking_is_active():
+                experiment.workload['info'] += f"\nTPC-DS (SF={SF}) data is loaded and benchmark is executed."
+            else:
+                experiment.workload['info'] += f"\nTPC-DS (SF={SF}) data is loaded."
         if experiment.benchmarking_is_active():
             if shuffle_queries:
                 experiment.workload['info'] += "\nQuery ordering is as required by the TPC."

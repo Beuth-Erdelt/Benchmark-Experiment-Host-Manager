@@ -185,6 +185,35 @@ ephemeral storage. It is now emitted from `resources` itself.
 
 Folded into 1.11.0 (not yet released) as an additive change.
 
+## Fresh volume per repetition (2026-10-13)
+
+`-rsr` deletes a volume only before the first repetition. Repetitions 2..n
+keep it: loading is skipped and the loading times of repetition 1 are
+copied. `resources.storage.remove_per_repetition` maps to the new `-rsrp`,
+which deletes the volume before every repetition, so each one loads into a
+fresh volume, as on ephemeral storage. It defaults to false (it costs one
+load per repetition) and is refused together with `remove_existing: false`,
+which it contradicts.
+
+On the result side, `loading_inherited` (result contract 1.11.0) marks each
+repetition that did not load, whatever the reason, so copied loading times
+can be told apart from measured ones.
+
+This moved the version 1.11.0 -> 1.12.0 (minor: a new optional field; 1.11.0
+is released in v0.11.3).
+
+## SUTs are removed at the end, `load` included (2026-10-15)
+
+`load` and `start` used to keep each configuration's last SUT running, and
+nothing could stop that. Under `max_sut_experiment: 1` (the default) a sweep
+or several systems in `load` then hung: the kept SUT held the one slot and
+the next configuration waited forever. Bexhoma now has `-ks/--keep-sut
+{auto,yes,no}` and never keeps a SUT another configuration waits for. The
+translators emit `-ks no` for every mode but `start`: an agent cannot use a
+SUT left running, and a kept SUT occupies the node of the next experiment.
+The `mode` field says so. No new field, so folded into 1.12.0 (not yet
+released).
+
 ## Only usable storage classes (2026-10-10)
 
 `environment.yml` lists every `StorageClass` the cluster has, but bexhoma

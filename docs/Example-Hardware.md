@@ -81,6 +81,13 @@ than inheriting whatever an earlier command left behind. The PVC name is fixed a
 the whole page (not scoped by experiment code), so fio commands must never be run concurrently
 against the same SUT.
 
+To compare storage backends in one experiment, give `-rst` a comma-separated list, e.g.
+`-rst nvme,cephcsi,` (the empty last entry is the SUT's ephemeral storage). Each class gets its own
+SUT (`Hardware-1`, `Hardware-2`, ...) with its own volume, and every fio round runs against each of
+them. As in the other benchmarks, `-rc/-lc/-rr/-lr` may carry lists of the same length, paired by
+position with `-rst`. Add `-ms 1` so the SUTs run one after another and do not compete for the
+network or the storage cluster.
+
 ### Examples
 
 #### 1. Queue-depth sweep
@@ -3204,8 +3211,10 @@ and https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/maste
 You maybe want to adjust some of the parameters that are set in the file: `python hardware.py -h`
 
 ```bash
-usage: hardware.py [-h] [-aws] [-db] [-sl] [-ss] [-cx CONTEXT] [-e EXPERIMENT]
-                   [-m] [-ma] [-mc] [-ms MAX_SUT] [-mse MAX_SUT_EXPERIMENT]
+usage: hardware.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
+                   [-e EXPERIMENT] [-m] [-ma] [-mc] [-mm MONITORING_METRICS]
+                   [-ms MAX_SUT] [-mse MAX_SUT_EXPERIMENT]
+                   [-et EXPERIMENT_TIMEOUT] [-lt LOADING_TIMEOUT]
                    [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nw NUM_WORKER]
                    [-nwr NUM_WORKER_REPLICAS] [-nws NUM_WORKER_SHARDS]
                    [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
@@ -3214,11 +3223,12 @@ usage: hardware.py [-h] [-aws] [-db] [-sl] [-ss] [-cx CONTEXT] [-e EXPERIMENT]
                    [-t TIMEOUT] [-lr LIMIT_RAM] [-lc LIMIT_CPU]
                    [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE]
                    [-rg REQUEST_GPU] [-rgt REQUEST_GPU_TYPE]
-                   [-rst {None,,local-hdd,shared,ramdisk,cephcsi}]
-                   [-rss REQUEST_STORAGE_SIZE] [-rsr]
-                   [-rnn [REQUEST_NODE_NAME]] [-rnl [REQUEST_NODE_LOADING]]
-                   [-rnb [REQUEST_NODE_BENCHMARKING]] [-mtn MULTI_TENANT_NUM]
-                   [-mtb MULTI_TENANT_BY] [-mtv] [-tr] [--set SETS]
+                   [-rst REQUEST_STORAGE_TYPE] [-rss REQUEST_STORAGE_SIZE]
+                   [-rsr] [-rsrp] [-rnn [REQUEST_NODE_NAME]]
+                   [-rnl [REQUEST_NODE_LOADING]]
+                   [-rnb [REQUEST_NODE_BENCHMARKING]]
+                   [-rnp [REQUEST_NODE_POOLING]] [-mtn MULTI_TENANT_NUM]
+                   [-mtb MULTI_TENANT_BY] [-mtv] [-tr] [-rp] [--set SETS]
                    [-dbms [{Hardware} ...]]
                    [-xht {fio,sysbench,sockperf,netperf}] [-xts HARDWARE_SIZE]
                    [-xtd HARDWARE_DURATION] [-xfrw FIO_RW] [-xfbs FIO_BS]
@@ -3246,127 +3256,166 @@ options:
   -db, --debug          enable debug logging
   -sl, --skip-loading   skip data loading and start benchmarking immediately
   -ss, --skip-shutdown  keep SUT pods running after the experiment finishes
-  -cx CONTEXT, --context CONTEXT
+  -ar, --activate-reset
+                        activate configured reset scripts (e.g.
+                        CHECKPOINT/VACUUM) when set on a benchmarker entry;
+                        off by default
+  -cx, --context CONTEXT
                         kubectl context to use (default: current context)
-  -e EXPERIMENT, --experiment EXPERIMENT
+  -e, --experiment EXPERIMENT
                         resume an existing experiment by its code
   -m, --monitoring      enable Prometheus monitoring for the SUT
   -ma, --monitoring-app
                         enable application-level metrics collection
   -mc, --monitoring-cluster
                         enable node-level monitoring for the entire cluster
-  -ms MAX_SUT, --max-sut MAX_SUT
+  -mm, --monitoring-metrics MONITORING_METRICS
+                        switch single cluster-wide hardware metrics of
+                        cluster.config on or off for this experiment,
+                        overriding their 'active' flag, e.g.
+                        total_gpu_util=on,total_network_rx=off; needs -m or
+                        -mc
+  -ms, --max-sut MAX_SUT
                         maximum number of DBMS configurations to run in
                         parallel cluster-wide (default: no limit)
-  -mse MAX_SUT_EXPERIMENT, --max-sut-experiment MAX_SUT_EXPERIMENT
+  -mse, --max-sut-experiment MAX_SUT_EXPERIMENT
                         maximum number of DBMS configurations in this
                         experiment to run in parallel (default: no limit)
-  -nc NUM_CONFIG, --num-config NUM_CONFIG
+  -et, --experiment-timeout EXPERIMENT_TIMEOUT
+                        maximum wall-clock duration of the experiment in
+                        minutes; when exceeded, the experiment is stopped and
+                        all its components are removed from the cluster
+                        (default: no limit)
+  -lt, --loading-timeout LOADING_TIMEOUT
+                        maximum loading duration per configuration in minutes;
+                        captures diagnostics and removes the experiment when
+                        exceeded (default: no limit)
+  -nc, --num-config NUM_CONFIG
                         number of experiment repetitions per configuration
-  -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
+  -ne, --num-query-executors NUM_QUERY_EXECUTORS
                         comma-separated list of parallel client counts to
                         sweep
-  -nw NUM_WORKER, --num-worker NUM_WORKER
+  -nw, --num-worker NUM_WORKER
                         number of worker nodes for distributed DBMS
-  -nwr NUM_WORKER_REPLICAS, --num-worker-replicas NUM_WORKER_REPLICAS
+  -nwr, --num-worker-replicas NUM_WORKER_REPLICAS
                         number of replicas per worker node
-  -nws NUM_WORKER_SHARDS, --num-worker-shards NUM_WORKER_SHARDS
+  -nws, --num-worker-shards NUM_WORKER_SHARDS
                         number of shards per worker node
-  -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
+  -nlp, --num-loading-pods NUM_LOADING_PODS
                         comma-separated list of total loader pod counts
-  -nlt NUM_LOADING_THREADS, --num-loading-threads NUM_LOADING_THREADS
+  -nlt, --num-loading-threads NUM_LOADING_THREADS
                         comma-separated list of total loader threads (split
                         across pods)
-  -nbp NUM_BENCHMARKING_PODS, --num-benchmarking-pods NUM_BENCHMARKING_PODS
+  -nbp, --num-benchmarking-pods NUM_BENCHMARKING_PODS
                         comma-separated list of benchmarker pod counts
-  -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
+  -nbt, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
                         total benchmarking threads, split evenly across pods
-  -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
+  -sf, --scaling-factor SCALING_FACTOR
                         scaling factor controlling dataset size
-  -t TIMEOUT, --timeout TIMEOUT
+  -t, --timeout TIMEOUT
                         per-query timeout in seconds
-  -lr LIMIT_RAM, --limit-ram LIMIT_RAM
+  -lr, --limit-ram LIMIT_RAM
                         RAM limit for the SUT and worker pods (e.g. 64Gi; 0 =
-                        no limit)
-  -lc LIMIT_CPU, --limit-cpu LIMIT_CPU
+                        no limit); comma-separated to sweep several settings
+                        (e.g. 32Gi,64Gi), one configuration per entry
+  -lc, --limit-cpu LIMIT_CPU
                         CPU limit for the SUT and worker pods (e.g. 4; 0 = no
-                        limit)
-  -rr REQUEST_RAM, --request-ram REQUEST_RAM
-                        RAM request for the SUT and worker pods (e.g. 16Gi)
-  -rc REQUEST_CPU, --request-cpu REQUEST_CPU
-                        CPU request for the SUT and worker pods (e.g. 4)
-  -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
+                        limit); comma-separated to sweep, must then match the
+                        length of any other swept resource list
+  -rr, --request-ram REQUEST_RAM
+                        RAM request for the SUT and worker pods (e.g. 16Gi);
+                        comma-separated to sweep several settings (e.g.
+                        32Gi,64Gi), one configuration per entry
+  -rc, --request-cpu REQUEST_CPU
+                        CPU request for the SUT and worker pods (e.g. 4);
+                        comma-separated to sweep, must then match the length
+                        of any other swept resource list
+  -rct, --request-cpu-type REQUEST_CPU_TYPE
                         require SUT node to carry label cpu=<value>
-  -rg REQUEST_GPU, --request-gpu REQUEST_GPU
+  -rg, --request-gpu REQUEST_GPU
                         number of GPUs to request for the SUT pod
-  -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
+  -rgt, --request-gpu-type REQUEST_GPU_TYPE
                         require SUT node to carry label gpu=<value>
-  -rst {None,,local-hdd,shared,ramdisk,cephcsi}, --request-storage-type {None,,local-hdd,shared,ramdisk,cephcsi}
-                        storage class for the SUT persistent volume
-  -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
+  -rst, --request-storage-type REQUEST_STORAGE_TYPE
+                        storage class for the SUT persistent volume ('' or
+                        unset = ephemeral, 'ramdisk' = in-memory; other values
+                        must be declared for the active cluster context, see
+                        cluster config 'storage_classes'); comma-separated to
+                        sweep the class, one configuration per entry and
+                        paired by position with -rc/-lc/-rr/-lr, an empty
+                        entry meaning ephemeral
+  -rss, --request-storage-size REQUEST_STORAGE_SIZE
                         size of the SUT persistent volume (e.g. 10Gi)
   -rsr, --request-storage-remove
                         delete any existing PVC for the SUT before starting
-  -rnn [REQUEST_NODE_NAME], --request-node-name [REQUEST_NODE_NAME]
+  -rsrp, --request-storage-remove-per-repetition
+                        delete the PVC of the SUT before every repetition
+                        (-nc), so each repetition loads into a fresh volume;
+                        implies -rsr
+  -rnn, --request-node-name [REQUEST_NODE_NAME]
                         pin the SUT pod to this Kubernetes node
-  -rnl [REQUEST_NODE_LOADING], --request-node-loading [REQUEST_NODE_LOADING]
+  -rnl, --request-node-loading [REQUEST_NODE_LOADING]
                         pin loader pods to this Kubernetes node
-  -rnb [REQUEST_NODE_BENCHMARKING], --request-node-benchmarking [REQUEST_NODE_BENCHMARKING]
+  -rnb, --request-node-benchmarking [REQUEST_NODE_BENCHMARKING]
                         pin benchmarker pods to this Kubernetes node
-  -mtn MULTI_TENANT_NUM, --multi-tenant-num MULTI_TENANT_NUM
+  -rnp, --request-node-pooling [REQUEST_NODE_POOLING]
+                        pin pooling pods to this Kubernetes node
+  -mtn, --multi-tenant-num MULTI_TENANT_NUM
                         number of tenants for multi-tenant experiments
-  -mtb MULTI_TENANT_BY, --multi-tenant-by MULTI_TENANT_BY
+  -mtb, --multi-tenant-by MULTI_TENANT_BY
                         tenancy granularity: schema, database, or container
   -mtv, --multi-tenant-volume
                         allocate a separate persistent volume per tenant
   -tr, --test-result    validate that results meet basic correctness
                         requirements
+  -rp, --report         also write a tiered Markdown summary report
+                        (report/index.md + detail files) to the result folder
   --set SETS            override a deployment parameter, e.g. deployment[sut].
                         container[dbms].max_worker_processes=128
-  -dbms [{Hardware} ...], --dbms [{Hardware} ...]
+  -dbms, --dbms [{Hardware} ...]
                         hardware target(s) to test
-  -xht {fio,sysbench,sockperf,netperf}, --xhardware-type {fio,sysbench,sockperf,netperf}
+  -xht, --xhardware-type {fio,sysbench,sockperf,netperf}
                         benchmark tool: fio (disk I/O), sysbench (CPU/memory),
                         sockperf (single-connection network
                         latency/throughput), or netperf (many-concurrent-
                         connection request/response)
-  -xts HARDWARE_SIZE, --xtest-size HARDWARE_SIZE
+  -xts, --xtest-size HARDWARE_SIZE
                         fio test file size (e.g. 1G, 64G)
-  -xtd HARDWARE_DURATION, --xtest-duration HARDWARE_DURATION
+  -xtd, --xtest-duration HARDWARE_DURATION
                         fio/sysbench/sockperf run duration in seconds
-  -xfrw FIO_RW, --xfio-rw FIO_RW
+  -xfrw, --xfio-rw FIO_RW
                         comma-separated fio I/O patterns to sweep, each in
                         {write, read, randwrite, randread, randrw}
-  -xfbs FIO_BS, --xfio-blocksize FIO_BS
+  -xfbs, --xfio-blocksize FIO_BS
                         comma-separated fio block sizes to sweep (e.g.
                         4k,64k,1M)
-  -xfid FIO_IODEPTH, --xfio-iodepth FIO_IODEPTH
+  -xfid, --xfio-iodepth FIO_IODEPTH
                         comma-separated fio queue depths to sweep
-  -xfe FIO_ENGINE, --xfio-engine FIO_ENGINE
+  -xfe, --xfio-engine FIO_ENGINE
                         comma-separated fio ioengines to sweep, each in {sync,
                         libaio, io_uring}
-  -xfsy FIO_FSYNC, --xfio-fsync FIO_FSYNC
+  -xfsy, --xfio-fsync FIO_FSYNC
                         comma-separated fsync intervals to sweep (0 disables
                         fsync); use fsync xor fdatasync, not both
-  -xffd FIO_FDATASYNC, --xfio-fdatasync FIO_FDATASYNC
+  -xffd, --xfio-fdatasync FIO_FDATASYNC
                         comma-separated fdatasync intervals to sweep (0
                         disables fdatasync); use fsync xor fdatasync, not both
-  -xfmx FIO_RWMIXREAD, --xfio-rwmixread FIO_RWMIXREAD
+  -xfmx, --xfio-rwmixread FIO_RWMIXREAD
                         comma-separated read percentages to sweep when
                         -xfrw=randrw
-  -xspm SOCKPERF_MODE, --xsockperf-mode SOCKPERF_MODE
+  -xspm, --xsockperf-mode SOCKPERF_MODE
                         comma-separated sockperf modes to sweep, each in {pp,
                         ul}
-  -xspr SOCKPERF_MPS, --xsockperf-mps SOCKPERF_MPS
+  -xspr, --xsockperf-mps SOCKPERF_MPS
                         comma-separated message rates to sweep (messages/sec);
                         each value is a positive integer or the literal "max"
-  -xsps SOCKPERF_MSGSIZE, --xsockperf-msgsize SOCKPERF_MSGSIZE
+  -xsps, --xsockperf-msgsize SOCKPERF_MSGSIZE
                         comma-separated message payload sizes in bytes to
                         sweep
-  -xspp SOCKPERF_PROTOCOL, --xsockperf-protocol SOCKPERF_PROTOCOL
+  -xspp, --xsockperf-protocol SOCKPERF_PROTOCOL
                         comma-separated sockperf protocols to sweep, each in
                         {tcp, udp}
-  -xnpp NETPERF_PROTOCOL, --xnetperf-protocol NETPERF_PROTOCOL
+  -xnpp, --xnetperf-protocol NETPERF_PROTOCOL
                         comma-separated netperf protocols to sweep, each in
                         {tcp, udp} (selects TCP_RR/UDP_RR)
 ```

@@ -34,7 +34,8 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
-from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage
+from bexhoma.monitoring_math import counter_total
+from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut
 from bexhoma import sut_restarts
 
 if TYPE_CHECKING:
@@ -92,6 +93,9 @@ SECONDS_PER_MINUTE = 60
 #: would otherwise leave the others waiting for it forever. The benchmark
 #: itself, once started, has no limit.
 BENCHMARK_START_TIMEOUT_MINUTES = 15
+
+#: Container waiting reasons that mean a loading pod cannot pull its image.
+IMAGE_PULL_WAITING_REASONS = frozenset({'ErrImagePull', 'ImagePullBackOff'})
 
 def parse_set_arg(s: str) -> Tuple[dict, str]:
     """
@@ -189,6 +193,7 @@ class ExperimentBase():
         self.pod_dashboard = ""                                         # name of the dashboard pod
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
+        self.keep_sut = False                                           # keep each configuration's last SUT running at the end (-ks/-ss, resolved in prepare_testbed)
         self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
         self.max_loading_minutes: Optional[int] = None                   # abort a configuration that remains in loading after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
@@ -252,6 +257,7 @@ class ExperimentBase():
         self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary
         self._runtime_test_results: list[tuple[bool, str]] = []          # failures detected before show_summary rebuilds its test list
         self._benchmark_rounds_starting: dict[str, tuple[str, datetime]] = {}  # configuration → (round counter key, submission time) until all round pods started
+        self._image_pull_waits_seen: set[str] = set()                    # loading pods already reported as waiting for their image
         self.set_eval_parameters(code = self.code)
     def process(self) -> None:
         """
@@ -305,7 +311,7 @@ class ExperimentBase():
             start = default_timer()
             start_datetime = str(datetime.now())
             # run workflow
-            self.work_benchmark_list(stop_after_benchmarking=True, stop_after_loading=True)
+            self.work_benchmark_list(stop_after_benchmarking=self.keep_sut, stop_after_loading=True)
             # total time of experiment
             end = default_timer()
             end_datetime = str(datetime.now())
@@ -328,7 +334,7 @@ class ExperimentBase():
             # (e.g. during cube building on resume) still leaves it in queries.config
             self.store_workflow_results()
             # run workflow
-            self.work_benchmark_list(stop_after_benchmarking=self.args.skip_shutdown)
+            self.work_benchmark_list(stop_after_benchmarking=self.keep_sut)
             # total time of experiment
             end = default_timer()
             end_datetime = str(datetime.now())
@@ -568,12 +574,16 @@ class ExperimentBase():
         request_storage_type = self.storage_types[0]
         request_storage_size = args.request_storage_size
         request_storage_remove = args.request_storage_remove
+        # entry scripts with their own parser may not know -rsrp
+        request_storage_remove_per_repetition = getattr(args, 'request_storage_remove_per_repetition', False)
         request_node_name = args.request_node_name
         request_node_loading = args.request_node_loading
         request_node_benchmarking = args.request_node_benchmarking
         request_node_pooling = args.request_node_pooling
         skip_loading = args.skip_loading
-        skip_shutdown = args.skip_shutdown
+        # entry scripts with their own parser may not know -ks
+        self.keep_sut = resolve_keep_sut(
+            mode, getattr(args, 'keep_sut', 'auto'), getattr(args, 'skip_shutdown', False))
         test_result = args.test_result
         num_worker = int(args.num_worker)
         num_worker_replicas = int(args.num_worker_replicas)
@@ -708,11 +718,15 @@ class ExperimentBase():
         if len(self.storage_types) > 1:
             self.workload['info'] = self.workload['info']+"\nStorage is swept across configurations: {}, size {}.".format(
                 ", ".join(storage_type or "ephemeral" for storage_type in self.storage_types), request_storage_size or "unset")
-            if request_storage_remove:
+            if request_storage_remove_per_repetition:
+                self.workload['info'] = self.workload['info']+" Persistent storage is removed before every repetition."
+            elif request_storage_remove:
                 self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
         elif request_storage_type and request_storage_size:
             self.workload['info'] = self.workload['info']+"\nDatabase is persisted to disk of type {} and size {}.".format(request_storage_type, request_storage_size)
-            if request_storage_remove:
+            if request_storage_remove_per_repetition:
+                self.workload['info'] = self.workload['info']+" Persistent storage is removed before every repetition."
+            elif request_storage_remove:
                 self.workload['info'] = self.workload['info']+" Persistent storage is removed at experiment start."
         elif request_storage_size and request_storage_type is None:
             self.workload['info'] = self.workload['info']+"\nDatabase uses ephemeral storage of size {}.".format(request_storage_size)
@@ -740,8 +754,10 @@ class ExperimentBase():
             self.workload['info'] = self.workload['info']+"\nExperiment is aborted and removed from the cluster after {} minutes.".format(self.max_experiment_minutes)
         if self.max_loading_minutes is not None:
             self.workload['info'] = self.workload['info']+"\nEach configuration has a loading timeout of {} minutes; diagnostics are captured before teardown.".format(self.max_loading_minutes)
-        if skip_shutdown:
-            self.workload['info'] = self.workload['info']+"\nSUT pods are kept running after the experiment finishes."
+        if self.keep_sut:
+            self.workload['info'] = self.workload['info']+"\nThe SUT of each configuration's last repetition is kept running after the experiment finishes, unless another configuration waits for its slot."
+        elif mode == 'load':
+            self.workload['info'] = self.workload['info']+"\nSUT pods are stopped after loading."
         if test_result:
             self.workload['info'] = self.workload['info']+"\nResults are validated against basic correctness requirements."
         if len(self.dbms_args) > 0:
@@ -1549,6 +1565,38 @@ class ExperimentBase():
         :type label: str
         """
         self._test_results.append((None, label))
+    def _show_loading_provenance(self, connections_sorted: list) -> None:
+        """
+        Print which configurations did not load in this experiment, and record the loading test.
+
+        A volume found already loaded at experiment start skips loading and
+        inherits its loading times from whichever experiment filled it. That
+        reuse is deliberate (the volume was not removed), so the test
+        ``Loading measured in this experiment`` is skipped, not failed; its
+        reason names the configurations whose loading times are inherited.
+        Results written before ``storage_reused`` was recorded record nothing.
+        A repetition that found the volume of an earlier repetition loaded
+        (without ``-rsrp``) is listed too, informational only.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        recorded = [c for c in connections_sorted if 'storage_reused' in c]
+        if recorded:
+            reused = sorted({c.get('configuration', c['name']) for c in recorded if c['storage_reused']})
+            if reused:
+                print("\n### Reused Storage")
+                print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
+                self._record_skipped_test("Loading measured in this experiment (storage reused, loading times inherited: {})".format(", ".join(reused)))
+            else:
+                self._record_test(True, "Loading measured in this experiment")
+        # its loading times are copies, so they are no further sample of loading
+        inherited = sorted({
+            "{}-{}".format(c.get('configuration', c['name']), c.get('parameter', {}).get('numExperiment', '?'))
+            for c in connections_sorted
+            if c.get('loading_inherited') and not c.get('storage_reused')})
+        if inherited:
+            print("\n### Inherited Loading")
+            print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
     def _test_column(self, df, column: str, title: str = '') -> bool:
         """
         Call evaluator.test_results_column and record the result.
@@ -1657,6 +1705,34 @@ class ExperimentBase():
         self.remove_experiment()
         return True
 
+    def _note_image_pull_waits(self, config: "SutConfiguration") -> None:
+        """Record a failed test when a loading pod of an active load waits for its image.
+
+        The load is not aborted (the pull may still succeed), but the wait
+        counts into this repetition's loading times, so they are flagged.
+        Each pod is reported once.
+
+        :param config: Configuration whose loading pods are checked.
+        """
+        if not config.loading_started or config.loading_finished:
+            return
+        pods = self.cluster.get_job_pods(
+            app=config.appname, component='loading', experiment=config.code,
+            configuration=config.configuration) or []
+        for pod in pods:
+            if pod in self._image_pull_waits_seen:
+                continue
+            reasons = [reason for reason in self.cluster.get_pod_waiting_reasons(pod)
+                       if reason in IMAGE_PULL_WAITING_REASONS]
+            if not reasons:
+                continue
+            self._image_pull_waits_seen.add(pod)
+            reason = (f"Loading pod {pod} of {config.configuration} waits for its image "
+                      f"({', '.join(sorted(set(reasons)))}); loading times of repetition "
+                      f"{config.num_experiment_to_apply_done + 1} include that wait")
+            print(f"{config.configuration:30s}: {reason}")
+            self._runtime_test_results.append((False, reason))
+
     def _benchmark_start_abort_reason(
         self,
         config: "SutConfiguration",
@@ -1724,6 +1800,60 @@ class ExperimentBase():
         for pod in pods:
             self.cluster.delete_job_pods(jobname=pod)
         del self._benchmark_rounds_starting[config.configuration]
+        return True
+
+    def _waits_for_slot(self, config) -> Optional[str]:
+        """Name a configuration of this experiment that waits for the SUT slot ``config`` holds.
+
+        It has not started its SUT yet, is not done, and a cap counts both
+        SUTs: ``-mse`` (this experiment), ``-ms`` (cluster-wide), or the
+        ``max_sut_dbms`` of its own DBMS when both run the same one. Keeping
+        ``config``'s SUT would then make it wait forever.
+
+        :param config: The configuration about to keep its SUT.
+        :return: The waiting configuration's name, or None.
+        :rtype: str or None
+        """
+        experiment_cap = self.max_sut is not None or self.cluster.max_sut is not None
+        for other in self.configurations:
+            if other is config or other.experiment_done:
+                continue
+            dbms_cap = other.max_sut_dbms is not None and other.docker == config.docker
+            if not (experiment_cap or dbms_cap):
+                continue
+            if not other.status.sut_exists():
+                return other.configuration
+        return None
+
+    def _leaves_sut_running(self, config, stop_after_starting: bool, stop_after_benchmarking: bool) -> bool:
+        """Whether this repetition of a configuration ends with its SUT left running.
+
+        Only the last repetition may (``-ks yes``, the default in modes load
+        and start); earlier ones stop and restart the SUT like any run, so
+        ``-nc`` is honoured. ``-m start`` stops before loading and never
+        repeats. A SUT another configuration waits for is stopped instead of
+        kept (see :meth:`_waits_for_slot`), so under a cap only the last
+        configurations to finish keep theirs.
+
+        :param config: The configuration whose repetition has run all its benchmarks.
+        :param stop_after_starting: As in :meth:`work_benchmark_list`.
+        :param stop_after_benchmarking: As in :meth:`work_benchmark_list`.
+        :return: True to keep the SUT, False to stop it (and start the next repetition, if any).
+        :rtype: bool
+        """
+        if not stop_after_benchmarking:
+            return False
+        if not stop_after_starting and config.num_experiment_to_apply_done + 1 < config.num_experiment_to_apply:
+            return False
+        waiting = self._waits_for_slot(config)
+        if waiting is not None:
+            print("{:30s}: stopped instead of kept, {} waits for its slot".format(config.configuration, waiting))
+            self.workload.setdefault('sut_stopped', {})[config.configuration] = (
+                f"stopped instead of kept: {waiting} waited for its slot")
+            if stop_after_starting:
+                # -m start never repeats: the stop below must not start it again
+                config.num_experiment_to_apply_done = config.num_experiment_to_apply - 1
+            return False
         return True
 
     def work_benchmark_list(self, intervals: int = 30, stop_after_starting: bool = False, stop_after_loading: bool = False, stop_after_benchmarking: bool = False) -> None:
@@ -1818,6 +1948,7 @@ class ExperimentBase():
                 config.loader.check()
                 if self._abort_loading_if_needed(config, datetime.utcnow()):
                     return
+                self._note_image_pull_waits(config)
                 # start loading
                 if not config.loading_started:
                     # check if monitoring has started
@@ -2100,10 +2231,15 @@ class ExperimentBase():
                         _benchmark_just_submitted = True
                     else:
                         # no list element left
-                        if not stop_after_benchmarking:
+                        if not self._leaves_sut_running(config, stop_after_starting, stop_after_benchmarking):
+                            if getattr(getattr(self, 'args', None), 'mode', None) == 'load':
+                                # load-only: no benchmarker job ever runs, so register the connection,
+                                # create /results/{code}, upload configs and fetch loading metrics here
+                                connection = (config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-1').lower()
+                                config.runner.run_pod(connection=connection, configuration=config.configuration, client='1', parallelism=1, only_prepare=True)
                             print("{:30s}: can be stopped".format(config.configuration))
                             app = self.cluster.appname
-                            sut_restarts: dict[str, str] = {}
+                            pod_restarts: dict[str, dict] = {}
                             deployments = list(config.deployment_infos['deployment'].keys())
                             for deployment in deployments:
                                 pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
@@ -2115,8 +2251,10 @@ class ExperimentBase():
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
-                                    sut_restarts[pod] = restarts
-                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                                    per_container = self.cluster.get_pod_restart_counts(pod)
+                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(restarts, per_container)
+                                    summary = sut_restarts.format_restart_summary(restarts, per_container)
+                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
                             statefulsets = list(config.deployment_infos['statefulset'].keys())
                             for statefulset in statefulsets:
                                 pods = config.get_worker_pods(component=statefulset)
@@ -2128,13 +2266,15 @@ class ExperimentBase():
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod)
-                                    sut_restarts[pod] = restarts
-                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, str(restarts), pod))
+                                    per_container = self.cluster.get_pod_restart_counts(pod)
+                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(restarts, per_container)
+                                    summary = sut_restarts.format_restart_summary(restarts, per_container)
+                                    print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
                             experiment_run = str(config.num_experiment_to_apply_done + 1)
                             restarts_filename = self.result_filename_local(
                                 f"bexhoma-sut-{config.configuration}-{self.code}-{experiment_run}-restarts.json".lower())
                             with open(restarts_filename, 'w') as _f:
-                                json.dump(sut_restarts, _f, indent=2)
+                                json.dump(pod_restarts, _f, indent=2)
                             config.lifecycle.stop_sut()
                             config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                             if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
@@ -2295,7 +2435,7 @@ class ExperimentBase():
                     # repetition was just processed, _still_has_benchmarks is False
                     # (client counter not yet reset) but another repetition is pending.
                     # Keep the loop running so the else block can fire next iteration.
-                    if not stop_after_benchmarking and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                    if not stop_after_starting and config.num_experiment_to_apply_done < config.num_experiment_to_apply:
                         self.cluster.logger.debug("{} more repetitions pending: {}/{}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply))
                         do = True
                     if stop_after_starting:
@@ -2719,11 +2859,14 @@ class ExperimentBase():
                 print("* Error: "+error)
                 for message in messages:
                     print("  * "+message)
-        if 'sut_service' in self.workload:
+        if 'sut_service' in self.workload or 'sut_stopped' in self.workload:
             print("\n### Services")
-            for c in sorted(self.workload['sut_service']):
+            for c in sorted(self.workload.get('sut_service', {})):
                 print(c)
                 print("* {}".format(self.generate_port_forward(self.workload['sut_service'][c])))
+            for c in sorted(self.workload.get('sut_stopped', {})):
+                print(c)
+                print("* {}".format(self.workload['sut_stopped'][c]))
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
@@ -2752,7 +2895,7 @@ class ExperimentBase():
                             if not df.empty:
                                 list_monitoring_app
                                 if metric['metric'] == 'counter':
-                                    df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                                    df = counter_total(df, component)
                                 else:
                                     df = df.max().sort_index()
                                 df_cleaned = pd.DataFrame(df)
@@ -2793,26 +2936,18 @@ class ExperimentBase():
                         infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
-        # A volume found already loaded at experiment start skips loading and
-        # inherits its loading times from whichever experiment filled it.
-        # Results written before storage_reused was recorded say nothing.
-        recorded = [c for c in connections_sorted if 'storage_reused' in c]
-        if recorded:
-            reused = sorted({c.get('configuration', c['name']) for c in recorded if c['storage_reused']})
-            if reused:
-                print("\n### Reused Storage")
-                print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
-            self._record_test(not reused, "Loading measured in this experiment")
+        self._show_loading_provenance(connections_sorted)
         result_dir = Path(resultfolder) / code
         restarts_files = sorted(result_dir.glob("bexhoma-sut-*-restarts.json"))
         if restarts_files:
             print("\n### SUT Container Restarts")
             # Aggregated by max per pod, not summed across files -- see
             # sut_restarts.read_restart_counts().
-            per_pod_total, per_pod_counts = sut_restarts.read_restart_counts(result_dir)
+            per_pod_total, _ = sut_restarts.read_restart_counts(result_dir)
+            per_pod_summary = sut_restarts.read_restart_summaries(result_dir)
             restart_details = sut_restarts.collect_restart_details(result_dir)
-            for pod, counts in per_pod_counts.items():
-                print(f"* {pod}: {counts}")
+            for pod, summary in per_pod_summary.items():
+                print(f"* {pod}: {summary}")
                 for detail in restart_details:
                     if detail.pod == pod:
                         print(f"  * {sut_restarts.format_detail(detail)}")
@@ -3056,8 +3191,8 @@ class ExperimentBase():
         df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component=component)
         if not df.empty and (df.count() < MIN_MONITORING_SAMPLES).any():
             insufficient_samples = True
-        df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
-        #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+        # a dead pod of the previous phase may still be in the sum, see counter_total()
+        df = counter_total(df, component)
         df_cleaned = pd.DataFrame(df)
         df_cleaned.columns = ["CPU [CPUs]"]
         if not df_cleaned.empty:

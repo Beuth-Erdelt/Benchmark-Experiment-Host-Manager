@@ -151,6 +151,10 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
         cap = experiment.get(field_name, default)
         if cap:
             _append_flag(argv, flag, cap)
+    # A SUT left running is of no use to an agent, and it holds its node for
+    # the next experiment: stop it in every mode but start (catalog_concepts.sut_isolation)
+    if argv[0] != "start":
+        argv.extend(["-ks", "no"])
 
     if observe.get("monitoring_sut"):
         argv.append("-m")

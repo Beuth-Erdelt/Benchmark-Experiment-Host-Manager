@@ -553,13 +553,8 @@ scrape_configs:
                 dep['metadata']['labels'][label_key] = str(label_value)
             return dep
 
-        def should_we_remove_pvcs():
-            return (not cfg.loading_finished
-                    and cfg.experiment.args_dict['request_storage_remove']
-                    and cfg.num_experiment_to_apply_done == 0)
-
         def reset_and_remove_pvc(pvc):
-            if should_we_remove_pvcs:
+            if cfg.removes_storage_now():
                 print("{:30s}: storage {} should be removed".format(configuration, pvc))
                 cfg.experiment.cluster.delete_pvc(pvc)
                 cfg.wait(10)
@@ -585,7 +580,7 @@ scrape_configs:
                     f"but {requested!r} is requested; remove it (-rsr) or request {found!r}")
 
         def get_labels_from_loaded_pvc():
-            if use_storage and not use_ramdisk and not should_we_remove_pvcs():
+            if use_storage and not use_ramdisk and not cfg.removes_storage_now():
                 list_of_pvc = cfg.get_list_of_pvc()
                 print("{:30s}: list of pvcs {}".format(cfg.configuration, list_of_pvc))
                 volume = list_of_pvc[0]
@@ -614,6 +609,9 @@ scrape_configs:
                 # this experiment finding its own volume is not a reuse.
                 if cfg.num_experiment_to_apply_done == 0 and not cfg.loading_finished:
                     cfg.storage_reused = True
+                # Either way this repetition does not load: its loading times
+                # are copied, not measured.
+                cfg.loading_inherited = True
                 dep['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                 for label in labels_on_existing_pvc:
                     print("{:30s}: copied label {} = {}".format(
@@ -835,9 +833,7 @@ scrape_configs:
                         app=app, component='storage',
                         experiment=cfg.storage_label, configuration=storageConfiguration)
                     if len(pvcs) > 0:
-                        if (not cfg.loading_finished
-                                and cfg.experiment.args_dict['request_storage_remove']
-                                and cfg.num_experiment_to_apply_done == 0):
+                        if cfg.removes_storage_now():
                             reset_and_remove_pvc(name_pvc)
                         else:
                             del result[key]
@@ -849,9 +845,7 @@ scrape_configs:
                             dep_tenant['metadata']['name'] + "-" + str(i))
                         result.append(dep_tenant)
                         tenant_pvc_name = dep_tenant['metadata']['name']
-                        if (not cfg.loading_finished
-                                and cfg.experiment.args_dict['request_storage_remove']
-                                and cfg.num_experiment_to_apply_done == 0):
+                        if cfg.removes_storage_now():
                             reset_and_remove_pvc(tenant_pvc_name)
             ########################################
             # Kind=StatefulSet
@@ -869,6 +863,15 @@ scrape_configs:
                 dep['metadata']['name'] = statefulset['name']
                 dep['metadata']['labels']['app'] = app
                 dep['spec']['serviceName'] = statefulset['name']
+                # dnsConfig search domains may name the headless service, so that
+                # pods reach each other by bare pod name (Redis Cluster keeps its
+                # announced address in a 45-character field)
+                dns_config = dep['spec']['template']['spec'].get('dnsConfig') or {}
+                if dns_config.get('searches'):
+                    dns_config['searches'] = [
+                        search.format(statefulset=statefulset['name'],
+                                      namespace=cfg.experiment.cluster.namespace)
+                        for search in dns_config['searches']]
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = cfg.docker
@@ -925,8 +928,14 @@ scrape_configs:
                         if 'volumeMounts' in container:
                             for j, vol in enumerate(container['volumeMounts']):
                                 if vol['name'] == 'bxw':
+                                    # where the worker keeps its data, with or without
+                                    # a pvc: HostProbe measures it there (datadisk)
+                                    cfg.deployment_infos['statefulset'][statefulset_type]['data_path'] = vol['mountPath']
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                                    elif not use_ramdisk:
+                                        # where the worker pvc sits, for HostProbe.check_volumes()
+                                        cfg.deployment_infos['statefulset'][statefulset_type]['mount_path'] = vol['mountPath']
                         if cfg.use_ephemeral_storage():
                             ephemeral_size = cfg.storage['storageSize']
                             c = dep['spec']['template']['spec']['containers'][i_container]
@@ -993,10 +1002,7 @@ scrape_configs:
                             list_of_workers_pvcs.append(worker_full_name)
                         cfg.deployment_infos['statefulset'][statefulset_type]['pvc'] = (
                             list_of_workers_pvcs)
-                        remove_old_pvcs = (
-                            not cfg.loading_finished
-                            and cfg.experiment.args_dict['request_storage_remove']
-                            and cfg.num_experiment_to_apply_done == 0)
+                        remove_old_pvcs = cfg.removes_storage_now()
                         old_pvc_exist = False
                         for statefulset_name_pvc in list_of_workers_pvcs:
                             pvc_exists = cfg.experiment.cluster.pvc_exists(statefulset_name_pvc)
@@ -1166,9 +1172,17 @@ scrape_configs:
                         if 'volumeMounts' in container and len(container['volumeMounts']) > 0:
                             for j, vol in reversed(list(enumerate(container['volumeMounts']))):
                                 if vol['name'] == 'benchmark-storage-volume':
+                                    if not cfg.volume_per_tenant:
+                                        # where the SUT keeps its data, with or without a
+                                        # pvc: HostProbe measures it there (datadisk)
+                                        cfg.deployment_infos['deployment'][deployment_type]['data_path'] = vol['mountPath']
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
-                                    elif cfg.volume_per_tenant:
+                                        continue
+                                    if not use_ramdisk:
+                                        # where the pvc sits, for HostProbe.check_volumes()
+                                        cfg.deployment_infos['deployment'][deployment_type]['mount_path'] = vol['mountPath']
+                                    if cfg.volume_per_tenant:
                                         print(f"I need {cfg.num_tenants} copies of volumeMounts")
                                         for i in range(cfg.num_tenants):
                                             vol_tenant = copy.deepcopy(vol)
@@ -1390,6 +1404,11 @@ scrape_configs:
             experiment = cfg.code
         cfg.logger.debug(
             f"stop_sut component={component} experiment={experiment} configuration={configuration}")
+        # Before the SUT goes away: loading diagnostics also capture the SUT pods.
+        # Only on the top-level call: the recursive calls for worker components
+        # run after the SUT deployment was deleted, when its pods are vanishing.
+        if cfg.experiment.loading_active and component == 'sut':
+            self.stop_loading()
         if len(cfg.storage) > 0 and 'keep' in cfg.storage and cfg.storage['keep']:
             pass
         else:
@@ -1421,10 +1440,8 @@ scrape_configs:
             app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             cfg.experiment.cluster.delete_service(service)
-        if cfg.experiment.monitoring_active:
+        if cfg.experiment.monitoring_active and component == 'sut':
             self.stop_monitoring()
-        if cfg.experiment.loading_active:
-            self.stop_loading()
         if component == 'sut':
             if 'deployment' in cfg.deployment_infos:
                 list_of_worker_components = list(cfg.deployment_infos['deployment'].keys())

@@ -53,14 +53,54 @@ class HostProbe:
             s.close()
         return found
 
-    def get_host_volume(self, pod: str = '') -> Tuple:
-        """Return (size, used) of mounted volumes in the SUT container.
+    def get_data_paths(self, component: str = 'sut', kind: str = 'deployment') -> Tuple:
+        """Return (data path, pvc mount path) of a component, as its template mounts them.
+
+        The data path is where the template mounts the storage volume
+        (``benchmark-storage-volume`` for a Deployment, ``bxw`` for a worker
+        StatefulSet), recorded whether or not a pvc is attached; the mount path
+        only when it is. A template without such a mount (e.g. TiDB's SQL
+        layer, a DatabaseService) falls back to the DBMS ``datadir`` of
+        ``cluster.config``.
+
+        :param component: Component name, e.g. ``sut``, ``pool``, ``tikv``.
+        :param kind: ``deployment`` or ``statefulset``.
+        :return: Tuple (data_path, mount_path); mount_path is '' without a pvc.
+        :rtype: tuple
+        """
+        info = self._config.deployment_infos.get(kind, {}).get(component, {})
+        data_path = info.get('data_path') or self._config.dockertemplate.get('datadir', '')
+        return data_path, info.get('mount_path', '')
+
+    def get_host_volume(self, pod: str = '', mount_path: str = '') -> Tuple:
+        """Return (size, used) of the storage volume in the SUT container.
+
+        Asks ``df`` for the filesystem holding ``mount_path``, which works for
+        every provisioner (an RBD device has no "volumes" in its df line).
+        Without ``mount_path``, uses the SUT's pvc mount path, then its data
+        path (:meth:`get_data_paths`), then the first df line matching
+        "volumes".
 
         :param pod: Optional pod name override; defaults to current SUT pod.
+        :param mount_path: Optional mount path of the volume inside the pod.
         :return: Tuple (size, used) as human-readable strings.
         :rtype: tuple
         """
         self._config.logger.debug('HostProbe.get_host_volume()')
+        if not mount_path:
+            data_path, sut_mount_path = self.get_data_paths()
+            mount_path = sut_mount_path or data_path
+        if mount_path:
+            try:
+                command = "df -hP " + mount_path
+                _, stdout, _ = self._config.execute_command_in_pod_sut(command=command, pod=pod)
+                lines = [x for x in stdout.split('\n') if x.strip() != '']
+                parts = lines[-1].split() if len(lines) > 1 else []
+                # mounted on "/" means the path is not on a volume
+                if len(parts) > 5 and parts[-1] != '/':
+                    return parts[1], parts[2]
+            except Exception as exc:
+                logging.error(exc)
         try:
             command = "df -hP | grep volumes"
             _, stdout, _ = self._config.execute_command_in_pod_sut(command=command, pod=pod)
@@ -277,16 +317,18 @@ class HostProbe:
         timestamp_local = os.popen(command).read()
         return int(timestamp_remote) - int(timestamp_local)
 
-    def get_host_diskspace_used_data(self) -> int:
+    def get_host_diskspace_used_data(self, data_path: str = '') -> int:
         """Return disk space used for database data directory in megabytes.
 
-        :return: Size in megabytes, or 0 on failure or if no datadir configured.
+        :param data_path: Directory to measure; defaults to the SUT's data
+            path (:meth:`get_data_paths`).
+        :return: Size in megabytes, or 0 on failure or if no data path is known.
         :rtype: int
         """
         self._config.logger.debug('HostProbe.get_host_diskspace_used_data()')
-        if 'datadir' not in self._config.dockertemplate:
+        datadir = data_path or self.get_data_paths()[0]
+        if not datadir:
             return 0
-        datadir = self._config.dockertemplate['datadir']
         try:
             command = "du --block-size=1M -Ls " + datadir + " | awk 'END{print \\$1}'"
             _, stdout, _ = self._config.execute_command_in_pod_sut(command)
@@ -350,7 +392,8 @@ class HostProbe:
                 for pod in pods:
                     print("{:30s}: get size via pod {} and write to pvc {}".format(
                         self._config.configuration, pod, pvc))
-                    size, used = self.get_host_volume(pod=pod)
+                    size, used = self.get_host_volume(
+                        pod=pod, mount_path=deployment.get('mount_path', ''))
                     fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(
                         pvc, size, used)
                     self._config.experiment.cluster.kubectl(fullcommand)
@@ -362,17 +405,26 @@ class HostProbe:
                     pvc = statefulset['pvc'][i]
                     print("{:30s}: get size via pod {} and write to pvc {}".format(
                         self._config.configuration, pod, pvc))
-                    size, used = self.get_host_volume(pod=pod)
+                    size, used = self.get_host_volume(
+                        pod=pod, mount_path=statefulset.get('mount_path', ''))
                     fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(
                         pvc, size, used)
                     self._config.experiment.cluster.kubectl(fullcommand)
 
-    def get_host_all(self) -> dict:
+    def get_host_all(self, component: str = 'sut', kind: str = 'deployment') -> dict:
         """Call all get_host_* probes and return a consolidated dict.
 
+        Runs in ``self._config.pod_sut``; the caller points it at the pod of
+        ``component`` first. Data size and volume are taken at that
+        component's own data path (:meth:`get_data_paths`), so a worker is
+        measured at its own volume, not at the SUT's.
+
+        :param component: Component the pod belongs to, e.g. ``sut``, ``pool``, ``tikv``.
+        :param kind: ``deployment`` or ``statefulset``.
         :return: Dict of host metrics (RAM, CPU, GPU, Cores, host, node, disk, etc.).
         :rtype: dict
         """
+        data_path, mount_path = self.get_data_paths(component, kind)
         server = {}
         server['RAM'] = self.get_host_memory()
         server['CPU'] = self.get_host_cpu()
@@ -382,8 +434,8 @@ class HostProbe:
         server['host'] = self.get_host_system()
         server['node'] = self.get_host_node()
         server['disk'] = self.get_host_diskspace_used()
-        server['datadisk'] = self.get_host_diskspace_used_data()
-        size, used = self.get_host_volume()
+        server['datadisk'] = self.get_host_diskspace_used_data(data_path)
+        size, used = self.get_host_volume(mount_path=mount_path or data_path)
         server['volume_size'] = size
         server['volume_used'] = used
         server['cuda'] = self.get_host_cuda()

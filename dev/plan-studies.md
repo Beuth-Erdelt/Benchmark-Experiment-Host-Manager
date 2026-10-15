@@ -1,14 +1,15 @@
 # Plan: studies as first-class records
 
-Status: **planned, nothing implemented** (2026-10-10). The first increment
-uses citations as *context* only; see "Scope of the first increment".
+Status: **planned, nothing implemented** (2026-10-10; planned series added
+2026-10-14). The first increment uses citations as *context* only; see
+"Scope of the first increment".
 
 ## Goal
 
-The agent carries out a *study*: one question, answered by a series of zero or
-more experiments. Zero is a legitimate outcome: the agent refused, or failed to
-design an experiment. One or more experiments are an initial design plus
-follow-ups or repeats.
+The agent carries out a *study*: one question, answered by zero or more
+experiments. Zero is a legitimate outcome: the agent refused, or failed to
+design an experiment. One or more experiments are an initial design, or a
+planned series of sibling experiments, plus follow-ups or repeats.
 
 Each experiment of a study can be addressed on its own. Another study can cite
 it, build on it or rerun it, without re-running the experiment or the whole
@@ -78,6 +79,13 @@ study.
     experiment's compact record steers design and may be named in the answer.
     The model never reads a cited experiment's report, and no claim in the
     verdict may rest on it. The harness-computed anchor check is deferred.
+11. **A setting that one experiment cannot sweep becomes a planned series**
+    (decided 2026-10-14). Example: the TPC-H scale factor, which is a single
+    value per experiment. The design phase plans a sequence of sibling
+    experiments that differ only in that setting, and the agent **may compare
+    numbers across the siblings of one series**. Comparison stays forbidden
+    everywhere else, in particular against cited experiments (decision 10).
+    See "Planned series".
 
 ## Scope of the first increment
 
@@ -90,8 +98,8 @@ In scope: M0–M6 of the implementation sketch.
 - derived standing and operator withdrawal;
 - discovery and context citations.
 
-Later: M7 rerun (operator, then model), M8 model-proposed withdrawal, and the
-anchor check.
+Later: M7 rerun (operator, then model), M8 model-proposed withdrawal, M9
+planned series, and the anchor check. M9 builds on M1–M3 and M5, not on M6.
 
 Not part of this plan: exporting a run for publication (issue #795) is a
 separate, decoupled extension in `dev/plan-publish-bundle.md`.
@@ -110,7 +118,7 @@ status: running | answered | no_experiment | incomplete
 no_experiment_reason: refused | design_failed | budget_exhausted   # only with no_experiment
 experiments:                              # ones this study ran, in order
   - code: "1787175665"
-    role: initial                         # initial | follow_up | repeat
+    role: initial                         # initial | follow_up | repeat | series
     follow_up_of: null
     scaling_factor: 10
     standing: sound                       # as derived when last written
@@ -120,6 +128,21 @@ experiments:                              # ones this study ran, in order
     scaling_factor: 10
     standing: failed
     failure: "benchmark process exited 1"  # only with failed
+  - code: "1787190000"                    # (M9) a series sibling
+    role: series
+    series: s1
+    level: 100                            # this sibling's value of the swept setting
+    anchor_of: null                       # code of the repeated sibling, only for the anchor
+    scaling_factor: 100
+    standing: sound
+series:                                   # (M9) absent when the study plans none
+  - id: s1
+    setting: workload.params.scaling_factor
+    levels: [1, 10, 100]
+    basis: "query time per scale factor"  # comparison basis, fixed before the run
+    anchor: true                          # last sibling repeats the first level
+    status: planned | running | complete | partial
+    comparison: series/s1/comparison.yml  # harness-written, after the last sibling
 cites:                                    # ones produced elsewhere, used here
   - code: "1786000000"
     study: "20260901T080000000000"        # from the cited summary; null for legacy
@@ -241,7 +264,11 @@ Two special cases:
   by the `no_experiment_reason` and the design phase's own account.
 - **Baseline:** never part of the study answer. `study.yml` links it.
 
-Numbers are never merged or compared across experiments.
+Numbers are compared across experiments only among the siblings of one
+planned series (decision 11). In the answer, a series appears in part 1 as
+one group, with its harness comparison table, and the model's series verdict
+is part of part 3. Numbers from different series, from follow-ups outside a
+series, or from cited experiments are never merged or compared.
 
 ## Citations as context
 
@@ -312,6 +339,96 @@ interpretation.
 - **Out of scope:** the with/without-handbook ablation runs two full
   pipelines, so it is two studies of the same question.
 
+## Planned series (later, M9)
+
+Some questions need a setting swept that one experiment cannot sweep: the
+TPC-H scale factor, a storage class, a Bexhoma option without a sweep list.
+The agent then plans a *series*: a sequence of sibling experiments, one per
+level, that differ only in that setting. Within a series, numbers may be
+compared across experiments (decision 11).
+
+**First choice stays one experiment.** If the setting can be a declared
+factor inside one experiment (concurrency, cpu, memory, and later
+`storage_class` per `dev/plan-storage-class-sweep.md`), a series is refused,
+with that hint. A series is for settings the catalog contract lists as
+series-only.
+
+### Authoring
+
+- The design phase (and follow-up authoring) may submit a *series spec*
+  instead of a single spec:
+
+  ```yaml
+  series:
+    base: <an ordinary experiment spec>
+    vary:
+      setting: workload.params.scaling_factor
+      levels: [1, 10, 100]
+    basis: "query time per scale factor"
+    anchor: true
+  ```
+
+- **Siblings by construction.** The harness expands `base` into one spec per
+  level, changing only `setting`. The model never writes the siblings one by
+  one, so "differ only in the swept setting" holds by construction. Each
+  expanded spec goes through the normal validator. If one fails, the whole
+  series is refused.
+- **Series-only settings** are listed in the catalog contract (new
+  `series_settings`), with the allowed value type. To start with:
+  `workload.params.scaling_factor` and `resources.storage_class`.
+- **Comparison basis before the run.** `basis` is required, and the
+  hypothesis states the expected relation in it, for example "time per scale
+  factor stays within 20 %" or "throughput scales linearly up to sf 100".
+  For a scale factor, raw times are not comparable. This is the same rule as
+  "criterion before the run" for staged optimization.
+- **Anchor (recommended, not required).** With `anchor: true` the harness
+  appends one more sibling that repeats the first level, with `anchor_of` set.
+  It guards against drift between the runs: the siblings run hours apart on
+  a shared cluster, and the Ceph pool load changes.
+- **Budget.** A series uses one experiment from the budget per sibling,
+  anchor included. A series that does not fit into the remaining budget is
+  refused.
+
+### Running
+
+- **Sequential.** The harness submits the siblings one at a time in level
+  order, and the anchor last. Each sibling gets its own code and result
+  folder, and is interpreted on its own as today. The interpretation of a
+  sibling does not decide follow-ups: no follow-up is authored until the
+  series ends.
+- **Failure.** A failed sibling is marked `failed` and the series goes on.
+  The series ends `partial` when any sibling failed, `complete` otherwise.
+  Missing levels are named, never interpolated.
+- **Resume.** `--resume` continues with the next unsubmitted sibling,
+  derived from `study.yml`.
+
+### Comparison
+
+After the last sibling, a *series interpretation* step runs:
+
+1. **Harness table**, written to `series/<id>/comparison.yml`:
+   - per level: code, standing, run dates, and the values of the metrics
+     named in `basis`, read from each sibling's report;
+   - deployment deviations between siblings (images, catalog version,
+     placement nodes), from `study.deployment_diff` (M6). By construction
+     only deployment can deviate; any deviation is a flag.
+   - the anchor result: first level vs. anchor, with the step rule of
+     `assess_comparison_quality`. When the anchor disagrees, the comparison
+     is `qualified`, and the verdict must say so.
+   - `hardware_baseline` status of the used nodes, where available.
+2. **Model verdict.** The interpretation gate admits evidence paths in the
+   result folders of the series' siblings, and nothing else. A claim that
+   compares levels must cite evidence from each sibling it names. Context
+   citations stay as in "Citations as context".
+3. **Record.** The series verdict goes to `series/<id>/verdict.yml`. The
+   per-sibling `agent_summary.yml` stays unchanged. After the series
+   verdict, follow-up authoring sees it as the ancestor of a follow-up of
+   the series.
+
+What a series still cannot do: compare against experiments outside it,
+including cited ones (that needs the anchor check), or relate *different*
+metrics across experiments (see "Pattern: reference measurement").
+
 ## Rerun (later, M7)
 
 A rerun is always a new experiment with a new code, in a new study, with
@@ -369,25 +486,166 @@ Recording and limits:
    zero-experiment outcome, "existing evidence suffices". With context-only
    citations, the agent cannot verify such an answer itself, so it is not part
    of the first increment.
-2. **Planned multi-experiment studies with harness comparison?** Today a study
-   is a chain: each follow-up is chosen after the previous result, and numbers
-   are never compared across experiments. Some questions need several
-   experiments that differ in one setting only, for example a storage backend
-   comparison for PostgreSQL TPC-H. There `resources.storage_class` is a
-   single value and not a declared factor, so one experiment cannot cover it.
-   Supporting that would take:
-   - a design phase that authors a set of sibling experiments up front, with
-     the varied setting named;
-   - a harness check that the siblings differ only in that setting;
-   - a harness-computed comparison across the sibling reports, like
-     `assess_comparison_quality` within one report.
+2. **Planned multi-experiment studies with harness comparison?** Resolved
+   2026-10-14 as decision 11: see "Planned series". Two cases that led
+   there, and how they fit now:
+   - **Storage backend for PostgreSQL TPC-H.** `resources.storage_class` is
+     a single value today, so it needs a series. Once
+     `dev/plan-storage-class-sweep.md` makes it a factor inside one
+     experiment, that is preferred, and the setting leaves the series-only
+     list.
+   - **HammerDB at 16 vs. 32 virtual users, each on a fresh volume**
+     (2026-10-13). Today the operator runs two experiments (`-nbt 16` and
+     `-nbt 32`, each with `-rsrp`) and merges them with
+     `collectors.tpcc(path, [code_16, code_32])`. In one experiment,
+     `-nbt 16,32` runs the second round on data the first one changed, and
+     `-rsrp` (`dev/plan-storage-remove-per-repetition.md`) gives a fresh
+     volume per repetition, not per round. The agent needs a `hammerdb`
+     workload in the catalog either way. Preferred is still one experiment
+     (virtual users as rounds, with a reload before every round); a series
+     over virtual users is the fallback until then.
 
-   This goes beyond the deferred anchor check, which compares one overlapping
-   level of a declared factor. The smaller alternative is a contract change
-   that makes the setting a factor inside one experiment (a `storage_class`
-   sweep list and `storage_class` in `discriminates`; see
-   `dev/plan-storage-class-sweep.md`). Prefer that while the question fits
-   into one experiment.
+## Pattern: staged optimization (2026-10-13)
+
+A study varies one factor, picks its optimal level, and then varies a second
+factor with the first held at that level. Example: a fio sweep, first the
+queue depth at a fixed block size, then the block size at the chosen queue
+depth.
+
+- **It fits the chain model.** Experiment 2 is a follow-up of experiment 1.
+  It does not compare its numbers with experiment 1; it uses one conclusion
+  of experiment 1, the chosen level, as a fixed setting. This is not a
+  planned series: the second factor's levels depend on the first result.
+- **Prefer one experiment when affordable.** `hardware.py` crosses its fio
+  lists (`-xfid 1,4,16,64 -xfbs 4k,16k,64k,1M` runs all 16 combinations in
+  one experiment), which shows interactions and keeps every comparison inside
+  one code. Staging pays off when the full grid is too large.
+
+Methodological rules for the design and follow-up prompts:
+- **Interaction.** The optimum of the first factor may depend on the second.
+  Experiment 2 varies the first factor again around its chosen level (e.g.
+  `-xfid 8,16,32`), or a confirmation run follows.
+- **Criterion before the run.** "Optimal" is fixed in the hypothesis: maximum
+  throughput, a latency bound (e.g. p99 < 1 ms), or the knee of the curve.
+- **Noise.** Repetitions, and a rule for when two levels count as equal.
+
+What the agent needs:
+1. **A `hardware` workload in the catalog** (only `tpch` and `ycsb` exist).
+2. **A structured chosen level.** Today the follow-up author sees the parent's
+   level only as prose in the verdict conclusion. Add to `agent_summary.yml`
+   (with M2, version 1.1.0):
+
+   ```yaml
+   selected:                       # absent when the experiment selects nothing
+     fio_iodepth: 16
+     criterion: "max IOPS with p99 < 1 ms"
+   ```
+
+   It is written from `record_interpretation`, and must be one of the levels
+   in the `design` block.
+3. **Validation of the follow-up.** A follow-up whose parent has `selected`
+   either holds that factor at the selected level, or declares it a factor
+   again (the interaction check above). Anything else is refused.
+4. **The answer names its sources.** "Queue depth 16 (<code 1>), block size
+   64k given queue depth 16 (<code 2>)": conclusions are chained, numbers are
+   not compared.
+
+## Pattern: reference measurement (2026-10-13)
+
+A study measures disk speed (fio) and network speed (sockperf), then a DBMS,
+and relates the DBMS result to the hardware: "the DBMS reaches X % of the
+volume's write IOPS", "commit latency is about N network round trips".
+
+- **Not a chain and not a series.** Numbers of *different* metrics are
+  related across experiments. As three separate experiments this is not
+  allowed: outside a planned series, numbers are never compared across
+  experiments, and a series compares one metric across siblings that differ
+  in one setting.
+
+### What works today: `environment.yml`
+
+- `bexhoma environment create -xhw` runs the hardware baseline
+  (`bexhoma/hardware_baseline.py`):
+  - sysbench and fio on each node's local disk;
+  - fio on a throwaway PVC of each named storage class;
+  - optionally sockperf between nodes.
+
+  The results go into `hardware_baseline` per node and per storage class, and
+  `network_matrix` (`bexhoma/environment.py::apply_hardware_baseline`).
+- The design prompt already points to these speeds
+  (`prompts.py::_ENVIRONMENT_AVAILABLE`).
+- `tools.py::_stage_provenance` copies `environment.yml` into the result
+  folder at submission, so interpretation can read it inside the current
+  result folder.
+- The DBMS experiment measures its own use of disk and network (`-m`/`-mc`,
+  Ceph pool metrics).
+
+So "capacity X, used Y" fits into one result folder, with the hardware
+speeds as facts about the cluster, not as an experiment.
+
+Limits:
+- **Different conditions:** the baseline is short (default size 256M) with
+  fixed fio settings, not the DBMS's I/O pattern (e.g. WAL: 8k writes with
+  fsync).
+- **Different time:** measured when `environment.yml` was created, not during
+  the run. The cluster is shared and the Ceph pool load changes.
+- **Contract gap:** `contract_result.yml` describes the archived
+  `environment.yml` only as "cluster descriptor used for validation". See
+  the next subsection.
+
+### Decision: interpretation may read `environment.yml`
+
+Good idea, with rules. The archived `environment.yml` is inside the result
+folder, so the interpretation gate already allows it; what is missing is a
+contract rule for what it may support.
+
+Why: a verdict that explains a result needs the hardware behind it (CPU
+model and cores, RAM, kernel, storage backend and replication, network
+latency). Without it, the model guesses or leaves the explanation out.
+
+Rules, in `contract_result.yml` (`provenance.agent_inputs` and a new
+`interpretation_context` entry):
+1. **Snapshot from design time.** `environment.yml` describes the cluster
+   when the experiment was designed, not when it ran.
+2. **Run-time facts win.** For the nodes the run used, `connections.config`
+   `hostsystem` (CPU, RAM, GPU, node, host system, disk) and the
+   `*.describe.log` files are measured at run time. Where they disagree with
+   `environment.yml`, the run-time value counts, and the difference is worth
+   reporting.
+3. **What it may support:**
+   - static facts (hardware, kernel, runtime, storage class provisioner and
+     Ceph pool) as context for an explanation;
+   - `hardware_baseline` and `network_matrix` as reference values, always
+     with their date, size and settings;
+   - not occupancy (`free`, `requested`, `limits_pct`): stale by run time.
+4. **Explanation, not evidence.** A claim built on environment facts ("CPU
+   bound: 32 streams on 32 cores") is labelled an explanation. The verdict on
+   the hypothesis rests on the result's own measurements.
+5. **Only the nodes the run used.** The interpretation reads the entries of
+   the nodes named in the describe logs (SUT, loaders, benchmarkers), not the
+   whole file. This keeps the read budget small and matches the publish
+   bundle, which keeps only used nodes (`dev/plan-publish-bundle.md`).
+
+To do:
+- the contract entries above, and `docs/AgentResultContract.md`;
+- one sentence in the interpretation prompt: where the archived
+  `environment.yml` is and what it may support;
+- `hardware_baseline_status` (complete, missing) is passed on: a missing
+  entry is reported as not measured, never estimated;
+- a test that the interpretation gate accepts the archived `environment.yml`
+  as an evidence path.
+
+### Matched measurements
+
+When fio must match the DBMS's I/O pattern, the baseline is not enough.
+Two routes:
+- **Inside one experiment (preferred):** a hardware round on the same node
+  and volume as the DBMS, in the same code. Bexhoma has mixed experiments
+  (several benchmarks in one code); whether hardware + DBMS on the same PVC
+  works is not checked yet.
+- **Reference experiments across codes:** needs its own comparability check
+  (same node, same storage class, close time window, declared fio settings).
+  This is a different check from the series comparison, and the large route.
 
 ## Implementation sketch
 
@@ -602,6 +860,33 @@ it.
   `_evidence_error`.
 - An append in `run_interpret`, plus confirm/reject in the M5 CLI.
 
+### M9 — planned series (later)
+
+- **Catalog contract:** `series_settings` (setting path, value type), and
+  the `series` spec shape (`base`, `vary`, `basis`, `anchor`). Minor version
+  bump, plus `contract_catalog_comments.md`.
+- **Expansion and validation:** `study.expand_series(series_spec) ->
+  list[dict]`, then the normal validator per sibling. Refused: a setting not
+  in `series_settings`, a setting that is a declared factor or could be one
+  (hint to the single experiment), fewer than two levels, duplicate levels,
+  no `basis`, a series larger than the remaining budget.
+- **Submission:** `tools.py::submit` accepts a validated series and submits
+  only the first sibling. `study.yml` records the whole series as `planned`.
+  The lifecycle submits the next sibling after the previous one is
+  interpreted, until the list (and the anchor) is done. Follow-up authoring
+  is skipped while a series is open.
+- **Comparison:** `study.compare_series(record, series_id, results_root)`
+  writes `comparison.yml`. It reads the basis metrics from each sibling's
+  report through the archived result contract, reuses
+  `study.deployment_diff` and the step rule of `assess_comparison_quality`.
+- **Series interpretation:** a new phase, `--phase series`, with its own
+  prompt. `_InterpretationGate` takes a list of admitted result folders
+  instead of one; for every other phase the list holds only the current
+  folder. Writes `verdict.yml`; `render_answer` (M3) shows the series group.
+- **Prompts:** in `DESIGN_SYSTEM_PROMPT` and `FOLLOWUP_AUTHOR_SYSTEM_PROMPT`,
+  one paragraph: when a series is allowed, that one experiment is preferred,
+  the basis and the anchor.
+
 ## Existing investigations
 
 - Old directories have no `study.yml`, and readers treat that as legacy.
@@ -662,6 +947,16 @@ it.
     - interpretation sees the cited rows;
     - an evidence path into a cited result is refused.
   - **Spec shape:** `bexhoma/spec.py` rejects a malformed `cites`.
+- **M9:**
+  - expansion changes only the swept setting;
+  - each refusal reason above;
+  - siblings are submitted in order, the anchor last, and `--resume`
+    continues with the next one;
+  - a failed sibling gives `partial`, and the missing level is named;
+  - an anchor disagreement makes the comparison `qualified`;
+  - the series gate admits sibling folders and refuses a cited or
+    non-series result;
+  - a per-experiment interpretation still admits only its own folder.
 - **All milestones:** lifecycle `--resume` on a study, which the Kubernetes
   controller relies on.
 
@@ -680,7 +975,8 @@ it.
   says the same.
 - `contracts/contract_result.yml` (`agent_summary_contract` 1.1.0;
   `known_gaps` entry on cross-experiment comparison mentions citations as
-  context) and `docs/AgentResultContract.md`.
+  context, and with M9 the comparison within a planned series) and
+  `docs/AgentResultContract.md`.
 - `contracts/contract_catalog.yml` (`cites`, 1.11.0),
   `contracts/contract_catalog_comments.md`, `docs/AgentCatalogContract.md`.
 - `agent/WEAKNESSES.md`: the M0 hole, until it is fixed.

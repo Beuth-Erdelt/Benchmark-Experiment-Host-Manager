@@ -97,6 +97,7 @@ class Benchbase(Benchmark):
             experiment.set_workload(
                 name=f'Benchbase Data {type_of_benchmark} Loading SF={SF}',
                 info='This imports a Benchbase data set.',
+                intro='Load data and do not run a benchmark.',
                 type='benchbase',
                 defaultParameters={'SF': SF},
             )
