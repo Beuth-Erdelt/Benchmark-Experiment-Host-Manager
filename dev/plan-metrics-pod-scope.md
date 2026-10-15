@@ -89,7 +89,8 @@ corrected on re-evaluation.
    reported once ("N cAdvisor metrics do not drop stopped pods' series; see
    k8s-cluster.config"), in the workload info and as a failed test in the
    summary and report, so results from an unfixed config say so.
-4. **Namespace filter.** The same 14 cAdvisor templates get
+4. **Namespace filter (required: worker queries carry no experiment code,
+   see the TiDB evidence).** The same 14 cAdvisor templates get
    `namespace="{namespace}"`; the formatting calls supply `namespace`.
    An old template without `{namespace}` keeps working (unused keyword).
 5. **Counters after the filter (follow-up to M1).** With stale series gone,
@@ -164,6 +165,37 @@ Not covered by these runs: worker StatefulSets (all single PostgreSQL),
 truly concurrent jobs of one configuration, missed scrapes (the
 reappearance guard of decision 5). The truth comes from the same cAdvisor
 data, so it verifies which pods are counted, not cAdvisor itself.
+
+### TiDB with worker StatefulSets (1792064085, 2026-10-15)
+
+BenchBase TPC-C SF16 on TiDB (3 SQL replicas as the SUT Deployment, PD and
+TiKV as worker StatefulSets, 3 pods each), `-nc 1`, rounds `-nbp 1,2`,
+nvme. All 16 fetches (SUT, loader, benchmarker, PD and TiKV, loading and
+benchmarking) agree with the ground truth for every method, CPU and Max RAM:
+no restart, and the rounds are 527 s apart (PostgreSQL runs: ~160 s). So the
+filter is harmless on StatefulSets and a multi-replica SUT; the worker
+linger itself is still untested.
+
+Found:
+- **Worker queries carry no experiment code** (and no namespace):
+  `pod=~"(.*)bexhoma-pd-tidb-nvme-benchbase-tpcc-16-(.*)"`. Worker pods are
+  named after the storage configuration, so every experiment of the same
+  configuration has the same worker pod names; Prometheus still held the
+  previous experiment's incarnations (10:24-10:58). A run within 5 min of
+  the previous one is covered by the filter; **another user running the
+  same configuration at the same time is summed in for the whole run**, and
+  only the namespace filter prevents that: decision 4 is required, not
+  optional.
+- **The cgroup `id` format differs per node** (systemd
+  `.../kubepods-burstable-pod<uid_with_underscores>.slice/...` on one node,
+  cgroupfs `/kubepods/burstable/pod<uid>/...` on the others). Confirms
+  rejecting UID-based worker selectors; the filter does not depend on it.
+- **Round spacing depends on the DBMS** (160 s PostgreSQL, 527 s TiDB): the
+  90 s threshold relies on the minimum gap, not the typical one.
+
+Next run to close the gap: the same TiDB experiment with `-nc 2` (restart,
+worker pods get the same names again), ideally twice in a row (back-to-back
+experiments).
 
 Other checks:
 - DBMS-Benchmarker's container swap (`str.replace`) and the worker

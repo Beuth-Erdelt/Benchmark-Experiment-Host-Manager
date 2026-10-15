@@ -408,9 +408,111 @@ This forwards ports, so you have
 All metrics in monitoring are summed across all matching components of the same type.
 In this example, this means that used memory, CPU time, etc. are summed across all nodes of the TiDB cluster for the components PD, TiKV and TiDB resp.
 
+### Application Metrics
+
+Collecting application metrics for TiDB is supported.
+It can be activated by `-m -mc -ma`.
+Metrics are defined per component: the tidb-server pods (SUT deployment), PD and TiKV.
+See [example configuration](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) for the definitions and [Metrics](Example-Metrics.html) for more examples.
+
+```bash
+bexhoma ycsb \
+  -dbms TiDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -xop 1 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  run &>$LOG_DIR/docs_ycsb_tidb_3.log
+```
+
+The result looks something like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_tidb_3_summary.md" target="_blank" rel="noopener">docs_ycsb_tidb_3.log</a></summary>
+
+```markdown
+## Show Summary
+```
+
+</details>
+
+
 ## Use Persistent Storage
 
-**Persistent storage currently is not yet implemented.**
+The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
+If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+
+Example:
+```bash
+bexhoma ycsb \
+  -dbms TiDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 2 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -xop 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  run &>$LOG_DIR/docs_ycsb_tidb_2.log
+```
+
+TiDB keeps its data in the PD and TiKV StatefulSets, so each of their pods gets a volume of the requested class and size (`-rst`, `-rss`).
+The tidb-server pods are stateless and get no volume.
+The name of each volume contains the storage class, so data loaded on one storage class is never reused on another.
+In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
+The first instance of TiDB mounts the volumes and loads the data.
+The second instance reuses the volumes and skips loading.
+Here, we remove existing storage via `-rsr` to start with a clean copy.
+
+The result looks something like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_tidb_2_summary.md" target="_blank" rel="noopener">docs_ycsb_tidb_2.log</a></summary>
+
+```markdown
+## Show Summary
+```
+
+</details>
 
 
 ## YCSB Example Explained
@@ -430,7 +532,7 @@ In `cluster.config` there is a section:
         'dialect': 'MySQL',
         'JDBC': {
             'driver': "com.mysql.cj.jdbc.Driver",
-            'auth': ["root", "root"],
+            'auth': ["root", ""],
             'url': 'jdbc:mysql://{serverip}:9091/{dbname}',
             'jar': ['mysql-connector-j-8.0.31.jar', 'slf4j-simple-1.7.21.jar'],
             'database': 'test',
@@ -446,7 +548,7 @@ In `cluster.config` there is a section:
 
 where
 * `loadData`: This command is used to create the schema
-* `JDBC`: These infos are used to configure YCSB
+* `JDBC`: These infos are used to configure YCSB. A new TiDB cluster creates the user `root` without a password, so the password is empty.
 * `worker_port`: This tells bexhoma what the port for internal communication is
 * `store_args`: This tells bexhoma not to log args of the containers, since they do not contain parameters
 
@@ -816,6 +918,48 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
+```
+
+</details>
+
+
+### Persistent Storage
+
+The same run with the data of PD and TiKV on persistent volumes of the storage class `nvme` (`-rst`, see [Use Persistent Storage](#use-persistent-storage)).
+Existing volumes are removed before the first repetition (`-rsr`), so the data is loaded fresh.
+The experiment is repeated twice (`-nc 2`): the second instance of TiDB reuses the volumes and skips loading, which shows that the data survives a restart of the cluster.
+
+```bash
+bexhoma benchbase \
+  -dbms TiDB \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nc 2 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rst nvme \
+  -rss 50Gi \
+  run &>$LOG_DIR/docs_benchbase_tidb_2.log
+```
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_tidb_2_summary.md" target="_blank" rel="noopener">docs_benchbase_tidb_2.log</a></summary>
+
+```markdown
+## Show Summary
 ```
 
 </details>
