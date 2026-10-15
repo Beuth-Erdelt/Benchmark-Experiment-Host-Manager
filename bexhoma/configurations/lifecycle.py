@@ -921,6 +921,9 @@ scrape_configs:
                                 if vol['name'] == 'bxw':
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
+                                    elif not use_ramdisk:
+                                        # where the worker pvc sits, for HostProbe.check_volumes()
+                                        cfg.deployment_infos['statefulset'][statefulset_type]['mount_path'] = vol['mountPath']
                         if cfg.use_ephemeral_storage():
                             ephemeral_size = cfg.storage['storageSize']
                             c = dep['spec']['template']['spec']['containers'][i_container]
@@ -1159,7 +1162,11 @@ scrape_configs:
                                 if vol['name'] == 'benchmark-storage-volume':
                                     if not use_storage:
                                         del result[key]['spec']['template']['spec']['containers'][i_container]['volumeMounts'][j]
-                                    elif cfg.volume_per_tenant:
+                                        continue
+                                    if not use_ramdisk:
+                                        # where the pvc sits, for HostProbe.check_volumes()
+                                        cfg.deployment_infos['deployment'][deployment_type]['mount_path'] = vol['mountPath']
+                                    if cfg.volume_per_tenant:
                                         print(f"I need {cfg.num_tenants} copies of volumeMounts")
                                         for i in range(cfg.num_tenants):
                                             vol_tenant = copy.deepcopy(vol)

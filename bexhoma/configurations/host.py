@@ -53,14 +53,35 @@ class HostProbe:
             s.close()
         return found
 
-    def get_host_volume(self, pod: str = '') -> Tuple:
-        """Return (size, used) of mounted volumes in the SUT container.
+    def get_host_volume(self, pod: str = '', mount_path: str = '') -> Tuple:
+        """Return (size, used) of the storage volume in the SUT container.
+
+        Asks ``df`` for the filesystem holding ``mount_path``, which works for
+        every provisioner (an RBD device has no "volumes" in its df line).
+        Without ``mount_path``, uses the mount path of the SUT deployment's
+        pvc, then the DBMS ``datadir``, then the first df line matching
+        "volumes".
 
         :param pod: Optional pod name override; defaults to current SUT pod.
+        :param mount_path: Optional mount path of the volume inside the pod.
         :return: Tuple (size, used) as human-readable strings.
         :rtype: tuple
         """
         self._config.logger.debug('HostProbe.get_host_volume()')
+        if not mount_path:
+            sut = self._config.deployment_infos.get('deployment', {}).get('sut', {})
+            mount_path = sut.get('mount_path', self._config.dockertemplate.get('datadir', ''))
+        if mount_path:
+            try:
+                command = "df -hP " + mount_path
+                _, stdout, _ = self._config.execute_command_in_pod_sut(command=command, pod=pod)
+                lines = [x for x in stdout.split('\n') if x.strip() != '']
+                parts = lines[-1].split() if len(lines) > 1 else []
+                # mounted on "/" means the path is not on a volume
+                if len(parts) > 5 and parts[-1] != '/':
+                    return parts[1], parts[2]
+            except Exception as exc:
+                logging.error(exc)
         try:
             command = "df -hP | grep volumes"
             _, stdout, _ = self._config.execute_command_in_pod_sut(command=command, pod=pod)
@@ -350,7 +371,8 @@ class HostProbe:
                 for pod in pods:
                     print("{:30s}: get size via pod {} and write to pvc {}".format(
                         self._config.configuration, pod, pvc))
-                    size, used = self.get_host_volume(pod=pod)
+                    size, used = self.get_host_volume(
+                        pod=pod, mount_path=deployment.get('mount_path', ''))
                     fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(
                         pvc, size, used)
                     self._config.experiment.cluster.kubectl(fullcommand)
@@ -362,7 +384,8 @@ class HostProbe:
                     pvc = statefulset['pvc'][i]
                     print("{:30s}: get size via pod {} and write to pvc {}".format(
                         self._config.configuration, pod, pvc))
-                    size, used = self.get_host_volume(pod=pod)
+                    size, used = self.get_host_volume(
+                        pod=pod, mount_path=statefulset.get('mount_path', ''))
                     fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(
                         pvc, size, used)
                     self._config.experiment.cluster.kubectl(fullcommand)
