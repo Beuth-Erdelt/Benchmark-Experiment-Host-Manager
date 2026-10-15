@@ -925,7 +925,7 @@ Benchbase Workload tpcc SF=16
 
 ### Persistent Storage
 
-The same run with the data of PD and TiKV on persistent volumes of the storage class `nvme` (`-rst`, see [Use Persistent Storage](#use-persistent-storage)).
+The same run with the data of PD and TiKV on persistent volumes of the storage class `$BEXHOMA_STORAGE_CLASS` (`-rst`, see [Use Persistent Storage](#use-persistent-storage)).
 Existing volumes are removed before the first repetition (`-rsr`), so the data is loaded fresh.
 The experiment is repeated twice (`-nc 2`): the second instance of TiDB reuses the volumes and skips loading, which shows that the data survives a restart of the cluster.
 
@@ -950,7 +950,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rst nvme \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   run &>$LOG_DIR/docs_benchbase_tidb_2.log
 ```

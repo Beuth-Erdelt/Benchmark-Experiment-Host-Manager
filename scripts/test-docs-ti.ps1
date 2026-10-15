@@ -161,7 +161,7 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
-  -rst nvme                     <# storage class for persistent volumes (PD and TiKV) #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes (PD and TiKV) #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb_2.log" -Encoding utf8
 

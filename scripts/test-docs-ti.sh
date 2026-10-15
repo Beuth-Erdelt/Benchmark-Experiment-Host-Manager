@@ -274,7 +274,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rst nvme \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   run &>$LOG_DIR/docs_benchbase_tidb_2.log
 
