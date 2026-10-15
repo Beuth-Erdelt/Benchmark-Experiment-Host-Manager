@@ -117,6 +117,52 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 
 
+# -dbms TiDB                    DBMS under test
+# -sf 16                        scaling factor (controls database size)
+# -xsd 5                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                      throughput target as a multiple of the base ops/s
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod
+# -xnsr 3                       number of TiDB server (SQL frontend) replicas
+# -nw 3                         number of worker nodes in the cluster
+# -xnpd 3                       number of PD (Placement Driver) nodes
+# -nwr 3                        number of worker node replicas
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete any existing PVC for the SUT before starting
+# -rst nvme                     storage class for persistent volumes (PD and TiKV)
+# -rss 50Gi                     size of the persistent volume claim
+bexhoma benchbase \
+  -dbms TiDB \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rst nvme \
+  -rss 50Gi \
+  run &>$LOG_DIR/docs_benchbase_tidb_2.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nvme"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################
