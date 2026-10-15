@@ -50,6 +50,30 @@ def _filter_by_labels(items: list, component: str = '', experiment: str = '', co
     return filtered
 
 
+def _statefulset_pvcs(pvcs: list) -> list:
+    """PVCs created from a StatefulSet volumeClaimTemplate (worker, pd, tikv, ...), named bxw-{worker_name}-{i}."""
+    return [pvc for pvc in pvcs if pvc.metadata.name.startswith('bxw-')]
+
+
+def _worker_volumes(pvcs: list) -> dict:
+    """Rows of the 'Volumes of Workers' table, keyed by PVC name, whatever the PVC's component label."""
+    volumes = {}
+    for pvc in _statefulset_pvcs(pvcs):
+        pvc_labels = _labels(pvc)
+        name = pvc.metadata.name
+        volumes[name] = {}
+        volumes[name]['component'] = pvc_labels.get('component', "")
+        volumes[name]['configuration'] = pvc_labels.get('configuration', "")
+        volumes[name]['experiment'] = pvc_labels.get('experiment', "")
+        volumes[name]['dbms'] = pvc_labels.get('dbms', "")
+        volumes[name]['storage_class_name'] = pvc.spec.storage_class_name
+        volumes[name]['storage'] = pvc.spec.resources.requests['storage']
+        volumes[name]['status'] = pvc.status.phase
+        volumes[name]['size'] = pvc_labels.get('volume_size', "")
+        volumes[name]['used'] = pvc_labels.get('volume_used', "")
+    return volumes
+
+
 def _pod_status_counts(pods: list) -> dict:
     """Count already bulk-fetched Pod objects by their status phase."""
     counts = {}
@@ -337,22 +361,12 @@ def manage():
             df = df.reindex(index=evaluators.natural_sort(df.index))
             h = ['Volumes'] + list(df.columns)
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
-        # get all worker volumes
-        volumes = {}
-        for pvc in _filter_by_labels(all_pvcs, component='worker'):
-            pvc_labels = _labels(pvc)
-            name = pvc.metadata.name
-            volumes[name] = {}
-            volumes[name]['configuration'] = pvc_labels['configuration']
-            volumes[name]['experiment'] = pvc_labels['experiment']
-            volumes[name]['dbms'] = pvc_labels['dbms']
-            volumes[name]['storage_class_name'] = pvc.spec.storage_class_name
-            volumes[name]['storage'] = pvc.spec.resources.requests['storage']
-            volumes[name]['status'] = pvc.status.phase
-            volumes[name]['size'] = pvc_labels.get('volume_size', "")
-            volumes[name]['used'] = pvc_labels.get('volume_used', "")
+        # get all worker volumes: every StatefulSet volumeClaimTemplate PVC,
+        # whatever its component label (worker, pd, tikv, ...)
+        volumes = _worker_volumes(all_pvcs)
         if len(volumes) > 0:
             df = pd.DataFrame(volumes).T
+            df = df.reindex(index=evaluators.natural_sort(df.index))
             h = ['Volumes of Workers'] + list(df.columns)
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
         # group already-fetched pods by experiment and configuration
