@@ -225,7 +225,6 @@ quoting any number, not after:
 |---|---|---|
 | `No SUT container restarts` | Every metric of the restarted configuration from the restart's `Finished` time onward — the Health Summary names the termination reason (e.g. `OOMKilled`) | `connections.md`'s SUT Container Restarts |
 | `SUT data survived container restarts` | Every query of that configuration after the restart ran against a freshly initialized, empty database; its SQL errors (`relation … does not exist`, connection/I/O errors) are consequences of the restart, not findings about the queries | `connections.md`'s SUT Container Restarts |
-| `Loading measured in this experiment` | Loading times of the configurations whose `storage_reused` is `True`: their volume was already loaded by an earlier experiment, so loading was skipped and the times are inherited, not measured here — they enter no loading comparison. Benchmarking metrics stay valid. Not checked: a repetition whose `loading_inherited` is `True` found the volume of an earlier repetition loaded; its loading times are copies and enter no loading statistic across repetitions | `connections.md`'s `storage_reused`, `loading_inherited` and `sut_storage_*` |
 | `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
 | `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured — dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
@@ -237,6 +236,17 @@ quoting any number, not after:
 A **skipped** test (e.g. monitoring skipped because data was pre-existing, or
 a phase shorter than the Prometheus scrape interval) does not invalidate
 anything — only a **failed** row does.
+
+One skipped test still says something about the numbers:
+`Loading measured in this experiment (storage reused, …)` lists the
+configurations whose volume an earlier experiment had already loaded. Reusing
+it is deliberate (the experiment did not remove its volumes), so loading was
+skipped: their loading times are inherited from that experiment, not measured
+here, and enter no loading comparison. Benchmarking metrics stay valid. The
+same holds for a repetition whose `loading_inherited` is `True` (it found the
+volume of an earlier repetition loaded): its loading times are copies and
+enter no loading statistic across repetitions. Check `connections.md`'s
+`storage_reused`, `loading_inherited` and `sut_storage_*`.
 """
 
 _INTERPRETATION_RULES_MD = """### Interpretation Rules

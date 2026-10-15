@@ -1565,6 +1565,38 @@ class ExperimentBase():
         :type label: str
         """
         self._test_results.append((None, label))
+    def _show_loading_provenance(self, connections_sorted: list) -> None:
+        """
+        Print which configurations did not load in this experiment, and record the loading test.
+
+        A volume found already loaded at experiment start skips loading and
+        inherits its loading times from whichever experiment filled it. That
+        reuse is deliberate (the volume was not removed), so the test
+        ``Loading measured in this experiment`` is skipped, not failed; its
+        reason names the configurations whose loading times are inherited.
+        Results written before ``storage_reused`` was recorded record nothing.
+        A repetition that found the volume of an earlier repetition loaded
+        (without ``-rsrp``) is listed too, informational only.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        recorded = [c for c in connections_sorted if 'storage_reused' in c]
+        if recorded:
+            reused = sorted({c.get('configuration', c['name']) for c in recorded if c['storage_reused']})
+            if reused:
+                print("\n### Reused Storage")
+                print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
+                self._record_skipped_test("Loading measured in this experiment (storage reused, loading times inherited: {})".format(", ".join(reused)))
+            else:
+                self._record_test(True, "Loading measured in this experiment")
+        # its loading times are copies, so they are no further sample of loading
+        inherited = sorted({
+            "{}-{}".format(c.get('configuration', c['name']), c.get('parameter', {}).get('numExperiment', '?'))
+            for c in connections_sorted
+            if c.get('loading_inherited') and not c.get('storage_reused')})
+        if inherited:
+            print("\n### Inherited Loading")
+            print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
     def _test_column(self, df, column: str, title: str = '') -> bool:
         """
         Call evaluator.test_results_column and record the result.
@@ -2904,26 +2936,7 @@ class ExperimentBase():
                         infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
-        # A volume found already loaded at experiment start skips loading and
-        # inherits its loading times from whichever experiment filled it.
-        # Results written before storage_reused was recorded say nothing.
-        recorded = [c for c in connections_sorted if 'storage_reused' in c]
-        if recorded:
-            reused = sorted({c.get('configuration', c['name']) for c in recorded if c['storage_reused']})
-            if reused:
-                print("\n### Reused Storage")
-                print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
-            self._record_test(not reused, "Loading measured in this experiment")
-        # A repetition that finds the volume of an earlier repetition loaded
-        # skips loading too (without -rsrp). Informational: its loading times
-        # are copies, so they are no further sample of loading.
-        inherited = sorted({
-            "{}-{}".format(c.get('configuration', c['name']), c.get('parameter', {}).get('numExperiment', '?'))
-            for c in connections_sorted
-            if c.get('loading_inherited') and not c.get('storage_reused')})
-        if inherited:
-            print("\n### Inherited Loading")
-            print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
+        self._show_loading_provenance(connections_sorted)
         result_dir = Path(resultfolder) / code
         restarts_files = sorted(result_dir.glob("bexhoma-sut-*-restarts.json"))
         if restarts_files:

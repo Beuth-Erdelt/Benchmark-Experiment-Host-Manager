@@ -14,6 +14,7 @@ See LICENSE for details.
 import copy
 import types
 import unittest
+from unittest import mock
 
 import pandas as pd
 
@@ -337,6 +338,31 @@ class StorageShapeTest(unittest.TestCase):
         self.assertTrue(catalog_spec.removes_existing_storage({'storage_class': [None, 'shared']}))
         self.assertFalse(catalog_spec.removes_existing_storage(
             {'storage_class': 'shared', 'storage': {'remove_existing': False}}))
+
+
+class LoadingProvenanceTest(unittest.TestCase):
+    """Reusing a loaded volume is deliberate: the loading test is skipped, never failed."""
+
+    def results(self, *connections):
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment._test_results = []
+        with mock.patch('builtins.print'):
+            experiment._show_loading_provenance(list(connections))
+        return experiment._test_results
+
+    def test_reuse_is_skipped_and_names_the_configurations(self):
+        results = self.results(
+            {'name': 'tidb-1-1-1-1', 'configuration': 'TiDB-1', 'storage_reused': True},
+            {'name': 'mysql-1-1-1-1', 'configuration': 'MySQL-1', 'storage_reused': False})
+        self.assertEqual(results, [
+            (None, 'Loading measured in this experiment (storage reused, loading times inherited: TiDB-1)')])
+
+    def test_measured_loading_passes(self):
+        self.assertEqual(self.results({'name': 'tidb-1-1-1-1', 'storage_reused': False}),
+                         [(True, 'Loading measured in this experiment')])
+
+    def test_older_results_record_nothing(self):
+        self.assertEqual(self.results({'name': 'tidb-1-1-1-1'}), [])
 
 
 class StorageReusedTest(unittest.TestCase):
