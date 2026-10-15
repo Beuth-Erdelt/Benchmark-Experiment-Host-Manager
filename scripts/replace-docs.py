@@ -59,7 +59,8 @@ for filename in os.listdir(md_directory):
             summary_path = os.path.join(logs_directory, summary_filename)
             print(f"->Looking for {summary_path}")
             if os.path.exists(summary_path):
-                with open(summary_path, 'r', encoding='utf-8') as log_f:
+                # utf-8-sig drops a BOM (e.g. from PowerShell 5.1) instead of embedding U+FEFF in the docs
+                with open(summary_path, 'r', encoding='utf-8-sig') as log_f:
                     log_content = log_f.read().strip()
                 return (
                     f'<details>\n<summary>Show <a href="{link_url}"{link_attrs}>{log_marker}</a></summary>\n\n'
