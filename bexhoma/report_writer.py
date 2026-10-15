@@ -74,6 +74,7 @@ from bexhoma import evaluators
 from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
+from bexhoma.monitoring_math import counter_total
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
 
@@ -607,7 +608,7 @@ def _build_monitoring_sections(
             df = evaluator.get_monitoring_metric(metric=metric_key, component=component)
             if df.empty:
                 continue
-            aggregated = _aggregate_metric(df, meta['metric'])
+            aggregated = _aggregate_metric(df, meta['metric'], component)
             df_cleaned = pd.DataFrame(aggregated)
             df_cleaned.columns = [meta['title']]
             df_cleaned = _add_not_applicable(
@@ -631,20 +632,23 @@ def _build_monitoring_sections(
     return sections
 
 
-def _aggregate_metric(df: pd.DataFrame, kind: str) -> pd.Series:
+def _aggregate_metric(df: pd.DataFrame, kind: str, component: str) -> pd.Series:
     """
     Reduce one metric's per-scrape values to one value per connection.
 
-    Counters by ``max - min``, ratios by ``max``, everything else by ``mean``
-    (NaN samples, e.g. a latency while the volume is idle, are skipped).
+    Counters by :func:`bexhoma.monitoring_math.counter_total` (their growth on
+    the SUT side, where ``max - min`` would count a dead pod still in the sum),
+    ratios by ``max``, everything else by ``mean`` (NaN samples, e.g. a latency
+    while the volume is idle, are skipped).
 
     :param df: One column per connection, one row per Prometheus scrape.
     :param kind: The metric's ``metric`` field (``counter``, ``ratio``, ``gauge``).
+    :param component: The monitoring component the values belong to.
     :return: One value per connection, sorted by connection.
     :rtype: pandas.Series
     """
     if kind == 'counter':
-        return df.max().sort_index() - df.min().sort_index()
+        return counter_total(df, component)
     if kind == 'ratio':
         return df.max().sort_index()
     return df.mean().sort_index()
@@ -729,7 +733,7 @@ def _build_ceph_storage_section(
             df = evaluator.get_monitoring_metric(metric=key, component=component)
             if df.empty:
                 continue
-            column = pd.DataFrame(_aggregate_metric(df, metric_defs[key]['metric']))
+            column = pd.DataFrame(_aggregate_metric(df, metric_defs[key]['metric'], component))
             column.columns = [metric_defs[key]['title']]
             columns.append(_add_not_applicable(column, _inactive_connections(connections_sorted, key)))
         if not columns:

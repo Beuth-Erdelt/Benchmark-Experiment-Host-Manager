@@ -27,6 +27,7 @@ import pprint
 from dbmsbenchmarker import parameter, inspector
 
 from bexhoma import evaluators
+from bexhoma.monitoring_math import counter_total
 
 __all__ = ["CollectorBase", "get_non_constant", "metric_is_active"]
 
@@ -451,7 +452,8 @@ class CollectorBase:
 
         Iterates over ``self.df_metrics``, skipping inactive metrics, and fetches the
         time-series data for each metric via the evaluator.  Counter metrics are reduced
-        by ``max - min``; ratio metrics by ``max``; all others by ``mean``.
+        by :func:`bexhoma.monitoring_math.counter_total`; ratio metrics by ``max``; all
+        others by ``mean``.
         Results are combined column-wise into a summary DataFrame.
 
         :param evaluation: Evaluator instance providing the monitoring data.
@@ -473,7 +475,7 @@ class CollectorBase:
             df = evaluation.get_monitoring_metric(metric=metric_key, component=type)
             df.index = evaluation.code + '-' + df.index.astype(str)
             if reduction == 'diff':
-                processed = df.max().sort_index() - df.min().sort_index()
+                processed = counter_total(df, type)
             elif reduction == 'max':
                 processed = df.max().sort_index()
             else:

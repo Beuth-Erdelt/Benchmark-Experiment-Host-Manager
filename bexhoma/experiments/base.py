@@ -34,6 +34,7 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
+from bexhoma.monitoring_math import counter_total
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut
 from bexhoma import sut_restarts
 
@@ -2862,7 +2863,7 @@ class ExperimentBase():
                             if not df.empty:
                                 list_monitoring_app
                                 if metric['metric'] == 'counter':
-                                    df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
+                                    df = counter_total(df, component)
                                 else:
                                     df = df.max().sort_index()
                                 df_cleaned = pd.DataFrame(df)
@@ -3177,8 +3178,8 @@ class ExperimentBase():
         df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component=component)
         if not df.empty and (df.count() < MIN_MONITORING_SAMPLES).any():
             insufficient_samples = True
-        df = df.max().sort_index() - df.min().sort_index() # compute difference of counter
-        #df = df.T.max().sort_index() - df.T.min().sort_index() # compute difference of counter
+        # a dead pod of the previous phase may still be in the sum, see counter_total()
+        df = counter_total(df, component)
         df_cleaned = pd.DataFrame(df)
         df_cleaned.columns = ["CPU [CPUs]"]
         if not df_cleaned.empty:
