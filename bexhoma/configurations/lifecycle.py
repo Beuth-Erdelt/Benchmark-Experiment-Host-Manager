@@ -1405,7 +1405,9 @@ scrape_configs:
         cfg.logger.debug(
             f"stop_sut component={component} experiment={experiment} configuration={configuration}")
         # Before the SUT goes away: loading diagnostics also capture the SUT pods.
-        if cfg.experiment.loading_active:
+        # Only on the top-level call: the recursive calls for worker components
+        # run after the SUT deployment was deleted, when its pods are vanishing.
+        if cfg.experiment.loading_active and component == 'sut':
             self.stop_loading()
         if len(cfg.storage) > 0 and 'keep' in cfg.storage and cfg.storage['keep']:
             pass
@@ -1438,7 +1440,7 @@ scrape_configs:
             app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             cfg.experiment.cluster.delete_service(service)
-        if cfg.experiment.monitoring_active:
+        if cfg.experiment.monitoring_active and component == 'sut':
             self.stop_monitoring()
         if component == 'sut':
             if 'deployment' in cfg.deployment_infos:
