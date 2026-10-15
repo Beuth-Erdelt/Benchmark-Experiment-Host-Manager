@@ -176,6 +176,9 @@ spec:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 60
+      dnsConfig:
+        searches:
+        - "{statefulset}.{namespace}.svc.cluster.local"
       containers:
       - name: dbms
         image: redis:7.4.2
@@ -199,7 +202,9 @@ spec:
           #- "--replica-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
           #- "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis"
           #- "--cluster-announce-ip $(POD_IP)"
-          - "--cluster-announce-ip $(POD_NAME).$(STATEFULSET_NAME)"
+          # cluster-announce-ip is kept in a 46-byte field (NET_IP_STR_LEN), so it
+          # gets the bare pod name, completed by the dnsConfig search domain below
+          - "--cluster-announce-ip $(POD_NAME)"
           - "--cluster-announce-hostname $(POD_NAME).$(STATEFULSET_NAME)"
           #- "--cluster-announce-hostname $(POD_NAME).bexhoma-worker-redis-64-8-196608-ycsb-1"
           #- "--cluster-announce-ip $(POD_NAME).bexhoma-worker-redis-64-8-196608-redis.perdelt.svc.cluster.local"

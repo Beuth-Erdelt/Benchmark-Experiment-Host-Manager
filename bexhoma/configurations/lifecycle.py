@@ -863,6 +863,15 @@ scrape_configs:
                 dep['metadata']['name'] = statefulset['name']
                 dep['metadata']['labels']['app'] = app
                 dep['spec']['serviceName'] = statefulset['name']
+                # dnsConfig search domains may name the headless service, so that
+                # pods reach each other by bare pod name (Redis Cluster keeps its
+                # announced address in a 45-character field)
+                dns_config = dep['spec']['template']['spec'].get('dnsConfig') or {}
+                if dns_config.get('searches'):
+                    dns_config['searches'] = [
+                        search.format(statefulset=statefulset['name'],
+                                      namespace=cfg.experiment.cluster.namespace)
+                        for search in dns_config['searches']]
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = cfg.docker
