@@ -243,23 +243,24 @@ releases them, and that the 16 PVCs bind.
 
 Moved to [plan-per-config-overrides.md](plan-per-config-overrides.md)
 (2026-10-16). Instead of `hardware.py`-only flags (`-xtnn`, `-xtw`), tenants
-are addressed by tenant id in a generic `--set` scope, for every benchmark:
+are addressed by tenant id with a generic flag `--set-tenant`, for every
+benchmark:
 
 ```
 # placement C
---set "sut@tenant:0,3,6,9.node=cl-worker21"
---set "sut@tenant:1,4,7,10.node=cl-worker34"
---set "sut@tenant:2,5,8,11.node=cl-worker37"
+--set-tenant "0,3,6,9:node=cl-worker21"
+--set-tenant "1,4,7,10:node=cl-worker34"
+--set-tenant "2,5,8,11:node=cl-worker37"
 # noisy neighbor: tenant 0 seqwrite, the others the commit default
---set "job[benchmarking]@tenant:0.env[HARDWARE_FIO_BS]=1M"
---set "job[benchmarking]@tenant:0.env[HARDWARE_FIO_IODEPTH]=8"
---set "job[benchmarking]@tenant:0.env[HARDWARE_FIO_ENGINE]=libaio"
---set "job[benchmarking]@tenant:0.env[HARDWARE_FIO_FDATASYNC]=0"
+--set-tenant "0:benchmarking.env.HARDWARE_FIO_BS=1M"
+--set-tenant "0:benchmarking.env.HARDWARE_FIO_IODEPTH=8"
+--set-tenant "0:benchmarking.env.HARDWARE_FIO_ENGINE=libaio"
+--set-tenant "0:benchmarking.env.HARDWARE_FIO_FDATASYNC=0"
 ```
 
 The fio profiles of the workload table become documented bundles of such
 lines. The per-pod mechanism (several fio pods on one SUT and volume,
-formerly "Case B" here) is described there under "Not covered".
+formerly "Case B" here) is described there under M6.
 
 ### M3: krbd `noshare` (needed for D)
 

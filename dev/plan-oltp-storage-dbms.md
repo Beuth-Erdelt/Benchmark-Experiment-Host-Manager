@@ -49,17 +49,17 @@ pinned.
 | SUT / template | From | To | Required changes beyond the tag |
 |---|---|---|---|
 | PostgreSQL (`PostgreSQL.yml`, `PGBouncer.yml` backend) | `postgres:18.3` | `postgres:18.6` | none |
-| PGBouncer variants (`PGBouncerReplica.yml`, `PGBouncerSidecar.yml`) | `postgres:16.1`, `edoburu/pgbouncer` (untagged) | `postgres:18.6`, `edoburu/pgbouncer:v1.26.0-p0` | check release notes 1.25 -> 1.26 |
-| PGBouncer (`PGBouncer.yml`) | `edoburu/pgbouncer:v1.25.1-p0` | `v1.26.0-p0` | as above |
-| Citus (`Citus.yml`, coordinator + workers) | `citusdata/citus:13.2.0-alpine` (PG 17.6) | `14.2.0-alpine` (PG 18.4) | **fix preStop**: `/usr/lib/postgresql/16/bin/pg_ctl` does not exist in alpine images; use `/usr/local/bin/pg_ctl` (gosu exists). Broken today already. |
+| PGBouncer variants (`PGBouncerReplica.yml`, `PGBouncerSidecar.yml`) | `postgres:16.1`, `edoburu/pgbouncer` (untagged) | `postgres:18.6`, `edoburu/pgbouncer:v1.26.0-p0` | none (release notes checked 2026-10-17: online restart removed, `search_path` tracked by default, new `client_login_count` stat; 1.26.1 fixes a `search_path` ignore regression but is not on edoburu yet) |
+| PGBouncer (`PGBouncer.yml`) | `edoburu/pgbouncer:v1.25.1-p0` | `v1.26.0-p0` | as above (`POOL_MODE session`, `IGNORE_STARTUP_PARAMETERS` unaffected) |
+| Citus (`Citus.yml`, coordinator + workers) | `citusdata/citus:13.2.0-alpine` (PG 17.6) | **`14.2.0` (Debian, PG 18.4), not `14.2.0-alpine`** | (a) **Not alpine:** `14.2.0-alpine` raises `ERROR: could not append to file: Not supported` in ~5 % of HammerDB New Order transactions (171-177 per minute, also on a real volume, same with HammerDB 5.0); `13.2.0-alpine` and `14.2.0` Debian run with 0 errors (checked 2026-10-17). (b) **Set `PGDATA=/var/lib/postgresql/data/pgdata` on the coordinator** (the workers have it, the coordinator does not): PG 18 images default to `/var/lib/postgresql/18/docker`, and with the PVC at `/var/lib/postgresql/data` the entrypoint refuses to start (crash loop, tested). (c) **fix preStop**: `/usr/lib/postgresql/16/bin/pg_ctl` does not exist; Debian 14.2 has `/usr/lib/postgresql/18/bin/pg_ctl` (also on `PATH`) and `/usr/local/bin/gosu`. Broken today already. |
 | MySQL (`MySQL.yml`) | `mysql:8.4.0` | `mysql:9.7.2` | **remove `--mysql-native-password=ON`** (server aborts on 9.x). Add TLS volume/args (WP5). Other args unchanged (D1). |
 | MariaDB (`MariaDB.yml`) | `mariadb:11.4.7` | `mariadb:12.3.3` | remove `--innodb-buffer-pool-chunk-size` (deprecated, ignored); readiness probe `timeoutSeconds: 2` -> 10 |
 | CockroachDB (`CockroachDB.yml`) | `v24.2.4` | **unchanged** (D4) | none |
 | TiDB (`TiDB.yml`, PD/TiKV/SQL) | `v7.1.6` | `v8.5.8` | none (TiKV accepts `--pd`; SQL pod `yum install mysql` works on Rocky Linux 9; both tested) |
 | Redis (`Redis.yml`) | `redis:8.6.1` | `redis:8.10.2` | none (args accepted) |
-| Redis cluster (`RedisCluster.yml`) | `redis:7.4.2` (SUT, workers), `redis:7.0` (helper) | `redis:8.10.2` | check `--cluster-*` args on 8.10 |
+| Redis cluster (`RedisCluster.yml`) | `redis:7.4.2` (SUT, workers), `redis:7.0` (helper) | `redis:8.10.2` | none (checked 2026-10-17: template args accepted, 3-node cluster `ok`, hostname endpoints route) |
 | Dragonfly (`Dragonfly.yml`, `DragonflyCluster.yml`, `DragonflyReplica.yml`) | `v1.37.0` | `v2.0.2` | move `--maxmemory` out of the command into an env default (WP3) |
-| Exporters | postgres-exporter `v0.19.1`, mysqld-exporter `v0.17.2`, `latest` tags (pgbouncer-exporter, redis_exporter) | `v0.20.1`, `v0.20.0`, pinned tags | check the metric names used in `k8s-cluster.config` |
+| Exporters | postgres-exporter `v0.19.1`, mysqld-exporter `v0.17.2`, `latest` tags (pgbouncer-exporter, redis_exporter) | `v0.20.1`, `v0.20.0`, pinned tags (redis_exporter `v1.94.0`, works with `--is-cluster` on 8.10) | none (checked 2026-10-17: mysqld-exporter 0.17.2/0.20.0 same names, works on MySQL 9.7 caching_sha2 with cold cache; postgres-exporter 0.20.1 only drops the unused `pg_stat_archiver_last_archive_age`). Pre-existing, not caused by the update: 15 PG names in `k8s-cluster.config` are empty in both versions (PG 17+ moved the checkpoint columns out of `pg_stat_bgwriter`; per-table stats only for the exporter's database; `pg_stat_wal_wal_bytes` absent) - separate cleanup |
 | cadvisor sidecars | `v0.47.0` | `v0.60.6` | low priority (unused with `-mc`) |
 | CedarDB | - | out of scope | - |
 | YugabyteDB | Helm chart in the test scripts | see WP9 | - |
@@ -153,9 +153,12 @@ Changes:
    set (the lines exist, commented out). **Move the HammerDB images to 6.0** (R8, user decision
    2026-10-17): base `tpcorg/hammerdb:v6.0` (or the per-DBMS tags such as `v6.0-mysql`, `v6.0-postgres`,
    `v6.0-maria`) in `images/hammerdb/{generator,benchmarker}/Dockerfile`, then rebuild. Tested with
-   MySQL 9.7 over TLS (build + timed run). Check at the start of WP5: HammerDB 6.0 for the other DBMS
-   bexhoma drives with it (PostgreSQL, MariaDB, Citus) - `diset` keys, output format parsed by bexhoma's
-   collector (`NOPM`/`TPM` lines), and the generic base image vs the per-DBMS tags.
+   MySQL 9.7 over TLS (build + timed run). Checked 2026-10-17 with the generic `tpcorg/hammerdb:v6.0`
+   and bexhoma's `diset` lines for PostgreSQL 18.6, Citus, MariaDB 12.3.3 and MySQL 9.7.2 (TLS): all
+   keys accepted, build + 1-min timed run with time profile OK, 0 errors; bexhoma's collector
+   (`tpcc.py:132-158`) parses `TEST RESULT`, `Active` (first match, via `zip`) and the
+   `/tmp/hdbxtprofile.log` block (`SUMMARY OF`, `>>>>> PROC: NEWORD`, separator, `CALLS/MIN/AVG/P99...`)
+   unchanged. The generic base image is enough; no per-DBMS tags needed.
 6. **Init script:** `experiments/tpcc/MySQL/initschema-tpcc.sql:14` -> `IDENTIFIED BY 'root'`.
 7. JDBC clients (YCSB, Benchbase, dbmsbenchmarker): no change (tested: YCSB over TLS, Benchbase via RSA key).
 8. Tests: unit test of the Secret document (keys, SANs, labels, name); template patch with TLS on/off.
@@ -301,9 +304,14 @@ settings are relaxed); missing files are skipped by bexhoma.
 Files: `scripts/test-docs-yugabytedb.ps1` / `.sh`, `bexhoma/ceph_storage.py`.
 1. `Install-YugabyteDB`: add parameters for storage class (default `shared`, as today), volumes per
    tserver (`storage.tserver.count`, default 2 = chart default, D8), node placement (chart
-   `nodeSelector`/affinity, WP6); chart `--version 2025.2.7` (LTS). Verify the `--set` keys used today
-   (`storage.*`, `resource.*`, `gflags.*`, `preflight.skipUlimit`, `*.livenessProbe.timeoutSeconds`)
-   against the 2025.2.7 chart first. `durable_wal_write` stays default (D1).
+   `nodeSelector`/affinity, WP6); chart `--version 2025.2.7` (LTS). Chart keys checked 2026-10-17: 2025.2.4 -> 2025.2.7 has no
+   added, removed or changed values; `storage.*` (incl. `count`), `resource.*`, `gflags.*`,
+   `preflight.skipUlimit`, `enableLoadBalancer`, `nodeSelector`, `master/tserver.affinity` exist.
+   **Fix:** `tserver.livenessProbe.timeoutSeconds` / `master.livenessProbe.timeoutSeconds` are not chart
+   keys and are silently ignored; the chart reads the root `livenessProbe.timeoutSeconds` (default 1 s).
+   The probe (disk check on the data dirs) exists only with `storage.ephemeral=false`, so this never
+   mattered with today's ephemeral runs; with PVCs set `livenessProbe.timeoutSeconds=10`.
+   `durable_wal_write` stays default (D1).
 2. Ceph volume metrics: bexhoma resolves `{rbd_images}` from PVCs it created; the chart's PVCs
    (`app=yb-tserver`) are unknown, so the metrics stay empty. Add a per-configuration PVC label
    selector (e.g. `pvc_selector='app=yb-tserver'`) to the resolution in `ceph_storage.py`; covers 1 or 2
@@ -349,6 +357,7 @@ Per WP the unit tests listed above, plus one short smoke run per touched SUT and
 | WP8 restore | save/relax/restore across sessions works with `CAST`; init-script `SET GLOBAL` values took effect beyond the container limit (pool 40 GiB, log buffer 4 GiB in 16 Gi). |
 | WP8 row counts | TPC-H loader logs: all tables exact; lineitem SF 10 = 59,986,052, SF 30 = 179,998,372. |
 | WP10 redo log | OFF/ON, idempotent, privileges present. |
+| Start-of-WP checks (2026-10-17) | PGBouncer 1.26.0 notes: nothing affecting bexhoma. Exporters: same metric names, MySQL 9.7 OK; pre-existing empty PG metrics noted in WP1. Redis 8.10.2 cluster: args OK, exporter `v1.94.0` with `--is-cluster`. HammerDB 6.0 (generic image), 2 warehouses, 1-min timed run: PostgreSQL 5,214 NOPM, MariaDB 27,039, MySQL 9.7 (TLS) 7,241, Citus 14.2.0 Debian 2,868 / 13.2.0-alpine 3,809, all 0 errors; Citus 14.2.0-alpine ~5 % New Order errors. YugabyteDB chart 2025.2.4 -> 2025.2.7 values identical; per-component `livenessProbe` keys ignored (root key only). |
 
 ---
 
@@ -369,6 +378,6 @@ Ready, with these defaults taken from this plan unless the user decides otherwis
 
 R1, R2, R3, R5 and R7 are the plan's defaults; the user did not object (2026-10-17).
 
-Checks to do at the start of the respective WP (verification, no decisions): PGBouncer 1.26 release
-notes (WP1), exporter metric names (WP1), Redis cluster args on 8.10 (WP1), HammerDB 6.0 with
-PostgreSQL/MariaDB/Citus and bexhoma's collector (WP5), YugabyteDB 2025.2.7 chart keys (WP9).
+The five start-of-WP checks were done on 2026-10-17 (section 4). They changed the plan in two
+places: Citus moves to the Debian image `14.2.0` with `PGDATA` on the coordinator (WP1), and the
+YugabyteDB script must use the root `livenessProbe.timeoutSeconds` (WP9). No open checks remain.
