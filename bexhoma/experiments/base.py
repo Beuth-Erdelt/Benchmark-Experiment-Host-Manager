@@ -1825,6 +1825,28 @@ class ExperimentBase():
                 return other.configuration
         return None
 
+    def _prepare_next_repetition(self, config) -> None:
+        """Get a configuration ready for its next repetition, without starting its SUT.
+
+        Waits until the stopped SUT is gone and resets the configuration. The
+        SUT is then started by the main loop like the first one, so ``-mse``,
+        ``-ms`` and ``max_sut_dbms`` are checked again: while the old SUT is
+        removed its slot is free, and another experiment may take it. Starting
+        here without that check would run both SUTs side by side.
+
+        :param config: The configuration whose repetition has ended and whose SUT was stopped.
+        """
+        while config.status.sut_exists():
+            print("{:30s}: still being removed".format(config.configuration))
+            self.wait(30)
+        print("{:30s}: starts again".format(config.configuration))
+        # find next sequence of benchmarks
+        if not config.experiment_dict["benchmarker"]:
+            config.benchmark_list = config.benchmark_list_template.copy()
+            config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
+        self.client = 0
+        config.reset_sut()
+
     def _leaves_sut_running(self, config, stop_after_starting: bool, stop_after_benchmarking: bool) -> bool:
         """Whether this repetition of a configuration ends with its SUT left running.
 
@@ -2278,18 +2300,7 @@ class ExperimentBase():
                             config.lifecycle.stop_sut()
                             config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                             if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
-                                while config.status.sut_exists():
-                                    print("{:30s}: still being removed".format(config.configuration))
-                                    self.wait(30)
-                                print("{:30s}: starts again".format(config.configuration))
-                                # find next sequence of benchmarks
-                                if not config.experiment_dict["benchmarker"]:
-                                    config.benchmark_list = config.benchmark_list_template.copy()
-                                    config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
-                                self.client = 0
-                                config.reset_sut()
-                                config.lifecycle.start_sut()
-                                self.wait(10)
+                                self._prepare_next_repetition(config)
                             else:
                                 config.experiment_done = True
                         else:
