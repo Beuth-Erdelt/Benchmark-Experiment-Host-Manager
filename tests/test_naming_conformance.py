@@ -339,6 +339,23 @@ class StorageRemovedPerRepetitionTest(SutManifestPerRunTest):
                 self.assertFalse(self.cfg.loading_inherited)
 
 
+class TenantPhaseFlagsResetPerRepetitionTest(SutManifestPerRunTest):
+    """reset_sut() clears the tenant load and index flags. A leftover
+    tenant_started_to_index from repetition 1 kept the experiment loop from
+    starting the index script in repetition 2 (-mtb container, -nc > 1), so
+    loading never finished and the run hung."""
+
+    def test_reset_sut_clears_tenant_flags(self) -> None:
+        for flag in ('tenant_ready_to_load', 'tenant_started_to_load',
+                     'tenant_ready_to_index', 'tenant_started_to_index'):
+            setattr(self.cfg, flag, True)
+        self.cfg.reset_sut()
+        for flag in ('tenant_ready_to_load', 'tenant_started_to_load',
+                     'tenant_ready_to_index', 'tenant_started_to_index'):
+            with self.subTest(flag):
+                self.assertFalse(getattr(self.cfg, flag))
+
+
 class SutRestartsPerRunTest(unittest.TestCase):
     """bexhoma-sut-*-restarts.json is archived one-per-experiment_run like the
     manifest, but restartCount is cumulative across runs (same pod, not

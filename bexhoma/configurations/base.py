@@ -272,6 +272,8 @@ class SutConfiguration:
         self.are_worker_ready = False
         self.tenant_ready_to_load = False
         self.tenant_started_to_load = False
+        self.tenant_ready_to_index = False
+        self.tenant_started_to_index = False
 
     def removes_storage_now(self) -> bool:
         """Whether starting the SUT now deletes its existing PVCs first.
