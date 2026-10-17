@@ -160,6 +160,7 @@ class SutConfiguration:
         self.loading_active = experiment.loading_active                          #: True iff a loading component should be deployed.
         self.loading_deactivated = experiment.loading_deactivated                #: Do not load at all and do not test for loading.
         self.monitor_loading = True                                              #: Fetch metrics for the loading phase when monitoring is active.
+        self.loading_metrics_fetched: dict = {}                                  #: experiment_run -> (connection, component types) whose loading metrics later connections of that run copy.
         self.monitoring_sut = True                                               #: Fetch SUT metrics when monitoring is active.
         self._jobtemplate_loading = ""                                           #: Name of YAML template file for the loading job (backing field).
         self.storage_label = experiment.storage_label                            #: Kubernetes node label used to select the storage node for PVs.

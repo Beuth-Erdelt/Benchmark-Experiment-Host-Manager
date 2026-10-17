@@ -37,6 +37,7 @@ from bexhoma import missing_metrics
 from bexhoma.monitoring_math import counter_total
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut
 from bexhoma import sut_restarts
+from bexhoma.metric_fetching import DEFAULT_MAX_PARALLEL_FETCHES, MetricFetchBatch
 
 if TYPE_CHECKING:
     from bexhoma.configurations.base import SutConfiguration
@@ -193,7 +194,9 @@ class ExperimentBase():
         self.pod_dashboard = ""                                         # name of the dashboard pod
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
-        self.keep_sut = False                                           # keep each configuration's last SUT running at the end (-ks/-ss, resolved in prepare_testbed)
+        self.max_parallel_fetches = DEFAULT_MAX_PARALLEL_FETCHES        # metrics.py runs at the same time after a loop pass (1 = one by one)
+        self._copy_metrics_script = ""                                  # name of the uploaded copy script, see ensure_copy_metrics_script()
+        self.keep_sut = False                                          # keep each configuration's last SUT running at the end (-ks/-ss, resolved in prepare_testbed)
         self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
         self.max_loading_minutes: Optional[int] = None                   # abort a configuration that remains in loading after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
@@ -423,6 +426,34 @@ class ExperimentBase():
         filename_local = self.path+'/.' if not filename else self.path+'/'+filename
         filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.upload_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
+    #: Copies metric CSVs of one connection to another (``MetricsCollector.copy_fetched``).
+    #: Shipped as a file, because ``$`` in an inline ``sh -c`` would be expanded by
+    #: the local shell on Linux and not on Windows.
+    COPY_METRICS_SCRIPT = (
+        '#!/bin/sh\n'
+        '# usage: bexhoma-copy-metrics.sh FOLDER SOURCE TARGET COMPONENT_TYPE...\n'
+        'folder=$1; src=$2; tgt=$3; shift 3\n'
+        'cd "$folder" || exit 1\n'
+        'for t in "$@"; do\n'
+        '  for f in query_${t}_metric_*_${src}.csv; do\n'
+        '    [ -f "$f" ] || continue\n'
+        '    g="${f%_${src}.csv}_${tgt}.csv"\n'
+        '    { echo "$tgt"; tail -n +2 "$f"; } > "$g.tmp" && mv "$g.tmp" "$g"\n'
+        '  done\n'
+        'done\n'
+    )
+    def ensure_copy_metrics_script(self) -> str:
+        """Write and upload the metrics copy script once per experiment.
+
+        :return: Its filename in the result folder.
+        """
+        filename = 'bexhoma-copy-metrics.sh'
+        if self._copy_metrics_script != filename:
+            with open(self.result_filename_local(filename), 'w', newline='\n') as f:
+                f.write(self.COPY_METRICS_SCRIPT)
+            self.upload_experiment_file(filename)
+            self._copy_metrics_script = filename
+        return filename
     def download_experiment_file(self, filename: str) -> str:
         """
         Download a result file from the dashboard pod.
@@ -1931,6 +1962,8 @@ class ExperimentBase():
             num_pods_pending_cluster = len(self.cluster.get_pods(app=self.appname, component='sut', status='Pending'))
             # track optimistic in-pass pending counts per DBMS type (reset each loop iteration)
             num_pods_pending_dbms: dict[str, int] = {}
+            # metric fetches of all configurations of this pass run together, in parallel
+            submit_batch = MetricFetchBatch()
             for config in self.configurations:
                 # check if sut is running
                 if not config.status.sut_running():
@@ -2212,6 +2245,7 @@ class ExperimentBase():
                                 benchmark_run=str(benchmark_index),
                                 template_override=bench_entry.get("template", ""),
                                 reset_seconds=reset_seconds,
+                                fetch_batch=submit_batch,
                             )
                         # Timed from here, not from the counter, so that reset
                         # scripts run before submission do not count.
@@ -2248,7 +2282,7 @@ class ExperimentBase():
                             config.set_benchmarking_parameters(**benchmarking_parameters)
                         connection = (config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client).lower()
                         print("{:30s}: start benchmarking".format(connection))
-                        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds)
+                        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds, fetch_batch=submit_batch)
                         self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
                         _benchmark_just_submitted = True
                     else:
@@ -2334,8 +2368,10 @@ class ExperimentBase():
                                 progress = " ({}/{} parallel loading jobs done)".format(
                                     num_data_jobs_ready, num_data_jobs)
                     print("{:30s}: is loading{}".format(config.configuration, progress))
+            submit_batch.run(self.max_parallel_fetches)
             _we_have_running_benchmarks = False
             _we_have_incomplete_jobs = False
+            end_batch = MetricFetchBatch()
             for config in self.configurations:
                 # all jobs of configuration - benchmarker
                 #app = self.cluster.appname
@@ -2411,9 +2447,10 @@ class ExperimentBase():
                             #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
                             #        self.cluster.store_pod_log(p)
                             #    self.cluster.delete_pod(p)
-                        self.end_benchmarking(job, config)
+                        self.end_benchmarking(job, config, fetch_batch=end_batch)
                         self.cluster.delete_job(job)
                         config.host.check_volumes()
+            end_batch.run(self.max_parallel_fetches)
             if _we_have_running_benchmarks: #len(pods) == 0 and len(jobs) == 0:
                 do = False
                 # A job was submitted this iteration: the Kubernetes API may not yet
@@ -2550,14 +2587,22 @@ class ExperimentBase():
         return timing
     def end_benchmarking(self,
                          jobname: str,
-                         config: Optional[object] = None) -> None:
+                         config: Optional[object] = None,
+                         fetch_batch: Optional[MetricFetchBatch] = None) -> None:
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
 
         :param jobname: Name of the job to clean
         :param config: Configuration object
+        :param fetch_batch: Queue the metric fetches here instead of fetching
+            right away, so the jobs that ended in one loop pass are processed in parallel.
         """
+        def fetch(**kwargs) -> None:
+            if fetch_batch is None:
+                config.metrics.fetch(**kwargs)
+            else:
+                fetch_batch.add_fetch(config, **kwargs)
         self.cluster.logger.debug('base.end_benchmarking({})'.format(jobname))
         # mark pod with new end time and duration
         job_labels = self.cluster.get_jobs_labels(app=self.cluster.appname, component='benchmarker', experiment=self.code)
@@ -2656,7 +2701,7 @@ class ExperimentBase():
                             print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
                             if name=='sut' and config.monitoring_sut:
                                 print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, connection))
-                                config.metrics.fetch(
+                                fetch(
                                     title=f"Benchmarking phase: SUT deployment",
                                     connection=connection,
                                     connection_file=connection+'.config',
@@ -2673,7 +2718,7 @@ class ExperimentBase():
                                     )
                             elif name!='sut':
                                 print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
-                                config.metrics.fetch(
+                                fetch(
                                     title=f"Benchmarking phase: component {name}",
                                     connection=connection,
                                     connection_file=connection+'.config',
@@ -2692,7 +2737,7 @@ class ExperimentBase():
                         for name, statefulset in config.deployment_infos['statefulset'].items():
                             print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
                             print("{:30s}: collecting execution metrics of {} at connection {}".format(connection, name, connection))
-                            config.metrics.fetch(
+                            fetch(
                                 title=f"Benchmarking phase: component {name}",
                                 connection=connection,
                                 connection_file=connection+'.config',
@@ -2777,7 +2822,7 @@ class ExperimentBase():
                     endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, connection))
-                        config.metrics.fetch(
+                        fetch(
                             title=f"Benchmarking phase: component benchmarker",
                             connection=connection,
                             connection_file=connection+'.config',
