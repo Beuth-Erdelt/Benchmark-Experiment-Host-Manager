@@ -81,7 +81,7 @@ _DEFAULT_THREADS = "1"
 _FIO_DEFAULTS = {
     "HARDWARE_FIO_RW": "randrw", "HARDWARE_FIO_BS": "8k", "HARDWARE_FIO_IODEPTH": "1",
     "HARDWARE_FIO_NUMJOBS": "1", "HARDWARE_FIO_ENGINE": "sync", "HARDWARE_FIO_FSYNC": "0",
-    "HARDWARE_FIO_FDATASYNC": "0", "HARDWARE_FIO_RWMIXREAD": "50",
+    "HARDWARE_FIO_FDATASYNC": "0", "HARDWARE_FIO_RWMIXREAD": "50", "HARDWARE_FIO_OVERWRITE": "0",
 }
 #: TCP, not sockperf's own UDP default: this network round exists to assess
 #: data systems (DBMS traffic is TCP), not raw UDP datagram latency.

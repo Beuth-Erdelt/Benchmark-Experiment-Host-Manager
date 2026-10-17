@@ -7,7 +7,7 @@ entry script, there is no data loading phase and no ``-dbms`` engine choice
 beyond the single ``Hardware`` target.
 
 The fio workload flags (``-xfrw``, ``-xfbs``, ``-xfid``, ``-xfe``, ``-xfsy``,
-``-xffd``, ``-xfmx``), the sockperf workload flags (``-xspm``, ``-xspr``,
+``-xffd``, ``-xfmx``, ``-xfow``), the sockperf workload flags (``-xspm``, ``-xspr``,
 ``-xsps``, ``-xspp``), and the netperf workload flag (``-xnpp``) each accept
 a comma-separated list. Every combination across the lists is run as one more
 sequential round against the same SUT, so a parameter sweep (e.g. queue
@@ -37,6 +37,7 @@ logging.basicConfig(level=logging.ERROR)
 
 FIO_RW_CHOICES = {'write', 'read', 'randwrite', 'randread', 'randrw'}
 FIO_ENGINE_CHOICES = {'sync', 'libaio', 'io_uring'}
+FIO_OVERWRITE_CHOICES = {'0', '1'}
 SOCKPERF_MODE_CHOICES = {'pp', 'ul'}
 SOCKPERF_PROTOCOL_CHOICES = {'tcp', 'udp'}
 NETPERF_PROTOCOL_CHOICES = {'tcp', 'udp'}
@@ -62,6 +63,7 @@ if __name__ == '__main__':
     parser.add_argument('-xfsy', '--xfio-fsync', help='comma-separated fsync intervals to sweep (0 disables fsync); use fsync xor fdatasync, not both', default='0', dest='fio_fsync')
     parser.add_argument('-xffd', '--xfio-fdatasync', help='comma-separated fdatasync intervals to sweep (0 disables fdatasync); use fsync xor fdatasync, not both', default='0', dest='fio_fdatasync')
     parser.add_argument('-xfmx', '--xfio-rwmixread', help='comma-separated read percentages to sweep when -xfrw=randrw', default='50', dest='fio_rwmixread')
+    parser.add_argument('-xfow', '--xfio-overwrite', help='comma-separated overwrite modes to sweep, each in {0, 1}: 1 lays out (fully writes) the test file before the timed run, so writes go into allocated blocks like PostgreSQL WAL or existing relation files; 0 writes into a fresh file like table growth during a bulk load', default='0', dest='fio_overwrite')
     parser.add_argument('-xspm', '--xsockperf-mode', help='comma-separated sockperf modes to sweep, each in {pp, ul}', default='ul', dest='sockperf_mode')
     parser.add_argument('-xspr', '--xsockperf-mps', help='comma-separated message rates to sweep (messages/sec); each value is a positive integer or the literal "max"', default='max', dest='sockperf_mps')
     parser.add_argument('-xsps', '--xsockperf-msgsize', help='comma-separated message payload sizes in bytes to sweep', default='64', dest='sockperf_msgsize')
@@ -134,12 +136,18 @@ if __name__ == '__main__':
     list_fio_rw = args.fio_rw.split(",")
     list_fio_bs = args.fio_bs.split(",")
     list_fio_engine = args.fio_engine.split(",")
+    # overwrite is a 0/1 flag, split as strings (like rw/engine) so that an invalid
+    # value is a parser error instead of get_parameter_as_list's int() ValueError
+    list_fio_overwrite = args.fio_overwrite.split(",")
     invalid_fio_rw = [value for value in list_fio_rw if value not in FIO_RW_CHOICES]
     if invalid_fio_rw:
         parser.error(f"-xfrw: invalid choice(s) {invalid_fio_rw}, must be one of {sorted(FIO_RW_CHOICES)}")
     invalid_fio_engine = [value for value in list_fio_engine if value not in FIO_ENGINE_CHOICES]
     if invalid_fio_engine:
         parser.error(f"-xfe: invalid choice(s) {invalid_fio_engine}, must be one of {sorted(FIO_ENGINE_CHOICES)}")
+    invalid_fio_overwrite = [value for value in list_fio_overwrite if value not in FIO_OVERWRITE_CHOICES]
+    if invalid_fio_overwrite:
+        parser.error(f"-xfow: invalid choice(s) {invalid_fio_overwrite}, must be one of {sorted(FIO_OVERWRITE_CHOICES)}")
     # msgsize is numeric (get_parameter_as_list casts to int); mode/protocol are
     # strings and mps mixes numeric values with the literal "max", so all three
     # are hand-split/validated, same as fio's rw/engine above
@@ -200,7 +208,8 @@ if __name__ == '__main__':
                         for fio_iodepth in list_fio_iodepth:
                             for fio_engine in list_fio_engine:
                                 for fio_fsync in list_fio_fsync:
-                                    for fio_fdatasync in list_fio_fdatasync:
+                                    # overwrite shares the fdatasync loop level to keep the pyramid's depth
+                                    for fio_fdatasync, fio_overwrite in itertools.product(list_fio_fdatasync, list_fio_overwrite):
                                         for fio_rwmixread in list_fio_rwmixread:
                                             # rwmixread only affects randrw; skip redundant rounds otherwise
                                             if fio_rw != 'randrw' and fio_rwmixread != list_fio_rwmixread[0]:
@@ -232,6 +241,7 @@ if __name__ == '__main__':
                                                                 HARDWARE_FIO_ENGINE=fio_engine,
                                                                 HARDWARE_FIO_FSYNC=str(fio_fsync),
                                                                 HARDWARE_FIO_FDATASYNC=str(fio_fdatasync),
+                                                                HARDWARE_FIO_OVERWRITE=fio_overwrite,
                                                                 HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
                                                                 HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
                                                                 # HARDWARE_THREADS is sysbench's own thread count
@@ -269,7 +279,8 @@ if __name__ == '__main__':
                     for fio_iodepth in list_fio_iodepth:
                         for fio_engine in list_fio_engine:
                             for fio_fsync in list_fio_fsync:
-                                for fio_fdatasync in list_fio_fdatasync:
+                                # overwrite shares the fdatasync loop level to keep the pyramid's depth
+                                for fio_fdatasync, fio_overwrite in itertools.product(list_fio_fdatasync, list_fio_overwrite):
                                     for fio_rwmixread in list_fio_rwmixread:
                                         # rwmixread only affects randrw; skip redundant rounds otherwise
                                         if fio_rw != 'randrw' and fio_rwmixread != list_fio_rwmixread[0]:
@@ -301,6 +312,7 @@ if __name__ == '__main__':
                                                             HARDWARE_FIO_ENGINE=fio_engine,
                                                             HARDWARE_FIO_FSYNC=str(fio_fsync),
                                                             HARDWARE_FIO_FDATASYNC=str(fio_fdatasync),
+                                                            HARDWARE_FIO_OVERWRITE=fio_overwrite,
                                                             HARDWARE_FIO_RWMIXREAD=str(fio_rwmixread),
                                                             HARDWARE_FIO_NUMJOBS=str(benchmarking_threads_per_pod),
                                                             # HARDWARE_THREADS is sysbench's own thread count

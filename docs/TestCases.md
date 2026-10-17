@@ -14152,6 +14152,7 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xffd 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \
@@ -14287,6 +14288,7 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xfsy 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1,2,4,8,16,32 \
   -ne 1 \
@@ -14515,6 +14517,7 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xfsy 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \
@@ -14722,6 +14725,7 @@ bexhoma hardware \
   -xfbs 1M,4M,16M \
   -xfid 4,16 \
   -xfe libaio \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \
@@ -14956,6 +14960,7 @@ bexhoma hardware \
   -xfid 64 \
   -xfe libaio \
   -xfsy 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \

@@ -1950,6 +1950,7 @@ bexhoma hardware `
   -xfid 1                          <# queue depth, fixed (single outstanding write) #> `
   -xfe libaio                      <# fio ioengine #> `
   -xffd 1                          <# fdatasync after every write (wal_sync_method=fdatasync) #> `
+  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1                           <# threads per benchmarking pod, fixed (single backend) #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
@@ -1983,6 +1984,7 @@ bexhoma hardware `
   -xfid 1                          <# queue depth, fixed (single outstanding write per thread) #> `
   -xfe libaio                      <# fio ioengine #> `
   -xfsy 1                          <# fsync after every write (wal_sync_method=fsync) #> `
+  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1,2,4,8,16,32               <# concurrent committing backends to sweep (comma-separated) #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
@@ -2014,6 +2016,7 @@ bexhoma hardware `
   -xfid 1                          <# queue depth, fixed (single outstanding write) #> `
   -xfe libaio                      <# fio ioengine #> `
   -xfsy 1                          <# fsync after every write (wal_sync_method=fsync) #> `
+  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1                           <# threads per benchmarking pod, fixed (single backend) #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
@@ -2040,6 +2043,7 @@ bexhoma hardware `
   -xfbs 1M,4M,16M                  <# checkpoint writeback block sizes to sweep (comma-separated) #> `
   -xfid 4,16                       <# queue depths to sweep (comma-separated) #> `
   -xfe libaio                      <# fio ioengine #> `
+  -xfow 1                          <# prefilled test file: writes go into written blocks, like existing relation files #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
@@ -2075,6 +2079,7 @@ bexhoma hardware `
   -xfid 64                         <# queue depth, fixed at the elbow found earlier #> `
   -xfe libaio                      <# fio ioengine #> `
   -xfsy 1                          <# fsync after every write (approximates WAL flush contention) #> `
+  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `

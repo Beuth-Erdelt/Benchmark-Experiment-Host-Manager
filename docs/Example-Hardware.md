@@ -72,14 +72,24 @@ References:
 
 Select it with `-xht fio`. `-xts`/`-xtd` set the test file size and the duration per round; the
 workload is swept with `-xfrw` (read pattern), `-xfbs` (block size), `-xfid` (queue depth), `-xfe`
-(I/O engine), `-xfsy`/`-xffd` (fsync/fdatasync interval), and `-xfmx` (read percentage for mixed
-`randrw`) — each accepts a comma-separated list, and every combination across the lists runs as one
+(I/O engine), `-xfsy`/`-xffd` (fsync/fdatasync interval), `-xfmx` (read percentage for mixed
+`randrw`), and `-xfow` (overwrite, see below) — each accepts a comma-separated list, and every combination across the lists runs as one
 more sequential round against the same SUT, so a whole sweep is one invocation instead of one
 process per value. Because fio writes real data, request and size a persistent volume with
 `-rst`/`-rss`, and pass `-rsr` so each command starts from a freshly recreated, empty volume rather
 than inheriting whatever an earlier command left behind. The PVC name is fixed and shared across
 the whole page (not scoped by experiment code), so fio commands must never be run concurrently
 against the same SUT.
+
+By default (`-xfow 0`) a write round writes into a fresh test file that fio has only fallocated, so
+each write converts unwritten extents and each fsync/fdatasync also commits a filesystem journal
+entry. That matches a table or index growing during a bulk load, but not PostgreSQL's WAL, whose
+segments are zero-filled when created and then recycled, nor checkpoint writes into existing
+relation files. `-xfow 1` lays out (fully writes) the test file before the timed part of the round,
+so writes go into already written blocks. On a Ceph RBD volume (ext4) this made a large difference
+for 8k writes with fdatasync after each, one job: about 370 commits/s on a fresh file versus about
+1,540 on a prefilled one, with fdatasync dropping from 1.85 ms to a few µs. Use `-xfow 1` for
+WAL-like rounds, or `-xfow 0,1` to measure both.
 
 To compare storage backends in one experiment, give `-rst` a comma-separated list, e.g.
 `-rst nvme,cephcsi,` (the empty last entry is the SUT's ephemeral storage). Each class gets its own
@@ -1070,6 +1080,7 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xfsy 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \
@@ -3234,7 +3245,7 @@ usage: hardware.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
                    [-xtd HARDWARE_DURATION] [-xfrw FIO_RW] [-xfbs FIO_BS]
                    [-xfid FIO_IODEPTH] [-xfe FIO_ENGINE] [-xfsy FIO_FSYNC]
                    [-xffd FIO_FDATASYNC] [-xfmx FIO_RWMIXREAD]
-                   [-xspm SOCKPERF_MODE] [-xspr SOCKPERF_MPS]
+                   [-xfow FIO_OVERWRITE] [-xspm SOCKPERF_MODE] [-xspr SOCKPERF_MPS]
                    [-xsps SOCKPERF_MSGSIZE] [-xspp SOCKPERF_PROTOCOL]
                    [-xnpp NETPERF_PROTOCOL]
                    {run,start,summary}
@@ -3403,6 +3414,12 @@ options:
   -xfmx, --xfio-rwmixread FIO_RWMIXREAD
                         comma-separated read percentages to sweep when
                         -xfrw=randrw
+  -xfow, --xfio-overwrite FIO_OVERWRITE
+                        comma-separated overwrite modes to sweep, each in {0,
+                        1}: 1 lays out (fully writes) the test file before the
+                        timed run, so writes go into allocated blocks like
+                        PostgreSQL WAL or existing relation files; 0 writes
+                        into a fresh file like table growth during a bulk load
   -xspm, --xsockperf-mode SOCKPERF_MODE
                         comma-separated sockperf modes to sweep, each in {pp,
                         ul}

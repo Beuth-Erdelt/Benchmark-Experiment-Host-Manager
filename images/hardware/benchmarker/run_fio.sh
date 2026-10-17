@@ -15,6 +15,9 @@ echo "HARDWARE_FIO_ENGINE:$HARDWARE_FIO_ENGINE"
 echo "HARDWARE_FIO_FSYNC:$HARDWARE_FIO_FSYNC"
 echo "HARDWARE_FIO_FDATASYNC:$HARDWARE_FIO_FDATASYNC"
 echo "HARDWARE_FIO_RWMIXREAD:$HARDWARE_FIO_RWMIXREAD"
+# unset in rounds from bexhoma versions before -xfow: keep the old fresh-file behaviour
+HARDWARE_FIO_OVERWRITE="${HARDWARE_FIO_OVERWRITE:-0}"
+echo "HARDWARE_FIO_OVERWRITE:$HARDWARE_FIO_OVERWRITE"
 
 ######################## Scope test directory to this pod ########################
 # Parallel benchmarker pods (BEXHOMA_NUM_PODS > 1) share one SUT and one PVC;
@@ -58,9 +61,18 @@ case "$HARDWARE_FIO_RW" in
         FIO_ARGS="$FIO_ARGS --rwmixread=${HARDWARE_FIO_RWMIXREAD}"
         ;;
 esac
+# Without --overwrite fio only fallocates a write job's file (unwritten extents),
+# so every write converts extents and every fdatasync commits an ext4 journal
+# entry - ~4x fewer commits/s than into already written blocks, which is what
+# PostgreSQL WAL (zero-filled, recycled segments) and existing relation files
+# see. With --overwrite=1 fio writes the whole file before the timed run starts
+# (the layout is not part of --runtime).
+if [ "$HARDWARE_FIO_OVERWRITE" = "1" ]; then
+    FIO_ARGS="$FIO_ARGS --overwrite=1"
+fi
 
 ######################## Run fio benchmark ########################
-echo "=== fio: rw=$HARDWARE_FIO_RW bs=$HARDWARE_FIO_BS iodepth=$HARDWARE_FIO_IODEPTH numjobs=$HARDWARE_FIO_NUMJOBS engine=$HARDWARE_FIO_ENGINE fsync=$HARDWARE_FIO_FSYNC fdatasync=$HARDWARE_FIO_FDATASYNC ==="
+echo "=== fio: rw=$HARDWARE_FIO_RW bs=$HARDWARE_FIO_BS iodepth=$HARDWARE_FIO_IODEPTH numjobs=$HARDWARE_FIO_NUMJOBS engine=$HARDWARE_FIO_ENGINE fsync=$HARDWARE_FIO_FSYNC fdatasync=$HARDWARE_FIO_FDATASYNC overwrite=$HARDWARE_FIO_OVERWRITE ==="
 # stderr is captured to a file instead of being left to flow into the pod's own
 # stderr (which is otherwise indistinguishable from this script's own output):
 # a warning fio prints instead of/ahead of its JSON report is the most likely
@@ -176,7 +188,7 @@ done
 
 ######################## Write CSV summary ########################
 {
-    header="rw,bs,iodepth,numjobs,engine,fsync,fdatasync,size,duration,read_iops,write_iops,read_bw_kbps,write_bw_kbps"
+    header="rw,bs,iodepth,numjobs,engine,fsync,fdatasync,overwrite,size,duration,read_iops,write_iops,read_bw_kbps,write_bw_kbps"
     for label in "${PERCENTILE_LABELS[@]}"; do
         header="$header,read_${label}_ms"
     done
@@ -186,7 +198,7 @@ done
     echo "$header"
 
     row="$HARDWARE_FIO_RW,$HARDWARE_FIO_BS,$HARDWARE_FIO_IODEPTH,$HARDWARE_FIO_NUMJOBS,$HARDWARE_FIO_ENGINE,\
-$HARDWARE_FIO_FSYNC,$HARDWARE_FIO_FDATASYNC,$HARDWARE_SIZE,$HARDWARE_DURATION,$read_iops,$write_iops,$read_bw_kbps,$write_bw_kbps"
+$HARDWARE_FIO_FSYNC,$HARDWARE_FIO_FDATASYNC,$HARDWARE_FIO_OVERWRITE,$HARDWARE_SIZE,$HARDWARE_DURATION,$read_iops,$write_iops,$read_bw_kbps,$write_bw_kbps"
     for value in "${read_lat[@]}"; do
         row="$row,$value"
     done
