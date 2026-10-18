@@ -4,11 +4,15 @@ Status: M1 **implemented and committed** (2026-10-15, `ee7832d3`). M1b
 (phases shorter than the scrape interval, added 2026-10-18) **implemented
 and committed** (`92964894`); jobs too short inside a long
 loading window are left unreliable (decided 2026-10-18). M2, M3 (unit tests)
-and M4 **implemented 2026-10-18, uncommitted** (see "M2-M4: result"): in the
+and M4 **implemented and committed** (`acf87edb`, see "M2-M4: result"): in the
 `cluster.config` templates a `{pods}` placeholder (jobs scoped by job name,
 one query set per scope, see "How"), `{namespace}`, and the 90 s filter for
 stale series (option (a): template change, no code-side query rewriting; no
-warning about old copies). M3 cluster run **open**.
+warning about old copies). M3 cluster runs **done 2026-10-19** (TPC-C SF1
+`-nc 2 -rsrp -xnbf 1,4`, YugabyteDB, Citus `-nw 3 -nc 2`). **Plan done.**
+Optional, not run: several benchmarker jobs per round (`experiment_dict`),
+the SUT gap with `-ks` / inherited loading. Release note: users copy the
+cAdvisor queries of `k8s-cluster.config` into their `cluster.config`.
 
 ## M2-M4: result (2026-10-18)
 
