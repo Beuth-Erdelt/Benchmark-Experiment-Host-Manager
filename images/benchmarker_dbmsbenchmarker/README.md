@@ -91,7 +91,6 @@ the wait loop).
 | `-rcp` | `0` or `1` | Recreate query parameters per stream |
 | `-sid` | `BEXHOMA_CHILD` | Stream ID for parallel execution |
 | `-ssh` | `0` or `1` | Shuffle query order by stream ID |
-| `-mps` | *(flag)* | Monitor per stream, not per query |
 | `-fixdb` | `BEXHOMA_DATABASE` | Override the database name |
 | `-fixs` | `BEXHOMA_SCHEMA` | Override the schema name |
 | `-d -vq -vr -vp -vs` | *(flags)* | Verbose output (verbose mode only) |

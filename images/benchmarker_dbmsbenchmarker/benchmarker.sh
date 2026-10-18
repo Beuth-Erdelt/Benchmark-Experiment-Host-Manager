@@ -261,7 +261,6 @@ done
 # -rcp     force parameter recreation (otherwise all streams share the same parameters)
 # -sid     stream ID for parallel execution
 # -ssh     shuffle query order based on stream ID
-# -mps     monitor per stream (not per query)
 # -fixdb   override the database name
 # -fixs    override the schema name
 # -d / -vq / -vr / -vp / -vs  verbose output flags (verbose mode only)
@@ -291,7 +290,6 @@ then
         $( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
         $( (( DBMSBENCHMARKER_VERBOSE_EXPLAIN == 1 )) && printf %s '-ve' ) \
         $( (( DBMSBENCHMARKER_STORE_EXPLAIN == 1 )) && printf %s '-se' ) \
-        -mps \
         -fixdb "${BEXHOMA_DATABASE:-""}" \
         -fixs "${BEXHOMA_SCHEMA:-""}" \
         | tee /tmp/dbmsbenchmarker.log
@@ -310,7 +308,6 @@ else
         $( (( DBMSBENCHMARKER_DEV == 1 )) && printf %s '-db' ) \
         $( (( DBMSBENCHMARKER_VERBOSE_EXPLAIN == 1 )) && printf %s '-ve' ) \
         $( (( DBMSBENCHMARKER_STORE_EXPLAIN == 1 )) && printf %s '-se' ) \
-        -mps \
         -fixdb "${BEXHOMA_DATABASE:-""}" \
         -fixs "${BEXHOMA_SCHEMA:-""}" \
         | tee /tmp/dbmsbenchmarker.log
