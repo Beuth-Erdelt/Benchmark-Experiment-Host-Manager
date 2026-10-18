@@ -219,10 +219,12 @@ class MetricsCollector:
                 c['monitoring']['grafanatoken'] = config_K8s['monitor']['grafanatoken']
             if 'grafanaurl' in config_K8s['monitor']:
                 c['monitoring']['grafanaurl'] = config_K8s['monitor']['grafanaurl']
-            if 'grafanashift' in config_K8s['monitor']:
-                c['monitoring']['shift'] = config_K8s['monitor']['grafanashift']
-            if 'grafanaextend' in config_K8s['monitor']:
-                c['monitoring']['extend'] = config_K8s['monitor']['grafanaextend']
+            # window adjustments read by dbmsbenchmarker's fetchMetric; the grafana* names are legacy
+            for key in ('shift', 'extend'):
+                for name in (key, 'grafana' + key):
+                    if name in config_K8s['monitor']:
+                        c['monitoring'][key] = config_K8s['monitor'][name]
+                        break
             if 'prometheus_url' in config_K8s['monitor']:
                 c['monitoring']['prometheus_url'] = config_K8s['monitor']['prometheus_url']
             if 'service_monitoring' in config_K8s['monitor']:

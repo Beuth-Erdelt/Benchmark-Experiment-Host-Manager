@@ -266,11 +266,11 @@ The report lists all gaps in `monitoring.md`'s Missing Metrics, with an `expecte
 ## Timing Adjustments
 
 Prometheus scrapes metrics at fixed intervals (typically every 15–60 seconds), so there is always some lag between when an event occurs and when the metric appears.
-Two configuration keys in `cluster.config` compensate for this:
+Two configuration keys in `cluster.config` adjust the interval; both default to 0:
 
 | Key | Effect |
 |---|---|
-| `extend` | Widens each monitoring interval by this many seconds on both ends: `[t, t']` → `[t − extend, t' + extend]`. The default of 20 s absorbs minor clock skew and scrape latency. |
+| `extend` | Widens each monitoring interval by this many seconds on both ends: `[t, t']` → `[t − extend, t' + extend]`. Only for clocks that are out of sync by a few seconds. Keep it well below the gap between phases (≤ 5 s): a wider window counts the neighbouring phase, e.g. its Max RAM. It does not make up for the scrape interval (see below). |
 | `shift` | Shifts the entire interval forward: `[t, t']` → `[t + shift, t' + shift]`. Useful when container clocks are systematically ahead of the Prometheus clock. |
 
 See [Config.md](Config.md) for how to set these values.
