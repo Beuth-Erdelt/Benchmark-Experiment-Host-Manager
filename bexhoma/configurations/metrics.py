@@ -4,9 +4,10 @@ from __future__ import annotations
 import copy
 import os
 import shutil
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from bexhoma import ceph_storage, missing_metrics
+from bexhoma.monitoring_math import JOB_QUERY_SETS
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
@@ -90,6 +91,7 @@ class MetricsCollector:
         dialect: str = '',
         serverip: str = 'localhost',
         monitoring_host: str = 'localhost',
+        job_pods: Optional[dict] = None,
     ) -> dict:
         """Build the dbmsbenchmarker connection config dict for this SUT.
 
@@ -101,6 +103,9 @@ class MetricsCollector:
         :param dialect: Optional SQL dialect string.
         :param serverip: Service IP/hostname used in JDBC URL formatting.
         :param monitoring_host: Prometheus monitoring service name.
+        :param job_pods: Query set name (``metrics_benchmarker``,
+            ``metrics_loading``) -> pod regex of the connection's jobs; each
+            becomes a copy of ``metrics`` with ``{pods}`` set to it.
         :return: Connection config dict compatible with dbmsbenchmarker.
         :rtype: dict
         """
@@ -273,6 +278,17 @@ class MetricsCollector:
                         cfg.set_metric_of_config_default(
                             metric=c['monitoring']['metrics'][metricname]['query'],
                             host=node, gpuid=gpuid, schema=schema, database=database))
+                # the connection's own jobs; a template without {pods} gives copies of metrics
+                for metrics_type, pods_job in (job_pods or {}).items():
+                    c['monitoring'][metrics_type] = {}
+                    for metricname, metricdata in config_K8s['monitor']['metrics'].items():
+                        c['monitoring'][metrics_type][metricname] = switch_off_unresolved(
+                            apply_metric_override(metricname, metricdata, overrides), storage_values)
+                        c['monitoring'][metrics_type][metricname]['query'] = (
+                            cfg.set_metric_of_config_default(
+                                metric=c['monitoring'][metrics_type][metricname]['query'],
+                                host=node, gpuid=gpuid, schema=schema, database=database,
+                                pods=pods_job))
             if cfg.monitor_app_active and 'monitor' in cfg.dockertemplate:
                 for component, application_monitoring in cfg.dockertemplate['monitor'].items():
                     print("{:30s}: need application metrics for {}".format(
@@ -355,6 +371,9 @@ class MetricsCollector:
         :param time_start: Unix timestamp of metric window start.
         :param time_end: Unix timestamp of metric window end.
         :param metrics_type: Key selecting the metric set in the connection config.
+            ``metrics`` for a job component (loader, data generator,
+            benchmarker) becomes its own query set (:data:`JOB_QUERY_SETS`)
+            when the connection has one.
         :param pod_dashboard: Name of the dashboard pod to run metrics.py in.
         :param optional: When True, the component is added to ``optional_monitoring_components``.
         :param register: Register the component first (see :meth:`register`); a
@@ -367,7 +386,10 @@ class MetricsCollector:
         if register:
             self.register(component_type, title, optional)
         config_folder = '/results/' + cfg.code
-        metrics = cfg.benchmark.dbms[connection].connectiondata['monitoring'][metrics_type]
+        monitoring = cfg.benchmark.dbms[connection].connectiondata['monitoring']
+        if metrics_type == 'metrics' and JOB_QUERY_SETS.get(component_type) in monitoring:
+            metrics_type = JOB_QUERY_SETS[component_type]
+        metrics = monitoring[metrics_type]
         metric_example = metrics['total_cpu_memory'].copy()
         if container != 'dbms':
             metric_example['query'] = metric_example['query'].replace(

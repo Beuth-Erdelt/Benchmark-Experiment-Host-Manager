@@ -34,7 +34,8 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
-from bexhoma.monitoring_math import counter_total, min_measurable_window, DEFAULT_SCRAPE_INTERVAL_SECONDS
+from bexhoma.monitoring_math import (counter_total, min_measurable_window, read_connections,
+                                     scoped_job_connections, DEFAULT_SCRAPE_INTERVAL_SECONDS)
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
@@ -3425,8 +3426,9 @@ class ExperimentBase():
 
         The window is the one the fetch queried (``Interval length`` in its
         ``bexhoma-metrics-{connection}-{component}.log``); the threshold is
-        :func:`~bexhoma.monitoring_math.min_measurable_window`. A connection
-        without such a log line (older results) is never short.
+        :func:`~bexhoma.monitoring_math.min_measurable_window`, lower for a job
+        whose queries select only its own pods. A connection without such a
+        log line (older results) is never short.
 
         :param evaluate: Evaluator with the result folder as ``path``.
         :param component: Monitoring component, e.g. ``loading``, ``benchmarker``.
@@ -3434,9 +3436,10 @@ class ExperimentBase():
         :return: The short ones.
         :rtype: set
         """
-        threshold = min_measurable_window(component, self.scrape_interval())
+        scoped = scoped_job_connections(read_connections(evaluate.path), component)
         short = set()
         for connection in connections:
+            threshold = min_measurable_window(component, self.scrape_interval(), connection in scoped)
             window = missing_metrics.fetch_window(
                 Path(evaluate.path) / missing_metrics.fetch_log_name(connection, component))
             if window is not None and window < threshold:
@@ -3478,7 +3481,8 @@ class ExperimentBase():
         df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component=component)
         short = self.short_phase_connections(evaluate, component, df.columns) if not df.empty else set()
         # a dead pod of the previous phase may still be in the sum, see counter_total()
-        df = counter_total(df, component)
+        df = counter_total(df, component, scoped_job_connections(
+            read_connections(evaluate.path), component, 'total_cpu_util_s'))
         df_cleaned = pd.DataFrame(df)
         df_cleaned.columns = ["CPU [CPUs]"]
         if not df_cleaned.empty:

@@ -40,7 +40,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable
 
-from .monitoring_math import min_measurable_window
+from .monitoring_math import min_measurable_window, read_connections, scoped_job_connections
 
 __all__ = [
     "MissingMetric", "parse_missing_metrics", "collect_missing_metrics", "fetch_log_name",
@@ -223,7 +223,7 @@ def _sparse_titles(result_dir: Path) -> tuple[set[str], set[tuple[str, str]]]:
 
 def collect_missing_metrics(
     result_dir: Path, optional_components: Iterable[str] = (),
-    scrape_interval: float | None = None, jobs_scoped: bool = False,
+    scrape_interval: float | None = None, jobs_scoped: bool | None = None,
 ) -> list[MissingMetric]:
     """
     Scan a result folder's metric-fetch and benchmarker logs for metrics that
@@ -240,7 +240,9 @@ def collect_missing_metrics(
         seconds; with it, a gap in a fetch whose window is shorter than
         :func:`~bexhoma.monitoring_math.min_measurable_window` is expected.
         ``None`` (default) leaves short windows unmarked.
-    :param jobs_scoped: Passed on to :func:`~bexhoma.monitoring_math.min_measurable_window`.
+    :param jobs_scoped: Passed on to :func:`~bexhoma.monitoring_math.min_measurable_window`;
+        ``None`` (default) decides per connection from ``connections.config``
+        (:func:`~bexhoma.monitoring_math.scoped_job_connections`).
     :return: Every missing metric, grouped by source file in name order.
     :rtype: list[MissingMetric]
     """
@@ -248,6 +250,17 @@ def collect_missing_metrics(
     optional = set(optional_components)
     sparse, sparse_components = _sparse_titles(result_dir)
     missing: dict[tuple[str, str, str], MissingMetric] = {}
+    scoped_by_component: dict[str, set] = {}
+
+    def is_scoped(entry: MissingMetric) -> bool:
+        if jobs_scoped is not None:
+            return jobs_scoped
+        if entry.component not in scoped_by_component:
+            scoped_by_component[entry.component] = scoped_job_connections(
+                read_connections(result_dir), entry.component)
+        scoped = scoped_by_component[entry.component]
+        # a DBMSBenchmarker pod appends its client to the connection name
+        return entry.connection in scoped or entry.connection.rsplit("-", 1)[0] in scoped
     for path in files:
         try:
             text = path.read_text(encoding="utf-8", errors="replace")
@@ -261,7 +274,7 @@ def collect_missing_metrics(
             elif entry.title in sparse or (entry.title, entry.component) in sparse_components:
                 entry = replace(entry, expected=EXPECTED_SPARSE)
             elif too_short and int(window.group("seconds")) < min_measurable_window(
-                    entry.component, scrape_interval, jobs_scoped):
+                    entry.component, scrape_interval, is_scoped(entry)):
                 entry = replace(entry, expected=EXPECTED_SHORT_PHASE)
             missing.setdefault((entry.title, entry.connection, entry.query, entry.component), entry)
     # A DBMSBenchmarker pod names its connection with the client appended

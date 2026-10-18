@@ -97,7 +97,7 @@ A metric's `metric` field says how its time series is reduced to one value per p
 
 | Kind | Reduced to | Use for |
 |---|---|---|
-| `counter` | maximum − minimum (the increase during the phase) | queries returning an ever-growing total, e.g. CPU seconds |
+| `counter` | the increase during the phase: the sum of its rises (a drop, e.g. a pod leaving the sum, is not subtracted); for a job selected by its own pods also its first value, else maximum − minimum (see [Pods of a phase](#pods-of-a-phase)) | queries returning an ever-growing total, e.g. CPU seconds |
 | `gauge` | mean | current values, and queries that already apply `rate()` (a value per second) |
 | `ratio` | maximum | ratios and per-node peaks |
 
@@ -116,6 +116,8 @@ Bexhoma substitutes the following placeholders at runtime before sending the que
 |---|---|
 | `{configuration}` | The name of the current DBMS configuration, lower-case (e.g., `postgresql-1`) |
 | `{experiment}` | The numeric experiment code (e.g., `1775855486`) |
+| `{pods}` | A regex of the pods the query is about, per query set (see [Pods of a phase](#pods-of-a-phase)) |
+| `{namespace}` | The namespace of the cluster context |
 | `{host}` | The Kubernetes node hosting the SUT |
 | `{gpuid}` | Pipe-separated list of GPU UUIDs present in the SUT pod |
 | `{database}` | The database name (the tenant's database in database-per-tenant mode) |
@@ -148,6 +150,34 @@ Bexhoma automatically produces parallel queries for other container roles by sub
 | Benchmarker driver | `dbmsbenchmarker` |
 
 This means a single metric definition covers all components without requiring separate query entries for each.
+
+### Pods of a phase
+
+A stopped pod's cAdvisor series does not end when the pod stops: Prometheus keeps returning its last value for about five minutes.
+A query by name pattern then still sums the previous repetition's SUT or the previous round's benchmarker into the next phase (its Max RAM, its CPU total).
+The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
+
+- **`{pods}`**: each connection file holds one query set per scope, each with its own pod regex:
+
+  | Query set | `{pods}` | Used for |
+  |---|---|---|
+  | `metrics` | `(.*)<configuration>-<experiment>(.*)` | the SUT and other deployments |
+  | `metrics_benchmarker` | `<benchmarker job name>-[a-z0-9]{5}` | the benchmarker job of exactly this connection |
+  | `metrics_loading` | `bexhoma-loading-<configuration>-<experiment>-<run>-.+` | all loading jobs of this repetition (loader, data generator) |
+  | `metrics_<statefulset>` | `(.*)<worker name>-(.*)` | workers |
+
+  The job names are those of the job manifests, so a job's queries see only its own pods, whatever the gap to the previous round.
+  Several benchmarker jobs in one round each get their own row instead of the sum of all of them.
+- **Stale series filter**: every instant selector `X` is written `(X and (time() - timestamp(X)) < 90)`, which drops a series whose newest sample is older than 90 s.
+  This keeps the previous SUT pod out of the next repetition, which starts minutes later.
+  The `irate(...)` queries need no filter: a stale series has rate 0.
+  The threshold assumes a scrape interval of about 30 s; with a longer `scrape_interval`, raise the `90` in the queries to about three intervals.
+
+`{namespace}` keeps pods of other namespaces out: worker pod names carry no experiment code.
+
+A scoped job's counter starts at 0 before its first scrape, so its first value counts as growth: a loader with a single scrape gets its CPU total instead of 0.
+Whether a connection is scoped is read from its stored queries (its job query set differs from `metrics`); a `cluster.config` copy with the old literal pod pattern gives job query sets equal to `metrics` and keeps the old rule (`max - min`) without any message.
+To use the new queries, copy the cAdvisor metric definitions of `k8s-cluster.config` into your `cluster.config`.
 
 ---
 
@@ -284,7 +314,8 @@ A phase can only show what was scraped inside its window:
 | Component | Shortest measurable window | Why |
 |---|---|---|
 | SUT, workers | 1.2 × scrape interval | their pod runs before the window, so one scrape inside it is enough |
-| jobs: loader, data generator, benchmarker | 2 × scrape interval | a job pod starts inside the window, so its CPU total (`max - min`) needs two scrapes |
+| jobs: loader, data generator, benchmarker, selected by their own pods (`{pods}`) | 1.2 × scrape interval | their first value counts, so one scrape is enough |
+| jobs with an old query (no `{pods}`) | 2 × scrape interval | a job pod starts inside the window, so its CPU total (`max - min`) needs two scrapes |
 
 The window is the one each fetch queried, logged as `Interval length <N>s` in `bexhoma-metrics-<connection>-<component>.log`.
 A connection whose window is shorter shows `n/a` instead of `CPU [CPUs]` in the summary and in the report, and is left out of the test `... contains no 0 or NaN in CPU [CPUs]`; the test is skipped when no connection of the component is measurable.

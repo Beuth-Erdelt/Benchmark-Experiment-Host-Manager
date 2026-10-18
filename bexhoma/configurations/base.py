@@ -930,6 +930,45 @@ class SutConfiguration:
     # Metric query substitution
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def pods_pattern(configuration: str, experiment: str) -> str:
+        """Pod regex for ``{pods}``: every pod whose name contains ``<configuration>-<experiment>``.
+
+        The pattern the cAdvisor templates had literally before ``{pods}``.
+
+        :param configuration: Configuration name, or a regex group of worker names.
+        :param experiment: Experiment code; empty for workers.
+        :return: The regex.
+        :rtype: str
+        """
+        return f"(.*){configuration}-{experiment}(.*)"
+
+    def job_pods_pattern(self, jobname: str, all_jobs_with_prefix: bool = False) -> str:
+        """Pod regex for ``{pods}`` selecting the pods of one job.
+
+        Kubernetes names a job's pods ``<jobname>-<5 characters>`` and cuts
+        ``<jobname>-`` to 58 characters first. Prometheus anchors the regex, so
+        ``…-1-1`` does not match the pods of ``…-1-10``.
+
+        :param jobname: Job name, as :meth:`generate_component_name` gives it.
+        :param all_jobs_with_prefix: Match every job whose name starts with
+            ``<jobname>-`` instead (the loading jobs of a repetition).
+        :return: The regex.
+        :rtype: str
+        """
+        if all_jobs_with_prefix:
+            return (jobname + "-")[:58] + ".+"
+        return (jobname + "-")[:58] + "[a-z0-9]{5}"
+
+    def monitoring_namespace(self) -> str:
+        """Namespace for ``{namespace}`` in metric templates.
+
+        :return: The cluster context's namespace; empty without a cluster context (tests).
+        :rtype: str
+        """
+        contextdata = getattr(self.experiment.cluster, 'contextdata', None) or {}
+        return contextdata.get('namespace', '')
+
     def set_metric_of_config_default(
         self,
         metric: str,
@@ -938,6 +977,7 @@ class SutConfiguration:
         schema: str,
         database: str,
         experiment: str = None,
+        pods: str = None,
     ) -> str:
         """Substitute placeholders in a PromQL query for bexhoma-managed components.
 
@@ -947,18 +987,26 @@ class SutConfiguration:
         :param schema: Database schema name.
         :param database: Database name.
         :param experiment: Experiment code; defaults to :attr:`code`.
+        :param pods: Pod regex for ``{pods}``; defaults to :meth:`pods_pattern`
+            of this configuration (a job's own pods: :meth:`job_pods_pattern`).
         :return: Filled PromQL query string.
         :rtype: str
         """
         if experiment is None:
             experiment = self.code
+        configuration = self.configuration.lower()
+        experiment_name = self.get_experiment_name()
+        if pods is None:
+            pods = self.pods_pattern(configuration, experiment_name)
         return metric.format(
             host=host,
             gpuid=gpuid,
-            configuration=self.configuration.lower(),
-            experiment=self.get_experiment_name(),
+            configuration=configuration,
+            experiment=experiment_name,
             schema=schema,
             database=database,
+            pods=pods,
+            namespace=self.monitoring_namespace(),
             **self.storage_placeholder_values(),
         )
 
@@ -992,6 +1040,7 @@ class SutConfiguration:
             metric = metric.replace(', container_label_io_kubernetes_container_name="dbms"', '')
             return metric.format(
                 host=host, gpuid=gpuid, configuration=component, experiment='',
+                pods=self.pods_pattern(component, ''), namespace=self.monitoring_namespace(),
                 **self.storage_placeholder_values())
         if self.num_worker > 0:
             if len(component) == 0:
@@ -1003,11 +1052,13 @@ class SutConfiguration:
                 return metric.format(
                     host=host, gpuid=gpuid, configuration=configuration,
                     experiment="", schema=schema, database=database,
+                    pods=self.pods_pattern(configuration, ''), namespace=self.monitoring_namespace(),
                     **self.storage_placeholder_values())
             name_worker = self.get_worker_name(component=component)
             return metric.format(
                 host=host, gpuid=gpuid, configuration=name_worker,
                 experiment="", schema=schema, database=database,
+                pods=self.pods_pattern(name_worker, ''), namespace=self.monitoring_namespace(),
                 **self.storage_placeholder_values())
         experiment_name = self.get_experiment_name()
         self.logger.debug(

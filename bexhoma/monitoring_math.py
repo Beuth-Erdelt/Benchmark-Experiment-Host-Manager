@@ -23,6 +23,13 @@ its CPU would count almost nothing. :func:`counter_total` therefore keeps
 ``max - min`` for those, which is still wrong while a job of the previous
 round lingers in the sum (see ``dev/plan-metrics-pod-scope.md``).
 
+A cluster template with ``pod=~"{pods}"`` gives every connection its own job
+query sets (:data:`JOB_QUERY_SETS`), which select only that job's pods. Such
+a series starts at 0 before the job's first scrape, so its first value is
+growth too: :func:`counter_total` counts first value + growth for the
+connections :func:`scoped_job_connections` finds. Results fetched with an old
+template (job query sets equal to ``metrics``) keep ``max - min``.
+
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -30,15 +37,28 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
+import ast
+from pathlib import Path
+from typing import Iterable, Optional
+
 import pandas as pd
 
 __all__ = [
-    "JOB_COMPONENTS", "DEFAULT_SCRAPE_INTERVAL_SECONDS", "SCRAPE_JITTER",
+    "JOB_COMPONENTS", "JOB_QUERY_SETS", "DEFAULT_SCRAPE_INTERVAL_SECONDS", "SCRAPE_JITTER",
     "counter_increase", "counter_total", "min_measurable_window",
+    "read_connections", "scoped_job_connections",
 ]
 
 #: Monitoring components whose pods are jobs started inside the phase.
 JOB_COMPONENTS = frozenset({'loader', 'datagenerator', 'benchmarker'})
+
+#: Query set of a connection's ``monitoring`` that selects a job component's
+#: own pods (filled from ``{pods}``, see ``configurations/metrics.py``).
+JOB_QUERY_SETS = {
+    'benchmarker': 'metrics_benchmarker',
+    'loader': 'metrics_loading',
+    'datagenerator': 'metrics_loading',
+}
 
 #: Scrape interval of the cluster Prometheus when ``cluster.config`` names none
 #: (``monitor.scrape_interval``).
@@ -67,7 +87,7 @@ def min_measurable_window(component: str, scrape_interval: float, jobs_scoped: b
         ``SCRAPE_JITTER x scrape_interval``.
     :rtype: float
     """
-    if component in JOB_COMPONENTS and not jobs_scoped:
+    if component in JOB_COMPONENTS and not jobs_scoped:  # scoped: see scoped_job_connections()
         return 2 * scrape_interval
     return SCRAPE_JITTER * scrape_interval
 
@@ -93,16 +113,75 @@ def counter_increase(df: pd.DataFrame) -> pd.Series:
     return increase.sort_index()
 
 
-def counter_total(df: pd.DataFrame, component: str) -> pd.Series:
+def counter_total(df: pd.DataFrame, component: str, scoped: Iterable[str] = ()) -> pd.Series:
     """Return each counter column's total for one monitoring component's phase.
+
+    For a scoped job column the first value counts as growth from 0, then
+    :func:`counter_increase` adds the positive steps. A drop (a finished pod
+    of the job leaving the sum, zero padding) is not counted; a later rise
+    counts only its step, so a pod reappearing after missed scrapes is not
+    counted twice.
 
     :param df: One column per connection, one row per sample, in time order.
     :param component: The monitoring component (``workload['monitoring_components']``
         key), e.g. ``loading``, ``benchmarking``, ``loader``, ``benchmarker``.
-    :return: :func:`counter_increase` for the SUT side, ``max - min`` for
-        :data:`JOB_COMPONENTS`; one value per column, sorted by column.
+    :param scoped: Columns whose series cover only the job's own pods
+        (:func:`scoped_job_connections`); only used for :data:`JOB_COMPONENTS`.
+    :return: :func:`counter_increase` for the SUT side; for
+        :data:`JOB_COMPONENTS` first value + growth in scoped columns,
+        ``max - min`` in the others; one value per column, sorted by column.
     :rtype: pandas.Series
     """
-    if component in JOB_COMPONENTS:
-        return df.max().sort_index() - df.min().sort_index()
-    return counter_increase(df)
+    if component not in JOB_COMPONENTS:
+        return counter_increase(df)
+    total = df.max().sort_index() - df.min().sort_index()
+    scoped = set(scoped)
+    columns = [column for column in df.columns if column in scoped]
+    if columns and len(df) > 0:
+        first = df[columns].bfill().iloc[0]
+        total.loc[columns] = (first + counter_increase(df[columns])).loc[columns].values
+    return total
+
+
+def read_connections(result_dir) -> list:
+    """Read a result folder's ``connections.config``.
+
+    :param result_dir: The experiment's result folder.
+    :return: The connection dicts; empty when the file is missing or unreadable.
+    :rtype: list
+    """
+    try:
+        connections = ast.literal_eval(Path(result_dir, 'connections.config').read_text(encoding='utf-8'))
+    except (OSError, SyntaxError, ValueError, TypeError):
+        return []
+    return connections if isinstance(connections, list) else []
+
+
+def scoped_job_connections(connections: list, component: str, metric: Optional[str] = None) -> set:
+    """Connections whose job query set of ``component`` selects only the job's own pods.
+
+    That is the case when the connection's query in :data:`JOB_QUERY_SETS`
+    differs from the one in ``metrics``: the cluster template had ``{pods}``.
+    A silent check on the stored queries, so re-evaluating old results keeps
+    their rule.
+
+    :param connections: Connection dicts (:func:`read_connections`).
+    :param component: The monitoring component; only :data:`JOB_COMPONENTS` can be scoped.
+    :param metric: Metric key to compare; None means any metric of the set.
+    :return: Names of the scoped connections.
+    :rtype: set
+    """
+    query_set = JOB_QUERY_SETS.get(component)
+    if query_set is None:
+        return set()
+    scoped = set()
+    for connection in connections:
+        monitoring = connection.get('monitoring') or {}
+        job_metrics = monitoring.get(query_set) or {}
+        default_metrics = monitoring.get('metrics') or {}
+        keys = job_metrics if metric is None else [metric]
+        if any(key in job_metrics
+               and job_metrics[key].get('query') != (default_metrics.get(key) or {}).get('query')
+               for key in keys):
+            scoped.add(connection.get('name'))
+    return scoped

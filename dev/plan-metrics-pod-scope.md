@@ -2,12 +2,54 @@
 
 Status: M1 **implemented and committed** (2026-10-15, `ee7832d3`). M1b
 (phases shorter than the scrape interval, added 2026-10-18) **implemented
-2026-10-18, uncommitted** (see "M1b: result"); jobs too short inside a long
-loading window are left unreliable (decided 2026-10-18). M2-M4 **planned**: in the `cluster.config`
-templates a `{pods}` placeholder (jobs scoped by job name, one query set per
-scope, see "How"), `{namespace}`, and the 90 s filter for stale series
-(option (a): template change, no code-side query rewriting; no warning about
-old copies). Decisions below revised 2026-10-18 to match.
+and committed** (`92964894`); jobs too short inside a long
+loading window are left unreliable (decided 2026-10-18). M2, M3 (unit tests)
+and M4 **implemented 2026-10-18, uncommitted** (see "M2-M4: result"): in the
+`cluster.config` templates a `{pods}` placeholder (jobs scoped by job name,
+one query set per scope, see "How"), `{namespace}`, and the 90 s filter for
+stale series (option (a): template change, no code-side query rewriting; no
+warning about old copies). M3 cluster run **open**.
+
+## M2-M4: result (2026-10-18)
+
+- Templates: the 14 cAdvisor queries of `k8s-cluster.config` (and the local
+  `cluster.config`) use `pod=~"{pods}", namespace="{namespace}"`; the 11
+  instant ones `(X and (time() - timestamp(X)) < 90)`. Checked read-only on
+  the cluster Prometheus with the live YugabyteDB loading pods
+  (1792348454): all 14 return `success`, with data in namespace `perdelt`
+  and none in `monitor`.
+- `SutConfiguration.pods_pattern()` (the old literal pattern, default for
+  `metrics`, workers, YugabyteDB), `job_pods_pattern()` (`(<job>-)[:58]` +
+  `[a-z0-9]{5}`, or `.+` for all loading jobs of a repetition),
+  `monitoring_namespace()`; `run_pod()` builds both job names with
+  `generate_component_name()` as the manifests do and passes them to
+  `get_connection_config(job_pods=)`, which writes `metrics_benchmarker` and
+  `metrics_loading`. `fetch()` switches `metrics` to the job set for
+  `benchmarker`, `loader`, `datagenerator` when the connection has it.
+- Silent check (decision 3), changed: not a string search on the templates
+  but on the **stored** queries: `monitoring_math.scoped_job_connections()`
+  calls a connection scoped when its job query differs from the one in
+  `metrics`. Works on re-evaluation without `cluster.config`; old results and
+  old templates (identical sets) keep `max - min` and the 2 x threshold.
+- Counting rule (decision 5), **changed**: scoped job total = first value +
+  `counter_increase()` (positive steps). The plan's "a value below the last
+  one is a new counter and counts fully" is not implemented: the job series
+  is a sum over the job's pods, and with the 90 s filter a finished pod
+  leaves that sum, so the sum drops while the other pods run on; counting the
+  lower value fully would count their CPU twice. A container restart inside
+  a job (counter reset) is therefore undercounted by its growth before the
+  restart; rare for jobs.
+- `short_phase_connections()` and `collect_missing_metrics()` pick the
+  threshold per connection (1.2 x for scoped jobs).
+- Tests: `tests/test_pods_scope.py` (templates, formatting per branch, job
+  patterns incl. `-1-1` vs `-1-10`, other repetitions, truncation, fetch
+  query set, scoped detection, counting, thresholds);
+  `test_ceph_storage_monitoring` formats with `pods`/`namespace`. 641 tests,
+  only the known `test_hardware_baseline` failure.
+- Docs: `docs/Monitoring.md` ("Pods of a phase", placeholders, counter
+  kind, short-phase table), `docs/Config.md`, `docs/AgentResultContract.md`,
+  `contracts/contract_result.yml` (CPU check wording; schema version
+  unchanged).
 
 ## Problem
 

@@ -117,9 +117,20 @@ class BenchmarkRunner:
         pods = cfg.experiment.cluster.get_pods(
             component='sut', configuration=configuration, experiment=cfg.code)
         cfg.pod_sut = pods[0]
+        # {pods} of the job query sets: this connection's benchmarker job (named as
+        # in create_manifest_job()) and every loading job of this repetition
+        jobname_benchmarker = cfg.generate_component_name(
+            app=app, component=component, experiment=cfg.code, configuration=configuration,
+            experiment_run=experiment_run, client=client, benchmark_run=benchmark_run)
+        jobname_loading = cfg.generate_component_name(
+            component='loading', experiment_run=experiment_run)
+        job_pods = {
+            'metrics_benchmarker': cfg.job_pods_pattern(jobname_benchmarker),
+            'metrics_loading': cfg.job_pods_pattern(jobname_loading, all_jobs_with_prefix=True),
+        }
         c = cfg.metrics.get_connection_config(
             connection, alias, dialect,
-            serverip=service_host, monitoring_host=monitoring_host)
+            serverip=service_host, monitoring_host=monitoring_host, job_pods=job_pods)
         c['time_reset'] = reset_seconds
         if len(cfg.loading_parameters) > 0:
             cfg.connection_parameter['loading_parameters'] = cfg.loading_parameters.copy()

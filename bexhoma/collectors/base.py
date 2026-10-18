@@ -27,7 +27,7 @@ import pprint
 from dbmsbenchmarker import parameter, inspector
 
 from bexhoma import evaluators
-from bexhoma.monitoring_math import counter_total
+from bexhoma.monitoring_math import counter_total, read_connections, scoped_job_connections
 
 __all__ = ["CollectorBase", "get_non_constant", "metric_is_active"]
 
@@ -467,6 +467,8 @@ class CollectorBase:
         if not self.with_monitoring:
             return pd.DataFrame()
         results = []
+        path = getattr(evaluation, 'path', None)
+        connections = read_connections(path) if path else []
         for metric_key, row in self.df_metrics.iterrows():
             if row["active"] is False or row["active"] == False:
                 continue
@@ -475,7 +477,7 @@ class CollectorBase:
             df = evaluation.get_monitoring_metric(metric=metric_key, component=type)
             df.index = evaluation.code + '-' + df.index.astype(str)
             if reduction == 'diff':
-                processed = counter_total(df, type)
+                processed = counter_total(df, type, scoped_job_connections(connections, type, metric_key))
             elif reduction == 'max':
                 processed = df.max().sort_index()
             else:

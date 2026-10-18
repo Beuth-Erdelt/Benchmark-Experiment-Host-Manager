@@ -78,7 +78,7 @@ and its loading times are still inherited (see the table).
 | no SQL errors (TPC-H) | a query failed | that query; the pooled totals |
 | all active queries in the totals (TPC-H) | a query failed in some connection and left the pooled totals | the pooled per-phase metrics |
 | no SQL warnings (TPC-H) | result sets differ inside one driver process | correctness of those queries |
-| component CPU non-zero | monitoring read 0 or NaN for a measurable phase; a phase shorter than 1.2 scrape intervals (SUT, workers) or 2 (jobs) shows `n/a` and is left out (skipped when no phase is measurable) | monitoring data only |
+| component CPU non-zero | monitoring read 0 or NaN for a measurable phase; a phase shorter than 1.2 scrape intervals (SUT, workers, jobs selected by their own pods) or 2 (jobs with an old query) shows `n/a` and is left out (skipped when no phase is measurable) | monitoring data only |
 | no monitoring metrics missing | Prometheus returned no data, filled with zeros (skipped when every gap is expected, e.g. data pre-existing, a sparse metric, or a phase shorter than the scrape interval) | those metrics |
 | EXPLAIN captured (TPC-H) | an active query has no plan (skipped without `store_explain`) | evidence of which engine ran |
 

@@ -176,7 +176,7 @@ validity:
     why: "bexhoma gives every benchmarking pod its own process and exactly one connection, so at numRun=1 there is nothing to compare against and the check passes vacuously; PASS never certifies that two configurations, phases or experiment_runs returned the same rows"
   - id: monitoring_component_cpu_nonzero
     kind: absolute
-    checks: "per monitored component, over the connections whose phase window is measurable: at least 1.2 x the cluster Prometheus scrape interval (cluster.config monitor.scrape_interval, default 30 s) for the SUT and workers, 2 x for jobs (loader, data generator, benchmarker); shorter phases show CPU [CPUs] as `n/a` and are left out; SKIPPED (not failed) when no connection of the component is measurable"
+    checks: "per monitored component, over the connections whose phase window is measurable: at least 1.2 x the cluster Prometheus scrape interval (cluster.config monitor.scrape_interval, default 30 s) for the SUT, workers and jobs whose queries select their own pods ({pods}), 2 x for jobs (loader, data generator, benchmarker) with an old query; shorter phases show CPU [CPUs] as `n/a` and are left out; SKIPPED (not failed) when no connection of the component is measurable"
   - id: no_monitoring_metrics_missing
     kind: absolute
     label: "No monitoring metrics missing"

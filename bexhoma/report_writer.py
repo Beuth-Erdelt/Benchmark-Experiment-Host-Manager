@@ -64,6 +64,7 @@ from __future__ import annotations
 import fnmatch
 import os
 import re
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -74,7 +75,7 @@ from bexhoma import evaluators
 from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
-from bexhoma.monitoring_math import counter_total
+from bexhoma.monitoring_math import counter_total, scoped_job_connections
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
 
@@ -622,7 +623,8 @@ def _build_monitoring_sections(
             df = evaluator.get_monitoring_metric(metric=metric_key, component=component)
             if df.empty:
                 continue
-            aggregated = _aggregate_metric(df, meta['metric'], component)
+            aggregated = _aggregate_metric(
+                df, meta['metric'], component, scoped_job_connections(connections_sorted, component, metric_key))
             df_cleaned = pd.DataFrame(aggregated)
             df_cleaned.columns = [meta['title']]
             df_cleaned = _add_not_applicable(
@@ -646,7 +648,7 @@ def _build_monitoring_sections(
     return sections
 
 
-def _aggregate_metric(df: pd.DataFrame, kind: str, component: str) -> pd.Series:
+def _aggregate_metric(df: pd.DataFrame, kind: str, component: str, scoped: Iterable[str] = ()) -> pd.Series:
     """
     Reduce one metric's per-scrape values to one value per connection.
 
@@ -658,11 +660,13 @@ def _aggregate_metric(df: pd.DataFrame, kind: str, component: str) -> pd.Series:
     :param df: One column per connection, one row per Prometheus scrape.
     :param kind: The metric's ``metric`` field (``counter``, ``ratio``, ``gauge``).
     :param component: The monitoring component the values belong to.
+    :param scoped: Connections whose job queries select only the job's own pods
+        (:func:`bexhoma.monitoring_math.scoped_job_connections`).
     :return: One value per connection, sorted by connection.
     :rtype: pandas.Series
     """
     if kind == 'counter':
-        return counter_total(df, component)
+        return counter_total(df, component, scoped)
     if kind == 'ratio':
         return df.max().sort_index()
     return df.mean().sort_index()
