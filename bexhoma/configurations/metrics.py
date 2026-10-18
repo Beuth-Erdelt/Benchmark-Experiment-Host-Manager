@@ -149,7 +149,8 @@ class MetricsCollector:
                 print("{:30s}: distributed system - get host info for worker {}".format(
                     cfg.configuration, pod))
                 worker_infos = cfg.host.get_host_all(component=component, kind='statefulset')
-                worker_infos['args'] = cfg.deployment_infos['statefulset'][component]['args']
+                # StatefulSets bexhoma did not render (YugabyteDB's Helm chart) record no args
+                worker_infos['args'] = cfg.deployment_infos['statefulset'][component].get('args', [])
                 c['worker'][component].append(worker_infos)
         # additional Deployment-based components (e.g. pool), excluding sut itself
         components_deployment = [
