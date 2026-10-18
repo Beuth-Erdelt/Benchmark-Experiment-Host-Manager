@@ -803,6 +803,7 @@ Also note the size increases from first to second run (benchmark writes data).
 For repeated benchmarking rounds against the same TPC-C database, bloat and stale planner statistics can drift the result away from the first round.
 Bexhoma can run a pre-benchmark reset script (`CHECKPOINT` + `VACUUM ANALYZE` on all 9 TPC-C tables for PostgreSQL) before each round to start every round from a comparable state.
 The feature is off by default; pass `-ar` to activate it.
+It also works with multi-tenancy (`-mtb`): with `schema` or `database` the script runs once per tenant, with `container` in each tenant's own container.
 
 Example (`-nc 2` repeats the experiment twice, so the reset script runs before each repeat):
 ```bash

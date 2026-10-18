@@ -41,6 +41,8 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -77,6 +79,8 @@ bexhoma ycsb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -105,6 +109,8 @@ bexhoma benchbase `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -136,6 +142,8 @@ bexhoma benchbase `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 100Gi                    <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -164,6 +172,8 @@ bexhoma benchbase `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 100Gi                    <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -193,6 +203,8 @@ bexhoma hammerdb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -227,6 +239,8 @@ bexhoma hammerdb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -262,8 +276,8 @@ bexhoma hammerdb `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 200Gi                    <# size of the persistent volume claim #> `
-  -lr 64Gi                      <# RAM limit for the SUT container #> `
-  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -295,6 +309,8 @@ bexhoma tpch `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -330,6 +346,8 @@ bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -364,6 +382,8 @@ bexhoma tpch `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
+  -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `

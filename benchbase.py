@@ -198,6 +198,10 @@ if __name__ == '__main__':
                             name_format = 'PostgreSQL-{threads}-{pods}-{target}-{tenant}'
                             #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
                             config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
+                            if type_of_benchmark == 'tpcc':
+                                # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
+                                # (with -ar), in each tenant's own container
+                                config.set_benchmark_resetscript(['reset-benchbase.sql'])
                             config.set_storage(
                                 storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
                                 )
@@ -435,6 +439,10 @@ if __name__ == '__main__':
                             name_format = 'MySQL-{threads}-{pods}-{target}-{tenant}'
                             #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
                             config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
+                            if type_of_benchmark == 'tpcc':
+                                # Run ANALYZE TABLE before each benchmarking round (with -ar),
+                                # in each tenant's own container
+                                config.set_benchmark_resetscript(['reset-benchbase.sql'])
                             config.set_storage(
                                 storageConfiguration = f'mysql-{tenant}'+"-"+str(config.num_tenants)
                                 )
