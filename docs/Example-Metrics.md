@@ -1395,6 +1395,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mysql_appmetrics.log
@@ -1574,6 +1575,7 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_appmetrics.log
@@ -1777,6 +1779,7 @@ bexhoma tpcds \
   -t 1200 \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -2064,6 +2067,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_appmetrics.log
