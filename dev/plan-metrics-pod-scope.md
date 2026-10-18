@@ -1,8 +1,9 @@
 # Plan: monitoring metrics must not count pods of earlier phases
 
-Status: M1 **implemented** (2026-10-15, uncommitted). M2-M4 **planned**:
-filter stale series in the `cluster.config` templates (decided 2026-10-15,
-option (a): template change plus a warning, no code-side query rewriting).
+Status: M1 **implemented and committed** (2026-10-15, `ee7832d3`). M2-M4
+**planned**: filter stale series in the `cluster.config` templates (decided
+2026-10-15, option (a): template change, no code-side query rewriting; no
+warning about old copies, decided 2026-10-18).
 
 ## Problem
 
@@ -83,12 +84,12 @@ corrected on re-evaluation.
    unchanged (rate 0 for a stale series). Users copy the new queries into
    their own `cluster.config` (git-ignored). The threshold is a literal `90`
    in the query: visible, and changed by editing the template.
-3. **Old copies are detected, not changed.** At experiment start bexhoma
-   checks the active `monitor.metrics` templates: a query using a
-   `container_*` metric outside `rate`/`irate` and without `timestamp(` is
-   reported once ("N cAdvisor metrics do not drop stopped pods' series; see
-   k8s-cluster.config"), in the workload info and as a failed test in the
-   summary and report, so results from an unfixed config say so.
+3. **Old copies are neither changed nor warned about** (2026-10-18). An
+   unchanged `cluster.config` keeps the old behaviour without any message.
+   Bexhoma only checks silently, per metric, whether its query contains
+   `timestamp(`. That check picks the job counting rule (decision 5) and is
+   reported nowhere. It is a string search on the loaded templates, no
+   Prometheus or cluster call.
 4. **Namespace filter (required: worker queries carry no experiment code,
    see the TiDB evidence).** The same 14 cAdvisor templates get
    `namespace="{namespace}"`; the formatting calls supply `namespace`.
@@ -98,11 +99,18 @@ corrected on re-evaluation.
    - jobs: total = positive steps + first value (their pods start inside the
      window, so the first value is growth from 0; removes the round-1
      undercount of `max - min`, e.g. 151 vs ~167);
-   - guard: an upward jump right after a drop is not counted. Missed scrapes
-     longer than 90 s (Prometheus or kubelet restart) would drop a live pod
-     for a moment; its reappearance must not count its whole counter again.
-   Only switched on when decision 3 finds the filter in place; with an old
-   config the jobs keep `max - min`.
+   - guard against gaps: missed scrapes longer than 90 s (Prometheus or
+     kubelet restart) drop a live pod for a moment; its reappearance must
+     not count its whole counter again. Rule (like PromQL `increase()`):
+     after a gap or drop, a value above the last value before it counts
+     only the difference (`100, 110, [gap], 125` -> 25, not 135); a value
+     below it is a new counter and counts fully.
+   Only for metrics whose query contains the filter (decision 3, per
+   metric); otherwise the jobs keep `max - min`. Both rules run on the
+   fetched CSV in `monitoring_math.py`, no extra query.
+7. **Old results are ignored** (2026-10-18): the filter only acts when
+   Prometheus is queried, so results fetched before it are not re-fetched
+   or marked. Re-evaluation still applies M1 to them.
 6. **Concurrent jobs: out of scope for now.** If needed later, scope only
    the benchmarker by its job name
    (`bexhoma-benchmarker-{configuration}-{experiment}-{run}-{client}-{benchmark_run}-`).
@@ -215,21 +223,22 @@ Other checks:
   query shapes as they are (`sum(...)`, `sum(max(...) by (instance))`,
   `sum(max by (pod) (...))`); wrap only the selector.
 - `configurations/base.py`: `set_metric_of_config_default` and every branch
-  of `set_metric_of_config` pass `namespace=`; check other places that
-  format these templates (`environment.py`, hardware baseline).
-- Detection (decision 3): a function over `monitor.metrics` returning the
-  keys without the filter; called once in `prepare_testbed` when monitoring
-  is on; workload info line and a runtime test result.
+  of `set_metric_of_config` pass `namespace=`. These two are the only places
+  that format the templates (both called from `configurations/metrics.py`;
+  checked 2026-10-18).
+- Silent check (decision 3): a helper telling per metric key whether its
+  query contains `timestamp(`; used by the job counting rule only, no
+  output.
 
 ### M3: tests
 
 - Every cAdvisor instant template in `k8s-cluster.config` has the filter and
   `namespace="{namespace}"`; the `irate` ones are unchanged; all still
   format (no unknown placeholder) and parse as PromQL-shaped strings.
-- Detection: an old-style template is reported, the new one is not, rates
-  are never reported.
-- M1 follow-up (decision 5): job total with first value; reappearance guard;
-  old config keeps `max - min` for jobs.
+- Silent check: true for the new templates, false for old-style ones.
+- M1 follow-up (decision 5): job total with first value; gap guard
+  (`100, 110, [gap], 125` -> 25; drop to a lower value counts fully); old
+  config keeps `max - min` for jobs.
 - On the cluster: a short TPC-C SF1 run with `-nc 2 -rsrp -xnbf 1,4`:
   rep 2 loading CPU and Max RAM close to rep 1, benchmarker round 2 CPU no
   longer equal to round 1.
@@ -237,10 +246,10 @@ Other checks:
 ### M4: docs
 
 - `docs/Monitoring.md`: why stopped pods linger, what the filter does, the
-  threshold and when to raise it (scrape interval above ~30 s), the warning.
+  threshold and when to raise it (scrape interval above ~30 s).
 - `docs/Config.md` and release notes: users update the cAdvisor queries in
-  their `cluster.config` from `k8s-cluster.config`.
-- Result contract: the new test line (additive).
+  their `cluster.config` from `k8s-cluster.config`; without it nothing
+  warns and the old behaviour stays.
 
 ## Rejected alternatives
 
@@ -258,8 +267,12 @@ Other checks:
   previous pod stopped. Documented, editable in the template.
 - **Missed scrapes > 90 s** make a live pod vanish briefly: gauges dip,
   counters need the guard (decision 5).
-- **Users who do not update** their `cluster.config` keep the old behaviour;
-  the warning (decision 3) makes those results recognisable.
+- **Users who do not update** their `cluster.config` keep the old behaviour,
+  and nothing marks those results (decision 3).
+- **Prometheus load.** The filter evaluates each cAdvisor selector twice per
+  step (step 1 s), so roughly twice the server work per query; the number
+  of queries stays the same. Not timed; the 162 re-run fetches showed no
+  problem.
 - **Workers on the cluster**: verified on SUT, loader, data generator and
   benchmarker of all storage probes (see "All storage probes"), not on
   worker StatefulSets; M3 needs a distributed run with `-nc 2` (e.g. Citus

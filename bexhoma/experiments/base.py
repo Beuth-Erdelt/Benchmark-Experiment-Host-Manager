@@ -39,6 +39,7 @@ from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_stora
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
 from bexhoma.metric_fetching import DEFAULT_MAX_PARALLEL_FETCHES, MetricFetchBatch
+from bexhoma.cluster_calls import CALL_STATS, stored_pods
 
 if TYPE_CHECKING:
     from bexhoma.configurations.base import SutConfiguration
@@ -98,6 +99,15 @@ BENCHMARK_START_TIMEOUT_MINUTES = 15
 
 #: Container waiting reasons that mean a loading pod cannot pull its image.
 IMAGE_PULL_WAITING_REASONS = frozenset({'ErrImagePull', 'ImagePullBackOff'})
+
+#: Wait before the next loop pass after a step of bexhoma itself whose next
+#: step needs no change in the cluster (a job ended and deleted, a stuck round
+#: skipped, a stopped SUT gone). Every other pass waits the full interval.
+FOLLOW_UP_WAIT_SECONDS = 0
+
+#: Follow-up waits in a row before the loop waits the full interval again, so
+#: a state that does not resolve never turns into a tight loop.
+MAX_FOLLOW_UP_WAITS_IN_A_ROW = 3
 
 def parse_set_arg(s: str) -> Tuple[dict, str]:
     """
@@ -427,6 +437,27 @@ class ExperimentBase():
         filename_local = self.path+'/.' if not filename else self.path+'/'+filename
         filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.upload_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
+    def upload_experiment_files(self, filenames: list) -> str:
+        """
+        Upload several result files to the dashboard pod in one go (see ``Kubernetes.upload_files()``).
+
+        :param filenames: Names of files relative to the experiment result folder.
+        :return: Output of the upload command, or empty string when no dashboard pod is available.
+        """
+        filenames = list(dict.fromkeys(filenames))
+        if not filenames:
+            return ""
+        if len(filenames) == 1:
+            return self.upload_experiment_file(filenames[0])
+        if not len(self.pod_dashboard):
+            pods = self.cluster.get_pods(component='dashboard')
+            if len(pods) > 0:
+                self.pod_dashboard = pods[0]
+            else:
+                return ""
+        return self.cluster.upload_files(
+            filenames_local=[self.path+'/'+filename for filename in filenames],
+            dir_remote='/results/'+str(self.code), pod=self.pod_dashboard)
     #: Copies metric CSVs of one connection to another (``MetricsCollector.copy_fetched``).
     #: Shipped as a file, because ``$`` in an inline ``sh -c`` would be expanded by
     #: the local shell on Linux and not on Windows.
@@ -1847,6 +1878,7 @@ class ExperimentBase():
         # The job goes first so that it cannot replace the pods deleted next.
         for job in jobs:
             self.cluster.delete_job(job)
+            self._ended_jobs().add(job)
         for pod in pods:
             self.cluster.delete_job_pods(jobname=pod)
         del self._benchmark_rounds_starting[config.configuration]
@@ -1871,31 +1903,128 @@ class ExperimentBase():
             dbms_cap = other.max_sut_dbms is not None and other.docker == config.docker
             if not (experiment_cap or dbms_cap):
                 continue
-            if not other.status.sut_exists():
+            # a SUT still being removed between repetitions waits for a slot too
+            if getattr(other, 'sut_removing', False) or not other.status.sut_exists():
                 return other.configuration
         return None
 
     def _prepare_next_repetition(self, config) -> None:
         """Get a configuration ready for its next repetition, without starting its SUT.
 
-        Waits until the stopped SUT is gone and resets the configuration. The
-        SUT is then started by the main loop like the first one, so ``-mse``,
-        ``-ms`` and ``max_sut_dbms`` are checked again: while the old SUT is
-        removed its slot is free, and another experiment may take it. Starting
-        here without that check would run both SUTs side by side.
+        Resets the configuration and marks its stopped SUT as being removed
+        (``config.sut_removing``). The main loop does not touch the
+        configuration until the SUT is gone (see :meth:`_sut_still_removing`),
+        and serves the other configurations meanwhile. The SUT is then started
+        by the main loop like the first one, so ``-mse``, ``-ms`` and
+        ``max_sut_dbms`` are checked again: while the old SUT is removed its
+        slot is free, and another experiment may take it. Starting here
+        without that check would run both SUTs side by side.
 
         :param config: The configuration whose repetition has ended and whose SUT was stopped.
         """
-        while config.status.sut_exists():
-            print("{:30s}: still being removed".format(config.configuration))
-            self.wait(30)
-        print("{:30s}: starts again".format(config.configuration))
         # find next sequence of benchmarks
         if not config.experiment_dict["benchmarker"]:
             config.benchmark_list = config.benchmark_list_template.copy()
             config.benchmarking_parameters_list = config.benchmarking_parameters_list_template.copy()
         self.client = 0
         config.reset_sut()
+        config.sut_removing = True
+
+    def _sut_still_removing(self, config) -> bool:
+        """Whether the stopped SUT of a configuration is still being removed.
+
+        Checked first in every pass for a configuration whose repetition ended
+        (:meth:`_prepare_next_repetition`): a terminating SUT pod still has
+        phase ``Running``, so the configuration must not be looked at before
+        it is gone.
+
+        :param config: Configuration to check.
+        :return: True while the SUT exists; False once it is gone (the mark is
+            then cleared) or if the configuration was not being removed.
+        """
+        if not getattr(config, 'sut_removing', False):
+            return False
+        if config.status.sut_exists():
+            print("{:30s}: still being removed".format(config.configuration))
+            return True
+        print("{:30s}: starts again".format(config.configuration))
+        config.sut_removing = False
+        return False
+
+    def _ended_jobs(self) -> set:
+        """Names of benchmarker jobs this process has ended and deleted.
+
+        A deleted job vanishes from the job list asynchronously. Both loops of
+        :meth:`work_benchmark_list` ignore these jobs, so a job still listed
+        right after its deletion is neither ended twice nor blocks the next
+        round. Job names contain run, client and benchmark index, so they
+        never repeat within an experiment.
+
+        :return: The (mutable) set.
+        """
+        return self.__dict__.setdefault('_jobs_ended', set())
+
+    def _store_finished_job_pod(self, job: str, pod: str) -> None:
+        """Store logs of all containers and the description of a finished benchmarker pod.
+
+        Once every file exists, the pod is remembered (see
+        :func:`~bexhoma.cluster_calls.stored_pods`) and not inspected again
+        in later passes. If a file is missing, the next pass tries again.
+
+        :param job: Name of the job the pod belongs to (for the log).
+        :param pod: Name of the pod (phase Succeeded or Failed).
+        """
+        if pod in stored_pods(self.cluster):
+            return
+        containers = [container for container in self.cluster.get_pod_containers(pod) if len(container) > 0]
+        for container in containers:
+            self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, pod, container))
+            self.cluster.store_pod_log(pod, container)
+        if not self.cluster.pod_description_exists(pod_name=pod):
+            self.cluster.logger.debug("Store description of job {} pod {}".format(job, pod))
+            self.cluster.store_pod_description(pod_name=pod)
+        if (containers
+                and all(self.cluster.pod_log_exists(pod, container) is True for container in containers)
+                and self.cluster.pod_description_exists(pod_name=pod) is True):
+            stored_pods(self.cluster).add(pod)
+
+    def _upload_ended_job_files(self, filenames: list) -> None:
+        """Upload the files written by :meth:`end_benchmarking` for the jobs of one pass.
+
+        One upload for all; if that fails, file by file as before: a
+        connection's own config only warns, ``connections.config`` raises.
+
+        :param filenames: Names collected in ``pending_uploads``.
+        """
+        filenames = list(dict.fromkeys(filenames))
+        if not filenames:
+            return
+        try:
+            self.upload_experiment_files(filenames)
+            return
+        except RuntimeError as exc:
+            print("{:30s}: WARNING - joint upload failed, uploading one by one: {}".format("Experiment", exc))
+        for filename in filenames:
+            if filename == 'connections.config':
+                self.upload_experiment_file(filename=filename)
+                continue
+            try:
+                self.upload_experiment_file(filename=filename)
+            except Exception as exc:
+                print("{:30s}: WARNING - could not upload {}: {}".format("Experiment", filename, exc))
+
+    def _follow_up_wait(self, current: int, reason: str) -> int:
+        """Shorten the next wait of the main loop after a step that needs no cluster change.
+
+        :param current: The next wait as planned so far.
+        :param reason: Why, for the debug log.
+        :return: The next wait: :data:`FOLLOW_UP_WAIT_SECONDS`, unless
+            :data:`MAX_FOLLOW_UP_WAITS_IN_A_ROW` short waits came before.
+        """
+        if self.__dict__.get('_follow_up_waits_in_a_row', 0) >= MAX_FOLLOW_UP_WAITS_IN_A_ROW:
+            return current
+        self.cluster.logger.debug("next loop pass without waiting: {}".format(reason))
+        return min(current, FOLLOW_UP_WAIT_SECONDS)
 
     def _leaves_sut_running(self, config, stop_after_starting: bool, stop_after_benchmarking: bool) -> bool:
         """Whether this repetition of a configuration ends with its SUT left running.
@@ -1963,10 +2092,18 @@ class ExperimentBase():
         intervals_wait = 0
         do = True
         experiment_start_time = datetime.utcnow()
+        self._follow_up_waits_in_a_row = 0
         while do:
             #time.sleep(intervals)
             self.wait(intervals_wait)
+            if 0 < intervals and intervals_wait < intervals:
+                self._follow_up_waits_in_a_row += 1
+            else:
+                self._follow_up_waits_in_a_row = 0
+            # a step of this pass may shorten the next wait (see _follow_up_wait())
             intervals_wait = intervals
+            pass_started = time.monotonic()
+            pass_calls_started = CALL_STATS.snapshot()
             if self.max_experiment_minutes is not None:
                 elapsed_minutes = (datetime.utcnow() - experiment_start_time).total_seconds() / SECONDS_PER_MINUTE
                 if elapsed_minutes >= self.max_experiment_minutes:
@@ -1984,6 +2121,12 @@ class ExperimentBase():
             # metric fetches of all configurations of this pass run together, in parallel
             submit_batch = MetricFetchBatch()
             for config in self.configurations:
+                # a SUT stopped between repetitions: wait until it is gone
+                if getattr(config, 'sut_removing', False):
+                    if not self._sut_still_removing(config):
+                        # gone: start it in the next pass, with fresh pod counts for the caps
+                        intervals_wait = self._follow_up_wait(intervals_wait, "{} SUT removed".format(config.configuration))
+                    continue
                 # check if sut is running
                 if not config.status.sut_running():
                     if self._abort_loading_if_needed(config, datetime.utcnow()):
@@ -2200,10 +2343,14 @@ class ExperimentBase():
                     # end_benchmarking() runs in the second loop below; stop_sut() must
                     # not fire until that loop has processed all completed jobs and
                     # deleted them, so we continue here for any non-empty job list.
-                    _active_jobs = self.cluster.get_jobs(app, component, self.code, configuration=config.configuration)
+                    # jobs already ended and deleted by this process may still be listed
+                    _active_jobs = [
+                        job for job in (self.cluster.get_jobs(app, component, self.code, configuration=config.configuration) or [])
+                        if job not in self._ended_jobs()]
                     if _active_jobs:
                         if any(not self.cluster.get_job_status(j) for j in _active_jobs):
                             if self._skip_benchmark_round_if_not_started(config, _active_jobs, datetime.utcnow()):
+                                intervals_wait = self._follow_up_wait(intervals_wait, "{} round skipped".format(config.configuration))
                                 continue
                             print("{:30s}: has running benchmarks".format(config.configuration))
                         continue
@@ -2321,12 +2468,13 @@ class ExperimentBase():
                                 for pod in pods:
                                     for container in config.deployment_infos['deployment'][deployment]['containers']:
                                         self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
-                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1)
+                                    # one read of the restart counts for the previous logs, the summary and the snapshot
+                                    per_container = self.cluster.get_pod_restart_counts(pod)
+                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1, counts=per_container)
                                     if not self.cluster.pod_description_exists(pod_name=pod):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                    restarts = config.host.get_host_restarts(pod)
-                                    per_container = self.cluster.get_pod_restart_counts(pod)
+                                    restarts = config.host.get_host_restarts(pod, counts=per_container)
                                     pod_restarts[pod] = sut_restarts.restart_snapshot_entry(restarts, per_container)
                                     summary = sut_restarts.format_restart_summary(restarts, per_container)
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
@@ -2336,12 +2484,13 @@ class ExperimentBase():
                                 for pod in pods:
                                     for container in config.deployment_infos['statefulset'][statefulset]['containers']:
                                         self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
-                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1)
+                                    # one read of the restart counts for the previous logs, the summary and the snapshot
+                                    per_container = self.cluster.get_pod_restart_counts(pod)
+                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1, counts=per_container)
                                     if not self.cluster.pod_description_exists(pod_name=pod):
                                         self.cluster.logger.debug("Store description of pod {}".format(pod))
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                    restarts = config.host.get_host_restarts(pod)
-                                    per_container = self.cluster.get_pod_restart_counts(pod)
+                                    restarts = config.host.get_host_restarts(pod, counts=per_container)
                                     pod_restarts[pod] = sut_restarts.restart_snapshot_entry(restarts, per_container)
                                     summary = sut_restarts.format_restart_summary(restarts, per_container)
                                     print("{:30s}: had {} restarts at worker {}".format(config.configuration, summary, pod))
@@ -2353,6 +2502,7 @@ class ExperimentBase():
                             config.lifecycle.stop_sut()
                             config.num_experiment_to_apply_done = config.num_experiment_to_apply_done + 1
                             if config.num_experiment_to_apply_done < config.num_experiment_to_apply:
+                                # the loop waits for the removal and serves the others meanwhile
                                 self._prepare_next_repetition(config)
                             else:
                                 config.experiment_done = True
@@ -2391,6 +2541,8 @@ class ExperimentBase():
             _we_have_running_benchmarks = False
             _we_have_incomplete_jobs = False
             end_batch = MetricFetchBatch()
+            # files of the jobs ended in this pass, uploaded together before end_batch runs
+            end_uploads: list = []
             for config in self.configurations:
                 # all jobs of configuration - benchmarker
                 #app = self.cluster.appname
@@ -2402,27 +2554,22 @@ class ExperimentBase():
                 component = 'benchmarker'
                 configuration = config.configuration#''
                 #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
-                jobs = self.cluster.get_jobs(app, component, self.code, configuration)
+                # jobs already ended and deleted by this process may still be listed
+                jobs = [job for job in (self.cluster.get_jobs(app, component, self.code, configuration) or [])
+                        if job not in self._ended_jobs()]
                 # all pods to these jobs
-                pods = self.cluster.get_job_pods(app, component, self.code, configuration)
+                pods = self.cluster.get_job_pods(app, component, self.code, configuration) or []
                 # status per job
                 for job in jobs:
                     _we_have_running_benchmarks = True
                     # status per pod
                     for p in pods:
-                        if not self.cluster.pod_log_exists(p):
+                        if p not in stored_pods(self.cluster) and not self.cluster.pod_log_exists(p):
                             status = self.cluster.get_pod_status(p)
                             self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
                             #print(p,status)
                             if status == 'Succeeded' or status == 'Failed':
-                                containers = self.cluster.get_pod_containers(p)
-                                for container in containers:
-                                    if len(container) > 0:
-                                        self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
-                                        self.cluster.store_pod_log(p, container)
-                                if not self.cluster.pod_description_exists(pod_name=p):
-                                    self.cluster.logger.debug("Store description of job {} pod {}".format(job, p))
-                                    self.cluster.store_pod_description(pod_name=p)
+                                self._store_finished_job_pod(job, p)
                             #if status == 'Succeeded':
                             #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
                             #    #if status != 'Running':
@@ -2444,14 +2591,7 @@ class ExperimentBase():
                             status = self.cluster.get_pod_status(p)
                             self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
                             if status == 'Succeeded' or status == 'Failed':
-                                containers = self.cluster.get_pod_containers(p)
-                                for container in containers:
-                                    if len(container) > 0:
-                                        self.cluster.logger.debug("Store logs of job {} pod {} container {}".format(job, p, container))
-                                        self.cluster.store_pod_log(p, container)
-                                if not self.cluster.pod_description_exists(pod_name=p):
-                                    self.cluster.logger.debug("Store description of job {} pod {}".format(job, p))
-                                    self.cluster.store_pod_description(pod_name=p)
+                                self._store_finished_job_pod(job, p)
                                 self.cluster.delete_pod(p)
                             #print(p,status)
                             #if status == 'Succeeded':
@@ -2466,10 +2606,16 @@ class ExperimentBase():
                             #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
                             #        self.cluster.store_pod_log(p)
                             #    self.cluster.delete_pod(p)
-                        self.end_benchmarking(job, config, fetch_batch=end_batch)
+                        self.end_benchmarking(job, config, fetch_batch=end_batch, pending_uploads=end_uploads)
                         self.cluster.delete_job(job)
+                        self._ended_jobs().add(job)
                         config.host.check_volumes()
+                        # the next round needs nothing from the cluster
+                        intervals_wait = self._follow_up_wait(intervals_wait, "{} job ended".format(job))
+            self._upload_ended_job_files(end_uploads)
             end_batch.run(self.max_parallel_fetches)
+            print("{:30s}: took {:.1f}s ({})".format(
+                "Loop pass", time.monotonic() - pass_started, CALL_STATS.since(pass_calls_started)))
             if _we_have_running_benchmarks: #len(pods) == 0 and len(jobs) == 0:
                 do = False
                 # A job was submitted this iteration: the Kubernetes API may not yet
@@ -2607,7 +2753,8 @@ class ExperimentBase():
     def end_benchmarking(self,
                          jobname: str,
                          config: Optional[object] = None,
-                         fetch_batch: Optional[MetricFetchBatch] = None) -> None:
+                         fetch_batch: Optional[MetricFetchBatch] = None,
+                         pending_uploads: Optional[list] = None) -> None:
         """
         Ends a benchmarker job.
         This is for storing or cleaning measures.
@@ -2616,7 +2763,16 @@ class ExperimentBase():
         :param config: Configuration object
         :param fetch_batch: Queue the metric fetches here instead of fetching
             right away, so the jobs that ended in one loop pass are processed in parallel.
+        :param pending_uploads: Collect the names of the files to upload to the
+            dashboard pod here instead of uploading them one by one; the
+            caller uploads them (:meth:`upload_experiment_files`) before
+            ``fetch_batch`` runs, whose fetches read them in the pod.
         """
+        def upload(filename: str) -> str:
+            if pending_uploads is None:
+                return self.upload_experiment_file(filename=filename)
+            pending_uploads.append(filename)
+            return ""
         def fetch(**kwargs) -> None:
             if fetch_batch is None:
                 config.metrics.fetch(**kwargs)
@@ -2663,7 +2819,7 @@ class ExperimentBase():
                         # Upload the individual config to the pod so that evaluate_results()'s
                         # download_experiment_file('') does not later overwrite it with the
                         # stale pod copy (which was written at job-submission time with {}).
-                        self.upload_experiment_file(filename=connection + '.config')
+                        upload(connection + '.config')
                     except Exception as exc:
                         print("{:30s}: WARNING - could not update {}: {}".format(connection, individual_config_path, exc))
                 else:
@@ -2709,7 +2865,7 @@ class ExperimentBase():
                         with open(connectionfile, 'w') as f:
                             f.write(str(config.benchmark.connections))
                         # upload connections infos with benchmarking times
-                        stdout = self.upload_experiment_file(filename=filename)
+                        stdout = upload(filename)
                         #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
                         #stdout = self.cluster.kubectl(cmd['upload_connection_file'])
                         self.cluster.logger.debug(stdout)

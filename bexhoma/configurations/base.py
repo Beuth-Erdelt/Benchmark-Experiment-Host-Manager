@@ -723,12 +723,25 @@ class SutConfiguration:
         :param parameters: Default parameter dict shared by all pods.
         :param pod_parameters: Per-pod override dicts.
         """
+        self.experiment.cluster.set_redis_values(self._pod_configs(queue_key, num_pods, parameters, pod_parameters))
+
+    @staticmethod
+    def _pod_configs(queue_key: str, num_pods: int, parameters: dict, pod_parameters: list) -> dict:
+        """Per-pod merged configurations, as :meth:`_push_pod_configs` stores them.
+
+        :param queue_key: Base Redis queue key.
+        :param num_pods: Number of pods in this job.
+        :param parameters: Default parameter dict shared by all pods.
+        :param pod_parameters: Per-pod override dicts.
+        :return: ``{queue_key}-config-{i}`` to the merged dict, for i in 1..num_pods.
+        """
+        configs = {}
         for i in range(1, num_pods + 1):
             merged = dict(parameters)
             if pod_parameters and i - 1 < len(pod_parameters):
                 merged.update(pod_parameters[i - 1])
-            config_key = f"{queue_key}-config-{i}"
-            self.experiment.cluster.set_pod_config(key=config_key, config=merged)
+            configs[f"{queue_key}-config-{i}"] = merged
+        return configs
 
     # ------------------------------------------------------------------
     # Component naming
@@ -1011,6 +1024,7 @@ class SutConfiguration:
         container: str = '',
         params: str = '',
         retry_interrupted: bool = True,
+        api: bool = False,
     ):
         """Run a shell command inside the SUT container.
 
@@ -1023,6 +1037,9 @@ class SutConfiguration:
         :param retry_interrupted: Whether to rerun the command after the
             cluster connection broke mid-command; ``False`` for commands that
             are not safe to repeat.
+        :param api: Run it through the Python client
+            (``cluster.execute_command_in_pod_api()``, falls back to kubectl);
+            only for read-only commands that are safe to repeat.
         :return: stdout of the shell command.
         """
         if len(pod) == 0:
@@ -1031,6 +1048,9 @@ class SutConfiguration:
             container = self.sut_container_name
         if self.pod_sut == '':
             self.check_sut()
+        if api and hasattr(self.experiment.cluster, 'execute_command_in_pod_api'):
+            return self.experiment.cluster.execute_command_in_pod_api(
+                command=command, pod=pod, container=container)
         return self.experiment.cluster.execute_command_in_pod(
             command=command, pod=pod, container=container, params=params,
             retry_interrupted=retry_interrupted)

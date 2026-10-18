@@ -10,9 +10,11 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import time
+import threading
 import kubernetes.client as kubernetes_client
 import kubernetes.config as kubernetes_config
 from kubernetes.client.rest import ApiException
+from kubernetes.stream import stream as kubernetes_stream
 import subprocess
 import traceback
 import os
@@ -34,6 +36,7 @@ from urllib3.util.retry import Retry
 from dbmsbenchmarker import *
 from .__version__ import __version__
 from . import ceph_storage
+from .cluster_calls import CALL_STATS, ThrottledTokenRefresh
 
 import platform
 
@@ -157,6 +160,11 @@ MESSAGEQUEUE_FILL_MAX_ATTEMPTS = 3
 #: Seconds to wait between queue-fill attempts, matching the pause
 #: :meth:`Kubernetes.upload_file` uses between its retries.
 MESSAGEQUEUE_FILL_RETRY_SECONDS = 10
+
+#: Returned by :meth:`Kubernetes._read_pod` when the Pod could not be read
+#: through the API (no client, or the API keeps failing): the caller then
+#: asks kubectl as before.
+POD_NOT_READ = object()
 
 
 def is_cluster_connection_error(output: str, include_interrupted: bool = True) -> bool:
@@ -375,6 +383,9 @@ class Kubernetes():
             self.v1apps = kubernetes_client.AppsV1Api(api_client=self._new_api_client())
             self.v1batches = kubernetes_client.BatchV1Api(api_client=self._new_api_client())
             self.v1storage = kubernetes_client.StorageV1Api(api_client=self._new_api_client())
+            # exec swaps the request method of its client while it runs, so it
+            # gets a client of its own (see execute_command_in_pod_api())
+            self.v1exec = kubernetes_client.CoreV1Api(api_client=self._new_api_client())
         except Exception:
             print("WARN: Could not connect to Kubernetes")
 
@@ -387,6 +398,9 @@ class Kubernetes():
         urllib3 error that none of the ``ApiException`` handlers catch.
         Requests that do not set ``_request_timeout`` themselves get
         :data:`CLUSTER_API_TIMEOUT_SECONDS`, so a stalled connection is retried.
+        The token refresh hook is throttled (see
+        :class:`~bexhoma.cluster_calls.ThrottledTokenRefresh`), so an exec
+        token plugin runs about once a minute instead of before every request.
         """
         configuration = kubernetes_client.Configuration()
         kubernetes_config.load_kube_config(context=self.context, client_configuration=configuration)
@@ -395,13 +409,19 @@ class Kubernetes():
             backoff_factor=CLUSTER_API_BACKOFF_FACTOR,
             backoff_max=CLUSTER_API_BACKOFF_MAX_SECONDS,
         )
+        if getattr(configuration, 'refresh_api_key_hook', None) is not None:
+            configuration.refresh_api_key_hook = ThrottledTokenRefresh(configuration.refresh_api_key_hook)
         api_client = kubernetes_client.ApiClient(configuration=configuration)
         # the client passes timeout=None to urllib3 when no _request_timeout is
         # given, which overrides any pool default, so set it per request
         request = api_client.rest_client.request
 
         def request_with_timeout(*args, _request_timeout=None, **kwargs):
-            return request(*args, _request_timeout=_request_timeout or CLUSTER_API_TIMEOUT_SECONDS, **kwargs)
+            started = time.monotonic()
+            try:
+                return request(*args, _request_timeout=_request_timeout or CLUSTER_API_TIMEOUT_SECONDS, **kwargs)
+            finally:
+                CALL_STATS.record_api(time.monotonic() - started)
 
         api_client.rest_client.request = request_with_timeout
         return api_client
@@ -737,18 +757,54 @@ class Kubernetes():
                 app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name
             )
 
+    def _read_pod(self, pod, attempts=3):
+        """
+        Read one Pod through the API.
+
+        :param pod: Name of the Pod.
+        :param attempts: API errors (other than 404) tolerated before giving up.
+        :return: The ``V1Pod``; ``None`` if the Pod does not exist;
+            :data:`POD_NOT_READ` if there is no API client or the API keeps
+            failing, so the caller falls back to kubectl.
+        """
+        v1core = getattr(self, 'v1core', None)
+        if v1core is None or not pod:
+            return POD_NOT_READ
+        try:
+            return v1core.read_namespaced_pod(name=pod, namespace=self.namespace)
+        except ApiException as e:
+            if e.status == 404:
+                return None
+            print(f"Exception when calling CoreV1Api->read_namespaced_pod: {e}\n")
+            if attempts <= 1:
+                return POD_NOT_READ
+            print("Create new access token")
+            self.cluster_access()
+            self.wait(2)
+            return self._read_pod(pod, attempts - 1)
+
     def get_pod_status(self, pod, app=''):
         """
         Return the phase of a named Pod.
+
+        Reads the Pod itself; a Pod without the ``app`` label ``app`` counts
+        as not found, as when all Pods of ``app`` were listed.
 
         :param pod: Pod name to look up.
         :param app: ``app`` label value.  Defaults to ``self.appname``.
         :return: Phase string (e.g. ``Running``, ``Succeeded``) or ``""`` if not found.
         """
         self.logger.debug('Kubernetes.get_pod_status()')
+        if not app:
+            app = self.appname
+        pod_object = self._read_pod(pod)
+        if pod_object is None:
+            return ""
+        if pod_object is not POD_NOT_READ:
+            if (pod_object.metadata.labels or {}).get('app') != app:
+                return ""
+            return pod_object.status.phase or ""
         try:
-            if not app:
-                app = self.appname
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector='app=' + app)
             if api_response.items:
                 for item in api_response.items:
@@ -1624,9 +1680,13 @@ class Kubernetes():
                 # data. Merging them let a stray word from such a warning
                 # (e.g. "tokens") be picked up as a fabricated, nonexistent
                 # container name; see CLUSTER_CLIENT_WARNING_PREFIXES.
-                result = subprocess.run(
-                    fullcommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                    timeout=CLUSTER_KUBECTL_TIMEOUT_SECONDS, check=True)
+                started = time.monotonic()
+                try:
+                    result = subprocess.run(
+                        fullcommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                        timeout=CLUSTER_KUBECTL_TIMEOUT_SECONDS, check=True)
+                finally:
+                    CALL_STATS.record_kubectl(time.monotonic() - started)
                 raw = result.stdout
             except subprocess.TimeoutExpired:
                 print(f"kubectl command timed out after {CLUSTER_KUBECTL_TIMEOUT_SECONDS}s: {fullcommand}")
@@ -1712,11 +1772,13 @@ class Kubernetes():
         self.logger.debug(f'Kubernetes.execute_command_in_pod({fullcommand})')
         deadline = time.monotonic() + CLUSTER_OUTAGE_BUDGET_SECONDS
         while True:
+            started = time.monotonic()
             proc = subprocess.Popen(
                 fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, shell=True
             )
             stdout, stderr = proc.communicate()
+            CALL_STATS.record_kubectl(time.monotonic() - started)
             try:
                 str_stdout = stdout.decode('utf-8')
                 str_stderr = stderr.decode('utf-8')
@@ -1728,6 +1790,64 @@ class Kubernetes():
                     and wait_for_cluster(deadline)):
                 continue
             return "", str_stdout, str_stderr
+
+    def execute_command_in_pod_api(self, command, pod='', container='',
+                                   timeout=CLUSTER_KUBECTL_TIMEOUT_SECONDS):
+        """
+        Execute a read-only shell command in a Pod through the Python client.
+
+        About 0.26 s instead of 1.6 s for a kubectl process from the Windows
+        host. The command runs as ``sh -c <command>`` without a local shell,
+        so it needs no escaping for one (``$`` reaches the Pod as ``$``).
+
+        Only for commands that are safe to repeat: whenever this path fails
+        (no client, a rejected handshake, a broken connection, a timeout), the
+        command runs again through :meth:`execute_command_in_pod`, with its
+        outage handling. A rejected token (401) is renewed and tried once more
+        here first.
+
+        :param command: Shell command string.
+        :param pod: Name of the target Pod.
+        :param container: Container name within the Pod (optional).
+        :param timeout: Seconds the command may run.
+        :return: Tuple ``("", stdout_str, stderr_str)``, as :meth:`execute_command_in_pod`.
+        """
+        if not pod:
+            return "", "", ""
+        for attempt in range(2):
+            v1exec = getattr(self, 'v1exec', None)
+            if v1exec is None:
+                break
+            kwargs = {'container': container} if container else {}
+            started = time.monotonic()
+            try:
+                with self.__dict__.setdefault('_exec_lock', threading.Lock()):
+                    client = kubernetes_stream(
+                        v1exec.connect_get_namespaced_pod_exec, pod, self.namespace,
+                        command=['sh', '-c', command], stderr=True, stdin=False, stdout=True,
+                        tty=False, _preload_content=False, **kwargs)
+                try:
+                    client.run_forever(timeout=timeout)
+                    if client.is_open():
+                        raise TimeoutError(f"command did not finish within {timeout}s")
+                    stdout = client.read_stdout() or ""
+                    stderr = client.read_stderr() or ""
+                finally:
+                    client.close()
+                return "", stdout, stderr
+            except ApiException as e:
+                if attempt == 0 and 'Handshake status 401' in str(e.reason):
+                    print("Create new access token")
+                    self.cluster_access()
+                    continue
+                self.logger.debug(f'execute_command_in_pod_api({command}) failed, using kubectl: {e}')
+                break
+            except Exception as e:
+                self.logger.debug(f'execute_command_in_pod_api({command}) failed, using kubectl: {e!r}')
+                break
+            finally:
+                CALL_STATS.record_api(time.monotonic() - started)
+        return self.execute_command_in_pod(command=command, pod=pod, container=container)
 
     def upload_file(self, filename_remote, filename_local, pod, container="dashboard",
                     max_retries: int = 3) -> str:
@@ -1769,11 +1889,15 @@ class Kubernetes():
         moves the source *into* it instead. Such uploads are verified with
         ``test -d`` on the target.
 
-        Before each attempt the remote directory is created with ``mkdir -p``:
-        ``kubectl cp`` into a pod runs ``tar -C <dir>``, which fails hard on a
-        missing directory. ``/results/{code}`` in particular is only created by
-        benchmarking-job setup, so it does not exist when an experiment fails
-        before any benchmarker job ran (e.g. during loading).
+        The remote directory is created with ``mkdir -p`` before the first
+        upload into it (per Pod and container, in this process) and again
+        before every retry: ``kubectl cp`` into a pod runs ``tar -C <dir>``,
+        which fails hard on a missing directory. ``/results/{code}`` in
+        particular is only created by benchmarking-job setup, so it does not
+        exist when an experiment fails before any benchmarker job ran (e.g.
+        during loading). The rename and its check run in one exec
+        (``mv ... && test -s ... && echo UPLOAD_OK``), so a failed rename is
+        never mistaken for an upload when an older file is in place.
 
         :param filename_remote: Destination path inside the container.
         :param filename_local: Source path on the local machine. A path ending
@@ -1794,30 +1918,107 @@ class Kubernetes():
             filename_remote_target = filename_remote + '.uploadtmp'
             dir_remote = posixpath.dirname(filename_remote_target)
             verify = f"test -s '{filename_remote}' && echo UPLOAD_OK"
+        if not is_directory:
+            verify = f"mv '{filename_remote_target}' '{filename_remote}' && " + verify
         cmd = f'cp "{filename_local}" {pod}:{filename_remote_target} -c {container} --retries {KUBECTL_CP_INTERNAL_RETRIES}'
         for attempt in range(1, max_retries + 1):
-            if dir_remote:
-                self.execute_command_in_pod(
-                    command=f"mkdir -p '{dir_remote}'",
-                    pod=pod, container=container)
+            self._ensure_remote_dir(dir_remote, pod, container)
             result = self.kubectl(cmd)
             if result is not None:
-                if not is_directory:
-                    self.execute_command_in_pod(
-                        command=f"mv '{filename_remote_target}' '{filename_remote}'",
-                        pod=pod, container=container)
                 _, verify_stdout, _ = self.execute_command_in_pod(
                     command=verify, pod=pod, container=container)
                 if 'UPLOAD_OK' in str(verify_stdout):
                     return result
                 print(f"upload_file: upload could not be verified for "
                       f"{pod}:{filename_remote} (attempt {attempt}/{max_retries})")
+            # the directory may be gone: create it again before the retry
+            self._remote_dirs().discard((pod, container, dir_remote))
             if attempt < max_retries:
                 print(f"upload_file: attempt {attempt}/{max_retries} failed, retrying in 10s ...")
                 self.wait(10)
         raise RuntimeError(
             f'upload_file failed after {max_retries} attempts: '
             f'{filename_local} -> {pod}:{filename_remote}'
+        )
+
+    def _remote_dirs(self) -> set:
+        """``(pod, container, directory)`` created by :meth:`_ensure_remote_dir` in this process."""
+        return self.__dict__.setdefault('_created_remote_dirs', set())
+
+    def _ensure_remote_dir(self, dir_remote, pod, container) -> None:
+        """Create a directory in a Pod with ``mkdir -p``, once per Pod and container.
+
+        :param dir_remote: Directory inside the container ('' does nothing).
+        :param pod: Pod name.
+        :param container: Container name.
+        """
+        if not dir_remote or (pod, container, dir_remote) in self._remote_dirs():
+            return
+        self.execute_command_in_pod(command=f"mkdir -p '{dir_remote}'", pod=pod, container=container)
+        self._remote_dirs().add((pod, container, dir_remote))
+
+    def upload_files(self, filenames_local, dir_remote, pod, container="dashboard",
+                     max_retries: int = 3) -> str:
+        """
+        Upload several local files into one directory of a Pod container in two calls.
+
+        Same guarantees as :meth:`upload_file` for each file: readers of the
+        target directory see the old or the new complete file, never a partial
+        one, and every file is checked to be in place. The files are copied
+        into a fresh local folder, which ``kubectl cp`` creates as
+        ``<dir_remote>/.upload-<id>`` (one call); one exec then renames each
+        file into ``dir_remote`` (a rename on the same file system), removes
+        the folder and checks every file (``test -s``). A failed attempt
+        removes its staging folder and repeats everything.
+
+        :param filenames_local: Paths of the local files; their base names are
+            the names in ``dir_remote``.
+        :param dir_remote: Target directory inside the container.
+        :param pod: Target Pod name.
+        :param container: Target container name.  Defaults to ``dashboard``.
+        :param max_retries: Maximum number of attempts before raising.
+        :return: Output of the ``kubectl cp`` command.
+        :raises RuntimeError: If every attempt fails.
+        """
+        import shutil
+        import tempfile
+        import uuid
+        names = [os.path.basename(filename) for filename in filenames_local]
+        if len(set(names)) != len(names):
+            raise ValueError(f"upload_files: file names must be unique: {names}")
+        dir_remote = dir_remote.rstrip('/')
+        for attempt in range(1, max_retries + 1):
+            staging_remote = f"{dir_remote}/.upload-{uuid.uuid4().hex}"
+            with tempfile.TemporaryDirectory() as staging_local:
+                folder_local = os.path.join(staging_local, 'files')
+                os.makedirs(folder_local)
+                for filename in filenames_local:
+                    try:
+                        shutil.copyfile(filename, os.path.join(folder_local, os.path.basename(filename)))
+                    except OSError as exc:
+                        # as upload_file(), whose kubectl cp fails on a missing file
+                        raise RuntimeError(f'upload_files failed: {filename} cannot be read ({exc})') from exc
+                self._ensure_remote_dir(dir_remote, pod, container)
+                result = self.kubectl(
+                    f'cp "{to_unc(folder_local)}" {pod}:{staging_remote} -c {container} '
+                    f'--retries {KUBECTL_CP_INTERNAL_RETRIES}')
+            if result is not None:
+                moves = [f"mv '{staging_remote}/{name}' '{dir_remote}/{name}'" for name in names]
+                checks = [f"test -s '{dir_remote}/{name}'" for name in names]
+                command = " && ".join(moves + [f"rmdir '{staging_remote}'"] + checks + ["echo UPLOAD_OK"])
+                _, verify_stdout, _ = self.execute_command_in_pod(command=command, pod=pod, container=container)
+                if 'UPLOAD_OK' in str(verify_stdout):
+                    return result
+                print(f"upload_files: upload could not be verified for {pod}:{dir_remote} {names} "
+                      f"(attempt {attempt}/{max_retries})")
+            # leftovers of this attempt; the directory may be gone, too
+            self.execute_command_in_pod(command=f"rm -rf '{staging_remote}'", pod=pod, container=container)
+            self._remote_dirs().discard((pod, container, dir_remote))
+            if attempt < max_retries:
+                print(f"upload_files: attempt {attempt}/{max_retries} failed, retrying in 10s ...")
+                self.wait(10)
+        raise RuntimeError(
+            f'upload_files failed after {max_retries} attempts: {names} -> {pod}:{dir_remote}'
         )
 
     def download_file(self, filename_remote, filename_local, pod, container="dashboard",
@@ -2011,6 +2212,13 @@ class Kubernetes():
         :param pod: Name of the Pod.
         :return: Container name to ``restartCount``; empty if the Pod is gone.
         """
+        pod_object = self._read_pod(pod)
+        if pod_object is None:
+            return {}
+        if pod_object is not POD_NOT_READ:
+            statuses = (pod_object.status.container_statuses or []) if pod_object.status else []
+            return {status.name: int(status.restart_count) for status in statuses
+                    if status.restart_count is not None}
         names = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.containerStatuses[*].name}"')
         counts = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.containerStatuses[*].restartCount}"')
         names = names.split() if names else []
@@ -2026,6 +2234,18 @@ class Kubernetes():
         :param pod: Name of the Pod.
         :return: Waiting reasons of init and regular containers; empty if none wait or the Pod is gone.
         """
+        pod_object = self._read_pod(pod)
+        if pod_object is None:
+            return []
+        if pod_object is not POD_NOT_READ:
+            status = pod_object.status
+            reasons = []
+            for statuses in ((status.init_container_statuses, status.container_statuses) if status else ()):
+                for container_status in statuses or []:
+                    waiting = container_status.state.waiting if container_status.state else None
+                    if waiting is not None and waiting.reason:
+                        reasons.extend(waiting.reason.split())
+            return reasons
         reasons = []
         for statuses in ('initContainerStatuses', 'containerStatuses'):
             output = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.' + statuses + '[*].state.waiting.reason}"')
@@ -2039,6 +2259,14 @@ class Kubernetes():
         :param pod: Name of the Pod.
         :return: List of container name strings (regular containers + init containers).
         """
+        pod_object = self._read_pod(pod)
+        if pod_object is None:
+            return []
+        if pod_object is not POD_NOT_READ:
+            containers = [container.name for container in (pod_object.spec.containers or [])]
+            init_containers = [container.name for container in (pod_object.spec.init_containers or [])]
+            self.logger.debug(f"Pod {pod} has container {containers + init_containers}")
+            return containers + init_containers
         fullcommand = 'get pods ' + pod + ' -o jsonpath="{.spec.containers[*].name}"'
         output = self.kubectl(fullcommand)
         # kubectl() returns None when the Pod is already gone (e.g. diagnostics
@@ -2794,16 +3022,73 @@ class Kubernetes():
         redis_command = f'redis-cli del {queue} '
         self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
 
+    def _messagequeue_pod(self) -> str:
+        """Name of the Redis (message queue) pod."""
+        pods_messagequeue = self.get_pods(component='messagequeue')
+        if pods_messagequeue:
+            pod_messagequeue = pods_messagequeue[0]
+        else:
+            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
+        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
+        return pod_messagequeue
+
+    def refill_messagequeue(self, queue: str, length: int):
+        """
+        Clear a Redis list and push ``1..length`` onto it, in one exec.
+
+        ``RPUSH`` of all numbers at once is atomic, and the command as a whole
+        always leaves the same list, so it is safe to repeat.
+
+        :param queue: Redis key (queue name).
+        :param length: Number of chunk numbers to push.
+        :return: List length reported by ``RPUSH``, or ``None`` if unreadable.
+        :rtype: int or None
+        """
+        numbers = ' '.join(str(i) for i in range(1, length + 1))
+        redis_command = f'redis-cli del {queue} > /dev/null && redis-cli rpush {queue} {numbers}'
+        _, stdout, _ = self.execute_command_in_pod_api(command=redis_command, pod=self._messagequeue_pod())
+        try:
+            return int(str(stdout).strip().splitlines()[-1])
+        except (TypeError, ValueError, IndexError):
+            return None
+
+    def set_redis_values(self, values: dict) -> None:
+        """
+        Set several Redis keys to string values in one exec (``MSET``).
+
+        Values are single-quoted as :meth:`set_pod_config` quotes them. If the
+        reply is not ``OK``, every key is set on its own instead, as before.
+
+        :param values: Redis key to value (str; a dict is stored as JSON).
+        """
+        if not values:
+            return
+        values = {key: (json.dumps(value) if isinstance(value, dict) else str(value))
+                  for key, value in values.items()}
+
+        def quoted(value: str) -> str:
+            return "'" + value.replace("'", "'\\''") + "'"
+
+        pod_messagequeue = self._messagequeue_pod()
+        pairs = ' '.join(f"{key} {quoted(value)}" for key, value in values.items())
+        _, stdout, _ = self.execute_command_in_pod_api(command=f"redis-cli mset {pairs}", pod=pod_messagequeue)
+        if str(stdout).strip() == 'OK':
+            return
+        print(f"set_redis_values: MSET of {len(values)} keys not confirmed ({str(stdout).strip()!r}), setting them one by one")
+        for key, value in values.items():
+            self.execute_command_in_pod(command=f"redis-cli set {key} {quoted(value)}", pod=pod_messagequeue)
+
     def fill_messagequeue(self, queue: str, length: int) -> None:
         """
         Replace a message queue's contents with the chunk numbers ``1..length``.
 
         Each parallel job pod pops one number to learn which chunk it owns, so
-        the queue must hold exactly ``length`` items. ``add_to_messagequeue``
-        swallows a failed ``kubectl exec`` and reports ``None``, so a dropped
-        cluster connection would otherwise leave the queue short and one pod
-        without a chunk. A wrong final length is therefore retried from a
-        cleared queue, up to :data:`MESSAGEQUEUE_FILL_MAX_ATTEMPTS` times.
+        the queue must hold exactly ``length`` items. ``refill_messagequeue``
+        clears and fills the queue in one exec and swallows a failed exec
+        (reports ``None``), so a dropped cluster connection would otherwise
+        leave the queue short and one pod without a chunk. A wrong final
+        length is therefore retried from a cleared queue, up to
+        :data:`MESSAGEQUEUE_FILL_MAX_ATTEMPTS` times.
 
         :param queue: Redis key (queue name).
         :param length: Number of chunk numbers to push.
@@ -2811,10 +3096,7 @@ class Kubernetes():
         """
         pushed_length = None
         for attempt in range(1, MESSAGEQUEUE_FILL_MAX_ATTEMPTS + 1):
-            self.delete_messagequeue_key(queue=queue)
-            pushed_length = None
-            for i in range(1, length + 1):
-                pushed_length = self.add_to_messagequeue(queue=queue, data=i)
+            pushed_length = self.refill_messagequeue(queue=queue, length=length)
             if pushed_length == length:
                 return
             if attempt < MESSAGEQUEUE_FILL_MAX_ATTEMPTS:
@@ -2837,14 +3119,9 @@ class Kubernetes():
         :param queue: Redis key to set.
         :param value: Integer value to assign.  Defaults to ``0``.
         """
-        pods_messagequeue = self.get_pods(component='messagequeue')
-        if pods_messagequeue:
-            pod_messagequeue = pods_messagequeue[0]
-        else:
-            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
-        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
         redis_command = f'redis-cli set {queue} {value} '
-        self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+        # setting the same value again is harmless, so the API path may repeat it
+        self.execute_command_in_pod_api(command=redis_command, pod=self._messagequeue_pod())
 
     def get_pod_counter(self, queue: str) -> int | None:
         """
@@ -2855,14 +3132,8 @@ class Kubernetes():
             the reply could not be read.
         :rtype: int or None
         """
-        pods_messagequeue = self.get_pods(component='messagequeue')
-        if pods_messagequeue:
-            pod_messagequeue = pods_messagequeue[0]
-        else:
-            pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
-        self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
         redis_command = f'redis-cli get {queue} '
-        _, stdout, _ = self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+        _, stdout, _ = self.execute_command_in_pod_api(command=redis_command, pod=self._messagequeue_pod())
         try:
             return int(stdout.strip())
         except (TypeError, ValueError, AttributeError):
@@ -3071,7 +3342,7 @@ class Kubernetes():
                 else:
                     attempt += 1
 
-    def store_previous_pod_logs(self, pod_name, number=None):
+    def store_previous_pod_logs(self, pod_name, number=None, counts=None):
         """
         Persist the previous-instance log of every container that restarted.
 
@@ -3082,8 +3353,12 @@ class Kubernetes():
 
         :param pod_name: Name of the Pod.
         :param number: Optional experiment-run index, as for :meth:`store_pod_log`.
+        :param counts: Restart counts per container if already read
+            (:meth:`get_pod_restart_counts`), else they are read here.
         """
-        for container, restarts in self.get_pod_restart_counts(pod_name).items():
+        if counts is None:
+            counts = self.get_pod_restart_counts(pod_name)
+        for container, restarts in counts.items():
             if restarts > 0:
                 self.store_pod_log(pod_name, container, number=number, previous=True)
 

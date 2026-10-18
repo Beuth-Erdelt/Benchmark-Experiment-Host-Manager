@@ -145,12 +145,19 @@ class PrepareNextRepetitionTest(unittest.TestCase):
         experiment.wait = mock.Mock()
         with mock.patch('builtins.print'):
             experiment._prepare_next_repetition(config)
-        experiment.wait.assert_called_once_with(30)
-        config.reset_sut.assert_called_once_with()
-        config.lifecycle.start_sut.assert_not_called()
-        self.assertEqual(config.benchmark_list, ['b1', 'b2'])
-        self.assertEqual(experiment.client, 0)
-        # it now counts as waiting for a slot, like a configuration that has not started yet
+            # it does not block the loop until the stopped SUT is gone
+            experiment.wait.assert_not_called()
+            config.reset_sut.assert_called_once_with()
+            config.lifecycle.start_sut.assert_not_called()
+            self.assertEqual(config.benchmark_list, ['b1', 'b2'])
+            self.assertEqual(experiment.client, 0)
+            # while its old SUT is removed it already counts as waiting for a slot
+            self.assertEqual(experiment._waits_for_slot(_config('PostgreSQL-1')), 'PostgreSQL-2')
+            # the loop skips it while the SUT exists, then lets it start again
+            self.assertTrue(experiment._sut_still_removing(config))
+            self.assertFalse(experiment._sut_still_removing(config))
+            self.assertFalse(config.sut_removing)
+        # after removal it counts as waiting for a slot, like a configuration that has not started yet
         self.assertEqual(experiment._waits_for_slot(_config('PostgreSQL-1')), 'PostgreSQL-2')
 
 

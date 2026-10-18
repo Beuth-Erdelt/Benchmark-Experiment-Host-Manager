@@ -14,6 +14,7 @@ from timeit import default_timer
 from typing import TYPE_CHECKING
 
 from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, wait_for_cluster
+from ..cluster_calls import stored_pods
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
@@ -617,11 +618,15 @@ class LoadingCoordinator:
                     app=app, component=component,
                     experiment=experiment, configuration=configuration)
                 for pod in pods:
+                    # finished pods whose files are all stored are not inspected again
+                    if pod in stored_pods(cfg.experiment.cluster):
+                        continue
                     status = cfg.experiment.cluster.get_pod_status(pod)
                     cfg.experiment.cluster.logger.debug(
                         "Pod {} has status {}".format(pod, status))
                     if status in ("Succeeded", "Failed"):
                         containers = cfg.experiment.cluster.get_pod_containers(pod)
+                        all_stored = len(containers) > 0
                         for container in containers:
                             if len(container) > 0:
                                 if not cfg.experiment.cluster.pod_log_exists(
@@ -631,10 +636,14 @@ class LoadingCoordinator:
                                             job, pod, container))
                                     cfg.experiment.cluster.store_pod_log(
                                         pod_name=pod, container=container)
+                                all_stored = all_stored and cfg.experiment.cluster.pod_log_exists(
+                                    pod_name=pod, container=container) is True
                         if not cfg.experiment.cluster.pod_description_exists(pod_name=pod):
                             cfg.experiment.cluster.logger.debug(
                                 "Store description of job {} pod {}".format(job, pod))
                             cfg.experiment.cluster.store_pod_description(pod_name=pod)
+                        if all_stored and cfg.experiment.cluster.pod_description_exists(pod_name=pod) is True:
+                            stored_pods(cfg.experiment.cluster).add(pod)
                 if success:
                     cfg.experiment.cluster.logger.debug(
                         'job {} will be suspended and parallel loading will be considered finished'

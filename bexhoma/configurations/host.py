@@ -1,18 +1,40 @@
 """Host probe methods for SUT pods."""
 from __future__ import annotations
 
+import copy
 import json
 import logging
 import os
 from collections import Counter
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
 
 from .. import sut_restarts
+from ..clusters import POD_NOT_READ
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
 __all__ = ['HostProbe']
+
+#: Values of :meth:`HostProbe.get_host_all` that do not change while a pod
+#: lives; measured once per pod UID. All others are measured every time.
+STATIC_HOST_INFO = ('RAM', 'CPU', 'GPU', 'GPUIDs', 'Cores', 'host', 'node',
+                    'cuda', 'hugepages_total', 'cpu_list')
+
+
+def _field(output: str, line: int, field: int) -> str:
+    """Return a whitespace-separated field of one line, as awk would print it.
+
+    :param output: Command output.
+    :param line: Line index (``-1`` for the last line, as awk's ``END``).
+    :param field: 0-based field index (awk's ``$1`` is 0).
+    :return: The field, or ``''`` if the line or field does not exist.
+    """
+    lines = (output or '').splitlines()
+    try:
+        return lines[line].split()[field]
+    except IndexError:
+        return ''
 
 
 class HostProbe:
@@ -29,6 +51,31 @@ class HostProbe:
         :type config: SutConfiguration
         """
         self._config = config
+        #: Values of :meth:`get_host_all` that do not change while a pod lives, per pod UID.
+        self._static_host_info: dict = {}
+
+    def _run(self, command: str, pod: str = '') -> tuple:
+        """Run a read-only probe command in the SUT container (or ``pod``).
+
+        Goes through the Python client (about 0.26 s instead of 1.6 s per
+        kubectl process), with kubectl as fallback.
+
+        :param command: Shell command; must not depend on a local shell's quoting.
+        :param pod: Pod name; defaults to the current SUT pod.
+        :return: ``("", stdout, stderr)``.
+        """
+        return self._config.execute_command_in_pod_sut(command=command, pod=pod, api=True)
+
+    def _read_pod(self):
+        """Read the current SUT pod through the API, if the cluster can.
+
+        :return: The pod object, or ``None`` if it is gone or cannot be read this way.
+        """
+        read_pod = getattr(self._config.experiment.cluster, '_read_pod', None)
+        if read_pod is None or not self._config.pod_sut:
+            return None
+        pod_object = read_pod(self._config.pod_sut)
+        return None if pod_object is POD_NOT_READ else pod_object
 
     def check_dbms_connection(self, ip: str, port: int) -> bool:
         """Check if DBMS is open for connections by opening a socket to ip:port.
@@ -93,7 +140,7 @@ class HostProbe:
         if mount_path:
             try:
                 command = "df -hP " + mount_path
-                _, stdout, _ = self._config.execute_command_in_pod_sut(command=command, pod=pod)
+                _, stdout, _ = self._run(command, pod=pod)
                 lines = [x for x in stdout.split('\n') if x.strip() != '']
                 parts = lines[-1].split() if len(lines) > 1 else []
                 # mounted on "/" means the path is not on a volume
@@ -103,7 +150,7 @@ class HostProbe:
                 logging.error(exc)
         try:
             command = "df -hP | grep volumes"
-            _, stdout, _ = self._config.execute_command_in_pod_sut(command=command, pod=pod)
+            _, stdout, _ = self._run(command, pod=pod)
             parts = stdout.split(" ")
             parts = [x for x in parts if x != '']
             if len(parts) > 2:
@@ -125,7 +172,7 @@ class HostProbe:
         self._config.logger.debug('HostProbe.get_host_hugepages_total()')
         try:
             command = "cat /proc/meminfo | grep HugePages_Total"
-            _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+            _, stdout, _ = self._run(command)
             mem = int(stdout.replace(" ", "").replace("HugePages_Total:", ""))
             return mem
         except Exception as exc:
@@ -141,7 +188,7 @@ class HostProbe:
         self._config.logger.debug('HostProbe.get_host_hugepages_free()')
         try:
             command = "cat /proc/meminfo | grep HugePages_Free"
-            _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+            _, stdout, _ = self._run(command)
             mem = int(stdout.replace(" ", "").replace("HugePages_Free:", ""))
             return mem
         except Exception as exc:
@@ -157,7 +204,7 @@ class HostProbe:
         self._config.logger.debug('HostProbe.get_host_cpulist()')
         try:
             command = "grep ^Cpus_allowed_list /proc/self/status | awk '{print $2}'"
-            _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+            _, stdout, _ = self._run(command)
             result = stdout.replace('Cpus_allowed_list:\t', '').replace('\n', '')
             return result
         except Exception as exc:
@@ -173,7 +220,7 @@ class HostProbe:
         self._config.logger.debug('HostProbe.get_host_memory()')
         try:
             command = "grep MemTotal /proc/meminfo | awk '{print $2}'"
-            _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+            _, stdout, _ = self._run(command)
             mem = int(stdout.replace(" ", "").replace("MemTotal:", "").replace("kB", "")) * 1024
             return mem
         except Exception as exc:
@@ -188,7 +235,7 @@ class HostProbe:
         """
         self._config.logger.debug('HostProbe.get_host_cpu()')
         command = "more /proc/cpuinfo | grep 'model name' | head -n 1"
-        _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+        _, stdout, _ = self._run(command)
         cpu = stdout
         cpu = cpu.replace('model name\t: ', '')
         return cpu.replace('\n', '')
@@ -202,7 +249,7 @@ class HostProbe:
         self._config.logger.debug('HostProbe.get_host_cores()')
         command = 'grep -c ^processor /proc/cpuinfo'
         try:
-            _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+            _, stdout, _ = self._run(command)
             if len(stdout) > 0:
                 return int(stdout)
             else:
@@ -219,17 +266,21 @@ class HostProbe:
         """
         self._config.logger.debug('HostProbe.get_host_system()')
         command = 'uname -r'
-        _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+        _, stdout, _ = self._run(command)
         return stdout.replace('\n', '')
 
-    def get_host_restarts(self, pod_sut: str = '') -> str:
+    def get_host_restarts(self, pod_sut: str = '', counts: Optional[dict] = None) -> str:
         """Return the container restart counts for the SUT pod via kubectl.
 
         :param pod_sut: Optional pod name override; defaults to current SUT pod.
+        :param counts: Restart counts per container if already read
+            (``cluster.get_pod_restart_counts()``); then no kubectl call is made.
         :return: Restart count string from kubectl jsonpath output.
         :rtype: str
         """
         self._config.logger.debug('HostProbe.get_host_restarts()')
+        if counts:
+            return sut_restarts.clean_restart_counts(" ".join(str(count) for count in counts.values()))
         if len(pod_sut) == 0:
             pod_sut = self._config.pod_sut
         result = self._config.experiment.cluster.kubectl(
@@ -243,6 +294,9 @@ class HostProbe:
         :rtype: str
         """
         self._config.logger.debug('HostProbe.get_host_node()')
+        pod_object = self._read_pod()
+        if pod_object is not None and pod_object.metadata.name == self._config.pod_sut:
+            return pod_object.spec.node_name or ""
         result = self._config.experiment.cluster.kubectl(
             'get pods/' + self._config.pod_sut + ' -o=json')
         try:
@@ -262,7 +316,7 @@ class HostProbe:
         """
         self._config.logger.debug('HostProbe.get_host_gpus()')
         command = 'nvidia-smi -L'
-        _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+        _, stdout, _ = self._run(command)
         gpus = stdout
         gpu_lines = gpus.split("\n")
         gpu_count = Counter(
@@ -280,7 +334,7 @@ class HostProbe:
         """
         self._config.logger.debug('HostProbe.get_host_gpu_ids()')
         command = 'nvidia-smi -L'
-        _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+        _, stdout, _ = self._run(command)
         gpus = stdout
         gpu_lines = gpus.split("\n")
         result = []
@@ -298,7 +352,7 @@ class HostProbe:
         """
         self._config.logger.debug('HostProbe.get_host_cuda()')
         command = "nvidia-smi | grep 'CUDA'"
-        _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+        _, stdout, _ = self._run(command)
         return stdout.replace('|', '').replace('\n', '').strip()
 
     def get_time_diff(self) -> int:
@@ -312,7 +366,7 @@ class HostProbe:
         """
         self._config.logger.debug('HostProbe.get_time_diff()')
         command = 'date +"%s"'
-        _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
+        _, stdout, _ = self._run(command)
         timestamp_remote = stdout
         timestamp_local = os.popen(command).read()
         return int(timestamp_remote) - int(timestamp_local)
@@ -329,24 +383,14 @@ class HostProbe:
         datadir = data_path or self.get_data_paths()[0]
         if not datadir:
             return 0
+        # the first field of du's last line, as awk 'END{print $1}' gave it; no
+        # awk, so no '$' that a local shell (kubectl fallback) could expand
+        command = "du --block-size=1M -Ls " + datadir
         try:
-            command = "du --block-size=1M -Ls " + datadir + " | awk 'END{print \\$1}'"
-            _, stdout, _ = self._config.execute_command_in_pod_sut(command)
-            if len(stdout) > 0:
-                return int(stdout.replace('\n', ''))
-            else:
-                return 0
+            _, stdout, _ = self._run(command)
+            return int(_field(stdout, -1, 0) or 0)
         except Exception:
-            command = "du --block-size=1M -Ls " + datadir + " | awk 'END{print $1}'"
-            try:
-                _, stdout, _ = self._config.execute_command_in_pod_sut(command)
-                if len(stdout) > 0:
-                    size_str = stdout.replace('\n', '')
-                    if len(size_str) > 0:
-                        return int(size_str)
-            except Exception:
-                return 0
-        return 0
+            return 0
 
     def get_host_diskspace_used(self) -> int:
         """Return disk space used on the root filesystem in megabytes.
@@ -355,31 +399,32 @@ class HostProbe:
         :rtype: int
         """
         self._config.logger.debug('HostProbe.get_host_diskspace_used()')
+        # the third field of df's second line, as awk 'NR == 2{print $3}' gave it
+        command = "df -m /"
         try:
-            command = "df -m / | awk 'NR == 2{print \\$3}'"
-            _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
-            return int(stdout.replace('\n', ''))
+            _, stdout, _ = self._run(command)
+            return int(_field(stdout, 1, 2))
         except Exception:
-            command = "df -m / | awk 'NR == 2{print $3}'"
-            try:
-                _, stdout, _ = self._config.execute_command_in_pod_sut(command=command)
-                if len(stdout) > 0:
-                    return int(stdout.replace('\n', ''))
-            except Exception:
-                return 0
-        return 0
+            return 0
 
-    def check_volumes(self) -> None:
+    def check_volumes(self, measured: Optional[dict] = None) -> None:
         """Write volume size/used labels to PVCs by probing mounted volumes in pods.
 
         Iterates over all tracked deployments and stateful sets, calls
         ``get_host_volume()`` per pod, and writes the result as labels on the
-        associated PVC via ``kubectl label``.
+        associated PVC via ``kubectl label``. The labels are shown by
+        ``bexperiments`` (status of volumes); a label is not written again
+        when it already has these values.
+
+        :param measured: ``{pod: (size, used)}`` of SUT pods measured a moment
+            ago at the same path (``get_host_all()`` in ``run_pod()``); these
+            are not measured again.
         """
         use_storage = self._config.use_storage()
         use_ramdisk = self._config.use_ramdisk()
         if not (use_storage and not use_ramdisk):
             return
+        measured = measured or {}
         if 'deployment' in self._config.deployment_infos:
             for component, deployment in self._config.deployment_infos['deployment'].items():
                 if 'pvc' not in deployment:
@@ -392,11 +437,12 @@ class HostProbe:
                 for pod in pods:
                     print("{:30s}: get size via pod {} and write to pvc {}".format(
                         self._config.configuration, pod, pvc))
-                    size, used = self.get_host_volume(
-                        pod=pod, mount_path=deployment.get('mount_path', ''))
-                    fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(
-                        pvc, size, used)
-                    self._config.experiment.cluster.kubectl(fullcommand)
+                    if component == 'sut' and pod in measured:
+                        size, used = measured[pod]
+                    else:
+                        size, used = self.get_host_volume(
+                            pod=pod, mount_path=deployment.get('mount_path', ''))
+                    self._label_pvc(pvc, size, used)
         if 'statefulset' in self._config.deployment_infos:
             for component, statefulset in self._config.deployment_infos['statefulset'].items():
                 for i, pod in enumerate(statefulset['pods']):
@@ -407,9 +453,22 @@ class HostProbe:
                         self._config.configuration, pod, pvc))
                     size, used = self.get_host_volume(
                         pod=pod, mount_path=statefulset.get('mount_path', ''))
-                    fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(
-                        pvc, size, used)
-                    self._config.experiment.cluster.kubectl(fullcommand)
+                    self._label_pvc(pvc, size, used)
+
+    def _label_pvc(self, pvc: str, size, used) -> None:
+        """Write the volume labels of a PVC, unless this process already wrote these values.
+
+        :param pvc: Name of the PVC.
+        :param size: Volume size as ``df -h`` gives it.
+        :param used: Used space as ``df -h`` gives it.
+        """
+        written = self.__dict__.setdefault('_pvc_labels_written', {})
+        if written.get(pvc) == (size, used):
+            return
+        fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(
+            pvc, size, used)
+        if self._config.experiment.cluster.kubectl(fullcommand) is not None:
+            written[pvc] = (size, used)
 
     def get_host_all(self, component: str = 'sut', kind: str = 'deployment') -> dict:
         """Call all get_host_* probes and return a consolidated dict.
@@ -419,29 +478,51 @@ class HostProbe:
         component's own data path (:meth:`get_data_paths`), so a worker is
         measured at its own volume, not at the SUT's.
 
+        The values in :data:`STATIC_HOST_INFO` do not change while a pod
+        lives; they are measured once per pod UID and then reused. A
+        StatefulSet pod keeps its name when it is recreated (possibly on
+        another node), hence the UID. Values are only reused if the first
+        measurement worked (RAM, CPU, cores, kernel and node found).
+
         :param component: Component the pod belongs to, e.g. ``sut``, ``pool``, ``tikv``.
         :param kind: ``deployment`` or ``statefulset``.
         :return: Dict of host metrics (RAM, CPU, GPU, Cores, host, node, disk, etc.).
         :rtype: dict
         """
         data_path, mount_path = self.get_data_paths(component, kind)
+        pod_object = self._read_pod()
+        uid = pod_object.metadata.uid if pod_object is not None else None
+        cached = self._static_host_info.get(uid, {}) if uid else {}
+        volume = {}
+
+        def volume_value(key):
+            if not volume:
+                volume['volume_size'], volume['volume_used'] = self.get_host_volume(
+                    mount_path=mount_path or data_path)
+            return volume[key]
+
+        # in the order of the keys in connections.config
+        probes = (
+            ('RAM', self.get_host_memory),
+            ('CPU', self.get_host_cpu),
+            ('GPU', self.get_host_gpus),
+            ('GPUIDs', self.get_host_gpu_ids),
+            ('Cores', self.get_host_cores),
+            ('host', self.get_host_system),
+            ('node', self.get_host_node),
+            ('disk', self.get_host_diskspace_used),
+            ('datadisk', lambda: self.get_host_diskspace_used_data(data_path)),
+            ('volume_size', lambda: volume_value('volume_size')),
+            ('volume_used', lambda: volume_value('volume_used')),
+            ('cuda', self.get_host_cuda),
+            ('hugepages_total', self.get_host_hugepages_total),
+            ('hugepages_free', self.get_host_hugepages_free),
+            ('cpu_list', self.get_host_cpulist),
+        )
         server = {}
-        server['RAM'] = self.get_host_memory()
-        server['CPU'] = self.get_host_cpu()
-        server['GPU'] = self.get_host_gpus()
-        server['GPUIDs'] = self.get_host_gpu_ids()
-        server['Cores'] = self.get_host_cores()
-        server['host'] = self.get_host_system()
-        server['node'] = self.get_host_node()
-        server['disk'] = self.get_host_diskspace_used()
-        server['datadisk'] = self.get_host_diskspace_used_data(data_path)
-        size, used = self.get_host_volume(mount_path=mount_path or data_path)
-        server['volume_size'] = size
-        server['volume_used'] = used
-        server['cuda'] = self.get_host_cuda()
-        server['hugepages_total'] = self.get_host_hugepages_total()
-        server['hugepages_free'] = self.get_host_hugepages_free()
-        server['cpu_list'] = self.get_host_cpulist()
-        server['cuda'] = self.get_host_cuda()
+        for key, probe in probes:
+            server[key] = copy.deepcopy(cached[key]) if key in cached else probe()
         server['args'] = self._config.sut_startup_args
+        if uid and not cached and all(server[key] for key in ('RAM', 'CPU', 'Cores', 'host', 'node')):
+            self._static_host_info[uid] = {key: copy.deepcopy(server[key]) for key in STATIC_HOST_INFO}
         return server
