@@ -99,8 +99,12 @@ class MetricFetchBatch:
             action()
         if self.fetches:
             self.fetches[0][0].upload_experiment_file('connections.config')
-        print("{:30s}: fetched {} metric sets in {:.0f}s ({} at once, {} repeated)".format(
-            "Experiment", len(self.fetches), time.monotonic() - started,
-            max(1, min(max_workers, len(self.fetches))) if self.fetches else 0, len(failed)))
+        if self.fetches:
+            print("{:30s}: fetched {} metric sets in {:.0f}s ({} at once, {} repeated, {} follow-up actions)".format(
+                "Experiment", len(self.fetches), time.monotonic() - started,
+                max(1, min(max_workers, len(self.fetches))), len(failed), len(self.after)))
+        else:
+            print("{:30s}: ran {} follow-up actions (e.g. reused loading metrics) in {:.0f}s".format(
+                "Experiment", len(self.after), time.monotonic() - started))
         self.fetches = []
         self.after = []
