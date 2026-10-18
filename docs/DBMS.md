@@ -55,7 +55,7 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `logfile` | no | Path inside the container to a log file that bexhoma downloads after each experiment |
 | `datadir` | no | Path inside the container to the DBMS data directory; bexhoma measures its size after loading |
 | `attachWorker` | no | Command run on the coordinator to register a new worker node (used for distributed DBMS like Citus, CockroachDB) |
-| `worker_port` | no | Internal port of the worker/coordinator headless service (used for TiDB) |
+| `worker_port` | no | Internal port of the worker/coordinator headless service, appended to every host of the worker lists (used for TiDB, and for Citus' `BEXHOMA_URL_LIST`: a multi-host JDBC URL needs the port on every host) |
 | `store_args` | no | Whether to capture and display the container startup arguments in the experiment summary (default: `True`) |
 | `priceperhourdollar` | no | Reserved for cost modelling (currently unused) |
 | `monitor` | no | Application-level monitoring configuration; see [Monitoring](Monitoring.md) |
