@@ -202,6 +202,44 @@ class ReadPodTest(unittest.TestCase):
         self.assertIs(cluster._read_pod('sut-0'), POD_NOT_READ)
 
 
+class StatefulSetPodsTest(unittest.TestCase):
+    """get_stateful_set_pods() finds the pods of a StatefulSet bexhoma did not create."""
+
+    def setUp(self) -> None:
+        self.cluster = _bare_cluster()
+        self.cluster.v1apps = mock.Mock()
+        self.cluster.v1core = mock.Mock()
+        self.cluster.v1apps.read_namespaced_stateful_set.return_value = k8s.V1StatefulSet(
+            spec=k8s.V1StatefulSetSpec(
+                selector=k8s.V1LabelSelector(match_labels={'app': 'yb-tserver', 'release': 'yb'}),
+                service_name='yb-tservers', template=k8s.V1PodTemplateSpec()))
+        self.cluster.v1core.list_namespaced_pod.return_value = k8s.V1PodList(items=[
+            _pod(name=name) for name in ('yb-tserver-10', 'yb-tserver-2', 'yb-tserver-0', 'yb-tserver-x')])
+
+    def test_pods_by_the_stateful_sets_selector_in_ordinal_order(self) -> None:
+        self.assertEqual(self.cluster.get_stateful_set_pods('yb-tserver'),
+                         ['yb-tserver-0', 'yb-tserver-2', 'yb-tserver-10'])
+        self.assertEqual(self.cluster.v1core.list_namespaced_pod.call_args.kwargs['label_selector'],
+                         'app=yb-tserver,release=yb')
+
+    def test_missing_stateful_set_gives_no_pods(self) -> None:
+        self.cluster.v1apps.read_namespaced_stateful_set.side_effect = ApiException(status=404)
+        self.assertEqual(self.cluster.get_stateful_set_pods('yb-tserver'), [])
+        self.assertEqual(self.cluster.get_stateful_set_pods(''), [])
+
+    def test_worker_pods_use_the_components_own_stateful_set(self) -> None:
+        from bexhoma.configurations.base import SutConfiguration
+        cluster = mock.Mock()
+        cluster.get_stateful_set_pods.side_effect = lambda name: [f'{name}-0']
+        config = SimpleNamespace(
+            statefulset_name='yb-tserver', experiment=SimpleNamespace(cluster=cluster),
+            deployment_infos={'statefulset': {'yb-tserver': {'name': 'yb-tserver'},
+                                              'yb-master': {'name': 'yb-master'}}})
+        self.assertEqual(SutConfiguration.get_worker_pods(config, component='yb-master'), ['yb-master-0'])
+        self.assertEqual(SutConfiguration.get_worker_pods(config, component='yb-tserver'), ['yb-tserver-0'])
+        self.assertEqual(SutConfiguration.get_worker_pods(config), ['yb-tserver-0'])
+
+
 class _FakeStream:
     """A finished ``WSClient`` with the given output."""
 

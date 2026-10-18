@@ -871,8 +871,10 @@ class SutConfiguration:
     def get_worker_pods(self, component: str = 'worker', only_stateful: bool = False) -> list:
         """Return a list of all worker pod names for the current SUT.
 
-        When :attr:`statefulset_name` is set, delegates to the cluster's
-        stateful set pod discovery (e.g. for YugabyteDB tservers).
+        When :attr:`statefulset_name` is set (StatefulSets bexhoma did not
+        create, e.g. YugabyteDB's ``yb-tserver`` and ``yb-master``), returns
+        the pods of the component's own StatefulSet (``deployment_infos``),
+        falling back to :attr:`statefulset_name` for an unknown component.
         Otherwise finds pods via the standard bexhoma label selector.
 
         :param component: Component label used in the label selector.
@@ -882,7 +884,9 @@ class SutConfiguration:
         :rtype: list[str]
         """
         if self.statefulset_name:
-            return self.experiment.cluster.get_stateful_set_pods(self.statefulset_name)
+            name = (self.deployment_infos.get('statefulset', {}).get(component, {}).get('name')
+                    or self.statefulset_name)
+            return self.experiment.cluster.get_stateful_set_pods(name)
         pods_worker = self.experiment.cluster.get_pods(
             app=self.appname,
             component=component,
