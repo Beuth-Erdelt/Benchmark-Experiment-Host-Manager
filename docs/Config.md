@@ -91,7 +91,7 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 'monitor': {
     'service_monitoring':             'http://prometheus.monitor.svc.cluster.local:9090/api/v1/',
     'service_monitoring_application': 'http://{service}.{namespace}.svc.cluster.local:9090/api/v1/',
-    'extend': 20,
+    'extend': 0,
     'shift':  0,
     'metrics': {
         'total_cpu_memory':     { ... },
@@ -122,7 +122,7 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 
 | Key | Description |
 |---|---|
-| `extend` | Number of seconds added to both ends of each monitoring interval. An interval `[t, t']` becomes `[t − extend, t' + extend]`. A value of 20 compensates for minor clock skew and scrape timing. |
+| `extend` | Number of seconds added to both ends of each monitoring interval. An interval `[t, t']` becomes `[t − extend, t' + extend]`. Default 0. Only for clocks that are out of sync; keep it well below the gap between phases (≤ 5 s), otherwise peak values (Max RAM) of the next phase are counted. |
 | `shift` | Number of seconds to shift the entire interval forward. An interval `[t, t']` becomes `[t + shift, t' + shift]`. Useful if container clocks are systematically ahead of the Prometheus clock. |
 
 #### Hardware metric definitions (`metrics`)

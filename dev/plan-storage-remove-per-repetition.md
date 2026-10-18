@@ -1,7 +1,7 @@
 # Plan: remove the SUT volume before every repetition
 
-Status: M1, M1b, M2, M3 implemented 2026-10-13 (not committed); M4 (cluster
-run) open. Deviations from the text below: the contradiction
+Status: M1, M1b, M2, M3 implemented 2026-10-13, committed (`0436a577`); M4
+(cluster run) open. Deviations from the text below: the contradiction
 `remove_per_repetition: true` + `remove_existing: false` is refused in
 `spec.validate_experiment()` (so the agent gets it too), not in
 `agent/harness/validation.py`; no warning for `repetitions: 1`. Contract

@@ -1,6 +1,6 @@
 # Plan: choose whether SUTs are kept, and never deadlock on a kept SUT
 
-Status: **implemented** (2026-10-15), uncommitted, not run on the cluster.
+Status: **implemented** (2026-10-15), committed (`6d60215e`), not run on the cluster.
 Deviations: the workload info adds "stopped after loading" only for
 `load -ks no` (a line on every `run` would be noise); the catalog
 translators emit `-ks no` for every mode but `start`, so agent runs never

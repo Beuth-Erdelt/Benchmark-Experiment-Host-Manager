@@ -1,9 +1,12 @@
 # Plan: monitoring metrics must not count pods of earlier phases
 
-Status: M1 **implemented and committed** (2026-10-15, `ee7832d3`). M2-M4
-**planned**: filter stale series in the `cluster.config` templates (decided
-2026-10-15, option (a): template change, no code-side query rewriting; no
-warning about old copies, decided 2026-10-18).
+Status: M1 **implemented and committed** (2026-10-15, `ee7832d3`). M1b
+(phases shorter than the scrape interval, added 2026-10-18) **planned**, to
+be done and committed before M2. M2-M4 **planned**: in the `cluster.config`
+templates a `{pods}` placeholder (jobs scoped by job name, one query set per
+scope, see "How"), `{namespace}`, and the 90 s filter for stale series
+(option (a): template change, no code-side query rewriting; no warning about
+old copies). Decisions below revised 2026-10-18 to match.
 
 ## Problem
 
@@ -36,7 +39,110 @@ Separate, rarer: two jobs of one configuration that really run at the same
 time (several benchmarker jobs per round via `experiment_dict`) are both
 live, so each job's metrics include the other's.
 
-## How metrics flow (unchanged by this plan)
+## Update 2026-10-18: shorter gaps between rounds
+
+`dev/plan-fewer-kubectl-calls.md` (M11, M14, M7) cut the time from the end
+of a round to the start of the next one of the same configuration (last
+`BEXHOMA_END` to first `BEXHOMA_START`): tenancy_2 202 -> 94 s (91-106 s),
+tenancy_8 663 -> 212 s, single SUT estimated 12-40 s. Decision 1 assumed
+"phases start at least ~160 s after the previous pod stopped"; that no
+longer holds for rounds, so the 90 s filter alone would not keep round k's
+benchmarker out of round k+1 (it was never out today either: 5 min linger).
+
+Decided 2026-10-18:
+- **Jobs (benchmarker, loader, data generator) are scoped by job name**, the
+  main fix for them, not only for concurrent jobs (decision 6 moves in):
+  their pods are named `bexhoma-<component>-{configuration}-{experiment}-{run}-{client}[-{benchmark_run}]-<hash>`,
+  so a selector on the job's prefix never sees pods of other rounds or
+  repetitions, whatever the gap. The job names are known when `run_pod()`
+  writes the connection file (one benchmarker job per connection, the
+  loading jobs of its repetition); see "How" below. The job counting rule
+  (decision 5) then applies to them.
+- **The SUT keeps the 90 s filter** (decision 1): its pods change only
+  between repetitions, which stay minutes apart (removal + start + loading
+  or `delay_prepare`).
+- Workers: as the SUT (filter + namespace), unchanged.
+
+### How: one `{pods}` placeholder, one query set per scope
+
+Still option (a) (decision 2): a template change, filled by bexhoma like
+`{configuration}` today, no rewriting of formatted queries. No change in
+DBMS-Benchmarker or the dashboard image: `metrics.py -mt <name>` already
+picks any query set of `connectiondata['monitoring']` and falls back to
+`metrics` when it does not exist (DBMS-Benchmarker `metrics.py:96`).
+
+1. **Templates** (`k8s-cluster.config`, `monitor.metrics`): the pod pattern
+   becomes a placeholder, plus the namespace (decision 4); the duplicated
+   `pod=~` goes:
+   ```python
+   # today
+   'query': 'sum(container_cpu_usage_seconds_total{{pod=~"(.*){configuration}-{experiment}(.*)", pod=~"(.*){configuration}-{experiment}(.*)", container="dbms"}})'
+   # new
+   'query': 'sum(container_cpu_usage_seconds_total{{pod=~"{pods}", namespace="{namespace}", container="dbms"}})'
+   ```
+   The 90 s filter (decision 1) wraps the selector as planned; for jobs it
+   is harmless (their own pods drop out only after their window).
+2. **bexhoma fills `{pods}` per scope** in `get_connection_config()` and
+   writes one query set per scope into `<connection>.config`:
+
+   | Query set | `{pods}` | for |
+   |---|---|---|
+   | `metrics` (as today) | `(.*){configuration}-{experiment}(.*)`, today's pattern | SUT and other deployments (`container="dbms"` keeps job pods out) |
+   | `metrics_benchmarker` (new) | `bexhoma-benchmarker-{configuration}-{experiment}-{run}-{client}-{benchmark_run}-[a-z0-9]{5}` | the benchmarker job of exactly this connection |
+   | `metrics_loading` (new) | `bexhoma-loading-{configuration}-{experiment}-{run}-.+` | all loading and data generator jobs of this repetition (several loaders together, as today) |
+   | `metrics_<statefulset>` (as today) | the worker pattern of `set_metric_of_config()` | workers |
+
+   The job patterns are built with `generate_component_name()`, the function
+   that names the jobs in the manifest, so they cannot drift apart; the
+   legacy path without benchmark index drops `-{benchmark_run}` as the job
+   name does. The pod suffix is exactly 5 characters (Prometheus regexes are
+   anchored), so `…-1-1` does not match the pods of `…-1-10`.
+3. **Fetch**: `MetricsCollector.fetch()` passes `metrics_type` =
+   `metrics_benchmarker` for component `benchmarker`, `metrics_loading` for
+   `loader` and `datagenerator`. Container swap, CSV names
+   (`query_<component_type>_metric_<key>_<connection>.csv`), evaluation,
+   summary and report are unchanged: one row per connection as today, only
+   the pods behind each row change.
+
+Effect on summary and report:
+- one benchmarker per round: rows unchanged; round 1 as today (plus the
+  first-value rule of decision 5); rounds 2+ no longer include the previous
+  round's pod (Max RAM, CPU [CPUs]); Max CPU (rate) unchanged;
+- several benchmarker jobs in one round (`experiment_dict`): today each row
+  shows the sum of all jobs of the round (identical rows); then each row
+  shows its own job, and the rows of a round add up correctly;
+- loader / data generator: rows unchanged, other repetitions excluded.
+
+Care:
+- every place that formats a template passes `pods=` and `namespace=`, or a
+  new template raises `KeyError`: `set_metric_of_config_default()`, every
+  branch of `set_metric_of_config()` (YugabyteDB included), application
+  metrics (same function);
+- a template without `{pods}` (an old `cluster.config` copy) still formats
+  (unused keyword): the job query sets equal `metrics`, today's behaviour,
+  silently (decision 3);
+- counting rule (decision 5): CSVs of the job query sets contain only the
+  job's own pods, the condition for "first value + positive steps";
+  `monitoring_math` keys it on the component and the silent check for
+  `{pods}` in the template;
+- each connection file gets two more copies of the metric definitions
+  (~20 queries each), harmless.
+- Old results are ignored (decision 7); no marker in the report needed.
+
+Also found 2026-10-18 (tenancy_2 1792334082, not a linger): a loader running
+~45 s gets one or two cAdvisor samples at a ~30 s scrape interval. With one
+sample, `irate()` returns nothing, so "CPU [CPUs]" is 0 and the counter
+total is 0 (`max - min` of one value); with two it works. Tenant 1's loader
+had one sample (158 CPU-s) in all 3 repetitions, tenant 2's two. Not fixable
+in the query; options: count a single-sample counter series as growth from
+0 (decision 5's first-value rule does exactly that for jobs), mark job
+metrics with fewer than 2 samples as missing instead of 0, or a shorter
+scrape interval.
+
+## How metrics flow
+
+Unchanged by this plan except steps 2 and 3: `{pods}` is filled per scope
+and the job fetches pick their own query set (see "How").
 
 1. `cluster.config` `monitor.metrics.<key>.query`: PromQL template.
 2. `MetricsCollector.get_connection_config()` formats it per configuration
@@ -68,6 +174,123 @@ Effect on the stored storage probes (only SUT phases change): 1792023056 rep
 489/469; 1791970052 rep 2/3 loading 2517/2461 -> 135/145. Stored results are
 corrected on re-evaluation.
 
+## M1b: phases shorter than the scrape interval (planned 2026-10-18)
+
+### Problem
+
+A counter needs two scrapes inside the window to show growth, a gauge one;
+a job pod that lives shorter than one scrape interval may never be scraped.
+Seen in 1792347080 (TPC-H SF1, `-ne 1,2 -m -mc`, check run of
+`dev/plan-stream-metrics.md`): round 1's stream took 11 s, so the SUT
+counter stayed flat (CPU 0.00) and the benchmarker had no sample at all
+(all metrics "missing"). Three tests failed: SUT and benchmarker "contains
+0 or NaN in CPU [CPUs]", "Monitoring metrics missing". Same cause as the
+tenancy_2 loader with one sample (see "Update 2026-10-18").
+
+The existing guard does not fire: `experiments/base.py:3430` skips the CPU
+test when a series has fewer than `MIN_MONITORING_SAMPLES = 2` values, but
+counts **rows**. The fetch runs with a 1 s step and repeats the latest scrape
+(or fills zeros) in every row, so 1792347080 round 1 had 14 rows from one
+scrape. `missing_metrics.py` knows only two expected reasons (data
+pre-existing, sparse), none for short phases.
+
+How much a window can show, at a scrape interval `I` (cluster: 28-32 s).
+Every 1 s row holds the latest scrape at or before it, so the first row of a
+pod that already runs (SUT, workers) is the scrape **before** the window:
+
+- **SUT / workers (counters):** growth = last scrape in the window minus the
+  scrape before it. One scrape inside the window is enough; the counted span
+  has about the window's length, shifted earlier by up to `I` (tail missed,
+  some time before the start counted). Roughly unbiased at constant load.
+- **Jobs (counters):** the pod starts inside the window, there is no scrape
+  before it. Today's `max - min` needs two scrapes inside; decision 5's
+  first-value rule needs one. The tail after the pod's last scrape is never
+  recorded (no scrape after the pod stopped).
+- **Gauges (Max RAM):** one sample inside the window; peaks between scrapes
+  are missed.
+
+| window | SUT / workers | jobs today (`max - min`) | jobs after decision 5 |
+|---|---|---|---|
+| < I | maybe no scrape inside: 0 | maybe never scraped | maybe never scraped |
+| I to 2I | at least 1 scrape: measurable | 1 or 2 scrapes, by chance | measurable |
+| >= 2I | measurable | measurable | measurable |
+
+(`I` with jitter: use `1.2 x I` for "at least one scrape".)
+
+### Decisions
+
+1. **Rule per component** (revised 2026-10-18): SUT and workers not
+   measurable below `1.2 x I`; jobs below `2 x I` while they use
+   `max - min`, below `1.2 x I` once decision 5 is in. Data-only rules
+   ("fewer than 2 distinct values") are rejected: a broken query over a long
+   phase is constant too and must still fail.
+2. **Scrape interval of the cluster Prometheus as a config key**
+   `monitor.scrape_interval` (seconds, default 30) in `cluster.config` /
+   `k8s-cluster.config`. Not `prometheus_interval`: that one only sets
+   bexhoma's own Prometheus (template `{prometheus_interval}`, 10 s default,
+   30 s in the TPC-H builder).
+3. **Window length from the fetch log**: `metrics.py` prints
+   `Interval length <N>s` into `bexhoma-metrics-{connection}-{component}.log`,
+   the same file `missing_metrics.py` already reads. One parser for both
+   places.
+4. **CPU test**: below the rule, *skipped* ("phase shorter than monitoring
+   scrape interval", existing text) and the table shows `n/a` instead of
+   `0.00` for that connection. Replaces the row-count guard.
+5. **Missing metrics**: third expected reason
+   `EXPECTED_SHORT_PHASE = "phase shorter than scrape interval"` for gaps in
+   a fetch log whose window is below the rule. Then "Monitoring metrics
+   missing" is skipped, not failed, when every gap has a reason.
+6. **No widening to make up for the scrape interval**: an end widened by
+   `I` makes SUT counters count about one interval too much (scrape before
+   start to scrape after end), gains nothing for jobs (no scrape after a pod
+   stopped), and puts the next round into gauges (gaps between rounds are
+   12-40 s since `dev/plan-fewer-kubectl-calls.md`). `extend` and `shift`
+   stay as knobs for clocks out of sync, default 0 (2026-10-18; measured
+   offset host vs. cluster Prometheus 0.3-0.5 s); docs say `extend` <= 5 s.
+   Deferred, only if a run shows the need: interpolate counters at the exact
+   start and end between the bracketing scrapes (fetch counters to `end + I`,
+   scrape times from the value changes in the 1 s rows).
+7. **Interplay with decision 5**: once jobs count their first value (with
+   `{pods}` in the template), a job with a single sample gets a real total
+   (the tenancy_2 loader); its threshold drops to `1.2 x I` (decision 1).
+   M1b uses the same silent `{pods}` check per metric to pick the job
+   threshold.
+8. **Result contract**: `contract_result.yml` `monitoring_component_cpu_nonzero`
+   says "SKIPPED when phase < 1 scrape interval" (update to decision 1) and
+   `no_monitoring_metrics_missing.expected_gaps` gets the new reason; additive,
+   minor version. The agent harness (`agent/harness/tools.py:2448`) skips
+   non-numeric CPU cells, so `n/a` is not listed as an affected phase.
+
+### Implementation
+
+- `cluster.config` / `k8s-cluster.config`: `'scrape_interval': 30` under
+  `monitor`.
+- `missing_metrics.py`: `fetch_window(path) -> int | None` (parses
+  `Interval length`), the new expected reason in `collect_missing_metrics`
+  (needs the scrape interval as a parameter).
+- `experiments/base.py`: `show_summary_monitoring_table` takes the window
+  per connection from the fetch logs; skip + `n/a` per decision 4;
+  `MIN_MONITORING_SAMPLES` goes.
+- Tests (`tests/test_missing_metrics.py`, a monitoring-summary test):
+  SUT window 11 s -> skipped and `n/a`; SUT 45 s -> measured; job 45 s with
+  `max - min` -> skipped; 600 s with zeros -> failed; reason only for short
+  windows; missing `Interval length` line (old logs) -> old behaviour.
+- `contracts/contract_result.yml` and its mirror doc (decision 8).
+- Check: re-evaluate 1792347080 locally (no cluster run): round 1 skipped,
+  round 2 unchanged.
+- `docs/Monitoring.md`: minimum phase length, accuracy of CPU totals
+  (about one scrape interval per phase), the key.
+
+### Open
+
+- Done 2026-10-18: `extend` and `shift` never took effect
+  (`configurations/metrics.py` read `grafanaextend` / `grafanashift`). Now
+  read under their documented names (the `grafana*` names still work);
+  `'extend': 20` became `'extend': 0` in `cluster.config` and
+  `k8s-cluster.config`; `docs/Config.md` and `docs/Monitoring.md` describe
+  both as clock-skew knobs, `extend` <= 5 s (decision 6). No stored result
+  changes: both were never applied.
+
 ## Decisions for M2-M4
 
 1. **Drop stale series in the query.** Every cAdvisor instant selector `X`
@@ -75,27 +298,34 @@ corrected on re-evaluation.
    `(X and (time() - timestamp(X)) < 90)`. `timestamp()` returns the time
    of the sample the query uses; a live pod's newest sample is at most one
    scrape interval old (28-32 s on this cluster), a stopped pod's keeps
-   ageing and drops out after 90 s instead of 5 min. Phases start at least
-   ~160 s after the previous pod stopped (rounds), ~3.5 min after a restart.
-   Tested on 1792023056 rep 2 loading (see "Evidence").
+   ageing and drops out after 90 s instead of 5 min. Since 2026-10-18 it
+   matters for the **SUT and workers**: jobs are scoped by job name
+   (decision 6), so the gap between rounds (now 12-40 s) no longer counts;
+   for jobs the filter is harmless. Relies on the SUT restarting at least
+   90 s after the old pod stopped (assumed ~3.5 min; to be measured, see
+   "Contradictions"). Tested on 1792023056 rep 2 loading (see "Evidence").
 2. **Option (a): change the shipped template, do not rewrite queries in
-   code.** `k8s-cluster.config` gets the filter in the 11 cAdvisor
-   instant-selector templates. The 3 templates inside `irate(...[5m])` stay
-   unchanged (rate 0 for a stale series). Users copy the new queries into
-   their own `cluster.config` (git-ignored). The threshold is a literal `90`
-   in the query: visible, and changed by editing the template.
+   code.** `k8s-cluster.config` gets, in the cAdvisor templates, `{pods}`
+   instead of the literal pod pattern (all 14, decision 6), the namespace
+   (decision 4), and the filter in the 11 instant-selector templates. The 3
+   templates inside `irate(...[5m])` keep no filter (rate 0 for a stale
+   series). Bexhoma only fills placeholders, as it does for
+   `{configuration}`; formatted queries are never edited. Users copy the
+   new queries into their own `cluster.config` (git-ignored). The threshold
+   is a literal `90` in the query: visible, and changed by editing the
+   template.
 3. **Old copies are neither changed nor warned about** (2026-10-18). An
-   unchanged `cluster.config` keeps the old behaviour without any message.
-   Bexhoma only checks silently, per metric, whether its query contains
-   `timestamp(`. That check picks the job counting rule (decision 5) and is
-   reported nowhere. It is a string search on the loaded templates, no
-   Prometheus or cluster call.
+   unchanged `cluster.config` keeps the old behaviour without any message:
+   without `{pods}` the job query sets equal `metrics`. Bexhoma only checks
+   silently, per metric, whether its template contains `{pods}`. That check
+   picks the job counting rule (decision 5) and is reported nowhere. It is a
+   string search on the loaded templates, no Prometheus or cluster call.
 4. **Namespace filter (required: worker queries carry no experiment code,
    see the TiDB evidence).** The same 14 cAdvisor templates get
    `namespace="{namespace}"`; the formatting calls supply `namespace`.
    An old template without `{namespace}` keeps working (unused keyword).
-5. **Counters after the filter (follow-up to M1).** With stale series gone,
-   a job's series contains only its own pods. Then:
+5. **Counters for job scopes (follow-up to M1).** With `{pods}` set to the
+   job's own pods, a job's series contains only its own pods. Then:
    - jobs: total = positive steps + first value (their pods start inside the
      window, so the first value is growth from 0; removes the round-1
      undercount of `max - min`, e.g. 151 vs ~167);
@@ -105,15 +335,19 @@ corrected on re-evaluation.
      after a gap or drop, a value above the last value before it counts
      only the difference (`100, 110, [gap], 125` -> 25, not 135); a value
      below it is a new counter and counts fully.
-   Only for metrics whose query contains the filter (decision 3, per
-   metric); otherwise the jobs keep `max - min`. Both rules run on the
-   fetched CSV in `monitoring_math.py`, no extra query.
-7. **Old results are ignored** (2026-10-18): the filter only acts when
-   Prometheus is queried, so results fetched before it are not re-fetched
-   or marked. Re-evaluation still applies M1 to them.
-6. **Concurrent jobs: out of scope for now.** If needed later, scope only
-   the benchmarker by its job name
-   (`bexhoma-benchmarker-{configuration}-{experiment}-{run}-{client}-{benchmark_run}-`).
+   Only for job components (loader, data generator, benchmarker) whose
+   template contains `{pods}` (decision 3, per metric); otherwise the jobs
+   keep `max - min`. Both rules run on the fetched CSV in
+   `monitoring_math.py`, no extra query. The gap guard matters for the SUT
+   too (it applies to positive steps generally).
+6. **Jobs scoped by job name** (changed 2026-10-18, see "Update 2026-10-18"
+   and "How"): `{pods}` per query set, `metrics_benchmarker` for the
+   connection's benchmarker job, `metrics_loading` for the repetition's
+   loading and data generator jobs, built with `generate_component_name()`.
+   Fixes rounds following each other within seconds and concurrent jobs.
+7. **Old results are ignored** (2026-10-18): the new queries only act when
+   Prometheus is queried, so results fetched before them are not re-fetched
+   or marked. Re-evaluation still applies M1 (and M1b) to them.
 
 ## Evidence (2026-10-15, cluster Prometheus)
 
@@ -216,40 +450,75 @@ Other checks:
 
 ## Implementation sketch
 
-### M2: templates and detection
+### M2: templates, query sets, fetch
 
-- `k8s-cluster.config`: the 11 instant-selector cAdvisor templates get the
-  filter (decision 1) and all 14 the namespace label (decision 4). Keep the
-  query shapes as they are (`sum(...)`, `sum(max(...) by (instance))`,
-  `sum(max by (pod) (...))`); wrap only the selector.
+- `k8s-cluster.config`: in the 14 cAdvisor templates the doubled
+  `pod=~"(.*){configuration}-{experiment}(.*)"` becomes one
+  `pod=~"{pods}"` plus `namespace="{namespace}"`; the 11 instant-selector
+  templates get the filter (decision 1). Keep the query shapes as they are
+  (`sum(...)`, `sum(max(...) by (instance))`, `sum(max by (pod) (...))`);
+  wrap only the selector.
 - `configurations/base.py`: `set_metric_of_config_default` and every branch
-  of `set_metric_of_config` pass `namespace=`. These two are the only places
-  that format the templates (both called from `configurations/metrics.py`;
-  checked 2026-10-18).
+  of `set_metric_of_config` (YugabyteDB included) pass `pods=` and
+  `namespace=`. These two are the only places that format the templates
+  (both called from `configurations/metrics.py`; checked 2026-10-18).
+- `configurations/metrics.py` `get_connection_config()`: besides `metrics`
+  and `metrics_<statefulset>`, write `metrics_benchmarker` and
+  `metrics_loading` with the job patterns of "How" (step 2), from
+  `generate_component_name()`.
+- `MetricsCollector.fetch()`: `metrics_type="metrics_benchmarker"` for
+  component `benchmarker`, `"metrics_loading"` for `loader` and
+  `datagenerator`. No change in DBMS-Benchmarker (`metrics.py -mt` falls
+  back to `metrics`).
 - Silent check (decision 3): a helper telling per metric key whether its
-  query contains `timestamp(`; used by the job counting rule only, no
+  template contains `{pods}`; used by the job counting rule only, no
   output.
 
 ### M3: tests
 
-- Every cAdvisor instant template in `k8s-cluster.config` has the filter and
-  `namespace="{namespace}"`; the `irate` ones are unchanged; all still
-  format (no unknown placeholder) and parse as PromQL-shaped strings.
+- Every cAdvisor template in `k8s-cluster.config` has `pod=~"{pods}"` once
+  and `namespace="{namespace}"`; the instant ones the filter, the `irate`
+  ones not; all still format (no unknown placeholder) and parse as
+  PromQL-shaped strings; an old-style template formats with `pods=` and
+  `namespace=` passed (unused keywords).
+- Job patterns: equal to the names `generate_component_name()` gives the
+  jobs; `...-1-1` does not match pods of `...-1-10`; the legacy path without
+  benchmark index; the loading pattern matches loader and data generator
+  pods of the repetition and no other repetition's.
+- Connection file: `metrics_benchmarker` / `metrics_loading` present, with
+  the connection's own job; `fetch()` passes the right `metrics_type`.
 - Silent check: true for the new templates, false for old-style ones.
 - M1 follow-up (decision 5): job total with first value; gap guard
   (`100, 110, [gap], 125` -> 25; drop to a lower value counts fully); old
   config keeps `max - min` for jobs.
 - On the cluster: a short TPC-C SF1 run with `-nc 2 -rsrp -xnbf 1,4`:
   rep 2 loading CPU and Max RAM close to rep 1, benchmarker round 2 CPU no
-  longer equal to round 1.
+  longer equal to round 1; the SUT restart gap measured (see
+  "Contradictions"). A second run with several benchmarker jobs per round
+  (`experiment_dict`) if one is at hand: rows of a round differ and add up.
 
 ### M4: docs
 
-- `docs/Monitoring.md`: why stopped pods linger, what the filter does, the
-  threshold and when to raise it (scrape interval above ~30 s).
-- `docs/Config.md` and release notes: users update the cAdvisor queries in
-  their `cluster.config` from `k8s-cluster.config`; without it nothing
-  warns and the old behaviour stays.
+- `docs/Monitoring.md`: why stopped pods linger, `{pods}` and the query sets
+  per scope, what the filter does, the threshold and when to raise it
+  (scrape interval above ~30 s).
+- `docs/Config.md` (placeholders `{pods}`, `{namespace}`) and release notes:
+  users update the cAdvisor queries in their `cluster.config` from
+  `k8s-cluster.config`; without it nothing warns and the old behaviour
+  stays.
+
+## Contradictions to settle before M2 (found 2026-10-18)
+
+- Resolved by "How" (2026-10-18): **jobs by job name vs. decision 2** (the
+  job name enters as the `{pods}` placeholder, filled like `{configuration}`,
+  no string surgery; decision 2 reworded) and **decision 3's silent check**
+  (now checks for `{pods}`).
+- Open: **SUT gap after a restart.** Decision 1 assumes the SUT restarts
+  ~3.5 min after the old pod stopped; `dev/plan-fewer-kubectl-calls.md` M12
+  (resets right after `stop_sut()`) and M11 may have shortened that, and
+  with `-ks`/inherited loading the first round follows the new SUT directly.
+  Measure in the M3 cluster run; if below 90 s, the SUT needs a lower
+  threshold or its own scoping (ReplicaSet hash).
 
 ## Rejected alternatives
 
@@ -257,14 +526,20 @@ Other checks:
   name, workers by pod UID; write `<connection>-<component_type>.config`
   per fetch): fixes concurrent jobs too, but needs five selector builders,
   string surgery on formatted PromQL, per-fetch files and uploads; fragile.
+  The adopted `{pods}` solution keeps only the job-name part, as a template
+  placeholder filled once per connection file, with the existing
+  `metrics.py -mt` mechanism; SUT and workers keep their patterns.
 - **Code-side rewrite of user queries** (option (b)): fixes old copies
   silently, but changes user queries behind their back.
 
 ## Risks and open points
 
 - **Scrape interval.** 90 s assumes about 30 s; a cluster scraping every
-  60 s needs a higher threshold, and no phase may start within it after the
-  previous pod stopped. Documented, editable in the template.
+  60 s needs a higher threshold, and no SUT phase may start within it after
+  the previous SUT pod stopped (jobs are scoped by name). Documented,
+  editable in the template.
+- **Job name drift.** `{pods}` for jobs must equal the manifest's job names;
+  built by the same `generate_component_name()`, covered by M3 tests.
 - **Missed scrapes > 90 s** make a live pod vanish briefly: gauges dip,
   counters need the guard (decision 5).
 - **Users who do not update** their `cluster.config` keep the old behaviour,

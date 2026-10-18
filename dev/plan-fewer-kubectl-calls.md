@@ -1,8 +1,11 @@
 # Plan: fewer kubectl calls when a benchmark round starts
 
-Status: M0-M4 and M7-M14 implemented 2026-10-18, uncommitted, unit tests in
-`tests/test_fewer_calls.py`; cluster run (see "Cluster check") open. M5, M6
-and the optional section not done. Deviations from the text below:
+Status: M0-M4 and M7-M14 implemented and committed 2026-10-18 (`9152423e`,
+`7ebfc8dd`), unit tests in `tests/test_fewer_calls.py`; cluster check done
+(see "Cluster check"). M5, M6 and the optional section not done. Note
+2026-10-18: `extend` never took effect (`configurations/metrics.py` read
+`grafanaextend`); it is now read and defaults to 0, so O1's `time_end +
+extend` is `time_end` unless a cluster sets it. Deviations from the text below:
 - M7: no awk at all for `disk`/`datadisk` (`df -m /`, `du -Ls` parsed in
   Python like awk's `NR == 2{print $3}` / `END{print $1}`), instead of the
   `$` variant on the API path. Found on the way: from the Windows host the
@@ -30,6 +33,30 @@ Measured after M14 from the Windows host (read-only, dashboard pod): API
 request 0.08 s (was 0.6 s), exec through the API 0.27 s (kubectl 1.6-2.1 s),
 10 x `get_pods()` 0.9 s (was 5.6 s); pod reads and probe outputs equal to
 the kubectl versions.
+
+Cluster check 2026-10-18 (same parameters as the reruns of that morning; other
+experiments ran on cl-worker36 and nvme at the same time; logs in
+`dev/logs_fewer_calls/`):
+
+| | before | after |
+|---|---|---|
+| tenancy_2 total | 76.5 min | 59.3 min |
+| tenancy_8 total | 145.6 min | 88.8 min |
+| submit a benchmarker job (median) | 44 s | 12 s |
+| SUT idle between rounds, tenancy_2 / tenancy_8 (median) | 202 s / 663 s | 94 s / 212 s |
+| result files tenancy_2 / tenancy_8 | 1689 / 6393 | 1689 / 6393 |
+
+Every job ended once, no upload/queue/token retries, same test outcome
+(only "Monitoring metrics missing", as before), host info identical except
+`datadisk` (now set). Loading times unchanged; the loading metric window is
+shorter (it ended with bexhoma's detection of the loader's end). Unthrottled
+TPC-C throughput about 10% lower in both (tenancy_8 mean 3426 vs 3810
+requests/s), light rounds identical: other experiments on the same node, or
+the shorter idle time between rounds; needs a run on a quiet cluster. YCSB
+Citus (3 workers, nvme, `-nc 2`): worker host info per pod, volumes reused,
+non-blocking removal; found and fixed a duplicate `env` key in the Citus
+worker template, OOM of workers at 16Gi (docs runs now `-lr/-rr 64Gi`), and
+`pg_isready` without `-U` logging `role "root" does not exist`.
 
 Plan written 2026-10-18. Follows the parallel metric fetching
 (commit 12e5546f), which cut tenancy_8 from 176 to 146 minutes. Extended
@@ -233,7 +260,10 @@ so 16 fetches go from about 19 s to about 10 s. Check dashboard pod CPU/RAM with
 instead of a kubectl subprocess. Measured: 0.26 s per exec with M14, 0.75 s
 without, against 1.6-1.8 s for kubectl. M7 builds the transport
 (`execute_command_in_pod_api()`) for the read-only host probes first; M5 then
-moves the other execs (loading, metrics, Redis) to it. Larger change for
+moves the other execs (metrics, uploads, logs) to it. Not the scripts of
+`load_data_asynch()` and reset scripts (decided 2026-10-18): they are not safe
+to repeat, can run for hours, and run in parallel threads already; a
+websocket that drops mid-script would lose the exit status. Larger change for
 those: the outage retry (`is_cluster_connection_error`, `wait_for_cluster`),
 stdout/stderr split, exit status, timeouts and `retry_interrupted` (commands
 not safe to repeat) must keep their behaviour. Decide after M7 has run on the
