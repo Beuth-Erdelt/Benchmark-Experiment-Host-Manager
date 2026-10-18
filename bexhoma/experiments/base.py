@@ -34,7 +34,7 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
-from bexhoma.monitoring_math import counter_total
+from bexhoma.monitoring_math import counter_total, min_measurable_window, DEFAULT_SCRAPE_INTERVAL_SECONDS
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
@@ -82,10 +82,6 @@ SELECTOR_RE = re.compile(
     re.IGNORECASE
 )
 
-# A counter-based CPU metric needs at least two scrape samples inside the phase
-# window to compute a non-degenerate difference; with fewer, the delta is 0.0
-# or NaN regardless of actual load, so the 0/NaN test would be a false positive.
-MIN_MONITORING_SAMPLES = 2
 
 #: Divisor to convert the ``--experiment-timeout`` CLI value (minutes) to seconds.
 SECONDS_PER_MINUTE = 60
@@ -3411,24 +3407,76 @@ class ExperimentBase():
             self._record_test(passed_warnings, "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)")
             self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
         self._print_test_summary()
-    def show_summary_monitoring_table(self, evaluate: object, component: str) -> Tuple[list, bool]:
+    def scrape_interval(self) -> float:
+        """
+        Scrape interval of the cluster Prometheus in seconds, from ``cluster.config``.
+
+        :return: ``monitor.scrape_interval``, or :data:`DEFAULT_SCRAPE_INTERVAL_SECONDS`.
+        :rtype: float
+        """
+        try:
+            monitor = self.cluster.config['credentials']['k8s']['monitor']
+            return float(monitor.get('scrape_interval', DEFAULT_SCRAPE_INTERVAL_SECONDS))
+        except (AttributeError, KeyError, TypeError, ValueError):
+            return float(DEFAULT_SCRAPE_INTERVAL_SECONDS)
+    def short_phase_connections(self, evaluate: object, component: str, connections) -> set:
+        """
+        Connections whose phase window was too short to measure the component's CPU.
+
+        The window is the one the fetch queried (``Interval length`` in its
+        ``bexhoma-metrics-{connection}-{component}.log``); the threshold is
+        :func:`~bexhoma.monitoring_math.min_measurable_window`. A connection
+        without such a log line (older results) is never short.
+
+        :param evaluate: Evaluator with the result folder as ``path``.
+        :param component: Monitoring component, e.g. ``loading``, ``benchmarker``.
+        :param connections: Connection names to check.
+        :return: The short ones.
+        :rtype: set
+        """
+        threshold = min_measurable_window(component, self.scrape_interval())
+        short = set()
+        for connection in connections:
+            window = missing_metrics.fetch_window(
+                Path(evaluate.path) / missing_metrics.fetch_log_name(connection, component))
+            if window is not None and window < threshold:
+                short.add(connection)
+        return short
+    @staticmethod
+    def mark_not_measurable(df: pd.DataFrame, short: set, column: str = "CPU [CPUs]") -> pd.DataFrame:
+        """
+        Show ``n/a`` instead of a value for connections whose phase was too short.
+
+        Apply after testing the column and after rounding: the column becomes text.
+
+        :param df: Monitoring table, one row per connection.
+        :param short: Connections from :meth:`short_phase_connections`.
+        :param column: The column to mark.
+        :return: ``df``, unchanged without short connections.
+        :rtype: pandas.DataFrame
+        """
+        rows = [connection for connection in df.index if connection in short]
+        if not rows or column not in df.columns:
+            return df
+        df = df.copy()
+        df[column] = ["n/a" if connection in short else f"{value:.2f}"
+                      for connection, value in df[column].items()]
+        return df
+    def show_summary_monitoring_table(self, evaluate: object, component: str) -> Tuple[list, set]:
         """
         Build a list of DataFrames containing CPU and RAM monitoring metrics for one component.
 
         :param evaluate: Evaluator object exposing get_monitoring_metric().
         :param component: Component name used as the metric scope (e.g. 'loading', 'benchmarking').
-        :return: List of single-column DataFrames (one per collected metric), and a flag that is
-                 ``True`` when at least one connection had fewer than :data:`MIN_MONITORING_SAMPLES`
-                 scrapes of ``total_cpu_util_s`` inside the phase window (the phase ran shorter than
-                 the Prometheus scrape interval, so a 0/NaN CPU delta is not necessarily a real gap).
-        :rtype: tuple[list, bool]
+        :return: List of single-column DataFrames (one per collected metric), and the
+                 connections whose phase window was too short to measure ``CPU [CPUs]``
+                 (:meth:`short_phase_connections`): their 0 or NaN is no gap.
+        :rtype: tuple[list, set]
         """
         df_monitoring = list()
-        insufficient_samples = False
         ##########
         df = evaluate.get_monitoring_metric(metric='total_cpu_util_s', component=component)
-        if not df.empty and (df.count() < MIN_MONITORING_SAMPLES).any():
-            insufficient_samples = True
+        short = self.short_phase_connections(evaluate, component, df.columns) if not df.empty else set()
         # a dead pod of the previous phase may still be in the sum, see counter_total()
         df = counter_total(df, component)
         df_cleaned = pd.DataFrame(df)
@@ -3459,7 +3507,7 @@ class ExperimentBase():
         df_cleaned.columns = ["Max RAM Cached [Gb]"]
         if not df_cleaned.empty:
             df_monitoring.append(df_cleaned.copy())
-        return df_monitoring, insufficient_samples
+        return df_monitoring, short
     def show_summary_monitoring(self) -> None:
         """
         Print monitoring tables for all registered monitoring components and record test results.
@@ -3473,7 +3521,7 @@ class ExperimentBase():
         optional_components = self.workload.get('optional_monitoring_components', [])
         header_printed = False
         for component, title in self.workload['monitoring_components'].items():
-            df_monitoring, insufficient_samples = self.show_summary_monitoring_table(self.evaluator, component)
+            df_monitoring, short = self.show_summary_monitoring_table(self.evaluator, component)
             if len(df_monitoring) > 0:
                 if not header_printed:
                     print("\n### Monitoring")
@@ -3482,21 +3530,24 @@ class ExperimentBase():
                 df = pd.concat(df_monitoring, axis=1).round(2)
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 df.index.names = ["DBMS"]
-                print(df.to_markdown(index=True, floatfmt=".2f"))
-                passed = self.evaluator.test_results_column(df, "CPU [CPUs]")
+                # a phase too short to hold the scrapes it needs is not measurable:
+                # its row shows n/a and is left out of the test
+                measurable = df.drop(index=[connection for connection in df.index if connection in short])
+                print(self.mark_not_measurable(df, short).to_markdown(index=True, floatfmt=".2f"))
+                passed = self.evaluator.test_results_column(measurable, "CPU [CPUs]")
                 if not passed and component in optional_components:
                     # Data generator produces no CPU load when data is pre-existing; skip test.
                     self._record_skipped_test(f"{title} contains 0 or NaN in CPU [CPUs] (data pre-existing)")
-                elif not passed and insufficient_samples:
-                    # Phase ran shorter than one Prometheus scrape interval, so the counter
-                    # delta cannot reliably reflect actual CPU usage; skip rather than fail.
+                elif measurable.empty:
+                    # every phase of the component ran shorter than it can be measured
                     self._record_skipped_test(f"{title} contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)")
                 else:
                     suffix = "no 0 or NaN" if passed else "0 or NaN"
                     self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
         # dbmsbenchmarker zero-fills a metric Prometheus did not return, so a
         # missing metric is only visible in the logs of the processes fetching it
-        missing = missing_metrics.collect_missing_metrics(Path(self.evaluator.path), optional_components)
+        missing = missing_metrics.collect_missing_metrics(
+            Path(self.evaluator.path), optional_components, scrape_interval=self.scrape_interval())
         if missing:
             print("\n### Missing Monitoring Metrics")
             for entry in missing:

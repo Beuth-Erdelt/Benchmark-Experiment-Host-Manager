@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.11.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.12.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -176,7 +176,7 @@ validity:
     why: "bexhoma gives every benchmarking pod its own process and exactly one connection, so at numRun=1 there is nothing to compare against and the check passes vacuously; PASS never certifies that two configurations, phases or experiment_runs returned the same rows"
   - id: monitoring_component_cpu_nonzero
     kind: absolute
-    checks: "per monitored component; SKIPPED (not failed) when phase < 1 scrape interval"
+    checks: "per monitored component, over the connections whose phase window is measurable: at least 1.2 x the cluster Prometheus scrape interval (cluster.config monitor.scrape_interval, default 30 s) for the SUT and workers, 2 x for jobs (loader, data generator, benchmarker); shorter phases show CPU [CPUs] as `n/a` and are left out; SKIPPED (not failed) when no connection of the component is measurable"
   - id: no_monitoring_metrics_missing
     kind: absolute
     label: "No monitoring metrics missing"
@@ -185,6 +185,7 @@ validity:
     expected_gaps:
       "data pre-existing": "an optional component (the data generator) had nothing to do and exited before the first scrape"
       "series exists only while non-zero": "the metric is marked sparse in cluster.config (e.g. backends waiting on locks, CPU throttling of a container without a CPU limit); no data means 0"
+      "phase shorter than scrape interval": "the fetch's window (Interval length in its bexhoma-metrics-*.log) was shorter than the component needs at the scrape interval (see monitoring_component_cpu_nonzero), so no scrape may have landed inside it; its CPU [CPUs] is n/a"
     reports:
       where: "report/index.md Health Summary (count and titles of unexpected gaps; a separate line for expected ones), report/monitoring.md Missing Metrics (source, title, connection, query, component, expected)"
     scopes: "the listed metrics' values in monitoring.md where `expected` is empty; expected gaps' zeros are correct; other metrics stay valid"

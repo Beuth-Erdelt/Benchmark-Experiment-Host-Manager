@@ -93,6 +93,7 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
     'service_monitoring_application': 'http://{service}.{namespace}.svc.cluster.local:9090/api/v1/',
     'extend': 0,
     'shift':  0,
+    'scrape_interval': 30,
     'metrics': {
         'total_cpu_memory':     { ... },
         'total_cpu_util':       { ... },
@@ -124,6 +125,7 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 |---|---|
 | `extend` | Number of seconds added to both ends of each monitoring interval. An interval `[t, t']` becomes `[t − extend, t' + extend]`. Default 0. Only for clocks that are out of sync; keep it well below the gap between phases (≤ 5 s), otherwise peak values (Max RAM) of the next phase are counted. |
 | `shift` | Number of seconds to shift the entire interval forward. An interval `[t, t']` becomes `[t + shift, t' + shift]`. Useful if container clocks are systematically ahead of the Prometheus clock. |
+| `scrape_interval` | Seconds between two scrapes of the cluster Prometheus (default 30). Phases shorter than 1.2 intervals (SUT, workers) or 2 intervals (jobs) are not measurable: their `CPU [CPUs]` is shown as `n/a` and left out of the CPU test (see [Monitoring.md](Monitoring.md#short-phases)). Not the same as `prometheus_interval`, which only sets bexhoma's own Prometheus. |
 
 #### Hardware metric definitions (`metrics`)
 

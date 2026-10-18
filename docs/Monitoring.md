@@ -257,6 +257,7 @@ Some gaps are expected, and their zeros are correct:
 |---|---|
 | `data pre-existing` | An optional component, the data generator, had nothing to do and exited before the first scrape |
 | `series exists only while non-zero` | The metric is marked `sparse: True` in `cluster.config`: its series only exists while the value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit) |
+| `phase shorter than scrape interval` | The fetch's window was too short for the scrapes the component needs (see [Short phases](#short-phases)), so no scrape may have landed inside it |
 
 The test `No monitoring metrics missing` fails only on unexpected gaps; when every gap is expected it is recorded as skipped, with the reasons.
 The report lists all gaps in `monitoring.md`'s Missing Metrics, with an `expected` column, and counts expected and unexpected gaps separately in `index.md`'s Health Summary (see [AgentReport](AgentReport.md)).
@@ -275,12 +276,24 @@ Two configuration keys in `cluster.config` adjust the interval; both default to 
 
 See [Config.md](Config.md) for how to set these values.
 
-If a loading or execution phase runs shorter than one scrape interval, fewer than two
-samples may land inside the phase window, so the `CPU [CPUs]` counter delta in the
-summary tables reads `0.0` (or `NaN`) even when the SUT was genuinely busy — the
-`total_cpu_util` gauge column (`Max CPU`) still reflects real usage in that case. The
-automated sanity check in `show_summary()` detects this and records the corresponding
-test as `skipped` rather than `failed` (see [Prepare-Testbeds.md](Prepare-Testbeds.md)).
+### Short phases
+
+Prometheus scrapes the containers every `scrape_interval` seconds (`monitor.scrape_interval` in `cluster.config`, default 30, the cluster Prometheus' own interval; not `prometheus_interval`, which only sets bexhoma's own Prometheus).
+A phase can only show what was scraped inside its window:
+
+| Component | Shortest measurable window | Why |
+|---|---|---|
+| SUT, workers | 1.2 × scrape interval | their pod runs before the window, so one scrape inside it is enough |
+| jobs: loader, data generator, benchmarker | 2 × scrape interval | a job pod starts inside the window, so its CPU total (`max - min`) needs two scrapes |
+
+The window is the one each fetch queried, logged as `Interval length <N>s` in `bexhoma-metrics-<connection>-<component>.log`.
+A connection whose window is shorter shows `n/a` instead of `CPU [CPUs]` in the summary and in the report, and is left out of the test `... contains no 0 or NaN in CPU [CPUs]`; the test is skipped when no connection of the component is measurable.
+Gaps in such a fetch count as expected (`phase shorter than scrape interval`, see [Missing Metrics](#missing-metrics)).
+`Max CPU` (a rate) and `Max RAM` (a gauge) keep their values; peaks between two scrapes are missed in any phase.
+
+Even in a long phase a CPU total is only accurate to about one scrape interval: the counted span is shifted by up to one interval, and the CPU after a job pod's last scrape is never recorded.
+Widening the window does not help (it counts the neighbouring phase), so `extend` stays a clock-skew knob.
+Results from before this rule (fetch logs without `Interval length`) are evaluated as before.
 
 ---
 

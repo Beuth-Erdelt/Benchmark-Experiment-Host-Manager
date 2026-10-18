@@ -1,8 +1,9 @@
 # Plan: monitoring metrics must not count pods of earlier phases
 
 Status: M1 **implemented and committed** (2026-10-15, `ee7832d3`). M1b
-(phases shorter than the scrape interval, added 2026-10-18) **planned**, to
-be done and committed before M2. M2-M4 **planned**: in the `cluster.config`
+(phases shorter than the scrape interval, added 2026-10-18) **implemented
+2026-10-18, uncommitted** (see "M1b: result"), one open point (jobs in a
+long loading window). M2-M4 **planned**: in the `cluster.config`
 templates a `{pods}` placeholder (jobs scoped by job name, one query set per
 scope, see "How"), `{namespace}`, and the 90 s filter for stale series
 (option (a): template change, no code-side query rewriting; no warning about
@@ -280,6 +281,45 @@ pod that already runs (SUT, workers) is the scrape **before** the window:
   round 2 unchanged.
 - `docs/Monitoring.md`: minimum phase length, accuracy of CPU totals
   (about one scrape interval per phase), the key.
+
+### M1b: result (2026-10-18)
+
+Implemented as above: `monitor.scrape_interval` (default 30) in
+`k8s-cluster.config` and `cluster.config`; `monitoring_math.min_measurable_window()`
+(1.2 x I for SUT/workers, 2 x I for jobs, 1.2 x I for jobs with
+`jobs_scoped=True`, for M2); `missing_metrics.fetch_window()` and
+`EXPECTED_SHORT_PHASE` (`collect_missing_metrics(..., scrape_interval=)`);
+`ExperimentBase.scrape_interval()`, `short_phase_connections()`,
+`mark_not_measurable()`; summary and report show `n/a` and test only the
+measurable connections (skipped when none is); `MIN_MONITORING_SAMPLES`
+removed; result contract 1.12.0 (`report_writer.SCHEMA_VERSION`), its
+prose in `docs/AgentResultContract.md`; `docs/Monitoring.md` ("Short
+phases"), `docs/Config.md`. Tests: `tests/test_short_phases.py`, new cases
+in `tests/test_missing_metrics.py`.
+
+Check, 1792347080 evaluated again locally: both benchmarking rounds (11 s
+and 13 s; round 2 is short too, unlike the expectation "round 2
+unchanged") show `n/a` for SUT and benchmarker, both CPU tests **skipped**
+instead of failed, their gaps carry the new reason; loading tables and
+tests unchanged.
+
+**Open: jobs in a long loading window.** "Monitoring metrics missing" still
+fails there, on the loader's `CPU Utilization [CPUs]` (`irate`, needs two
+samples): the loader pods ran ~8 s inside a 165 s loading window, so the
+window rule calls the phase measurable. Same case as the tenancy_2 loader.
+The window of a loading fetch is the whole loading phase, not a job's life.
+Options, not decided:
+- (a) for loader / data generator, use the jobs' own spans
+  (`loading_timespans` in the connection config) as the window: they are
+  measured between markers inside the container and shorter than the pod's
+  life, so loaders that did get two scrapes would be shown `n/a` too (e.g.
+  tenant 2 of tenancy_2); conservative, loses values;
+- (b) expect a missing rate metric of a job when its counter series exists
+  but has one distinct value (one scrape): data-based, but unlike the
+  rejected rule of decision 1 not ambiguous, since a broken query has no
+  counter values at all;
+- (c) leave it until M2: decision 5 then gives the single-sample loader a
+  real CPU total; the missing `irate` stays and still fails the test.
 
 ### Open
 

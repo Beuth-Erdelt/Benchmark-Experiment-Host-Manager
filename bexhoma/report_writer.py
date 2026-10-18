@@ -83,7 +83,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.11.0"
+SCHEMA_VERSION = "1.12.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -589,15 +589,19 @@ def _build_monitoring_sections(
                    f"it names a reason, the zeros are correct: `{missing_metrics.EXPECTED_DATA_PREEXISTING}` "
                    "means an optional component (the data generator) had nothing to do and exited "
                    f"before the first scrape; `{missing_metrics.EXPECTED_SPARSE}` means the metric "
-                   "only has a series while its value is non-zero. `source` is the log that reported "
+                   "only has a series while its value is non-zero; "
+                   f"`{missing_metrics.EXPECTED_SHORT_PHASE}` means the phase was too short for the "
+                   "scrapes it needs, so its CPU is shown as n/a. `source` is the log that reported "
                    "it (see files.md)."],
         ))
     monitoring_components = experiment.workload.get('monitoring_components', {})
     for component, title in monitoring_components.items():
-        df_monitoring, _insufficient_samples = experiment.show_summary_monitoring_table(evaluator, component)
+        df_monitoring, short = experiment.show_summary_monitoring_table(evaluator, component)
         if len(df_monitoring) > 0:
             df = pd.concat(df_monitoring, axis=1).round(2)
             df = df.reindex(index=evaluators.natural_sort(df.index))
+            # phases too short to measure their CPU show n/a, as in show_summary()
+            df = experiment.mark_not_measurable(df, short)
             df.index.names = ["DBMS"]
             sections.append(Section(heading=title, level=3, dataframe=df, link_connections=True))
     if monitoring_applications:
@@ -1155,7 +1159,8 @@ def write_markdown_report(
     missing = None
     if experiment.monitoring_active or experiment.cluster.monitor_cluster_active:
         missing = missing_metrics.collect_missing_metrics(
-            result_dir, experiment.workload.get('optional_monitoring_components', []))
+            result_dir, experiment.workload.get('optional_monitoring_components', []),
+            scrape_interval=experiment.scrape_interval())
     monitoring_sections = _build_monitoring_sections(
         experiment, benchmark.evaluator, connections_sorted, monitoring_applications, missing,
     )

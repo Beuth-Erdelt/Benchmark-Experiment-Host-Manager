@@ -32,10 +32,44 @@ from __future__ import annotations
 
 import pandas as pd
 
-__all__ = ["JOB_COMPONENTS", "counter_increase", "counter_total"]
+__all__ = [
+    "JOB_COMPONENTS", "DEFAULT_SCRAPE_INTERVAL_SECONDS", "SCRAPE_JITTER",
+    "counter_increase", "counter_total", "min_measurable_window",
+]
 
 #: Monitoring components whose pods are jobs started inside the phase.
 JOB_COMPONENTS = frozenset({'loader', 'datagenerator', 'benchmarker'})
+
+#: Scrape interval of the cluster Prometheus when ``cluster.config`` names none
+#: (``monitor.scrape_interval``).
+DEFAULT_SCRAPE_INTERVAL_SECONDS = 30
+
+#: Factor on the scrape interval for "at least one scrape inside the window",
+#: since scrapes come with some jitter (28-32 s on the cluster at 30 s).
+SCRAPE_JITTER = 1.2
+
+
+def min_measurable_window(component: str, scrape_interval: float, jobs_scoped: bool = False) -> float:
+    """Shortest phase window, in seconds, whose CPU total can be measured.
+
+    The fetch repeats the latest scrape in every 1 s row, so the first row of a
+    pod that already runs (SUT, workers) is the scrape before the window: one
+    scrape inside the window is enough. A job pod starts inside the window and
+    has no scrape before it, so ``max - min`` needs two scrapes inside; once its
+    query covers only its own pods and its first value counts as growth
+    (``jobs_scoped``), one is enough. See ``dev/plan-metrics-pod-scope.md`` (M1b).
+
+    :param component: The monitoring component, e.g. ``loading`` or ``benchmarker``.
+    :param scrape_interval: Seconds between two scrapes of the Prometheus the metrics come from.
+    :param jobs_scoped: Whether job counters count their first value (their
+        query covers only their own pods).
+    :return: ``2 x scrape_interval`` for a job counted by ``max - min``, else
+        ``SCRAPE_JITTER x scrape_interval``.
+    :rtype: float
+    """
+    if component in JOB_COMPONENTS and not jobs_scoped:
+        return 2 * scrape_interval
+    return SCRAPE_JITTER * scrape_interval
 
 
 def counter_increase(df: pd.DataFrame) -> pd.Series:
