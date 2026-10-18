@@ -65,6 +65,8 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_citus_1.log
 ```
@@ -326,6 +328,8 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_citus_2.log
@@ -657,6 +661,8 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_citus_1.log
 ```
@@ -851,6 +857,8 @@ bexhoma benchbase \
   -tr \
   -rsr \
   -rss 100Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_citus_2.log
@@ -1298,6 +1306,8 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 100Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_citus_3.log
@@ -2007,6 +2017,8 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_citus_1.log
 ```
@@ -2145,6 +2157,8 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_citus_2.log
@@ -3308,6 +3322,8 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_citus_1.log
 ```
@@ -3504,6 +3520,8 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_citus_2.log
@@ -3942,6 +3960,8 @@ bexhoma tpch \
   -tr \
   -rsr \
   -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_citus_3.log
