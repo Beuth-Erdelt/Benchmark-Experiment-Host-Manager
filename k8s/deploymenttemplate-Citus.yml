@@ -244,6 +244,11 @@ spec:
           #"-c", "huge_pages=on",
           "-c", "temp_buffers=64MB",
           "-c", "autovacuum_work_mem=-1",
+          # Citus 14.0-14.2 on a worker: every execution of a prepared statement on a
+          # distributed table adds a local plan to its generic plan (citusdata/citus#8824),
+          # so client sessions on workers (YCSB host list) grow until OOM. Custom plans
+          # are not cached. Remove once the image contains #8824.
+          "-c", "plan_cache_mode=force_custom_plan",
           "-c", "max_stack_depth=4MB",
           "-c", "max_files_per_process=4000",
           "-c", "effective_io_concurrency=32",
