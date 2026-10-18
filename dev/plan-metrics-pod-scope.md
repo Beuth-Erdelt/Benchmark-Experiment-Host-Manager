@@ -50,6 +50,35 @@ warning about old copies). M3 cluster run **open**.
   kind, short-phase table), `docs/Config.md`, `docs/AgentResultContract.md`,
   `contracts/contract_result.yml` (CPU check wording; schema version
   unchanged).
+- Cluster, YugabyteDB YCSB (1792356094): all tests passed; fetches used
+  `metrics_benchmarker`, `metrics_loading`, `metrics_yb-master`,
+  `metrics_yb-tserver`.
+- Cluster, M3 run Benchbase TPC-C SF1 PostgreSQL `-nc 2 -rsrp -xnbf 1,4`
+  (1792359757, `dev/logs_pod_scope/tpcc_postgresql_m3.log`):
+  - SUT loading rep 1 / rep 2: 16.17 / 15.91 CPU-s, Max RAM 0.50 / 0.50 GB
+    (no old SUT in rep 2).
+  - Benchmarker rounds differ: rep 1 47.79 / 61.61, rep 2 59.32 / 56.30
+    CPU-s; round 1's pod series lingered 5 min into round 2 (Prometheus
+    pod spans) and is not counted.
+  - SUT gap (contradiction "SUT gap after a restart"): rep 1 SUT's last real
+    sample ~23:52:55, rep 2 loading window from 23:56:41: ~3.7 min, above
+    90 s. Rep 2 SUT pod started 23:54:10, but no phase window starts before
+    loading. Resolved for this setup; `-ks`/inherited loading not measured.
+  - Loader: CPU 0.09 / 0 and "Monitoring metrics missing" failed: the
+    Benchbase loading pod's `sensor` container ran 25 s in a 56-67 s
+    window, one sample in rep 1, none in rep 2. The accepted "short job in
+    a long loading window" case, not a regression.
+- Cluster, workers: YCSB Citus `-nw 3 -nc 2 -rsrp` (1792360184,
+  `dev/logs_pod_scope/ycsb_citus_workers.log`). The worker pods keep their
+  names across repetitions (StatefulSet), so only the 90 s filter separates
+  them:
+  - worker loading rep 1 / rep 2: 337.4 / 329.1 CPU-s, Max RAM 3.25 / 2.95 GB;
+    SUT loading 111.3 / 103.6; loader 52.6 / 48.5. No old pods counted.
+  - All monitoring tests passed. Failed, unrelated to monitoring: worker 0
+    `OOMKilled` in rep 2 benchmarking (container limit 64Gi, working set
+    51 GB at the last scrape, node cl-worker24 had ~430 GB free), hence "No
+    SUT container restarts" and the YCSB FAILED column. Worker 2 stayed at
+    1.9 GB while workers 0 and 1 reached ~50 GB.
 
 ## Problem
 
