@@ -2,8 +2,8 @@
 
 Status: M1 **implemented and committed** (2026-10-15, `ee7832d3`). M1b
 (phases shorter than the scrape interval, added 2026-10-18) **implemented
-2026-10-18, uncommitted** (see "M1b: result"), one open point (jobs in a
-long loading window). M2-M4 **planned**: in the `cluster.config`
+2026-10-18, uncommitted** (see "M1b: result"); jobs too short inside a long
+loading window are left unreliable (decided 2026-10-18). M2-M4 **planned**: in the `cluster.config`
 templates a `{pods}` placeholder (jobs scoped by job name, one query set per
 scope, see "How"), `{namespace}`, and the 90 s filter for stale series
 (option (a): template change, no code-side query rewriting; no warning about
@@ -303,23 +303,36 @@ unchanged") show `n/a` for SUT and benchmarker, both CPU tests **skipped**
 instead of failed, their gaps carry the new reason; loading tables and
 tests unchanged.
 
-**Open: jobs in a long loading window.** "Monitoring metrics missing" still
-fails there, on the loader's `CPU Utilization [CPUs]` (`irate`, needs two
+**Found: jobs in a long loading window.** "Monitoring metrics missing" still
+failed there, on the loader's `CPU Utilization [CPUs]` (`irate`, needs two
 samples): the loader pods ran ~8 s inside a 165 s loading window, so the
-window rule calls the phase measurable. Same case as the tenancy_2 loader.
-The window of a loading fetch is the whole loading phase, not a job's life.
-Options, not decided:
-- (a) for loader / data generator, use the jobs' own spans
-  (`loading_timespans` in the connection config) as the window: they are
-  measured between markers inside the container and shorter than the pod's
-  life, so loaders that did get two scrapes would be shown `n/a` too (e.g.
-  tenant 2 of tenancy_2); conservative, loses values;
-- (b) expect a missing rate metric of a job when its counter series exists
-  but has one distinct value (one scrape): data-based, but unlike the
-  rejected rule of decision 1 not ambiguous, since a broken query has no
-  counter values at all;
-- (c) leave it until M2: decision 5 then gives the single-sample loader a
-  real CPU total; the missing `irate` stays and still fails the test.
+window rule calls the phase measurable. Same case as the tenancy_2 loader
+(one scrape). The window of a loading fetch is the whole loading phase, not
+a job's life.
+
+**Decision (2026-10-18): ignored for now.** A job too short for its
+metrics is not reliable, and the test may say so; no extra rule.
+
+Tried and taken out: "a missing metric is expected when its fetch saw at
+least one but fewer scrapes than the query needs", with the scrapes needed
+from the query text (2 for `rate`, `irate`, `increase`, ...) and the scrapes
+seen as value runs in the fetch's CSVs. It does not hold:
+- a fetch is not one scope: it also holds node metrics (`instance="{host}"`),
+  Ceph pool metrics and network metrics without a container filter, which
+  change with other targets' scrapes (tenancy_2 tenant 1's loader: 1 run in
+  its own container metrics, 5-76 in the others);
+- the CSVs are sums over pods: 8 loader pods with one scrape each at
+  different times give several runs (1792347080), while every pod's rate is
+  empty.
+
+If it is ever needed: (A) take the runs only from a fetched metric with the
+same series selector as the missing query (exact for one pod, stays strict
+for several); (B) when a metric comes back empty, DBMS-Benchmarker runs
+`max(count_over_time(<selector>[<window>]))` and logs the samples per series
+(exact for any number of pods; needs a release and a new dashboard image).
+Also rejected: the jobs' own spans (`loading_timespans`) as their window
+(shorter than the pods' life, would show `n/a` for loaders that had two
+scrapes).
 
 ### Open
 
