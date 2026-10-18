@@ -1,0 +1,837 @@
+﻿Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792091105
+Experiment                    : starts at 2026-10-15 21:05:10.057874 (75066.4507661)
+Experiment                    : This imports TPC-H data sets.
+TPC-H (SF=30) data is loaded.
+Experiment uses bexhoma version 0.11.5.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['PostgreSQL'].
+Import is handled by 8 processes (pods).
+SUT is fixed to cl-worker36.
+Storage is swept across configurations: nvme, cephcsi, size 150Gi. Persistent storage is removed before every repetition.
+Loading is tested with [8] threads, split into [8] pods.
+Experiment is run 3 times.
+Maximum DBMS across the whole cluster is 1.
+SUT pods are stopped after loading.
+Results are validated against basic correctness requirements.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '4GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '12GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200')].
+SUT requests 8 CPU and 16Gi RAM. CPU limit is 8. RAM limit is 16Gi.
+Cluster monitoring            : is running
+PostgreSQL-1                  : will start now
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : found labels on pvc = []
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1792091105
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1792091105
+PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 4GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 12GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-2                  : has to wait - 0 running and 1 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is not loaded yet
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792091105-6685d7dbdb-l5rps to load scripts
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : start asynch loading scripts of type schema
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : showing loader times (tpch-loader)
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1792091369, 1792091369), (1792091364, 1792091364), (1792091371, 1792091371), (1792091365, 1792091365), (1792091363, 1792091363), (1792091379, 1792091379), (1792091364, 1792091364), (1792091377, 1792091377)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1792091385, 1792091609), (1792091385, 1792091608), (1792091385, 1792091609), (1792091384, 1792091600), (1792091385, 1792091607), (1792091385, 1792091596), (1792091385, 1792091607), (1792091385, 1792091594)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1792091369, 1792091369), (1792091364, 1792091364), (1792091371, 1792091371), (1792091365, 1792091365), (1792091363, 1792091363), (1792091379, 1792091379), (1792091364, 1792091364), (1792091377, 1792091377), (1792091385, 1792091609), (1792091385, 1792091608), (1792091385, 1792091609), (1792091384, 1792091600), (1792091385, 1792091607), (1792091385, 1792091596), (1792091385, 1792091607), (1792091385, 1792091594)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 16
+PostgreSQL-1                  : loader timespan (first to last [s]) = 225
+PostgreSQL-1                  : total timespan (first to last [s]) = 246
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+postgresql-1-1-1              : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1792091105-6685d7dbdb-l5rps and write to pvc bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792091105
+postgresql-1-1-1              : needs monitoring (common metrics) for deployment sut
+postgresql-1-1-1              : collecting loading metrics of SUT at connection postgresql-1-1-1
+postgresql-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-1              : collecting metrics of data generator at connection postgresql-1-1-1
+postgresql-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-1              : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: CPU User Time [s]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: CPU System Time [s]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-1-1-1              : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-1-1-1              : collecting metrics of data injector at connection postgresql-1-1-1
+postgresql-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-1              : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+postgresql-1-1-1              : WARNING metric missing for loader: CPU Throttled Time [s]
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1792091105-6685d7dbdb-l5rps
+PostgreSQL-1                  : starts again
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : found labels on pvc = []
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1792091105
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1792091105
+PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 4GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 12GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-1                  : storage bexhoma-storage-postgresql-1-nvme-tpch-30 should be removed
+- waiting 10s -               : done
+PostgreSQL-1                  : storage bexhoma-storage-postgresql-1-nvme-tpch-30 is gone
+- waiting 10s -               : done
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is not loaded yet
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792091105-fd596bdd7-4tt22 to load scripts
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : start asynch loading scripts of type schema
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : showing loader times (tpch-loader)
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1792092154, 1792092155), (1792092152, 1792092152), (1792092170, 1792092170), (1792092166, 1792092166), (1792092163, 1792092163), (1792092173, 1792092173), (1792092160, 1792092160), (1792092168, 1792092168)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1792092178, 1792092383), (1792092178, 1792092401), (1792092177, 1792092393), (1792092178, 1792092400), (1792092177, 1792092400), (1792092177, 1792092399), (1792092177, 1792092401), (1792092177, 1792092378)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1792092154, 1792092155), (1792092152, 1792092152), (1792092170, 1792092170), (1792092166, 1792092166), (1792092163, 1792092163), (1792092173, 1792092173), (1792092160, 1792092160), (1792092168, 1792092168), (1792092178, 1792092383), (1792092178, 1792092401), (1792092177, 1792092393), (1792092178, 1792092400), (1792092177, 1792092400), (1792092177, 1792092399), (1792092177, 1792092401), (1792092177, 1792092378)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 21
+PostgreSQL-1                  : loader timespan (first to last [s]) = 224
+PostgreSQL-1                  : total timespan (first to last [s]) = 249
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+postgresql-1-2-1              : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1792091105-fd596bdd7-4tt22 and write to pvc bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792091105
+postgresql-1-2-1              : needs monitoring (common metrics) for deployment sut
+postgresql-1-2-1              : collecting loading metrics of SUT at connection postgresql-1-2-1
+postgresql-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-2-1              : collecting metrics of data generator at connection postgresql-1-2-1
+postgresql-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-2-1              : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: CPU User Time [s]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: CPU System Time [s]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-1-2-1              : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-1-2-1              : collecting metrics of data injector at connection postgresql-1-2-1
+postgresql-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-2-1              : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+postgresql-1-2-1              : WARNING metric missing for loader: CPU Throttled Time [s]
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1792091105-fd596bdd7-4tt22
+PostgreSQL-1                  : starts again
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : found labels on pvc = []
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1792091105
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1792091105
+PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 4GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 12GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-1                  : storage bexhoma-storage-postgresql-1-nvme-tpch-30 should be removed
+- waiting 10s -               : done
+PostgreSQL-1                  : storage bexhoma-storage-postgresql-1-nvme-tpch-30 is gone
+- waiting 10s -               : done
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is not loaded yet
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792091105-b7b64b4c6-bvnf7 to load scripts
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : start asynch loading scripts of type schema
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-1                  : showing loader times (tpch-loader)
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1792093060, 1792093060), (1792093052, 1792093052), (1792093069, 1792093069), (1792093056, 1792093056), (1792093065, 1792093065), (1792093051, 1792093051), (1792093067, 1792093067), (1792093053, 1792093053)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1792093073, 1792093310), (1792093074, 1792093291), (1792093074, 1792093308), (1792093074, 1792093297), (1792093074, 1792093310), (1792093074, 1792093311), (1792093074, 1792093304), (1792093074, 1792093309)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1792093060, 1792093060), (1792093052, 1792093052), (1792093069, 1792093069), (1792093056, 1792093056), (1792093065, 1792093065), (1792093051, 1792093051), (1792093067, 1792093067), (1792093053, 1792093053), (1792093073, 1792093310), (1792093074, 1792093291), (1792093074, 1792093308), (1792093074, 1792093297), (1792093074, 1792093310), (1792093074, 1792093311), (1792093074, 1792093304), (1792093074, 1792093309)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 18
+PostgreSQL-1                  : loader timespan (first to last [s]) = 238
+PostgreSQL-1                  : total timespan (first to last [s]) = 260
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-1-nvme-tpch-30']
+PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-1-nvme-tpch-30
+postgresql-1-3-1              : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1792091105-b7b64b4c6-bvnf7 and write to pvc bexhoma-storage-postgresql-1-nvme-tpch-30
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792091105
+postgresql-1-3-1              : needs monitoring (common metrics) for deployment sut
+postgresql-1-3-1              : collecting loading metrics of SUT at connection postgresql-1-3-1
+postgresql-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-3-1              : collecting metrics of data generator at connection postgresql-1-3-1
+postgresql-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-3-1              : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: CPU User Time [s]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: CPU System Time [s]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-1-3-1              : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-1-3-1              : collecting metrics of data injector at connection postgresql-1-3-1
+postgresql-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792091105(.*)", pod=~"(.*)postgresql-1-1792091105(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-3-1              : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+postgresql-1-3-1              : WARNING metric missing for loader: CPU Throttled Time [s]
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1792091105-b7b64b4c6-bvnf7
+PostgreSQL-2                  : has to wait - 1 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+PostgreSQL-2                  : will start now
+PostgreSQL-2                  : deployments ['sut']
+PostgreSQL-2                  : stateful sets []
+PostgreSQL-2                  : pvcs ['sut']
+PostgreSQL-2                  : found labels on pvc = []
+PostgreSQL-2                  : name of SUT pods = bexhoma-sut-postgresql-2-1792091105
+PostgreSQL-2                  : name of SUT service = bexhoma-sut-postgresql-2-1792091105
+PostgreSQL-2                  : name of SUT PVC name = bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 4GB
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 12GB
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-2                  : is not loaded yet
+PostgreSQL-2                  : connect to pod bexhoma-sut-postgresql-2-1792091105-7f76f76799-dgx97 to load scripts
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : start asynch loading scripts of type schema
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : showing loader times (tpch-loader)
+PostgreSQL-2                  : generator times (start/end per pod and container) [(1792093947, 1792093947), (1792093943, 1792093943), (1792093965, 1792093965), (1792093961, 1792093961), (1792093957, 1792093957), (1792093950, 1792093950), (1792093945, 1792093945), (1792093959, 1792093959)]
+PostgreSQL-2                  : loader times (start/end per pod and container) [(1792093969, 1792095328), (1792093969, 1792095301), (1792093969, 1792095325), (1792093969, 1792095289), (1792093969, 1792095327), (1792093969, 1792095325), (1792093969, 1792095325), (1792093969, 1792095322)]
+PostgreSQL-2                  : total times (start/end per pod and container) [(1792093947, 1792093947), (1792093943, 1792093943), (1792093965, 1792093965), (1792093961, 1792093961), (1792093957, 1792093957), (1792093950, 1792093950), (1792093945, 1792093945), (1792093959, 1792093959), (1792093969, 1792095328), (1792093969, 1792095301), (1792093969, 1792095325), (1792093969, 1792095289), (1792093969, 1792095327), (1792093969, 1792095325), (1792093969, 1792095325), (1792093969, 1792095322)]
+PostgreSQL-2                  : generator timespan (first to last [s]) = 22
+PostgreSQL-2                  : loader timespan (first to last [s]) = 1359
+PostgreSQL-2                  : total timespan (first to last [s]) = 1385
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+postgresql-2-1-1              : needs monitoring (common metrics) for deployment sut
+PostgreSQL-2                  : get size via pod bexhoma-sut-postgresql-2-1792091105-7f76f76799-dgx97 and write to pvc bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : benchmarking results in folder C:\data\benchmarks/1792091105
+postgresql-2-1-1              : needs monitoring (common metrics) for deployment sut
+postgresql-2-1-1              : collecting loading metrics of SUT at connection postgresql-2-1-1
+postgresql-2-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-1-1              : collecting metrics of data generator at connection postgresql-2-1-1
+postgresql-2-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-1-1              : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: CPU User Time [s]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: CPU System Time [s]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-2-1-1              : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-2-1-1              : collecting metrics of data injector at connection postgresql-2-1-1
+postgresql-2-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-1-1              : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+postgresql-2-1-1              : WARNING metric missing for loader: CPU Throttled Time [s]
+PostgreSQL-2                  : can be stopped
+PostgreSQL-2                  : had 0 restarts at worker bexhoma-sut-postgresql-2-1792091105-7f76f76799-dgx97
+PostgreSQL-2                  : still being removed
+- waiting 30s -               : done
+PostgreSQL-2                  : still being removed
+- waiting 30s -               : done
+PostgreSQL-2                  : starts again
+PostgreSQL-2                  : deployments ['sut']
+PostgreSQL-2                  : stateful sets []
+PostgreSQL-2                  : pvcs ['sut']
+PostgreSQL-2                  : found labels on pvc = []
+PostgreSQL-2                  : name of SUT pods = bexhoma-sut-postgresql-2-1792091105
+PostgreSQL-2                  : name of SUT service = bexhoma-sut-postgresql-2-1792091105
+PostgreSQL-2                  : name of SUT PVC name = bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 4GB
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 12GB
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-2                  : storage bexhoma-storage-postgresql-2-cephcsi-tpch-30 should be removed
+- waiting 10s -               : done
+PostgreSQL-2                  : storage bexhoma-storage-postgresql-2-cephcsi-tpch-30 is gone
+- waiting 10s -               : done
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : start asynch loading scripts of type schema
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : total timespan (first to last [s]) = 1561
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+postgresql-2-2-1              : needs monitoring (common metrics) for deployment sut
+PostgreSQL-2                  : get size via pod bexhoma-sut-postgresql-2-1792091105-7dd674b9d8-j8ns7 and write to pvc bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : benchmarking results in folder C:\data\benchmarks/1792091105
+postgresql-2-2-1              : needs monitoring (common metrics) for deployment sut
+postgresql-2-2-1              : collecting loading metrics of SUT at connection postgresql-2-2-1
+postgresql-2-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-2-1              : collecting metrics of data generator at connection postgresql-2-2-1
+postgresql-2-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-2-1              : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: CPU User Time [s]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: CPU System Time [s]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-2-2-1              : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-2-2-1              : collecting metrics of data injector at connection postgresql-2-2-1
+postgresql-2-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-2-1              : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+postgresql-2-2-1              : WARNING metric missing for loader: CPU Throttled Time [s]
+PostgreSQL-2                  : can be stopped
+PostgreSQL-2                  : had 0 restarts at worker bexhoma-sut-postgresql-2-1792091105-7dd674b9d8-j8ns7
+PostgreSQL-2                  : still being removed
+- waiting 30s -               : done
+PostgreSQL-2                  : still being removed
+- waiting 30s -               : done
+PostgreSQL-2                  : starts again
+PostgreSQL-2                  : deployments ['sut']
+PostgreSQL-2                  : stateful sets []
+PostgreSQL-2                  : pvcs ['sut']
+PostgreSQL-2                  : found labels on pvc = []
+PostgreSQL-2                  : name of SUT pods = bexhoma-sut-postgresql-2-1792091105
+PostgreSQL-2                  : name of SUT service = bexhoma-sut-postgresql-2-1792091105
+PostgreSQL-2                  : name of SUT PVC name = bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 4GB
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 12GB
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-2                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-2                  : storage bexhoma-storage-postgresql-2-cephcsi-tpch-30 should be removed
+- waiting 10s -               : done
+PostgreSQL-2                  : storage bexhoma-storage-postgresql-2-cephcsi-tpch-30 is gone
+- waiting 10s -               : done
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-2                  : waits for health check to succeed
+- waiting 30s -               : done
+PostgreSQL-2                  : is not loaded yet
+PostgreSQL-2                  : connect to pod bexhoma-sut-postgresql-2-1792091105-7896d7666f-wkdzt to load scripts
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : start asynch loading scripts of type schema
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : is loading
+- waiting 30s -               : done
+PostgreSQL-2                  : showing loader times (tpch-loader)
+PostgreSQL-2                  : generator times (start/end per pod and container) [(1792098211, 1792098211), (1792098225, 1792098225), (1792098206, 1792098206), (1792098216, 1792098216), (1792098226, 1792098226), (1792098221, 1792098221), (1792098213, 1792098213), (1792098204, 1792098204)]
+PostgreSQL-2                  : loader times (start/end per pod and container) [(1792098229, 1792099569), (1792098229, 1792099563), (1792098230, 1792099571), (1792098229, 1792099557), (1792098229, 1792099571), (1792098229, 1792099547), (1792098230, 1792099571), (1792098230, 1792099563)]
+PostgreSQL-2                  : total times (start/end per pod and container) [(1792098211, 1792098211), (1792098225, 1792098225), (1792098206, 1792098206), (1792098216, 1792098216), (1792098226, 1792098226), (1792098221, 1792098221), (1792098213, 1792098213), (1792098204, 1792098204), (1792098229, 1792099569), (1792098229, 1792099563), (1792098230, 1792099571), (1792098229, 1792099557), (1792098229, 1792099571), (1792098229, 1792099547), (1792098230, 1792099571), (1792098230, 1792099563)]
+PostgreSQL-2                  : generator timespan (first to last [s]) = 22
+PostgreSQL-2                  : loader timespan (first to last [s]) = 1342
+PostgreSQL-2                  : total timespan (first to last [s]) = 1367
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : list of pvcs ['bexhoma-storage-postgresql-2-cephcsi-tpch-30']
+PostgreSQL-2                  : will be labeling bexhoma-storage-postgresql-2-cephcsi-tpch-30
+postgresql-2-3-1              : needs monitoring (common metrics) for deployment sut
+PostgreSQL-2                  : get size via pod bexhoma-sut-postgresql-2-1792091105-7896d7666f-wkdzt and write to pvc bexhoma-storage-postgresql-2-cephcsi-tpch-30
+PostgreSQL-2                  : benchmarking results in folder C:\data\benchmarks/1792091105
+postgresql-2-3-1              : needs monitoring (common metrics) for deployment sut
+postgresql-2-3-1              : collecting loading metrics of SUT at connection postgresql-2-3-1
+postgresql-2-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-3-1              : collecting metrics of data generator at connection postgresql-2-3-1
+postgresql-2-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-3-1              : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: CPU User Time [s]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: CPU System Time [s]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-2-3-1              : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+postgresql-2-3-1              : collecting metrics of data injector at connection postgresql-2-3-1
+postgresql-2-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)postgresql-2-1792091105(.*)", pod=~"(.*)postgresql-2-1792091105(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-2-3-1              : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+postgresql-2-3-1              : WARNING metric missing for loader: CPU Throttled Time [s]
+PostgreSQL-2                  : can be stopped
+PostgreSQL-2                  : had 0 restarts at worker bexhoma-sut-postgresql-2-1792091105-7896d7666f-wkdzt
+Experiment                    : ends at 2026-10-15 23:31:34.884311 (83851.2411173) - 8784.79s total
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-H Data Loading SF=30
+* Type: tpch
+* Duration: 8785s 
+* Code: 1792091105
+* Load data and do not run a benchmark.
+* This imports TPC-H data sets.
+  * TPC-H (SF=30) data is loaded.
+  * Experiment uses bexhoma version 0.11.5.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 8 processes (pods).
+  * SUT is fixed to cl-worker36.
+  * Storage is swept across configurations: nvme, cephcsi, size 150Gi. Persistent storage is removed before every repetition.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Experiment is run 3 times.
+  * Maximum DBMS across the whole cluster is 1.
+  * SUT pods are stopped after loading.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '4GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '12GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200')].
+  * SUT requests 8 CPU and 16Gi RAM. CPU limit is 8. RAM limit is 16Gi.
+
+### Connections
+* postgresql-1-1-1 uses docker image postgres:18.3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1143405
+  * volume_size:147G
+  * volume_used:70G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=4GB', '-c', 'effective_cache_size=12GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'io_method=io_uring', '-c', 'effective_io_concurrency=200']
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792091105
+* postgresql-1-2-1 uses docker image postgres:18.3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1131853
+  * volume_size:147G
+  * volume_used:70G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=4GB', '-c', 'effective_cache_size=12GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'io_method=io_uring', '-c', 'effective_io_concurrency=200']
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792091105
+* postgresql-1-3-1 uses docker image postgres:18.3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1143406
+  * volume_size:147G
+  * volume_used:70G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=4GB', '-c', 'effective_cache_size=12GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'io_method=io_uring', '-c', 'effective_io_concurrency=200']
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792091105
+* postgresql-2-1-1 uses docker image postgres:18.3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1143431
+  * volume_size:147G
+  * volume_used:70G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=4GB', '-c', 'effective_cache_size=12GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'io_method=io_uring', '-c', 'effective_io_concurrency=200']
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792091105
+* postgresql-2-2-1 uses docker image postgres:18.3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1143490
+  * volume_size:147G
+  * volume_used:70G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=4GB', '-c', 'effective_cache_size=12GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'io_method=io_uring', '-c', 'effective_io_concurrency=200']
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792091105
+* postgresql-2-3-1 uses docker image postgres:18.3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1143506
+  * volume_size:147G
+  * volume_used:70G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=4GB', '-c', 'effective_cache_size=12GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'io_method=io_uring', '-c', 'effective_io_concurrency=200']
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792091105
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1792091105-6685d7dbdb-l5rps: 0
+* bexhoma-sut-postgresql-1-1792091105-fd596bdd7-4tt22: 0
+* bexhoma-sut-postgresql-1-1792091105-b7b64b4c6-bvnf7: 0
+* bexhoma-sut-postgresql-2-1792091105-7f76f76799-dgx97: 0
+* bexhoma-sut-postgresql-2-1792091105-7dd674b9d8-j8ns7: 0
+* bexhoma-sut-postgresql-2-1792091105-7896d7666f-wkdzt: 0
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |   30 |      251.00 |           5.00 |           16.00 |        225.00 |            0.00 |              8 |           0 |             |                |             0 | False         |              430.28 | False               |
+| PostgreSQL-1-2 |                2 |   30 |      254.00 |           5.00 |           21.00 |        224.00 |            0.00 |              8 |           0 |             |                |             0 | False         |              425.20 | False               |
+| PostgreSQL-1-3 |                3 |   30 |      265.00 |           5.00 |           18.00 |        238.00 |            0.00 |              8 |           0 |             |                |             0 | False         |              407.55 | False               |
+| PostgreSQL-2-1 |                1 |   30 |     1390.00 |           5.00 |           22.00 |       1359.00 |            0.00 |              8 |           0 |             |                |             0 | False         |               77.70 | False               |
+| PostgreSQL-2-2 |                2 |   30 |     1566.00 |           5.00 |           23.00 |       1533.00 |            0.00 |              8 |           0 |             |                |             0 | False         |               68.97 | False               |
+| PostgreSQL-2-3 |                3 |   30 |     1373.00 |           6.00 |           22.00 |       1342.00 |            0.00 |              8 |           0 |             |                |             0 | False         |               78.66 | False               |
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1 |       496.53 |      3.19 |           1.33 |                 16.00 |
+| postgresql-1-2-1 |       507.71 |      3.20 |           1.33 |                 16.00 |
+| postgresql-1-3-1 |       518.94 |      3.07 |           1.34 |                 16.00 |
+| postgresql-2-1-1 |       521.54 |      0.55 |           1.33 |                 16.00 |
+| postgresql-2-2-1 |       527.36 |      0.47 |           1.34 |                 16.00 |
+| postgresql-2-3-1 |       544.02 |      0.62 |           1.34 |                 16.00 |
+
+### Loading phase: component data generator
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| postgresql-1-2-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| postgresql-1-3-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| postgresql-2-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| postgresql-2-2-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| postgresql-2-3-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1 |       414.37 |      2.85 |           0.01 |                  3.54 |
+| postgresql-1-2-1 |       435.09 |      2.75 |           0.01 |                  3.96 |
+| postgresql-1-3-1 |       417.25 |      2.57 |           0.02 |                  3.54 |
+| postgresql-2-1-1 |       503.76 |      2.84 |           0.02 |                  3.96 |
+| postgresql-2-2-1 |       501.23 |      2.14 |           0.02 |                  3.96 |
+| postgresql-2-3-1 |       511.36 |      2.83 |           0.01 |                  3.96 |
+
+### Missing Monitoring Metrics
+* Memory Usage, Working Set [MiB] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1 (bexhoma-metrics-postgresql-1-1-1-loader.log, expected: series exists only while non-zero)
+* Memory Usage, Working Set [MiB] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-2-1 (bexhoma-metrics-postgresql-1-2-1-loader.log, expected: series exists only while non-zero)
+* Memory Usage, Working Set [MiB] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-3-1 (bexhoma-metrics-postgresql-1-3-1-loader.log, expected: series exists only while non-zero)
+* Memory Usage, Working Set [MiB] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-2-1-1 (bexhoma-metrics-postgresql-2-1-1-loader.log, expected: series exists only while non-zero)
+* Memory Usage, Working Set [MiB] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-2-2-1 (bexhoma-metrics-postgresql-2-2-1-loader.log, expected: series exists only while non-zero)
+* Memory Usage, Working Set [MiB] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-2-3-1 (bexhoma-metrics-postgresql-2-3-1-loader.log, expected: series exists only while non-zero)
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
