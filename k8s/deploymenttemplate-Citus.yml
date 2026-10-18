@@ -271,8 +271,16 @@ spec:
           #  secretKeyRef:
           #    name: citus-secrets
           #    key: password
+        # PG 18 images default to /var/lib/postgresql/18/docker and refuse a mount at .../data without this
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        # one env list only: a second 'env:' key of this container would replace this one
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
         volumeMounts:
         - name: bxw
           mountPath: /var/lib/postgresql/data
@@ -287,13 +295,6 @@ spec:
         #      - if [ ${POD_IP} ]; then {sleep 180 ; psql --host=bexhoma-service --port 9091 --username=postgres --command="SELECT * from master_add_node('${HOSTNAME}.citus-workers', 5432);" }& fi
         ports:
         - containerPort: 5432
-        env:
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        - name: POSTGRES_HOST_AUTH_METHOD
-          value: trust
         lifecycle:
           postStart:
             exec:
