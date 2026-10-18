@@ -5,7 +5,7 @@
 # This Dockerfile builds an image for a Bexhoma generator that loads TPC-C data
 # into a DBMS using HammerDB's buildschema command.
 #
-# Base Image: tpcorg/hammerdb:v5.0
+# Base Image: tpcorg/hammerdb:v6.0 (Ubuntu 24.04, WORKDIR /home/HammerDB-6.0, runs as root)
 #
 # Author: Patrick K. Erdelt
 # Email: patrick.erdelt@bht-berlin.de
@@ -14,7 +14,7 @@
 # Description: Runs the HammerDB schema builder to populate TPC-C data.
 #   Configuration is supplied via environment variables.
 ######################################################################################
-FROM tpcorg/hammerdb:v5.0
+FROM tpcorg/hammerdb:v6.0
 
 ######################################################################################
 # Environment variables — runtime configuration
@@ -48,6 +48,9 @@ ENV HAMMERDB_ITERATIONS=10000000
 ENV HAMMERDB_MYSQL_ENGINE=innodb
 ENV HAMMERDB_NUM_VU=4
 ENV HAMMERDB_VUSERS=1
+
+# TLS: bexhoma sets true and mounts the SUT's CA at /etc/mysql/certs/ca-cert.pem (MySQL 9)
+ENV BEXHOMA_TLS=false
 
 ######################################################################################
 # Create temp TPC-C directory and copy entrypoint script

@@ -467,6 +467,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='YugabyteDB', alias='DBMS D')
                     config.monitoring_sut = False # should not be monitored since only dummy
+                    config.set_sut_role('placeholder') # helper pod; data lives in the Helm-managed tservers
+                    config.set_pvc_selector('app=yb-tserver') # storage metrics of the tserver volumes
                     # YSQL has no CHECKPOINT; ANALYZE VERBOSE refreshes
                     # planner statistics before each benchmarking round.
                     config.set_benchmark_resetscript(['reset-ycsb.sql'])
@@ -530,6 +532,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
+                    config.set_sut_role('placeholder') # client pod; data lives in the worker StatefulSet
                     # Pebble has no user-invokable checkpoint; ANALYZE
                     # refreshes planner statistics before each round.
                     config.set_benchmark_resetscript(['reset-ycsb.sql'])
@@ -587,6 +590,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     name_format = 'TiDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
+                    config.set_data_components(['tikv']) # PD keeps its template resources and volume size
                     # TiKV has no user-invokable checkpoint; ANALYZE TABLE
                     # forces fresh histograms before each round instead of
                     # relying on TiDB's async auto-analyze job timing.
@@ -650,6 +654,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='DatabaseService', alias='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
+                    config.set_sut_role('placeholder') # the pod is only a client; the DBMS is outside of K8s
                     config.resource_sweep = False # resources and storage are not set by bexhoma
                     if skip_loading:
                         config.loading_deactivated = True
@@ -704,9 +709,13 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                         #config.sut_template = "deploymenttemplate-DragonflyCluster.yml"
                         config.monitoring_sut = False # should not be monitored since only dummy
                         if num_worker_replicas > 0:
+                            # SUT pod is the master and holds the data; replicas get it by replication,
+                            # so SAVE stays on the master
                             config.sut_template = "deploymenttemplate-DragonflyReplica.yml"
                         else:
                             BEXHOMA_DBMS_TYPE = "redis-cluster" # multi-master aware client, finds correct master for each write
+                            config.set_sut_role('placeholder') # data lives in the worker StatefulSet
+                            config.set_script_target('workers') # SAVE on every cluster node
                     config.set_storage(
                         storageConfiguration = 'dragonfly'
                         )
@@ -770,6 +779,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-RedisCluster.yml"
                         BEXHOMA_DBMS_TYPE = "redis-cluster"
+                        config.set_sut_role('placeholder') # data lives in the worker StatefulSet
+                        config.set_script_target('workers') # shell scripts run on every cluster node
                     else:
                         BEXHOMA_DBMS_TYPE = "redis"
                     config.set_storage(

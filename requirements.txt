@@ -1,7 +1,7 @@
 urllib3==2.2.3
 kubernetes==22.6.0
 psutil>=5.6.1
-dbmsbenchmarker>=0.15.0
+dbmsbenchmarker>=0.15.2
 myst_parser
 HiYaPyCo==0.5.1
 mistune>=3.2.1 # not directly required, pinned by Snyk to avoid a vulnerability
@@ -14,6 +14,7 @@ dash>=2.15.0 # not directly required, pinned by Snyk to avoid a vulnerability
 pyarrow>=14.0.2
 requests==2.32.3
 prettytable
+cryptography>=42.0.0 # TLS Secret for SUTs that need one (bexhoma/tls.py)
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
 seaborn>=0.13.2
 idna>=3.15 # not directly required, pinned by Snyk to avoid a vulnerability

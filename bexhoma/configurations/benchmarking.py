@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 import os
+import time
 from datetime import datetime
 from typing import TYPE_CHECKING, Optional
 
 from dbmsbenchmarker import benchmarker, tools
 
 if TYPE_CHECKING:
+    from bexhoma.metric_fetching import MetricFetchBatch
     from .base import SutConfiguration
 
 __all__ = ['BenchmarkRunner']
@@ -44,8 +46,9 @@ class BenchmarkRunner:
         benchmark_run: str = '',
         template_override: str = '',
         reset_seconds: float = 0.0,
+        fetch_batch: Optional[MetricFetchBatch] = None,
     ) -> None:
-        """Start a benchmarker job pod, upload configs, and optionally wait for it.
+        """Start a benchmarker job pod and upload configs; the job is not waited for.
 
         Sets metadata in the connection config, copies ``query.config`` and
         ``connection.config`` to the first pod of the job (result folder is
@@ -67,11 +70,15 @@ class BenchmarkRunner:
         :param template_override: When non-empty, overrides the default YAML job template.
         :param reset_seconds: Seconds spent running this connection's reset script
             (0 if none ran), recorded on the connection as ``time_reset``.
+        :param fetch_batch: Queue the loading-metric fetches here instead of
+            fetching right away, so the fetches of all configurations of one loop
+            pass run in parallel.
         :raises RuntimeError: If the chunk-assignment queue cannot be filled
             with exactly ``parallelism`` items, which would otherwise let pods
             race on a corrupted assignment.
         """
         cfg = self._config
+        started = time.monotonic()
         cfg.logger.debug('BenchmarkRunner.run_pod()')
         resultfolder = cfg.experiment.cluster.config['benchmarker']['resultfolder']
         experiments_configfolder = cfg.experiment.cluster.experiments_configfolder
@@ -208,7 +215,6 @@ class BenchmarkRunner:
                 command=cmd_prepare_log, pod=pod_dashboard, container="dashboard")
             cfg.upload_experiment_file('queries.config')
             cfg.upload_experiment_file(c['name'] + '.config')
-            cfg.upload_experiment_file(c['name'] + '.config')
             cfg.upload_experiment_file('connections.config')
             cfg.upload_experiment_file('protocol.json')
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, cfg.code)
@@ -238,118 +244,77 @@ class BenchmarkRunner:
                 alias=c['alias'], num_pods=parallelism, benchmark_run=benchmark_run,
                 env=bm_entry.get('parameters', {}), template_override=template_override)
             cfg.experiment.cluster.create_object_from_file(yamlfile)
-            job_pods = []
-            while len(job_pods) == 0:
-                cfg.wait(10)
-                job_pods = cfg.experiment.cluster.get_job_pods(
-                    component=component, configuration=configuration,
-                    experiment=cfg.code, client=client)
-            client_pod_name = job_pods[0]
-            status = cfg.experiment.cluster.get_pod_status(client_pod_name)
-            cfg.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
-            print("{:30s}: benchmarking is waiting for job {}: ".format(
-                configuration, client_pod_name), end="", flush=True)
-            while status != "Running" and status != "Succeeded":
-                cfg.logger.debug('Pod={} has status={}'.format(client_pod_name, status))
-                print(".", end="", flush=True)
-                job_pods = []
-                while len(job_pods) == 0:
-                    cfg.wait(10, silent=True)
-                    job_pods = cfg.experiment.cluster.get_job_pods(
-                        component=component, configuration=configuration,
-                        experiment=cfg.code, client=client)
-                client_pod_name = job_pods[0]
-                status = cfg.experiment.cluster.get_pod_status(client_pod_name)
-            print("found")
+            # No waiting for the pod here: the experiment loop watches the job, and a
+            # round whose pods do not start is skipped after BENCHMARK_START_TIMEOUT_MINUTES.
+            # Waiting per job made N tenants start one after another.
+            print("{:30s}: submitted benchmarker job in {:.1f}s".format(
+                configuration, time.monotonic() - started))
         pods = cfg.experiment.cluster.get_pods(component='dashboard')
-        if len(pods) > 0:
-            pod_dashboard = pods[0]
-            if cfg.monitoring_active and cfg.monitor_loading:
-                if 'deployment' in cfg.deployment_infos:
-                    for name, deployment in cfg.deployment_infos['deployment'].items():
-                        print("{:30s}: needs monitoring (common metrics) for deployment {}".format(
-                            connection, name))
-                        if name == 'sut' and cfg.monitoring_sut:
-                            print("{:30s}: collecting loading metrics of SUT at connection {}".format(
-                                connection, cfg.current_benchmark_connection))
-                            cfg.metrics.fetch(
-                                title="Loading phase: SUT deployment",
-                                connection=cfg.current_benchmark_connection,
-                                connection_file=c['name'] + '.config',
-                                container="dbms",
-                                component=name,
-                                component_type="loading",
-                                experiment=cfg.code,
-                                time_start=cfg.time_loading_start,
-                                time_end=cfg.time_loading_end,
-                                metrics_type="metrics",
-                                pod_dashboard=pod_dashboard,
-                            )
-                        elif name != 'sut':
-                            print("{:30s}: collecting loading metrics of {} at connection {}".format(
-                                connection, name, cfg.current_benchmark_connection))
-                            cfg.metrics.fetch(
-                                title=f"Loading phase: component {name}",
-                                connection=cfg.current_benchmark_connection,
-                                connection_file=c['name'] + '.config',
-                                container=deployment['containers'][0],
-                                component=name,
-                                component_type=f"{name}loading",
-                                experiment=cfg.code,
-                                time_start=cfg.time_loading_start,
-                                time_end=cfg.time_loading_end,
-                                metrics_type="metrics",
-                                pod_dashboard=pod_dashboard,
-                            )
-                if 'statefulset' in cfg.deployment_infos:
-                    for name, statefulset in cfg.deployment_infos['statefulset'].items():
-                        print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(
-                            connection, name))
-                        cfg.metrics.fetch(
-                            title=f"Loading phase: component {name}",
-                            connection=cfg.current_benchmark_connection,
-                            connection_file=c['name'] + '.config',
-                            container="dbms",
-                            component=name,
-                            component_type=f"{name}loading",
-                            experiment=cfg.code,
-                            time_start=cfg.time_loading_start,
-                            time_end=cfg.time_loading_end,
-                            metrics_type=f"metrics_{name}",
-                            pod_dashboard=pod_dashboard,
-                        )
-                endpoints_cluster = cfg.experiment.cluster.get_service_endpoints(
-                    service_name="bexhoma-service-monitoring-default")
-                if len(endpoints_cluster) > 0 or cfg.experiment.cluster.monitor_cluster_exists:
-                    if "datagenerator" in cfg.experiment.components["loader"]:
-                        print("{:30s}: collecting metrics of data generator at connection {}".format(
-                            connection, cfg.current_benchmark_connection))
-                        cfg.metrics.fetch(
-                            title="Loading phase: component data generator",
-                            connection=cfg.current_benchmark_connection,
-                            connection_file=c['name'] + '.config',
-                            container="datagenerator",
-                            component="datagenerator",
-                            component_type="datagenerator",
-                            experiment=cfg.code,
-                            time_start=cfg.time_loading_start,
-                            time_end=cfg.time_loading_end,
-                            metrics_type="metrics",
-                            pod_dashboard=pod_dashboard,
-                            optional=True,
-                        )
-                    print("{:30s}: collecting metrics of data injector at connection {}".format(
-                        connection, cfg.current_benchmark_connection))
-                    cfg.metrics.fetch(
-                        title="Loading phase: component loader",
-                        connection=cfg.current_benchmark_connection,
-                        connection_file=c['name'] + '.config',
-                        container="sensor",
-                        component="loader",
-                        component_type="loader",
-                        experiment=cfg.code,
-                        time_start=cfg.time_loading_start,
-                        time_end=cfg.time_loading_end,
-                        metrics_type="metrics",
-                        pod_dashboard=pod_dashboard,
-                    )
+        if len(pods) > 0 and cfg.monitoring_active and cfg.monitor_loading:
+            self._loading_metrics(connection, c['name'] + '.config', pods[0], fetch_batch)
+
+    def _loading_metrics(self, connection: str, connection_file: str, pod_dashboard: str,
+                         fetch_batch: Optional[MetricFetchBatch]) -> None:
+        """Fetch the loading-phase metrics for a connection, once per repetition.
+
+        The loading window is the same for every benchmarker connection of a
+        repetition, so only the first one queries Prometheus; later ones get a
+        copy (see :meth:`MetricsCollector.copy_fetched`).
+
+        :param connection: Benchmarker connection that needs the loading metrics.
+        :param connection_file: Its connection config file.
+        :param pod_dashboard: Name of the dashboard pod.
+        :param fetch_batch: Batch to queue into; None fetches right away.
+        """
+        cfg = self._config
+        experiment_run = cfg.num_experiment_to_apply_done + 1
+        fetched = cfg.loading_metrics_fetched.get(experiment_run)
+        if fetched is not None and fetched[0] != connection:
+            source, component_types = fetched
+
+            def copy() -> None:
+                cfg.metrics.copy_fetched(source, connection, component_types, pod_dashboard)
+            if fetch_batch is None:
+                copy()
+            else:
+                fetch_batch.add_after(copy)
+            return
+        window = dict(connection=connection, connection_file=connection_file, experiment=cfg.code,
+                      time_start=cfg.time_loading_start, time_end=cfg.time_loading_end,
+                      pod_dashboard=pod_dashboard)
+        fetches = []
+        if 'deployment' in cfg.deployment_infos:
+            for name, deployment in cfg.deployment_infos['deployment'].items():
+                print("{:30s}: needs monitoring (common metrics) for deployment {}".format(connection, name))
+                if name == 'sut' and cfg.monitoring_sut:
+                    print("{:30s}: collecting loading metrics of SUT at connection {}".format(connection, connection))
+                    fetches.append(dict(title="Loading phase: SUT deployment", container="dbms", component=name,
+                                        component_type="loading", metrics_type="metrics"))
+                elif name != 'sut':
+                    print("{:30s}: collecting loading metrics of {} at connection {}".format(connection, name, connection))
+                    fetches.append(dict(title=f"Loading phase: component {name}", container=deployment['containers'][0],
+                                        component=name, component_type=f"{name}loading", metrics_type="metrics"))
+        if 'statefulset' in cfg.deployment_infos:
+            for name in cfg.deployment_infos['statefulset']:
+                print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(connection, name))
+                fetches.append(dict(title=f"Loading phase: component {name}", container="dbms", component=name,
+                                    component_type=f"{name}loading", metrics_type=f"metrics_{name}"))
+        endpoints_cluster = cfg.experiment.cluster.get_service_endpoints(
+            service_name="bexhoma-service-monitoring-default")
+        if len(endpoints_cluster) > 0 or cfg.experiment.cluster.monitor_cluster_exists:
+            if "datagenerator" in cfg.experiment.components["loader"]:
+                print("{:30s}: collecting metrics of data generator at connection {}".format(connection, connection))
+                fetches.append(dict(title="Loading phase: component data generator", container="datagenerator",
+                                    component="datagenerator", component_type="datagenerator",
+                                    metrics_type="metrics", optional=True))
+            print("{:30s}: collecting metrics of data injector at connection {}".format(connection, connection))
+            fetches.append(dict(title="Loading phase: component loader", container="sensor", component="loader",
+                                component_type="loader", metrics_type="metrics"))
+        if not fetches:
+            return
+        cfg.loading_metrics_fetched[experiment_run] = (connection, [f['component_type'] for f in fetches])
+        for fetch in fetches:
+            if fetch_batch is None:
+                cfg.metrics.fetch(**window, **fetch)
+            else:
+                fetch_batch.add_fetch(cfg, **window, **fetch)

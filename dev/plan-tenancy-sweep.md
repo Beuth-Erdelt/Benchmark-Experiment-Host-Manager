@@ -1,7 +1,13 @@
 # Plan: tenancy sweep on the `nvme` pool
 
-Status: **planned** (2026-10-11), not run. One small code change (M1), the
-rest is measurement with the existing `hardware.py`.
+Status: **planned** (2026-10-11), not run. One small code change (M0a fio
+overwrite, added 2026-10-16, **implemented 2026-10-17**, image rebuild and
+validation run open); placements A, B and D with the
+same workload for all tenants are then measurement with `hardware.py`.
+Placement C and the synchronized noisy neighbor need per-tenant placement and
+workload, which is a separate, generic plan:
+[plan-per-config-overrides.md](plan-per-config-overrides.md) (split out
+2026-10-16; formerly M1 and M2 here).
 
 ## Goal
 
@@ -53,10 +59,29 @@ Questions:
 - The fio flags `-xfrw`, `-xfbs`, `-xfid`, `-xfsy`/`-xffd`, `-xfe` sweep as
   sequential rounds within one experiment.
 - `-rst nvme -rsr` gives fresh volumes on `nvme`.
+- `run_fio.sh` writes into a **fresh** test file (fio's default
+  `fallocate=native`, i.e. unwritten ext4 extents). Every O_DIRECT write then
+  converts an extent, and every fdatasync commits an ext4 journal entry. A/B
+  on 2026-10-16 (separate pod on cl-worker36, nvme PVC, 256 PGs, 8k write,
+  QD1, sync, `fdatasync=1`, 30 s):
+
+  | Test file | commits/s | write clat p50 | fdatasync mean / p99 |
+  |---|---:|---:|---:|
+  | fresh (as bexhoma today), run twice | 361 / 370 | 0.93 / 0.89 ms | 1.85 / 3.16 ms |
+  | fresh, `fallocate=none` | 346 | 0.95 ms | 1.95 / 3.46 ms |
+  | prefilled once (1M seq write), then the same job | 1,538 | 0.64 ms | 0.003 / 0.003 ms |
+
+  On a prefilled file fdatasync is a no-op (krbd advertises no volatile write
+  cache), so a commit costs one RBD write round trip. PostgreSQL WAL segments
+  are zero-filled when created and recycled later, so WAL behaves like the
+  prefilled case. The bexhoma run `fio_write_latency_nvme` (1792162949,
+  ~400 commits/s) therefore understates WAL commits by ~4×. The ~0.64 ms is
+  still slower than the 0.36 ms fdatasync of the 2026-10-11 manual run
+  (cl-worker21, 1 PG); that gap is not explained yet.
 - `-rnn <node>` pins **every** SUT to one node (`experiments/base.py:683`).
   Spreading tenants over several nodes is not possible today.
-  `SutConfiguration.set_resources(nodeSelector=...)` exists per
-  configuration, so a per-tenant node is a small change.
+  Per-tenant placement is covered by
+  [plan-per-config-overrides.md](plan-per-config-overrides.md).
 
 ## Design
 
@@ -71,7 +96,7 @@ Test file large enough to leave the OSD caches: `-xts 16G` per tenant
 
 | Name | fio | Main metric |
 |---|---|---|
-| `commit` | write, 8k, QD1, `fdatasync=1`, sync | commits/s, p50/p99 fdatasync |
+| `commit` | write, 8k, QD1, `fdatasync=1`, sync, overwrite (`-xfow 1`, M0a) | commits/s, p50/p99 fdatasync |
 | `randwrite` | randwrite, 8k, QD32, libaio | IOPS, p99 |
 | `seqwrite` | write, 1M, QD8, libaio | MB/s |
 
@@ -83,7 +108,8 @@ confirmed the 0.4 vs 1.35 GB/s gap.
 
 N tenants of which tenant 0 runs `seqwrite` and the others `commit`, at the
 same time. Today all tenants of one round get the same fio parameters, so this
-needs M2. Until then it is approximated with two experiments started together
+needs the per-tenant env override of
+[plan-per-config-overrides.md](plan-per-config-overrides.md). Until then it is approximated with two experiments started together
 by hand (one `seqwrite` tenant, N−1 `commit` tenants), which loses the
 synchronized start.
 
@@ -93,7 +119,7 @@ synchronized start.
 |---|---|---|
 | A: all on cl-worker21 | 1, 2, 4, 8, 16 | realistic case: SUTs do not run on storage nodes |
 | B: all on cl-worker40 | 1, 4, 16 | reference without the network; tenants compete with the OSDs for CPU |
-| C: round-robin over cl-worker21, cl-worker34, cl-worker37 | 3, 6, 12 | separates a client-node limit from an OSD limit |
+| C: round-robin over cl-worker21, cl-worker34, cl-worker37 | 3, 6, 12 | separates a client-node limit from an OSD limit; needs the per-tenant node override |
 | D: like A, krbd `noshare` | 4, 16 | only if A stalls below C: tests the shared-connection hypothesis |
 
 Reading rule for A against C at the same N:
@@ -129,6 +155,77 @@ repetitions. A ≈ 1.5 h, B ≈ 1 h, C ≈ 1 h, D ≈ 40 min, noisy neighbor ≈
 
 ## Implementation sketch
 
+### M0a: fio overwrite option (`-xfow`)
+
+**Implemented 2026-10-17** as sketched below, with these differences and open
+points:
+
+- `hardware.py` splits `-xfow` as strings (like `-xfrw`/`-xfe`), so an
+  invalid value is a parser error instead of an `int()` ValueError. The value
+  shares the `fio_fdatasync` loop level via `itertools.product` instead of
+  a new nesting level; rounds are ordered fdatasync-major, overwrite-minor.
+- `bexhoma/hardware_baseline.py`: `HARDWARE_FIO_OVERWRITE: "0"` in
+  `_FIO_DEFAULTS`.
+- Docs: flag paragraph and a note on fresh vs. prefilled in
+  `docs/Example-Hardware.md`, help output there updated. `-xfow 1` added to
+  the commands of `wal_sync_fsync` (docs case 4), `wal_sync_fdatasync`,
+  `wal_group_commit`, `wal_record_size`, `checkpoint_writeback` and
+  `oltp_wal_contention_proxy` in `scripts/test-docs-{cases,hardware}.{sh,ps1}`,
+  `docs/TestCases.md` and `docs/Example-Hardware.md`. **Their result sections
+  still show the old fresh-file runs until these cases are rerun.**
+- Tests: `tests/test_hardware_fio_overwrite.py`. The `run_fio.sh` tests are
+  skipped on Windows; checked by hand with Git bash (1 → `--overwrite=1`,
+  0/unset → none).
+- **Open:** rebuild `bexhoma/benchmarker_hardware` (old images ignore
+  `HARDWARE_FIO_OVERWRITE` and silently measure a fresh file; the round's
+  log then lacks the `HARDWARE_FIO_OVERWRITE:` line), then the validation
+  run below.
+
+Needed before M0, so that `commit` measures WAL-like commits (see the A/B in
+"Facts"). An option, not always-on: both behaviours are real database
+patterns.
+
+| `-xfow 1` (prefilled) | `-xfow 0` (fresh, today) |
+|---|---|
+| PostgreSQL WAL, InnoDB redo (preallocated, recycled) | table/index growth during bulk load or COPY |
+| checkpoint and random page writes into existing relations | append-only files (logs, LSM SSTables), a new database |
+
+The effect is not limited to sync tests: on a fresh file the O_DIRECT write
+itself was slower too (0.93 vs 0.64 ms p50), so randwrite and throughput
+rounds are affected, less strongly.
+
+- `hardware.py`: `-xfow` / `--xfio-overwrite`, comma-separated sweep list
+  like the other fio flags, values `0`/`1`, **default `0`** (keeps existing
+  results comparable). Add a loop level next to `fio_fdatasync` in both
+  sweep blocks (`hardware.py:203`, `:272`) and pass
+  `HARDWARE_FIO_OVERWRITE` with the other `HARDWARE_FIO_*` values
+  (`:234`, `:303`). Refuse values other than 0/1.
+- `images/hardware/benchmarker/run_fio.sh`: echo `HARDWARE_FIO_OVERWRITE`
+  in the parameter block; append `--overwrite=1` when it is `1`. fio then
+  lays the file out by writing it fully before the timed part (layout is not
+  part of `--runtime`). Default `0` when unset, so old round entries still
+  work. Add `overwrite` to the CSV header/row. Image rebuild.
+- `bexhoma/evaluators/hardware.py`: `HARDWARE_FIO_OVERWRITE` in the key list
+  (`:44`), type `int` (`:242`), and in the grouping/column lists
+  (`:327`, `:359`, `:412`, `:462`). Missing key in old logs → 0.
+- `bexhoma/benchmarks/hardware.py:84-92`: summary line
+  "Overwrite (prefilled test file) swept: [...]".
+- Docs: `docs/Example-Hardware.md` (flag table, a note on fresh vs.
+  prefilled with the A/B numbers), `docs/TestCases.md`. Set `-xfow 1` in the
+  WAL-style test cases (`wal_sync_fdatasync`, `wal_sync_fsync`,
+  `wal_record_size`, `wal_group_commit`, `oltp_wal_contention_proxy`) in
+  `scripts/test-docs-*.{sh,ps1}` and `scripts/test-docs-cases.{sh,ps1}`;
+  `checkpoint_writeback` too (writes into existing relation files). Their
+  logs in `logs_tests/` then need a rerun.
+- Cost: layout writes `-xts` per job before each round (seconds for 1G,
+  longer for 8G/16G × numjobs). With the tenancy barrier, layout must happen
+  before the synchronized start; this also resolves the "No ramp time" risk
+  for write workloads if layout precedes the barrier (check in M0).
+- Tests: flag parsing and refusal; `run_fio.sh` argument building with
+  0/1/unset; evaluator reads old logs without the key as 0.
+- Validation run: `-xfrw write -xfbs 8k -xffd 1 -xfe sync -xfow 0,1 -rst nvme`
+  should reproduce ~370 vs ~1,500 commits/s.
+
 ### M0: run A and B with the code as it is
 
 ```
@@ -142,84 +239,28 @@ workloads, run one experiment per workload, or accept the extra rounds.
 Check that the 16 tenants are all `Running` before the round counter
 releases them, and that the 16 PVCs bind.
 
-### M1: per-tenant node placement (needed for C)
+### Placement C and noisy neighbor: per-tenant overrides
 
-- `hardware.py`: new flag `-xtnn` / `--xtenant-nodes`, a comma-separated
-  node list. With `-mtb container`, tenant *i* gets
-  `config.set_resources(nodeSelector={'kubernetes.io/hostname':
-  nodes[i % len(nodes)]})`. Refuse together with `-rnn`.
-- Check that the configuration-level `nodeSelector` replaces the
-  experiment-level one in the SUT manifest and is not merged with the `cpu`
-  selector that `-rnn` sets (the `gpu` nodes carry no `cpu` label value).
-- GPU nodes: check for taints or a toleration Kyverno would block.
-- Record the node of each tenant in `connections.config` (it already holds
-  the SUT's node from the pod) and show it in `connections.md`.
-- Tests: the tenant → node assignment; refusal with `-rnn`.
-
-### M2: per-tenant workload (needed for the synchronized noisy neighbor)
-
-`-xtw` / `--xtenant-workload`: a comma-separated list of fio profiles
-(`commit`, `randwrite`, `seqwrite`, as in the workload table), one per
-tenant in tenant order. **The last entry repeats**, so
-`-mtn 8 -xtw seqwrite,commit` is one noisy tenant and seven commit tenants,
-and N can change without rewriting the list.
-
-**Why not the per-pod mechanism.** Bexhoma can give each pod of one
-benchmarker job its own parameters: `SutConfiguration._push_pod_configs()`
-(`configurations/base.py:622`) writes `{queue}-config-{i}` to Redis from the
-round entry's `pod_parameters`, and `images/hardware/benchmarker/benchmarker.sh`
-(lines 75–85) exports it as `BEXHOMA_POD_<key>`. With `-mtb container`,
-however, every tenant is its own configuration with its own job of one pod,
-so per-tenant values belong in the tenant loop of `hardware.py`, not in
-`pod_parameters`. (As of 2026-10-11 the per-pod path is plumbing only: no
-code fills `pod_parameters`, `add_benchmarking_parameters()` /
-`add_benchmark_list()` do not carry it, and no script reads a
-`BEXHOMA_POD_*` variable.)
-
-Case A, for this plan (Python only, no image rebuild):
-
-- `hardware.py`: a `FIO_PROFILES` dict mapping each profile name to its
-  `HARDWARE_FIO_*` values, and `workload_of(workloads, i)` returning
-  `workloads[min(i, len(workloads) - 1)]`.
-- In the existing tenant loop, merge `FIO_PROFILES[workload_of(...)]` (plus
-  `HARDWARE_FIO_PROFILE=<name>`) last into `add_benchmarking_parameters()`,
-  so it wins over the sweep values.
-- Validation: only with `-xht fio`; refused together with non-default
-  `-xfrw`/`-xfbs`/`-xfid`/`-xfe`/`-xfsy`/`-xffd` (the sweep would otherwise
-  produce identical rounds); unknown profile names refused.
-- Evaluation needs no change: `HardwareEvaluator` reads the fio parameters
-  from each pod's log (last match) and already has a per-tenant summary
-  (`get_summary_benchmark_per_phase_multitenant`). Optional:
-  `HARDWARE_FIO_PROFILE` as a readable column (one `echo` in
-  `benchmarker.sh`, one key in `_KEYS_TYPE_PARAMETERS`).
-- Tests: tenant → profile mapping including the repeating last entry;
-  refusals.
-
-Example:
+Moved to [plan-per-config-overrides.md](plan-per-config-overrides.md)
+(2026-10-16). Instead of `hardware.py`-only flags (`-xtnn`, `-xtw`), tenants
+are addressed by tenant id with a generic flag `--set-tenant`, for every
+benchmark:
 
 ```
-python hardware.py run -mtb container -mtn 8 -rst nvme -rsr -rnn cl-worker21 \
-    -xtw seqwrite,commit -xts 16G -xtd 60
+# placement C
+--set-tenant "0,3,6,9:node=cl-worker21"
+--set-tenant "1,4,7,10:node=cl-worker34"
+--set-tenant "2,5,8,11:node=cl-worker37"
+# noisy neighbor: tenant 0 seqwrite, the others the commit default
+--set-tenant "0:benchmarking.env.HARDWARE_FIO_BS=1M"
+--set-tenant "0:benchmarking.env.HARDWARE_FIO_IODEPTH=8"
+--set-tenant "0:benchmarking.env.HARDWARE_FIO_ENGINE=libaio"
+--set-tenant "0:benchmarking.env.HARDWARE_FIO_FDATASYNC=0"
 ```
 
-Case B, a separate later step (not needed for this plan): several fio
-pods on **one** SUT and volume (`-nbp N`), i.e. contention on the same
-volume. This is where the per-pod mechanism fits:
-
-1. `configurations/base.py`: `add_benchmarking_parameters(...,
-   pod_parameters=None, ...)` stores `pod_parameters` in the round entry;
-   `add_benchmark_list()` keeps it when rebuilding (generic, all benchmarks).
-2. `hardware.py`: without tenancy, `-xtw` becomes
-   `pod_parameters=[FIO_PROFILES[workload_of(w, i)] for i in range(pods)]`.
-3. `benchmarker.sh`, after reading the per-pod config: export every
-   `BEXHOMA_POD_HARDWARE_*` as `HARDWARE_*` and echo it, so the evaluator
-   (last match) records the pod's actual values. Image rebuild.
-4. `evaluators/hardware.py:326-330`: per-phase aggregation sums IOPS/bandwidth
-   over pods and takes fio parameters from the first pod; with mixed
-   profiles in one phase, group by `hardware_fio_profile` (or the fio
-   parameter columns) instead.
-5. The shell parser handles only string values without commas or quotes;
-   `_push_pod_configs` should `str()` all values.
+The fio profiles of the workload table become documented bundles of such
+lines. The per-pod mechanism (several fio pods on one SUT and volume,
+formerly "Case B" here) is described there under M6.
 
 ### M3: krbd `noshare` (needed for D)
 
@@ -240,8 +281,9 @@ Not a Bexhoma change: a second StorageClass `nvme-noshare` with
 - **Sixteen SUT pods on one node** (A at N = 16) also share the client node's
   CPU. The page cache is not involved: `run_fio.sh` passes `--direct=1`.
 - **No ramp time.** `run_fio.sh` has no `--ramp_time`, so the first seconds
-  of each round are measured. fio lays out the test file before the timed
-  run, but with N tenants the layouts finish at different times, so the
+  of each round are measured. For write workloads fio only fallocates the
+  test file (no data written) unless `--overwrite=1` (M0a); with it, or for
+  reads, fio lays out the file before the timed run. With N tenants the layouts finish at different times, so the
   synchronized start covers the timed part only if layout happens before the
   barrier. Check this in M0; if not, add an optional `HARDWARE_FIO_RAMP`
   to `run_fio.sh`.

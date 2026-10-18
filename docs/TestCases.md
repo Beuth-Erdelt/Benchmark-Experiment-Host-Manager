@@ -7574,6 +7574,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -7678,6 +7679,7 @@ bexhoma benchbase \
   -xnbf 8 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -7791,6 +7793,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -7927,6 +7930,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -8175,6 +8179,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -8279,6 +8284,7 @@ bexhoma benchbase \
   -xnbf 8 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -8411,6 +8417,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -8547,6 +8554,7 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -9377,6 +9385,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -9485,6 +9494,7 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 128Gi \
@@ -9628,6 +9638,7 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -9853,6 +9864,7 @@ bexhoma hammerdb \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -9957,6 +9969,7 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -10096,6 +10109,7 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -11313,6 +11327,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -11510,6 +11525,7 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -11658,6 +11674,7 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -11932,6 +11949,7 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -12050,6 +12068,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -12206,6 +12225,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -12367,6 +12387,7 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -12515,6 +12536,7 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -12800,6 +12822,7 @@ bexhoma ycsb \
   -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -12929,6 +12952,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
@@ -14152,6 +14176,7 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xffd 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \
@@ -14287,6 +14312,7 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xfsy 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1,2,4,8,16,32 \
   -ne 1 \
@@ -14515,6 +14541,7 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xfsy 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \
@@ -14722,6 +14749,7 @@ bexhoma hardware \
   -xfbs 1M,4M,16M \
   -xfid 4,16 \
   -xfe libaio \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \
@@ -14956,6 +14984,7 @@ bexhoma hardware \
   -xfid 64 \
   -xfe libaio \
   -xfsy 1 \
+  -xfow 1 \
   -nbp 1 \
   -nbt 1 \
   -ne 1 \

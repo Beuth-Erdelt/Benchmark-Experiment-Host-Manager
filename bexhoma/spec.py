@@ -51,6 +51,9 @@ __all__ = [
     "resolve_system_definition",
     "resolve_system",
     "DEFAULT_ARG_STYLE",
+    "ARG_STYLE_MYSQL_FLAG",
+    "ARG_STYLE_ENV_VAR",
+    "ARG_STYLES_VIA_SET",
     "effective_post_load",
     "validate_experiment",
     "validate_environment",
@@ -101,6 +104,13 @@ _REQUIRED_HEADER_FIELDS = ("title", "hypothesis", "discriminates")
 
 #: Fallback ``arg_style`` for a knob/system that doesn't declare one.
 DEFAULT_ARG_STYLE = "pg-guc"
+#: MySQL/MariaDB server option, written by ``--set`` as ``--key=value``.
+ARG_STYLE_MYSQL_FLAG = "mysql-flag"
+#: Container environment variable, written by ``--set ...container[dbms].env.NAME``.
+ARG_STYLE_ENV_VAR = "env-var"
+#: Arg styles that become a plain ``--set ...container[dbms].KNOB=VALUE``; the
+#: manifest patcher picks ``-c`` pairs or ``--key=value`` from the template.
+ARG_STYLES_VIA_SET = (DEFAULT_ARG_STYLE, ARG_STYLE_MYSQL_FLAG)
 _KNOB_TYPE_MEMORY = "memory"
 _KNOB_TYPE_INT = "int"
 

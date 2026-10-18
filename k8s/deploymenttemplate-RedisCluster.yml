@@ -46,7 +46,7 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        image: redis:7.4.2
+        image: redis:8.10.2
         args: ["--maxclients", "10000", "--io-threads", "64"]
         env:
           - name: MASTER
@@ -76,8 +76,9 @@ spec:
           #    - ALL
           readOnlyRootFilesystem: false
         resources:
-          limits: {cpu: 16000m, memory: 128Gi}
-          requests: {cpu: 1000m, memory: 1Gi}
+          # placeholder SUT (data lives in the workers): bexhoma keeps these values (sut_role placeholder)
+          limits: {cpu: 1000m, memory: 1Gi}
+          requests: {cpu: 250m, memory: 512Mi}
           #, ephemeral-storage: "1536Gi"}
         #volumeMounts:
         #- {mountPath: /data, name: benchmark-data-volume}
@@ -181,7 +182,7 @@ spec:
         - "{statefulset}.{namespace}.svc.cluster.local"
       containers:
       - name: dbms
-        image: redis:7.4.2
+        image: redis:8.10.2
         command:
           - "redis-server"
           - "--cluster-enabled"
@@ -264,7 +265,7 @@ spec:
         - name: bxw
           mountPath: /data
       - name: monitor-application
-        image: oliver006/redis_exporter:latest
+        image: oliver006/redis_exporter:v1.94.0
         args:
           - "--redis.addr=redis://localhost:6379"
           - "--is-cluster"
@@ -320,7 +321,7 @@ spec:
     spec:
       containers:
       - name: dbms
-        image: redis:7.0
+        image: redis:8.10.2
         imagePullPolicy: IfNotPresent
         env:
           - name: POD_NAMESPACE

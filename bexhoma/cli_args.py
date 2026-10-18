@@ -20,8 +20,11 @@ __all__ = [
     "parse_metric_overrides", "format_metric_overrides",
     "split_storage_types", "format_storage_types",
     "storage_suffix", "set_cell_storage", "resource_cells",
-    "KEEP_SUT_CHOICES", "resolve_keep_sut",
+    "KEEP_SUT_CHOICES", "resolve_keep_sut", "split_worker_nodes",
 ]
+
+#: ``-rnw`` value that stands for the SUT's node (``-rnn``).
+WORKER_NODE_SUT = 'sut'
 
 #: Values of ``-ks/--keep-sut``.
 KEEP_SUT_CHOICES = ('auto', 'yes', 'no')
@@ -54,7 +57,41 @@ def resolve_keep_sut(mode: str, keep_sut: str = 'auto', skip_shutdown: bool = Fa
     return keep_sut == 'yes'
 
 
-def resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list, storage_type_list=None):
+def split_worker_nodes(value, sut_node=None) -> list:
+    """
+    Split ``-rnw``'s value into one list of worker nodes per resource cell.
+
+    Nodes of one cell are joined by ``+`` (``cl-worker37+cl-worker38``);
+    commas separate cells, paired by position with the other resource lists
+    like ``-rst``. ``sut`` stands for the SUT's node (``-rnn``).
+
+    :param value: ``args.request_node_worker``; ``None`` or empty means no pinning.
+    :param sut_node: ``args.request_node_name``, for ``sut``.
+    :return: One node list per cell (``[None]`` without ``-rnw``).
+    :rtype: list[Optional[list[str]]]
+    :raises ValueError: For an empty cell, or ``sut`` without ``-rnn``.
+    """
+    if not value:
+        return [None]
+    cells = []
+    for cell in str(value).split(','):
+        nodes = []
+        for node in cell.split('+'):
+            node = node.strip()
+            if not node:
+                raise ValueError(f"-rnw {value!r}: empty node name in cell {cell!r}")
+            if node == WORKER_NODE_SUT:
+                if not sut_node:
+                    raise ValueError(f"-rnw {value!r}: '{WORKER_NODE_SUT}' needs the SUT node (-rnn)")
+                node = sut_node
+            if node not in nodes:
+                nodes.append(node)
+        cells.append(nodes)
+    return cells
+
+
+def resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list, storage_type_list=None,
+                   worker_nodes_list=None):
     """Zip per-dimension resource CLI lists into one resource cell per swept value.
 
     Every list with more than one entry must share the same length; a
@@ -69,8 +106,10 @@ def resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram
     :param storage_type_list: Parsed ``-rst`` values
         (:func:`split_storage_types`), ``None`` for ephemeral;
         omitted means one experiment-wide storage class.
-    :return: List of ``{'cpu', 'cpu_limit', 'memory', 'memory_limit', 'storage_type'}``
-        dicts, one per cell.
+    :param worker_nodes_list: Parsed ``-rnw`` values (:func:`split_worker_nodes`),
+        one node list (or ``None``) per cell; omitted means no worker pinning.
+    :return: List of ``{'cpu', 'cpu_limit', 'memory', 'memory_limit', 'storage_type',
+        'worker_nodes'}`` dicts, one per cell.
     :rtype: list[dict]
     :raises ValueError: When two lists both have more than one entry but different lengths.
     """
@@ -80,6 +119,7 @@ def resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram
         'memory': request_ram_list,
         'memory_limit': limit_ram_list,
         'storage_type': storage_type_list if storage_type_list is not None else [None],
+        'worker_nodes': worker_nodes_list if worker_nodes_list is not None else [None],
     }
     num_cells = max((len(values) for values in lists.values() if len(values) > 1), default=1)
     for name, values in lists.items():
@@ -294,10 +334,11 @@ def make_base_parser():
     p.add_argument('-rnl', '--request-node-loading', help='pin loader pods to this Kubernetes node', default=None, nargs='?', const=None)
     p.add_argument('-rnb', '--request-node-benchmarking', help='pin benchmarker pods to this Kubernetes node', default=None, nargs='?', const=None)
     p.add_argument('-rnp', '--request-node-pooling', help='pin pooling pods to this Kubernetes node', default=None, nargs='?', const=None)
+    p.add_argument('-rnw', '--request-node-worker', help="pin the worker pods (all StatefulSets of the SUT) to these Kubernetes nodes, joined by '+' and spread evenly (e.g. cl-worker37+cl-worker38+cl-worker39); 'sut' stands for the -rnn node; comma-separated to sweep, one configuration per entry and paired by position with -rc/-lc/-rr/-lr/-rst", default=None, nargs='?', const=None)
     p.add_argument('-mtn', '--multi-tenant-num', help='number of tenants for multi-tenant experiments', default=0)
     p.add_argument('-mtb', '--multi-tenant-by', help='tenancy granularity: schema, database, or container', default='')
     p.add_argument('-mtv', '--multi-tenant-volume', help='allocate a separate persistent volume per tenant', action='store_true', default=False)
     p.add_argument('-tr',  '--test-result', help='validate that results meet basic correctness requirements', action='store_true', default=False)
     p.add_argument('-rp',  '--report', help='also write a tiered Markdown summary report (report/index.md + detail files) to the result folder', action='store_true', default=False, dest='write_report')
-    p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[sut].container[dbms].max_worker_processes=128")
+    p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[sut].container[dbms].max_worker_processes=128 (PostgreSQL -c key=value, MySQL/MariaDB --key=value, chosen by the template) or an environment variable via ...container[dbms].env.NAME=VALUE")
     return p

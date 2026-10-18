@@ -1,0 +1,865 @@
+﻿Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792165007
+Experiment                    : starts at 2026-10-16 17:36:51.432329 (148967.5533204)
+Experiment                    : This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
+Benchmark tool: fio.
+Test file size is '16G', duration per round is 60s.
+I/O pattern(s) swept: ['read'].
+Block size(s) swept: ['128k'].
+Queue depth(s) swept: [1, 32].
+I/O engine(s) swept: ['io_uring'].
+Fsync interval(s) swept: [0].
+Fdatasync interval(s) swept: [0].
+Experiment uses bexhoma version 0.11.5.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['Hardware'].
+SUT is fixed to cl-worker36.
+Database is persisted to disk of type nvme and size 150Gi. Persistent storage is removed before every repetition.
+Benchmarking is tested with [1, 8] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run 3 times.
+Maximum DBMS across the whole cluster is 2.
+Results are validated against basic correctness requirements.
+SUT requests 8 CPU and 16Gi RAM. CPU limit is 8. RAM limit is 16Gi.
+Cluster monitoring            : is running
+Hardware-1                    : will start now
+Hardware-1                    : deployments ['sut']
+Hardware-1                    : stateful sets []
+Hardware-1                    : pvcs ['sut']
+Hardware-1                    : found labels on pvc = []
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1792165007
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1792165007
+Hardware-1                    : name of SUT PVC name = bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : storage bexhoma-storage-hardware-nvme-hardware should be removed
+- waiting 10s -               : done
+Hardware-1                    : storage bexhoma-storage-hardware-nvme-hardware is gone
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 3. This will be client 1
+hardware-1-1-1-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4 and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-1-1-1-ntwzv: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-1-1-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-1-1-1.config
+hardware-1-1-1-1              : showing benchmarker times
+hardware-1-1-1-1              : benchmarker timespan job from 1792165165 to 1792165288
+hardware-1-1-1-1              : benchmarker timespan pods from 1792165170 to 1792165247
+hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 77
+hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1792165170, 1792165247)]
+hardware-1-1-1-1              : found and updated times {'benchmarker': [(1792165170, 1792165247)]}
+hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-1-1-1              : collecting execution metrics of SUT at connection hardware-1-1-1-1
+hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-1-1              : collecting metrics of benchmarker at connection hardware-1-1-1-1
+hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4 and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 3. This will be client 2
+hardware-1-1-2-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-2-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4 and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-1-2-1-bdzxp: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-1-2-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-1-2-1.config
+hardware-1-1-2-1              : showing benchmarker times
+hardware-1-1-2-1              : benchmarker timespan job from 1792165448 to 1792165652
+hardware-1-1-2-1              : benchmarker timespan pods from 1792165452 to 1792165617
+hardware-1-1-2-1              : benchmarker timespan (start to end single container [s]) = 165
+hardware-1-1-2-1              : benchmarker times (start/end per pod and container) = [(1792165452, 1792165617)]
+hardware-1-1-2-1              : found and updated times {'benchmarker': [(1792165452, 1792165617)]}
+hardware-1-1-2-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-1-2-1              : collecting execution metrics of SUT at connection hardware-1-1-2-1
+hardware-1-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-2-1              : collecting metrics of benchmarker at connection hardware-1-1-2-1
+hardware-1-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-2-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-1-2-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-1-2-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-1-2-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4 and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 3. This will be client 3
+hardware-1-1-3-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-3-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4 and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-1-3-1-ms8pm: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-1-3-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-1-3-1.config
+hardware-1-1-3-1              : showing benchmarker times
+hardware-1-1-3-1              : benchmarker timespan job from 1792165814 to 1792165952
+hardware-1-1-3-1              : benchmarker timespan pods from 1792165818 to 1792165894
+hardware-1-1-3-1              : benchmarker timespan (start to end single container [s]) = 76
+hardware-1-1-3-1              : benchmarker times (start/end per pod and container) = [(1792165818, 1792165894)]
+hardware-1-1-3-1              : found and updated times {'benchmarker': [(1792165818, 1792165894)]}
+hardware-1-1-3-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-1-3-1              : collecting execution metrics of SUT at connection hardware-1-1-3-1
+hardware-1-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-3-1              : collecting metrics of benchmarker at connection hardware-1-1-3-1
+hardware-1-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-3-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-1-3-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-1-3-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-1-3-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4 and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 3. This will be client 4
+hardware-1-1-4-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-4-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4 and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-1-4-1-r5vl4: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-1-4-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-1-4-1.config
+hardware-1-1-4-1              : showing benchmarker times
+hardware-1-1-4-1              : benchmarker timespan job from 1792166121 to 1792166333
+hardware-1-1-4-1              : benchmarker timespan pods from 1792166124 to 1792166281
+hardware-1-1-4-1              : benchmarker timespan (start to end single container [s]) = 157
+hardware-1-1-4-1              : benchmarker times (start/end per pod and container) = [(1792166124, 1792166281)]
+hardware-1-1-4-1              : found and updated times {'benchmarker': [(1792166124, 1792166281)]}
+hardware-1-1-4-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-1-4-1              : collecting execution metrics of SUT at connection hardware-1-1-4-1
+hardware-1-1-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-4-1              : collecting metrics of benchmarker at connection hardware-1-1-4-1
+hardware-1-1-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-4-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-1-4-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-1-4-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-1-4-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4 and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Hardware-1                    : can be stopped
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4
+Hardware-1                    : starts again
+Hardware-1                    : deployments ['sut']
+Hardware-1                    : stateful sets []
+Hardware-1                    : pvcs ['sut']
+Hardware-1                    : found labels on pvc = []
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1792165007
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1792165007
+Hardware-1                    : name of SUT PVC name = bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : storage bexhoma-storage-hardware-nvme-hardware should be removed
+- waiting 10s -               : done
+Hardware-1                    : storage bexhoma-storage-hardware-nvme-hardware is gone
+- waiting 10s -               : done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 1 of 3. This will be client 1
+hardware-1-2-1-1              : start benchmarking (benchmark_run=1)
+hardware-1-2-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-2-1-1-pzt9c: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-2-1-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-2-1-1.config
+hardware-1-2-1-1              : showing benchmarker times
+hardware-1-2-1-1              : benchmarker timespan job from 1792166587 to 1792166711
+hardware-1-2-1-1              : benchmarker timespan pods from 1792166590 to 1792166666
+hardware-1-2-1-1              : benchmarker timespan (start to end single container [s]) = 76
+hardware-1-2-1-1              : benchmarker times (start/end per pod and container) = [(1792166590, 1792166666)]
+hardware-1-2-1-1              : found and updated times {'benchmarker': [(1792166590, 1792166666)]}
+hardware-1-2-1-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-2-1-1              : collecting execution metrics of SUT at connection hardware-1-2-1-1
+hardware-1-2-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-1-1              : collecting metrics of benchmarker at connection hardware-1-2-1-1
+hardware-1-2-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-1-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-2-1-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-2-1-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-2-1-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 1 of 3. This will be client 2
+hardware-1-2-2-1              : start benchmarking (benchmark_run=1)
+hardware-1-2-2-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-2-2-1-xwnzm: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-2-2-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-2-2-1.config
+hardware-1-2-2-1              : showing benchmarker times
+hardware-1-2-2-1              : benchmarker timespan job from 1792166875 to 1792167084
+hardware-1-2-2-1              : benchmarker timespan pods from 1792166878 to 1792167043
+hardware-1-2-2-1              : benchmarker timespan (start to end single container [s]) = 165
+hardware-1-2-2-1              : benchmarker times (start/end per pod and container) = [(1792166878, 1792167043)]
+hardware-1-2-2-1              : found and updated times {'benchmarker': [(1792166878, 1792167043)]}
+hardware-1-2-2-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-2-2-1              : collecting execution metrics of SUT at connection hardware-1-2-2-1
+hardware-1-2-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-2-1              : collecting metrics of benchmarker at connection hardware-1-2-2-1
+hardware-1-2-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-2-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-2-2-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-2-2-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-2-2-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-3-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 1 of 3. This will be client 3
+hardware-1-2-3-1              : start benchmarking (benchmark_run=1)
+hardware-1-2-3-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-2-3-1-ds66t: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-2-3-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-2-3-1.config
+hardware-1-2-3-1              : showing benchmarker times
+hardware-1-2-3-1              : benchmarker timespan job from 1792167250 to 1792167373
+hardware-1-2-3-1              : benchmarker timespan pods from 1792167254 to 1792167330
+hardware-1-2-3-1              : benchmarker timespan (start to end single container [s]) = 76
+hardware-1-2-3-1              : benchmarker times (start/end per pod and container) = [(1792167254, 1792167330)]
+hardware-1-2-3-1              : found and updated times {'benchmarker': [(1792167254, 1792167330)]}
+hardware-1-2-3-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-2-3-1              : collecting execution metrics of SUT at connection hardware-1-2-3-1
+hardware-1-2-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-3-1              : collecting metrics of benchmarker at connection hardware-1-2-3-1
+hardware-1-2-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-3-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-2-3-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-2-3-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-2-3-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-4-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 1 of 3. This will be client 4
+hardware-1-2-4-1              : start benchmarking (benchmark_run=1)
+hardware-1-2-4-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-2-4-1-kphbl: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-2-4-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-2-4-1.config
+hardware-1-2-4-1              : showing benchmarker times
+hardware-1-2-4-1              : benchmarker timespan job from 1792167538 to 1792167743
+hardware-1-2-4-1              : benchmarker timespan pods from 1792167541 to 1792167706
+hardware-1-2-4-1              : benchmarker timespan (start to end single container [s]) = 165
+hardware-1-2-4-1              : benchmarker times (start/end per pod and container) = [(1792167541, 1792167706)]
+hardware-1-2-4-1              : found and updated times {'benchmarker': [(1792167541, 1792167706)]}
+hardware-1-2-4-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-2-4-1              : collecting execution metrics of SUT at connection hardware-1-2-4-1
+hardware-1-2-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-4-1              : collecting metrics of benchmarker at connection hardware-1-2-4-1
+hardware-1-2-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-4-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-2-4-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-2-4-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-2-4-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Hardware-1                    : can be stopped
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d
+Hardware-1                    : starts again
+Hardware-1                    : deployments ['sut']
+Hardware-1                    : stateful sets []
+Hardware-1                    : pvcs ['sut']
+Hardware-1                    : found labels on pvc = []
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1792165007
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1792165007
+Hardware-1                    : name of SUT PVC name = bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : storage bexhoma-storage-hardware-nvme-hardware should be removed
+- waiting 10s -               : done
+Hardware-1                    : storage bexhoma-storage-hardware-nvme-hardware is gone
+- waiting 10s -               : done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-1-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 2 of 3. This will be client 1
+hardware-1-3-1-1              : start benchmarking (benchmark_run=1)
+hardware-1-3-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-3-1-1-stcrx: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-3-1-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-3-1-1.config
+hardware-1-3-1-1              : showing benchmarker times
+hardware-1-3-1-1              : benchmarker timespan job from 1792167991 to 1792168091
+hardware-1-3-1-1              : benchmarker timespan pods from 1792167994 to 1792168071
+hardware-1-3-1-1              : benchmarker timespan (start to end single container [s]) = 77
+hardware-1-3-1-1              : benchmarker times (start/end per pod and container) = [(1792167994, 1792168071)]
+hardware-1-3-1-1              : found and updated times {'benchmarker': [(1792167994, 1792168071)]}
+hardware-1-3-1-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-3-1-1              : collecting execution metrics of SUT at connection hardware-1-3-1-1
+hardware-1-3-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-1-1              : collecting metrics of benchmarker at connection hardware-1-3-1-1
+hardware-1-3-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-1-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-3-1-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-3-1-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-3-1-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-2-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 2 of 3. This will be client 2
+hardware-1-3-2-1              : start benchmarking (benchmark_run=1)
+hardware-1-3-2-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-3-2-1-4glmd: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-3-2-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-3-2-1.config
+hardware-1-3-2-1              : showing benchmarker times
+hardware-1-3-2-1              : benchmarker timespan job from 1792168199 to 1792168398
+hardware-1-3-2-1              : benchmarker timespan pods from 1792168201 to 1792168361
+hardware-1-3-2-1              : benchmarker timespan (start to end single container [s]) = 160
+hardware-1-3-2-1              : benchmarker times (start/end per pod and container) = [(1792168201, 1792168361)]
+hardware-1-3-2-1              : found and updated times {'benchmarker': [(1792168201, 1792168361)]}
+hardware-1-3-2-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-3-2-1              : collecting execution metrics of SUT at connection hardware-1-3-2-1
+hardware-1-3-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-2-1              : collecting metrics of benchmarker at connection hardware-1-3-2-1
+hardware-1-3-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-2-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-3-2-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-3-2-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-3-2-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-3-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 2 of 3. This will be client 3
+hardware-1-3-3-1              : start benchmarking (benchmark_run=1)
+hardware-1-3-3-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-3-3-1-xdq27: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-3-3-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-3-3-1.config
+hardware-1-3-3-1              : showing benchmarker times
+hardware-1-3-3-1              : benchmarker timespan job from 1792168503 to 1792168598
+hardware-1-3-3-1              : benchmarker timespan pods from 1792168506 to 1792168582
+hardware-1-3-3-1              : benchmarker timespan (start to end single container [s]) = 76
+hardware-1-3-3-1              : benchmarker times (start/end per pod and container) = [(1792168506, 1792168582)]
+hardware-1-3-3-1              : found and updated times {'benchmarker': [(1792168506, 1792168582)]}
+hardware-1-3-3-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-3-3-1              : collecting execution metrics of SUT at connection hardware-1-3-3-1
+hardware-1-3-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-3-1              : collecting metrics of benchmarker at connection hardware-1-3-3-1
+hardware-1-3-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-3-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-3-3-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-3-3-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-3-3-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-4-Hardware-1-1792165007 initialized to 1.
+Hardware-1                    : benchmarks done 2 of 3. This will be client 4
+hardware-1-3-4-1              : start benchmarking (benchmark_run=1)
+hardware-1-3-4-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh and write to pvc bexhoma-storage-hardware-nvme-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792165007
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792165007-3-4-1-8mdfq: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-3-4-1              : wrote benchmarking_timespans to /data/benchmarks/1792165007/hardware-1-3-4-1.config
+hardware-1-3-4-1              : showing benchmarker times
+hardware-1-3-4-1              : benchmarker timespan job from 1792168705 to 1792168904
+hardware-1-3-4-1              : benchmarker timespan pods from 1792168707 to 1792168872
+hardware-1-3-4-1              : benchmarker timespan (start to end single container [s]) = 165
+hardware-1-3-4-1              : benchmarker times (start/end per pod and container) = [(1792168707, 1792168872)]
+hardware-1-3-4-1              : found and updated times {'benchmarker': [(1792168707, 1792168872)]}
+hardware-1-3-4-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-3-4-1              : collecting execution metrics of SUT at connection hardware-1-3-4-1
+hardware-1-3-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-4-1              : collecting metrics of benchmarker at connection hardware-1-3-4-1
+hardware-1-3-4-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792165007(.*)", pod=~"(.*)hardware-1-1792165007(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-4-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-3-4-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-3-4-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-3-4-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh and write to pvc bexhoma-storage-hardware-nvme-hardware
+- waiting 30s -               : done
+Hardware-1                    : can be stopped
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh
+Experiment                    : ends at 2026-10-16 18:42:51.953948 (152928.0540256) - 3960.50s total
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 3961s 
+* Code: 1792165007
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
+  * Benchmark tool: fio.
+  * Test file size is '16G', duration per round is 60s.
+  * I/O pattern(s) swept: ['read'].
+  * Block size(s) swept: ['128k'].
+  * Queue depth(s) swept: [1, 32].
+  * I/O engine(s) swept: ['io_uring'].
+  * Fsync interval(s) swept: [0].
+  * Fdatasync interval(s) swept: [0].
+  * Experiment uses bexhoma version 0.11.5.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['Hardware'].
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 150Gi. Persistent storage is removed before every repetition.
+  * Benchmarking is tested with [1, 8] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run 3 times.
+  * Maximum DBMS across the whole cluster is 2.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 8 CPU and 16Gi RAM. CPU limit is 8. RAM limit is 16Gi.
+
+### Connections
+* hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1399119
+  * volume_size:146.6G
+  * volume_used:28.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1405903
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1405909
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1406282
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-2-1-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1405918
+  * volume_size:146.6G
+  * volume_used:28.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-2-2-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1406291
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-2-3-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1405917
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-2-4-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1405920
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-3-1-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1405926
+  * volume_size:146.6G
+  * volume_used:28.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-3-2-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1405918
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-3-3-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1405922
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+* hardware-1-3-4-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1406294
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792165007
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1792165007-8494b7bf87-z6mm4: 0
+* bexhoma-sut-hardware-1-1792165007-58467cbbd-tbb9d: 0
+* bexhoma-sut-hardware-1-1792165007-7987cbf6b5-hk2dh: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 4: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 4: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 4: hardware (1 pods)
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------:|
+| hardware-1-1-1-1-1 | hardware-1-1-1 | hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         77 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                      1 |                  1438.29 |                      0.00 |                           0.95 |                            0.00 |                           1.14 |                            0.00 |                  1 |        0 |
+| hardware-1-1-2-1-1 | hardware-1-1-2 | hardware-1-1-2-1 |                1 |        2 |               1 |       1 |        166 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                      8 |                 11182.20 |                      0.00 |                           0.97 |                            0.00 |                           1.12 |                            0.00 |                  8 |        0 |
+| hardware-1-1-3-1-1 | hardware-1-1-3 | hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         77 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                      1 |                 10617.59 |                      0.00 |                           5.47 |                            0.00 |                           6.85 |                            0.00 |                  1 |        0 |
+| hardware-1-1-4-1-1 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       1 |        157 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                      8 |                 22345.99 |                      0.00 |                          30.28 |                            0.00 |                          38.01 |                            0.00 |                  8 |        0 |
+| hardware-1-2-1-1-1 | hardware-1-2-1 | hardware-1-2-1-1 |                2 |        1 |               1 |       1 |         76 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                      1 |                  1423.64 |                      0.00 |                           0.97 |                            0.00 |                           1.16 |                            0.00 |                  1 |        0 |
+| hardware-1-2-2-1-1 | hardware-1-2-2 | hardware-1-2-2-1 |                2 |        2 |               1 |       1 |        165 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                      8 |                 11309.83 |                      0.00 |                           1.00 |                            0.00 |                           1.17 |                            0.00 |                  8 |        0 |
+| hardware-1-2-3-1-1 | hardware-1-2-3 | hardware-1-2-3-1 |                2 |        3 |               1 |       1 |         76 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                      1 |                 12007.12 |                      0.00 |                           5.14 |                            0.00 |                           6.59 |                            0.00 |                  1 |        0 |
+| hardware-1-2-4-1-1 | hardware-1-2-4 | hardware-1-2-4-1 |                2 |        4 |               1 |       1 |        165 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                      8 |                 22322.45 |                      0.00 |                          36.44 |                            0.00 |                          45.35 |                            0.00 |                  8 |        0 |
+| hardware-1-3-1-1-1 | hardware-1-3-1 | hardware-1-3-1-1 |                3 |        1 |               1 |       1 |         77 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                      1 |                  1319.54 |                      0.00 |                           1.00 |                            0.00 |                           1.20 |                            0.00 |                  1 |        0 |
+| hardware-1-3-2-1-1 | hardware-1-3-2 | hardware-1-3-2-1 |                3 |        2 |               1 |       1 |        160 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                      8 |                 10148.63 |                      0.00 |                           1.04 |                            0.00 |                           1.22 |                            0.00 |                  8 |        0 |
+| hardware-1-3-3-1-1 | hardware-1-3-3 | hardware-1-3-3-1 |                3 |        3 |               1 |       1 |         76 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                      1 |                 10762.19 |                      0.00 |                           5.41 |                            0.00 |                           6.78 |                            0.00 |                  1 |        0 |
+| hardware-1-3-4-1-1 | hardware-1-3-4 | hardware-1-3-4-1 |                3 |        4 |               1 |       1 |        165 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                      8 |                 22341.43 |                      0.00 |                          33.82 |                            0.00 |                          42.21 |                            0.00 |                  8 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   errors | hardware_type   |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------:|:----------------|
+| hardware-1-1-1 | hardware-1-1-1 |                1 |        1 |               1 |           1 |         77 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                  1438.29 |                      0.00 |                           0.95 |                            0.00 |                           1.14 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-1-2 | hardware-1-1-2 |                1 |        2 |               1 |           1 |        166 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                 11182.20 |                      0.00 |                           0.97 |                            0.00 |                           1.12 |                            0.00 |                  8 |        0 | fio             |
+| hardware-1-1-3 | hardware-1-1-3 |                1 |        3 |               1 |           1 |         77 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                 10617.59 |                      0.00 |                           5.47 |                            0.00 |                           6.85 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-1-4 | hardware-1-1-4 |                1 |        4 |               1 |           1 |        157 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                 22345.99 |                      0.00 |                          30.28 |                            0.00 |                          38.01 |                            0.00 |                  8 |        0 | fio             |
+| hardware-1-2-1 | hardware-1-2-1 |                2 |        1 |               1 |           1 |         76 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                  1423.64 |                      0.00 |                           0.97 |                            0.00 |                           1.16 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-2-2 | hardware-1-2-2 |                2 |        2 |               1 |           1 |        165 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                 11309.83 |                      0.00 |                           1.00 |                            0.00 |                           1.17 |                            0.00 |                  8 |        0 | fio             |
+| hardware-1-2-3 | hardware-1-2-3 |                2 |        3 |               1 |           1 |         76 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                 12007.12 |                      0.00 |                           5.14 |                            0.00 |                           6.59 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-2-4 | hardware-1-2-4 |                2 |        4 |               1 |           1 |        165 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                 22322.45 |                      0.00 |                          36.44 |                            0.00 |                          45.35 |                            0.00 |                  8 |        0 | fio             |
+| hardware-1-3-1 | hardware-1-3-1 |                3 |        1 |               1 |           1 |         77 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                  1319.54 |                      0.00 |                           1.00 |                            0.00 |                           1.20 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-3-2 | hardware-1-3-2 |                3 |        2 |               1 |           1 |        160 | read              | 128k              |                      1 | io_uring              |                    0 |                        0 |                       50 |                 10148.63 |                      0.00 |                           1.04 |                            0.00 |                           1.22 |                            0.00 |                  8 |        0 | fio             |
+| hardware-1-3-3 | hardware-1-3-3 |                3 |        3 |               1 |           1 |         76 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                 10762.19 |                      0.00 |                           5.41 |                            0.00 |                           6.78 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-3-4 | hardware-1-3-4 |                3 |        4 |               1 |           1 |        165 | read              | 128k              |                     32 | io_uring              |                    0 |                        0 |                       50 |                 22341.43 |                      0.00 |                          33.82 |                            0.00 |                          42.21 |                            0.00 |                  8 |        0 | fio             |
+
+### Monitoring
+
+### Benchmarking phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| hardware-1-1-1-1 |        27.21 |      0.86 |           0.22 |                  0.22 |
+| hardware-1-1-2-1 |       124.86 |      0.97 |           0.77 |                 16.00 |
+| hardware-1-1-3-1 |        32.69 |      0.55 |           0.35 |                  4.25 |
+| hardware-1-1-4-1 |       126.25 |      0.97 |           0.60 |                 13.83 |
+| hardware-1-2-1-1 |        28.09 |      0.77 |           0.67 |                 16.00 |
+| hardware-1-2-2-1 |       123.85 |      1.06 |           0.67 |                 14.31 |
+| hardware-1-2-3-1 |        33.91 |      0.96 |           0.41 |                  5.97 |
+| hardware-1-2-4-1 |       126.37 |      1.37 |           0.83 |                 16.00 |
+| hardware-1-3-1-1 |        26.37 |      1.01 |           0.22 |                  0.22 |
+| hardware-1-3-2-1 |       112.46 |      1.15 |           0.58 |                 12.79 |
+| hardware-1-3-3-1 |        28.77 |      0.94 |           0.23 |                  0.23 |
+| hardware-1-3-4-1 |       130.77 |      0.97 |           0.55 |                 11.94 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| hardware-1-1-1-1 |         0.59 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-1-2-1 |         0.59 |      0.03 |           0.00 |                  0.00 |
+| hardware-1-1-3-1 |         0.59 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-1-4-1 |         0.59 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-2-1-1 |         0.59 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-2-2-1 |         0.59 |      0.01 |           0.00 |                  0.00 |
+| hardware-1-2-3-1 |         0.59 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-2-4-1 |         0.59 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-3-1-1 |         0.59 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-3-2-1 |         0.59 |      0.01 |           0.00 |                  0.00 |
+| hardware-1-3-3-1 |         0.59 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-3-4-1 |         0.58 |      0.00 |           0.00 |                  0.00 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-4-1 (bexhoma-metrics-hardware-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-4-1 (bexhoma-metrics-hardware-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-4-1 (bexhoma-metrics-hardware-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-4-1 (bexhoma-metrics-hardware-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-2-1-1 (bexhoma-metrics-hardware-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-2-1-1 (bexhoma-metrics-hardware-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-1-1 (bexhoma-metrics-hardware-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-1-1 (bexhoma-metrics-hardware-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-2-2-1 (bexhoma-metrics-hardware-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-2-2-1 (bexhoma-metrics-hardware-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-2-1 (bexhoma-metrics-hardware-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-2-1 (bexhoma-metrics-hardware-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-2-3-1 (bexhoma-metrics-hardware-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-2-3-1 (bexhoma-metrics-hardware-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-3-1 (bexhoma-metrics-hardware-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-3-1 (bexhoma-metrics-hardware-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-2-4-1 (bexhoma-metrics-hardware-1-2-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-2-4-1 (bexhoma-metrics-hardware-1-2-4-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-4-1 (bexhoma-metrics-hardware-1-2-4-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-4-1 (bexhoma-metrics-hardware-1-2-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-3-1-1 (bexhoma-metrics-hardware-1-3-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-3-1-1 (bexhoma-metrics-hardware-1-3-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-1-1 (bexhoma-metrics-hardware-1-3-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-1-1 (bexhoma-metrics-hardware-1-3-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-3-2-1 (bexhoma-metrics-hardware-1-3-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-3-2-1 (bexhoma-metrics-hardware-1-3-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-2-1 (bexhoma-metrics-hardware-1-3-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-2-1 (bexhoma-metrics-hardware-1-3-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-3-3-1 (bexhoma-metrics-hardware-1-3-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-3-3-1 (bexhoma-metrics-hardware-1-3-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-3-1 (bexhoma-metrics-hardware-1-3-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-3-1 (bexhoma-metrics-hardware-1-3-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-3-4-1 (bexhoma-metrics-hardware-1-3-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-3-4-1 (bexhoma-metrics-hardware-1-3-4-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-4-1 (bexhoma-metrics-hardware-1-3-4-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-4-1 (bexhoma-metrics-hardware-1-3-4-1-benchmarker.log, expected: series exists only while non-zero)
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS

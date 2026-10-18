@@ -1497,6 +1497,7 @@ bexhoma benchbase \
   -nbt 10 \
   -xkey \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
@@ -1634,6 +1635,7 @@ bexhoma benchbase \
   -nbt 10 \
   -xkey \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \

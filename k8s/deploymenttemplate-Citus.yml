@@ -43,9 +43,14 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
+      # pause container is PID 1 and reaps orphans (e.g. of a timed-out probe);
+      # postgres as PID 1 would take them for crashed backends and restart all of them
+      shareProcessNamespace: true
       containers:
       - name: dbms
-        image: citusdata/citus:13.2.0-alpine
+        image: citusdata/citus:14.2.0 # not -alpine: 14.2.0-alpine fails ~5% of TPC-C New Order with "could not append to file"
+        # raise soft nofile limit (1024) to the hard limit; max_files_per_process is capped by it
+        command: ["bash", "-c", "ulimit -S -n \"$(ulimit -H -n)\" || true; exec docker-entrypoint.sh \"$@\"", "docker-entrypoint.sh"]
         args: [
           "-c", "max_worker_processes=16",
           "-c", "max_parallel_workers=16",
@@ -86,6 +91,9 @@ spec:
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
+        # PG 18 images default to /var/lib/postgresql/18/docker and refuse a mount at .../data without this
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         ports:
         - {containerPort: 5432}
         resources:
@@ -101,7 +109,7 @@ spec:
               command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
           preStop:
             exec:
-              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120"]
+              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/18/bin/pg_ctl stop -m smart -t 120"]
         readinessProbe:
           exec:
             command:
@@ -117,6 +125,7 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 60
           successThreshold: 3
+          timeoutSeconds: 10
       - name: cadvisor
         image: gcr.io/cadvisor/cadvisor:v0.47.0
         args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
@@ -204,9 +213,14 @@ spec:
       tolerations:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
+      # pause container is PID 1 and reaps orphans (e.g. of a timed-out probe);
+      # postgres as PID 1 would take them for crashed backends and restart all of them
+      shareProcessNamespace: true
       containers:
       - name: dbms
-        image: citusdata/citus:13.2.0-alpine
+        image: citusdata/citus:14.2.0 # not -alpine: 14.2.0-alpine fails ~5% of TPC-C New Order with "could not append to file"
+        # raise soft nofile limit (1024) to the hard limit; max_files_per_process is capped by it
+        command: ["bash", "-c", "ulimit -S -n \"$(ulimit -H -n)\" || true; exec docker-entrypoint.sh \"$@\"", "docker-entrypoint.sh"]
         args: [
           "-c", "max_worker_processes=16",
           "-c", "max_parallel_workers=16",
@@ -286,7 +300,7 @@ spec:
               command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
           preStop:
             exec:
-              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120"]
+              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/18/bin/pg_ctl stop -m smart -t 120"]
         readinessProbe:
           exec:
             command:
@@ -302,6 +316,7 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 60
           successThreshold: 3
+          timeoutSeconds: 10
         #livenessProbe:
         #  exec:
         #    command:

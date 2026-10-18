@@ -136,6 +136,7 @@ bexhoma hardware `
   -xfid 1                          <# queue depth, fixed (single outstanding write) #> `
   -xfe libaio                      <# fio ioengine #> `
   -xfsy 1                          <# fsync after every write (wal_sync_method=fsync) #> `
+  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
   -nbp 1                           <# benchmarking pod count #> `
   -nbt 1                           <# threads per benchmarking pod, fixed (single backend) #> `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `

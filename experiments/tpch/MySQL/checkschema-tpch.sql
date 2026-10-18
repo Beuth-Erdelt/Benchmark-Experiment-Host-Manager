@@ -1,0 +1,62 @@
+-- Benchmark-Experiment-Host-Manager | experiments/tpch/MySQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2026 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Last post-load script, always run (also without -xii/-xic/-xis).
+--          Restores the settings relaxed for the load to the startup values
+--          saved by initschema-tpch.sql, and reports row counts, sizes, the
+--          redo log written so far and the non-default configuration.
+--          No curly braces in this file: bexhoma may fill it with str.format().
+
+-- Restore the settings saved before the load (SET GLOBAL x = DEFAULT would give
+-- compiled defaults, not the server's startup values). @v starts at the current
+-- value, so a setting without a saved row stays as it is.
+SET @v = @@GLOBAL.innodb_flush_log_at_trx_commit;
+SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'innodb_flush_log_at_trx_commit';
+SET GLOBAL innodb_flush_log_at_trx_commit = @v;
+SET @v = @@GLOBAL.foreign_key_checks;
+SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'foreign_key_checks';
+SET GLOBAL foreign_key_checks = @v;
+SET @v = @@GLOBAL.unique_checks;
+SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'unique_checks';
+SET GLOBAL unique_checks = @v;
+SET @v = @@GLOBAL.autocommit;
+SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'autocommit';
+SET GLOBAL autocommit = @v;
+
+SELECT name, value AS saved_value FROM bexhoma.saved_settings ORDER BY name;
+SELECT @@GLOBAL.innodb_flush_log_at_trx_commit, @@GLOBAL.foreign_key_checks,
+       @@GLOBAL.unique_checks, @@GLOBAL.autocommit;
+
+-- Row counts per table (exact counts; for reference: lineitem SF 10 = 59,986,052)
+SELECT 'customer' AS table_name, COUNT(*) AS row_count FROM tpch.customer
+UNION ALL SELECT 'lineitem', COUNT(*) FROM tpch.lineitem
+UNION ALL SELECT 'nation',   COUNT(*) FROM tpch.nation
+UNION ALL SELECT 'orders',   COUNT(*) FROM tpch.orders
+UNION ALL SELECT 'part',     COUNT(*) FROM tpch.part
+UNION ALL SELECT 'partsupp', COUNT(*) FROM tpch.partsupp
+UNION ALL SELECT 'region',   COUNT(*) FROM tpch.region
+UNION ALL SELECT 'supplier', COUNT(*) FROM tpch.supplier;
+
+-- Sizes (InnoDB estimates)
+SELECT table_name,
+       ROUND(data_length / 1024 / 1024)  AS data_mib,
+       ROUND(index_length / 1024 / 1024) AS index_mib
+FROM information_schema.tables
+WHERE table_schema = 'tpch'
+ORDER BY data_length + index_length DESC;
+
+SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024) AS database_mib
+FROM information_schema.tables
+WHERE table_schema = 'tpch';
+
+-- Redo log written since server start, i.e. mostly by the load
+SHOW GLOBAL STATUS WHERE Variable_name IN ('Innodb_os_log_written', 'Innodb_data_written', 'Innodb_redo_log_enabled');
+
+-- Configuration that differs from the compiled defaults
+SELECT vi.VARIABLE_NAME, gv.VARIABLE_VALUE, vi.VARIABLE_SOURCE
+FROM performance_schema.variables_info vi
+JOIN performance_schema.global_variables gv ON gv.VARIABLE_NAME = vi.VARIABLE_NAME
+WHERE vi.VARIABLE_SOURCE <> 'COMPILED'
+ORDER BY vi.VARIABLE_NAME;

@@ -4,14 +4,18 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Pre-load setup for TPC-C on MySQL. Configures the root user,
---          enables local infile loading, sets session modes, and tunes
---          InnoDB and MEMORY engine parameters to accelerate bulk import.
+--          enables local infile loading, sets session modes, and relaxes
+--          InnoDB settings to accelerate the bulk import. The relaxed settings
+--          hold for the load only: their startup values are saved in
+--          bexhoma.saved_settings and checkschema-tpcc.sql restores them.
+--          Memory sizes (buffer pool, tmp tables) come from the template or --set.
 
 DROP USER 'root'@'%';
 FLUSH PRIVILEGES;
 
 CREATE USER 'root'@'%';
-ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
+-- MySQL 9 has no mysql_native_password: default plugin (caching_sha2_password)
+ALTER USER 'root'@'%' IDENTIFIED BY 'root';
 
 ALTER USER 'root'@'%' REQUIRE NONE;
 
@@ -25,11 +29,14 @@ SET GLOBAL local_infile = 1;
 SET sql_mode='';
 SET GLOBAL sql_mode='';
 
--- speed up import
-SET GLOBAL innodb_buffer_pool_size = 32*1024*1024*1024;
-SET GLOBAL innodb_log_buffer_size = 16*1024*1024*1024;
-SET GLOBAL innodb_flush_log_at_trx_commit = 0;
+-- Save the startup values of the settings relaxed below (first save wins)
+CREATE DATABASE IF NOT EXISTS bexhoma;
+CREATE TABLE IF NOT EXISTS bexhoma.saved_settings (name VARCHAR(64) PRIMARY KEY, value VARCHAR(255));
+INSERT IGNORE INTO bexhoma.saved_settings VALUES
+  ('innodb_flush_log_at_trx_commit', @@GLOBAL.innodb_flush_log_at_trx_commit),
+  ('innodb_log_buffer_size', @@GLOBAL.innodb_log_buffer_size);
+SELECT * FROM bexhoma.saved_settings;
 
--- set max MEMORY engine size
-SET GLOBAL tmp_table_size = 1024 * 1024 * 1024 * 32;
-SET GLOBAL max_heap_table_size = 1024 * 1024 * 1024 * 32;
+-- speed up import (load phase only)
+SET GLOBAL innodb_log_buffer_size = 1024*1024*1024;
+SET GLOBAL innodb_flush_log_at_trx_commit = 0;

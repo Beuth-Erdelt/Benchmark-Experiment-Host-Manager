@@ -887,6 +887,87 @@ class LoadingCoordinator:
                     time_type = key[len("time_"):]
                     cfg.times_scripts[time_type] = float(value)
 
+    def split_worker_scripts(self, scripts: list) -> tuple:
+        """Split a script list into the part for the SUT pod and the part for the workers.
+
+        With :attr:`SutConfiguration.script_target` ``'workers'``, shell scripts
+        (``.sh``) run in the ``dbms`` container of every worker pod, where the data
+        is (e.g. a ``SAVE`` per Dragonfly cluster node). SQL scripts keep running
+        once through ``loadData``, which addresses the cluster through its service.
+        With the default ``'sut'`` everything runs in the SUT pod, as before.
+
+        :param scripts: Script filenames in execution order.
+        :return: ``(scripts_for_sut, scripts_for_workers)``, each in the given order.
+        :rtype: tuple[list, list]
+        """
+        if getattr(self._config, 'script_target', 'sut') != 'workers':
+            return list(scripts), []
+        for_workers = [s for s in scripts if os.path.splitext(s)[1].lower() == '.sh']
+        for_sut = [s for s in scripts if s not in for_workers]
+        return for_sut, for_workers
+
+    def run_scripts_on_workers(self, scripts: list, script_type: str) -> int:
+        """Run shell scripts in the ``dbms`` container of every worker pod, in parallel.
+
+        Each script is uploaded to ``/tmp/`` of every stateful worker pod and run
+        there; stdout/stderr go to one log per pod and script. Scripts missing in
+        the experiment folder are skipped, as for the SUT pod.
+
+        :param scripts: Shell script filenames (from :meth:`split_worker_scripts`).
+        :param script_type: Label of the phase, used in the log file names
+            (e.g. ``'reset_1_1_1'`` or ``'index'``).
+        :return: Seconds until the slowest pod finished (0 if nothing ran).
+        :rtype: int
+        """
+        cfg = self._config
+        sources = []
+        for script in scripts:
+            source = (cfg.experiment.cluster.experiments_configfolder
+                      + '/' + cfg.path_experiment_docker + '/' + script)
+            if os.path.isfile(source):
+                sources.append((script, source))
+        if not sources:
+            return 0
+        pods = cfg.get_worker_pods(only_stateful=True)
+        if not pods:
+            print("{:30s}: no worker pods found for scripts {}".format(
+                cfg.configuration, [s for s, _ in sources]))
+            return 0
+        elapsed_per_pod = {}
+
+        def run_in_pod(pod):
+            t_start = default_timer()
+            for script, source in sources:
+                target = '/tmp/' + script
+                cfg.experiment.cluster.upload_file(
+                    filename_remote=target, filename_local=source, pod=pod, container='dbms')
+                cfg.experiment.cluster.execute_command_in_pod(
+                    "sed -i 's/\\r$//' {}".format(target), pod=pod, container='dbms')
+                _, stdout, stderr = cfg.experiment.cluster.execute_command_in_pod(
+                    'sh {}'.format(target), pod=pod, container='dbms', retry_interrupted=False)
+                filename, file_extension = os.path.splitext(script)
+                for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
+                    if content:
+                        log_path = (
+                            cfg.experiment.path
+                            + '/{app}-{script_type}-{configuration}-{filename}-{pod}{ext}{suffix}'.format(
+                                app=cfg.appname, script_type=script_type,
+                                configuration=cfg.configuration, filename=filename, pod=pod,
+                                ext=file_extension.lower(), suffix=suffix).lower())
+                        with open(log_path, 'w') as fh:
+                            fh.write(content)
+            elapsed_per_pod[pod] = default_timer() - t_start
+
+        threads = [threading.Thread(target=run_in_pod, args=(pod,)) for pod in pods]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+        elapsed = int(max(elapsed_per_pod.values())) if elapsed_per_pod else 0
+        print("{:30s}: scripts {} ran on {} worker pods in {}s".format(
+            cfg.configuration, [s for s, _ in sources], len(pods), elapsed))
+        return elapsed
+
     def exec_reset_script(self, script_type: str, scripts: list) -> int:
         """Execute reset scripts synchronously in the SUT pod before a benchmarking round.
 
@@ -928,6 +1009,15 @@ class LoadingCoordinator:
         if 'loadData' not in cfg.dockertemplate:
             print("{:30s}: no loadData command found, skipping reset".format(cfg.configuration))
             return 0
+        scripts, scripts_workers = self.split_worker_scripts(scripts)
+        elapsed_workers = self.run_scripts_on_workers(scripts_workers, script_type)
+        if not scripts:
+            cfg.pod_sut = cfg.experiment.cluster.get_pods(
+                component='sut', configuration=cfg.configuration, experiment=cfg.code)[0]
+            cfg.experiment.cluster.kubectl(
+                'label pod {} --overwrite {}=True time_{}={}'.format(
+                    cfg.pod_sut, script_type, script_type, elapsed_workers))
+            return elapsed_workers
         self.prepare_init_dbms(scripts)
         pods = cfg.experiment.cluster.get_pods(
             component='sut', configuration=cfg.configuration, experiment=cfg.code)
@@ -980,7 +1070,7 @@ class LoadingCoordinator:
                               ext=file_extension.lower(), suffix=suffix).lower())
                     with open(log_path, 'w') as fh:
                         fh.write(content)
-        elapsed = int(default_timer() - t_start)
+        elapsed = int(default_timer() - t_start) + elapsed_workers
         print("{:30s}: reset ({}) completed in {}s".format(
             cfg.configuration, script_type, elapsed))
         cfg.experiment.cluster.kubectl(
@@ -1009,6 +1099,10 @@ class LoadingCoordinator:
         cfg = self._config
         cfg.logger.debug('LoadingCoordinator.load_data()')
         cfg.loading_started = True
+        # shell scripts meant for the data nodes run there first (synchronously,
+        # short); their time is part of the loading time
+        scripts, scripts_workers = self.split_worker_scripts(scripts)
+        time_offset += self.run_scripts_on_workers(scripts_workers, script_type)
         self.prepare_init_dbms(scripts)
         service_name = cfg.get_service_sut(configuration=cfg.configuration)
         pods = cfg.experiment.cluster.get_pods(

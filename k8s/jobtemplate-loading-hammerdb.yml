@@ -42,7 +42,16 @@ spec:
         volumeMounts:
         - name: datadir
           mountPath: "/tmp/tpcc/"
+        # CA of the SUT's TLS Secret (MySQL 9); bexhoma removes it when the SUT has none
+        - name: bexhoma-tls
+          mountPath: /etc/mysql/certs
+          readOnly: true
       restartPolicy: Never
       volumes:
       - name: datadir
         emptyDir: {}
+      - name: bexhoma-tls
+        secret:
+          secretName: bexhoma-tls
+          items:
+          - {key: ca.pem, path: ca-cert.pem}

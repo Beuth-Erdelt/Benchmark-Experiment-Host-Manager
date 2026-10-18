@@ -9,10 +9,25 @@ from typing import TYPE_CHECKING, List, Optional, Tuple
 import hiyapyco
 import yaml
 
+from ..tls import TLS_ENV, TLS_VOLUME, apply_tls_volume
+
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
-__all__ = ['ManifestBuilder', 'find_workloads', 'ensure_arg_pairs', 'patch_container']
+__all__ = [
+    'ManifestBuilder', 'find_workloads', 'ensure_arg_pairs', 'ensure_arg_flags', 'ensure_env',
+    'detect_arg_style', 'patch_container', 'ARG_STYLE_ANNOTATION', 'ARG_STYLE_PG', 'ARG_STYLE_FLAG',
+    'ENV_PARAM_PREFIX',
+]
+
+#: Workload annotation that declares how ``--set`` writes container args.
+ARG_STYLE_ANNOTATION = 'bexhoma/arg-style'
+#: PostgreSQL style: ``["-c", "key=value"]`` pairs.
+ARG_STYLE_PG = 'pg'
+#: MySQL/MariaDB style: one ``"--key=value"`` element per setting.
+ARG_STYLE_FLAG = 'flag'
+#: ``--set`` parameter prefix that targets the container's ``env`` list instead of its args.
+ENV_PARAM_PREFIX = 'env.'
 
 
 def find_workloads(doc: dict, kind: str, name: str) -> bool:
@@ -63,12 +78,98 @@ def ensure_arg_pairs(
     return args
 
 
+def _flag_name(name: str) -> str:
+    """Normalise a flag name for comparison: MySQL treats ``-`` and ``_`` alike."""
+    return name.replace("-", "_").lower()
+
+
+def ensure_arg_flags(
+    args_list: Optional[List[str]], updates: List[Tuple[str, str]]
+) -> List[str]:
+    """Update or append ``--key=value`` elements in a container args list.
+
+    Names match regardless of ``-``/``_`` (``innodb_buffer_pool_size`` replaces
+    ``--innodb-buffer-pool-size=96G``); a replaced element keeps the template's
+    spelling of the name. Valueless flags (``--skip-log-bin``) are left alone.
+
+    :param args_list: Existing container args (e.g. ``["--max_connections=1500"]``).
+    :param updates: List of ``(key, value)`` pairs to apply.
+    :return: New args list with updates applied.
+    :rtype: list[str]
+    """
+    args = list(args_list or [])
+    pos_by_key = {}
+    for i, arg in enumerate(args):
+        if isinstance(arg, str) and arg.startswith("--") and "=" in arg:
+            name = arg[2:].split("=", 1)[0]
+            pos_by_key[_flag_name(name)] = (i, name)
+    for k, v in updates:
+        hit = pos_by_key.get(_flag_name(k))
+        if hit is not None:
+            args[hit[0]] = f"--{hit[1]}={v}"
+        else:
+            args.append(f"--{k}={v}")
+            pos_by_key[_flag_name(k)] = (len(args) - 1, k)
+    return args
+
+
+def ensure_env(env_list: Optional[list], name: str, value: str) -> list:
+    """Set or replace one entry in a container ``env`` list.
+
+    An existing entry (also one with ``valueFrom``) is replaced by a plain
+    ``{name, value}``; a new one is appended.
+
+    :param env_list: Existing container env list.
+    :param name: Environment variable name.
+    :param value: Value; stored as a string.
+    :return: New env list.
+    :rtype: list
+    """
+    env = [dict(e) for e in (env_list or [])]
+    for e in env:
+        if e.get("name") == name:
+            e.pop("valueFrom", None)
+            e["value"] = str(value)
+            return env
+    env.append({"name": name, "value": str(value)})
+    return env
+
+
+def detect_arg_style(doc: dict, args_list: Optional[List[str]]) -> str:
+    """Return how ``--set`` writes args into this workload's container.
+
+    The ``bexhoma/arg-style`` annotation of the workload wins (``pg`` or ``flag``).
+    Otherwise the existing args decide: ``-c key=value`` pairs -> ``pg``,
+    ``--key=value`` elements -> ``flag``; no hint -> ``pg`` (backward compatible).
+
+    :param doc: Parsed Deployment/StatefulSet document.
+    :param args_list: Args of the container that is patched.
+    :return: :data:`ARG_STYLE_PG` or :data:`ARG_STYLE_FLAG`.
+    :rtype: str
+    """
+    md = doc.get("metadata", {}) or {}
+    annotations = md.get("annotations", {}) or {}
+    declared = str(annotations.get(ARG_STYLE_ANNOTATION, "")).strip().lower()
+    if declared in (ARG_STYLE_PG, ARG_STYLE_FLAG):
+        return declared
+    args = list(args_list or [])
+    if any(a == "-c" for a in args):
+        return ARG_STYLE_PG
+    if any(isinstance(a, str) and a.startswith("--") and "=" in a for a in args):
+        return ARG_STYLE_FLAG
+    return ARG_STYLE_PG
+
+
 def patch_container(doc: dict, container_name: str, param: str, value: str) -> bool:
-    """Patch a single container's args in a Deployment/StatefulSet YAML doc.
+    """Patch a single container in a Deployment/StatefulSet YAML doc.
+
+    ``param`` of the form ``env.NAME`` sets the environment variable ``NAME``;
+    any other ``param`` is written into the args in the workload's arg style
+    (see :func:`detect_arg_style`): ``-c key=value`` or ``--key=value``.
 
     :param doc: Parsed YAML document dict.
     :param container_name: Name of the container to patch.
-    :param param: Parameter key to set inside ``-c key=value``.
+    :param param: Parameter key, or ``env.NAME``.
     :param value: Parameter value.
     :return: True iff any changes were made.
     :rtype: bool
@@ -81,8 +182,18 @@ def patch_container(doc: dict, container_name: str, param: str, value: str) -> b
     for c in containers:
         if c.get("name") != container_name:
             continue
+        if param.startswith(ENV_PARAM_PREFIX):
+            old_env = c.get("env", []) or []
+            new_env = ensure_env(old_env, param[len(ENV_PARAM_PREFIX):], value)
+            if new_env != old_env:
+                c["env"] = new_env
+                changed = True
+            continue
         old_args = c.get("args", [])
-        new_args = ensure_arg_pairs(old_args, [(param, value)])
+        if detect_arg_style(doc, old_args) == ARG_STYLE_FLAG:
+            new_args = ensure_arg_flags(old_args, [(param, value)])
+        else:
+            new_args = ensure_arg_pairs(old_args, [(param, value)])
         if new_args != old_args:
             c["args"] = new_args
             changed = True
@@ -403,6 +514,12 @@ class ManifestBuilder:
                         for i, e in env_merged.items():
                             dep['spec']['template']['spec']['initContainers'][i_container]['env'].append(
                                 {'name': i, 'value': str(e)})
+                # the CA of the SUT's TLS Secret, for clients that need a CA file (HammerDB)
+                pod_spec = dep['spec']['template']['spec']
+                if apply_tls_volume(pod_spec, getattr(cfg, 'tls_secret', '')):
+                    for cont in pod_spec['containers']:
+                        if any(m.get('name') == TLS_VOLUME for m in cont.get('volumeMounts') or []):
+                            cont['env'] = ensure_env(cont.get('env'), TLS_ENV, 'true')
                 if len(nodegroup) and nodegroup in cfg.nodes:
                     if 'nodeSelector' not in dep['spec']['template']['spec']:
                         dep['spec']['template']['spec']['nodeSelector'] = dict()

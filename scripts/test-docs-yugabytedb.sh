@@ -20,8 +20,16 @@ source ./scripts/testfunctions.sh
 ################################################
 
 
+# install_yugabytedb [persistent] [storage_class] [tserver_volumes] [nodes]
+#   persistent:      yes = PVCs of storage_class, no = ephemeral (emptyDir)
+#   storage_class:   storage class of master and tserver PVCs (default shared)
+#   tserver_volumes: volumes per tserver (chart storage.tserver.count, default 2; data dirs are striped over them)
+#   nodes:           pin masters and tservers to these nodes, joined by '+' (like bexhoma -rnw); empty = anywhere
 install_yugabytedb() {
   PERSISTENT=${1:-yes}
+  STORAGE_CLASS=${2:-shared}
+  TSERVER_VOLUMES=${3:-2}
+  NODES=${4:-}
 
   if [[ "$PERSISTENT" == "yes" ]]; then
     EPHEMERAL=false
@@ -29,8 +37,29 @@ install_yugabytedb() {
     EPHEMERAL=true
   fi
 
+  VALUES_ARGS=()
+  if [[ -n "$NODES" ]]; then
+    # node affinity per component; the chart keeps its own (soft) pod anti-affinity next to it
+    VALUES_FILE=$(mktemp --suffix=.yaml)
+    NODE_LIST=$(echo "$NODES" | tr '+' '\n' | sed 's/^/                - /')
+    AFFINITY="    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+$NODE_LIST"
+    printf 'master:\n%s\ntserver:\n%s\n' "$AFFINITY" "$AFFINITY" > "$VALUES_FILE"
+    VALUES_ARGS=(-f "$VALUES_FILE")
+  fi
+
+  # The chart reads the liveness probe settings at the root (livenessProbe.*), not per component;
+  # the probe (a disk check of the data dirs) only exists with persistent storage.
   helm install bexhoma yugabytedb/yugabyte \
-    --version 2025.2.4 \
+    --version 2025.2.7 \
+    "${VALUES_ARGS[@]}" \
     --set \
 gflags.tserver.ysql_enable_packed_row=true,\
 gflags.tserver.ysql_max_connections=1280,\
@@ -43,14 +72,16 @@ resource.tserver.limits.memory=16Gi,\
 resource.tserver.requests.cpu=8,\
 resource.tserver.requests.memory=16Gi,\
 storage.master.size=100Gi,\
-storage.master.storageClass=shared,\
+storage.master.storageClass=$STORAGE_CLASS,\
 storage.tserver.size=100Gi,\
-storage.tserver.storageClass=shared,\
+storage.tserver.storageClass=$STORAGE_CLASS,\
+storage.tserver.count=$TSERVER_VOLUMES,\
 storage.ephemeral=$EPHEMERAL,\
-tserver.livenessProbe.timeoutSeconds=10,\
-master.livenessProbe.timeoutSeconds=10,\
+livenessProbe.timeoutSeconds=10,\
 preflight.skipUlimit=true,\
 enableLoadBalancer=true
+
+  if [[ -n "$NODES" ]]; then rm -f "$VALUES_FILE"; fi
 
   echo "Waiting 60s for pods to start..."
   sleep 60

@@ -44,6 +44,9 @@ spec:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
+      # pause container is PID 1 and reaps orphans (e.g. of a timed-out probe);
+      # postgres as PID 1 would take them for crashed backends and restart all of them
+      shareProcessNamespace: true
       priorityClassName: important
       initContainers:
         - name: fix-permissions
@@ -60,6 +63,8 @@ spec:
       containers:
       - name: dbms
         image: pgduckdb/pgduckdb:18-v1.1.1
+        # raise soft nofile limit (1024) to the hard limit; io_uring needs more fds than 1024
+        command: ["bash", "-c", "ulimit -S -n \"$(ulimit -H -n)\" || true; exec docker-entrypoint.sh \"$@\"", "docker-entrypoint.sh"]
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
@@ -96,6 +101,7 @@ spec:
           initialDelaySeconds: 15
           periodSeconds: 60
           successThreshold: 3
+          timeoutSeconds: 10
         ports:
         - {containerPort: 5432}
         securityContext:

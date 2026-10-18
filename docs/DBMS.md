@@ -228,6 +228,54 @@ Always name the DBMS connection port `port-dbms` so it is never stripped.
 | `port-monitoring` | Stripped when monitoring inactive |
 | `port-monitoring-application` | Stripped when app monitoring inactive |
 
+### Server options via `--set`
+
+`--set KIND[NAME](@CONFIG).container[C].PARAM=VALUE` changes one setting of a container in a Deployment or StatefulSet of the template.
+How `PARAM` is written depends on the template:
+
+| Style | Written as | Templates | Chosen by |
+|---|---|---|---|
+| `pg` | `["-c", "PARAM=VALUE"]` | PostgreSQL, PgDuckDB, Citus, PGBouncer backends | `-c` pairs in the args (default) |
+| `flag` | `"--PARAM=VALUE"` | MySQL, MariaDB | annotation `bexhoma/arg-style: flag` on the workload, or `--x=y` elements in the args |
+| env | env entry `PARAM=VALUE` | all | `PARAM` = `env.NAME`, e.g. Dragonfly `env.DFLY_maxmemory` |
+
+An existing setting is replaced in place, a new one is appended.
+In the `flag` style, `-` and `_` in names are equal (`innodb_buffer_pool_size` replaces `--innodb-buffer-pool-size=96G`).
+Valueless flags (`--skip-log-bin`) cannot be set this way.
+Flags inside `bash -c` command strings (CockroachDB, TiDB) and Helm values (YugabyteDB) are not reachable by `--set`.
+
+Examples:
+```bash
+--set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=10G
+--set statefulset[bexhoma-worker].container[dbms].env.DFLY_snapshot_cron="*/5 * * * *"
+```
+
+### Cluster SUTs: placement, sizing and scripts
+
+**Placement.** `-rnn` pins the SUT pod (Deployment). `-rnw` pins the workers, i.e. every StatefulSet of the SUT (e.g. TiDB's PD and TiKV, CockroachDB's nodes), to a set of nodes joined by `+`, and spreads each StatefulSet evenly over them (`maxSkew: 1`).
+`sut` stands for the `-rnn` node.
+Commas sweep, one configuration per entry, paired by position with `-rc/-lc/-rr/-lr/-rst`:
+
+```bash
+-rnn cl-worker37 -rnw sut+cl-worker38+cl-worker39            # SUT pod and workers on three nodes
+-rnw cl-worker37+cl-worker38,cl-worker39+cl-worker40        # two configurations
+```
+
+**Sizing.** `-rc/-rr/-lc/-lr` and `-rss` apply to the SUT pod and to the *data components* of a configuration.
+By default all StatefulSets are data components.
+A configuration can name them (`config.set_data_components(['tikv'])`); the other StatefulSets (TiDB's PD) then keep the resources and volume size of the template.
+The storage class (`-rst`) applies to all volumes.
+Per-component values win in both cases, e.g. `config.set_resources(requests_pd={'cpu': '500m'}, limits_pd={...}, storage_pd='20Gi')`.
+
+**Placeholder SUT pods.** Where the SUT pod holds no data (entry point, client or helper pod: CockroachDB, Redis cluster, Dragonfly cluster, YugabyteDB, DatabaseService), the configuration sets `config.set_sut_role('placeholder')`.
+That pod keeps the (small) resources of its template; `-rnn` still applies.
+The summary reports what the whole SUT requests (`resources_total`: SUT pod plus all StatefulSets, times replicas).
+
+**Scripts on workers.** Init, check and reset scripts run in the first SUT pod.
+With `config.set_script_target('workers')` (Redis cluster, Dragonfly cluster), shell scripts (`.sh`, e.g. `save-snapshot.sh`) run in every worker pod instead; SQL scripts still run once through `loadData`.
+
+**Post-load checks.** The last post-load script always runs, also for TPC-H and TPC-DS without `-xii/-xic/-xis` (key `Checks`): `checkschema-<benchmark>.sql` restores settings relaxed for the import (PostgreSQL `synchronous_commit`; MySQL settings saved in `bexhoma.saved_settings` before the load), writes a checkpoint (PostgreSQL, Citus) and reports row counts, sizes, the WAL/redo written by the load and the non-default configuration.
+
 ### Minimal SUT template skeleton
 
 ```yaml
@@ -380,12 +428,15 @@ PGBouncer uses the same DDL scripts as PostgreSQL — see the PostgreSQL section
 ## MySQL
 
 MySQL is supported for TPC-H and YCSB experiments.
-The default image runs MySQL 8.4.
+The default image runs MySQL 9.7 (LTS).
+MySQL 9 has no `mysql_native_password`; `root@'%'` uses `caching_sha2_password`, whose first login needs TLS or the server's RSA key.
+bexhoma therefore creates a TLS Secret per SUT (see `'tls'` in the configuration) and mounts it into MySQL and the HammerDB jobs.
 
 **Deployment template:** [`k8s/deploymenttemplate-MySQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml)
 
-The default deployment tuning includes `innodb-buffer-pool-size=32G`, `innodb-write-io-threads=64`, `innodb-read-io-threads=64`, `innodb-redo-log-capacity=8G`, `innodb-flush-log-at-trx-commit=0`, and `innodb-parallel-read-threads=64`.
-See the [MySQL 8.4 documentation](https://dev.mysql.com/doc/refman/8.4/en/mysql-nutshell.html) for parameter explanations.
+The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=96G`, `--innodb-flush-log-at-trx-commit=2`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=10G`.
+The init scripts relax settings only for the import (e.g. `innodb_flush_log_at_trx_commit`, `foreign_key_checks`); the check scripts restore them to the server's startup values afterwards.
+See the [MySQL 9.7 documentation](https://dev.mysql.com/doc/refman/9.7/en/) for parameter explanations.
 
 **Configuration** (from `cluster.config`):
 
@@ -518,6 +569,9 @@ After each worker pod starts, bexhoma runs the `attachWorker` command on the coo
 
 **Deployment template:** [`k8s/deploymenttemplate-Citus.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Citus.yml)
 
+The template uses the Debian image `citusdata/citus:14.2.0` (PostgreSQL 18), not `-alpine`: `14.2.0-alpine` fails about 5 % of TPC-C New Order transactions with `could not append to file: Not supported`.
+Coordinator and workers set `PGDATA=/var/lib/postgresql/data/pgdata`; PostgreSQL 18 images otherwise use `/var/lib/postgresql/18/docker` and refuse a volume mounted at `/var/lib/postgresql/data`.
+
 **Configuration** (from `cluster.config`):
 
 ```python
@@ -585,6 +639,10 @@ The JDBC connection targets the TServer service.
 ```
 
 The monitoring section configures Kubernetes pod discovery for both the master component (port 7000) and the TServer component (port 9000), scraping YugabyteDB's native Prometheus endpoint at `/prometheus-metrics`.
+
+YugabyteDB itself is installed by Helm (chart `2025.2.7`, see `Install-YugabyteDB` / `install_yugabytedb` in `scripts/test-docs-yugabytedb.*`, with parameters for persistence, storage class, volumes per tserver and nodes); the bexhoma SUT pod is a placeholder helper.
+With persistent storage the chart adds a liveness probe (a disk check); its timeout is the chart's root key `livenessProbe.timeoutSeconds` (per-component keys are ignored).
+The storage metrics include the tserver volumes (`config.set_pvc_selector('app=yb-tserver')`); `volume_used`/`volume_size` still come from the helper pod.
 
 **DDL scripts:**
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/YugabyteDB)
@@ -670,6 +728,7 @@ All three are deployed and monitored separately.
 ```
 
 `store_args: False` suppresses capturing TiDB's verbose startup arguments in the summary.
+Only TiKV is a data component (`config.set_data_components(['tikv'])`): `-rc/-rr/-lc/-lr` and `-rss` size TiKV and the SQL pod, while PD keeps the template's resources (0.25-1 CPU, 0.5-2 GiB) and volume size (10Gi).
 `worker_port: 2379` is the PD headless service port used internally for cluster coordination.
 The monitoring section scrapes all three components via Kubernetes pod discovery.
 
@@ -707,6 +766,10 @@ It is used as the SUT for YCSB key-value workloads as a single-instance deployme
 
 No JDBC driver is needed — YCSB communicates via the Redis wire protocol.
 The monitoring section scrapes Dragonfly's native Prometheus endpoint at `/metrics` on port 6379.
+
+Dragonfly settings are environment variables `DFLY_<flag>` in the templates (e.g. `DFLY_maxmemory`), not command-line flags, because a flag on the command line would win over the variable.
+Change them per run with `--set`, e.g. `--set deployment[bexhoma-deployment-dragonfly].container[dbms].env.DFLY_snapshot_cron="*/5 * * * *"` (for the cluster workers: `statefulset[bexhoma-worker]`).
+In a Dragonfly or Redis cluster, `save-snapshot.sh` (`SAVE`) runs on every worker; with replicas (DragonflyReplica) only on the master.
 
 **DDL scripts:**
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Dragonfly)

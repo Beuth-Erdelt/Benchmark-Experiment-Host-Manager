@@ -438,6 +438,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='DatabaseService', dialect='PostgreSQL', alias='DBMS A1')
                 config.monitoring_sut = False # cannot be monitored since outside of K8s
+                config.set_sut_role('placeholder') # the pod is only a client; the DBMS is outside of K8s
                 config.resource_sweep = False # resources and storage are not set by bexhoma
                 if skip_loading:
                     config.loading_deactivated = True

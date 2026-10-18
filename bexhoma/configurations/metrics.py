@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import copy
+import os
+import shutil
 from typing import TYPE_CHECKING
 
 from bexhoma import ceph_storage, missing_metrics
@@ -335,7 +337,9 @@ class MetricsCollector:
         metrics_type: str,
         pod_dashboard: str,
         optional: bool = False,
-    ) -> None:
+        register: bool = True,
+        upload: bool = True,
+    ) -> str:
         """Fetch Prometheus metrics into the experiment result via the dashboard pod.
 
         :param connection: dbmsbenchmarker connection name.
@@ -350,16 +354,15 @@ class MetricsCollector:
         :param metrics_type: Key selecting the metric set in the connection config.
         :param pod_dashboard: Name of the dashboard pod to run metrics.py in.
         :param optional: When True, the component is added to ``optional_monitoring_components``.
+        :param register: Register the component first (see :meth:`register`); a
+            :class:`~bexhoma.metric_fetching.MetricFetchBatch` does that when queuing.
+        :param upload: Upload ``connections.config`` afterwards, which ``metrics.py``
+            may have overwritten in the pod; a batch uploads it once at its end.
+        :return: Combined stdout and stderr of ``metrics.py``.
         """
         cfg = self._config
-        if 'monitoring_components' not in cfg.experiment.workload:
-            cfg.experiment.workload['monitoring_components'] = {}
-        cfg.experiment.workload['monitoring_components'][component_type] = title
-        if optional:
-            if 'optional_monitoring_components' not in cfg.experiment.workload:
-                cfg.experiment.workload['optional_monitoring_components'] = []
-            if component_type not in cfg.experiment.workload['optional_monitoring_components']:
-                cfg.experiment.workload['optional_monitoring_components'].append(component_type)
+        if register:
+            self.register(component_type, title, optional)
         config_folder = '/results/' + cfg.code
         metrics = cfg.benchmark.dbms[connection].connectiondata['monitoring'][metrics_type]
         metric_example = metrics['total_cpu_memory'].copy()
@@ -394,7 +397,51 @@ class MetricsCollector:
             f.write(f"### {cmd}\n{output}\n")
         for missing in missing_metrics.parse_missing_metrics(output):
             print("{:30s}: WARNING metric missing for {}: {}".format(connection, component_type, missing.title))
-        # re-upload connections.config because metrics.py may have overwritten it
-        filename = 'connections.config'
-        stdout = cfg.upload_experiment_file(filename)
+        if upload:
+            # re-upload connections.config because metrics.py may have overwritten it
+            stdout = cfg.upload_experiment_file('connections.config')
+            cfg.logger.debug(stdout)
+        return output
+
+    def register(self, component_type: str, title: str, optional: bool = False) -> None:
+        """Record a monitored component in the workload, for the report.
+
+        :param component_type: Key under ``monitoring_components``.
+        :param title: Human-readable label.
+        :param optional: When True, also list it in ``optional_monitoring_components``.
+        """
+        workload = self._config.experiment.workload
+        workload.setdefault('monitoring_components', {})[component_type] = title
+        if optional:
+            optional_components = workload.setdefault('optional_monitoring_components', [])
+            if component_type not in optional_components:
+                optional_components.append(component_type)
+
+    def copy_fetched(self, source: str, target: str, component_types: list, pod_dashboard: str) -> None:
+        """Reuse metrics already fetched for another connection of the same window.
+
+        Loading metrics cover the loading window of a repetition, which is the
+        same for every benchmarker connection of that repetition. Instead of
+        querying Prometheus again, the CSVs of ``source`` are copied to the
+        names of ``target`` (header line = connection name), in the pod, and the
+        local ``metrics.py`` logs are copied too, so the missing-metrics report
+        stays as before.
+
+        :param source: Connection whose metrics were fetched.
+        :param target: Connection that gets the same metrics.
+        :param component_types: Component types fetched for ``source`` (e.g. ``loading``, ``loader``).
+        :param pod_dashboard: Name of the dashboard pod.
+        """
+        cfg = self._config
+        script = cfg.experiment.ensure_copy_metrics_script()
+        cmd = 'sh /results/{code}/{script} /results/{code} {source} {target} {types}'.format(
+            code=cfg.code, script=script, source=source, target=target, types=' '.join(component_types))
+        _, stdout, stderr = cfg.experiment.cluster.execute_command_in_pod(
+            command=cmd, pod=pod_dashboard, container="dashboard")
         cfg.logger.debug(stdout)
+        cfg.logger.debug(stderr)
+        for component_type in component_types:
+            log_source = os.path.join(cfg.path, missing_metrics.fetch_log_name(source, component_type))
+            if os.path.isfile(log_source):
+                shutil.copyfile(log_source, os.path.join(cfg.path, missing_metrics.fetch_log_name(target, component_type)))
+        print("{:30s}: reused loading metrics of {} ({})".format(target, source, ', '.join(component_types)))

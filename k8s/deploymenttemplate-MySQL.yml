@@ -27,6 +27,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  annotations: {bexhoma/arg-style: flag}   # --set writes --key=value elements
   name: bexhoma-deployment-mysql
 spec:
   replicas: 1
@@ -46,17 +47,14 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        #image: mysql:9.4.0                           # Innovation, latest image
-        image: mysql:8.4.0                           # LTS, default InnoDB settings have changed, import sometimes really slow
-        #image: mysql:8.0.36                           # latest bug fixes
-        #image: mysql:8.1.0                           # no docs
-        #image: mysql:8.2.0                           # no docs
-        #image: mysql:8.3.0                           # more current, but slow import (?)
+        image: mysql:9.7.2                           # LTS
+        #image: mysql:8.4.0                           # LTS, default InnoDB settings have changed, import sometimes really slow
         args:
           - "--max_connections=1500"
           - "--local-infile=1"
           # --- Authentication ---
-          - "--mysql-native-password=ON"           # Backward-compatible password auth
+          # 9.x has no mysql_native_password; caching_sha2_password needs TLS or the RSA key on first login.
+          # bexhoma adds --ssl-ca/--ssl-cert/--ssl-key and the Secret volume when TLS is configured.
           #- "--innodb_log_file_size=2GB"          # Deprecated in 8.0.30
           - "--innodb-redo-log-capacity=32GB"
           - "--innodb-io-capacity=400"             # Tuned for NVMe SSDs vs. remote deistributed Ceph
@@ -95,6 +93,10 @@ spec:
           # --- Doublewrite Buffer ---
           - "--innodb-doublewrite=0"               # Disable for CephFS redundancy and speed
           - "--tmpdir=/mysqltmp"
+          # --- TLS (Secret created by bexhoma; volume and these args are removed when the config has no 'tls') ---
+          - "--ssl-ca=/etc/mysql/certs/ca.pem"
+          - "--ssl-cert=/etc/mysql/certs/server-cert.pem"
+          - "--ssl-key=/etc/mysql/certs/server-key.pem"
         env:
           - {name: MYSQL_ALLOW_EMPTY_PASSWORD, value: 'yes'}
           - {name: MYSQL_ROOT_HOST, value: '%'}
@@ -135,8 +137,9 @@ spec:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /var/lib/mysql, name: benchmark-storage-volume}
         - {mountPath: /mysqltmp, name: mysqltmp}
+        - {mountPath: /etc/mysql/certs, name: bexhoma-tls, readOnly: true}
       - name: monitor-application
-        image: prom/mysqld-exporter:v0.17.2
+        image: prom/mysqld-exporter:v0.20.0
         args:
           - "--mysqld.address=localhost:3306"
           - "--mysqld.username=root"
@@ -175,3 +178,6 @@ spec:
         emptyDir:
           medium: Memory
           sizeLimit: 32Gi
+      - name: bexhoma-tls
+        secret:
+          secretName: bexhoma-tls

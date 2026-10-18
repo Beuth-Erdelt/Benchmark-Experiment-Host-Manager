@@ -47,13 +47,17 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
+        image: docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2
         imagePullPolicy: IfNotPresent
         command:
           - sh
           - -c
           - |
-            exec dragonfly --logtostderr --admin_port=8080 --maxmemory=64GiB
+            exec dragonfly --logtostderr --admin_port=8080
+        env:
+        # Settings as DFLY_<flag> (see --set ...env.DFLY_<flag>); a command-line flag would win.
+        - name: DFLY_maxmemory
+          value: "64GiB"
         ports:
           - containerPort: 6379
             name: server
@@ -77,8 +81,9 @@ spec:
           #    - ALL
           readOnlyRootFilesystem: false
         resources:
-          limits: {cpu: 16000m, memory: 16Gi}
-          requests: {cpu: 1000m, memory: 1Gi}
+          # placeholder SUT (data lives in the workers): bexhoma keeps these values (sut_role placeholder)
+          limits: {cpu: 1000m, memory: 1Gi}
+          requests: {cpu: 250m, memory: 512Mi}
           #, ephemeral-storage: "1536Gi"}
 ---
 apiVersion: v1
@@ -115,7 +120,7 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
+        image: docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2
         command:
           - sh
           - -c
@@ -124,14 +129,17 @@ spec:
 
             if [ "$ORDINAL" -eq 0 ]; then
               echo "Starting as MASTER ($POD_NAME)"
-              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080 --maxmemory=128GiB
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080
             else
               MASTER="${STATEFULSET_NAME}-0.${BEXHOMA_WORKER_SERVICE}:6379"
               echo "Starting as REPLICA of $MASTER"
-              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080 --maxmemory=128GiB
+              exec dragonfly --logtostderr --cluster_mode=yes --admin_port=8080
               # --replicaof=$MASTER
             fi
         env:
+          # Settings as DFLY_<flag> (see --set ...env.DFLY_<flag>); a command-line flag would win.
+          - name: DFLY_maxmemory
+            value: "128GiB"
           - name: POD_NAME
             valueFrom:
               fieldRef:

@@ -40,7 +40,7 @@ This file covers the shared design and decisions that apply across both.
 | `HAMMERDB_TYPE` | HammerDB database key | Notes |
 |---|---|---|
 | `postgresql` | `pg` | Standard PostgreSQL TPC-C |
-| `mysql` | `mysql` | Requires `mysql_ssl_options` workaround (see comments) |
+| `mysql` | `mysql` | MySQL 9 needs TLS: with `BEXHOMA_TLS=true` the scripts set `mysql_ssl true`, and bexhoma mounts the SUT's CA at `/etc/mysql/certs/ca-cert.pem` (without that file HammerDB disables SSL and fails with `can't read "mysql_ssl_options"`) |
 | `mariadb` | `maria` | Same schema as MySQL |
 | `citus` | `pg` | PostgreSQL + `pg_cituscompat true`, `pg_storedprocs false` |
 

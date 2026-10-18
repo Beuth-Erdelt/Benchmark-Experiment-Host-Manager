@@ -90,6 +90,9 @@ class Hardware(Benchmark):
                 experiment.workload['info'] += f"\nI/O engine(s) swept: {list_fio_engine}."
                 experiment.workload['info'] += f"\nFsync interval(s) swept: {list_fio_fsync}."
                 experiment.workload['info'] += f"\nFdatasync interval(s) swept: {list_fio_fdatasync}."
+                # getattr: args restored from experiments before -xfow have no fio_overwrite
+                list_fio_overwrite = getattr(args, 'fio_overwrite', '0').split(",")
+                experiment.workload['info'] += f"\nOverwrite (prefilled test file) swept: {list_fio_overwrite}."
                 if 'randrw' in list_fio_rw:
                     experiment.workload['info'] += f"\nRead mix percentage(s) swept: {list_fio_rwmixread}."
             elif hardware_type == 'sysbench':

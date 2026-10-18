@@ -1,0 +1,2265 @@
+﻿Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792199302
+Experiment                    : starts at 2026-10-17 03:08:23.978532 (183259.9464198)
+Experiment                    : This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
+Benchmark tool: fio.
+Test file size is '2G', duration per round is 60s.
+I/O pattern(s) swept: ['randread'].
+Block size(s) swept: ['8k'].
+Queue depth(s) swept: [1].
+I/O engine(s) swept: ['io_uring'].
+Fsync interval(s) swept: [0].
+Fdatasync interval(s) swept: [0].
+Experiment uses bexhoma version 0.11.5.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['Hardware'].
+SUT is fixed to cl-worker36.
+Database is persisted to disk of type cephcsi and size 150Gi. Persistent storage is removed before every repetition.
+Benchmarking is tested with [1, 16, 64] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run 3 times.
+Maximum DBMS across the whole cluster is 1.
+Results are validated against basic correctness requirements.
+SUT requests 8 CPU and 16Gi RAM. CPU limit is 8. RAM limit is 16Gi.
+Cluster monitoring            : is running
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : has to wait - 2 running and 0 pending pods: max is 1 pods per cluster
+- waiting 30s -               : done
+Hardware-1                    : will start now
+Hardware-1                    : deployments ['sut']
+Hardware-1                    : stateful sets []
+Hardware-1                    : pvcs ['sut']
+Hardware-1                    : found labels on pvc = []
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1792199302
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1792199302
+Hardware-1                    : name of SUT PVC name = bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : storage bexhoma-storage-hardware-cephcsi-hardware should be removed
+- waiting 10s -               : done
+Hardware-1                    : storage bexhoma-storage-hardware-cephcsi-hardware is gone
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 3. This will be client 1
+hardware-1-1-1-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-7d69d64dd9-x9b2q and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-1-1-1-t6kv9: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-1-1-1              : wrote benchmarking_timespans to /data/benchmarks/1792199302/hardware-1-1-1-1.config
+hardware-1-1-1-1              : showing benchmarker times
+hardware-1-1-1-1              : benchmarker timespan job from 1792224636 to 1792224760
+hardware-1-1-1-1              : benchmarker timespan pods from 1792224642 to 1792224711
+hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 69
+hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1792224642, 1792224711)]
+hardware-1-1-1-1              : found and updated times {'benchmarker': [(1792224642, 1792224711)]}
+hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-1-1-1              : collecting execution metrics of SUT at connection hardware-1-1-1-1
+hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-1-1              : collecting metrics of benchmarker at connection hardware-1-1-1-1
+hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-7d69d64dd9-x9b2q and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 3. This will be client 2
+hardware-1-1-2-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-2-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-7d69d64dd9-x9b2q and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-1-2-1-g4tq6: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+hardware-1-1-2-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-1-2-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-7d69d64dd9-x9b2q and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 3. This will be client 3
+hardware-1-1-3-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-3-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-7d69d64dd9-x9b2q and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-1-3-1-7rd97: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-1-3-1              : wrote benchmarking_timespans to /data/benchmarks/1792199302/hardware-1-1-3-1.config
+hardware-1-1-3-1              : showing benchmarker times
+hardware-1-1-3-1              : benchmarker timespan job from 1792225277 to 1792225728
+hardware-1-1-3-1              : benchmarker timespan pods from 1792225282 to 1792225669
+hardware-1-1-3-1              : benchmarker timespan (start to end single container [s]) = 387
+hardware-1-1-3-1              : benchmarker times (start/end per pod and container) = [(1792225282, 1792225669)]
+hardware-1-1-3-1              : found and updated times {'benchmarker': [(1792225282, 1792225669)]}
+hardware-1-1-3-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-1-3-1              : collecting execution metrics of SUT at connection hardware-1-1-3-1
+hardware-1-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-3-1              : collecting metrics of benchmarker at connection hardware-1-1-3-1
+hardware-1-1-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-3-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-1-3-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-1-3-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-1-3-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+- waiting 10s -               : done
+Hardware-1                    : storage bexhoma-storage-hardware-cephcsi-hardware is gone
+- waiting 10s -               : done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 1 of 3. This will be client 1
+hardware-1-2-1-1              : start benchmarking (benchmark_run=1)
+hardware-1-2-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-86c464d484-z9c6h and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-2-1-1-fgvkj: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-2-1-1              : wrote benchmarking_timespans to /data/benchmarks/1792199302/hardware-1-2-1-1.config
+hardware-1-2-1-1              : showing benchmarker times
+hardware-1-2-1-1              : benchmarker timespan job from 1792225987 to 1792226109
+hardware-1-2-1-1              : benchmarker timespan pods from 1792225991 to 1792226059
+hardware-1-2-1-1              : benchmarker timespan (start to end single container [s]) = 68
+hardware-1-2-1-1              : benchmarker times (start/end per pod and container) = [(1792225991, 1792226059)]
+hardware-1-2-1-1              : found and updated times {'benchmarker': [(1792225991, 1792226059)]}
+hardware-1-2-1-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-2-1-1              : collecting execution metrics of SUT at connection hardware-1-2-1-1
+hardware-1-2-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-1-1              : collecting metrics of benchmarker at connection hardware-1-2-1-1
+hardware-1-2-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-1-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-2-1-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-2-1-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-2-1-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-86c464d484-z9c6h and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 1 of 3. This will be client 2
+hardware-1-2-2-1              : start benchmarking (benchmark_run=1)
+hardware-1-2-2-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-86c464d484-z9c6h and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-2-2-1-5zl2j: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-2-2-1              : wrote benchmarking_timespans to /data/benchmarks/1792199302/hardware-1-2-2-1.config
+hardware-1-2-2-1              : showing benchmarker times
+hardware-1-2-2-1              : benchmarker timespan job from 1792226270 to 1792226435
+hardware-1-2-2-1              : benchmarker timespan pods from 1792226274 to 1792226406
+hardware-1-2-2-1              : benchmarker timespan (start to end single container [s]) = 132
+hardware-1-2-2-1              : benchmarker times (start/end per pod and container) = [(1792226274, 1792226406)]
+hardware-1-2-2-1              : found and updated times {'benchmarker': [(1792226274, 1792226406)]}
+hardware-1-2-2-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-2-2-1              : collecting execution metrics of SUT at connection hardware-1-2-2-1
+hardware-1-2-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-2-1              : collecting metrics of benchmarker at connection hardware-1-2-2-1
+hardware-1-2-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-2-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-2-2-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-2-2-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-2-2-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-86c464d484-z9c6h and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-3-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 1 of 3. This will be client 3
+hardware-1-2-3-1              : start benchmarking (benchmark_run=1)
+hardware-1-2-3-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-86c464d484-z9c6h and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-2-3-1-fjk2v: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-2-3-1              : wrote benchmarking_timespans to /data/benchmarks/1792199302/hardware-1-2-3-1.config
+hardware-1-2-3-1              : showing benchmarker times
+hardware-1-2-3-1              : benchmarker timespan job from 1792226601 to 1792227024
+hardware-1-2-3-1              : benchmarker timespan pods from 1792226609 to 1792226980
+hardware-1-2-3-1              : benchmarker timespan (start to end single container [s]) = 371
+hardware-1-2-3-1              : benchmarker times (start/end per pod and container) = [(1792226609, 1792226980)]
+hardware-1-2-3-1              : found and updated times {'benchmarker': [(1792226609, 1792226980)]}
+hardware-1-2-3-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-2-3-1              : collecting execution metrics of SUT at connection hardware-1-2-3-1
+hardware-1-2-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-3-1              : collecting metrics of benchmarker at connection hardware-1-2-3-1
+hardware-1-2-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-2-3-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-2-3-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-2-3-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-2-3-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-86c464d484-z9c6h and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+- waiting 30s -               : done
+Hardware-1                    : can be stopped
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1792199302-86c464d484-z9c6h
+Hardware-1                    : starts again
+Hardware-1                    : deployments ['sut']
+Hardware-1                    : stateful sets []
+Hardware-1                    : pvcs ['sut']
+Hardware-1                    : found labels on pvc = []
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1792199302
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1792199302
+Hardware-1                    : name of SUT PVC name = bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : storage bexhoma-storage-hardware-cephcsi-hardware should be removed
+- waiting 10s -               : done
+Hardware-1                    : storage bexhoma-storage-hardware-cephcsi-hardware is gone
+- waiting 10s -               : done
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-1-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 2 of 3. This will be client 1
+hardware-1-3-1-1              : start benchmarking (benchmark_run=1)
+hardware-1-3-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-5f574d8799-pqxdh and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-3-1-1-9dhbj: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-3-1-1              : wrote benchmarking_timespans to /data/benchmarks/1792199302/hardware-1-3-1-1.config
+hardware-1-3-1-1              : showing benchmarker times
+hardware-1-3-1-1              : benchmarker timespan job from 1792227277 to 1792227400
+hardware-1-3-1-1              : benchmarker timespan pods from 1792227283 to 1792227351
+hardware-1-3-1-1              : benchmarker timespan (start to end single container [s]) = 68
+hardware-1-3-1-1              : benchmarker times (start/end per pod and container) = [(1792227283, 1792227351)]
+hardware-1-3-1-1              : found and updated times {'benchmarker': [(1792227283, 1792227351)]}
+hardware-1-3-1-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-3-1-1              : collecting execution metrics of SUT at connection hardware-1-3-1-1
+hardware-1-3-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-1-1              : collecting metrics of benchmarker at connection hardware-1-3-1-1
+hardware-1-3-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-1-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-3-1-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-3-1-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-3-1-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-5f574d8799-pqxdh and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-2-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 2 of 3. This will be client 2
+hardware-1-3-2-1              : start benchmarking (benchmark_run=1)
+hardware-1-3-2-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-5f574d8799-pqxdh and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-3-2-1-cgpm8: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-3-2-1              : wrote benchmarking_timespans to /data/benchmarks/1792199302/hardware-1-3-2-1.config
+hardware-1-3-2-1              : showing benchmarker times
+hardware-1-3-2-1              : benchmarker timespan job from 1792227561 to 1792227767
+hardware-1-3-2-1              : benchmarker timespan pods from 1792227569 to 1792227708
+hardware-1-3-2-1              : benchmarker timespan (start to end single container [s]) = 139
+hardware-1-3-2-1              : benchmarker times (start/end per pod and container) = [(1792227569, 1792227708)]
+hardware-1-3-2-1              : found and updated times {'benchmarker': [(1792227569, 1792227708)]}
+hardware-1-3-2-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-3-2-1              : collecting execution metrics of SUT at connection hardware-1-3-2-1
+hardware-1-3-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-2-1              : collecting metrics of benchmarker at connection hardware-1-3-2-1
+hardware-1-3-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-2-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-3-2-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-3-2-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-3-2-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-5f574d8799-pqxdh and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 3.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-3-3-Hardware-1-1792199302 initialized to 1.
+Hardware-1                    : benchmarks done 2 of 3. This will be client 3
+hardware-1-3-3-1              : start benchmarking (benchmark_run=1)
+hardware-1-3-3-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-5f574d8799-pqxdh and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+Hardware-1                    : benchmarking results in folder C:\data\benchmarks/1792199302
+- waiting 10s -               : done
+Hardware-1                    : benchmarking is waiting for job bexhoma-benchmarker-hardware-1-1792199302-3-3-1-276bk: found
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '475307bd-fd54-465a-a9f5-a8bdef9409ef', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Sat, 17 Oct 2026 09:07:58 GMT', 'Content-Length': '129'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
+
+
+
+Create new access token
+- waiting 2s -                : done
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+- waiting 30s -               : done
+hardware-1-3-3-1              : wrote benchmarking_timespans to /data/benchmarks/1792199302/hardware-1-3-3-1.config
+hardware-1-3-3-1              : showing benchmarker times
+hardware-1-3-3-1              : benchmarker timespan job from 1792227928 to 1792228351
+hardware-1-3-3-1              : benchmarker timespan pods from 1792227932 to 1792228315
+hardware-1-3-3-1              : benchmarker timespan (start to end single container [s]) = 383
+hardware-1-3-3-1              : benchmarker times (start/end per pod and container) = [(1792227932, 1792228315)]
+hardware-1-3-3-1              : found and updated times {'benchmarker': [(1792227932, 1792228315)]}
+hardware-1-3-3-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-3-3-1              : collecting execution metrics of SUT at connection hardware-1-3-3-1
+hardware-1-3-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-3-1              : collecting metrics of benchmarker at connection hardware-1-3-3-1
+hardware-1-3-3-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1792199302(.*)", pod=~"(.*)hardware-1-1792199302(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-3-3-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-3-3-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+hardware-1-3-3-1              : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+hardware-1-3-3-1              : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Hardware-1                    : get size via pod bexhoma-sut-hardware-1-1792199302-5f574d8799-pqxdh and write to pvc bexhoma-storage-hardware-cephcsi-hardware
+- waiting 30s -               : done
+Hardware-1                    : can be stopped
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1792199302-5f574d8799-pqxdh
+Experiment                    : ends at 2026-10-17 11:14:07.597804 (212403.4723929) - 29143.53s total
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Hardware Benchmark (fio)
+* Type: hardware
+* Duration: 29144s 
+* Code: 1792199302
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
+  * Benchmark tool: fio.
+  * Test file size is '2G', duration per round is 60s.
+  * I/O pattern(s) swept: ['randread'].
+  * Block size(s) swept: ['8k'].
+  * Queue depth(s) swept: [1].
+  * I/O engine(s) swept: ['io_uring'].
+  * Fsync interval(s) swept: [0].
+  * Fdatasync interval(s) swept: [0].
+  * Experiment uses bexhoma version 0.11.5.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['Hardware'].
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type cephcsi and size 150Gi. Persistent storage is removed before every repetition.
+  * Benchmarking is tested with [1, 16, 64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run 3 times.
+  * Maximum DBMS across the whole cluster is 1.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 8 CPU and 16Gi RAM. CPU limit is 8. RAM limit is 16Gi.
+
+### Connections
+* hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087364
+  * volume_size:146.6G
+  * volume_used:28.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+* hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087368
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+* hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087372
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+* hardware-1-2-1-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087381
+  * volume_size:146.6G
+  * volume_used:28.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+* hardware-1-2-2-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087385
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+* hardware-1-2-3-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087389
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+* hardware-1-3-1-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087175
+  * volume_size:146.6G
+  * volume_used:28.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+* hardware-1-3-2-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087177
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+* hardware-1-3-3-1 uses docker image bexhoma/sut_hardware:0.11.5
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:1087386
+  * volume_size:146.6G
+  * volume_used:36.0K
+  * cpu_list:0-223
+  * requests_cpu:8
+  * requests_memory:16Gi
+  * limits_cpu:8
+  * limits_memory:16Gi
+  * eval_parameters
+    * code:1792199302
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1792199302-7d69d64dd9-x9b2q: 0
+* bexhoma-sut-hardware-1-1792199302-86c464d484-z9c6h: 0
+* bexhoma-sut-hardware-1-1792199302-5f574d8799-pqxdh: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 3: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 2 Client 3: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 2: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 3 Client 3: hardware (1 pods)
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------:|
+| hardware-1-1-1-1-1 | hardware-1-1-1 | hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         69 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                      1 |                    44.36 |                      0.00 |                          81.26 |                            0.00 |                         162.53 |                            0.00 |                  1 |        0 |
+| hardware-1-1-2-1-1 | hardware-1-1-2 | hardware-1-1-2-1 |                1 |        2 |               1 |       1 |        139 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                     16 |                   799.77 |                      0.00 |                          76.02 |                            0.00 |                         143.65 |                            0.00 |                 16 |        0 |
+| hardware-1-1-3-1-1 | hardware-1-1-3 | hardware-1-1-3-1 |                1 |        3 |               1 |       1 |        387 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                     64 |                  2883.83 |                      0.00 |                          74.97 |                            0.00 |                         129.50 |                            0.00 |                 64 |        0 |
+| hardware-1-2-1-1-1 | hardware-1-2-1 | hardware-1-2-1-1 |                2 |        1 |               1 |       1 |         68 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                      1 |                    51.93 |                      0.00 |                          70.78 |                            0.00 |                         160.43 |                            0.00 |                  1 |        0 |
+| hardware-1-2-2-1-1 | hardware-1-2-2 | hardware-1-2-2-1 |                2 |        2 |               1 |       1 |        132 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                     16 |                   852.42 |                      0.00 |                          70.78 |                            0.00 |                         137.36 |                            0.00 |                 16 |        0 |
+| hardware-1-2-3-1-1 | hardware-1-2-3 | hardware-1-2-3-1 |                2 |        3 |               1 |       1 |        372 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                     64 |                  3104.18 |                      0.00 |                          73.92 |                            0.00 |                         127.40 |                            0.00 |                 64 |        0 |
+| hardware-1-3-1-1-1 | hardware-1-3-1 | hardware-1-3-1-1 |                3 |        1 |               1 |       1 |         69 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                      1 |                    49.61 |                      0.00 |                          77.07 |                            0.00 |                         166.72 |                            0.00 |                  1 |        0 |
+| hardware-1-3-2-1-1 | hardware-1-3-2 | hardware-1-3-2-1 |                3 |        2 |               1 |       1 |        139 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                     16 |                   813.19 |                      0.00 |                          73.92 |                            0.00 |                         145.75 |                            0.00 |                 16 |        0 |
+| hardware-1-3-3-1-1 | hardware-1-3-3 | hardware-1-3-3-1 |                3 |        3 |               1 |       1 |        383 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                     64 |                  3009.30 |                      0.00 |                          74.97 |                            0.00 |                         131.60 |                            0.00 |                 64 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   errors | hardware_type   |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------:|:----------------|
+| hardware-1-1-1 | hardware-1-1-1 |                1 |        1 |               1 |           1 |         69 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                    44.36 |                      0.00 |                          81.26 |                            0.00 |                         162.53 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-1-2 | hardware-1-1-2 |                1 |        2 |               1 |           1 |        139 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                   799.77 |                      0.00 |                          76.02 |                            0.00 |                         143.65 |                            0.00 |                 16 |        0 | fio             |
+| hardware-1-1-3 | hardware-1-1-3 |                1 |        3 |               1 |           1 |        387 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                  2883.83 |                      0.00 |                          74.97 |                            0.00 |                         129.50 |                            0.00 |                 64 |        0 | fio             |
+| hardware-1-2-1 | hardware-1-2-1 |                2 |        1 |               1 |           1 |         68 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                    51.93 |                      0.00 |                          70.78 |                            0.00 |                         160.43 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-2-2 | hardware-1-2-2 |                2 |        2 |               1 |           1 |        132 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                   852.42 |                      0.00 |                          70.78 |                            0.00 |                         137.36 |                            0.00 |                 16 |        0 | fio             |
+| hardware-1-2-3 | hardware-1-2-3 |                2 |        3 |               1 |           1 |        372 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                  3104.18 |                      0.00 |                          73.92 |                            0.00 |                         127.40 |                            0.00 |                 64 |        0 | fio             |
+| hardware-1-3-1 | hardware-1-3-1 |                3 |        1 |               1 |           1 |         69 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                    49.61 |                      0.00 |                          77.07 |                            0.00 |                         166.72 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-3-2 | hardware-1-3-2 |                3 |        2 |               1 |           1 |        139 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                   813.19 |                      0.00 |                          73.92 |                            0.00 |                         145.75 |                            0.00 |                 16 |        0 | fio             |
+| hardware-1-3-3 | hardware-1-3-3 |                3 |        3 |               1 |           1 |        383 | randread          | 8k                |                      1 | io_uring              |                    0 |                        0 |                       50 |                  3009.30 |                      0.00 |                          74.97 |                            0.00 |                         131.60 |                            0.00 |                 64 |        0 | fio             |
+
+### Monitoring
+
+### Benchmarking phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| hardware-1-1-1-1 |        16.98 |      0.60 |           0.22 |                  0.22 |
+| hardware-1-1-2-1 |        37.99 |      0.75 |           0.28 |                  2.28 |
+| hardware-1-1-3-1 |       107.46 |      0.65 |           0.29 |                  2.29 |
+| hardware-1-2-1-1 |        13.47 |      0.40 |           0.22 |                  0.22 |
+| hardware-1-2-2-1 |        38.28 |      0.68 |           0.28 |                  2.28 |
+| hardware-1-2-3-1 |       109.95 |      0.63 |           0.29 |                  2.29 |
+| hardware-1-3-1-1 |        15.72 |      0.85 |           0.22 |                  0.22 |
+| hardware-1-3-2-1 |        38.35 |      0.67 |           0.28 |                  2.28 |
+| hardware-1-3-3-1 |       115.33 |      0.92 |           0.29 |                  2.29 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| hardware-1-1-1-1 |         0.57 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-1-2-1 |         0.57 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-1-3-1 |         0.57 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-2-1-1 |         0.58 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-2-2-1 |         0.58 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-2-3-1 |         0.58 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-3-1-1 |         0.50 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-3-2-1 |         0.58 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-3-3-1 |         0.58 |      0.00 |           0.00 |                  0.00 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-2-1-1 (bexhoma-metrics-hardware-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-2-1-1 (bexhoma-metrics-hardware-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-1-1 (bexhoma-metrics-hardware-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-1-1 (bexhoma-metrics-hardware-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-2-2-1 (bexhoma-metrics-hardware-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-2-2-1 (bexhoma-metrics-hardware-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-2-1 (bexhoma-metrics-hardware-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-2-1 (bexhoma-metrics-hardware-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-2-3-1 (bexhoma-metrics-hardware-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-2-3-1 (bexhoma-metrics-hardware-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-3-1 (bexhoma-metrics-hardware-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-2-3-1 (bexhoma-metrics-hardware-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-3-1-1 (bexhoma-metrics-hardware-1-3-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-3-1-1 (bexhoma-metrics-hardware-1-3-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-1-1 (bexhoma-metrics-hardware-1-3-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-1-1 (bexhoma-metrics-hardware-1-3-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-3-2-1 (bexhoma-metrics-hardware-1-3-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-3-2-1 (bexhoma-metrics-hardware-1-3-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-2-1 (bexhoma-metrics-hardware-1-3-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-2-1 (bexhoma-metrics-hardware-1-3-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-3-3-1 (bexhoma-metrics-hardware-1-3-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-3-3-1 (bexhoma-metrics-hardware-1-3-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-3-1 (bexhoma-metrics-hardware-1-3-3-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-3-3-1 (bexhoma-metrics-hardware-1-3-3-1-benchmarker.log, expected: series exists only while non-zero)
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero read or write IOPS

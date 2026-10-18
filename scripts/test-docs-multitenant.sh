@@ -320,6 +320,7 @@ BEXHOMA_NUM_TENANTS=2
 # -nbt 10                       threads per benchmarking pod
 # -xkey                         simulate user think time and keying delays
 # -lr 64Gi                      RAM limit for the SUT container
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
@@ -339,6 +340,7 @@ bexhoma benchbase \
   -nbt 10 \
   -xkey \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
@@ -359,6 +361,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL database  tenants=$
 # -nbt 10                       threads per benchmarking pod
 # -xkey                         simulate user think time and keying delays
 # -lr 64Gi                      RAM limit for the SUT container
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
@@ -378,6 +381,7 @@ bexhoma benchbase \
   -nbt 10 \
   -xkey \
   -lr 64Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \

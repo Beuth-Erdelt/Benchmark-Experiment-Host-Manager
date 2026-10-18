@@ -4,7 +4,8 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Collect table statistics and verify row counts after data loading.
---          Re-enables synchronous commit that was disabled in initschema-tpch.sql.
+--          synchronous_commit (disabled in initschema-tpch.sql) is restored by
+--          checkschema-tpch.sql, which always runs last.
 
 ANALYZE VERBOSE public.customer;
 ANALYZE VERBOSE public.lineitem;
@@ -18,7 +19,3 @@ ANALYZE VERBOSE public.supplier;
 -- Verify that reference tables loaded correctly
 SELECT COUNT(*) AS count_nation FROM public.nation;
 SELECT COUNT(*) AS count_region FROM public.region;
-
--- Restore synchronous commit after bulk loading
-ALTER SYSTEM SET synchronous_commit = on;
-SELECT pg_reload_conf();

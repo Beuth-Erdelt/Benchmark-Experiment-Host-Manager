@@ -42,6 +42,8 @@ _KEYS_TYPE_PARAMETERS = {
         'HARDWARE_FIO_RW', 'HARDWARE_FIO_BS', 'HARDWARE_FIO_IODEPTH',
         'HARDWARE_FIO_NUMJOBS', 'HARDWARE_FIO_ENGINE', 'HARDWARE_FIO_FSYNC',
         'HARDWARE_FIO_FDATASYNC', 'HARDWARE_FIO_RWMIXREAD',
+        # absent in logs from before -xfow; blank, so 0 (fresh file) after typing
+        'HARDWARE_FIO_OVERWRITE',
     ],
     'sysbench': [],
     'sockperf': [
@@ -240,6 +242,7 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_fio_rw': 'str', 'hardware_fio_bs': 'str', 'hardware_fio_engine': 'str',
             'hardware_fio_iodepth': 'int', 'hardware_fio_numjobs': 'int',
             'hardware_fio_fsync': 'int', 'hardware_fio_fdatasync': 'int',
+            'hardware_fio_overwrite': 'int',
             'hardware_fio_rwmixread': 'int', 'tenant_id': 'int', 'duration': 'int',
             'hardware_sockperf_mode': 'str', 'hardware_sockperf_protocol': 'str',
             'hardware_sockperf_msgsize': 'int', 'hardware_sockperf_port': 'int',
@@ -325,7 +328,7 @@ class HardwareEvaluator(LogEvaluator):
                 dict_grp['hardware_type'] = grp['hardware_type'].iloc[0]
             for fio_param in ['hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
                                'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
-                               'hardware_fio_rwmixread']:
+                               'hardware_fio_overwrite', 'hardware_fio_rwmixread']:
                 if fio_param in grp.columns:
                     dict_grp[fio_param] = grp[fio_param].iloc[0]
             # sockperf_port is the exception: it varies per pod (each pod gets its own
@@ -357,7 +360,7 @@ class HardwareEvaluator(LogEvaluator):
             'phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child', 'duration',
             'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
             'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
-            'hardware_fio_rwmixread', 'hardware_fio_numjobs',
+            'hardware_fio_overwrite', 'hardware_fio_rwmixread', 'hardware_fio_numjobs',
             'hardware_fio_read_iops', 'hardware_fio_write_iops',
             'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
             'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
@@ -410,7 +413,7 @@ class HardwareEvaluator(LogEvaluator):
             columns = [
                 'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
                 'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
-                'hardware_fio_rwmixread',
+                'hardware_fio_overwrite', 'hardware_fio_rwmixread',
                 'hardware_fio_read_iops', 'hardware_fio_write_iops',
                 'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
                 'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
@@ -460,7 +463,7 @@ class HardwareEvaluator(LogEvaluator):
             columns = [
                 'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
                 'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
-                'hardware_fio_rwmixread',
+                'hardware_fio_overwrite', 'hardware_fio_rwmixread',
                 'hardware_fio_read_iops', 'hardware_fio_write_iops',
                 'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
                 'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
