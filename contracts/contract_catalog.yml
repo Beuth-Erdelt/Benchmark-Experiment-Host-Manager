@@ -856,7 +856,7 @@ systems:
   PostgreSQL:
     why: "the baseline OLTP/OLAP RDBMS this pairing compares against"
     deployment: bexhoma-deployment-postgres
-    image: postgres:18.3
+    image: postgres:18.6
     arg_style: pg-guc
     memory_units: [B, kB, MB, GB, TB]
     memory_budget:

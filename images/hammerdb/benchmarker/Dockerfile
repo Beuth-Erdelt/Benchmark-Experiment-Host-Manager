@@ -5,7 +5,7 @@
 # This Dockerfile builds an image for a Bexhoma benchmarker running TPC-C workloads
 # against an already-loaded DBMS using HammerDB.
 #
-# Base Image: tpcorg/hammerdb:v5.0
+# Base Image: tpcorg/hammerdb:v6.0 (Ubuntu 24.04, WORKDIR /home/HammerDB-6.0, runs as root)
 #
 # Author: Patrick K. Erdelt
 # Email: patrick.erdelt@bht-berlin.de
@@ -16,7 +16,7 @@
 #   A Redis message queue is consulted for pod-assignment details.
 #   redis-tools is installed for queue interaction.
 ######################################################################################
-FROM tpcorg/hammerdb:v5.0
+FROM tpcorg/hammerdb:v6.0
 
 ######################################################################################
 # Environment variables — runtime configuration
@@ -58,6 +58,9 @@ ENV HAMMERDB_MYSQL_ENGINE=innodb
 ENV HAMMERDB_TIMEPROFILE=true
 ENV HAMMERDB_ALLWAREHOUSES=false
 ENV HAMMERDB_KEYANDTHINK=false
+
+# TLS: bexhoma sets true and mounts the SUT's CA at /etc/mysql/certs/ca-cert.pem (MySQL 9)
+ENV BEXHOMA_TLS=false
 
 ######################################################################################
 # Install Redis client

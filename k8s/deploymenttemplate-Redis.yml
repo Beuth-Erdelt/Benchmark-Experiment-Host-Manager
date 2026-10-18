@@ -45,7 +45,7 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        image: redis:8.6.1 #7.4.2
+        image: redis:8.10.2 #7.4.2
         args: ["--maxclients", "10000", "--io-threads", "64"]
         env:
           - name: MASTER
@@ -87,7 +87,7 @@ spec:
         #- {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /data, name: benchmark-storage-volume}
       - name: monitor-application
-        image: oliver006/redis_exporter:latest
+        image: oliver006/redis_exporter:v1.94.0
         args:
           - "--redis.addr=redis://localhost:6379"
           - "--is-cluster=1"

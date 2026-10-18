@@ -35,8 +35,9 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 from bexhoma import evaluators
 from bexhoma import missing_metrics
 from bexhoma.monitoring_math import counter_total
-from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut
+from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes
 from bexhoma import sut_restarts
+from bexhoma.tls import TLS_COMPONENT
 from bexhoma.metric_fetching import DEFAULT_MAX_PARALLEL_FETCHES, MetricFetchBatch
 
 if TYPE_CHECKING:
@@ -575,7 +576,10 @@ class ExperimentBase():
         gpu_type = str(args.request_gpu_type)
         gpus = str(args.request_gpu)
         self.storage_types = split_storage_types(args.request_storage_type)
-        # -rc/-lc/-rr/-lr/-rst may each carry a comma list; one cell per swept
+        # entry scripts with their own parser may not know -rnw
+        worker_nodes = split_worker_nodes(
+            getattr(args, 'request_node_worker', None), args.request_node_name)
+        # -rc/-lc/-rr/-lr/-rst/-rnw may each carry a comma list; one cell per swept
         # setting, expanded per configuration by expand_resource_cells()
         self.resource_cells = resource_cells(
             request_cpu_list=self.get_parameter_as_list_str('request_cpu') or [str(args.request_cpu)],
@@ -583,10 +587,11 @@ class ExperimentBase():
             request_ram_list=self.get_parameter_as_list_str('request_ram') or [str(args.request_ram)],
             limit_ram_list=self.get_parameter_as_list_str('limit_ram') or [str(args.limit_ram)],
             storage_type_list=self.storage_types,
+            worker_nodes_list=worker_nodes,
         )
         if len(self.resource_cells) > 1 and not self.supports_storage_sweep:
             raise ValueError(
-                f"-rc/-lc/-rr/-lr/-rst carry a list, but {type(self).__name__} "
+                f"-rc/-lc/-rr/-lr/-rst/-rnw carry a list, but {type(self).__name__} "
                 f"cannot sweep resources across configurations."
             )
         valid_storage_types = self.cluster.get_available_storage_types()
@@ -729,6 +734,17 @@ class ExperimentBase():
                     'kubernetes.io/hostname': request_node_name
                 })
             self.workload['info'] = self.workload['info']+"\nSUT is fixed to {}.".format(request_node_name)
+        # fix workers (all StatefulSets of the SUT), spread evenly over the nodes
+        if self.resource_cells[0]['worker_nodes']:
+            self.set_resources(nodes_worker=self.resource_cells[0]['worker_nodes'])
+        worker_node_cells = [cell['worker_nodes'] for cell in self.resource_cells if cell['worker_nodes']]
+        if len({tuple(nodes) for nodes in worker_node_cells}) == 1:
+            self.workload['info'] = self.workload['info']+"\nWorkers are fixed to {}.".format(
+                ", ".join(worker_node_cells[0]))
+        elif worker_node_cells:
+            self.workload['info'] = self.workload['info']+"\nWorkers are fixed per configuration: {}.".format(
+                "; ".join("{}: {}".format(number, ", ".join(cell['worker_nodes'] or ['not fixed']))
+                          for number, cell in enumerate(self.resource_cells, start=1)))
         # fix pooling
         if request_node_pooling:
             self.set_resources(
@@ -1137,6 +1153,7 @@ class ExperimentBase():
                 clone.set_resources(
                     requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
                     limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
+                    nodes_worker = cell.get('worker_nodes'),
                     )
                 set_cell_storage(clone, f'{base_storage}-{cell_number}', cell)
                 self.configurations.append(clone)
@@ -1422,6 +1439,8 @@ class ExperimentBase():
         self.stop_monitoring()
         self.stop_sut()
         self.cluster.kubectl('delete all -l experiment='+self.code)
+        # "all" does not include Secrets (TLS material of the SUTs, see bexhoma.tls)
+        self.cluster.kubectl('delete secret -l experiment='+self.code+',component='+TLS_COMPONENT)
     def start_monitoring(self):
         """
         Start monitoring for all dbms configurations of this experiment.
@@ -2987,6 +3006,13 @@ class ExperimentBase():
                             print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
                 for i, parameters in c['parameter']['connection_parameter'].items():
+                    if i == "resources_total" and isinstance(parameters, dict):
+                        # requested by the SUT pod plus all StatefulSets (dbms containers)
+                        print("  * resources_total: {} CPU, {} GiB RAM requested in {} pods".format(
+                            parameters.get('cpu'), parameters.get('memory_gib'), parameters.get('pods')))
+                        for component, entry in parameters.get('components', {}).items():
+                            print("    * {}: {} x, {} CPU, {} GiB RAM".format(
+                                component, entry.get('replicas'), entry.get('cpu'), entry.get('memory_gib')))
                     if i == "eval_parameters":
                         print("  * "+i)
                         infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]

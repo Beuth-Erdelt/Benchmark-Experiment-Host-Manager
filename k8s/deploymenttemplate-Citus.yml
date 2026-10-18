@@ -48,7 +48,7 @@ spec:
       shareProcessNamespace: true
       containers:
       - name: dbms
-        image: citusdata/citus:13.2.0-alpine
+        image: citusdata/citus:14.2.0 # not -alpine: 14.2.0-alpine fails ~5% of TPC-C New Order with "could not append to file"
         # raise soft nofile limit (1024) to the hard limit; max_files_per_process is capped by it
         command: ["bash", "-c", "ulimit -S -n \"$(ulimit -H -n)\" || true; exec docker-entrypoint.sh \"$@\"", "docker-entrypoint.sh"]
         args: [
@@ -91,6 +91,9 @@ spec:
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
+        # PG 18 images default to /var/lib/postgresql/18/docker and refuse a mount at .../data without this
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
         ports:
         - {containerPort: 5432}
         resources:
@@ -106,7 +109,7 @@ spec:
               command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
           preStop:
             exec:
-              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120"]
+              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/18/bin/pg_ctl stop -m smart -t 120"]
         readinessProbe:
           exec:
             command:
@@ -215,7 +218,7 @@ spec:
       shareProcessNamespace: true
       containers:
       - name: dbms
-        image: citusdata/citus:13.2.0-alpine
+        image: citusdata/citus:14.2.0 # not -alpine: 14.2.0-alpine fails ~5% of TPC-C New Order with "could not append to file"
         # raise soft nofile limit (1024) to the hard limit; max_files_per_process is capped by it
         command: ["bash", "-c", "ulimit -S -n \"$(ulimit -H -n)\" || true; exec docker-entrypoint.sh \"$@\"", "docker-entrypoint.sh"]
         args: [
@@ -297,7 +300,7 @@ spec:
               command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
           preStop:
             exec:
-              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120"]
+              command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/18/bin/pg_ctl stop -m smart -t 120"]
         readinessProbe:
           exec:
             command:

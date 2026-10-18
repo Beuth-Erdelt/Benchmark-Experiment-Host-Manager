@@ -26,13 +26,13 @@ from typing import Any
 
 from bexhoma import spec
 from bexhoma.cli_args import format_metric_overrides
-from bexhoma.experiments.tpch_catalog import append_resource_flags, resolve_resource_cells, resource_sweep
+from bexhoma.experiments.tpch_catalog import (
+    _env_set_arg, append_resource_flags, resolve_resource_cells, resource_sweep)
 from bexhoma.spec import SpecError
 
 __all__ = ["build_ycsb_argv"]
 
 _DEFAULT_MODE = "run"
-_ARG_STYLE_ENV_VAR = "env-var"
 
 
 def _append_flag(argv: list[str], flag: str, value: Any) -> None:
@@ -173,11 +173,13 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     for system_spec, resolved, configuration_name in resolved_cells:
         scope = f"@{configuration_name}" if configuration_name else ""
         for knob in resolved.knobs.values():
-            if knob.arg_style == spec.DEFAULT_ARG_STYLE:
+            if knob.arg_style in spec.ARG_STYLES_VIA_SET:
                 argv.extend([
                     "--set",
                     f"deployment[{resolved.deployment}]{scope}.container[dbms].{knob.name}={knob.value}",
                 ])
+            elif knob.arg_style == spec.ARG_STYLE_ENV_VAR:
+                argv.extend(["--set", _env_set_arg(resolved, scope, knob)])
             else:
                 raise SpecError(
                     f"system '{resolved.name}' knob '{knob.name}' has arg_style "

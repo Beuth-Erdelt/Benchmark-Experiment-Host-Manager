@@ -7,15 +7,92 @@ from typing import TYPE_CHECKING
 import yaml
 
 from ..__version__ import __version__
+from ..tls import TLS_COMPONENT, apply_tls_volume, build_tls_secret
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
-__all__ = ['LifecycleManager']
+__all__ = ['LifecycleManager', 'sum_requested_resources', 'pin_pods_to_nodes']
+
+#: Node label that names a node (``-rnn``, ``-rnw``).
+HOSTNAME_LABEL = 'kubernetes.io/hostname'
+
+
+def pin_pods_to_nodes(pod_spec: dict, nodes: list, match_labels: dict) -> None:
+    """Restrict a pod template to some nodes and spread its pods evenly over them.
+
+    Sets a required ``nodeAffinity`` (``kubernetes.io/hostname In nodes``) and a
+    ``topologySpreadConstraint`` (``maxSkew: 1`` over hostnames, ``DoNotSchedule``)
+    for the pods selected by ``match_labels``. Other affinity rules of the
+    template (e.g. a soft ``podAntiAffinity``) stay.
+
+    :param pod_spec: ``spec.template.spec`` of a StatefulSet.
+    :param nodes: Node names (``-rnw``).
+    :param match_labels: Labels that select this component's pods.
+    """
+    affinity = pod_spec.get('affinity') or {}
+    affinity['nodeAffinity'] = {
+        'requiredDuringSchedulingIgnoredDuringExecution': {
+            'nodeSelectorTerms': [{
+                'matchExpressions': [{'key': HOSTNAME_LABEL, 'operator': 'In', 'values': list(nodes)}],
+            }],
+        },
+    }
+    pod_spec['affinity'] = affinity
+    constraints = [c for c in (pod_spec.get('topologySpreadConstraints') or [])
+                   if c.get('topologyKey') != HOSTNAME_LABEL]
+    constraints.append({
+        'maxSkew': 1,
+        'topologyKey': HOSTNAME_LABEL,
+        'whenUnsatisfiable': 'DoNotSchedule',
+        'labelSelector': {'matchLabels': dict(match_labels)},
+    })
+    pod_spec['topologySpreadConstraints'] = constraints
 
 #: Service port names kept even when monitoring is inactive, since they carry
 #: SUT connectivity rather than monitoring traffic.
 SERVICE_PORT_NAMES_ALWAYS_KEPT = ('port-dbms', 'port-bus', 'port-web')
+
+
+def sum_requested_resources(docs: list) -> dict:
+    """Sum the requested CPU and RAM of the ``dbms`` containers of a SUT manifest.
+
+    Counts the Deployments and StatefulSets of the manifest, each times its
+    replicas, so a cluster DBMS reports what it holds in total (e.g. 3 TiKV
+    plus 3 PD plus the SQL pod), not only the SUT pod.
+
+    :param docs: Parsed manifest documents as written by ``start_sut``.
+    :return: ``{'cpu': cores, 'memory_gib': GiB, 'pods': n, 'components': {component: {...}}}``.
+    :rtype: dict
+    """
+    from ..spec import SpecError, parse_cpu_quantity, parse_memory_quantity
+    total = {'cpu': 0.0, 'memory_gib': 0.0, 'pods': 0, 'components': {}}
+    for doc in docs:
+        if not isinstance(doc, dict) or doc.get('kind') not in ('Deployment', 'StatefulSet'):
+            continue
+        replicas = int((doc.get('spec') or {}).get('replicas', 1) or 0)
+        component = ((doc.get('metadata') or {}).get('labels') or {}).get('component', '')
+        containers = (((doc.get('spec') or {}).get('template') or {}).get('spec') or {}).get('containers') or []
+        for c in containers:
+            if c.get('name') != 'dbms':
+                continue
+            requests = ((c.get('resources') or {}).get('requests')) or {}
+            try:
+                cpu = parse_cpu_quantity(requests['cpu']) if requests.get('cpu') else 0.0
+                memory = parse_memory_quantity(requests['memory']) / 1024 ** 3 if requests.get('memory') else 0.0
+            except SpecError:
+                cpu, memory = 0.0, 0.0
+            entry = total['components'].setdefault(
+                component, {'replicas': 0, 'cpu': 0.0, 'memory_gib': 0.0})
+            entry['replicas'] += replicas
+            entry['cpu'] = round(entry['cpu'] + cpu * replicas, 2)
+            entry['memory_gib'] = round(entry['memory_gib'] + memory * replicas, 2)
+            total['cpu'] += cpu * replicas
+            total['memory_gib'] += memory * replicas
+            total['pods'] += replicas
+    total['cpu'] = round(total['cpu'], 2)
+    total['memory_gib'] = round(total['memory_gib'], 2)
+    return total
 
 
 class LifecycleManager:
@@ -706,6 +783,22 @@ scrape_configs:
         # archive this run's own manifest copy below -- only the final
         # create_object_from_file() submission is skipped when already running.
         already_deployed = len(deployments) > 0
+        if getattr(cfg, 'uses_tls_secret', lambda: False)():
+            # One Secret per SUT, created before the SUT so its pods can mount it;
+            # a running SUT keeps the Secret it was started with.
+            cfg.tls_secret = cfg.generate_component_name(
+                app=app, component=TLS_COMPONENT,
+                experiment=cfg.get_experiment_name(), configuration=configuration)
+            if not already_deployed:
+                labels = {'app': app, 'component': TLS_COMPONENT,
+                          'configuration': configuration, 'experiment': experiment}
+                secret = build_tls_secret(
+                    name=cfg.tls_secret, service=name,
+                    namespace=cfg.experiment.cluster.namespace, labels=labels)
+                cfg.experiment.cluster.apply_secret(secret)
+                print("{:30s}: TLS secret = {}".format(configuration, cfg.tls_secret))
+        else:
+            cfg.tls_secret = ''
         print("{:30s}: name of SUT pods = {}".format(configuration, name))
         print("{:30s}: name of SUT service = {}".format(configuration, name))
         if use_storage:
@@ -881,6 +974,14 @@ scrape_configs:
                 dep['spec']['replicas'] = cfg.get_num_worker(component=statefulset_type)
                 dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
+                if cfg.resources.get('nodes_worker'):
+                    # -rnw: every StatefulSet of the SUT on these nodes, one pod per node
+                    # as far as the replicas allow
+                    pin_pods_to_nodes(
+                        dep['spec']['template']['spec'], cfg.resources['nodes_worker'],
+                        {key: dep['metadata']['labels'][key]
+                         for key in ('app', 'component', 'configuration', 'experiment')
+                         if key in dep['metadata']['labels']})
                 if 'initContainers' in dep['spec']['template']['spec']:
                     for i_container, container in enumerate(
                             dep['spec']['template']['spec']['initContainers']):
@@ -944,34 +1045,46 @@ scrape_configs:
                             c['resources'].setdefault('limits', {})
                             c['resources']['requests']['ephemeral-storage'] = ephemeral_size
                             c['resources']['limits']['ephemeral-storage'] = ephemeral_size
-                        req_cpu_w = 0
-                        limit_cpu_w = 0
-                        req_mem_w = 0
-                        limit_mem_w = 0
-                        if 'requests' in cfg.resources and 'cpu' in cfg.resources['requests']:
-                            req_cpu_w = cfg.resources['requests']['cpu']
-                        if 'requests' in cfg.resources and 'memory' in cfg.resources['requests']:
-                            req_mem_w = cfg.resources['requests']['memory']
-                        if 'limits' in cfg.resources and 'cpu' in cfg.resources['limits']:
-                            limit_cpu_w = cfg.resources['limits']['cpu']
-                        if 'limits' in cfg.resources and 'memory' in cfg.resources['limits']:
-                            limit_mem_w = cfg.resources['limits']['memory']
                         c = dep['spec']['template']['spec']['containers'][i_container]
                         c.setdefault('resources', {})
                         c['resources'].setdefault('requests', {})
                         c['resources'].setdefault('limits', {})
-                        c['resources']['requests']['cpu'] = req_cpu_w
-                        c['resources']['limits']['cpu'] = limit_cpu_w
-                        c['resources']['requests']['memory'] = req_mem_w
-                        c['resources']['limits']['memory'] = limit_mem_w
-                        if limit_cpu_w == "0":
-                            del c['resources']['limits']['cpu']
-                        if limit_mem_w == "0":
-                            del c['resources']['limits']['memory']
-                        if req_cpu_w == "0":
-                            del c['resources']['requests']['cpu']
-                        if req_mem_w == "0":
-                            del c['resources']['requests']['memory']
+                        if c['resources']['requests'] is None:
+                            c['resources']['requests'] = {}
+                        if c['resources']['limits'] is None:
+                            c['resources']['limits'] = {}
+                        if cfg.receives_experiment_resources(statefulset_type):
+                            # a data component: the experiment's -rc/-rr/-lc/-lr
+                            req_cpu_w = 0
+                            limit_cpu_w = 0
+                            req_mem_w = 0
+                            limit_mem_w = 0
+                            if 'requests' in cfg.resources and 'cpu' in cfg.resources['requests']:
+                                req_cpu_w = cfg.resources['requests']['cpu']
+                            if 'requests' in cfg.resources and 'memory' in cfg.resources['requests']:
+                                req_mem_w = cfg.resources['requests']['memory']
+                            if 'limits' in cfg.resources and 'cpu' in cfg.resources['limits']:
+                                limit_cpu_w = cfg.resources['limits']['cpu']
+                            if 'limits' in cfg.resources and 'memory' in cfg.resources['limits']:
+                                limit_mem_w = cfg.resources['limits']['memory']
+                            c['resources']['requests']['cpu'] = req_cpu_w
+                            c['resources']['limits']['cpu'] = limit_cpu_w
+                            c['resources']['requests']['memory'] = req_mem_w
+                            c['resources']['limits']['memory'] = limit_mem_w
+                            if limit_cpu_w == "0":
+                                del c['resources']['limits']['cpu']
+                            if limit_mem_w == "0":
+                                del c['resources']['limits']['memory']
+                            if req_cpu_w == "0":
+                                del c['resources']['requests']['cpu']
+                            if req_mem_w == "0":
+                                del c['resources']['requests']['memory']
+                        # else: not a data component (see set_data_components), keeps the template's resources
+                        # per-component overrides win in both cases (set_resources(requests_<component>=...))
+                        for kind in ('requests', 'limits'):
+                            override = cfg.resources.get('{}_{}'.format(kind, statefulset_type)) or {}
+                            for resource_name, resource_value in override.items():
+                                c['resources'][kind][resource_name] = resource_value
                     elif (not cfg.monitoring_active
                           or cfg.experiment.cluster.monitor_cluster_active
                           or cfg.experiment.cluster.monitor_cluster_exists):
@@ -1040,8 +1153,14 @@ scrape_configs:
                                 cfg.storage['storageClassName'])
                         else:
                             del result[key]['spec']['storageClassName']
-                        if len(cfg.storage['storageSize']) > 0:
+                        # the storage class is the same for all volumes of a configuration; the size
+                        # only for data components, others keep the template's size
+                        if (len(cfg.storage['storageSize']) > 0
+                                and cfg.receives_experiment_resources(statefulset_type)):
                             dep['spec']['volumeClaimTemplates'][0]['spec']['resources']['requests']['storage'] = cfg.storage['storageSize']
+                        storage_override = cfg.resources.get('storage_{}'.format(statefulset_type))
+                        if storage_override:
+                            dep['spec']['volumeClaimTemplates'][0]['spec']['resources']['requests']['storage'] = storage_override
             ########################################
             # Kind=Job
             ########################################
@@ -1304,10 +1423,14 @@ scrape_configs:
                     # must survive this reset: StatefulSet documents earlier in the
                     # template (patched later because this loop runs in reverse) still
                     # need cfg.get_num_worker() to see them.
+                    # The same holds for per-component resources and volume sizes
+                    # (requests_<component>, limits_<component>, storage_<component>)
+                    # and the worker node list (nodes_worker, see -rnw).
                     replicas_overrides = {
                         resource_key: resource_value
                         for resource_key, resource_value in cfg.resources.items()
-                        if resource_key.startswith('replicas_')
+                        if resource_key.startswith(('replicas_', 'requests_', 'limits_', 'storage_'))
+                        or resource_key == 'nodes_worker'
                     }
                     node_selector_pool = cfg.resources.get('nodeSelector_pool')
                     cfg.resources = {}
@@ -1324,18 +1447,21 @@ scrape_configs:
                     cfg.resources.update(replicas_overrides)
                     if node_selector_pool is not None:
                         cfg.resources['nodeSelector_pool'] = node_selector_pool
-                    dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu
-                    dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu'] = limit_cpu
-                    dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory'] = req_mem
-                    dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory'] = limit_mem
-                    if limit_cpu == "0":
-                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu']
-                    if limit_mem == "0":
-                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory']
-                    if req_cpu == "0":
-                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu']
-                    if req_mem == "0":
-                        del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory']
+                    if getattr(cfg, 'sut_role', 'data') != 'placeholder':
+                        dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu'] = req_cpu
+                        dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu'] = limit_cpu
+                        dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory'] = req_mem
+                        dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory'] = limit_mem
+                        if limit_cpu == "0":
+                            del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['cpu']
+                        if limit_mem == "0":
+                            del dep['spec']['template']['spec']['containers'][i_container]['resources']['limits']['memory']
+                        if req_cpu == "0":
+                            del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['cpu']
+                        if req_mem == "0":
+                            del dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['memory']
+                    # else: a placeholder SUT (entry point, client or helper pod; see set_sut_role)
+                    # keeps the template's resources; node pinning below still applies
                     if cfg.use_ephemeral_storage():
                         ephemeral_size = cfg.storage['storageSize']
                         dep['spec']['template']['spec']['containers'][i_container]['resources']['requests']['ephemeral-storage'] = ephemeral_size
@@ -1368,6 +1494,11 @@ scrape_configs:
                         if dep['spec']['template']['spec']['nodeSelector'] is None:
                             dep['spec']['template']['spec']['nodeSelector'] = dict()
                         dep['spec']['template']['spec']['nodeSelector']['type'] = cfg.nodes['sut']
+        for dep in result:
+            if isinstance(dep, dict) and dep.get('kind') in ('Deployment', 'StatefulSet'):
+                apply_tls_volume(dep['spec']['template']['spec'], getattr(cfg, 'tls_secret', ''))
+        # what the whole SUT requests (SUT pod plus all StatefulSets), for the summary
+        cfg.connection_parameter['resources_total'] = sum_requested_resources(result)
         with open(deployment_experiment, "w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))
@@ -1440,6 +1571,10 @@ scrape_configs:
             app=app, component=component, experiment=experiment, configuration=configuration)
         for service in services:
             cfg.experiment.cluster.delete_service(service)
+        if component == 'sut' and getattr(cfg, 'tls_secret', ''):
+            # not part of "delete all": Secrets must go explicitly
+            cfg.experiment.cluster.delete_secret(cfg.tls_secret)
+            cfg.tls_secret = ''
         if cfg.experiment.monitoring_active and component == 'sut':
             self.stop_monitoring()
         if component == 'sut':

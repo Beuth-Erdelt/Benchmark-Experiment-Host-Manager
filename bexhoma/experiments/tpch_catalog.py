@@ -36,13 +36,28 @@ __all__ = [
 _BYTES_PER_MEGABYTE = 1024 ** 2
 
 _DEFAULT_MODE = "run"
-_ARG_STYLE_ENV_VAR = "env-var"
 _STORAGE_FORMAT_COLUMNAR = "columnar"
 
-#: The only env-var knob this prototype can translate — it happens to already
-#: be a first-class tpch.py flag, so it needs no generic env-var CLI mapping yet.
+#: An env-var knob that is a first-class tpch.py flag; every other env-var
+#: knob becomes ``--set ...container[dbms].env.NAME=VALUE``.
 _DUCKDB_FORCE_EXECUTION_ENV_VAR = "DUCKDB_FORCE_EXECUTION"
 _DUCKDB_FORCE_EXECUTION_FLAG = "-xdfe"
+
+
+def _env_set_arg(resolved: Any, scope: str, knob: Any) -> str:
+    """Return the ``--set`` value that writes an env-var knob into the dbms container.
+
+    :param resolved: Resolved system (provides ``name`` and ``deployment``).
+    :param scope: ``"@CONFIG"`` or ``""``.
+    :param knob: Resolved knob with ``arg_style == "env-var"``.
+    :return: ``deployment[NAME]@CONFIG.container[dbms].env.VAR=VALUE``.
+    :rtype: str
+    :raises SpecError: When the knob declares no ``env_var``.
+    """
+    if not knob.env_var:
+        raise SpecError(
+            f"system '{resolved.name}' knob '{knob.name}' has arg_style 'env-var' but no env_var")
+    return f"deployment[{resolved.deployment}]{scope}.container[dbms].env.{knob.env_var}={knob.value}"
 
 
 def format_postgres_memory(num_bytes: int) -> str:
@@ -356,20 +371,17 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     for system_spec, resolved, configuration_name in resolved_cells:
         scope = f"@{configuration_name}" if configuration_name else ""
         for knob in resolved.knobs.values():
-            if knob.arg_style == spec.DEFAULT_ARG_STYLE:
+            if knob.arg_style in spec.ARG_STYLES_VIA_SET:
                 argv.extend([
                     "--set",
                     f"deployment[{resolved.deployment}]{scope}.container[dbms].{knob.name}={knob.value}",
                 ])
-            elif knob.arg_style == _ARG_STYLE_ENV_VAR:
+            elif knob.arg_style == spec.ARG_STYLE_ENV_VAR:
                 if knob.env_var == _DUCKDB_FORCE_EXECUTION_ENV_VAR:
                     if knob.value:
                         argv.append(_DUCKDB_FORCE_EXECUTION_FLAG)
                 else:
-                    raise SpecError(
-                        f"system '{resolved.name}' knob '{knob.name}' has arg_style "
-                        f"'env-var' but no known CLI mapping yet"
-                    )
+                    argv.extend(["--set", _env_set_arg(resolved, scope, knob)])
             else:
                 raise SpecError(
                     f"system '{resolved.name}' knob '{knob.name}' has arg_style "

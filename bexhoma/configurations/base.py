@@ -206,6 +206,11 @@ class SutConfiguration:
         self.volume_per_tenant = False                                           #: True iff each tenant gets its own persistent volume.
         self.service = ""                                                        #: Name of the Kubernetes Service currently exposing the SUT.
         self.worker_startup_args = []                                            #: Args set for the worker container in YAML at startup.
+        self.tls_secret = ''                                                     #: Name of the SUT's TLS Secret (see bexhoma.tls); empty when the DBMS uses none.
+        self.script_target = 'sut'                                               #: Where shell init/reset scripts run: 'sut' (first SUT pod) or 'workers' (every worker pod).
+        self.data_components = None                                              #: StatefulSet components that get the experiment's resources and volume size; None = all.
+        self.sut_role = 'data'                                                   #: 'data' (SUT pod holds data) or 'placeholder' (entry point/client/helper; keeps template resources).
+        self.pvc_selector = ''                                                   #: Label selector of extra PVCs for storage monitoring (volumes bexhoma did not create, e.g. 'app=yb-tserver').
         self.connection = ""                                                     #: Name of the dbmsbenchmarker connection currently being executed.
         self.current_benchmark_start = 0                                         #: Unix timestamp when the current benchmark run started.
         self.volumeid = ""                                                       #: Identifier of the persistent volume claimed by this configuration.
@@ -511,6 +516,63 @@ class SutConfiguration:
         :param kwargs: Resource dict, e.g. ``requests={'cpu': 4}``.
         """
         self.resources = {**self.resources, **kwargs}
+
+    def set_script_target(self, target: str) -> None:
+        """Set where shell init and reset scripts run.
+
+        ``'workers'`` runs ``.sh`` scripts in every stateful worker pod (where the
+        data of a cluster is, e.g. ``SAVE`` per Dragonfly or Redis cluster node);
+        SQL scripts keep running once through ``loadData``.
+
+        :param target: ``'sut'`` (default) or ``'workers'``.
+        :raises ValueError: For any other value.
+        """
+        if target not in ('sut', 'workers'):
+            raise ValueError(f"script target must be 'sut' or 'workers', got {target!r}")
+        self.script_target = target
+
+    def set_data_components(self, components: Optional[list]) -> None:
+        """Set the StatefulSet components that hold data.
+
+        Only these get the experiment's ``-rc/-rr/-lc/-lr`` and ``-rss``; the
+        others (e.g. TiDB's PD) keep the resources and volume size of the
+        template. ``None`` means all StatefulSets (the default).
+
+        :param components: ``component`` labels, e.g. ``['tikv']``, or ``None``.
+        """
+        self.data_components = None if components is None else list(components)
+
+    def receives_experiment_resources(self, component: str) -> bool:
+        """Return True iff a StatefulSet component gets the experiment's resources and volume size.
+
+        :param component: ``component`` label of the StatefulSet.
+        :rtype: bool
+        """
+        data_components = getattr(self, 'data_components', None)
+        return data_components is None or component in data_components
+
+    def set_sut_role(self, role: str) -> None:
+        """Set whether the SUT Deployment holds data.
+
+        A ``'placeholder'`` SUT (entry point, client or helper pod of a cluster)
+        keeps the resources of its template; node pinning (``-rnn``) still applies.
+
+        :param role: ``'data'`` (default) or ``'placeholder'``.
+        :raises ValueError: For any other value.
+        """
+        if role not in ('data', 'placeholder'):
+            raise ValueError(f"SUT role must be 'data' or 'placeholder', got {role!r}")
+        self.sut_role = role
+
+    def set_pvc_selector(self, label_selector: str) -> None:
+        """Add the PVCs of a label selector to the volumes of the storage metrics.
+
+        For volumes bexhoma does not create itself, e.g. the tserver PVCs of the
+        YugabyteDB Helm chart (``app=yb-tserver``), so ``{rbd_images}`` covers them.
+
+        :param label_selector: Kubernetes label selector; empty switches it off.
+        """
+        self.pvc_selector = label_selector or ''
 
     def set_storage(self, **kwargs) -> None:
         """Set storage parameters for the SUT's persistent volume.
@@ -1117,6 +1179,10 @@ class SutConfiguration:
         """
         cluster = self.experiment.cluster
         pvcs = self.get_list_of_pvc()
+        pvc_selector = getattr(self, 'pvc_selector', '')
+        if pvc_selector:
+            # volumes bexhoma did not create (e.g. a Helm chart's tservers)
+            pvcs = pvcs + [pvc for pvc in cluster.get_pvc_by_selector(pvc_selector) if pvc not in pvcs]
         storage_class = configured_class
         if pvcs:
             storage_class = cluster.get_pvc_storage_class(pvcs[0]) or configured_class
@@ -1177,6 +1243,16 @@ class SutConfiguration:
             self.storage.get('storageClassName') is not None
             and self.storage['storageClassName'] == 'ramdisk'
         )
+
+    def uses_tls_secret(self) -> bool:
+        """Return True iff the DBMS entry in the cluster config asks for a TLS Secret.
+
+        Set by ``'tls': {'secret': True}`` in the docker entry of ``cluster.config``.
+
+        :rtype: bool
+        """
+        tls = (getattr(self, 'dockertemplate', None) or {}).get('tls') or {}
+        return bool(tls.get('secret', False))
 
     def use_storage(self) -> bool:
         """Return True iff persistent storage is configured for the SUT.

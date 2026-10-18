@@ -1,9 +1,14 @@
 # Plan: OLTP SUTs in bexhoma - current images, settings, CLI and placement
 
-Status: **plan only, nothing implemented**. Revised 2026-10-16 to cover only changes to bexhoma
-(code, templates, config, scripts, images, tests, docs). Running the storage study itself is out of
-scope. Prototypes of the riskier parts were tested in the cluster (section 4); nothing in the repo was
-changed for that.
+Status: **WP1-WP9 implemented 2026-10-17, uncommitted; WP10 not (later, R7).** Unit tests:
+`tests/test_set_arg_styles.py` (WP2/WP3), `tests/test_tls_secret.py` (WP5),
+`tests/test_cluster_sut_settings.py` (WP4/WP6/WP7/WP8/WP9). The WP8 init/check scripts were run on
+PostgreSQL 18.6, MySQL 9.7.2, MariaDB 12.3.3, Citus 14.2.0 and MonetDB Dec2025-SP3 pods (MySQL: startup
+values restored after every check). Open: HammerDB images must be rebuilt (base 6.0), and the smoke
+runs of section 3. Deviation from the plan: the HammerDB scripts read the generic `BEXHOMA_TLS`
+(set by bexhoma where the job mounts the CA) instead of `HAMMERDB_MYSQL_SSL`. cadvisor stays v0.47.0.
+Revised 2026-10-16 to cover only changes to bexhoma (code, templates, config, scripts, images, tests,
+docs). Running the storage study itself is out of scope.
 
 Scope:
 - SUTs: PostgreSQL, PGBouncer, Citus, MySQL, MariaDB, CockroachDB, TiDB, YugabyteDB, Redis
@@ -318,15 +323,63 @@ Files: `scripts/test-docs-yugabytedb.ps1` / `.sh`, `bexhoma/ceph_storage.py`.
    volumes per pod.
 3. Known limitation (document): `volume_used`/`volume_size` come from bexhoma's helper pod, not the tservers.
 
-### WP10 (optional, later). MySQL redo log off during the import
+### WP10 (optional, later). Import durability as a general option (all workloads, all DBMS)
 
-`ALTER INSTANCE DISABLE INNODB REDO_LOG` before the load, `ENABLE` afterwards. Much faster import;
-data lost if the server crashes during the load; changes what the load test measures.
-- `disable-redo.sql` in the MySQL folders, only in a variant pre-load key (e.g. `SchemaNoRedo`), chosen
-  by an option (e.g. `--xload-redo off`).
-- `ENABLE` unconditionally in the always-run check scripts (WP8) + print `Innodb_redo_log_enabled`.
-- Tested on 9.7.2: OFF/ON works; `ENABLE` when enabled and `DISABLE` twice are no-ops; `root@localhost`
-  and `root@'%'` hold `INNODB_REDO_LOG_ENABLE`; MySQL logs a warning while off.
+Revised 2026-10-17: the user wanted a general option, not a MySQL-only redo switch. Not implemented.
+
+**Idea.** Every DBMS can make the import cheaper on durability, with its own statements and to a
+different degree. bexhoma offers one setting for it; each DBMS maps it to what it has. An unsafe fast
+import is always visible in the results.
+
+**What the DBMS offer** (only the MySQL line is tested; (?) = to be checked first):
+
+| DBMS | Strongest lever during the load | Runtime? | Way back |
+|---|---|---|---|
+| MySQL 9.7 | `ALTER INSTANCE DISABLE INNODB REDO_LOG` | yes (tested) | `ENABLE` |
+| PostgreSQL / PgDuckDB | `fsync=off`, `full_page_writes=off` (WAL written, never flushed) | yes, reload | `ALTER SYSTEM RESET` + reload + `CHECKPOINT` |
+| PostgreSQL, alternatives | `UNLOGGED` tables + `SET LOGGED` (writes the whole table into WAL afterwards, cost moves); `wal_level=minimal` + COPY into a table created in the same transaction | yes / restart | `SET LOGGED` / restart |
+| Citus | as PostgreSQL, on coordinator and workers (`run_command_on_workers`) | yes | as PostgreSQL |
+| MariaDB 12 | no redo-off switch; `innodb_flush_log_at_trx_commit=0`, `innodb_doublewrite` (?) | yes | restore saved values |
+| Redis | `CONFIG SET appendonly no`, `save ""` | yes | `CONFIG SET` back, `BGREWRITEAOF`/`SAVE` |
+| Dragonfly | nothing to switch off (snapshots only on demand) | - | - |
+| YugabyteDB | `durable_wal_write=false` already default (D1); `yb_disable_transactional_writes` for COPY (?) | session | - |
+| CockroachDB | `kv.raft_log.disable_synchronization_unsafe` (?) | cluster setting | reset |
+| TiDB | no WAL switch; bulk paths only (`tidb_dml_type='bulk'`, IMPORT INTO) (?) | session | - |
+| MonetDB | `COPY ... LOCKED` (?) | per statement | - |
+
+**Design.**
+1. **CLI, all entry scripts:** `-xld/--load-durability {default,relaxed,off}`.
+   - `default`: what the init scripts do today, no change in behavior.
+   - `relaxed`: commit without flushing (PostgreSQL `synchronous_commit=off`, MySQL/MariaDB
+     `innodb_flush_log_at_trx_commit=2`, Redis `appendfsync no`).
+   - `off`: the strongest lever of the DBMS (table above).
+2. **Scripts per DBMS, not per benchmark**, in a shared folder such as `experiments/_durability/<DBMS>/`:
+   - `load-durability-relaxed.*` / `load-durability-off.*`: appended by bexhoma as the last pre-load script.
+   - `load-durability-restore.*`: inserted by bexhoma before the check script in every post-load list
+     (WP8 'Checks' runs always), so a load never leaves the server weakened for the benchmark.
+3. **Restore** as in WP8: save startup values before relaxing (MySQL `bexhoma.saved_settings`), restore
+   exactly those (PostgreSQL `ALTER SYSTEM RESET` + reload). `off` ends with a `CHECKPOINT` (or the DBMS
+   equivalent) in the restore, so the first benchmark round does not pay for it.
+4. **Unsupported level:** no file for the level -> message ("load durability 'off' not supported by TiDB,
+   using default"), no failure; the effective level is what gets reported.
+5. **Reporting:** requested and effective level in the workload info and the connection parameters;
+   the summary shows it next to the loading times.
+6. **Safety:** with `off`, a SUT restart during the load can lose data; bexhoma already detects SUT
+   restarts and then marks the load as failed.
+7. **Tests:** script-list insertion per level, restore always present, unsupported level falls back,
+   reporting; scripts run on the DBMS pods as for WP8.
+
+**First step (proposal).** Mechanism (1-7); scripts for MySQL, PostgreSQL/PgDuckDB, Citus, MariaDB
+(`relaxed` only); Redis later; TiDB, CockroachDB, YugabyteDB, MonetDB report "not supported".
+
+**Open decisions (user):**
+- Levels `default/relaxed/off`, or only `default/off`?
+- Move today's init-script relaxations (PostgreSQL `synchronous_commit=off`, MySQL flush 2/0) into
+  `relaxed` and make that the default (init scripts then only create schemas; changes what `default`
+  means), or leave them where they are?
+
+Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DISABLE` twice are no-ops;
+`root@localhost` and `root@'%'` hold `INNODB_REDO_LOG_ENABLE`; MySQL logs a warning while off.
 
 ---
 
@@ -373,7 +426,7 @@ Ready, with these defaults taken from this plan unless the user decides otherwis
 | R4 | WP7 data components / placeholder SUT | **decided:** design in WP7 (`data_components`, `sut_role`, template sizes 250m-1 CPU / 512Mi-1Gi), confirmed by the user 2026-10-17 |
 | R5 | WP8 DBMS folders for TPC-H/TPC-DS check scripts | PostgreSQL, MySQL, MariaDB, Citus, PgDuckDB, MonetDB |
 | R6 | WP8 row counts | **decided:** counts only, no expected values (user 2026-10-17) |
-| R7 | WP10 | later, not part of the first implementation |
+| R7 | WP10 | later, not part of the first implementation; revised 2026-10-17 to a general import-durability option (`-xld`), two open decisions in WP10 |
 | R8 | HammerDB image | **decided:** move to 6.0 (user 2026-10-17); check the other DBMS at the start of WP5 |
 
 R1, R2, R3, R5 and R7 are the plan's defaults; the user did not object (2026-10-17).

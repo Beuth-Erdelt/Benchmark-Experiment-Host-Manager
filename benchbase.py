@@ -602,6 +602,8 @@ if __name__ == '__main__':
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='YugabyteDB', alias='DBMS D')
+                    config.set_sut_role('placeholder') # helper pod; data lives in the Helm-managed tservers
+                    config.set_pvc_selector('app=yb-tserver') # storage metrics of the tserver volumes
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
@@ -674,6 +676,7 @@ if __name__ == '__main__':
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
+                    config.set_sut_role('placeholder') # client pod; data lives in the worker StatefulSet
                     if type_of_benchmark == 'tpcc':
                         # Pebble has no user-invokable checkpoint; ANALYZE
                         # refreshes planner statistics before each round.
@@ -734,6 +737,7 @@ if __name__ == '__main__':
                     name_format = 'TiDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
+                    config.set_data_components(['tikv']) # PD keeps its template resources and volume size
                     if type_of_benchmark == 'tpcc':
                         # TiKV has no user-invokable checkpoint; ANALYZE TABLE
                         # forces fresh histograms before each round instead of
@@ -800,6 +804,7 @@ if __name__ == '__main__':
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='DatabaseService', alias='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
+                    config.set_sut_role('placeholder') # the pod is only a client; the DBMS is outside of K8s
                     config.resource_sweep = False # resources and storage are not set by bexhoma
                     if skip_loading:
                         config.loading_deactivated = True

@@ -23,11 +23,11 @@ SHOW GLOBAL variables like 'local_infile';
 SET sql_mode='';
 SET GLOBAL sql_mode='';
 
+-- tmp_table_size / max_heap_table_size are query settings, not import settings:
+-- set them in the template or per run, e.g.
+-- --set deployment[bexhoma-deployment-mysql].container[dbms].tmp_table_size=1G
 SHOW GLOBAL VARIABLES LIKE '%tmp_table_size%';
 SHOW GLOBAL VARIABLES LIKE '%max_heap_table_size%';
-
-SET GLOBAL tmp_table_size = 1024 * 1024 * 1024;  -- 1 GB
-SET GLOBAL max_heap_table_size = 1024 * 1024 * 1024;  -- 1 GB
 
 SHOW GLOBAL VARIABLES;
 SHOW GLOBAL STATUS;

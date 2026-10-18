@@ -5,7 +5,7 @@
 -- See LICENSE for details.
 -- Purpose: Create TPC-H tables in the public schema.
 --          Disables synchronous commit at the end to accelerate subsequent
---          bulk loading; re-enabled by initstatistics-tpch.sql.
+--          bulk loading; restored by checkschema-tpch.sql (always the last post-load script).
 
 CREATE TABLE public.nation (
     n_nationkey  INTEGER      NOT NULL,
@@ -92,6 +92,6 @@ CREATE TABLE public.lineitem (
     l_comment       VARCHAR(44)   NOT NULL
 );
 
--- Relax WAL durability to speed up bulk loading; restored in initstatistics-tpch.sql
+-- Relax WAL durability to speed up bulk loading; restored in checkschema-tpch.sql
 ALTER SYSTEM SET synchronous_commit = off;
 SELECT pg_reload_conf();

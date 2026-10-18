@@ -129,6 +129,31 @@ class LeavesSutRunningTest(unittest.TestCase):
         self.assertEqual(first.num_experiment_to_apply_done + 1, first.num_experiment_to_apply)
 
 
+class PrepareNextRepetitionTest(unittest.TestCase):
+    """Between repetitions the SUT is not restarted directly, so the caps are checked again."""
+
+    def test_resets_but_leaves_the_start_to_the_capped_main_loop(self):
+        still_there = [True]     # the stopped SUT is gone at the second look
+        config = SimpleNamespace(
+            configuration='PostgreSQL-2', docker='PostgreSQL', experiment_done=False, max_sut_dbms=None,
+            status=SimpleNamespace(sut_exists=lambda: bool(still_there) and still_there.pop()),
+            experiment_dict={'benchmarker': []},
+            benchmark_list=[], benchmark_list_template=['b1', 'b2'],
+            benchmarking_parameters_list=[], benchmarking_parameters_list_template=[{}, {}],
+            reset_sut=mock.Mock(), lifecycle=mock.Mock())
+        experiment = _experiment([config], cluster_max_sut=1)
+        experiment.wait = mock.Mock()
+        with mock.patch('builtins.print'):
+            experiment._prepare_next_repetition(config)
+        experiment.wait.assert_called_once_with(30)
+        config.reset_sut.assert_called_once_with()
+        config.lifecycle.start_sut.assert_not_called()
+        self.assertEqual(config.benchmark_list, ['b1', 'b2'])
+        self.assertEqual(experiment.client, 0)
+        # it now counts as waiting for a slot, like a configuration that has not started yet
+        self.assertEqual(experiment._waits_for_slot(_config('PostgreSQL-1')), 'PostgreSQL-2')
+
+
 class PrepareTestbedKeepSutTest(unittest.TestCase):
     """The resolved choice lands on the experiment and in its workload info."""
 

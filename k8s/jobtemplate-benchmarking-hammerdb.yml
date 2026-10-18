@@ -50,5 +50,14 @@ spec:
         #  privileged: true
         # HammerDB writes results to stdout; no results PVC needed
         volumeMounts:
+        # CA of the SUT's TLS Secret (MySQL 9); bexhoma removes it when the SUT has none
+        - name: bexhoma-tls
+          mountPath: /etc/mysql/certs
+          readOnly: true
       restartPolicy: Never
       volumes:
+      - name: bexhoma-tls
+        secret:
+          secretName: bexhoma-tls
+          items:
+          - {key: ca.pem, path: ca-cert.pem}

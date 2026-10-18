@@ -224,7 +224,7 @@ spec:
         - {name: pd-args, mountPath: /pd-args}
       containers:
       - name: dbms
-        image: pingcap/pd:v7.1.6
+        image: pingcap/pd:v8.5.8
         imagePullPolicy: IfNotPresent
         command:
         - /bin/sh
@@ -415,7 +415,7 @@ spec:
           limits:   {cpu: 100m, memory: 64Mi}
       containers:
       - name: dbms
-        image: pingcap/tikv:v7.1.6
+        image: pingcap/tikv:v8.5.8
         imagePullPolicy: IfNotPresent
         args:
         - --addr=0.0.0.0:20160
@@ -520,7 +520,7 @@ spec:
                 matchLabels: {app: bexhoma, component: sut}
       containers:
       - name: dbms
-        image: pingcap/tidb:v7.1.6
+        image: pingcap/tidb:v8.5.8
         imagePullPolicy: IfNotPresent
         command: ["/bin/sh", "-c"]
         args:

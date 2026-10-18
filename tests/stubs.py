@@ -45,6 +45,7 @@ class StubCluster:
                 'id': 'tpch',
                 'initscripts': {
                     '': [],
+                    'Checks': [],
                     'Schema': [],
                     'Index': [],
                     'Constraints': [],

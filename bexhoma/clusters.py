@@ -953,6 +953,26 @@ class Kubernetes():
                 self.wait(2)
                 return self.pvc_exists(name=name)
 
+    def get_pvc_by_selector(self, label_selector):
+        """
+        Return names of PersistentVolumeClaims matching a raw label selector.
+
+        Unlike :meth:`get_pvc` the selector is not bound to bexhoma's labels, so
+        PVCs created by others (e.g. a Helm chart's ``app=yb-tserver``) are found.
+        Never raises: an API error gives an empty list.
+
+        :param label_selector: Kubernetes label selector, e.g. ``app=yb-tserver``.
+        :return: List of PVC names.
+        """
+        self.logger.debug(f'Kubernetes.get_pvc_by_selector({label_selector})')
+        try:
+            api_response = self.v1core.list_namespaced_persistent_volume_claim(
+                self.namespace, label_selector=label_selector)
+            return [p.metadata.name for p in api_response.items]
+        except Exception as e:
+            print(f"WARN: could not list PVCs with selector {label_selector} ({getattr(e, 'status', e)})")
+            return []
+
     def get_pvc_storage_class(self, name):
         """
         Return the storage class a PVC was provisioned on.
@@ -1479,6 +1499,53 @@ class Kubernetes():
             print(f"Exception when calling CoreV1Api->delete_namespaced_persistent_volume_claim: {e}\n")
             self.cluster_access()
             self.wait(2)
+            return False
+
+    def apply_secret(self, body):
+        """
+        Create a Secret, or replace it when one of that name exists.
+
+        The Secret is sent through the API, not through a manifest file, so its
+        keys never land in the result folder.
+
+        :param body: Secret document (dict) with ``metadata.name``.
+        :return: ``True`` on success, ``False`` on error.
+        """
+        name = body['metadata']['name']
+        self.logger.debug(f'Kubernetes.apply_secret({name})')
+        try:
+            self.v1core.create_namespaced_secret(self.namespace, body)
+            return True
+        except ApiException as e:
+            if e.status != 409:
+                print(f"Exception when calling CoreV1Api->create_namespaced_secret: {e}\n")
+                self.cluster_access()
+                return False
+        try:
+            self.v1core.replace_namespaced_secret(name, self.namespace, body)
+            return True
+        except ApiException as e:
+            print(f"Exception when calling CoreV1Api->replace_namespaced_secret: {e}\n")
+            self.cluster_access()
+            return False
+
+    def delete_secret(self, name):
+        """
+        Delete a Secret by name. A 404 (already gone) counts as success.
+
+        :param name: Name of the Secret to delete.
+        :return: ``True`` if deleted (or already gone), ``False`` on error.
+        """
+        self.logger.debug(f'Kubernetes.delete_secret({name})')
+        body = kubernetes_client.V1DeleteOptions()
+        try:
+            self.v1core.delete_namespaced_secret(name, self.namespace, body=body)
+            return True
+        except ApiException as e:
+            if e.status == 404:
+                return True
+            print(f"Exception when calling CoreV1Api->delete_namespaced_secret: {e}\n")
+            self.cluster_access()
             return False
 
     def delete_service(self, name):

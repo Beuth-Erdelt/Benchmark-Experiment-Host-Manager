@@ -135,6 +135,15 @@ echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
 echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
 echo "SF:$SF"
 
+######################## TLS (MySQL 9) ########################
+# bexhoma mounts the CA of the SUT's TLS Secret at /etc/mysql/certs/ca-cert.pem and sets
+# BEXHOMA_TLS=true; HammerDB disables SSL (and then fails) when that file is missing.
+MYSQL_SSL_LINE=""
+if [ "$BEXHOMA_TLS" = "true" ]; then
+    MYSQL_SSL_LINE="diset connection mysql_ssl true"
+fi
+echo "BEXHOMA_TLS:$BEXHOMA_TLS"
+
 ######################## Generate workflow file (MySQL) ########################
 
 if [ "$HAMMERDB_TYPE" = "mysql" ]; then
@@ -158,11 +167,7 @@ puts \"SETTING CONFIGURATION\"
 dbset db mysql
 diset connection mysql_host $BEXHOMA_HOST
 diset connection mysql_port $BEXHOMA_PORT
-# Error: can't read \"mysql_ssl_options\": no such variable
-# diset connection mysql_ssl true
-# diset connection mysql_ssl_ca /etc/mysql/certs/ca-cert.pem
-# diset connection mysql_ssl_cert /etc/mysql/certs/client-cert.pem
-# diset connection mysql_ssl_key /etc/mysql/certs/client-key.pem
+$MYSQL_SSL_LINE
 diset tpcc mysql_count_ware $SF
 diset tpcc mysql_num_vu $HAMMERDB_NUM_VU
 diset tpcc mysql_user $BEXHOMA_USER

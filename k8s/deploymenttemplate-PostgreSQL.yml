@@ -62,7 +62,7 @@ spec:
           - {mountPath: /var/lib/postgresql/data, name: benchmark-storage-volume}
       containers:
       - name: dbms
-        image: postgres:18.3 #17.5
+        image: postgres:18.6 #17.5
         # raise soft nofile limit (1024) to the hard limit; io_uring needs more fds than 1024
         command: ["bash", "-c", "ulimit -S -n \"$(ulimit -H -n)\" || true; exec docker-entrypoint.sh \"$@\"", "docker-entrypoint.sh"]
         env:
@@ -230,7 +230,7 @@ spec:
           #- "-c"
           #- "huge_pages=try"                          # https://www.postgresql.org/docs/current/runtime-config-resource.html#GUC-HUGE-PAGES
       - name: monitor-application
-        image: prometheuscommunity/postgres-exporter:v0.19.1 #v0.17.1 #v0.15.0
+        image: prometheuscommunity/postgres-exporter:v0.20.1 #v0.17.1 #v0.15.0
         command: ["postgres_exporter"] #, "--auto-discover-databases"]
         env:
           - name: DATA_SOURCE_URI

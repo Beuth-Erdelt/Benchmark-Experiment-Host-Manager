@@ -13,13 +13,35 @@
 
 
 function Install-YugabyteDB {
-    param([string]$Persistent = "yes")
+    # Persistent:     "yes" = PVCs of StorageClass, "no" = ephemeral (emptyDir)
+    # StorageClass:   storage class of master and tserver PVCs
+    # TserverVolumes: volumes per tserver (chart storage.tserver.count; data dirs are striped over them)
+    # Nodes:          pin masters and tservers to these nodes, joined by '+' (like bexhoma -rnw); empty = anywhere
+    param(
+        [string]$Persistent = "yes",
+        [string]$StorageClass = "shared",
+        [int]$TserverVolumes = 2,
+        [string]$Nodes = ""
+    )
 
     if ($Persistent -eq "yes") { $Ephemeral = "false" } else { $Ephemeral = "true" }
 
-    helm install bexhoma yugabytedb/yugabyte `
-        --version 2025.2.4 `
-        --set "gflags.tserver.ysql_enable_packed_row=true,gflags.tserver.ysql_max_connections=1280,resource.master.limits.cpu=2,resource.master.limits.memory=16Gi,resource.master.requests.cpu=2,resource.master.requests.memory=16Gi,resource.tserver.limits.cpu=8,resource.tserver.limits.memory=16Gi,resource.tserver.requests.cpu=8,resource.tserver.requests.memory=16Gi,storage.master.size=100Gi,storage.master.storageClass=shared,storage.tserver.size=100Gi,storage.tserver.storageClass=shared,storage.ephemeral=$Ephemeral,tserver.livenessProbe.timeoutSeconds=10,master.livenessProbe.timeoutSeconds=10,preflight.skipUlimit=true,enableLoadBalancer=true"
+    # The chart reads the liveness probe settings at the root (livenessProbe.*), not per component;
+    # the probe (a disk check of the data dirs) only exists with persistent storage.
+    $settings = "gflags.tserver.ysql_enable_packed_row=true,gflags.tserver.ysql_max_connections=1280,resource.master.limits.cpu=2,resource.master.limits.memory=16Gi,resource.master.requests.cpu=2,resource.master.requests.memory=16Gi,resource.tserver.limits.cpu=8,resource.tserver.limits.memory=16Gi,resource.tserver.requests.cpu=8,resource.tserver.requests.memory=16Gi,storage.master.size=100Gi,storage.master.storageClass=$StorageClass,storage.tserver.size=100Gi,storage.tserver.storageClass=$StorageClass,storage.tserver.count=$TserverVolumes,storage.ephemeral=$Ephemeral,livenessProbe.timeoutSeconds=10,preflight.skipUlimit=true,enableLoadBalancer=true"
+
+    $helmArgs = @("install", "bexhoma", "yugabytedb/yugabyte", "--version", "2025.2.7", "--set", $settings)
+    $valuesFile = $null
+    if ($Nodes -ne "") {
+        # node affinity per component; the chart keeps its own (soft) pod anti-affinity next to it
+        $nodeList = ($Nodes.Split('+') | ForEach-Object { "                - " + $_.Trim() }) -join "`n"
+        $affinity = "    affinity:`n      nodeAffinity:`n        requiredDuringSchedulingIgnoredDuringExecution:`n          nodeSelectorTerms:`n          - matchExpressions:`n            - key: kubernetes.io/hostname`n              operator: In`n              values:`n$nodeList"
+        $valuesFile = Join-Path ([IO.Path]::GetTempPath()) "bexhoma-yugabytedb-nodes.yaml"
+        [IO.File]::WriteAllText($valuesFile, "master:`n$affinity`ntserver:`n$affinity`n")
+        $helmArgs += @("-f", $valuesFile)
+    }
+    helm @helmArgs
+    if ($valuesFile) { Remove-Item $valuesFile -ErrorAction SilentlyContinue }
 
     Write-Host "Waiting 60s for pods to start..."
     Start-Sleep -Seconds 60

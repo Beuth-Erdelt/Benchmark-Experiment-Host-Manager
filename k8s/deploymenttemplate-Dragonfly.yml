@@ -45,14 +45,18 @@ spec:
       terminationGracePeriodSeconds: 180
       containers:
       - name: dbms
-        image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.37.0
+        image: docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2
         imagePullPolicy: IfNotPresent
         command:
           - sh
           - -c
           - |
-            exec dragonfly --logtostderr --admin_port=8080 --maxmemory=128GiB
+            exec dragonfly --logtostderr --admin_port=8080
         env:
+        # Settings as DFLY_<flag> so that --set ...container[dbms].env.DFLY_<flag> can change them;
+        # a flag on the command line would win over the env var.
+        - name: DFLY_maxmemory
+          value: "128GiB"
         #- name: DFLY_MAXMEMORY_POLICY
         #  value: "allkeys-lru"
         #- name: DFLY_REQUIREPASS

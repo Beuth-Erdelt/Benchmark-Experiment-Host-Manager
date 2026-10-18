@@ -5,7 +5,8 @@
 -- See LICENSE for details.
 -- Purpose: Create the 25 TPC-DS tables in the public schema for PostgreSQL.
 --          Planner hints and synchronous_commit are set before table creation
---          to accelerate bulk loading; re-enabled in initstatistics-tpcds.sql.
+--          to accelerate bulk loading; synchronous_commit is restored in
+--          checkschema-tpcds.sql (always the last post-load script).
 
 -- Planner settings: disable nested loops and tune parallelism for TPC-DS queries.
 ALTER SYSTEM SET enable_nestloop = 'off';
@@ -22,7 +23,7 @@ SHOW enable_nestloop;
 SHOW parallel_tuple_cost;
 SHOW parallel_setup_cost;
 
--- Disable synchronous commit to speed up bulk loading; re-enabled after ANALYZE.
+-- Disable synchronous commit to speed up bulk loading; restored in checkschema-tpcds.sql.
 ALTER SYSTEM SET synchronous_commit = off;
 SELECT pg_reload_conf();
 

@@ -124,6 +124,8 @@ class TPCDS(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += "\nEXPLAIN statements are run and stored in the protocol after the first run of each query."
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
+            # always a post-load list: its last script (checkschema-tpcds.sql) restores the load relaxations
+            experiment.set_experiment(indexing='Checks')
             if init_indexes or init_constraints or init_statistics:
                 experiment.set_experiment(indexing='Index')
                 init_scripts = " Import sets indexes after loading."

@@ -16,9 +16,11 @@ __all__ = ["TPCH", "resolve_indexing_key"]
 #: volume's ``initscripts`` key that applies exactly that combination (see
 #: ``k8s-cluster.config``'s ``volumes.tpch.initscripts``). The three post-load
 #: steps are independent DDL/DML statements with no ordering dependency on
-#: each other, so all eight combinations are legal.
+#: each other, so all eight combinations are legal. Every list ends with
+#: ``checkschema-tpch.sql``, which restores the load relaxations; without any
+#: step the list is ``Checks`` (only that script), so it always runs.
 _INDEXING_KEYS: dict[tuple[bool, bool, bool], str] = {
-    (False, False, False): "",
+    (False, False, False): "Checks",
     (True, False, False): "Index",
     (False, True, False): "Constraints",
     (False, False, True): "Statistics",
@@ -43,7 +45,7 @@ def resolve_indexing_key(indexes: bool, constraints: bool, statistics: bool) -> 
     :param indexes: Create indexes on all tables after loading.
     :param constraints: Add primary-key/foreign-key constraints after loading.
     :param statistics: Run ``ANALYZE`` after loading.
-    :return: The matching ``initscripts`` key, or ``""`` when none of the
+    :return: The matching ``initscripts`` key; ``"Checks"`` when none of the
         three steps were requested.
     :rtype: str
     """
@@ -170,8 +172,9 @@ class TPCH(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += "\nEXPLAIN statements are run and stored in the protocol after the first run of each query."
         experiment.set_experiment(script='Schema')
         if experiment.loading_is_active():
+            # always a post-load list: its last script restores the load relaxations
+            experiment.set_experiment(indexing=resolve_indexing_key(init_indexes, init_constraints, init_statistics))
             if init_indexes or init_constraints or init_statistics:
-                experiment.set_experiment(indexing=resolve_indexing_key(init_indexes, init_constraints, init_statistics))
                 requested_steps = [name for flag, name in (
                     (init_indexes, "indexes"),
                     (init_constraints, "constraints"),
