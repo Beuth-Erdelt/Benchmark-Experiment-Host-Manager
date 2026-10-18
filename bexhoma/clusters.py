@@ -19,6 +19,7 @@ import subprocess
 import traceback
 import os
 import posixpath
+import re
 import tarfile
 import psutil
 import logging
@@ -1486,23 +1487,35 @@ class Kubernetes():
         """
         Return names of Pods belonging to a given StatefulSet.
 
+        Selects with the StatefulSet's own pod selector (``spec.selector``)
+        and keeps the pods named ``<stateful_set>-<ordinal>``, in ordinal
+        order. Works for StatefulSets bexhoma did not create (e.g. a Helm
+        chart's ``yb-tserver``). The label ``statefulset.kubernetes.io/pod-name``
+        carries the *pod's* name, so selecting it with the StatefulSet's name
+        found nothing.
+
         :param stateful_set: Name of the StatefulSet.
-        :return: List of Pod names.
+        :return: List of Pod names; empty if the StatefulSet does not exist.
         """
-        self.logger.debug('Kubernetes.get_stateful_set_pods()')
-        label = f"statefulset.kubernetes.io/pod-name={stateful_set}"
-        self.logger.debug('get_stateful_set_pods' + label)
+        self.logger.debug(f'Kubernetes.get_stateful_set_pods({stateful_set})')
+        if not stateful_set:
+            return []
         try:
+            stateful_set_object = self.v1apps.read_namespaced_stateful_set(stateful_set, self.namespace)
+            match_labels = (stateful_set_object.spec.selector.match_labels or {}) if stateful_set_object.spec.selector else {}
+            label = ','.join(f'{key}={value}' for key, value in sorted(match_labels.items()))
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
-            if api_response.items:
-                return [p.metadata.name for p in api_response.items]
-            else:
-                return []
         except ApiException as e:
-            print(f"Exception when calling CoreV1Api->list_namespaced_pod: {e}\n")
+            if e.status == 404:
+                return []
+            print(f"Exception when calling the API for get_stateful_set_pods: {e}\n")
             self.cluster_access()
             self.wait(2)
             return self.get_stateful_set_pods(stateful_set=stateful_set)
+        ordinal = re.compile(re.escape(stateful_set) + r'-(\d+)$')
+        pods = [(int(m.group(1)), p.metadata.name) for p in api_response.items
+                for m in [ordinal.match(p.metadata.name)] if m]
+        return [name for _, name in sorted(pods)]
 
     def delete_stateful_set(self, name):
         """
