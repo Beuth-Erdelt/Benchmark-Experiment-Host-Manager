@@ -3,16 +3,17 @@
 ### Workload
 TPC-DS Queries SF=3
 * Type: tpcds
-* Duration: 1990s 
-* Code: 1783872787
+* Duration: 1654s 
+* Code: 1792321722
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=3) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q99.
   * All instances use the same query parameters.
   * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.5.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
@@ -25,25 +26,32 @@ TPC-DS Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1084752
+  * disk:834808
+  * volume_size:1.8T
+  * volume_used:816G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783872787
+    * code:1792321722
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783872787-778cd88656-5brqp: 0 0
+* bexhoma-sut-postgresql-1-1792321722-78f8448f98-8ndr7: 0
 
 ### Workflow
 
@@ -59,126 +67,134 @@ TPC-DS Queries SF=3
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 3.00 |     1405.00 |           1.00 |          522.00 |        121.00 |          760.00 |              2 |           0 |             | None           |             0 | False         |                7.69 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    3 |      254.00 |           4.00 |            0.00 |        165.00 |           81.00 |              2 |           0 |             | None           |             0 | False         |               42.52 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |        812 |            0.75 |            14825.04 |           1316.75 |          -1 | PostgreSQL-1-1-1-1-1 |
+| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |        778 |            0.69 |            15986.46 |           1374.29 |          -1 | postgresql-1-1-1-1-1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |        812 |            0.75 |            14825.04 |           1316.75 |          -1 |
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |        778 |            0.69 |            15986.46 |           1374.29 |          -1 |
+
+#### Query Completion per Phase
+
+| phase            |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:-----------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| postgresql-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries       |   PostgreSQL-1-1-1-1-1 |
+| Queries       |   postgresql-1-1-1-1-1 |
 |:--------------|-----------------------:|
-| TPC-DS Q1     |                 164.94 |
-| TPC-DS Q2     |                 443.44 |
-| TPC-DS Q3     |                1091.85 |
-| TPC-DS Q4     |               18701.26 |
-| TPC-DS Q5     |                 761.15 |
-| TPC-DS Q6     |              225482.02 |
-| TPC-DS Q7     |                 592.82 |
-| TPC-DS Q8     |                 224.72 |
-| TPC-DS Q9     |                2591.35 |
-| TPC-DS Q10    |                1266.62 |
-| TPC-DS Q11    |               11635.66 |
-| TPC-DS Q12    |                 148.50 |
-| TPC-DS Q13    |                1849.96 |
-| TPC-DS Q14a+b |                7542.65 |
-| TPC-DS Q15    |                 307.19 |
-| TPC-DS Q16    |                 426.38 |
-| TPC-DS Q17    |                 718.01 |
-| TPC-DS Q18    |                 646.54 |
-| TPC-DS Q19    |                 414.75 |
-| TPC-DS Q20    |                 259.17 |
-| TPC-DS Q21    |                 307.20 |
-| TPC-DS Q22    |                8227.72 |
-| TPC-DS Q23a+b |               14200.24 |
-| TPC-DS Q24a+b |                2112.58 |
-| TPC-DS Q25    |                 772.76 |
-| TPC-DS Q26    |                 463.25 |
-| TPC-DS Q27    |                  44.94 |
-| TPC-DS Q28    |                2301.12 |
-| TPC-DS Q29    |                 885.93 |
-| TPC-DS Q30    |               75606.63 |
-| TPC-DS Q31    |                4178.54 |
-| TPC-DS Q32    |                 302.05 |
-| TPC-DS Q33    |                1085.23 |
-| TPC-DS Q34    |                  73.09 |
-| TPC-DS Q35    |                1387.18 |
-| TPC-DS Q36    |                  39.13 |
-| TPC-DS Q37    |                 443.25 |
-| TPC-DS Q38    |                2655.52 |
-| TPC-DS Q39a+b |                5479.35 |
-| TPC-DS Q40    |                 244.43 |
-| TPC-DS Q41    |                3776.48 |
-| TPC-DS Q42    |                 174.15 |
-| TPC-DS Q43    |                 361.42 |
-| TPC-DS Q44    |                   1.85 |
-| TPC-DS Q45    |                 188.24 |
-| TPC-DS Q46    |                  63.10 |
-| TPC-DS Q47    |                2708.73 |
-| TPC-DS Q48    |                1186.25 |
-| TPC-DS Q49    |                 720.83 |
-| TPC-DS Q50    |                2218.81 |
-| TPC-DS Q51    |                3002.19 |
-| TPC-DS Q52    |                 165.83 |
-| TPC-DS Q53    |                 246.72 |
-| TPC-DS Q54    |                  66.09 |
-| TPC-DS Q55    |                 166.54 |
-| TPC-DS Q56    |                 704.60 |
-| TPC-DS Q57    |                2640.18 |
-| TPC-DS Q58    |                 810.58 |
-| TPC-DS Q59    |                 780.08 |
-| TPC-DS Q60    |                 803.72 |
-| TPC-DS Q61    |                 136.89 |
-| TPC-DS Q62    |                 197.40 |
-| TPC-DS Q63    |                 216.78 |
-| TPC-DS Q64    |                1734.62 |
-| TPC-DS Q65    |                1269.42 |
-| TPC-DS Q66    |                 578.22 |
-| TPC-DS Q67    |                7467.14 |
-| TPC-DS Q68    |                 110.36 |
-| TPC-DS Q69    |                 414.44 |
-| TPC-DS Q70    |                 844.63 |
-| TPC-DS Q71    |                 767.72 |
-| TPC-DS Q72    |                2368.33 |
-| TPC-DS Q73    |                  40.01 |
-| TPC-DS Q74    |                2314.94 |
-| TPC-DS Q75    |                3756.16 |
-| TPC-DS Q76    |                 323.18 |
-| TPC-DS Q77    |                 473.31 |
-| TPC-DS Q78    |                2954.40 |
-| TPC-DS Q79    |                 217.06 |
-| TPC-DS Q80    |                 772.39 |
-| TPC-DS Q81    |              325842.78 |
-| TPC-DS Q82    |                 502.83 |
-| TPC-DS Q83    |                 149.34 |
-| TPC-DS Q84    |                  84.64 |
-| TPC-DS Q85    |                 325.37 |
-| TPC-DS Q86    |                 766.95 |
-| TPC-DS Q87    |                2558.67 |
-| TPC-DS Q88    |                3632.09 |
-| TPC-DS Q89    |                 249.48 |
-| TPC-DS Q90    |                 333.37 |
-| TPC-DS Q91    |                 154.33 |
-| TPC-DS Q92    |                  79.53 |
-| TPC-DS Q93    |                 487.39 |
-| TPC-DS Q94    |                 313.52 |
-| TPC-DS Q95    |                9248.51 |
-| TPC-DS Q96    |                 173.65 |
-| TPC-DS Q97    |                 757.93 |
-| TPC-DS Q98    |                 422.70 |
-| TPC-DS Q99    |                 618.82 |
+| TPC-DS Q1     |                 220.59 |
+| TPC-DS Q2     |                 472.10 |
+| TPC-DS Q3     |                 440.50 |
+| TPC-DS Q4     |               17323.27 |
+| TPC-DS Q5     |                 797.98 |
+| TPC-DS Q6     |              201729.20 |
+| TPC-DS Q7     |                 601.74 |
+| TPC-DS Q8     |                 103.88 |
+| TPC-DS Q9     |                2515.66 |
+| TPC-DS Q10    |                1085.79 |
+| TPC-DS Q11    |                9773.93 |
+| TPC-DS Q12    |                 140.68 |
+| TPC-DS Q13    |                1135.91 |
+| TPC-DS Q14a+b |                6512.17 |
+| TPC-DS Q15    |                 296.62 |
+| TPC-DS Q16    |                 446.24 |
+| TPC-DS Q17    |                 697.75 |
+| TPC-DS Q18    |                 608.73 |
+| TPC-DS Q19    |                 404.24 |
+| TPC-DS Q20    |                 259.62 |
+| TPC-DS Q21    |                 293.25 |
+| TPC-DS Q22    |                6685.43 |
+| TPC-DS Q23a+b |               11087.97 |
+| TPC-DS Q24a+b |                 920.72 |
+| TPC-DS Q25    |                 695.75 |
+| TPC-DS Q26    |                 445.03 |
+| TPC-DS Q27    |                  42.64 |
+| TPC-DS Q28    |                1915.92 |
+| TPC-DS Q29    |                 783.63 |
+| TPC-DS Q30    |               66383.54 |
+| TPC-DS Q31    |                3732.78 |
+| TPC-DS Q32    |                 296.18 |
+| TPC-DS Q33    |                 820.09 |
+| TPC-DS Q34    |                  40.91 |
+| TPC-DS Q35    |                1232.95 |
+| TPC-DS Q36    |                  44.34 |
+| TPC-DS Q37    |                 439.71 |
+| TPC-DS Q38    |                2149.55 |
+| TPC-DS Q39a+b |                5018.43 |
+| TPC-DS Q40    |                 249.15 |
+| TPC-DS Q41    |                2615.93 |
+| TPC-DS Q42    |                 173.52 |
+| TPC-DS Q43    |                  54.47 |
+| TPC-DS Q44    |                1145.72 |
+| TPC-DS Q45    |                 190.75 |
+| TPC-DS Q46    |                  63.47 |
+| TPC-DS Q47    |                2215.30 |
+| TPC-DS Q48    |                1092.73 |
+| TPC-DS Q49    |                 669.57 |
+| TPC-DS Q50    |                1568.68 |
+| TPC-DS Q51    |                2286.64 |
+| TPC-DS Q52    |                 176.85 |
+| TPC-DS Q53    |                 208.40 |
+| TPC-DS Q54    |                  67.86 |
+| TPC-DS Q55    |                 172.75 |
+| TPC-DS Q56    |                 702.24 |
+| TPC-DS Q57    |                2090.25 |
+| TPC-DS Q58    |                 815.09 |
+| TPC-DS Q59    |                 746.14 |
+| TPC-DS Q60    |                 928.81 |
+| TPC-DS Q61    |                  83.45 |
+| TPC-DS Q62    |                 177.45 |
+| TPC-DS Q63    |                 213.53 |
+| TPC-DS Q64    |                 917.67 |
+| TPC-DS Q65    |                1267.37 |
+| TPC-DS Q66    |                 542.95 |
+| TPC-DS Q67    |                5977.61 |
+| TPC-DS Q68    |                  67.90 |
+| TPC-DS Q69    |                 381.44 |
+| TPC-DS Q70    |                 740.77 |
+| TPC-DS Q71    |                 804.15 |
+| TPC-DS Q72    |                2182.06 |
+| TPC-DS Q73    |                  42.54 |
+| TPC-DS Q74    |                2096.70 |
+| TPC-DS Q75    |                3108.95 |
+| TPC-DS Q76    |                 389.41 |
+| TPC-DS Q77    |                 457.54 |
+| TPC-DS Q78    |                2647.75 |
+| TPC-DS Q79    |                 346.30 |
+| TPC-DS Q80    |                 739.17 |
+| TPC-DS Q81    |              357478.37 |
+| TPC-DS Q82    |                 337.50 |
+| TPC-DS Q83    |                 143.50 |
+| TPC-DS Q84    |                  79.22 |
+| TPC-DS Q85    |                 302.28 |
+| TPC-DS Q86    |                 419.03 |
+| TPC-DS Q87    |                2475.05 |
+| TPC-DS Q88    |                2567.54 |
+| TPC-DS Q89    |                 233.87 |
+| TPC-DS Q90    |                 283.47 |
+| TPC-DS Q91    |                 137.93 |
+| TPC-DS Q92    |                 101.07 |
+| TPC-DS Q93    |                 442.35 |
+| TPC-DS Q94    |                 313.32 |
+| TPC-DS Q95    |                8088.14 |
+| TPC-DS Q96    |                 173.80 |
+| TPC-DS Q97    |                 728.03 |
+| TPC-DS Q98    |                 417.84 |
+| TPC-DS Q99    |                 285.37 |
 
 ### Errors (failed queries)
 
@@ -194,56 +210,87 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       219.06 |      2.43 |           6.31 |                 13.17 |
+| postgresql-1-1-1-1 |       232.96 |      2.50 |           6.32 |                 13.17 |
 
 ### Loading phase: component data generator
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       499.31 |      2.00 |           0.01 |                  3.62 |
+| postgresql-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        29.58 |      0.42 |           0.00 |                  0.00 |
+| postgresql-1-1-1-1 |        31.50 |      0.29 |           0.01 |                  2.43 |
 
-### Execution phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       996.50 |      2.58 |           6.67 |                 13.53 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        25.78 |      0.12 |           0.34 |                  0.34 |
+| postgresql-1-1-1-1 |       979.66 |      2.75 |           7.86 |                 14.94 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |        20.02 |      0.06 |           0.33 |                  0.33 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        6.00 |                                    5.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                    1 |                                                   0 |                                                           0 |                                      1 |                                                  1 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        6.00 |                                    6.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                    1 |                                                   0 |                                                           0 |                                      6 |                                                  6 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Loading phase: component data generator contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
 * TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned

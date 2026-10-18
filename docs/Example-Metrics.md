@@ -75,13 +75,13 @@ This
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1233s 
-* Code: 1783869734
+* Duration: 1475s 
+* Code: 1792317325
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-  * Benchbase data is generated and loaded using several threads.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.10.5.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
@@ -94,39 +94,51 @@ Benchbase Workload tpcc SF=16
   * Benchmarking is tested with [160] threads, split into [1, 2] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1073586
+  * disk:824784
+  * volume_size:1.8T
+  * volume_used:806G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783869734
+    * code:1792317325
     * TENANT_VOL:False
-* PostgreSQL-1-1-2-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-2-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1109056
+  * disk:839543
+  * volume_size:1.8T
+  * volume_used:820G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783869734
+    * code:1792317325
     * TENANT_VOL:False
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783869734-845d77c9f8-djxzm: 0 0
+* bexhoma-sut-postgresql-1-1792317325-7869fcf44b-ghw9f: 0
 
 ### Workflow
 
@@ -144,26 +156,26 @@ Benchbase Workload tpcc SF=16
 
 #### Per Run
 
-|                |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 16.00 |      325.00 |           0.00 |            0.00 |        150.00 |          175.00 |              1 |           1 |             |                |             0 | False         |              177.23 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |   16 |      163.00 |           4.00 |            0.00 |        148.00 |           11.00 |              1 |           1 |             |                |             0 | False         |              353.37 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |         160 |    16384 |        1 |               1 |       1 |           0 | 300.00 |          139 |                       11427.15 |                    11255.35 |         0.00 |                                                      37416.00 |                                              13979.00 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       1 |           0 | 300.00 |           27 |                        4378.83 |                     4324.69 |         0.00 |                                                      40392.00 |                                              18262.00 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       2 |           0 | 300.00 |           14 |                        4396.02 |                     4342.27 |         0.00 |                                                      40181.00 |                                              18190.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |         160 |    16384 |        1 |               1 |       1 |           0 | 300.00 |          114 |                       14285.07 |                    14083.17 |         0.00 |                                                      28400.00 |                                              11193.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       1 |           0 | 300.00 |           19 |                        4390.55 |                     4345.74 |         0.00 |                                                      35536.00 |                                              18204.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       2 |           0 | 300.00 |           21 |                        4390.52 |                     4345.35 |         0.00 |                                                      35489.00 |                                              18214.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |         160 |    16384 |               1 |           1 |           0 | 300.00 |          139 |                       11427.15 |                    11255.35 |         0.00 |                                                      37416.00 |                                              13979.00 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |         160 |    16384 |               1 |           2 |           0 | 300.00 |           41 |                        8774.85 |                     8666.95 |         0.00 |                                                      40392.00 |                                              18226.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |         160 |    16384 |               1 |           1 |           0 | 300.00 |          114 |                       14285.07 |                    14083.17 |         0.00 |                                                      28400.00 |                                              11193.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |         160 |    16384 |               1 |           2 |           0 | 300.00 |           40 |                        8781.07 |                     8691.09 |         0.00 |                                                      35536.00 |                                              18209.00 |
 
 ### Monitoring
 
@@ -171,52 +183,71 @@ Benchbase Workload tpcc SF=16
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       166.96 |      3.15 |           2.07 |                  3.64 |
-| PostgreSQL-1-1-2-1 |       166.96 |      3.15 |           2.07 |                  3.64 |
+| postgresql-1-1-1-1 |       153.99 |      1.98 |           2.05 |                  3.69 |
+| postgresql-1-1-2-1 |       153.99 |      1.98 |           2.05 |                  3.69 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      1870.76 |     15.35 |           0.27 |                  0.27 |
-| PostgreSQL-1-1-2-1 |      1870.76 |     15.35 |           0.27 |                  0.27 |
+| postgresql-1-1-1-1 |      1662.06 |     15.49 |           0.26 |                  0.26 |
+| postgresql-1-1-2-1 |      1662.06 |     15.49 |           0.26 |                  0.26 |
 
-### Execution phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      4175.96 |     16.51 |           7.36 |                 12.21 |
-| PostgreSQL-1-1-2-1 |      4286.92 |     16.17 |          10.16 |                 16.00 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      5491.80 |     21.42 |           1.14 |                  1.14 |
-| PostgreSQL-1-1-2-1 |      5491.80 |     36.67 |           1.14 |                  1.14 |
+| postgresql-1-1-1-1 |      4910.00 |     19.40 |           8.36 |                 13.94 |
+| postgresql-1-1-2-1 |      3633.01 |     14.70 |          10.98 |                 16.00 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |      5208.47 |     19.29 |           1.36 |                  1.43 |
+| postgresql-1-1-2-1 |      5208.47 |     26.74 |           1.36 |                  1.43 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                     16.00 |                                     0.00 |                                             0.00 |                        9.00 |                                    8.00 |
-| PostgreSQL-1-1-2-1 |                     16.00 |                                     0.00 |                                             0.00 |                        9.00 |                                    8.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                   17 |                                                   0 |                                                           0 |                                     11 |                                                 11 |
+| postgresql-1-1-2-1 |                                   17 |                                                   0 |                                                           0 |                                     11 |                                                 11 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      9.00 |                                    76.00 |                                             0.00 |                      160.00 |                                  160.00 |
-| PostgreSQL-1-1-2-1 |                      8.00 |                                    57.00 |                                             0.00 |                      160.00 |                                  160.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                12.00 |                                               78.00 |                                                        0.00 |                                 160.00 |                                             160.00 |
+| postgresql-1-1-2-1 |                                 7.00 |                                               41.00 |                                                        0.00 |                                 160.00 |                                             160.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
@@ -259,13 +290,13 @@ bexhoma hammerdb \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 1371s 
-* Code: 1783874903
+* Duration: 1722s 
+* Code: 1792323545
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
-  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-  * Experiment uses bexhoma version 0.10.5.
+  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 2 minutes before measurements begin. Benchmarking also logs latencies.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
@@ -278,37 +309,48 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Benchmarking is tested with [16] threads, split into [1, 2] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1073870
+  * disk:824366
+  * volume_size:1.8T
+  * volume_used:806G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783874903
-* PostgreSQL-1-1-2-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+    * code:1792323545
+* postgresql-1-1-2-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1088087
+  * disk:839114
+  * volume_size:1.8T
+  * volume_used:820G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783874903
+    * code:1792323545
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783874903-7ddd559b5b-qdkqc: 0 0
+* bexhoma-sut-postgresql-1-1792323545-74774b4bf7-bw298: 0
 
 ### Workflow
 
@@ -326,26 +368,26 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 #### Per Run
 
-|                |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 16.00 |      111.00 |           1.00 |            0.00 |         39.00 |           71.00 |              1 |          16 |             | None           |             0 | False         |              518.92 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |   16 |       63.00 |           4.00 |            0.00 |         49.00 |           10.00 |              1 |          16 |             | None           |             0 | False         |              914.29 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 260019 | 598280 |         0.00 |          5 |        0 |       2.09 |       2.73 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 |  49535 | 114420 |         0.00 |          5 |        0 |       1.62 |       1.94 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        8 |        2 |               1 |       2 |  49501 | 114394 |         0.00 |          5 |        0 |       1.64 |       1.95 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 246600 | 567759 |         0.00 |          5 |        0 |       2.07 |       2.58 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        8 |        2 |               1 |       1 |  61219 | 140745 |         0.00 |          5 |        0 |       1.59 |       1.94 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        8 |        2 |               1 |       2 |  61184 | 140813 |         0.00 |          5 |        0 |       1.60 |       1.96 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |       2.09 |       2.73 |         0.00 | 260019.00 | 598280.00 |          5 |        0 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |       16 |        2 |               1 |           2 |       1.64 |       1.95 |         0.00 |  49518.00 | 114407.00 |          5 |        0 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |       16 |        1 |               1 |           1 |       2.07 |       2.58 |         0.00 | 246600.00 | 567759.00 |          5 |        0 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |       16 |        2 |               1 |           2 |       1.60 |       1.96 |         0.00 |  61201.50 | 140779.00 |          5 |        0 |
 
 ### Monitoring
 
@@ -353,52 +395,104 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        37.23 |      0.94 |           1.67 |                  2.38 |
-| PostgreSQL-1-1-2-1 |        37.23 |      0.94 |           1.67 |                  2.38 |
+| postgresql-1-1-1-1 |        40.23 |      0.97 |           1.73 |                  2.40 |
+| postgresql-1-1-2-1 |        40.23 |      0.97 |           1.73 |                  2.40 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
-| PostgreSQL-1-1-2-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
+| postgresql-1-1-1-1 |       184.76 |      0.00 |           0.15 |                  0.15 |
+| postgresql-1-1-2-1 |       184.76 |      0.00 |           0.15 |                  0.15 |
 
-### Execution phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      2620.30 |      7.65 |           5.56 |                  9.53 |
-| PostgreSQL-1-1-2-1 |      6174.56 |     14.85 |           6.50 |                 11.22 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       626.76 |      1.58 |           1.79 |                  1.79 |
-| PostgreSQL-1-1-2-1 |       626.76 |      1.84 |           1.79 |                  1.79 |
+| postgresql-1-1-1-1 |      2568.39 |      8.22 |           5.57 |                 10.39 |
+| postgresql-1-1-2-1 |      5898.68 |     14.42 |           6.68 |                 12.41 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |       598.93 |      1.62 |           0.35 |                  0.35 |
+| postgresql-1-1-2-1 |       598.93 |      1.29 |           0.35 |                  0.35 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Number of Active Application Sessions [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Index Scan Count [scans] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Index Tuple Fetch Count [rows] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Index Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Table Buffer Hits [blocks] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Table Blocks Read outside Shared Buffers [blocks] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Table Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Total Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Autoanalyze Run Count for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Autovacuum Run Count for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Dead Tuples, Estimated [rows] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Index Scan Count [scans] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Index Tuple Fetch Count [rows] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Index Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Table Buffer Hits [blocks] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Table Blocks Read outside Shared Buffers [blocks] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Table Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Total Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Autoanalyze Run Count for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Autovacuum Run Count for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* Dead Tuples, Estimated [rows] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* Number of Active Application Sessions [sessions] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Index Scan Count [scans] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Index Tuple Fetch Count [rows] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Index Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Table Buffer Hits [blocks] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Table Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Table Blocks Read outside Shared Buffers [blocks] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Total Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Autoanalyze Run Count for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Autovacuum Run Count for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
+* Dead Tuples, Estimated [rows] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                     16.00 |                                     0.00 |                                             0.00 |                       10.00 |                                    0.00 |
-| PostgreSQL-1-1-2-1 |                     16.00 |                                     0.00 |                                             0.00 |                       10.00 |                                    0.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                   18 |                                                   0 |                                                           0 |                                     15 |                                                  1 |
+| postgresql-1-1-2-1 |                                   18 |                                                   0 |                                                           0 |                                     15 |                                                  1 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                     13.00 |                                     0.00 |                                             0.00 |                       17.00 |                                    0.00 |
-| PostgreSQL-1-1-2-1 |                      8.00 |                                     0.00 |                                             0.00 |                       17.00 |                                    0.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                 9.00 |                                                0.00 |                                                        0.00 |                                  16.00 |                                               0.00 |
+| postgresql-1-1-2-1 |                                 7.00 |                                                0.00 |                                                        0.00 |                                  16.00 |                                               0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Monitoring metrics missing
 * TEST passed: NOPM contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
@@ -438,16 +532,17 @@ bexhoma tpch \
 ### Workload
 TPC-H Queries SF=3
 * Type: tpch
-* Duration: 593s 
-* Code: 1783872105
+* Duration: 727s 
+* Code: 1792320882
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=3) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q22.
   * All instances use the same query parameters.
   * Timeout per query is 1200.
-  * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.5.
+  * Data transfer volume per query is also measured.
+  * Import sets indexes, constraints, statistics recomputation after loading.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
@@ -460,25 +555,32 @@ TPC-H Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1078840
+  * disk:836001
+  * volume_size:1.8T
+  * volume_used:817G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783872105
+    * code:1792320882
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783872105-dc4958648-8n9lw: 0 0
+* bexhoma-sut-postgresql-1-1792320882-5958f65bc6-8smms: 0
 
 ### Workflow
 
@@ -494,49 +596,57 @@ TPC-H Queries SF=3
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 3.00 |      360.00 |           1.00 |          109.00 |         40.00 |          208.00 |              2 |           0 |             |                |             0 | False         |               30.00 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    3 |      110.00 |           4.00 |            1.00 |         56.00 |           47.00 |              2 |           0 |             |                |             0 | False         |               98.18 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |         28 |            0.60 |            19258.27 |           8485.71 |           0 | PostgreSQL-1-1-1-1-1 |
+| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         34 |            0.68 |            16965.60 |           6988.24 |           0 | postgresql-1-1-1-1-1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |         28 |            0.60 |            19258.27 |           8485.71 |           0 |
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         34 |            0.68 |            16965.60 |           6988.24 |           0 |
+
+#### Query Completion per Phase
+
+| phase            |   pods | Pricing Summary Report (TPC-H Q1)   | Minimum Cost Supplier Query (TPC-H Q2)   | Shipping Priority (TPC-H Q3)   | Order Priority Checking Query (TPC-H Q4)   | Local Supplier Volume (TPC-H Q5)   | Forecasting Revenue Change (TPC-H Q6)   | Volume Shipping Query (TPC-H Q7)   | National Market Share (TPC-H Q8)   | Product Type Profit Measure (TPC-H Q9)   | Returned Item Reporting Query (TPC-H Q10)   | Important Stock Identification (TPC-H Q11)   | Shipping Modes and Order Priority (TPC-H Q12)   | Customer Distribution (TPC-H Q13)   | Promotion Effect Query (TPC-H Q14)   | Top Supplier Query (TPC-H Q15)   | Parts/Supplier Relationship (TPC-H Q16)   | Small-Quantity-Order Revenue (TPC-H Q17)   | Large Volume Customer (TPC-H Q18)   | Discounted Revenue (TPC-H Q19)   | Potential Part Promotion (TPC-H Q20)   | Suppliers Who Kept Orders Waiting Query (TPC-H Q21)   | Global Sales Opportunity Query (TPC-H Q22)   | complete   |
+|:-----------------|-------:|:------------------------------------|:-----------------------------------------|:-------------------------------|:-------------------------------------------|:-----------------------------------|:----------------------------------------|:-----------------------------------|:-----------------------------------|:-----------------------------------------|:--------------------------------------------|:---------------------------------------------|:------------------------------------------------|:------------------------------------|:-------------------------------------|:---------------------------------|:------------------------------------------|:-------------------------------------------|:------------------------------------|:---------------------------------|:---------------------------------------|:------------------------------------------------------|:---------------------------------------------|:-----------|
+| postgresql-1-1-1 |      1 | 1/1                                 | 1/1                                      | 1/1                            | 1/1                                        | 1/1                                | 1/1                                     | 1/1                                | 1/1                                | 1/1                                      | 1/1                                         | 1/1                                          | 1/1                                             | 1/1                                 | 1/1                                  | 1/1                              | 1/1                                       | 1/1                                        | 1/1                                 | 1/1                              | 1/1                                    | 1/1                                                   | 1/1                                          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries                                             |   PostgreSQL-1-1-1-1-1 |
+| Queries                                             |   postgresql-1-1-1-1-1 |
 |:----------------------------------------------------|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |                1677.85 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                 501.69 |
-| Shipping Priority (TPC-H Q3)                        |                 496.26 |
-| Order Priority Checking Query (TPC-H Q4)            |                 246.86 |
-| Local Supplier Volume (TPC-H Q5)                    |                 552.25 |
-| Forecasting Revenue Change (TPC-H Q6)               |                 612.16 |
-| Volume Shipping Query (TPC-H Q7)                    |                 795.29 |
-| National Market Share (TPC-H Q8)                    |                 353.20 |
-| Product Type Profit Measure (TPC-H Q9)              |                 867.59 |
-| Returned Item Reporting Query (TPC-H Q10)           |                 861.70 |
-| Important Stock Identification (TPC-H Q11)          |                 173.32 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                 487.12 |
-| Customer Distribution (TPC-H Q13)                   |                2428.73 |
-| Promotion Effect Query (TPC-H Q14)                  |                 550.68 |
-| Top Supplier Query (TPC-H Q15)                      |                 403.72 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                 388.51 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                1566.50 |
-| Large Volume Customer (TPC-H Q18)                   |                7652.97 |
-| Discounted Revenue (TPC-H Q19)                      |                  89.37 |
-| Potential Part Promotion (TPC-H Q20)                |                 295.38 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 522.18 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                 138.93 |
+| Pricing Summary Report (TPC-H Q1)                   |                1738.52 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                 643.15 |
+| Shipping Priority (TPC-H Q3)                        |                 649.72 |
+| Order Priority Checking Query (TPC-H Q4)            |                 293.78 |
+| Local Supplier Volume (TPC-H Q5)                    |                 676.55 |
+| Forecasting Revenue Change (TPC-H Q6)               |                 352.52 |
+| Volume Shipping Query (TPC-H Q7)                    |                 877.84 |
+| National Market Share (TPC-H Q8)                    |                 460.22 |
+| Product Type Profit Measure (TPC-H Q9)              |                1114.87 |
+| Returned Item Reporting Query (TPC-H Q10)           |                 595.89 |
+| Important Stock Identification (TPC-H Q11)          |                 266.68 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                 499.53 |
+| Customer Distribution (TPC-H Q13)                   |                2923.66 |
+| Promotion Effect Query (TPC-H Q14)                  |                 625.02 |
+| Top Supplier Query (TPC-H Q15)                      |                 473.12 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                 493.93 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                2065.92 |
+| Large Volume Customer (TPC-H Q18)                   |                9024.69 |
+| Discounted Revenue (TPC-H Q19)                      |                 109.59 |
+| Potential Part Promotion (TPC-H Q20)                |                 372.74 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 546.15 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                 149.71 |
 
 ### Errors (failed queries)
 
@@ -552,58 +662,96 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        58.79 |      1.21 |           4.61 |                  8.87 |
+| postgresql-1-1-1-1 |        75.26 |      1.22 |           4.40 |                  9.05 |
 
 ### Loading phase: component data generator
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       131.13 |      2.00 |           0.30 |                  2.27 |
+| postgresql-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        18.28 |      0.00 |           0.00 |                  0.00 |
+| postgresql-1-1-1-1 |        19.33 |      0.67 |           0.00 |                  1.11 |
 
-### Execution phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |         6.38 |      0.23 |           4.41 |                  9.05 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |         0.02 |      0.00 |           0.00 |                  0.00 |
+| postgresql-1-1-1-1 |        14.94 |      0.81 |           4.66 |                  9.46 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |        12.29 |      0.00 |           0.27 |                  0.28 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Number of Active Application Sessions [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* Active Backends Waiting on I/O [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        3.00 |                                    2.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                    1 |                                                   0 |                                                           0 |                                      2 |                                                  2 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        0.00 |                                    0.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                    2 |                                                   0 |                                                           0 |                                      0 |                                                  0 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Loading phase: component data generator contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Monitoring metrics missing
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
 * TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
 ```
 
@@ -642,16 +790,17 @@ bexhoma tpcds \
 ### Workload
 TPC-DS Queries SF=3
 * Type: tpcds
-* Duration: 1990s 
-* Code: 1783872787
+* Duration: 1654s 
+* Code: 1792321722
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=3) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q99.
   * All instances use the same query parameters.
   * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.5.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
@@ -664,25 +813,32 @@ TPC-DS Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1084752
+  * disk:834808
+  * volume_size:1.8T
+  * volume_used:816G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783872787
+    * code:1792321722
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783872787-778cd88656-5brqp: 0 0
+* bexhoma-sut-postgresql-1-1792321722-78f8448f98-8ndr7: 0
 
 ### Workflow
 
@@ -698,126 +854,134 @@ TPC-DS Queries SF=3
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 3.00 |     1405.00 |           1.00 |          522.00 |        121.00 |          760.00 |              2 |           0 |             | None           |             0 | False         |                7.69 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    3 |      254.00 |           4.00 |            0.00 |        165.00 |           81.00 |              2 |           0 |             | None           |             0 | False         |               42.52 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |        812 |            0.75 |            14825.04 |           1316.75 |          -1 | PostgreSQL-1-1-1-1-1 |
+| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |        778 |            0.69 |            15986.46 |           1374.29 |          -1 | postgresql-1-1-1-1-1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |        812 |            0.75 |            14825.04 |           1316.75 |          -1 |
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |        778 |            0.69 |            15986.46 |           1374.29 |          -1 |
+
+#### Query Completion per Phase
+
+| phase            |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:-----------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| postgresql-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries       |   PostgreSQL-1-1-1-1-1 |
+| Queries       |   postgresql-1-1-1-1-1 |
 |:--------------|-----------------------:|
-| TPC-DS Q1     |                 164.94 |
-| TPC-DS Q2     |                 443.44 |
-| TPC-DS Q3     |                1091.85 |
-| TPC-DS Q4     |               18701.26 |
-| TPC-DS Q5     |                 761.15 |
-| TPC-DS Q6     |              225482.02 |
-| TPC-DS Q7     |                 592.82 |
-| TPC-DS Q8     |                 224.72 |
-| TPC-DS Q9     |                2591.35 |
-| TPC-DS Q10    |                1266.62 |
-| TPC-DS Q11    |               11635.66 |
-| TPC-DS Q12    |                 148.50 |
-| TPC-DS Q13    |                1849.96 |
-| TPC-DS Q14a+b |                7542.65 |
-| TPC-DS Q15    |                 307.19 |
-| TPC-DS Q16    |                 426.38 |
-| TPC-DS Q17    |                 718.01 |
-| TPC-DS Q18    |                 646.54 |
-| TPC-DS Q19    |                 414.75 |
-| TPC-DS Q20    |                 259.17 |
-| TPC-DS Q21    |                 307.20 |
-| TPC-DS Q22    |                8227.72 |
-| TPC-DS Q23a+b |               14200.24 |
-| TPC-DS Q24a+b |                2112.58 |
-| TPC-DS Q25    |                 772.76 |
-| TPC-DS Q26    |                 463.25 |
-| TPC-DS Q27    |                  44.94 |
-| TPC-DS Q28    |                2301.12 |
-| TPC-DS Q29    |                 885.93 |
-| TPC-DS Q30    |               75606.63 |
-| TPC-DS Q31    |                4178.54 |
-| TPC-DS Q32    |                 302.05 |
-| TPC-DS Q33    |                1085.23 |
-| TPC-DS Q34    |                  73.09 |
-| TPC-DS Q35    |                1387.18 |
-| TPC-DS Q36    |                  39.13 |
-| TPC-DS Q37    |                 443.25 |
-| TPC-DS Q38    |                2655.52 |
-| TPC-DS Q39a+b |                5479.35 |
-| TPC-DS Q40    |                 244.43 |
-| TPC-DS Q41    |                3776.48 |
-| TPC-DS Q42    |                 174.15 |
-| TPC-DS Q43    |                 361.42 |
-| TPC-DS Q44    |                   1.85 |
-| TPC-DS Q45    |                 188.24 |
-| TPC-DS Q46    |                  63.10 |
-| TPC-DS Q47    |                2708.73 |
-| TPC-DS Q48    |                1186.25 |
-| TPC-DS Q49    |                 720.83 |
-| TPC-DS Q50    |                2218.81 |
-| TPC-DS Q51    |                3002.19 |
-| TPC-DS Q52    |                 165.83 |
-| TPC-DS Q53    |                 246.72 |
-| TPC-DS Q54    |                  66.09 |
-| TPC-DS Q55    |                 166.54 |
-| TPC-DS Q56    |                 704.60 |
-| TPC-DS Q57    |                2640.18 |
-| TPC-DS Q58    |                 810.58 |
-| TPC-DS Q59    |                 780.08 |
-| TPC-DS Q60    |                 803.72 |
-| TPC-DS Q61    |                 136.89 |
-| TPC-DS Q62    |                 197.40 |
-| TPC-DS Q63    |                 216.78 |
-| TPC-DS Q64    |                1734.62 |
-| TPC-DS Q65    |                1269.42 |
-| TPC-DS Q66    |                 578.22 |
-| TPC-DS Q67    |                7467.14 |
-| TPC-DS Q68    |                 110.36 |
-| TPC-DS Q69    |                 414.44 |
-| TPC-DS Q70    |                 844.63 |
-| TPC-DS Q71    |                 767.72 |
-| TPC-DS Q72    |                2368.33 |
-| TPC-DS Q73    |                  40.01 |
-| TPC-DS Q74    |                2314.94 |
-| TPC-DS Q75    |                3756.16 |
-| TPC-DS Q76    |                 323.18 |
-| TPC-DS Q77    |                 473.31 |
-| TPC-DS Q78    |                2954.40 |
-| TPC-DS Q79    |                 217.06 |
-| TPC-DS Q80    |                 772.39 |
-| TPC-DS Q81    |              325842.78 |
-| TPC-DS Q82    |                 502.83 |
-| TPC-DS Q83    |                 149.34 |
-| TPC-DS Q84    |                  84.64 |
-| TPC-DS Q85    |                 325.37 |
-| TPC-DS Q86    |                 766.95 |
-| TPC-DS Q87    |                2558.67 |
-| TPC-DS Q88    |                3632.09 |
-| TPC-DS Q89    |                 249.48 |
-| TPC-DS Q90    |                 333.37 |
-| TPC-DS Q91    |                 154.33 |
-| TPC-DS Q92    |                  79.53 |
-| TPC-DS Q93    |                 487.39 |
-| TPC-DS Q94    |                 313.52 |
-| TPC-DS Q95    |                9248.51 |
-| TPC-DS Q96    |                 173.65 |
-| TPC-DS Q97    |                 757.93 |
-| TPC-DS Q98    |                 422.70 |
-| TPC-DS Q99    |                 618.82 |
+| TPC-DS Q1     |                 220.59 |
+| TPC-DS Q2     |                 472.10 |
+| TPC-DS Q3     |                 440.50 |
+| TPC-DS Q4     |               17323.27 |
+| TPC-DS Q5     |                 797.98 |
+| TPC-DS Q6     |              201729.20 |
+| TPC-DS Q7     |                 601.74 |
+| TPC-DS Q8     |                 103.88 |
+| TPC-DS Q9     |                2515.66 |
+| TPC-DS Q10    |                1085.79 |
+| TPC-DS Q11    |                9773.93 |
+| TPC-DS Q12    |                 140.68 |
+| TPC-DS Q13    |                1135.91 |
+| TPC-DS Q14a+b |                6512.17 |
+| TPC-DS Q15    |                 296.62 |
+| TPC-DS Q16    |                 446.24 |
+| TPC-DS Q17    |                 697.75 |
+| TPC-DS Q18    |                 608.73 |
+| TPC-DS Q19    |                 404.24 |
+| TPC-DS Q20    |                 259.62 |
+| TPC-DS Q21    |                 293.25 |
+| TPC-DS Q22    |                6685.43 |
+| TPC-DS Q23a+b |               11087.97 |
+| TPC-DS Q24a+b |                 920.72 |
+| TPC-DS Q25    |                 695.75 |
+| TPC-DS Q26    |                 445.03 |
+| TPC-DS Q27    |                  42.64 |
+| TPC-DS Q28    |                1915.92 |
+| TPC-DS Q29    |                 783.63 |
+| TPC-DS Q30    |               66383.54 |
+| TPC-DS Q31    |                3732.78 |
+| TPC-DS Q32    |                 296.18 |
+| TPC-DS Q33    |                 820.09 |
+| TPC-DS Q34    |                  40.91 |
+| TPC-DS Q35    |                1232.95 |
+| TPC-DS Q36    |                  44.34 |
+| TPC-DS Q37    |                 439.71 |
+| TPC-DS Q38    |                2149.55 |
+| TPC-DS Q39a+b |                5018.43 |
+| TPC-DS Q40    |                 249.15 |
+| TPC-DS Q41    |                2615.93 |
+| TPC-DS Q42    |                 173.52 |
+| TPC-DS Q43    |                  54.47 |
+| TPC-DS Q44    |                1145.72 |
+| TPC-DS Q45    |                 190.75 |
+| TPC-DS Q46    |                  63.47 |
+| TPC-DS Q47    |                2215.30 |
+| TPC-DS Q48    |                1092.73 |
+| TPC-DS Q49    |                 669.57 |
+| TPC-DS Q50    |                1568.68 |
+| TPC-DS Q51    |                2286.64 |
+| TPC-DS Q52    |                 176.85 |
+| TPC-DS Q53    |                 208.40 |
+| TPC-DS Q54    |                  67.86 |
+| TPC-DS Q55    |                 172.75 |
+| TPC-DS Q56    |                 702.24 |
+| TPC-DS Q57    |                2090.25 |
+| TPC-DS Q58    |                 815.09 |
+| TPC-DS Q59    |                 746.14 |
+| TPC-DS Q60    |                 928.81 |
+| TPC-DS Q61    |                  83.45 |
+| TPC-DS Q62    |                 177.45 |
+| TPC-DS Q63    |                 213.53 |
+| TPC-DS Q64    |                 917.67 |
+| TPC-DS Q65    |                1267.37 |
+| TPC-DS Q66    |                 542.95 |
+| TPC-DS Q67    |                5977.61 |
+| TPC-DS Q68    |                  67.90 |
+| TPC-DS Q69    |                 381.44 |
+| TPC-DS Q70    |                 740.77 |
+| TPC-DS Q71    |                 804.15 |
+| TPC-DS Q72    |                2182.06 |
+| TPC-DS Q73    |                  42.54 |
+| TPC-DS Q74    |                2096.70 |
+| TPC-DS Q75    |                3108.95 |
+| TPC-DS Q76    |                 389.41 |
+| TPC-DS Q77    |                 457.54 |
+| TPC-DS Q78    |                2647.75 |
+| TPC-DS Q79    |                 346.30 |
+| TPC-DS Q80    |                 739.17 |
+| TPC-DS Q81    |              357478.37 |
+| TPC-DS Q82    |                 337.50 |
+| TPC-DS Q83    |                 143.50 |
+| TPC-DS Q84    |                  79.22 |
+| TPC-DS Q85    |                 302.28 |
+| TPC-DS Q86    |                 419.03 |
+| TPC-DS Q87    |                2475.05 |
+| TPC-DS Q88    |                2567.54 |
+| TPC-DS Q89    |                 233.87 |
+| TPC-DS Q90    |                 283.47 |
+| TPC-DS Q91    |                 137.93 |
+| TPC-DS Q92    |                 101.07 |
+| TPC-DS Q93    |                 442.35 |
+| TPC-DS Q94    |                 313.32 |
+| TPC-DS Q95    |                8088.14 |
+| TPC-DS Q96    |                 173.80 |
+| TPC-DS Q97    |                 728.03 |
+| TPC-DS Q98    |                 417.84 |
+| TPC-DS Q99    |                 285.37 |
 
 ### Errors (failed queries)
 
@@ -833,58 +997,89 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       219.06 |      2.43 |           6.31 |                 13.17 |
+| postgresql-1-1-1-1 |       232.96 |      2.50 |           6.32 |                 13.17 |
 
 ### Loading phase: component data generator
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       499.31 |      2.00 |           0.01 |                  3.62 |
+| postgresql-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        29.58 |      0.42 |           0.00 |                  0.00 |
+| postgresql-1-1-1-1 |        31.50 |      0.29 |           0.01 |                  2.43 |
 
-### Execution phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       996.50 |      2.58 |           6.67 |                 13.53 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |        25.78 |      0.12 |           0.34 |                  0.34 |
+| postgresql-1-1-1-1 |       979.66 |      2.75 |           7.86 |                 14.94 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |        20.02 |      0.06 |           0.33 |                  0.33 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        6.00 |                                    5.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                    1 |                                                   0 |                                                           0 |                                      1 |                                                  1 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      1.00 |                                     0.00 |                                             0.00 |                        6.00 |                                    6.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                    1 |                                                   0 |                                                           0 |                                      6 |                                                  6 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Loading phase: component data generator contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
 * TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
 ```
 
@@ -928,8 +1123,8 @@ bexhoma ycsb \
 ### Workload
 YCSB SF=3
 * Type: ycsb
-* Duration: 1074s 
-* Code: 1783870998
+* Duration: 1884s 
+* Code: 1792318911
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -940,7 +1135,8 @@ YCSB SF=3
   * Target is based on multiples of '16384'.
   * Factors for loading are [4].
   * Factors for benchmarking are [2, 3].
-  * Experiment uses bexhoma version 0.10.5.
+  * Status is logged every 10s.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
@@ -953,63 +1149,82 @@ YCSB SF=3
   * Benchmarking is tested with [64] threads, split into [1, 8] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1098905
+  * disk:828113
+  * volume_size:1.8T
+  * volume_used:809G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783870998
-* PostgreSQL-1-1-2-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+    * code:1792318911
+* postgresql-1-1-2-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1102912
+  * disk:833033
+  * volume_size:1.8T
+  * volume_used:814G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783870998
-* PostgreSQL-1-1-3-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+    * code:1792318911
+* postgresql-1-1-3-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1079277
+  * disk:847709
+  * volume_size:1.8T
+  * volume_used:828G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783870998
-* PostgreSQL-1-1-4-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+    * code:1792318911
+* postgresql-1-1-4-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1080879
+  * disk:851079
+  * volume_size:1.8T
+  * volume_used:832G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783870998
+    * code:1792318911
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783870998-57864c9499-xwstq: 0 0
+* bexhoma-sut-postgresql-1-1792318911-85c767cd4f-m5pkg: 0
 
 ### Workflow
 
@@ -1033,54 +1248,54 @@ YCSB SF=3
 
 | connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| PostgreSQL-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7805.18 |                48045.00 |            375000.00 |                              3053.00 | 3.00 |              224.79 |
-| PostgreSQL-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7651.97 |                49007.00 |            375000.00 |                              2897.00 | 3.00 |              220.38 |
-| PostgreSQL-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7857.02 |                47728.00 |            375000.00 |                              2911.00 | 3.00 |              226.28 |
-| PostgreSQL-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7689.15 |                48770.00 |            375000.00 |                              2973.00 | 3.00 |              221.45 |
-| PostgreSQL-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7562.77 |                49585.00 |            375000.00 |                              3113.00 | 3.00 |              217.81 |
-| PostgreSQL-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7377.68 |                50829.00 |            375000.00 |                              2981.00 | 3.00 |              212.48 |
-| PostgreSQL-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7825.54 |                47920.00 |            375000.00 |                              3009.00 | 3.00 |              225.38 |
-| PostgreSQL-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7328.37 |                51171.00 |            375000.00 |                              3097.00 | 3.00 |              211.06 |
+| postgresql-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7829.14 |                47898.00 |            375000.00 |                              3205.00 | 3.00 |              225.48 |
+| postgresql-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7854.72 |                47742.00 |            375000.00 |                              3179.00 | 3.00 |              226.22 |
+| postgresql-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7788.32 |                48149.00 |            375000.00 |                              3191.00 | 3.00 |              224.30 |
+| postgresql-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7909.56 |                47411.00 |            375000.00 |                              3091.00 | 3.00 |              227.80 |
+| postgresql-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7715.57 |                48603.00 |            375000.00 |                              3147.00 | 3.00 |              222.21 |
+| postgresql-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7802.91 |                48059.00 |            375000.00 |                              3167.00 | 3.00 |              224.72 |
+| postgresql-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7965.17 |                47080.00 |            375000.00 |                              3123.00 | 3.00 |              229.40 |
+| postgresql-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7671.22 |                48884.00 |            375000.00 |                              3201.00 | 3.00 |              220.93 |
 
 #### Per Run
 
 | DBMS           |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:---------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| PostgreSQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 3.00 |              211.06 |                        61097.69 |                51171.00 |           3000000.00 |                              3004.25 |
+| PostgreSQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 3.00 |              220.93 |                        62536.61 |                48884.00 |           3000000.00 |                              3163.00 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS                 | phase            | job                | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:---------------------|:-----------------|:-------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       1 |        64 |    32768 |           1 |            0 |                        32663.02 |                91847.00 |            1499600 |                             584.00 |              1500400 |                              5335.00 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       1 |         8 |     4096 |           8 |            0 |                         4084.83 |                91803.00 |             187722 |                             567.00 |               187278 |                              1436.00 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       2 |         8 |     4096 |           8 |            0 |                         4085.68 |                91784.00 |             187180 |                             549.00 |               187820 |                              1456.00 |
-| PostgreSQL-1-1-2-1-3 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       3 |         8 |     4096 |           8 |            0 |                         4085.81 |                91781.00 |             187412 |                             583.00 |               187588 |                              1459.00 |
-| PostgreSQL-1-1-2-1-4 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       4 |         8 |     4096 |           8 |            0 |                         4085.01 |                91799.00 |             187238 |                             530.00 |               187762 |                              1422.00 |
-| PostgreSQL-1-1-2-1-5 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       5 |         8 |     4096 |           8 |            0 |                         4085.46 |                91789.00 |             187414 |                             548.00 |               187586 |                              1480.00 |
-| PostgreSQL-1-1-2-1-6 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       6 |         8 |     4096 |           8 |            0 |                         4084.88 |                91802.00 |             187486 |                             615.00 |               187514 |                              1467.00 |
-| PostgreSQL-1-1-2-1-7 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       7 |         8 |     4096 |           8 |            0 |                         4084.39 |                91813.00 |             187323 |                             568.00 |               187677 |                              1447.00 |
-| PostgreSQL-1-1-2-1-8 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       8 |         8 |     4096 |           8 |            0 |                         4085.19 |                91795.00 |             187479 |                             526.00 |               187521 |                              1470.00 |
-| PostgreSQL-1-1-3-1-1 | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 | PostgreSQL-1    |                1 |        3 |               1 |       1 |        64 |    49152 |           1 |            0 |                        48924.48 |                61319.00 |            1498875 |                             599.00 |              1501125 |                              4147.00 |
-| PostgreSQL-1-1-4-1-1 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       1 |         8 |     6144 |           8 |            0 |                         6121.45 |                61260.00 |             187286 |                             588.00 |               187714 |                              3421.00 |
-| PostgreSQL-1-1-4-1-2 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       2 |         8 |     6144 |           8 |            0 |                         6120.55 |                61269.00 |             187589 |                             616.00 |               187411 |                              3711.00 |
-| PostgreSQL-1-1-4-1-3 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       3 |         8 |     6144 |           8 |            0 |                         6119.75 |                61277.00 |             187712 |                             604.00 |               187288 |                              3407.00 |
-| PostgreSQL-1-1-4-1-4 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       4 |         8 |     6144 |           8 |            0 |                         6120.25 |                61272.00 |             187227 |                             589.00 |               187773 |                              3409.00 |
-| PostgreSQL-1-1-4-1-5 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       5 |         8 |     6144 |           8 |            0 |                         6116.86 |                61306.00 |             187633 |                             681.00 |               187367 |                              3627.00 |
-| PostgreSQL-1-1-4-1-6 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       6 |         8 |     6144 |           8 |            0 |                         6117.26 |                61302.00 |             187496 |                             648.00 |               187504 |                              3525.00 |
-| PostgreSQL-1-1-4-1-7 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       7 |         8 |     6144 |           8 |            0 |                         6111.37 |                61361.00 |             187230 |                             582.00 |               187770 |                              3481.00 |
-| PostgreSQL-1-1-4-1-8 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       8 |         8 |     6144 |           8 |            0 |                         6120.75 |                61267.00 |             188343 |                             623.00 |               186657 |                              3493.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       1 |        64 |    32768 |           1 |            0 |                        32673.33 |                91818.00 |            1499484 |                             603.00 |              1500516 |                              3289.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       1 |         8 |     4096 |           8 |            0 |                         4083.99 |                91822.00 |             187597 |                             530.00 |               187403 |                             16223.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       2 |         8 |     4096 |           8 |            0 |                         4083.81 |                91826.00 |             187848 |                             537.00 |               187152 |                             15951.00 |
+| postgresql-1-1-2-1-3 | postgresql-1-1-2 | postgresql-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       3 |         8 |     4096 |           8 |            0 |                         4084.74 |                91805.00 |             187594 |                             505.00 |               187406 |                             16111.00 |
+| postgresql-1-1-2-1-4 | postgresql-1-1-2 | postgresql-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       4 |         8 |     4096 |           8 |            0 |                         4084.21 |                91817.00 |             187687 |                             486.00 |               187313 |                             15671.00 |
+| postgresql-1-1-2-1-5 | postgresql-1-1-2 | postgresql-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       5 |         8 |     4096 |           8 |            0 |                         4083.94 |                91823.00 |             187966 |                             527.00 |               187034 |                             15823.00 |
+| postgresql-1-1-2-1-6 | postgresql-1-1-2 | postgresql-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       6 |         8 |     4096 |           8 |            0 |                         4084.12 |                91819.00 |             187260 |                             508.00 |               187740 |                             15711.00 |
+| postgresql-1-1-2-1-7 | postgresql-1-1-2 | postgresql-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       7 |         8 |     4096 |           8 |            0 |                         4084.43 |                91812.00 |             187179 |                             544.00 |               187821 |                             15887.00 |
+| postgresql-1-1-2-1-8 | postgresql-1-1-2 | postgresql-1-1-2-1 | PostgreSQL-1    |                1 |        2 |               1 |       8 |         8 |     4096 |           8 |            0 |                         4084.26 |                91816.00 |             188023 |                             489.00 |               186977 |                             16351.00 |
+| postgresql-1-1-3-1-1 | postgresql-1-1-3 | postgresql-1-1-3-1 | PostgreSQL-1    |                1 |        3 |               1 |       1 |        64 |    49152 |           1 |            0 |                        48931.66 |                61310.00 |            1501014 |                             537.00 |              1498986 |                              1484.00 |
+| postgresql-1-1-4-1-1 | postgresql-1-1-4 | postgresql-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       1 |         8 |     6144 |           8 |            0 |                         6116.46 |                61310.00 |             187864 |                             595.00 |               187136 |                              1900.00 |
+| postgresql-1-1-4-1-2 | postgresql-1-1-4 | postgresql-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       2 |         8 |     6144 |           8 |            0 |                         6118.05 |                61294.00 |             187299 |                             610.00 |               187701 |                              1900.00 |
+| postgresql-1-1-4-1-3 | postgresql-1-1-4 | postgresql-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       3 |         8 |     6144 |           8 |            0 |                         6121.45 |                61260.00 |             187527 |                             626.00 |               187473 |                              1920.00 |
+| postgresql-1-1-4-1-4 | postgresql-1-1-4 | postgresql-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       4 |         8 |     6144 |           8 |            0 |                         6115.26 |                61322.00 |             187048 |                             608.00 |               187952 |                              1942.00 |
+| postgresql-1-1-4-1-5 | postgresql-1-1-4 | postgresql-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       5 |         8 |     6144 |           8 |            0 |                         6115.46 |                61320.00 |             187530 |                             642.00 |               187470 |                              2022.00 |
+| postgresql-1-1-4-1-6 | postgresql-1-1-4 | postgresql-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       6 |         8 |     6144 |           8 |            0 |                         6116.86 |                61306.00 |             187319 |                             653.00 |               187681 |                              2091.00 |
+| postgresql-1-1-4-1-7 | postgresql-1-1-4 | postgresql-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       7 |         8 |     6144 |           8 |            0 |                         6115.66 |                61318.00 |             186913 |                             693.00 |               188087 |                              2161.00 |
+| postgresql-1-1-4-1-8 | postgresql-1-1-4 | postgresql-1-1-4-1 | PostgreSQL-1    |                1 |        4 |               1 |       8 |         8 |     6144 |           8 |            0 |                         6119.85 |                61276.00 |             187015 |                             548.00 |               187985 |                              1862.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-----------------|:-----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        64 |    32768 |               1 |           1 |            0 |                        32663.02 |                91847.00 |            1499600 |                             584.00 |              1500400 |                              5335.00 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |        64 |    32768 |               1 |           8 |            0 |                        32681.25 |                91813.00 |            1499254 |                             615.00 |              1500746 |                              1480.00 |
-| PostgreSQL-1-1-3 | PostgreSQL-1-1-3 |                1 |        64 |    49152 |               1 |           1 |            0 |                        48924.48 |                61319.00 |            1498875 |                             599.00 |              1501125 |                              4147.00 |
-| PostgreSQL-1-1-4 | PostgreSQL-1-1-4 |                1 |        64 |    49152 |               1 |           8 |            0 |                        48948.24 |                61361.00 |            1500516 |                             681.00 |              1499484 |                              3711.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        64 |    32768 |               1 |           1 |            0 |                        32673.33 |                91818.00 |            1499484 |                             603.00 |              1500516 |                              3289.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        64 |    32768 |               1 |           8 |            0 |                        32673.51 |                91826.00 |            1501154 |                             544.00 |              1498846 |                             16351.00 |
+| postgresql-1-1-3 | postgresql-1-1-3 |                1 |        64 |    49152 |               1 |           1 |            0 |                        48931.66 |                61310.00 |            1501014 |                             537.00 |              1498986 |                              1484.00 |
+| postgresql-1-1-4 | postgresql-1-1-4 |                1 |        64 |    49152 |               1 |           8 |            0 |                        48939.05 |                61322.00 |            1498515 |                             693.00 |              1501485 |                              2161.00 |
 
 ### Monitoring
 
@@ -1088,64 +1303,97 @@ YCSB SF=3
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       272.58 |      5.77 |           3.89 |                  4.90 |
-| PostgreSQL-1-1-2-1 |       272.58 |      5.77 |           3.89 |                  4.90 |
-| PostgreSQL-1-1-3-1 |       272.58 |      5.77 |           3.89 |                  4.90 |
-| PostgreSQL-1-1-4-1 |       272.58 |      5.77 |           3.89 |                  4.90 |
+| postgresql-1-1-1-1 |       249.65 |      5.15 |           4.22 |                  7.40 |
+| postgresql-1-1-2-1 |       249.65 |      5.15 |           4.22 |                  7.40 |
+| postgresql-1-1-3-1 |       249.65 |      5.15 |           4.22 |                  7.40 |
+| postgresql-1-1-4-1 |       249.65 |      5.15 |           4.22 |                  7.40 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       190.00 |      6.42 |           0.11 |                  0.11 |
-| PostgreSQL-1-1-2-1 |       190.00 |      6.42 |           0.11 |                  0.11 |
-| PostgreSQL-1-1-3-1 |       190.00 |      6.42 |           0.11 |                  0.11 |
-| PostgreSQL-1-1-4-1 |       190.00 |      6.42 |           0.11 |                  0.11 |
+| postgresql-1-1-1-1 |       156.44 |      5.32 |           0.11 |                  0.12 |
+| postgresql-1-1-2-1 |       156.44 |      5.32 |           0.11 |                  0.12 |
+| postgresql-1-1-3-1 |       156.44 |      5.32 |           0.11 |                  0.12 |
+| postgresql-1-1-4-1 |       156.44 |      5.32 |           0.11 |                  0.12 |
 
-### Execution phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       252.09 |      2.81 |           5.08 |                  9.02 |
-| PostgreSQL-1-1-2-1 |       219.41 |      2.82 |           5.17 |                  9.18 |
-| PostgreSQL-1-1-3-1 |       190.85 |      3.97 |           5.22 |                  9.28 |
-| PostgreSQL-1-1-4-1 |       159.78 |      3.52 |           5.24 |                  9.31 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       174.90 |      2.26 |           0.13 |                  0.13 |
-| PostgreSQL-1-1-2-1 |       204.63 |      5.20 |           0.13 |                  0.13 |
-| PostgreSQL-1-1-3-1 |       129.60 |      6.13 |           0.13 |                  0.13 |
-| PostgreSQL-1-1-4-1 |       255.38 |      8.59 |           0.13 |                  0.13 |
+| postgresql-1-1-1-1 |       167.90 |      2.54 |           5.02 |                  8.89 |
+| postgresql-1-1-2-1 |       236.70 |      2.78 |           5.18 |                  9.20 |
+| postgresql-1-1-3-1 |       194.53 |      3.32 |           5.21 |                  9.26 |
+| postgresql-1-1-4-1 |       180.19 |      3.55 |           5.21 |                  9.28 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |       181.88 |      2.74 |           0.31 |                  0.32 |
+| postgresql-1-1-2-1 |       154.07 |      3.98 |           0.31 |                  0.32 |
+| postgresql-1-1-3-1 |       136.79 |      2.95 |           0.55 |                  0.55 |
+| postgresql-1-1-4-1 |       248.61 |      5.59 |           0.55 |                  0.55 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-4-1 (bexhoma-metrics-postgresql-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-4-1 (bexhoma-metrics-postgresql-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-4-1 (bexhoma-metrics-postgresql-1-1-4-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-4-1 (bexhoma-metrics-postgresql-1-1-4-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-4-1 (bexhoma-metrics-postgresql-1-1-4-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-4-1 (bexhoma-metrics-postgresql-1-1-4-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                     42.00 |                                     0.00 |                                             0.00 |                       64.00 |                                   64.00 |
-| PostgreSQL-1-1-2-1 |                     42.00 |                                     0.00 |                                             0.00 |                       64.00 |                                   64.00 |
-| PostgreSQL-1-1-3-1 |                     42.00 |                                     0.00 |                                             0.00 |                       64.00 |                                   64.00 |
-| PostgreSQL-1-1-4-1 |                     42.00 |                                     0.00 |                                             0.00 |                       64.00 |                                   64.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                   20 |                                                   0 |                                                           0 |                                     45 |                                                 45 |
+| postgresql-1-1-2-1 |                                   20 |                                                   0 |                                                           0 |                                     45 |                                                 45 |
+| postgresql-1-1-3-1 |                                   20 |                                                   0 |                                                           0 |                                     45 |                                                 45 |
+| postgresql-1-1-4-1 |                                   20 |                                                   0 |                                                           0 |                                     45 |                                                 45 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                     58.00 |                                     0.00 |                                             0.00 |                       62.00 |                                   61.00 |
-| PostgreSQL-1-1-2-1 |                     60.00 |                                     0.00 |                                             0.00 |                        8.00 |                                    8.00 |
-| PostgreSQL-1-1-3-1 |                     56.00 |                                     0.00 |                                             0.00 |                       10.00 |                                   10.00 |
-| PostgreSQL-1-1-4-1 |                     55.00 |                                     0.00 |                                             0.00 |                       15.00 |                                   15.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                58.00 |                                                0.00 |                                                        0.00 |                                  15.00 |                                              15.00 |
+| postgresql-1-1-2-1 |                                56.00 |                                                0.00 |                                                        0.00 |                                  63.00 |                                              63.00 |
+| postgresql-1-1-3-1 |                                52.00 |                                                0.00 |                                                        0.00 |                                  13.00 |                                              13.00 |
+| postgresql-1-1-4-1 |                                56.00 |                                                0.00 |                                                        0.00 |                                  11.00 |                                              11.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
@@ -1226,13 +1474,13 @@ This
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1324s 
-* Code: 1783876300
+* Duration: 1488s 
+* Code: 1792325353
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-  * Benchbase data is generated and loaded using several threads.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.10.5.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
@@ -1245,37 +1493,49 @@ Benchbase Workload tpcc SF=16
   * Benchmarking is tested with [160] threads, split into [1, 2] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* MySQL-1-1-1-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1106015
+  * disk:857321
+  * volume_size:1.8T
+  * volume_used:837G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783876300
+    * code:1792325353
     * TENANT_VOL:False
-* MySQL-1-1-2-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+* mysql-1-1-2-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1107744
+  * disk:858000
+  * volume_size:1.8T
+  * volume_used:838G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783876300
+    * code:1792325353
     * TENANT_VOL:False
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1783876300-7fb75d884b-8gz9z: 0 0
+* bexhoma-sut-mysql-1-1792325353-d5496887c-dljxc: 0
 
 ### Workflow
 
@@ -1293,26 +1553,26 @@ Benchbase Workload tpcc SF=16
 
 #### Per Run
 
-|           |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:----------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MySQL-1-1 |                1 | 16.00 |      361.00 |           0.00 |            0.00 |        163.00 |          198.00 |              1 |           1 |             |                |             0 | False         |              159.56 |
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |   16 |      119.00 |           5.00 |            0.00 |        110.00 |            4.00 |              1 |           1 |             |                |             0 | False         |              484.03 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS            | phase       | job           |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------|:------------|:--------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| MySQL-1-1-1-1-1 | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |         160 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        7888.33 |                     7755.95 |         0.00 |                                                      43647.00 |                                              20271.00 |
-| MySQL-1-1-2-1-1 | MySQL-1-1-2 | MySQL-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                        3515.41 |                     3464.91 |         0.00 |                                                      48427.00 |                                              22746.00 |
-| MySQL-1-1-2-1-2 | MySQL-1-1-2 | MySQL-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                        3445.78 |                     3396.70 |         0.00 |                                                      48401.00 |                                              23206.00 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |         160 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        4580.06 |                     4506.60 |         0.00 |                                                      77338.00 |                                              34848.00 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                        4753.16 |                     4683.54 |         0.00 |                                                      33301.00 |                                              16820.00 |
+| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |          80 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                        5309.21 |                     5229.52 |         0.00 |                                                      32826.00 |                                              15061.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------|:------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| MySQL-1-1-1 | MySQL-1-1-1 |                1 |         160 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        7888.33 |                     7755.95 |         0.00 |                                                      43647.00 |                                              20271.00 |
-| MySQL-1-1-2 | MySQL-1-1-2 |                1 |         160 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                        6961.19 |                     6861.61 |         0.00 |                                                      48427.00 |                                              22976.00 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |         160 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        4580.06 |                     4506.60 |         0.00 |                                                      77338.00 |                                              34848.00 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |         160 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                       10062.37 |                     9913.06 |         0.00 |                                                      33301.00 |                                              15940.50 |
 
 ### Monitoring
 
@@ -1320,52 +1580,69 @@ Benchbase Workload tpcc SF=16
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       177.69 |      4.68 |           9.65 |                 12.05 |
-| MySQL-1-1-2-1 |       177.69 |      4.68 |           9.65 |                 12.05 |
+| mysql-1-1-1-1 |       136.97 |      2.53 |           9.66 |                 11.72 |
+| mysql-1-1-2-1 |       136.97 |      2.53 |           9.66 |                 11.72 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |      1893.35 |     15.73 |           0.28 |                  0.28 |
-| MySQL-1-1-2-1 |      1893.35 |     15.73 |           0.28 |                  0.28 |
+| mysql-1-1-1-1 |       854.41 |     10.75 |           1.54 |                  1.54 |
+| mysql-1-1-2-1 |       854.41 |     10.75 |           1.54 |                  1.54 |
 
-### Execution phase: SUT deployment
-
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |      4765.20 |     16.92 |          11.46 |                 16.00 |
-| MySQL-1-1-2-1 |      4416.17 |     15.31 |          12.88 |                 16.00 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |      6447.31 |     24.49 |           1.14 |                  1.14 |
-| MySQL-1-1-2-1 |      6447.31 |     47.08 |           1.14 |                  1.14 |
+| mysql-1-1-1-1 |      2324.37 |      9.20 |          10.86 |                 16.00 |
+| mysql-1-1-2-1 |      4383.68 |     16.18 |          12.78 |                 16.00 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |      4068.61 |     16.94 |           1.19 |                  1.19 |
+| mysql-1-1-2-1 |      4860.70 |     41.25 |           1.19 |                  1.19 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                     447.12 |                     0.01 |                0.00 |                    0.00 |
-| MySQL-1-1-2-1 |                           1.00 |                     447.12 |                     0.01 |                0.00 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                           455.64 |                            0.01 |                            0.00 |                              0.00 |
+| mysql-1-1-2-1 |                                  1.00 |                           455.64 |                            0.01 |                            0.00 |                              0.00 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                  191138.68 |                     0.11 |                0.00 |                    0.00 |
-| MySQL-1-1-2-1 |                           0.00 |                  170197.24 |                     0.11 |                0.00 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                        111254.29 |                            0.11 |                            0.00 |                              0.00 |
+| mysql-1-1-2-1 |                                  1.00 |                        246204.36 |                            0.11 |                            0.00 |                              0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
@@ -1410,13 +1687,13 @@ bexhoma hammerdb \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 1491s 
-* Code: 1783883479
+* Duration: 1855s 
+* Code: 1792331738
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
-  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Benchmarking also logs latencies.
-  * Experiment uses bexhoma version 0.10.5.
+  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 2 minutes before measurements begin. Benchmarking also logs latencies.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
@@ -1429,37 +1706,49 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Benchmarking is tested with [16] threads, split into [1, 2] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 16Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1105753
+  * disk:857105
+  * volume_size:1.8T
+  * volume_used:837G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783883479
-* MySQL-1-1-2-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+    * code:1792331738
+* mysql-1-1-2-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1107715
+  * disk:859090
+  * volume_size:1.8T
+  * volume_used:839G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783883479
+    * code:1792331738
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1783883479-b9f6c6886-7vmw4: 0 0
+* bexhoma-sut-mysql-1-1792331738-68c995fdd8-lr4fj: 0
 
 ### Workflow
 
@@ -1477,26 +1766,26 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 #### Per Run
 
-|           |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:----------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MySQL-1-1 |                1 | 16.00 |      133.00 |           9.00 |            0.00 |         54.00 |           70.00 |              1 |          16 |             | None           |             0 | False         |              433.08 |
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |   16 |       54.00 |           5.00 |            0.00 |         44.00 |            5.00 |              1 |          16 |             | None           |             0 | False         |             1066.67 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS            | phase       | job           |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
 |:----------------|:------------|:--------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
-| MySQL-1-1-1-1-1 | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 265908 | 616752 |         0.00 |          5 |        0 |       2.54 |       3.29 |
-| MySQL-1-1-2-1-1 | MySQL-1-1-2 | MySQL-1-1-2-1 |                1 |        8 |        2 |               1 |       1 | 268600 | 623860 |         0.00 |          5 |        0 |       2.48 |       3.29 |
-| MySQL-1-1-2-1-2 | MySQL-1-1-2 | MySQL-1-1-2-1 |                1 |        8 |        2 |               1 |       2 | 268709 | 624142 |         0.00 |          5 |        0 |       2.51 |       3.33 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 288541 | 669793 |         0.00 |          5 |        0 |       2.17 |       2.60 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        8 |        2 |               1 |       1 | 302184 | 701936 |         0.00 |          5 |        0 |       2.13 |       2.39 |
+| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        8 |        2 |               1 |       2 | 302159 | 701865 |         0.00 |          5 |        0 |       2.15 |       2.38 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:------------|:------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
-| MySQL-1-1-1 | MySQL-1-1-1 |                1 |       16 |        1 |               1 |           1 |       2.54 |       3.28 |         0.00 | 265908.00 | 616752.00 |          5 |        0 |
-| MySQL-1-1-2 | MySQL-1-1-2 |                1 |       16 |        2 |               1 |           2 |       2.51 |       3.33 |         0.00 | 268654.50 | 624001.00 |          5 |        0 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |       16 |        1 |               1 |           1 |       2.17 |       2.60 |         0.00 | 288541.00 | 669793.00 |          5 |        0 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |       16 |        2 |               1 |           2 |       2.15 |       2.39 |         0.00 | 302171.50 | 701900.50 |          5 |        0 |
 
 ### Monitoring
 
@@ -1504,52 +1793,69 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |        96.64 |      2.03 |          22.23 |                 24.14 |
-| MySQL-1-1-2-1 |        96.64 |      2.03 |          22.23 |                 24.14 |
+| mysql-1-1-1-1 |        68.81 |      1.91 |           5.52 |                  7.30 |
+| mysql-1-1-2-1 |        68.81 |      1.91 |           5.52 |                  7.30 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       396.60 |     10.87 |           0.17 |                  0.17 |
-| MySQL-1-1-2-1 |       396.60 |     10.87 |           0.17 |                  0.17 |
+| mysql-1-1-1-1 |       389.95 |     11.12 |           0.17 |                  0.17 |
+| mysql-1-1-2-1 |       389.95 |     11.12 |           0.17 |                  0.17 |
 
-### Execution phase: SUT deployment
-
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |      4061.50 |     10.04 |          24.46 |                 39.84 |
-| MySQL-1-1-2-1 |      3831.44 |      9.65 |          26.61 |                 54.88 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |      1063.80 |      2.67 |           1.83 |                  1.83 |
-| MySQL-1-1-2-1 |      1063.80 |      4.78 |           1.83 |                  1.83 |
+| mysql-1-1-1-1 |      4063.05 |      9.92 |           6.98 |                 21.81 |
+| mysql-1-1-2-1 |      4057.82 |      9.84 |           9.44 |                 38.11 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |      1239.67 |      3.15 |           0.36 |                  0.36 |
+| mysql-1-1-2-1 |      1302.98 |      3.40 |           0.36 |                  0.36 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                     485.37 |                     0.01 |                0.00 |                    0.00 |
-| MySQL-1-1-2-1 |                           1.00 |                     485.37 |                     0.01 |                0.00 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                           483.21 |                            0.01 |                            0.00 |                              0.00 |
+| mysql-1-1-2-1 |                                  1.00 |                           483.21 |                            0.01 |                            0.00 |                              0.00 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                 1497434.76 |                     0.01 |                0.00 |                    0.00 |
-| MySQL-1-1-2-1 |                           0.00 |                 1480331.98 |                     0.01 |                0.00 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                       1638500.11 |                            0.01 |                            0.00 |                              0.00 |
+| mysql-1-1-2-1 |                                  1.00 |                       1675960.63 |                            0.01 |                            0.00 |                              0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: NOPM contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
@@ -1590,16 +1896,17 @@ bexhoma tpch \
 ### Workload
 TPC-H Queries SF=3
 * Type: tpch
-* Duration: 816s 
-* Code: 1783878877
+* Duration: 982s 
+* Code: 1792329039
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=3) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q22.
   * All instances use the same query parameters.
   * Timeout per query is 1200.
-  * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.5.
+  * Data transfer volume per query is also measured.
+  * Import sets indexes, constraints, statistics recomputation after loading.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
@@ -1612,24 +1919,32 @@ TPC-H Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 16Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+* mysql-1-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1109766
+  * disk:860816
+  * volume_size:1.8T
+  * volume_used:841G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783878877
+    * code:1792329039
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1783878877-66475bdd65-gvlbz: 0 0
+* bexhoma-sut-mysql-1-1792329039-cc675b756-j27d5: 0
 
 ### Workflow
 
@@ -1645,49 +1960,57 @@ TPC-H Queries SF=3
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MySQL-1-1 |                1 | 3.00 |      406.00 |           1.00 |            0.00 |        118.00 |          284.00 |              2 |           0 |             | None           |             0 | False         |               26.60 |
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |    3 |      157.00 |           5.00 |            1.00 |         85.00 |           51.00 |              2 |           0 |             | None           |             0 | False         |               68.79 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
-|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
-| MySQL-1-1-1-1-1 | MySQL-1         | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |        144 |            2.83 |             3946.39 |           1650.00 |          -1 | MySQL-1-1-1-1-1 |
+| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
+|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
+| mysql-1-1-1-1-1 | MySQL-1         | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |        130 |            2.42 |             4617.93 |           1827.69 |          -1 | mysql-1-1-1-1-1 |
 
 #### Per Phase
 
-|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |        144 |            2.83 |             3946.39 |           1650.00 |          -1 |
+|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |        130 |            2.42 |             4617.93 |           1827.69 |          -1 |
+
+#### Query Completion per Phase
+
+| phase       |   pods | Pricing Summary Report (TPC-H Q1)   | Minimum Cost Supplier Query (TPC-H Q2)   | Shipping Priority (TPC-H Q3)   | Order Priority Checking Query (TPC-H Q4)   | Local Supplier Volume (TPC-H Q5)   | Forecasting Revenue Change (TPC-H Q6)   | Volume Shipping Query (TPC-H Q7)   | National Market Share (TPC-H Q8)   | Product Type Profit Measure (TPC-H Q9)   | Returned Item Reporting Query (TPC-H Q10)   | Important Stock Identification (TPC-H Q11)   | Shipping Modes and Order Priority (TPC-H Q12)   | Customer Distribution (TPC-H Q13)   | Promotion Effect Query (TPC-H Q14)   | Top Supplier Query (TPC-H Q15)   | Parts/Supplier Relationship (TPC-H Q16)   | Small-Quantity-Order Revenue (TPC-H Q17)   | Large Volume Customer (TPC-H Q18)   | Discounted Revenue (TPC-H Q19)   | Potential Part Promotion (TPC-H Q20)   | Suppliers Who Kept Orders Waiting Query (TPC-H Q21)   | Global Sales Opportunity Query (TPC-H Q22)   | complete   |
+|:------------|-------:|:------------------------------------|:-----------------------------------------|:-------------------------------|:-------------------------------------------|:-----------------------------------|:----------------------------------------|:-----------------------------------|:-----------------------------------|:-----------------------------------------|:--------------------------------------------|:---------------------------------------------|:------------------------------------------------|:------------------------------------|:-------------------------------------|:---------------------------------|:------------------------------------------|:-------------------------------------------|:------------------------------------|:---------------------------------|:---------------------------------------|:------------------------------------------------------|:---------------------------------------------|:-----------|
+| mysql-1-1-1 |      1 | 1/1                                 | 1/1                                      | 1/1                            | 1/1                                        | 1/1                                | 1/1                                     | 1/1                                | 1/1                                | 1/1                                      | 1/1                                         | 1/1                                          | 1/1                                             | 1/1                                 | 1/1                                  | 1/1                              | 1/1                                       | 1/1                                        | 1/1                                 | 1/1                              | 1/1                                    | 1/1                                                   | 1/1                                          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries                                             |   MySQL-1-1-1-1-1 |
+| Queries                                             |   mysql-1-1-1-1-1 |
 |:----------------------------------------------------|------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |          20123.99 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |            241.46 |
-| Shipping Priority (TPC-H Q3)                        |           3974.75 |
-| Order Priority Checking Query (TPC-H Q4)            |           1173.19 |
-| Local Supplier Volume (TPC-H Q5)                    |           3356.62 |
-| Forecasting Revenue Change (TPC-H Q6)               |           3259.18 |
-| Volume Shipping Query (TPC-H Q7)                    |           2650.20 |
-| National Market Share (TPC-H Q8)                    |           7595.22 |
-| Product Type Profit Measure (TPC-H Q9)              |           5867.13 |
-| Returned Item Reporting Query (TPC-H Q10)           |           3739.28 |
-| Important Stock Identification (TPC-H Q11)          |            496.78 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |           5578.34 |
-| Customer Distribution (TPC-H Q13)                   |          16501.59 |
-| Promotion Effect Query (TPC-H Q14)                  |           4310.56 |
-| Top Supplier Query (TPC-H Q15)                      |          37620.28 |
-| Parts/Supplier Relationship (TPC-H Q16)             |           1061.65 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |            805.88 |
-| Large Volume Customer (TPC-H Q18)                   |           5486.47 |
-| Discounted Revenue (TPC-H Q19)                      |            356.80 |
-| Potential Part Promotion (TPC-H Q20)                |            670.84 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |          12820.83 |
-| Global Sales Opportunity Query (TPC-H Q22)          |            355.63 |
+| Pricing Summary Report (TPC-H Q1)                   |          19344.83 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |            261.48 |
+| Shipping Priority (TPC-H Q3)                        |           4312.15 |
+| Order Priority Checking Query (TPC-H Q4)            |           1029.26 |
+| Local Supplier Volume (TPC-H Q5)                    |           2498.32 |
+| Forecasting Revenue Change (TPC-H Q6)               |           2450.32 |
+| Volume Shipping Query (TPC-H Q7)                    |           1889.96 |
+| National Market Share (TPC-H Q8)                    |           6322.49 |
+| Product Type Profit Measure (TPC-H Q9)              |           5605.84 |
+| Returned Item Reporting Query (TPC-H Q10)           |           3392.17 |
+| Important Stock Identification (TPC-H Q11)          |            458.71 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |           3991.19 |
+| Customer Distribution (TPC-H Q13)                   |          14136.89 |
+| Promotion Effect Query (TPC-H Q14)                  |           3076.50 |
+| Top Supplier Query (TPC-H Q15)                      |          37232.33 |
+| Parts/Supplier Relationship (TPC-H Q16)             |            901.65 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |            597.21 |
+| Large Volume Customer (TPC-H Q18)                   |           3776.26 |
+| Discounted Revenue (TPC-H Q19)                      |            311.71 |
+| Potential Part Promotion (TPC-H Q20)                |            672.57 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |          10645.32 |
+| Global Sales Opportunity Query (TPC-H Q22)          |            311.95 |
 
 ### Errors (failed queries)
 
@@ -1703,58 +2026,81 @@ No warnings
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       584.17 |      6.15 |          13.19 |                 18.68 |
+| mysql-1-1-1-1 |       215.93 |      2.79 |           8.05 |                 13.56 |
 
 ### Loading phase: component data generator
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| mysql-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |         6.76 |      0.07 |           0.07 |                  1.42 |
+| mysql-1-1-1-1 |         6.07 |      0.05 |           0.01 |                  1.36 |
 
-### Execution phase: SUT deployment
-
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       136.01 |      1.01 |          13.65 |                 19.15 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |        17.66 |      0.18 |           0.36 |                  0.37 |
+| mysql-1-1-1-1 |        93.29 |      1.01 |           8.42 |                 13.93 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |        14.66 |      0.03 |           0.30 |                  0.30 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                       0.88 |                     0.00 |                0.02 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                             0.87 |                            0.00 |                            0.02 |                              0.00 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                       1.07 |                     0.00 |                0.01 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                             1.19 |                            0.00 |                            0.02 |                              0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
 * TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
 ```
 
@@ -1795,16 +2141,17 @@ bexhoma tpcds \
 ### Workload
 TPC-DS Queries SF=3
 * Type: tpcds
-* Duration: 3586s 
-* Code: 1783879748
+* Duration: 1501s 
+* Code: 1792330119
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=3) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q99.
   * All instances use the same query parameters.
   * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.5.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
@@ -1817,24 +2164,33 @@ TPC-DS Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1-1-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+* mysql-1-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1116355
+  * disk:898804
+  * volume_size:1.8T
+  * volume_used:878G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1783879748
+    * code:1792330119
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1783879748-85cd8f4cc4-6d8x6: 0 0
+* bexhoma-sut-mysql-1-1792330119-55cdfb74c9-sgm7c: 1 (dbms=1, monitor-application=0)
+  * dbms: OOMKilled (exit 137) at Sun, 18 Oct 2026 15:48:32 +0200; data on a mounted volume
 
 ### Workflow
 
@@ -1850,126 +2206,34 @@ TPC-DS Queries SF=3
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MySQL-1-1 |                1 | 3.00 |     1852.00 |           0.00 |            0.00 |        227.00 |         1622.00 |              2 |           0 |             | None           |             0 | False         |                5.83 |
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |    3 |      753.00 |           6.00 |            0.00 |        177.00 |          566.00 |              2 |           0 |             | None           |             0 | False         |               14.34 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
-|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
-| MySQL-1-1-1-1-1 | MySQL-1         | MySQL-1-1-1 | MySQL-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |       1524 |            2.47 |             4404.45 |            701.57 |          -1 | MySQL-1-1-1-1-1 |
+No rows: these totals count only queries that succeeded in every connection of this experiment, and no query did (Q1 failed in 1 of 1 connections; Q2 failed in 1 of 1 connections; Q3 failed in 1 of 1 connections; Q4 failed in 1 of 1 connections; Q5 failed in 1 of 1 connections; Q6 failed in 1 of 1 connections; Q7 failed in 1 of 1 connections; Q8 failed in 1 of 1 connections; Q9 failed in 1 of 1 connections; Q10 failed in 1 of 1 connections; Q11 failed in 1 of 1 connections; Q12 failed in 1 of 1 connections; Q13 failed in 1 of 1 connections; Q14 failed in 1 of 1 connections; Q15 failed in 1 of 1 connections; Q16 failed in 1 of 1 connections; Q17 failed in 1 of 1 connections; Q18 failed in 1 of 1 connections; Q19 failed in 1 of 1 connections; Q20 failed in 1 of 1 connections; Q21 failed in 1 of 1 connections; Q22 failed in 1 of 1 connections; Q23 failed in 1 of 1 connections; Q24 failed in 1 of 1 connections; Q25 failed in 1 of 1 connections; Q26 failed in 1 of 1 connections; Q27 failed in 1 of 1 connections; Q28 failed in 1 of 1 connections; Q29 failed in 1 of 1 connections; Q30 failed in 1 of 1 connections; Q31 failed in 1 of 1 connections; Q32 failed in 1 of 1 connections; Q33 failed in 1 of 1 connections; Q34 failed in 1 of 1 connections; Q35 failed in 1 of 1 connections; Q36 failed in 1 of 1 connections; Q37 failed in 1 of 1 connections; Q38 failed in 1 of 1 connections; Q39 failed in 1 of 1 connections; Q40 failed in 1 of 1 connections; Q41 failed in 1 of 1 connections; Q42 failed in 1 of 1 connections; Q43 failed in 1 of 1 connections; Q44 failed in 1 of 1 connections; Q45 failed in 1 of 1 connections; Q46 failed in 1 of 1 connections; Q47 failed in 1 of 1 connections; Q48 failed in 1 of 1 connections; Q49 failed in 1 of 1 connections; Q50 failed in 1 of 1 connections; Q51 failed in 1 of 1 connections; Q52 failed in 1 of 1 connections; Q53 failed in 1 of 1 connections; Q54 failed in 1 of 1 connections; Q55 failed in 1 of 1 connections; Q56 failed in 1 of 1 connections; Q57 failed in 1 of 1 connections; Q58 failed in 1 of 1 connections; Q59 failed in 1 of 1 connections; Q60 failed in 1 of 1 connections; Q61 failed in 1 of 1 connections; Q62 failed in 1 of 1 connections; Q63 failed in 1 of 1 connections; Q64 failed in 1 of 1 connections; Q65 failed in 1 of 1 connections; Q66 failed in 1 of 1 connections; Q67 failed in 1 of 1 connections; Q68 failed in 1 of 1 connections; Q69 failed in 1 of 1 connections; Q70 failed in 1 of 1 connections; Q71 failed in 1 of 1 connections; Q72 failed in 1 of 1 connections; Q73 failed in 1 of 1 connections; Q74 failed in 1 of 1 connections; Q75 failed in 1 of 1 connections; Q76 failed in 1 of 1 connections; Q77 failed in 1 of 1 connections; Q78 failed in 1 of 1 connections; Q79 failed in 1 of 1 connections; Q80 failed in 1 of 1 connections; Q81 failed in 1 of 1 connections; Q82 failed in 1 of 1 connections; Q83 failed in 1 of 1 connections; Q84 failed in 1 of 1 connections; Q85 failed in 1 of 1 connections; Q86 failed in 1 of 1 connections; Q87 failed in 1 of 1 connections; Q88 failed in 1 of 1 connections; Q89 failed in 1 of 1 connections; Q90 failed in 1 of 1 connections; Q91 failed in 1 of 1 connections; Q92 failed in 1 of 1 connections; Q93 failed in 1 of 1 connections; Q94 failed in 1 of 1 connections; Q95 failed in 1 of 1 connections; Q96 failed in 1 of 1 connections; Q97 failed in 1 of 1 connections; Q98 failed in 1 of 1 connections; Q99 failed in 1 of 1 connections). See Query Completion per Phase for where, and Per Phase (Complete Phases Only) for the phases that completed every query.
 
 #### Per Phase
 
-|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |       1524 |            2.47 |             4404.45 |            701.57 |          -1 |
+No rows: these totals count only queries that succeeded in every connection of this experiment, and no query did (Q1 failed in 1 of 1 connections; Q2 failed in 1 of 1 connections; Q3 failed in 1 of 1 connections; Q4 failed in 1 of 1 connections; Q5 failed in 1 of 1 connections; Q6 failed in 1 of 1 connections; Q7 failed in 1 of 1 connections; Q8 failed in 1 of 1 connections; Q9 failed in 1 of 1 connections; Q10 failed in 1 of 1 connections; Q11 failed in 1 of 1 connections; Q12 failed in 1 of 1 connections; Q13 failed in 1 of 1 connections; Q14 failed in 1 of 1 connections; Q15 failed in 1 of 1 connections; Q16 failed in 1 of 1 connections; Q17 failed in 1 of 1 connections; Q18 failed in 1 of 1 connections; Q19 failed in 1 of 1 connections; Q20 failed in 1 of 1 connections; Q21 failed in 1 of 1 connections; Q22 failed in 1 of 1 connections; Q23 failed in 1 of 1 connections; Q24 failed in 1 of 1 connections; Q25 failed in 1 of 1 connections; Q26 failed in 1 of 1 connections; Q27 failed in 1 of 1 connections; Q28 failed in 1 of 1 connections; Q29 failed in 1 of 1 connections; Q30 failed in 1 of 1 connections; Q31 failed in 1 of 1 connections; Q32 failed in 1 of 1 connections; Q33 failed in 1 of 1 connections; Q34 failed in 1 of 1 connections; Q35 failed in 1 of 1 connections; Q36 failed in 1 of 1 connections; Q37 failed in 1 of 1 connections; Q38 failed in 1 of 1 connections; Q39 failed in 1 of 1 connections; Q40 failed in 1 of 1 connections; Q41 failed in 1 of 1 connections; Q42 failed in 1 of 1 connections; Q43 failed in 1 of 1 connections; Q44 failed in 1 of 1 connections; Q45 failed in 1 of 1 connections; Q46 failed in 1 of 1 connections; Q47 failed in 1 of 1 connections; Q48 failed in 1 of 1 connections; Q49 failed in 1 of 1 connections; Q50 failed in 1 of 1 connections; Q51 failed in 1 of 1 connections; Q52 failed in 1 of 1 connections; Q53 failed in 1 of 1 connections; Q54 failed in 1 of 1 connections; Q55 failed in 1 of 1 connections; Q56 failed in 1 of 1 connections; Q57 failed in 1 of 1 connections; Q58 failed in 1 of 1 connections; Q59 failed in 1 of 1 connections; Q60 failed in 1 of 1 connections; Q61 failed in 1 of 1 connections; Q62 failed in 1 of 1 connections; Q63 failed in 1 of 1 connections; Q64 failed in 1 of 1 connections; Q65 failed in 1 of 1 connections; Q66 failed in 1 of 1 connections; Q67 failed in 1 of 1 connections; Q68 failed in 1 of 1 connections; Q69 failed in 1 of 1 connections; Q70 failed in 1 of 1 connections; Q71 failed in 1 of 1 connections; Q72 failed in 1 of 1 connections; Q73 failed in 1 of 1 connections; Q74 failed in 1 of 1 connections; Q75 failed in 1 of 1 connections; Q76 failed in 1 of 1 connections; Q77 failed in 1 of 1 connections; Q78 failed in 1 of 1 connections; Q79 failed in 1 of 1 connections; Q80 failed in 1 of 1 connections; Q81 failed in 1 of 1 connections; Q82 failed in 1 of 1 connections; Q83 failed in 1 of 1 connections; Q84 failed in 1 of 1 connections; Q85 failed in 1 of 1 connections; Q86 failed in 1 of 1 connections; Q87 failed in 1 of 1 connections; Q88 failed in 1 of 1 connections; Q89 failed in 1 of 1 connections; Q90 failed in 1 of 1 connections; Q91 failed in 1 of 1 connections; Q92 failed in 1 of 1 connections; Q93 failed in 1 of 1 connections; Q94 failed in 1 of 1 connections; Q95 failed in 1 of 1 connections; Q96 failed in 1 of 1 connections; Q97 failed in 1 of 1 connections; Q98 failed in 1 of 1 connections; Q99 failed in 1 of 1 connections). See Query Completion per Phase for where, and Per Phase (Complete Phases Only) for the phases that completed every query.
+
+#### Query Completion per Phase
+
+| phase       |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| mysql-1-1-1 |      1 | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1          | 0/1          | 0/1          | 0/1          | 0/1             | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1             | 0/1             | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1             | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | no         |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+#### Per Phase (Complete Phases Only)
+
+Only the 0 of 1 phases in which every pod completed every active query; each row covers all 99 active queries, so the rows are comparable with each other. Left out: mysql-1-1-1 — see Query Completion per Phase.
 
 ### Latency of Timer Execution [ms]
-| Queries       |   MySQL-1-1-1-1-1 |
-|:--------------|------------------:|
-| TPC-DS Q1     |             78.40 |
-| TPC-DS Q2     |          13692.97 |
-| TPC-DS Q3     |             23.98 |
-| TPC-DS Q4     |         115304.79 |
-| TPC-DS Q5     |          30681.82 |
-| TPC-DS Q6     |         271783.80 |
-| TPC-DS Q7     |           1325.94 |
-| TPC-DS Q8     |            862.64 |
-| TPC-DS Q9     |          11744.90 |
-| TPC-DS Q10    |            913.63 |
-| TPC-DS Q11    |          72910.96 |
-| TPC-DS Q12    |            835.39 |
-| TPC-DS Q13    |           3785.18 |
-| TPC-DS Q14a+b |         119243.75 |
-| TPC-DS Q15    |            537.02 |
-| TPC-DS Q16    |            372.68 |
-| TPC-DS Q17    |           1271.80 |
-| TPC-DS Q18    |           1420.20 |
-| TPC-DS Q19    |            868.80 |
-| TPC-DS Q20    |           1544.70 |
-| TPC-DS Q21    |          68402.65 |
-| TPC-DS Q22    |          10988.92 |
-| TPC-DS Q23a+b |         154354.14 |
-| TPC-DS Q24a+b |           3005.38 |
-| TPC-DS Q25    |            424.24 |
-| TPC-DS Q26    |           1625.22 |
-| TPC-DS Q27    |            952.77 |
-| TPC-DS Q28    |           9833.14 |
-| TPC-DS Q29    |            428.40 |
-| TPC-DS Q30    |           4206.57 |
-| TPC-DS Q31    |          33402.23 |
-| TPC-DS Q32    |            991.75 |
-| TPC-DS Q33    |            693.03 |
-| TPC-DS Q34    |           1674.20 |
-| TPC-DS Q35    |           7120.16 |
-| TPC-DS Q36    |           3884.16 |
-| TPC-DS Q37    |             20.33 |
-| TPC-DS Q38    |          24734.98 |
-| TPC-DS Q39a+b |           5254.09 |
-| TPC-DS Q40    |            462.91 |
-| TPC-DS Q41    |           5554.08 |
-| TPC-DS Q42    |           1224.59 |
-| TPC-DS Q43    |              2.63 |
-| TPC-DS Q44    |              2.62 |
-| TPC-DS Q45    |            572.31 |
-| TPC-DS Q46    |           3907.38 |
-| TPC-DS Q47    |          12765.31 |
-| TPC-DS Q48    |           3671.38 |
-| TPC-DS Q49    |           4306.05 |
-| TPC-DS Q50    |             84.74 |
-| TPC-DS Q51    |          17169.02 |
-| TPC-DS Q52    |            801.73 |
-| TPC-DS Q53    |            927.97 |
-| TPC-DS Q54    |           7409.39 |
-| TPC-DS Q55    |            997.23 |
-| TPC-DS Q56    |            655.08 |
-| TPC-DS Q57    |           9084.60 |
-| TPC-DS Q58    |          19703.14 |
-| TPC-DS Q59    |          20165.00 |
-| TPC-DS Q60    |           1557.74 |
-| TPC-DS Q61    |           2088.12 |
-| TPC-DS Q62    |           8449.80 |
-| TPC-DS Q63    |            918.79 |
-| TPC-DS Q64    |           1170.43 |
-| TPC-DS Q65    |          22724.26 |
-| TPC-DS Q66    |           6335.36 |
-| TPC-DS Q67    |          26202.02 |
-| TPC-DS Q68    |            845.31 |
-| TPC-DS Q69    |              2.44 |
-| TPC-DS Q70    |          37176.09 |
-| TPC-DS Q71    |           1336.15 |
-| TPC-DS Q72    |          36807.20 |
-| TPC-DS Q73    |            840.35 |
-| TPC-DS Q74    |          15149.67 |
-| TPC-DS Q75    |           6154.93 |
-| TPC-DS Q76    |           1225.58 |
-| TPC-DS Q77    |          28219.03 |
-| TPC-DS Q78    |          33955.47 |
-| TPC-DS Q79    |           2744.97 |
-| TPC-DS Q80    |          23906.21 |
-| TPC-DS Q81    |          20819.57 |
-| TPC-DS Q82    |             22.19 |
-| TPC-DS Q83    |           1962.47 |
-| TPC-DS Q84    |             98.34 |
-| TPC-DS Q85    |            268.41 |
-| TPC-DS Q86    |           3018.81 |
-| TPC-DS Q87    |          24237.59 |
-| TPC-DS Q88    |          32229.34 |
-| TPC-DS Q89    |           5739.63 |
-| TPC-DS Q90    |            993.20 |
-| TPC-DS Q91    |             50.74 |
-| TPC-DS Q92    |            314.65 |
-| TPC-DS Q93    |            113.53 |
-| TPC-DS Q94    |           1272.14 |
-| TPC-DS Q95    |          11390.68 |
-| TPC-DS Q96    |           2780.83 |
-| TPC-DS Q97    |          16793.11 |
-| TPC-DS Q98    |           2863.12 |
-| TPC-DS Q99    |          14961.96 |
+No rows: these totals count only queries that succeeded in every connection of this experiment, and no query did (Q1 failed in 1 of 1 connections; Q2 failed in 1 of 1 connections; Q3 failed in 1 of 1 connections; Q4 failed in 1 of 1 connections; Q5 failed in 1 of 1 connections; Q6 failed in 1 of 1 connections; Q7 failed in 1 of 1 connections; Q8 failed in 1 of 1 connections; Q9 failed in 1 of 1 connections; Q10 failed in 1 of 1 connections; Q11 failed in 1 of 1 connections; Q12 failed in 1 of 1 connections; Q13 failed in 1 of 1 connections; Q14 failed in 1 of 1 connections; Q15 failed in 1 of 1 connections; Q16 failed in 1 of 1 connections; Q17 failed in 1 of 1 connections; Q18 failed in 1 of 1 connections; Q19 failed in 1 of 1 connections; Q20 failed in 1 of 1 connections; Q21 failed in 1 of 1 connections; Q22 failed in 1 of 1 connections; Q23 failed in 1 of 1 connections; Q24 failed in 1 of 1 connections; Q25 failed in 1 of 1 connections; Q26 failed in 1 of 1 connections; Q27 failed in 1 of 1 connections; Q28 failed in 1 of 1 connections; Q29 failed in 1 of 1 connections; Q30 failed in 1 of 1 connections; Q31 failed in 1 of 1 connections; Q32 failed in 1 of 1 connections; Q33 failed in 1 of 1 connections; Q34 failed in 1 of 1 connections; Q35 failed in 1 of 1 connections; Q36 failed in 1 of 1 connections; Q37 failed in 1 of 1 connections; Q38 failed in 1 of 1 connections; Q39 failed in 1 of 1 connections; Q40 failed in 1 of 1 connections; Q41 failed in 1 of 1 connections; Q42 failed in 1 of 1 connections; Q43 failed in 1 of 1 connections; Q44 failed in 1 of 1 connections; Q45 failed in 1 of 1 connections; Q46 failed in 1 of 1 connections; Q47 failed in 1 of 1 connections; Q48 failed in 1 of 1 connections; Q49 failed in 1 of 1 connections; Q50 failed in 1 of 1 connections; Q51 failed in 1 of 1 connections; Q52 failed in 1 of 1 connections; Q53 failed in 1 of 1 connections; Q54 failed in 1 of 1 connections; Q55 failed in 1 of 1 connections; Q56 failed in 1 of 1 connections; Q57 failed in 1 of 1 connections; Q58 failed in 1 of 1 connections; Q59 failed in 1 of 1 connections; Q60 failed in 1 of 1 connections; Q61 failed in 1 of 1 connections; Q62 failed in 1 of 1 connections; Q63 failed in 1 of 1 connections; Q64 failed in 1 of 1 connections; Q65 failed in 1 of 1 connections; Q66 failed in 1 of 1 connections; Q67 failed in 1 of 1 connections; Q68 failed in 1 of 1 connections; Q69 failed in 1 of 1 connections; Q70 failed in 1 of 1 connections; Q71 failed in 1 of 1 connections; Q72 failed in 1 of 1 connections; Q73 failed in 1 of 1 connections; Q74 failed in 1 of 1 connections; Q75 failed in 1 of 1 connections; Q76 failed in 1 of 1 connections; Q77 failed in 1 of 1 connections; Q78 failed in 1 of 1 connections; Q79 failed in 1 of 1 connections; Q80 failed in 1 of 1 connections; Q81 failed in 1 of 1 connections; Q82 failed in 1 of 1 connections; Q83 failed in 1 of 1 connections; Q84 failed in 1 of 1 connections; Q85 failed in 1 of 1 connections; Q86 failed in 1 of 1 connections; Q87 failed in 1 of 1 connections; Q88 failed in 1 of 1 connections; Q89 failed in 1 of 1 connections; Q90 failed in 1 of 1 connections; Q91 failed in 1 of 1 connections; Q92 failed in 1 of 1 connections; Q93 failed in 1 of 1 connections; Q94 failed in 1 of 1 connections; Q95 failed in 1 of 1 connections; Q96 failed in 1 of 1 connections; Q97 failed in 1 of 1 connections; Q98 failed in 1 of 1 connections; Q99 failed in 1 of 1 connections). See Query Completion per Phase for where, and Per Phase (Complete Phases Only) for the phases that completed every query.
 
 ### Errors (failed queries)
 
@@ -1985,58 +2249,100 @@ No warnings
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |      2936.43 |      6.92 |          27.45 |                 52.96 |
+| mysql-1-1-1-1 |       970.77 |      2.95 |          63.98 |                 64.00 |
 
 ### Loading phase: component data generator
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| mysql-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |         7.18 |      0.12 |           0.01 |                  2.88 |
+| mysql-1-1-1-1 |         6.79 |      0.13 |           0.01 |                  2.43 |
 
-### Execution phase: SUT deployment
-
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |      1480.38 |      1.02 |          31.80 |                 57.33 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |        27.15 |      0.05 |           0.43 |                  0.44 |
+| mysql-1-1-1-1 |         0.00 |      1.03 |          63.98 |                 64.00 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Missing Monitoring Metrics
+* CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
+* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
+* Memory Usage incl. Page Cache [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Utilization Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU User Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
+* CPU System Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Connection Usage Ratio [0..1] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* Average Redo Log Bytes per fsync [B] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* InnoDB Buffer Pool Wait Free [count] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* InnoDB Max Dirty Pages [%] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* InnoDB Max Dirty Pages Low Watermark [%] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* InnoDB Buffer Pool Bytes Data [B] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* InnoDB Redo Log Flushed to Disk [B] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* Ratio of Dirty Pages in Buffer Pool [%] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* Threads Running for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* Open Files Usage Ratio [0..1] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
+* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                       1.01 |                     0.00 |                0.03 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                             1.18 |                            0.00 |                            0.02 |                              0.00 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                       0.82 |                     0.00 |                0.03 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                             0.40 |                            0.00 |                            0.00 |                              0.00 |
 
 ### Tests
-* TEST passed: No SUT container restarts
+* TEST passed: Loading measured in this experiment
+* TEST failed: No SUT container restarts
+* TEST passed: SUT data survived container restarts
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Geo Times [s] contains no 0 or NaN
-* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST skipped: Benchmarking phase: SUT deployment contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
+* TEST skipped: Benchmarking phase: component benchmarker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
+* TEST failed: Monitoring metrics missing
+* TEST failed: Geo Times [s] contains 0 or NaN
+* TEST failed: Power@Size [~Q/h] contains 0 or NaN
+* TEST failed: Throughput@Size contains 0 or NaN
 * TEST passed: No SQL errors
 * TEST passed: No SQL warnings
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
 ```
 
@@ -2082,8 +2388,8 @@ bexhoma ycsb \
 ### Workload
 YCSB SF=3
 * Type: ycsb
-* Duration: 1198s 
-* Code: 1783877650
+* Duration: 2044s 
+* Code: 1792326913
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -2094,7 +2400,8 @@ YCSB SF=3
   * Target is based on multiples of '16384'.
   * Factors for loading are [4].
   * Factors for benchmarking are [2, 3].
-  * Experiment uses bexhoma version 0.10.5.
+  * Status is logged every 10s.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
@@ -2107,63 +2414,83 @@ YCSB SF=3
   * Benchmarking is tested with [64] threads, split into [1, 8] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 16Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1109714
+  * disk:860668
+  * volume_size:1.8T
+  * volume_used:841G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783877650
-* MySQL-1-1-2-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+    * code:1792326913
+* mysql-1-1-2-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1109715
+  * disk:860671
+  * volume_size:1.8T
+  * volume_used:841G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783877650
-* MySQL-1-1-3-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+    * code:1792326913
+* mysql-1-1-3-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1109716
+  * disk:801738
+  * volume_size:1.8T
+  * volume_used:783G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783877650
-* MySQL-1-1-4-1 uses docker image mysql:8.4.0
-  * RAM:2164173213696
+    * code:1792326913
+* mysql-1-1-4-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1109716
+  * disk:860678
+  * volume_size:1.8T
+  * volume_used:841G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783877650
+    * code:1792326913
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1783877650-7c85cbbc77-xxwd8: 0 0
+* bexhoma-sut-mysql-1-1792326913-6f7877696f-9qkjh: 0
 
 ### Workflow
 
@@ -2187,54 +2514,54 @@ YCSB SF=3
 
 | connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| MySQL-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7415.02 |                50573.00 |            375000.00 |                             12535.00 | 3.00 |              213.55 |
-| MySQL-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7366.37 |                50907.00 |            375000.00 |                             12239.00 | 3.00 |              212.15 |
-| MySQL-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7283.53 |                51486.00 |            375000.00 |                             12383.00 | 3.00 |              209.77 |
-| MySQL-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7449.05 |                50342.00 |            375000.00 |                             12207.00 | 3.00 |              214.53 |
-| MySQL-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7361.31 |                50942.00 |            375000.00 |                             12375.00 | 3.00 |              212.01 |
-| MySQL-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7460.31 |                50266.00 |            375000.00 |                             12191.00 | 3.00 |              214.86 |
-| MySQL-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7368.69 |                50891.00 |            375000.00 |                             12279.00 | 3.00 |              212.22 |
-| MySQL-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7334.10 |                51131.00 |            375000.00 |                             12599.00 | 3.00 |              211.22 |
+| mysql-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         8002.39 |                46861.00 |            375000.00 |                              8155.00 | 3.00 |              230.47 |
+| mysql-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         8020.88 |                46753.00 |            375000.00 |                              8039.00 | 3.00 |              231.00 |
+| mysql-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         8008.71 |                46824.00 |            375000.00 |                              7967.00 | 3.00 |              230.65 |
+| mysql-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7997.61 |                46889.00 |            375000.00 |                              8055.00 | 3.00 |              230.33 |
+| mysql-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         8031.01 |                46694.00 |            375000.00 |                              8079.00 | 3.00 |              231.29 |
+| mysql-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7994.88 |                46905.00 |            375000.00 |                              7967.00 | 3.00 |              230.25 |
+| mysql-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7988.07 |                46945.00 |            375000.00 |                              7987.00 | 3.00 |              230.06 |
+| mysql-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         8018.82 |                46765.00 |            375000.00 |                              8063.00 | 3.00 |              230.94 |
 
 #### Per Run
 
 | DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 3.00 |              209.77 |                        59038.40 |                51486.00 |           3000000.00 |                             12351.00 |
+| MySQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 3.00 |              230.06 |                        64062.37 |                46945.00 |           3000000.00 |                              8039.00 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1-1-1 | MySQL-1-1-1 | MySQL-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |    32768 |           1 |            0 |                        32157.44 |                93291.00 |            1500723 |                             751.00 |              1499277 |                               680.00 |
-| MySQL-1-1-2-1-1 | MySQL-1-1-2 | MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       1 |         8 |     4096 |           8 |            0 |                         4046.70 |                92668.00 |             187081 |                             769.00 |               187919 |                               680.00 |
-| MySQL-1-1-2-1-2 | MySQL-1-1-2 | MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       2 |         8 |     4096 |           8 |            0 |                         4051.38 |                92561.00 |             187061 |                             895.00 |               187939 |                               777.00 |
-| MySQL-1-1-2-1-3 | MySQL-1-1-2 | MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       3 |         8 |     4096 |           8 |            0 |                         4057.39 |                92424.00 |             187159 |                             815.00 |               187841 |                               702.00 |
-| MySQL-1-1-2-1-4 | MySQL-1-1-2 | MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       4 |         8 |     4096 |           8 |            0 |                         4047.71 |                92645.00 |             188096 |                             760.00 |               186904 |                               679.00 |
-| MySQL-1-1-2-1-5 | MySQL-1-1-2 | MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       5 |         8 |     4096 |           8 |            0 |                         4052.56 |                92534.00 |             187269 |                             879.00 |               187731 |                               794.00 |
-| MySQL-1-1-2-1-6 | MySQL-1-1-2 | MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       6 |         8 |     4096 |           8 |            0 |                         4047.49 |                92650.00 |             187430 |                             757.00 |               187570 |                               685.00 |
-| MySQL-1-1-2-1-7 | MySQL-1-1-2 | MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       7 |         8 |     4096 |           8 |            0 |                         4049.33 |                92608.00 |             187279 |                             774.00 |               187721 |                               678.00 |
-| MySQL-1-1-2-1-8 | MySQL-1-1-2 | MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       8 |         8 |     4096 |           8 |            0 |                         4054.58 |                92488.00 |             187392 |                             826.00 |               187608 |                               712.00 |
-| MySQL-1-1-3-1-1 | MySQL-1-1-3 | MySQL-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       1 |        64 |    49152 |           1 |            0 |                        47647.79 |                62962.00 |            1500175 |                            1045.00 |              1499825 |                               818.00 |
-| MySQL-1-1-4-1-1 | MySQL-1-1-4 | MySQL-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       1 |         8 |     6144 |           8 |            0 |                         6032.92 |                62159.00 |             187570 |                             849.00 |               187430 |                               739.00 |
-| MySQL-1-1-4-1-2 | MySQL-1-1-4 | MySQL-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       2 |         8 |     6144 |           8 |            0 |                         6048.87 |                61995.00 |             187591 |                            1033.00 |               187409 |                               853.00 |
-| MySQL-1-1-4-1-3 | MySQL-1-1-4 | MySQL-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       3 |         8 |     6144 |           8 |            0 |                         6058.75 |                61894.00 |             187010 |                            1128.00 |               187990 |                               960.00 |
-| MySQL-1-1-4-1-4 | MySQL-1-1-4 | MySQL-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       4 |         8 |     6144 |           8 |            0 |                         6041.96 |                62066.00 |             188050 |                             866.00 |               186950 |                               744.00 |
-| MySQL-1-1-4-1-5 | MySQL-1-1-4 | MySQL-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       5 |         8 |     6144 |           8 |            0 |                         6054.34 |                61939.00 |             187559 |                            1057.00 |               187441 |                               852.00 |
-| MySQL-1-1-4-1-6 | MySQL-1-1-4 | MySQL-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       6 |         8 |     6144 |           8 |            0 |                         6032.04 |                62168.00 |             187159 |                             830.00 |               187841 |                               706.00 |
-| MySQL-1-1-4-1-7 | MySQL-1-1-4 | MySQL-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       7 |         8 |     6144 |           8 |            0 |                         6040.69 |                62079.00 |             187653 |                            1001.00 |               187347 |                               791.00 |
-| MySQL-1-1-4-1-8 | MySQL-1-1-4 | MySQL-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       8 |         8 |     6144 |           8 |            0 |                         6051.90 |                61964.00 |             187073 |                            1048.00 |               187927 |                               878.00 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |    32768 |           1 |            0 |                        32140.56 |                93340.00 |            1500802 |                             661.00 |              1499198 |                               631.00 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       1 |         8 |     4096 |           8 |            0 |                         4048.15 |                92635.00 |             187475 |                             707.00 |               187525 |                               653.00 |
+| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       2 |         8 |     4096 |           8 |            0 |                         4055.63 |                92464.00 |             187746 |                             746.00 |               187254 |                               692.00 |
+| mysql-1-1-2-1-3 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       3 |         8 |     4096 |           8 |            0 |                         4060.77 |                92347.00 |             187439 |                             737.00 |               187561 |                               677.00 |
+| mysql-1-1-2-1-4 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       4 |         8 |     4096 |           8 |            0 |                         4051.38 |                92561.00 |             187657 |                             644.00 |               187343 |                               592.00 |
+| mysql-1-1-2-1-5 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       5 |         8 |     4096 |           8 |            0 |                         4051.86 |                92550.00 |             187108 |                             646.00 |               187892 |                               583.00 |
+| mysql-1-1-2-1-6 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       6 |         8 |     4096 |           8 |            0 |                         4048.15 |                92635.00 |             187507 |                             701.00 |               187493 |                               654.00 |
+| mysql-1-1-2-1-7 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       7 |         8 |     4096 |           8 |            0 |                         4048.93 |                92617.00 |             187395 |                             661.00 |               187605 |                               606.00 |
+| mysql-1-1-2-1-8 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       8 |         8 |     4096 |           8 |            0 |                         4052.65 |                92532.00 |             187489 |                             643.00 |               187511 |                               587.00 |
+| mysql-1-1-3-1-1 | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       1 |        64 |    49152 |           1 |            0 |                        47409.84 |                63278.00 |            1499277 |                             859.00 |              1500723 |                               954.00 |
+| mysql-1-1-4-1-1 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       1 |         8 |     6144 |           8 |            0 |                         6039.33 |                62093.00 |             187778 |                             667.00 |               187222 |                               594.00 |
+| mysql-1-1-4-1-2 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       2 |         8 |     6144 |           8 |            0 |                         6054.64 |                61936.00 |             187583 |                             736.00 |               187417 |                               657.00 |
+| mysql-1-1-4-1-3 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       3 |         8 |     6144 |           8 |            0 |                         6063.84 |                61842.00 |             187048 |                             754.00 |               187952 |                               667.00 |
+| mysql-1-1-4-1-4 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       4 |         8 |     6144 |           8 |            0 |                         6033.30 |                62155.00 |             187471 |                             760.00 |               187529 |                               690.00 |
+| mysql-1-1-4-1-5 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       5 |         8 |     6144 |           8 |            0 |                         6055.03 |                61932.00 |             187619 |                             736.00 |               187381 |                               655.00 |
+| mysql-1-1-4-1-6 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       6 |         8 |     6144 |           8 |            0 |                         6033.40 |                62154.00 |             187654 |                             670.00 |               187346 |                               595.00 |
+| mysql-1-1-4-1-7 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       7 |         8 |     6144 |           8 |            0 |                         6048.78 |                61996.00 |             187414 |                             711.00 |               187586 |                               633.00 |
+| mysql-1-1-4-1-8 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       8 |         8 |     6144 |           8 |            0 |                         6056.01 |                61922.00 |             187413 |                             771.00 |               187587 |                               677.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1 | MySQL-1-1-1 |                1 |        64 |    32768 |               1 |           1 |            0 |                        32157.44 |                93291.00 |            1500723 |                             751.00 |              1499277 |                               680.00 |
-| MySQL-1-1-2 | MySQL-1-1-2 |                1 |        64 |    32768 |               1 |           8 |            0 |                        32407.14 |                92668.00 |            1498767 |                             895.00 |              1501233 |                               794.00 |
-| MySQL-1-1-3 | MySQL-1-1-3 |                1 |        64 |    49152 |               1 |           1 |            0 |                        47647.79 |                62962.00 |            1500175 |                            1045.00 |              1499825 |                               818.00 |
-| MySQL-1-1-4 | MySQL-1-1-4 |                1 |        64 |    49152 |               1 |           8 |            0 |                        48361.47 |                62168.00 |            1499665 |                            1128.00 |              1500335 |                               960.00 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |    32768 |               1 |           1 |            0 |                        32140.56 |                93340.00 |            1500802 |                             661.00 |              1499198 |                               631.00 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |        64 |    32768 |               1 |           8 |            0 |                        32417.53 |                92635.00 |            1499816 |                             746.00 |              1500184 |                               692.00 |
+| mysql-1-1-3 | mysql-1-1-3 |                1 |        64 |    49152 |               1 |           1 |            0 |                        47409.84 |                63278.00 |            1499277 |                             859.00 |              1500723 |                               954.00 |
+| mysql-1-1-4 | mysql-1-1-4 |                1 |        64 |    49152 |               1 |           8 |            0 |                        48384.32 |                62155.00 |            1499980 |                             771.00 |              1500020 |                               690.00 |
 
 ### Monitoring
 
@@ -2242,64 +2569,89 @@ YCSB SF=3
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       611.00 |     12.04 |          25.52 |                 31.34 |
-| MySQL-1-1-2-1 |       611.00 |     12.04 |          25.52 |                 31.34 |
-| MySQL-1-1-3-1 |       611.00 |     12.04 |          25.52 |                 31.34 |
-| MySQL-1-1-4-1 |       611.00 |     12.04 |          25.52 |                 31.34 |
+| mysql-1-1-1-1 |       379.19 |      8.50 |           8.82 |                 14.52 |
+| mysql-1-1-2-1 |       379.19 |      8.50 |           8.82 |                 14.52 |
+| mysql-1-1-3-1 |       379.19 |      8.50 |           8.82 |                 14.52 |
+| mysql-1-1-4-1 |       379.19 |      8.50 |           8.82 |                 14.52 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       319.53 |     11.06 |           0.13 |                  0.14 |
-| MySQL-1-1-2-1 |       319.53 |     11.06 |           0.13 |                  0.14 |
-| MySQL-1-1-3-1 |       319.53 |     11.06 |           0.13 |                  0.14 |
-| MySQL-1-1-4-1 |       319.53 |     11.06 |           0.13 |                  0.14 |
+| mysql-1-1-1-1 |       370.08 |     11.52 |           1.05 |                  1.05 |
+| mysql-1-1-2-1 |       370.08 |     11.52 |           1.05 |                  1.05 |
+| mysql-1-1-3-1 |       370.08 |     11.52 |           1.05 |                  1.05 |
+| mysql-1-1-4-1 |       370.08 |     11.52 |           1.05 |                  1.05 |
 
-### Execution phase: SUT deployment
-
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       324.86 |      3.89 |          25.57 |                 32.08 |
-| MySQL-1-1-2-1 |       284.84 |      3.90 |          25.60 |                 32.78 |
-| MySQL-1-1-3-1 |       148.34 |      5.39 |          25.63 |                 33.29 |
-| MySQL-1-1-4-1 |       259.83 |      5.14 |          25.67 |                 34.38 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1-1 |       371.22 |      4.05 |           0.16 |                  0.16 |
-| MySQL-1-1-2-1 |       392.49 |      8.94 |           0.16 |                  0.16 |
-| MySQL-1-1-3-1 |       427.58 |     11.16 |           0.16 |                  0.16 |
-| MySQL-1-1-4-1 |       238.27 |     14.50 |           0.16 |                  0.16 |
+| mysql-1-1-1-1 |       270.75 |      3.89 |           7.95 |                 14.22 |
+| mysql-1-1-2-1 |       298.68 |      3.84 |           8.00 |                 15.10 |
+| mysql-1-1-3-1 |       261.91 |      5.18 |           8.04 |                 15.87 |
+| mysql-1-1-4-1 |       239.05 |      4.88 |           8.08 |                 16.64 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |       303.82 |      3.12 |           1.39 |                  1.40 |
+| mysql-1-1-2-1 |       282.42 |      6.28 |           1.39 |                  1.40 |
+| mysql-1-1-3-1 |       229.11 |      8.40 |           1.37 |                  1.38 |
+| mysql-1-1-4-1 |       331.08 |      8.14 |           1.37 |                  1.38 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-3-1 (bexhoma-metrics-mysql-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-3-1 (bexhoma-metrics-mysql-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-3-1 (bexhoma-metrics-mysql-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-3-1 (bexhoma-metrics-mysql-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-4-1 (bexhoma-metrics-mysql-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-4-1 (bexhoma-metrics-mysql-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-4-1 (bexhoma-metrics-mysql-1-1-4-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-4-1 (bexhoma-metrics-mysql-1-1-4-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           0.00 |                   14306.98 |                     0.04 |                0.00 |                    0.00 |
-| MySQL-1-1-2-1 |                           0.00 |                   14306.98 |                     0.04 |                0.00 |                    0.00 |
-| MySQL-1-1-3-1 |                           0.00 |                   14306.98 |                     0.04 |                0.00 |                    0.00 |
-| MySQL-1-1-4-1 |                           0.00 |                   14306.98 |                     0.04 |                0.00 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                         12460.07 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-2-1 |                                  1.00 |                         12460.07 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-3-1 |                                  1.00 |                         12460.07 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-4-1 |                                  1.00 |                         12460.07 |                            0.04 |                            0.00 |                              0.00 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS          |   InnoDB Buffer Pool Hit Ratio |   Queries Per Second (QPS) |   Connection Usage Ratio |   Slow Queries Rate |   InnoDB Log Waits Rate |
-|:--------------|-------------------------------:|---------------------------:|-------------------------:|--------------------:|------------------------:|
-| MySQL-1-1-1-1 |                           1.00 |                   18726.11 |                     0.04 |                0.00 |                    0.00 |
-| MySQL-1-1-2-1 |                           1.00 |                   20525.17 |                     0.04 |                0.00 |                    0.00 |
-| MySQL-1-1-3-1 |                           0.00 |                   21969.72 |                     0.04 |                0.00 |                    0.00 |
-| MySQL-1-1-4-1 |                           0.00 |                   20976.62 |                     0.04 |                0.00 |                    0.00 |
+| DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
+|:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
+| mysql-1-1-1-1 |                                  1.00 |                          9908.63 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-2-1 |                                  1.00 |                          8558.24 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-3-1 |                                  1.00 |                          7206.84 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-4-1 |                                  1.00 |                          9368.60 |                            0.04 |                            0.00 |                              0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
@@ -2356,8 +2708,8 @@ bexhoma ycsb \
 ### Workload
 YCSB SF=10
 * Type: ycsb
-* Duration: 5521s 
-* Code: 1783884999
+* Duration: 10989s 
+* Code: 1792333677
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -2368,7 +2720,8 @@ YCSB SF=10
   * Target is based on multiples of '16384'.
   * Factors for loading are [4].
   * Factors for benchmarking are [4].
-  * Experiment uses bexhoma version 0.10.5.
+  * Status is logged every 10s.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['CockroachDB'].
@@ -2381,52 +2734,62 @@ YCSB SF=10
   * Benchmarking is tested with [64] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 3 worker nodes, 3 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* CockroachDB-1-1-1-1 uses docker image cockroachdb/cockroach:v24.2.4
-  * RAM:2164173213696
+* cockroachdb-1-1-1-1 uses docker image cockroachdb/cockroach:v24.2.4
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1071339
+  * disk:854127
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:16Gi
   * worker 0
-    * RAM:1077382598656
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:589347
-    * volume_size:1000G
-    * volume_used:738G
-    * cpu_list:0-255
-  * worker 1
-    * RAM:1077381287936
-    * Cores:256
-    * host:6.8.0-111-generic
-    * node:cl-worker27
-    * disk:1383265
-    * volume_size:1000G
-    * volume_used:738G
-    * cpu_list:0-255
-  * worker 2
-    * RAM:540590841856
+    * RAM:540590800896
     * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:171816
+    * host:6.8.0-146-generic
+    * node:cl-worker24
+    * disk:151647
+    * datadisk:700899
     * volume_size:1000G
-    * volume_used:738G
+    * volume_used:674G
     * cpu_list:0-95
+  * worker 1
+    * RAM:1081853952000
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:681817
+    * datadisk:700833
+    * volume_size:1000G
+    * volume_used:674G
+    * cpu_list:0-127
+  * worker 2
+    * RAM:540579299328
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:252912
+    * datadisk:700827
+    * volume_size:1000G
+    * volume_used:674G
+    * cpu_list:0-127
+  * resources_total: 12.25 CPU, 48.5 GiB RAM requested in 4 pods
+    * worker: 3 x, 12.0 CPU, 48.0 GiB RAM
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * eval_parameters
-    * code:1783884999
+    * code:1792333677
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
 ### SUT Container Restarts
-* bexhoma-sut-cockroachdb-1-1783884999-67f9c75bff-v26xj: 0
+* bexhoma-sut-cockroachdb-1-1792333677-f67bb46db-7vp4q: 0
 * bexhoma-worker-cockroachdb-ycsb-10-0: 0
 * bexhoma-worker-cockroachdb-ycsb-10-1: 0
 * bexhoma-worker-cockroachdb-ycsb-10-2: 0
@@ -2447,34 +2810,34 @@ YCSB SF=10
 
 | connection            |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    sf |   Throughput [SF/h] |
 |:----------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
-| CockroachDB-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          514.06 |              2431610.00 |           1250000.00 |                            171519.00 | 10.00 |               14.81 |
-| CockroachDB-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          514.55 |              2429292.00 |           1250000.00 |                            171135.00 | 10.00 |               14.82 |
-| CockroachDB-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          514.58 |              2429176.00 |           1250000.00 |                            170367.00 | 10.00 |               14.82 |
-| CockroachDB-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          514.92 |              2427584.00 |           1250000.00 |                            170239.00 | 10.00 |               14.83 |
-| CockroachDB-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          514.95 |              2427403.00 |           1250000.00 |                            171391.00 | 10.00 |               14.83 |
-| CockroachDB-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          513.98 |              2431992.00 |           1250000.00 |                            172415.00 | 10.00 |               14.80 |
-| CockroachDB-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          515.42 |              2425227.00 |           1250000.00 |                            171391.00 | 10.00 |               14.84 |
-| CockroachDB-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          515.16 |              2426435.00 |           1250000.00 |                            171391.00 | 10.00 |               14.84 |
+| cockroachdb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          376.60 |              3319210.00 |           1250000.00 |                            155007.00 | 10.00 |               10.85 |
+| cockroachdb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          364.86 |              3425973.00 |           1250000.00 |                            155903.00 | 10.00 |               10.51 |
+| cockroachdb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          366.02 |              3415155.00 |           1250000.00 |                            155775.00 | 10.00 |               10.54 |
+| cockroachdb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          376.27 |              3322086.00 |           1250000.00 |                            154751.00 | 10.00 |               10.84 |
+| cockroachdb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          364.05 |              3433639.00 |           1250000.00 |                            155903.00 | 10.00 |               10.48 |
+| cockroachdb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          364.71 |              3427389.00 |           1250000.00 |                            155263.00 | 10.00 |               10.50 |
+| cockroachdb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          363.76 |              3436320.00 |           1250000.00 |                            156543.00 | 10.00 |               10.48 |
+| cockroachdb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                          366.15 |              3413939.00 |           1250000.00 |                            155647.00 | 10.00 |               10.55 |
 
 #### Per Run
 
 | DBMS            |   experiment_run |   threads |   target |   pod_count |   exceptions |    sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------------|-----------------:|----------:|---------:|------------:|-------------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| CockroachDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 10.00 |               14.80 |                         4117.62 |              2431992.00 |          10000000.00 |                            171231.00 |
+| CockroachDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 10.00 |               10.48 |                         2942.40 |              3436320.00 |          10000000.00 |                            155599.00 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS                  | phase             | job                 | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------------|:------------------|:--------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| CockroachDB-1-1-1-1-1 | CockroachDB-1-1-1 | CockroachDB-1-1-1-1 | CockroachDB-1   |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                         3748.55 |              2667700.00 |            5002335 |                           17183.00 |              4997665 |                            425215.00 |
+| cockroachdb-1-1-1-1-1 | cockroachdb-1-1-1 | cockroachdb-1-1-1-1 | CockroachDB-1   |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                         1635.69 |              6113623.00 |            5002464 |                           36703.00 |              4997536 |                           1948671.00 |
 
 #### Per Phase
 
 | DBMS              | phase             |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------------|:------------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| CockroachDB-1-1-1 | CockroachDB-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                         3748.55 |              2667700.00 |            5002335 |                           17183.00 |              4997665 |                            425215.00 |
+| cockroachdb-1-1-1 | cockroachdb-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                         1635.69 |              6113623.00 |            5002464 |                           36703.00 |              4997536 |                           1948671.00 |
 
 ### Monitoring
 
@@ -2482,46 +2845,59 @@ YCSB SF=10
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |     23002.85 |     21.07 |          20.00 |                 47.94 |
+| cockroachdb-1-1-1-1 |     29067.12 |     22.25 |          19.25 |                 47.99 |
 
 ### Loading phase: component loader
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |       965.84 |      1.04 |           0.11 |                  0.11 |
+| cockroachdb-1-1-1-1 |       901.87 |      1.45 |           0.12 |                  0.13 |
 
-### Execution phase: component worker
-
-| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |     26604.38 |     22.59 |          24.48 |                 47.93 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: component worker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |       744.34 |      0.66 |           0.14 |                  0.14 |
+| cockroachdb-1-1-1-1 |     35013.89 |      8.06 |          22.06 |                 47.99 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------|-------------:|----------:|---------------:|----------------------:|
+| cockroachdb-1-1-1-1 |       782.26 |      0.56 |           0.24 |                  0.24 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: component worker
 
-| DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In (Bytes/sec) |   Raft Recovery Snapshot In (Bytes/sec) |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
-|:--------------------|--------------------------------------------:|------------------------------:|----------------------------------------:|------------------------------------------:|----------------------------------:|
-| CockroachDB-1-1-1-1 |                                    16927.34 |                   17490323.37 |                             15306729.59 |                                      0.00 |                              0.00 |
+| DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In [B/s] |   Raft Recovery Snapshot In [B/s] |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
+|:--------------------|--------------------------------------------:|------------------------:|----------------------------------:|------------------------------------------:|----------------------------------:|
+| cockroachdb-1-1-1-1 |                                    12891.76 |             17774623.27 |                              0.00 |                                      0.00 |                              0.00 |
 
-#### Execution phase: component worker
+#### Benchmarking phase: component worker
 
-| DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In (Bytes/sec) |   Raft Recovery Snapshot In (Bytes/sec) |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
-|:--------------------|--------------------------------------------:|------------------------------:|----------------------------------------:|------------------------------------------:|----------------------------------:|
-| CockroachDB-1-1-1-1 |                                     8156.09 |                    5519962.47 |                                    0.00 |                                      0.00 |                              0.00 |
+| DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In [B/s] |   Raft Recovery Snapshot In [B/s] |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
+|:--------------------|--------------------------------------------:|------------------------:|----------------------------------:|------------------------------------------:|----------------------------------:|
+| cockroachdb-1-1-1-1 |                                     4374.27 |              3165371.58 |                              0.00 |                                      0.00 |                              0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component worker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
@@ -2564,13 +2940,13 @@ bexhoma benchbase \
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1574s 
-* Code: 1783890550
+* Duration: 1317s 
+* Code: 1792344739
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-  * Benchbase data is generated and loaded using several threads.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.10.5.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['CockroachDB'].
@@ -2583,93 +2959,109 @@ Benchbase Workload tpcc SF=16
   * Benchmarking is tested with [16] threads, split into [1, 2] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 3 worker nodes, 3 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* CockroachDB-1-1-1-1 uses docker image cockroachdb/cockroach:v24.2.4
-  * RAM:2164173213696
+* cockroachdb-1-1-1-1 uses docker image cockroachdb/cockroach:v24.2.4
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1086935
+  * disk:853969
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:16Gi
   * worker 0
-    * RAM:1077382598656
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:576525
-    * volume_size:1000G
-    * volume_used:738G
-    * cpu_list:0-255
-  * worker 1
-    * RAM:540590841856
+    * RAM:540590800896
     * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:162734
-    * volume_size:1000G
-    * volume_used:738G
-    * cpu_list:0-95
-  * worker 2
-    * RAM:540590804992
-    * Cores:96
-    * host:6.8.0-124-generic
+    * host:6.8.0-146-generic
     * node:cl-worker24
-    * disk:135913
+    * disk:143579
+    * datadisk:691715
     * volume_size:1000G
-    * volume_used:738G
+    * volume_used:674G
     * cpu_list:0-95
+  * worker 1
+    * RAM:1077382627328
+    * Cores:256
+    * host:6.8.0-1060-nvidia
+    * node:cl-worker28
+    * disk:879746
+    * datadisk:691506
+    * volume_size:1000G
+    * volume_used:674G
+    * cpu_list:0-255
+  * worker 2
+    * RAM:540579299328
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:154257
+    * datadisk:691678
+    * volume_size:1000G
+    * volume_used:674G
+    * cpu_list:0-127
+  * resources_total: 12.25 CPU, 48.5 GiB RAM requested in 4 pods
+    * worker: 3 x, 12.0 CPU, 48.0 GiB RAM
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * eval_parameters
-    * code:1783890550
+    * code:1792344739
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
-* CockroachDB-1-1-2-1 uses docker image cockroachdb/cockroach:v24.2.4
-  * RAM:2164173213696
+* cockroachdb-1-1-2-1 uses docker image cockroachdb/cockroach:v24.2.4
+  * RAM:2164173172736
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1086937
+  * disk:853973
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:16Gi
   * worker 0
-    * RAM:1077382598656
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:576555
-    * volume_size:1000G
-    * volume_used:738G
-    * cpu_list:0-255
-  * worker 1
-    * RAM:540590841856
+    * RAM:540590800896
     * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:162826
-    * volume_size:1000G
-    * volume_used:738G
-    * cpu_list:0-95
-  * worker 2
-    * RAM:540590804992
-    * Cores:96
-    * host:6.8.0-124-generic
+    * host:6.8.0-146-generic
     * node:cl-worker24
-    * disk:136006
+    * disk:143760
+    * datadisk:691888
     * volume_size:1000G
-    * volume_used:738G
+    * volume_used:674G
     * cpu_list:0-95
+  * worker 1
+    * RAM:1077382627328
+    * Cores:256
+    * host:6.8.0-1060-nvidia
+    * node:cl-worker28
+    * disk:879853
+    * datadisk:691676
+    * volume_size:1000G
+    * volume_used:674G
+    * cpu_list:0-255
+  * worker 2
+    * RAM:540579299328
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:154330
+    * datadisk:691746
+    * volume_size:1000G
+    * volume_used:674G
+    * cpu_list:0-127
+  * resources_total: 12.25 CPU, 48.5 GiB RAM requested in 4 pods
+    * worker: 3 x, 12.0 CPU, 48.0 GiB RAM
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * eval_parameters
-    * code:1783890550
+    * code:1792344739
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
 ### SUT Container Restarts
-* bexhoma-sut-cockroachdb-1-1783890550-67c46fcb89-98x2f: 0
+* bexhoma-sut-cockroachdb-1-1792344739-7f9dd56c5f-vrdf2: 0
 * bexhoma-worker-cockroachdb-benchbase-tpcc-16-0: 0
 * bexhoma-worker-cockroachdb-benchbase-tpcc-16-1: 0
 * bexhoma-worker-cockroachdb-benchbase-tpcc-16-2: 0
@@ -2690,26 +3082,26 @@ Benchbase Workload tpcc SF=16
 
 #### Per Run
 
-|                 |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:----------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| CockroachDB-1-1 |                1 | 16.00 |     1043.00 |           1.00 |            0.00 |        513.00 |          529.00 |              1 |           1 |             | None           |             0 | False         |               55.23 |
+|                 |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| CockroachDB-1-1 |                1 |   16 |      299.00 |           4.00 |            0.00 |        290.00 |            5.00 |              1 |           1 |             | None           |             0 | False         |              192.64 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS                  | phase             | job                 |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------------|:------------------|:--------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| CockroachDB-1-1-1-1-1 | CockroachDB-1-1-1 | CockroachDB-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         168.19 |                      167.39 |         0.00 |                                                     181754.00 |                                              95115.00 |
-| CockroachDB-1-1-2-1-1 | CockroachDB-1-1-2 | CockroachDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                          65.08 |                       64.81 |         0.00 |                                                     226916.00 |                                             122892.00 |
-| CockroachDB-1-1-2-1-2 | CockroachDB-1-1-2 | CockroachDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                          63.54 |                       63.26 |         0.00 |                                                     236248.00 |                                             125877.00 |
+| cockroachdb-1-1-1-1-1 | cockroachdb-1-1-1 | cockroachdb-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         267.31 |                      266.09 |         0.00 |                                                     187956.00 |                                              59837.00 |
+| cockroachdb-1-1-2-1-1 | cockroachdb-1-1-2 | cockroachdb-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                         122.59 |                      122.07 |         0.00 |                                                     191186.00 |                                              65239.00 |
+| cockroachdb-1-1-2-1-2 | cockroachdb-1-1-2 | cockroachdb-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                         119.22 |                      118.78 |         0.00 |                                                     190421.00 |                                              67092.00 |
 
 #### Per Phase
 
 | DBMS              | phase             |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------------|:------------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| CockroachDB-1-1-1 | CockroachDB-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         168.19 |                      167.39 |         0.00 |                                                     181754.00 |                                              95115.00 |
-| CockroachDB-1-1-2 | CockroachDB-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                         128.62 |                      128.07 |         0.00 |                                                     236248.00 |                                             124384.50 |
+| cockroachdb-1-1-1 | cockroachdb-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         267.31 |                      266.09 |         0.00 |                                                     187956.00 |                                              59837.00 |
+| cockroachdb-1-1-2 | cockroachdb-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                         241.81 |                      240.85 |         0.00 |                                                     191186.00 |                                              66165.50 |
 
 ### Monitoring
 
@@ -2717,52 +3109,69 @@ Benchbase Workload tpcc SF=16
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |      2525.39 |     17.45 |           6.53 |                 10.39 |
-| CockroachDB-1-1-2-1 |      2525.39 |     17.45 |           6.53 |                 10.39 |
+| cockroachdb-1-1-1-1 |      2625.98 |     19.22 |           7.54 |                 11.44 |
+| cockroachdb-1-1-2-1 |      2625.98 |     19.22 |           7.54 |                 11.44 |
 
 ### Loading phase: component loader
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |      1430.79 |     10.09 |           0.26 |                  0.26 |
-| CockroachDB-1-1-2-1 |      1430.79 |     10.09 |           0.26 |                  0.26 |
+| cockroachdb-1-1-1-1 |       964.88 |      9.36 |           0.27 |                  0.27 |
+| cockroachdb-1-1-2-1 |       964.88 |      9.36 |           0.27 |                  0.27 |
 
-### Execution phase: component worker
-
-| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |      2806.82 |     19.97 |           8.06 |                 12.28 |
-| CockroachDB-1-1-2-1 |      2062.42 |     17.93 |           7.93 |                 12.23 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: component worker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| CockroachDB-1-1-1-1 |       106.82 |      0.71 |           0.31 |                  0.31 |
-| CockroachDB-1-1-2-1 |       106.83 |      0.71 |           0.31 |                  0.31 |
+| cockroachdb-1-1-1-1 |      4113.62 |     15.73 |           7.92 |                 11.92 |
+| cockroachdb-1-1-2-1 |      3767.58 |     13.56 |           7.80 |                 12.17 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------|-------------:|----------:|---------------:|----------------------:|
+| cockroachdb-1-1-1-1 |       145.74 |      0.55 |           0.30 |                  0.30 |
+| cockroachdb-1-1-2-1 |       145.74 |      1.34 |           0.30 |                  0.30 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-2-1 (bexhoma-metrics-cockroachdb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-2-1 (bexhoma-metrics-cockroachdb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-2-1 (bexhoma-metrics-cockroachdb-1-1-2-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection cockroachdb-1-1-2-1 (bexhoma-metrics-cockroachdb-1-1-2-1-workerbenchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: component worker
 
-| DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In (Bytes/sec) |   Raft Recovery Snapshot In (Bytes/sec) |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
-|:--------------------|--------------------------------------------:|------------------------------:|----------------------------------------:|------------------------------------------:|----------------------------------:|
-| CockroachDB-1-1-1-1 |                                      970.22 |                    9806527.16 |                                    0.00 |                                      0.07 |                              0.00 |
-| CockroachDB-1-1-2-1 |                                      970.22 |                    9806527.16 |                                    0.00 |                                      0.07 |                              0.00 |
+| DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In [B/s] |   Raft Recovery Snapshot In [B/s] |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
+|:--------------------|--------------------------------------------:|------------------------:|----------------------------------:|------------------------------------------:|----------------------------------:|
+| cockroachdb-1-1-1-1 |                                     1354.31 |             13646676.41 |                              0.00 |                                      0.38 |                              0.00 |
+| cockroachdb-1-1-2-1 |                                     1354.31 |             13646676.41 |                              0.00 |                                      0.38 |                              0.00 |
 
-#### Execution phase: component worker
+#### Benchmarking phase: component worker
 
-| DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In (Bytes/sec) |   Raft Recovery Snapshot In (Bytes/sec) |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
-|:--------------------|--------------------------------------------:|------------------------------:|----------------------------------------:|------------------------------------------:|----------------------------------:|
-| CockroachDB-1-1-1-1 |                                     8106.30 |                    3795993.72 |                                    0.00 |                                      0.00 |                              0.00 |
-| CockroachDB-1-1-2-1 |                                     5253.89 |                    2100009.01 |                                    0.00 |                                      0.00 |                              0.00 |
+| DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In [B/s] |   Raft Recovery Snapshot In [B/s] |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
+|:--------------------|--------------------------------------------:|------------------------:|----------------------------------:|------------------------------------------:|----------------------------------:|
+| cockroachdb-1-1-1-1 |                                    14453.18 |             10715075.91 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-2-1 |                                    13422.10 |              5603661.82 |                              0.00 |                                      0.00 |                              0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component worker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
@@ -2813,8 +3222,8 @@ bexhoma ycsb \
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 632s 
-* Code: 1783892151
+* Duration: 585s 
+* Code: 1792346117
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -2825,7 +3234,8 @@ YCSB SF=1
   * Target is based on multiples of '16384'.
   * Factors for loading are [12].
   * Factors for benchmarking are [4].
-  * Experiment uses bexhoma version 0.10.5.
+  * Status is logged every 10s.
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['Redis'].
@@ -2838,80 +3248,93 @@ YCSB SF=1
   * Benchmarking is tested with [128] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 3 worker nodes, 1 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* Redis-1-1-1-1 uses docker image redis:7.4.2
-  * RAM:2164173213696
+* redis-1-1-1-1 uses docker image redis:8.10.2
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1086940
+  * disk:854802
+  * datadisk:1
   * cpu_list:0-223
   * args:['--maxclients', '10000', '--io-threads', '64']
   * requests_cpu:4
   * requests_memory:16Gi
   * worker 0
-    * RAM:1077382598656
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:578614
-    * cpu_list:0-255
-  * worker 1
-    * RAM:540590841856
+    * RAM:540590800896
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161323
-    * cpu_list:0-95
-  * worker 2
-    * RAM:1077381287936
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-111-generic
-    * node:cl-worker27
-    * disk:1371668
-    * cpu_list:0-255
-  * worker 3
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
+    * host:6.8.0-146-generic
     * node:cl-worker24
-    * disk:134433
+    * disk:143873
+    * datadisk:717
     * cpu_list:0-95
-  * worker 4
-    * RAM:540597907456
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-124-generic
-    * node:cl-worker39
-    * disk:321198
-    * cpu_list:0-255
-  * worker 5
-    * RAM:1081742745600
+  * worker 1
+    * RAM:540579299328
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-117-generic
-    * node:cl-worker29
-    * disk:942030
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:151397
+    * datadisk:803
     * cpu_list:0-127
+  * worker 2
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:617872
+    * datadisk:721
+    * cpu_list:0-127
+  * worker 3
+    * RAM:1077382627328
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-1060-nvidia
+    * node:cl-worker28
+    * disk:878208
+    * datadisk:714
+    * cpu_list:0-255
+  * worker 4
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:870689
+    * datadisk:714
+    * cpu_list:0-255
+  * worker 5
+    * RAM:2164173172736
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-137-generic
+    * node:cl-worker36
+    * disk:854803
+    * datadisk:806
+    * cpu_list:0-223
+  * resources_total: 24.25 CPU, 96.5 GiB RAM requested in 7 pods
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
+    * worker: 6 x, 24.0 CPU, 96.0 GiB RAM
   * eval_parameters
-    * code:1783892151
+    * code:1792346117
     * BEXHOMA_REPLICAS:1
     * BEXHOMA_WORKERS:3
 
 ### SUT Container Restarts
-* bexhoma-sut-redis-1-1783892151-65474664c6-5kghb: 0
-* bx-w-redis-ycsb-1-0: 0 0
-* bx-w-redis-ycsb-1-1: 0 0
-* bx-w-redis-ycsb-1-2: 0 0
-* bx-w-redis-ycsb-1-3: 0 0
-* bx-w-redis-ycsb-1-4: 0 0
-* bx-w-redis-ycsb-1-5: 0 0
+* bexhoma-sut-redis-1-1792346117-958975b77-gh27h: 0
+* bx-w-redis-ycsb-1-0: 0
+* bx-w-redis-ycsb-1-1: 0
+* bx-w-redis-ycsb-1-2: 0
+* bx-w-redis-ycsb-1-3: 0
+* bx-w-redis-ycsb-1-4: 0
+* bx-w-redis-ycsb-1-5: 0
 
 ### Workflow
 
@@ -2929,34 +3352,34 @@ YCSB SF=1
 
 | connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| Redis-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         1836.16 |                68077.00 |            125000.00 |                              9303.00 | 1.00 |               52.88 |
-| Redis-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         1833.38 |                68180.00 |            125000.00 |                              9463.00 | 1.00 |               52.80 |
-| Redis-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         1842.43 |                67845.00 |            125000.00 |                              9487.00 | 1.00 |               53.06 |
-| Redis-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         1834.38 |                68143.00 |            125000.00 |                              9439.00 | 1.00 |               52.83 |
-| Redis-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         1835.72 |                68093.00 |            125000.00 |                              9599.00 | 1.00 |               52.87 |
-| Redis-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         1838.51 |                67990.00 |            125000.00 |                              9359.00 | 1.00 |               52.95 |
-| Redis-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         1833.70 |                68168.00 |            125000.00 |                              9447.00 | 1.00 |               52.81 |
-| Redis-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         1858.18 |                67270.00 |            125000.00 |                              9447.00 | 1.00 |               53.52 |
+| redis-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3859.93 |                32384.00 |            125000.00 |                              4683.00 | 1.00 |              111.17 |
+| redis-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3840.36 |                32549.00 |            125000.00 |                              4675.00 | 1.00 |              110.60 |
+| redis-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3973.05 |                31462.00 |            125000.00 |                              4687.00 | 1.00 |              114.42 |
+| redis-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3861.60 |                32370.00 |            125000.00 |                              4683.00 | 1.00 |              111.21 |
+| redis-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3841.31 |                32541.00 |            125000.00 |                              4683.00 | 1.00 |              110.63 |
+| redis-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3896.75 |                32078.00 |            125000.00 |                              4699.00 | 1.00 |              112.23 |
+| redis-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3858.98 |                32392.00 |            125000.00 |                              4703.00 | 1.00 |              111.14 |
+| redis-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3882.71 |                32194.00 |            125000.00 |                              4683.00 | 1.00 |              111.82 |
 
 #### Per Run
 
 | DBMS      |   experiment_run |   threads |    target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------|-----------------:|----------:|----------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| Redis-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |               52.80 |                        14712.47 |                68180.00 |           1000000.00 |                              9443.00 |
+| Redis-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              110.60 |                        31014.69 |                32549.00 |           1000000.00 |                              4687.00 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| Redis-1-1-1-1-1 | Redis-1-1-1 | Redis-1-1-1-1 | Redis-1         |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        55248.62 |               181000.00 |            4999079 |                            6587.00 |              5000921 |                              6555.00 |
+| redis-1-1-1-1-1 | redis-1-1-1 | redis-1-1-1-1 | Redis-1         |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        60853.53 |               164329.00 |            4999181 |                            1623.00 |              5000819 |                              1615.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| Redis-1-1-1 | Redis-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        55248.62 |               181000.00 |            4999079 |                            6587.00 |              5000921 |                              6555.00 |
+| redis-1-1-1 | redis-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        60853.53 |               164329.00 |            4999181 |                            1623.00 |              5000819 |                              1615.00 |
 
 ### Monitoring
 
@@ -2964,46 +3387,60 @@ YCSB SF=1
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| Redis-1-1-1-1 |       225.56 |      3.38 |           3.59 |                  3.59 |
+| redis-1-1-1-1 |       158.90 |      2.83 |           3.07 |                  3.07 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| Redis-1-1-1-1 |       153.24 |      2.77 |           0.12 |                  0.12 |
+| redis-1-1-1-1 |        59.52 |      0.00 |           0.30 |                  0.31 |
 
-### Execution phase: component worker
-
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| Redis-1-1-1-1 |       565.16 |      4.29 |           4.04 |                  4.06 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: component worker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| Redis-1-1-1-1 |       547.77 |      4.29 |           0.30 |                  0.30 |
+| redis-1-1-1-1 |       420.73 |      3.42 |           3.27 |                  3.28 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| redis-1-1-1-1 |       593.24 |      3.94 |           1.50 |                  1.50 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-loader.log)
+* CPU Throttled Time [s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: component worker
 
-| DBMS          |   Redis Cluster State |   Connected Clients [count] |   Redis Memory Used [Gi] |   Redis Master Link Status |   Redis Operations Rate [ops/s] |
-|:--------------|----------------------:|----------------------------:|-------------------------:|---------------------------:|--------------------------------:|
-| Redis-1-1-1-1 |                  6.00 |                      201.00 |                     3.46 |                       3.00 |                         5530.00 |
+| DBMS          |   Redis Cluster State |   Connected Clients [count] |   Redis Memory Used [GiB] |   Redis Master Link Status |   Redis Operations Rate, Busiest Instance [ops/s] |
+|:--------------|----------------------:|----------------------------:|--------------------------:|---------------------------:|--------------------------------------------------:|
+| redis-1-1-1-1 |                  6.00 |                      201.00 |                      2.90 |                       3.00 |                                           5913.96 |
 
-#### Execution phase: component worker
+#### Benchmarking phase: component worker
 
-| DBMS          |   Redis Cluster State |   Connected Clients [count] |   Redis Memory Used [Gi] |   Redis Master Link Status |   Redis Operations Rate [ops/s] |
-|:--------------|----------------------:|----------------------------:|-------------------------:|---------------------------:|--------------------------------:|
-| Redis-1-1-1-1 |                  6.00 |                      393.00 |                     3.50 |                       3.00 |                         6813.02 |
+| DBMS          |   Redis Cluster State |   Connected Clients [count] |   Redis Memory Used [GiB] |   Redis Master Link Status |   Redis Operations Rate, Busiest Instance [ops/s] |
+|:--------------|----------------------:|----------------------------:|--------------------------:|---------------------------:|--------------------------------------------------:|
+| redis-1-1-1-1 |                  6.00 |                      403.00 |                      2.91 |                       3.00 |                                          12275.30 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component worker contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component worker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Monitoring metrics missing
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
@@ -3062,8 +3499,8 @@ bexhoma ycsb \
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 826s 
-* Code: 1783892810
+* Duration: 585s 
+* Code: 1792346768
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -3074,7 +3511,9 @@ YCSB SF=1
   * Target is based on multiples of '16384'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.10.5.
+  * Status is logged every 10s.
+  * TiDB uses 3 SUT replica(s) and 3 PD node(s).
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['TiDB'].
@@ -3084,99 +3523,113 @@ YCSB SF=1
   * Benchmarking is tested with [64] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 3 worker nodes, 3 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* TiDB-1-1-1-1 uses docker image pingcap/tidb:v7.1.6
-  * RAM:540590841856
-  * CPU:AMD EPYC 7352 24-Core Processor
-  * Cores:96
-  * host:6.8.0-117-generic
-  * node:cl-worker25
-  * disk:170557
-  * cpu_list:0-95
+* tidb-1-1-1-1 uses docker image pingcap/tidb:v8.5.8
+  * RAM:1081853952000
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
+  * Cores:128
+  * host:6.8.0-137-generic
+  * node:cl-worker37
+  * disk:631401
+  * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:16Gi
   * sut 0
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:170609
-    * cpu_list:0-95
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:631401
+    * cpu_list:0-127
   * sut 1
-    * RAM:540597907456
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-124-generic
-    * node:cl-worker39
-    * disk:320592
-    * cpu_list:0-255
-  * sut 2
-    * RAM:1077382598656
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:592162
-    * cpu_list:0-255
-  * pd 0
-    * RAM:1077382598656
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:597940
-    * cpu_list:0-255
-  * pd 1
-    * RAM:540590804992
+    * RAM:540590800896
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
-    * host:6.8.0-124-generic
+    * host:6.8.0-146-generic
     * node:cl-worker24
-    * disk:133836
+    * disk:144405
     * cpu_list:0-95
+  * sut 2
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:169495
+    * cpu_list:0-127
+  * pd 0
+    * RAM:540590800896
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-146-generic
+    * node:cl-worker24
+    * disk:144406
+    * datadisk:123
+    * cpu_list:0-95
+  * pd 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:631401
+    * datadisk:123
+    * cpu_list:0-127
   * pd 2
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:170647
-    * cpu_list:0-95
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:170897
+    * datadisk:123
+    * cpu_list:0-127
   * tikv 0
-    * RAM:1077382598656
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:592155
-    * cpu_list:0-255
-  * tikv 1
-    * RAM:1077381287936
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-111-generic
-    * node:cl-worker27
-    * disk:1392000
-    * cpu_list:0-255
-  * tikv 2
-    * RAM:540590841856
+    * RAM:540590800896
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:170586
+    * host:6.8.0-146-generic
+    * node:cl-worker24
+    * disk:144405
+    * datadisk:5373
     * cpu_list:0-95
+  * tikv 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:631401
+    * datadisk:11994
+    * cpu_list:0-127
+  * tikv 2
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:169494
+    * datadisk:7370
+    * cpu_list:0-127
+  * resources_total: 24.75 CPU, 97.5 GiB RAM requested in 9 pods
+    * pd: 3 x, 0.75 CPU, 1.5 GiB RAM
+    * tikv: 3 x, 12.0 CPU, 48.0 GiB RAM
+    * sut: 3 x, 12.0 CPU, 48.0 GiB RAM
   * eval_parameters
-    * code:1783892810
+    * code:1792346768
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
 ### SUT Container Restarts
-* bexhoma-sut-tidb-1-1783892810-6749979d78-jp74c: 0
-* bexhoma-sut-tidb-1-1783892810-6749979d78-lh57n: 0
-* bexhoma-sut-tidb-1-1783892810-6749979d78-sq9bz: 0
+* bexhoma-sut-tidb-1-1792346768-6c6588cf4-42vnj: 0
+* bexhoma-sut-tidb-1-1792346768-6c6588cf4-6xbtd: 0
+* bexhoma-sut-tidb-1-1792346768-6c6588cf4-g7br9: 0
 * bexhoma-pd-tidb-ycsb-1-0: 0
 * bexhoma-pd-tidb-ycsb-1-1: 0
 * bexhoma-pd-tidb-ycsb-1-2: 0
@@ -3200,34 +3653,34 @@ YCSB SF=1
 
 | connection     |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:---------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| TiDB-1-1-0-1-1 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                          706.97 |               176810.00 |            125000.00 |                             78911.00 | 1.00 |               20.36 |
-| TiDB-1-1-0-1-2 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                          707.59 |               176655.00 |            125000.00 |                             77823.00 | 1.00 |               20.38 |
-| TiDB-1-1-0-1-3 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                          707.37 |               176712.00 |            125000.00 |                             80255.00 | 1.00 |               20.37 |
-| TiDB-1-1-0-1-4 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                          706.94 |               176818.00 |            125000.00 |                             79615.00 | 1.00 |               20.36 |
-| TiDB-1-1-0-1-5 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                          720.36 |               173524.00 |            125000.00 |                             77439.00 | 1.00 |               20.75 |
-| TiDB-1-1-0-1-6 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                          708.83 |               176346.00 |            125000.00 |                             78975.00 | 1.00 |               20.41 |
-| TiDB-1-1-0-1-7 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                          707.69 |               176632.00 |            125000.00 |                             78463.00 | 1.00 |               20.38 |
-| TiDB-1-1-0-1-8 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                          710.32 |               175978.00 |            125000.00 |                             77887.00 | 1.00 |               20.46 |
+| tidb-1-1-0-1-1 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1574.86 |                79372.00 |            125000.00 |                             21951.00 | 1.00 |               45.36 |
+| tidb-1-1-0-1-2 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1615.13 |                77393.00 |            125000.00 |                             18831.00 | 1.00 |               46.52 |
+| tidb-1-1-0-1-3 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1608.23 |                77725.00 |            125000.00 |                             20255.00 | 1.00 |               46.32 |
+| tidb-1-1-0-1-4 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1583.56 |                78936.00 |            125000.00 |                             19279.00 | 1.00 |               45.61 |
+| tidb-1-1-0-1-5 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1771.44 |                70564.00 |            125000.00 |                             18191.00 | 1.00 |               51.02 |
+| tidb-1-1-0-1-6 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1589.64 |                78634.00 |            125000.00 |                             20815.00 | 1.00 |               45.78 |
+| tidb-1-1-0-1-7 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1594.23 |                78408.00 |            125000.00 |                             22015.00 | 1.00 |               45.91 |
+| tidb-1-1-0-1-8 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1583.16 |                78956.00 |            125000.00 |                             22031.00 | 1.00 |               45.60 |
 
 #### Per Run
 
 | DBMS     |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:---------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| TiDB-1-1 |             1.00 |     64.00 | 16384.00 |        8.00 |         0.00 | 1.00 |               20.36 |                         5676.07 |               176818.00 |           1000000.00 |                             78671.00 |
+| TiDB-1-1 |             1.00 |     64.00 | 16384.00 |        8.00 |         0.00 | 1.00 |               45.36 |                        12920.26 |                79372.00 |           1000000.00 |                             20421.00 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS           | phase      | job          | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:---------------|:-----------|:-------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| TiDB-1-1-1-1-1 | TiDB-1-1-1 | TiDB-1-1-1-1 | TiDB-1          |                1 |        1 |               1 |       1 |        64 |    16384 |           1 |            0 |                         4162.68 |               240230.00 |             500772 |                            7891.00 |               499228 |                            331519.00 |
+| tidb-1-1-1-1-1 | tidb-1-1-1 | tidb-1-1-1-1 | TiDB-1          |                1 |        1 |               1 |       1 |        64 |    16384 |           1 |            0 |                        13726.84 |                72850.00 |             500121 |                            2547.00 |               499879 |                            103359.00 |
 
 #### Per Phase
 
 | DBMS       | phase      |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-----------|:-----------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| TiDB-1-1-1 | TiDB-1-1-1 |                1 |        64 |    16384 |               1 |           1 |            0 |                         4162.68 |               240230.00 |             500772 |                            7891.00 |               499228 |                            331519.00 |
+| tidb-1-1-1 | tidb-1-1-1 |                1 |        64 |    16384 |               1 |           1 |            0 |                        13726.84 |                72850.00 |             500121 |                            2547.00 |               499879 |                            103359.00 |
 
 ### Monitoring
 
@@ -3235,98 +3688,117 @@ YCSB SF=1
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      1208.31 |      8.29 |           2.88 |                  3.22 |
+| tidb-1-1-1-1 |       966.23 |     13.20 |           1.71 |                  2.25 |
 
 ### Loading phase: component pd
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       122.25 |      0.85 |           0.28 |                  0.28 |
+| tidb-1-1-1-1 |        71.05 |      0.87 |           0.22 |                  0.22 |
 
 ### Loading phase: component tikv
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      1184.00 |      8.60 |           7.03 |                 17.83 |
+| tidb-1-1-1-1 |       637.61 |      8.26 |           7.82 |                 15.54 |
 
 ### Loading phase: component loader
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       120.75 |      0.89 |           0.23 |                  0.23 |
+| tidb-1-1-1-1 |       111.70 |      2.07 |           0.32 |                  0.33 |
 
-### Execution phase: SUT deployment
-
-| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      1146.49 |      8.73 |           1.28 |                  1.63 |
-
-### Execution phase: component pd
+### Benchmarking phase: SUT deployment
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       136.37 |      0.93 |           0.27 |                  0.27 |
+| tidb-1-1-1-1 |       808.11 |     13.87 |           1.89 |                  2.42 |
 
-### Execution phase: component tikv
-
-| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      1332.57 |      9.86 |           9.05 |                 22.55 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: component pd
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |        85.94 |      0.75 |           0.14 |                  0.14 |
+| tidb-1-1-1-1 |        59.82 |      0.96 |           0.22 |                  0.22 |
+
+### Benchmarking phase: component tikv
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| tidb-1-1-1-1 |       568.99 |     12.38 |           9.52 |                 20.17 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| tidb-1-1-1-1 |        59.31 |      1.08 |           0.55 |                  0.55 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* PD Leader Balance Actions [count] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-pdbenchmarking.log)
+* PD Leader Balance Actions [count] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-pdloading.log)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvloading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvloading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS         |   TiDB SQL Statement Throughput [ops/s] |   TiDB Avg Query Duration [ms] |
-|:-------------|----------------------------------------:|-------------------------------:|
-| TiDB-1-1-1-1 |                                 3446.56 |                          10.77 |
+| DBMS         |   TiDB SQL Statement Throughput [ops/s] |   TiDB Avg Query Duration since Start [ms] |
+|:-------------|----------------------------------------:|-------------------------------------------:|
+| tidb-1-1-1-1 |                                 4202.97 |                                       4.30 |
 
 #### Loading phase: component pd
 
-| DBMS         |   PD Cluster Leader Count |   PD Leader Balance Actions [ops] |
-|:-------------|--------------------------:|----------------------------------:|
-| TiDB-1-1-1-1 |                     64.00 |                             12.00 |
+| DBMS         |   PD Cluster Leader Count |   PD Leader Balance Actions [count] |
+|:-------------|--------------------------:|------------------------------------:|
+| tidb-1-1-1-1 |                     37.00 |                                0.00 |
 
 #### Loading phase: component tikv
 
-| DBMS         |   TiKV Store Used [%] |   TiKV Compaction Time Median [s] |   TiKV Compaction Flow [Gi] |   TiKV Compaction Pending [Gi] |
-|:-------------|----------------------:|----------------------------------:|----------------------------:|-------------------------------:|
-| TiDB-1-1-1-1 |                  0.18 |                      104429564.00 |                        6.22 |                           1.44 |
+| DBMS         |   TiKV Store Size Used [GiB] |   TiKV Store Used [%] |   TiKV Compaction Time Median, Max over Instances [s] |   TiKV Compaction Flow [GiB] |   TiKV Compaction Pending [GiB] |
+|:-------------|-----------------------------:|----------------------:|------------------------------------------------------:|-----------------------------:|--------------------------------:|
+| tidb-1-1-1-1 |                        22.78 |                  1.38 |                                                  5.68 |                         5.94 |                            0.48 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS         |   TiDB SQL Statement Throughput [ops/s] |   TiDB Avg Query Duration [ms] |
-|:-------------|----------------------------------------:|-------------------------------:|
-| TiDB-1-1-1-1 |                                 1553.79 |                          12.37 |
+| DBMS         |   TiDB SQL Statement Throughput [ops/s] |   TiDB Avg Query Duration since Start [ms] |
+|:-------------|----------------------------------------:|-------------------------------------------:|
+| tidb-1-1-1-1 |                                 5588.12 |                                       4.33 |
 
-#### Execution phase: component pd
+#### Benchmarking phase: component pd
 
-| DBMS         |   PD Cluster Leader Count |   PD Leader Balance Actions [ops] |
-|:-------------|--------------------------:|----------------------------------:|
-| TiDB-1-1-1-1 |                     70.00 |                              0.00 |
+| DBMS         |   PD Cluster Leader Count |   PD Leader Balance Actions [count] |
+|:-------------|--------------------------:|------------------------------------:|
+| tidb-1-1-1-1 |                     39.00 |                                0.00 |
 
-#### Execution phase: component tikv
+#### Benchmarking phase: component tikv
 
-| DBMS         |   TiKV Store Used [%] |   TiKV Compaction Time Median [s] |   TiKV Compaction Flow [Gi] |   TiKV Compaction Pending [Gi] |
-|:-------------|----------------------:|----------------------------------:|----------------------------:|-------------------------------:|
-| TiDB-1-1-1-1 |                  0.26 |                       56219681.00 |                        2.26 |                           1.42 |
+| DBMS         |   TiKV Store Size Used [GiB] |   TiKV Store Used [%] |   TiKV Compaction Time Median, Max over Instances [s] |   TiKV Compaction Flow [GiB] |   TiKV Compaction Pending [GiB] |
+|:-------------|-----------------------------:|----------------------:|------------------------------------------------------:|-----------------------------:|--------------------------------:|
+| tidb-1-1-1-1 |                        23.49 |                  1.43 |                                                  2.57 |                         0.41 |                            0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component pd contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component tikv contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Monitoring metrics missing
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
@@ -3370,13 +3842,14 @@ bexhoma benchbase \
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1419s 
-* Code: 1783893680
+* Duration: 1274s 
+* Code: 1792347432
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-  * Benchbase data is generated and loaded using several threads.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.10.5.
+  * TiDB uses 3 SUT replica(s) and 3 PD node(s).
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['TiDB'].
   * Import is handled by 1 processes (pods).
@@ -3385,185 +3858,209 @@ Benchbase Workload tpcc SF=16
   * Benchmarking is tested with [16] threads, split into [1, 2] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 3 worker nodes, 3 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* TiDB-1-1-1-1 uses docker image pingcap/tidb:v7.1.6
-  * RAM:1077382598656
-  * CPU:AMD EPYC 7742 64-Core Processor
-  * Cores:256
-  * host:6.8.0-1058-nvidia
-  * node:cl-worker28
-  * disk:582341
-  * cpu_list:0-255
+* tidb-1-1-1-1 uses docker image pingcap/tidb:v8.5.8
+  * RAM:1081853952000
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
+  * Cores:128
+  * host:6.8.0-137-generic
+  * node:cl-worker37
+  * disk:619408
+  * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:16Gi
   * sut 0
-    * RAM:1077382598656
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:577312
-    * cpu_list:0-255
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:619408
+    * cpu_list:0-127
   * sut 1
-    * RAM:540590804992
+    * RAM:540590800896
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
-    * host:6.8.0-124-generic
+    * host:6.8.0-146-generic
     * node:cl-worker24
-    * disk:142627
+    * disk:145175
     * cpu_list:0-95
   * sut 2
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161794
-    * cpu_list:0-95
-  * pd 0
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161794
-    * cpu_list:0-95
-  * pd 1
-    * RAM:540597907456
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-124-generic
-    * node:cl-worker39
-    * disk:320597
-    * cpu_list:0-255
-  * pd 2
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
-    * node:cl-worker24
-    * disk:142627
-    * cpu_list:0-95
-  * tikv 0
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
-    * node:cl-worker24
-    * disk:142627
-    * cpu_list:0-95
-  * tikv 1
-    * RAM:1081742745600
+    * RAM:540579299328
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-117-generic
-    * node:cl-worker29
-    * disk:965701
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:168978
     * cpu_list:0-127
+  * pd 0
+    * RAM:540590800896
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-146-generic
+    * node:cl-worker24
+    * disk:141439
+    * datadisk:123
+    * cpu_list:0-95
+  * pd 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:619408
+    * datadisk:123
+    * cpu_list:0-127
+  * pd 2
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:167992
+    * datadisk:123
+    * cpu_list:0-127
+  * tikv 0
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:168348
+    * datadisk:9144
+    * cpu_list:0-127
+  * tikv 1
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:894446
+    * datadisk:24450
+    * cpu_list:0-255
   * tikv 2
-    * RAM:2164173213696
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-111-generic
-    * node:cl-worker36
-    * disk:1111265
-    * cpu_list:0-223
+    * RAM:1077382627328
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-1060-nvidia
+    * node:cl-worker28
+    * disk:902000
+    * datadisk:24562
+    * cpu_list:0-255
+  * resources_total: 24.75 CPU, 97.5 GiB RAM requested in 9 pods
+    * pd: 3 x, 0.75 CPU, 1.5 GiB RAM
+    * tikv: 3 x, 12.0 CPU, 48.0 GiB RAM
+    * sut: 3 x, 12.0 CPU, 48.0 GiB RAM
   * eval_parameters
-    * code:1783893680
+    * code:1792347432
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
-* TiDB-1-1-2-1 uses docker image pingcap/tidb:v7.1.6
-  * RAM:1077382598656
-  * CPU:AMD EPYC 7742 64-Core Processor
-  * Cores:256
-  * host:6.8.0-1058-nvidia
-  * node:cl-worker28
-  * disk:579884
-  * cpu_list:0-255
+* tidb-1-1-2-1 uses docker image pingcap/tidb:v8.5.8
+  * RAM:1081853952000
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
+  * Cores:128
+  * host:6.8.0-137-generic
+  * node:cl-worker37
+  * disk:619409
+  * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:16Gi
   * sut 0
-    * RAM:1077382598656
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:578508
-    * cpu_list:0-255
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:619409
+    * cpu_list:0-127
   * sut 1
-    * RAM:540590804992
+    * RAM:540590800896
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
-    * host:6.8.0-124-generic
+    * host:6.8.0-146-generic
     * node:cl-worker24
-    * disk:141199
+    * disk:142124
     * cpu_list:0-95
   * sut 2
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161795
-    * cpu_list:0-95
-  * pd 0
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161795
-    * cpu_list:0-95
-  * pd 1
-    * RAM:540597907456
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-124-generic
-    * node:cl-worker39
-    * disk:320603
-    * cpu_list:0-255
-  * pd 2
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
-    * node:cl-worker24
-    * disk:141230
-    * cpu_list:0-95
-  * tikv 0
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
-    * node:cl-worker24
-    * disk:141466
-    * cpu_list:0-95
-  * tikv 1
-    * RAM:1081742745600
+    * RAM:540579299328
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-117-generic
-    * node:cl-worker29
-    * disk:964905
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:173821
     * cpu_list:0-127
+  * pd 0
+    * RAM:540590800896
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-146-generic
+    * node:cl-worker24
+    * disk:144056
+    * datadisk:123
+    * cpu_list:0-95
+  * pd 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:619409
+    * datadisk:123
+    * cpu_list:0-127
+  * pd 2
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:173821
+    * datadisk:123
+    * cpu_list:0-127
+  * tikv 0
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:173821
+    * datadisk:11727
+    * cpu_list:0-127
+  * tikv 1
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:893123
+    * datadisk:23126
+    * cpu_list:0-255
   * tikv 2
-    * RAM:2164173213696
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-111-generic
-    * node:cl-worker36
-    * disk:1109491
-    * cpu_list:0-223
+    * RAM:1077382627328
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-1060-nvidia
+    * node:cl-worker28
+    * disk:904359
+    * datadisk:23140
+    * cpu_list:0-255
+  * resources_total: 24.75 CPU, 97.5 GiB RAM requested in 9 pods
+    * pd: 3 x, 0.75 CPU, 1.5 GiB RAM
+    * tikv: 3 x, 12.0 CPU, 48.0 GiB RAM
+    * sut: 3 x, 12.0 CPU, 48.0 GiB RAM
   * eval_parameters
-    * code:1783893680
+    * code:1792347432
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
 ### SUT Container Restarts
-* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-bbs8w: 0
-* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-fz7fv: 0
-* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-jc5df: 0
+* bexhoma-sut-tidb-1-1792347432-64dc45fb4-dvvb5: 0
+* bexhoma-sut-tidb-1-1792347432-64dc45fb4-gjkbz: 0
+* bexhoma-sut-tidb-1-1792347432-64dc45fb4-wvpsm: 0
 * bexhoma-pd-tidb-benchbase-tpcc-16-0: 0
 * bexhoma-pd-tidb-benchbase-tpcc-16-1: 0
 * bexhoma-pd-tidb-benchbase-tpcc-16-2: 0
@@ -3587,26 +4084,26 @@ Benchbase Workload tpcc SF=16
 
 #### Per Run
 
-|          |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| TiDB-1-1 |                1 | 16.00 |      485.00 |           1.00 |            0.00 |        218.00 |          266.00 |              1 |           1 |             | None           |             0 | False         |              118.76 |
+|          |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| TiDB-1-1 |                1 |   16 |      232.00 |           5.00 |            0.00 |        223.00 |            4.00 |              1 |           1 |             | None           |             0 | False         |              248.28 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS           | phase      | job          |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------|:-----------|:-------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| TiDB-1-1-1-1-1 | TiDB-1-1-1 | TiDB-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         346.82 |                      345.22 |         0.00 |                                                     129138.00 |                                              45625.00 |
-| TiDB-1-1-2-1-1 | TiDB-1-1-2 | TiDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                         167.67 |                      165.79 |         0.00 |                                                     119802.00 |                                              47297.00 |
-| TiDB-1-1-2-1-2 | TiDB-1-1-2 | TiDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                         168.23 |                      166.45 |         0.00 |                                                     123754.00 |                                              47407.00 |
+| tidb-1-1-1-1-1 | tidb-1-1-1 | tidb-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         422.51 |                      420.65 |         0.00 |                                                      93952.00 |                                              37856.00 |
+| tidb-1-1-2-1-1 | tidb-1-1-2 | tidb-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                         187.19 |                      184.98 |         0.00 |                                                     105555.00 |                                              42724.00 |
+| tidb-1-1-2-1-2 | tidb-1-1-2 | tidb-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                         203.06 |                      200.67 |         0.00 |                                                     102407.00 |                                              39383.00 |
 
 #### Per Phase
 
 | DBMS       | phase      |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------|:-----------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| TiDB-1-1-1 | TiDB-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         346.82 |                      345.22 |         0.00 |                                                     129138.00 |                                              45625.00 |
-| TiDB-1-1-2 | TiDB-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                         335.90 |                      332.24 |         0.00 |                                                     123754.00 |                                              47352.00 |
+| tidb-1-1-1 | tidb-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         422.51 |                      420.65 |         0.00 |                                                      93952.00 |                                              37856.00 |
+| tidb-1-1-2 | tidb-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                         390.25 |                      385.65 |         0.00 |                                                     105555.00 |                                              41053.50 |
 
 ### Monitoring
 
@@ -3614,68 +4111,91 @@ Benchbase Workload tpcc SF=16
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      1045.59 |      8.60 |           3.99 |                  4.32 |
-| TiDB-1-1-2-1 |      1045.59 |      8.60 |           3.99 |                  4.32 |
+| tidb-1-1-1-1 |       928.99 |      4.98 |           1.34 |                  1.88 |
+| tidb-1-1-2-1 |       928.99 |      4.98 |           1.34 |                  1.88 |
 
 ### Loading phase: component pd
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       119.00 |      0.55 |           0.33 |                  0.33 |
-| TiDB-1-1-2-1 |       119.00 |      0.55 |           0.33 |                  0.33 |
+| tidb-1-1-1-1 |        63.84 |      0.30 |           0.21 |                  0.21 |
+| tidb-1-1-2-1 |        63.84 |      0.30 |           0.21 |                  0.21 |
 
 ### Loading phase: component tikv
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      2840.89 |     18.27 |          10.96 |                 30.53 |
-| TiDB-1-1-2-1 |      2840.89 |     18.27 |          10.96 |                 30.53 |
+| tidb-1-1-1-1 |      2708.40 |     15.77 |          13.60 |                 29.90 |
+| tidb-1-1-2-1 |      2708.40 |     15.77 |          13.60 |                 29.90 |
 
 ### Loading phase: component loader
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       136.53 |      1.55 |           0.68 |                  0.68 |
-| TiDB-1-1-2-1 |       136.53 |      1.55 |           0.68 |                  0.68 |
+| tidb-1-1-1-1 |       114.09 |      1.05 |           0.49 |                  0.49 |
+| tidb-1-1-2-1 |       114.09 |      1.05 |           0.49 |                  0.49 |
 
-### Execution phase: SUT deployment
-
-| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      2304.24 |      9.02 |           2.10 |                  2.44 |
-| TiDB-1-1-2-1 |      2166.24 |      8.52 |           2.82 |                  3.16 |
-
-### Execution phase: component pd
+### Benchmarking phase: SUT deployment
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       361.50 |      1.41 |           0.32 |                  0.32 |
-| TiDB-1-1-2-1 |       372.91 |      1.37 |           0.32 |                  0.33 |
+| tidb-1-1-1-1 |      3102.39 |     11.66 |           2.44 |                  2.98 |
+| tidb-1-1-2-1 |      2993.80 |     10.78 |           2.70 |                  3.24 |
 
-### Execution phase: component tikv
-
-| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      3910.02 |     16.52 |          14.30 |                 32.54 |
-| TiDB-1-1-2-1 |      3875.33 |     15.20 |          16.49 |                 35.40 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: component pd
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       219.99 |      0.93 |           0.50 |                  0.50 |
-| TiDB-1-1-2-1 |       219.99 |      1.85 |           0.50 |                  0.50 |
+| tidb-1-1-1-1 |       306.06 |      1.04 |           0.22 |                  0.22 |
+| tidb-1-1-2-1 |       297.88 |      1.05 |           0.22 |                  0.22 |
+
+### Benchmarking phase: component tikv
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| tidb-1-1-1-1 |      3836.32 |     14.60 |          15.44 |                 31.98 |
+| tidb-1-1-2-1 |      4229.86 |     15.56 |          17.59 |                 37.38 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| tidb-1-1-1-1 |       221.98 |      0.80 |           0.34 |                  0.34 |
+| tidb-1-1-2-1 |       221.98 |      2.14 |           0.34 |                  0.34 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvloading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvloading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-tikvbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-tikvbenchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component pd contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component tikv contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned
 ```
@@ -3718,7 +4238,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 80Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT \
   run &>$LOG_DIR/docs_ycsb_pgbouncer_appmetrics.log
 ```
 
@@ -3964,7 +4484,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_appmetrics.log
 ```
 
