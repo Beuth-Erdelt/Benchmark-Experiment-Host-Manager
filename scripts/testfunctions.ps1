@@ -22,6 +22,9 @@
 $BEXHOMA_NODE_SUT         = "cl-worker36"
 $BEXHOMA_NODE_LOAD        = "cl-worker19"
 $BEXHOMA_NODE_BENCHMARK   = "cl-worker19"
+# worker pods of distributed DBMS (CockroachDB), joined by '+' as bexhoma -rnw expects;
+# their data sits on the nodes' local disks, so the nodes decide the results
+$BEXHOMA_NODES_WORKER     = "cl-worker36+cl-worker37+cl-worker29"
 $LOG_DIR                  = ".\logs_tests"
 $BEXHOMA_MS               = 10
 $BEXHOMA_STORAGE_CLASS    = "nvme"
