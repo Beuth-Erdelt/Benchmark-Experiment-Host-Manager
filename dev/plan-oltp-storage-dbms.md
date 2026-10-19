@@ -373,11 +373,15 @@ import is always visible in the results.
 **First step (proposal).** Mechanism (1-7); scripts for MySQL, PostgreSQL/PgDuckDB, Citus, MariaDB
 (`relaxed` only); Redis later; TiDB, CockroachDB, YugabyteDB, MonetDB report "not supported".
 
-**Open decisions (user):**
-- Levels `default/relaxed/off`, or only `default/off`?
-- Move today's init-script relaxations (PostgreSQL `synchronous_commit=off`, MySQL flush 2/0) into
-  `relaxed` and make that the default (init scripts then only create schemas; changes what `default`
-  means), or leave them where they are?
+**Decisions (user, 2026-10-20):**
+- Levels: `default/relaxed/off` (all three).
+- Today's init-script relaxations (PostgreSQL `synchronous_commit=off`; MySQL flush 2/0,
+  `foreign_key_checks`/`unique_checks` 0, TPC-H `autocommit` 0; their save/restore in the check
+  scripts) move into `relaxed`. Init scripts then only create schemas; restore moves into
+  `load-durability-restore.*`.
+- Consequence: `default` becomes "DBMS as configured" (fully durable). To keep results comparable
+  with earlier runs, the CLI default of `-xld` is `relaxed` (confirmed).
+- Port to TPC-DS MySQL (#709, 2026-10-20) is in the init/check scripts for now and moves with the rest.
 
 Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DISABLE` twice are no-ops;
 `root@localhost` and `root@'%'` hold `INNODB_REDO_LOG_ENABLE`; MySQL logs a warning while off.
