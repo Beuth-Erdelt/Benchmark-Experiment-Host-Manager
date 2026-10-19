@@ -31,6 +31,9 @@ spec:
         - {name: TPCH_REFRESH_STREAM_OFFSET, value: '0'}
         - {name: STORE_RAW_DATA, value: '1'}
         resources:
+          # measured peaks are far below; without a request the cluster default reserves 16Gi
+          requests: {memory: 1Gi}
+          limits: {memory: 16Gi}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
       containers:
@@ -54,6 +57,9 @@ spec:
         - {name: TPCH_REFRESH_STREAM_OFFSET, value: '0'}
         - {name: STORE_RAW_DATA, value: '1'}
         resources:
+          # measured peaks are far below; without a request the cluster default reserves 16Gi
+          requests: {memory: 256Mi}
+          limits: {memory: 16Gi}
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
       restartPolicy: Never

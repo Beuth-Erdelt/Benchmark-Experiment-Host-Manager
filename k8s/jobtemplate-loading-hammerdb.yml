@@ -33,6 +33,9 @@ spec:
         - {name: RNGSEED, value: '123'}
         - {name: HAMMERDB_TYPE, value: 'mysql'}
         resources:
+          # measured peaks are far below; without a request the cluster default reserves 16Gi
+          requests: {memory: 1Gi}
+          limits: {memory: 16Gi}
           #limits: {cpu: 100m}
           #, memory: 16Gi}
           #requests: {cpu: 4000m}
