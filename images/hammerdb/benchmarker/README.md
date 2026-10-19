@@ -6,7 +6,7 @@ This folder contains the Dockerfile for a benchmarker that runs a timed TPC-C
 workload against an already-loaded DBMS using HammerDB.
 Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`.
 
-See [../README.md](../README.md) for shared design decisions and the full
+See [images/hammerdb/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hammerdb/README.md) for shared design decisions and the full
 supported-backend table.
 
 ## Execution flow (`benchmarker.sh`)

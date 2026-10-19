@@ -2,7 +2,7 @@
 
 Loads pre-generated TPC-DS `.dat` files into MariaDB using `mysql LOAD DATA LOCAL INFILE`. The child index is read from `/tmp/tpcds/BEXHOMA_CHILD` (written by the generator pod running in the same Kubernetes pod). Sets `BEXHOMA_DATABASE=$BEXHOMA_VOLUME` at startup.
 
-See [../README.md](../README.md) for the shared TPC-DS pipeline design.
+See [images/tpcds/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/tpcds/README.md) for the shared TPC-DS pipeline design.
 
 ## Execution flow (`loader.sh`)
 
@@ -11,7 +11,7 @@ See [../README.md](../README.md) for the shared TPC-DS pipeline design.
 3. If `BEXHOMA_SYNCH_LOAD=1`: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
    then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
    initialized by Python; only meaningful when the SUT configuration has more than one parallel
-   loader entry — see `bexhoma/README.md`).
+   loader entry — see [bexhoma/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/README.md)).
 4. Loop over `.dat` files; strip pod suffix from filename to get table name in multi-pod mode.
 5. If `TPCDS_TABLE` is set: only load that table.
 6. Execute `mysql LOAD DATA LOCAL INFILE` per table with the same column mapping as the MySQL loader.

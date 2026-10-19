@@ -2,14 +2,14 @@
 
 Based on https://www.tpc.org/tpch/ — generates flat `.tbl` files (pipe-delimited, one row per line ending with `|`) using the `dbgen` binary. Expects the pre-compiled `dbgen` binary and `dists.dss` in the build context. In multi-pod mode each pod generates one partition of the data set.
 
-See [../README.md](../README.md) for the shared TPC-H pipeline design and per-DBMS loader differences.
+See [images/tpch/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/tpch/README.md) for the shared TPC-H pipeline design and per-DBMS loader differences.
 
 ## Execution flow (`generator.sh`)
 
 1. Pop child index from Redis queue
    `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>` (scoped by
    `EXPERIMENT_RUN` because loading is redone from scratch for every experiment_run — see
-   `bexhoma/README.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
+   [bexhoma/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/README.md)'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
    empty rather than defaulting to a fixed child index, since another pod may already own it.
 2. Write child index to `/tmp/tpch/BEXHOMA_CHILD` (loaders read this file).
 3. Multi-tenant handling: `schema` or `database` mode remaps `BEXHOMA_CHILD` and scales `BEXHOMA_NUM_PODS` per tenant; `container` mode logs but does not remap.

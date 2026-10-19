@@ -3,7 +3,7 @@
 Generates TPC-H RF1/RF2 update files using `dbgen -U N` and stores them on the
 persistent data volume at `/data/tpch-refresh/SF<SF>/`.
 
-See [../README.md](../README.md) for the shared refresh-stream pipeline design.
+See [images/tpch_refresh/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/tpch_refresh/README.md) for the shared refresh-stream pipeline design.
 
 ## Execution flow (`generator.sh`)
 

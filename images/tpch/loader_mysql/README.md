@@ -2,7 +2,7 @@
 
 Loads pre-generated TPC-H `.tbl` files into MySQL. The active script (`loader.sh`) uses `mysql LOAD DATA LOCAL INFILE` with per-table `NULLIF` column mappings. The folder also contains `loader-parallel.sh`, which uses `mysqlsh util.import_table` for parallel loading — it is not the active `CMD`. Sets `BEXHOMA_DATABASE=$BEXHOMA_VOLUME` at startup so the target database name is taken from the Bexhoma volume variable rather than `BEXHOMA_DATABASE`.
 
-See [../README.md](../README.md) for the shared TPC-H pipeline design.
+See [images/tpch/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/tpch/README.md) for the shared TPC-H pipeline design.
 
 ## Execution flow (`loader.sh`)
 
@@ -12,7 +12,7 @@ See [../README.md](../README.md) for the shared TPC-H pipeline design.
 4. If `BEXHOMA_SYNCH_LOAD=1`: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
    then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
    initialized by Python, even for a single loader entry; only meaningful when the SUT
-   configuration has more than one parallel loader entry — see `bexhoma/README.md`).
+   configuration has more than one parallel loader entry — see [bexhoma/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/README.md)).
 5. Loop over `.tbl` files; skip `nation` and `region` for pods > 1 in non-tenant mode.
 6. If `TPCH_TABLE` is set: only load that table.
 7. Execute `mysql LOAD DATA LOCAL INFILE` per table with column mapping via `NULLIF`; retry on known transient errors.

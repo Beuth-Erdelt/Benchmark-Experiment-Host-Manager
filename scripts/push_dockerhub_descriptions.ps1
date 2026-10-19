@@ -81,6 +81,13 @@ foreach ($entry in $images.GetEnumerator()) {
         continue
     }
     $readme = Get-Content $readmePath -Raw -Encoding UTF8
+    # Relative links resolve against hub.docker.com and break there; use GitHub URLs
+    $relative = [regex]::Matches($readme, '\]\((?!https?://|#|mailto:)[^)]*\)')
+    if ($relative.Count -gt 0) {
+        Write-Host "  FAIL $repo - relative link(s), use https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/...: $(($relative | ForEach-Object { $_.Value }) -join ', ')"
+        $failed += $repo
+        continue
+    }
     $body = $serializer.Serialize(@{ full_description = [string]$readme })
     $uri = "https://hub.docker.com/v2/repositories/bexhoma/$repo/"
     try {

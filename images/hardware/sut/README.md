@@ -61,7 +61,7 @@ build context (`images/hardware/benchmarker/bench_key`).
 ## Storage
 
 `/database` is the base directory the benchmarker's fio job targets via
-`HARDWARE_TEST_DIR` (see `images/hardware/benchmarker/README.md`). The
+`HARDWARE_TEST_DIR` (see [images/hardware/benchmarker/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hardware/benchmarker/README.md)). The
 Dockerfile bakes it in (`mkdir` + `chmod 777`) so it always exists and is
 writable by `bench`, regardless of whether a volume ends up mounted there:
 

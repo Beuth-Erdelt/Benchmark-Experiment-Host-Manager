@@ -58,7 +58,7 @@ same synchronized instant — the basis for co-located noisy-neighbor experiment
 * `HARDWARE_THREADS`: Number of threads passed to sysbench (default `4`); also the number
   of concurrent netperf `TCP_RR`/`UDP_RR` client instances `run_netperf.sh` launches
   per pod (see below). Not used by fio.
-* `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/database/fio-test`). Not used by sysbench. `/database` is always present on the SUT (baked into `images/hardware/sut/Dockerfile`); whether it's backed by a real PVC or is just the SUT container's own ephemeral filesystem depends on `-rst` at deploy time — see `images/hardware/sut/README.md`.
+* `HARDWARE_TEST_DIR`: Directory on the SUT where fio creates its test files (default `/database/fio-test`). Not used by sysbench. `/database` is always present on the SUT (baked into `images/hardware/sut/Dockerfile`); whether it's backed by a real PVC or is just the SUT container's own ephemeral filesystem depends on `-rst` at deploy time — see [images/hardware/sut/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hardware/sut/README.md).
 * `HARDWARE_SIZE`: Size of the fio test file (default `1G`). Not used by sysbench.
 * `HARDWARE_DURATION`: Runtime in seconds (default `30`) — fio's `--runtime` (time-based, so actual runtime matches) and, since both sysbench sub-tests pass `--time=$HARDWARE_DURATION`, an upper bound for each of the CPU and memory phases. The memory phase can finish earlier than `HARDWARE_DURATION` if `--memory-total-size` (10G) transfers before the time limit.
 
