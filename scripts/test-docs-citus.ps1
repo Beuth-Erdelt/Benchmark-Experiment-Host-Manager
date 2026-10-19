@@ -238,7 +238,7 @@ bexhoma hammerdb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
-  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rss 100Gi                    <# size of the persistent volume claim #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
   -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `

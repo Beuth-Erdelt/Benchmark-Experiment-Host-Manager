@@ -2156,7 +2156,7 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
+  -rss 100Gi \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
