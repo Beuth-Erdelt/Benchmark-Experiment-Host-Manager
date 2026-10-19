@@ -1,7 +1,17 @@
 # Plan: remove the SUT volume before every repetition
 
-Status: M1, M1b, M2, M3 implemented 2026-10-13 (not committed); M4 (cluster
-run) open. Deviations from the text below: the contradiction
+Status: M1, M1b, M2, M3 implemented 2026-10-13, committed (`0436a577`); M4
+checked 2026-10-19 on an existing run (Benchbase TPC-C SF1 PostgreSQL, nvme,
+`-nc 2 -rsrp`, 1792359757, `dev/logs_pod_scope/tpcc_postgresql_m3.log`):
+before repetition 2 "storage ... should be removed" / "is gone" (before
+repetition 1 there was no volume yet, so no message); both repetitions ran
+their own loading job (`...-1-1-1-bswlw`, `...-2-1-1-464dc`, 25 s each),
+`loading_inherited` False for all connections, separate loading windows (67 s
+/ 56 s) with their own SUT CPU (16.17 / 15.91 CPU-s). `time_load` is 36 s in
+both, equal to the second because the workload is small and deterministic,
+not copied. The opposite case (only `-rsr`, repetition 2 inherits) was not
+rerun; 1792031806 (2026-10-15) had repetitions inheriting the loading (see
+`dev/plan-metrics-pod-scope.md`, M1). **Done.** Deviations from the text below: the contradiction
 `remove_per_repetition: true` + `remove_existing: false` is refused in
 `spec.validate_experiment()` (so the agent gets it too), not in
 `agent/harness/validation.py`; no warning for `repetitions: 1`. Contract

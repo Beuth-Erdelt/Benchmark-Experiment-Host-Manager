@@ -116,7 +116,7 @@ spec:
               - /bin/sh
               - "-c"
               - >
-                if pg_isready -h localhost -p 5432 > /dev/null; then
+                if pg_isready -h localhost -p 5432 -U postgres > /dev/null; then
                   recovery_status=$(psql -h localhost -p 5432 -U postgres -t -c "SELECT pg_is_in_recovery();" | xargs);
                   [ "$recovery_status" = "f" ] && exit 0 || exit 1;
                 else
@@ -244,6 +244,11 @@ spec:
           #"-c", "huge_pages=on",
           "-c", "temp_buffers=64MB",
           "-c", "autovacuum_work_mem=-1",
+          # Citus 14.0-14.2 on a worker: every execution of a prepared statement on a
+          # distributed table adds a local plan to its generic plan (citusdata/citus#8824),
+          # so client sessions on workers (YCSB host list) grow until OOM. Custom plans
+          # are not cached. Remove once the image contains #8824.
+          "-c", "plan_cache_mode=force_custom_plan",
           "-c", "max_stack_depth=4MB",
           "-c", "max_files_per_process=4000",
           "-c", "effective_io_concurrency=32",
@@ -271,8 +276,16 @@ spec:
           #  secretKeyRef:
           #    name: citus-secrets
           #    key: password
+        # PG 18 images default to /var/lib/postgresql/18/docker and refuse a mount at .../data without this
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
+        # one env list only: a second 'env:' key of this container would replace this one
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
         volumeMounts:
         - name: bxw
           mountPath: /var/lib/postgresql/data
@@ -287,13 +300,6 @@ spec:
         #      - if [ ${POD_IP} ]; then {sleep 180 ; psql --host=bexhoma-service --port 9091 --username=postgres --command="SELECT * from master_add_node('${HOSTNAME}.citus-workers', 5432);" }& fi
         ports:
         - containerPort: 5432
-        env:
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        - name: POSTGRES_HOST_AUTH_METHOD
-          value: trust
         lifecycle:
           postStart:
             exec:
@@ -307,7 +313,7 @@ spec:
               - /bin/sh
               - "-c"
               - >
-                if pg_isready -h localhost -p 5432 > /dev/null; then
+                if pg_isready -h localhost -p 5432 -U postgres > /dev/null; then
                   recovery_status=$(psql -h localhost -p 5432 -U postgres -t -c "SELECT pg_is_in_recovery();" | xargs);
                   [ "$recovery_status" = "f" ] && exit 0 || exit 1;
                 else

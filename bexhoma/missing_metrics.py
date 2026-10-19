@@ -5,24 +5,29 @@ DBMSBenchmarker's ``monitor.metrics.getMetrics()`` does not fail when a
 Prometheus query comes back empty: it logs
 ``ERROR:root:Metrics missing for <title> (<query>)[ for connection <c>]: <url>``
 and substitutes a series of zeros, which then reads like a measured idle
-component. Two processes run that code, and both leave their output in the
-result folder:
+component. That code leaves its output in the result folder:
 
 * ``bexhoma-metrics-{connection}-{component_type}.log`` — output of
   ``metrics.py`` in the dashboard pod, written by
-  :meth:`bexhoma.configurations.metrics.MetricsCollector.fetch`.
-* ``bexhoma-benchmarker-*.log`` — the DBMSBenchmarker pod (e.g. TPC-H, run
-  with ``-mps``) fetching per-stream metrics itself.
+  :meth:`bexhoma.configurations.metrics.MetricsCollector.fetch`. This is the
+  only source for current runs.
+* ``bexhoma-benchmarker-*.log`` — the DBMSBenchmarker pod log. Only results
+  from before ``-mps`` was dropped from ``benchmarker.sh`` contain gaps here,
+  from the pod fetching per-stream metrics itself; they are still read so
+  those results evaluate the same.
 
-Both processes may fetch the same metric for the same connection, so a gap
-is reported once. Some gaps are expected and carry the reason in
+In such older results both processes may fetch the same metric for the same
+connection, so a gap is reported once. Some gaps are expected and carry the reason in
 ``expected``: an optional component whose data was pre-existing (the data
 generator then exits before the first scrape), and a metric that
 ``cluster.config`` marks ``sparse`` because its series only exists while the
 value is non-zero (e.g. backends waiting on locks, or CPU throttling of a
 container without a CPU limit), so no data means 0. ``sparse_components``
 marks a metric sparse only for the listed component types (e.g. the
-filesystem I/O of client containers that may never touch disk).
+filesystem I/O of client containers that may never touch disk). A gap in a
+fetch whose window is shorter than the component needs at the cluster's
+scrape interval (:func:`bexhoma.monitoring_math.min_measurable_window`) is
+expected too: no scrape may have landed inside it.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -37,9 +42,11 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable
 
+from .monitoring_math import min_measurable_window, read_connections, scoped_job_connections
+
 __all__ = [
     "MissingMetric", "parse_missing_metrics", "collect_missing_metrics", "fetch_log_name",
-    "EXPECTED_DATA_PREEXISTING", "EXPECTED_SPARSE",
+    "fetch_window", "EXPECTED_DATA_PREEXISTING", "EXPECTED_SPARSE", "EXPECTED_SHORT_PHASE",
 ]
 
 #: Log files that can carry the message, relative to the result folder.
@@ -48,11 +55,15 @@ _LOG_PATTERNS = ("bexhoma-metrics-*.log", "bexhoma-benchmarker-*.log")
 _MARKER = re.compile(r"Metrics missing for (?P<label>.+?)(?:: \S*)?$")
 _CONNECTION = re.compile(r"^(?P<label>.*) for connection (?P<connection>\S+)$")
 _FETCH_LOG = re.compile(r"^bexhoma-metrics-.+-(?P<component>[^-]+)\.log$")
+#: Printed by ``metrics.py`` once per fetch: the phase window without ``extend``.
+_WINDOW = re.compile(r"^Interval length (?P<seconds>-?\d+)s\s*$", re.MULTILINE)
 
 #: ``expected`` reason for a gap in an optional component (e.g. the data generator).
 EXPECTED_DATA_PREEXISTING = "data pre-existing"
 #: ``expected`` reason for a gap in a metric ``cluster.config`` marks ``sparse``.
 EXPECTED_SPARSE = "series exists only while non-zero"
+#: ``expected`` reason for a gap in a fetch whose window is too short to hold a scrape.
+EXPECTED_SHORT_PHASE = "phase shorter than scrape interval"
 
 
 @dataclass(frozen=True)
@@ -135,6 +146,23 @@ def fetch_log_name(connection: str, component_type: str) -> str:
     return f"bexhoma-metrics-{connection}-{component_type}.log"
 
 
+def fetch_window(path) -> int | None:
+    """
+    Length of the phase window one ``metrics.py`` fetch queried, from its log.
+
+    :param path: A ``bexhoma-metrics-{connection}-{component_type}.log`` file.
+    :return: Seconds (``Interval length <N>s``, without ``extend``), or ``None``
+        when the file does not exist or has no such line (older logs).
+    :rtype: int or None
+    """
+    try:
+        text = Path(path).read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+    match = _WINDOW.search(text)
+    return int(match.group("seconds")) if match else None
+
+
 def parse_missing_metrics(text: str, source: str = "") -> list[MissingMetric]:
     """
     Extract every ``Metrics missing for ...`` message from a log text.
@@ -197,6 +225,7 @@ def _sparse_titles(result_dir: Path) -> tuple[set[str], set[tuple[str, str]]]:
 
 def collect_missing_metrics(
     result_dir: Path, optional_components: Iterable[str] = (),
+    scrape_interval: float | None = None, jobs_scoped: bool | None = None,
 ) -> list[MissingMetric]:
     """
     Scan a result folder's metric-fetch and benchmarker logs for metrics that
@@ -209,6 +238,13 @@ def collect_missing_metrics(
     :param result_dir: The experiment's result folder.
     :param optional_components: Component types whose gaps mean the data was
         pre-existing (the experiment's ``optional_monitoring_components``).
+    :param scrape_interval: Scrape interval of the cluster Prometheus in
+        seconds; with it, a gap in a fetch whose window is shorter than
+        :func:`~bexhoma.monitoring_math.min_measurable_window` is expected.
+        ``None`` (default) leaves short windows unmarked.
+    :param jobs_scoped: Passed on to :func:`~bexhoma.monitoring_math.min_measurable_window`;
+        ``None`` (default) decides per connection from ``connections.config``
+        (:func:`~bexhoma.monitoring_math.scoped_job_connections`).
     :return: Every missing metric, grouped by source file in name order.
     :rtype: list[MissingMetric]
     """
@@ -216,16 +252,32 @@ def collect_missing_metrics(
     optional = set(optional_components)
     sparse, sparse_components = _sparse_titles(result_dir)
     missing: dict[tuple[str, str, str], MissingMetric] = {}
+    scoped_by_component: dict[str, set] = {}
+
+    def is_scoped(entry: MissingMetric) -> bool:
+        if jobs_scoped is not None:
+            return jobs_scoped
+        if entry.component not in scoped_by_component:
+            scoped_by_component[entry.component] = scoped_job_connections(
+                read_connections(result_dir), entry.component)
+        scoped = scoped_by_component[entry.component]
+        # a DBMSBenchmarker pod appends its client to the connection name
+        return entry.connection in scoped or entry.connection.rsplit("-", 1)[0] in scoped
     for path in files:
         try:
             text = path.read_text(encoding="utf-8", errors="replace")
         except OSError:
             continue
+        window = _WINDOW.search(text) if _FETCH_LOG.match(path.name) else None
+        too_short = (scrape_interval is not None and window is not None)
         for entry in parse_missing_metrics(text, path.name):
             if entry.component in optional:
                 entry = replace(entry, expected=EXPECTED_DATA_PREEXISTING)
             elif entry.title in sparse or (entry.title, entry.component) in sparse_components:
                 entry = replace(entry, expected=EXPECTED_SPARSE)
+            elif too_short and int(window.group("seconds")) < min_measurable_window(
+                    entry.component, scrape_interval, is_scoped(entry)):
+                entry = replace(entry, expected=EXPECTED_SHORT_PHASE)
             missing.setdefault((entry.title, entry.connection, entry.query, entry.component), entry)
     # A DBMSBenchmarker pod names its connection with the client appended
     # ("pgduckdb-1-1-1-1-1" for the fetch log's "pgduckdb-1-1-1-1"), so its

@@ -157,13 +157,14 @@ class ComponentStatus:
         """
         app = self._config.appname
         configuration = self._config.configuration
-        components = list(self._config.deployment_infos['deployment'].keys())
+        # deployment_infos is filled when the SUT starts; a configuration that has not started yet has no SUT
+        components = list(self._config.deployment_infos.get('deployment', {}).keys())
         for component in components:
             pods = self._config.experiment.cluster.get_pods(
                 app, component, self._config.experiment.code, configuration)
             if len(pods) > 0:
                 return True
-        components = list(self._config.deployment_infos['statefulset'].keys())
+        components = list(self._config.deployment_infos.get('statefulset', {}).keys())
         for component in components:
             pods = self._config.experiment.cluster.get_pods(
                 app, component, self._config.experiment.code, configuration)

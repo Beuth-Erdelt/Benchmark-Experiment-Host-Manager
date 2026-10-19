@@ -723,12 +723,25 @@ class SutConfiguration:
         :param parameters: Default parameter dict shared by all pods.
         :param pod_parameters: Per-pod override dicts.
         """
+        self.experiment.cluster.set_redis_values(self._pod_configs(queue_key, num_pods, parameters, pod_parameters))
+
+    @staticmethod
+    def _pod_configs(queue_key: str, num_pods: int, parameters: dict, pod_parameters: list) -> dict:
+        """Per-pod merged configurations, as :meth:`_push_pod_configs` stores them.
+
+        :param queue_key: Base Redis queue key.
+        :param num_pods: Number of pods in this job.
+        :param parameters: Default parameter dict shared by all pods.
+        :param pod_parameters: Per-pod override dicts.
+        :return: ``{queue_key}-config-{i}`` to the merged dict, for i in 1..num_pods.
+        """
+        configs = {}
         for i in range(1, num_pods + 1):
             merged = dict(parameters)
             if pod_parameters and i - 1 < len(pod_parameters):
                 merged.update(pod_parameters[i - 1])
-            config_key = f"{queue_key}-config-{i}"
-            self.experiment.cluster.set_pod_config(key=config_key, config=merged)
+            configs[f"{queue_key}-config-{i}"] = merged
+        return configs
 
     # ------------------------------------------------------------------
     # Component naming
@@ -858,8 +871,10 @@ class SutConfiguration:
     def get_worker_pods(self, component: str = 'worker', only_stateful: bool = False) -> list:
         """Return a list of all worker pod names for the current SUT.
 
-        When :attr:`statefulset_name` is set, delegates to the cluster's
-        stateful set pod discovery (e.g. for YugabyteDB tservers).
+        When :attr:`statefulset_name` is set (StatefulSets bexhoma did not
+        create, e.g. YugabyteDB's ``yb-tserver`` and ``yb-master``), returns
+        the pods of the component's own StatefulSet (``deployment_infos``),
+        falling back to :attr:`statefulset_name` for an unknown component.
         Otherwise finds pods via the standard bexhoma label selector.
 
         :param component: Component label used in the label selector.
@@ -869,7 +884,9 @@ class SutConfiguration:
         :rtype: list[str]
         """
         if self.statefulset_name:
-            return self.experiment.cluster.get_stateful_set_pods(self.statefulset_name)
+            name = (self.deployment_infos.get('statefulset', {}).get(component, {}).get('name')
+                    or self.statefulset_name)
+            return self.experiment.cluster.get_stateful_set_pods(name)
         pods_worker = self.experiment.cluster.get_pods(
             app=self.appname,
             component=component,
@@ -913,6 +930,45 @@ class SutConfiguration:
     # Metric query substitution
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def pods_pattern(configuration: str, experiment: str) -> str:
+        """Pod regex for ``{pods}``: every pod whose name contains ``<configuration>-<experiment>``.
+
+        The pattern the cAdvisor templates had literally before ``{pods}``.
+
+        :param configuration: Configuration name, or a regex group of worker names.
+        :param experiment: Experiment code; empty for workers.
+        :return: The regex.
+        :rtype: str
+        """
+        return f"(.*){configuration}-{experiment}(.*)"
+
+    def job_pods_pattern(self, jobname: str, all_jobs_with_prefix: bool = False) -> str:
+        """Pod regex for ``{pods}`` selecting the pods of one job.
+
+        Kubernetes names a job's pods ``<jobname>-<5 characters>`` and cuts
+        ``<jobname>-`` to 58 characters first. Prometheus anchors the regex, so
+        ``…-1-1`` does not match the pods of ``…-1-10``.
+
+        :param jobname: Job name, as :meth:`generate_component_name` gives it.
+        :param all_jobs_with_prefix: Match every job whose name starts with
+            ``<jobname>-`` instead (the loading jobs of a repetition).
+        :return: The regex.
+        :rtype: str
+        """
+        if all_jobs_with_prefix:
+            return (jobname + "-")[:58] + ".+"
+        return (jobname + "-")[:58] + "[a-z0-9]{5}"
+
+    def monitoring_namespace(self) -> str:
+        """Namespace for ``{namespace}`` in metric templates.
+
+        :return: The cluster context's namespace; empty without a cluster context (tests).
+        :rtype: str
+        """
+        contextdata = getattr(self.experiment.cluster, 'contextdata', None) or {}
+        return contextdata.get('namespace', '')
+
     def set_metric_of_config_default(
         self,
         metric: str,
@@ -921,6 +977,7 @@ class SutConfiguration:
         schema: str,
         database: str,
         experiment: str = None,
+        pods: str = None,
     ) -> str:
         """Substitute placeholders in a PromQL query for bexhoma-managed components.
 
@@ -930,18 +987,26 @@ class SutConfiguration:
         :param schema: Database schema name.
         :param database: Database name.
         :param experiment: Experiment code; defaults to :attr:`code`.
+        :param pods: Pod regex for ``{pods}``; defaults to :meth:`pods_pattern`
+            of this configuration (a job's own pods: :meth:`job_pods_pattern`).
         :return: Filled PromQL query string.
         :rtype: str
         """
         if experiment is None:
             experiment = self.code
+        configuration = self.configuration.lower()
+        experiment_name = self.get_experiment_name()
+        if pods is None:
+            pods = self.pods_pattern(configuration, experiment_name)
         return metric.format(
             host=host,
             gpuid=gpuid,
-            configuration=self.configuration.lower(),
-            experiment=self.get_experiment_name(),
+            configuration=configuration,
+            experiment=experiment_name,
             schema=schema,
             database=database,
+            pods=pods,
+            namespace=self.monitoring_namespace(),
             **self.storage_placeholder_values(),
         )
 
@@ -975,6 +1040,7 @@ class SutConfiguration:
             metric = metric.replace(', container_label_io_kubernetes_container_name="dbms"', '')
             return metric.format(
                 host=host, gpuid=gpuid, configuration=component, experiment='',
+                pods=self.pods_pattern(component, ''), namespace=self.monitoring_namespace(),
                 **self.storage_placeholder_values())
         if self.num_worker > 0:
             if len(component) == 0:
@@ -986,11 +1052,13 @@ class SutConfiguration:
                 return metric.format(
                     host=host, gpuid=gpuid, configuration=configuration,
                     experiment="", schema=schema, database=database,
+                    pods=self.pods_pattern(configuration, ''), namespace=self.monitoring_namespace(),
                     **self.storage_placeholder_values())
             name_worker = self.get_worker_name(component=component)
             return metric.format(
                 host=host, gpuid=gpuid, configuration=name_worker,
                 experiment="", schema=schema, database=database,
+                pods=self.pods_pattern(name_worker, ''), namespace=self.monitoring_namespace(),
                 **self.storage_placeholder_values())
         experiment_name = self.get_experiment_name()
         self.logger.debug(
@@ -1011,6 +1079,7 @@ class SutConfiguration:
         container: str = '',
         params: str = '',
         retry_interrupted: bool = True,
+        api: bool = False,
     ):
         """Run a shell command inside the SUT container.
 
@@ -1023,6 +1092,9 @@ class SutConfiguration:
         :param retry_interrupted: Whether to rerun the command after the
             cluster connection broke mid-command; ``False`` for commands that
             are not safe to repeat.
+        :param api: Run it through the Python client
+            (``cluster.execute_command_in_pod_api()``, falls back to kubectl);
+            only for read-only commands that are safe to repeat.
         :return: stdout of the shell command.
         """
         if len(pod) == 0:
@@ -1031,6 +1103,9 @@ class SutConfiguration:
             container = self.sut_container_name
         if self.pod_sut == '':
             self.check_sut()
+        if api and hasattr(self.experiment.cluster, 'execute_command_in_pod_api'):
+            return self.experiment.cluster.execute_command_in_pod_api(
+                command=command, pod=pod, container=container)
         return self.experiment.cluster.execute_command_in_pod(
             command=command, pod=pod, container=container, params=params,
             retry_interrupted=retry_interrupted)

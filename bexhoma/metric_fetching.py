@@ -12,16 +12,21 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Callable
+
+from .cluster_calls import CALL_STATS
 
 __all__ = ['DEFAULT_MAX_PARALLEL_FETCHES', 'MetricFetchBatch', 'fetch_failed']
 
 #: Default number of ``metrics.py`` runs at the same time. Each queries
 #: Prometheus metric by metric, so a few in parallel are cheap for Prometheus
-#: and the dashboard pod.
-DEFAULT_MAX_PARALLEL_FETCHES = 4
+#: and the dashboard pod (limits 16 CPU, 128 Gi; one run is one Python
+#: process with pandas). A run is mostly waiting (about 4.7 s of exec overhead
+#: against 0.4 s of Prometheus work), so 8 at once halve a pass's fetch time.
+DEFAULT_MAX_PARALLEL_FETCHES = 8
 
 
 def fetch_failed(output: str) -> bool:
@@ -49,6 +54,8 @@ class MetricFetchBatch:
     def __init__(self) -> None:
         self.fetches: list[tuple[Any, dict]] = []
         self.after: list[Callable[[], None]] = []
+        # filled by job submissions / job ends running side by side (parallel_steps)
+        self._lock = threading.Lock()
 
     def __len__(self) -> int:
         return len(self.fetches) + len(self.after)
@@ -60,14 +67,16 @@ class MetricFetchBatch:
         :param kwargs: Arguments of :meth:`MetricsCollector.fetch`.
         """
         config.metrics.register(kwargs['component_type'], kwargs['title'], kwargs.get('optional', False))
-        self.fetches.append((config, kwargs))
+        with self._lock:
+            self.fetches.append((config, kwargs))
 
     def add_after(self, action: Callable[[], None]) -> None:
         """Queue an action to run after all fetches of this batch.
 
         :param action: Callable without arguments.
         """
-        self.after.append(action)
+        with self._lock:
+            self.after.append(action)
 
     def run(self, max_workers: int = DEFAULT_MAX_PARALLEL_FETCHES) -> None:
         """Run all queued fetches (up to ``max_workers`` at once), then the queued actions.
@@ -77,6 +86,7 @@ class MetricFetchBatch:
         if not len(self):
             return
         started = time.monotonic()
+        calls_started = CALL_STATS.snapshot()
         failed = []
         if self.fetches:
             workers = max(1, min(max_workers, len(self.fetches)))
@@ -100,9 +110,10 @@ class MetricFetchBatch:
         if self.fetches:
             self.fetches[0][0].upload_experiment_file('connections.config')
         if self.fetches:
-            print("{:30s}: fetched {} metric sets in {:.0f}s ({} at once, {} repeated, {} follow-up actions)".format(
+            print("{:30s}: fetched {} metric sets in {:.0f}s ({} at once, {} repeated, {} follow-up actions; {})".format(
                 "Experiment", len(self.fetches), time.monotonic() - started,
-                max(1, min(max_workers, len(self.fetches))), len(failed), len(self.after)))
+                max(1, min(max_workers, len(self.fetches))), len(failed), len(self.after),
+                CALL_STATS.since(calls_started)))
         else:
             print("{:30s}: ran {} follow-up actions (e.g. reused loading metrics) in {:.0f}s".format(
                 "Experiment", len(self.after), time.monotonic() - started))

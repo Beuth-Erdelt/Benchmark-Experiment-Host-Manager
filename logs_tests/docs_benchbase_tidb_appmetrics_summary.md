@@ -3,13 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1419s 
-* Code: 1783893680
+* Duration: 1274s 
+* Code: 1792347432
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-  * Benchbase data is generated and loaded using several threads.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.10.5.
+  * TiDB uses 3 SUT replica(s) and 3 PD node(s).
+  * Experiment uses bexhoma version 0.11.6.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['TiDB'].
   * Import is handled by 1 processes (pods).
@@ -18,185 +19,209 @@ Benchbase Workload tpcc SF=16
   * Benchmarking is tested with [16] threads, split into [1, 2] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 3 worker nodes, 3 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* TiDB-1-1-1-1 uses docker image pingcap/tidb:v7.1.6
-  * RAM:1077382598656
-  * CPU:AMD EPYC 7742 64-Core Processor
-  * Cores:256
-  * host:6.8.0-1058-nvidia
-  * node:cl-worker28
-  * disk:582341
-  * cpu_list:0-255
+* tidb-1-1-1-1 uses docker image pingcap/tidb:v8.5.8
+  * RAM:1081853952000
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
+  * Cores:128
+  * host:6.8.0-137-generic
+  * node:cl-worker37
+  * disk:619408
+  * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:16Gi
   * sut 0
-    * RAM:1077382598656
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:577312
-    * cpu_list:0-255
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:619408
+    * cpu_list:0-127
   * sut 1
-    * RAM:540590804992
+    * RAM:540590800896
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
-    * host:6.8.0-124-generic
+    * host:6.8.0-146-generic
     * node:cl-worker24
-    * disk:142627
+    * disk:145175
     * cpu_list:0-95
   * sut 2
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161794
-    * cpu_list:0-95
-  * pd 0
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161794
-    * cpu_list:0-95
-  * pd 1
-    * RAM:540597907456
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-124-generic
-    * node:cl-worker39
-    * disk:320597
-    * cpu_list:0-255
-  * pd 2
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
-    * node:cl-worker24
-    * disk:142627
-    * cpu_list:0-95
-  * tikv 0
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
-    * node:cl-worker24
-    * disk:142627
-    * cpu_list:0-95
-  * tikv 1
-    * RAM:1081742745600
+    * RAM:540579299328
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-117-generic
-    * node:cl-worker29
-    * disk:965701
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:168978
     * cpu_list:0-127
+  * pd 0
+    * RAM:540590800896
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-146-generic
+    * node:cl-worker24
+    * disk:141439
+    * datadisk:123
+    * cpu_list:0-95
+  * pd 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:619408
+    * datadisk:123
+    * cpu_list:0-127
+  * pd 2
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:167992
+    * datadisk:123
+    * cpu_list:0-127
+  * tikv 0
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:168348
+    * datadisk:9144
+    * cpu_list:0-127
+  * tikv 1
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:894446
+    * datadisk:24450
+    * cpu_list:0-255
   * tikv 2
-    * RAM:2164173213696
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-111-generic
-    * node:cl-worker36
-    * disk:1111265
-    * cpu_list:0-223
+    * RAM:1077382627328
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-1060-nvidia
+    * node:cl-worker28
+    * disk:902000
+    * datadisk:24562
+    * cpu_list:0-255
+  * resources_total: 24.75 CPU, 97.5 GiB RAM requested in 9 pods
+    * pd: 3 x, 0.75 CPU, 1.5 GiB RAM
+    * tikv: 3 x, 12.0 CPU, 48.0 GiB RAM
+    * sut: 3 x, 12.0 CPU, 48.0 GiB RAM
   * eval_parameters
-    * code:1783893680
+    * code:1792347432
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
-* TiDB-1-1-2-1 uses docker image pingcap/tidb:v7.1.6
-  * RAM:1077382598656
-  * CPU:AMD EPYC 7742 64-Core Processor
-  * Cores:256
-  * host:6.8.0-1058-nvidia
-  * node:cl-worker28
-  * disk:579884
-  * cpu_list:0-255
+* tidb-1-1-2-1 uses docker image pingcap/tidb:v8.5.8
+  * RAM:1081853952000
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
+  * Cores:128
+  * host:6.8.0-137-generic
+  * node:cl-worker37
+  * disk:619409
+  * cpu_list:0-127
   * requests_cpu:4
   * requests_memory:16Gi
   * sut 0
-    * RAM:1077382598656
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1058-nvidia
-    * node:cl-worker28
-    * disk:578508
-    * cpu_list:0-255
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:619409
+    * cpu_list:0-127
   * sut 1
-    * RAM:540590804992
+    * RAM:540590800896
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
-    * host:6.8.0-124-generic
+    * host:6.8.0-146-generic
     * node:cl-worker24
-    * disk:141199
+    * disk:142124
     * cpu_list:0-95
   * sut 2
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161795
-    * cpu_list:0-95
-  * pd 0
-    * RAM:540590841856
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-117-generic
-    * node:cl-worker25
-    * disk:161795
-    * cpu_list:0-95
-  * pd 1
-    * RAM:540597907456
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-124-generic
-    * node:cl-worker39
-    * disk:320603
-    * cpu_list:0-255
-  * pd 2
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
-    * node:cl-worker24
-    * disk:141230
-    * cpu_list:0-95
-  * tikv 0
-    * RAM:540590804992
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-124-generic
-    * node:cl-worker24
-    * disk:141466
-    * cpu_list:0-95
-  * tikv 1
-    * RAM:1081742745600
+    * RAM:540579299328
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-117-generic
-    * node:cl-worker29
-    * disk:964905
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:173821
     * cpu_list:0-127
+  * pd 0
+    * RAM:540590800896
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-146-generic
+    * node:cl-worker24
+    * disk:144056
+    * datadisk:123
+    * cpu_list:0-95
+  * pd 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:619409
+    * datadisk:123
+    * cpu_list:0-127
+  * pd 2
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:173821
+    * datadisk:123
+    * cpu_list:0-127
+  * tikv 0
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:173821
+    * datadisk:11727
+    * cpu_list:0-127
+  * tikv 1
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:893123
+    * datadisk:23126
+    * cpu_list:0-255
   * tikv 2
-    * RAM:2164173213696
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-111-generic
-    * node:cl-worker36
-    * disk:1109491
-    * cpu_list:0-223
+    * RAM:1077382627328
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-1060-nvidia
+    * node:cl-worker28
+    * disk:904359
+    * datadisk:23140
+    * cpu_list:0-255
+  * resources_total: 24.75 CPU, 97.5 GiB RAM requested in 9 pods
+    * pd: 3 x, 0.75 CPU, 1.5 GiB RAM
+    * tikv: 3 x, 12.0 CPU, 48.0 GiB RAM
+    * sut: 3 x, 12.0 CPU, 48.0 GiB RAM
   * eval_parameters
-    * code:1783893680
+    * code:1792347432
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
 ### SUT Container Restarts
-* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-bbs8w: 0
-* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-fz7fv: 0
-* bexhoma-sut-tidb-1-1783893680-7b9cfc84d9-jc5df: 0
+* bexhoma-sut-tidb-1-1792347432-64dc45fb4-dvvb5: 0
+* bexhoma-sut-tidb-1-1792347432-64dc45fb4-gjkbz: 0
+* bexhoma-sut-tidb-1-1792347432-64dc45fb4-wvpsm: 0
 * bexhoma-pd-tidb-benchbase-tpcc-16-0: 0
 * bexhoma-pd-tidb-benchbase-tpcc-16-1: 0
 * bexhoma-pd-tidb-benchbase-tpcc-16-2: 0
@@ -220,26 +245,26 @@ Benchbase Workload tpcc SF=16
 
 #### Per Run
 
-|          |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| TiDB-1-1 |                1 | 16.00 |      485.00 |           1.00 |            0.00 |        218.00 |          266.00 |              1 |           1 |             | None           |             0 | False         |              118.76 |
+|          |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| TiDB-1-1 |                1 |   16 |      232.00 |           5.00 |            0.00 |        223.00 |            4.00 |              1 |           1 |             | None           |             0 | False         |              248.28 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS           | phase      | job          |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------|:-----------|:-------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| TiDB-1-1-1-1-1 | TiDB-1-1-1 | TiDB-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         346.82 |                      345.22 |         0.00 |                                                     129138.00 |                                              45625.00 |
-| TiDB-1-1-2-1-1 | TiDB-1-1-2 | TiDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                         167.67 |                      165.79 |         0.00 |                                                     119802.00 |                                              47297.00 |
-| TiDB-1-1-2-1-2 | TiDB-1-1-2 | TiDB-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                         168.23 |                      166.45 |         0.00 |                                                     123754.00 |                                              47407.00 |
+| tidb-1-1-1-1-1 | tidb-1-1-1 | tidb-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         422.51 |                      420.65 |         0.00 |                                                      93952.00 |                                              37856.00 |
+| tidb-1-1-2-1-1 | tidb-1-1-2 | tidb-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                         187.19 |                      184.98 |         0.00 |                                                     105555.00 |                                              42724.00 |
+| tidb-1-1-2-1-2 | tidb-1-1-2 | tidb-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                         203.06 |                      200.67 |         0.00 |                                                     102407.00 |                                              39383.00 |
 
 #### Per Phase
 
 | DBMS       | phase      |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------|:-----------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| TiDB-1-1-1 | TiDB-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         346.82 |                      345.22 |         0.00 |                                                     129138.00 |                                              45625.00 |
-| TiDB-1-1-2 | TiDB-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                         335.90 |                      332.24 |         0.00 |                                                     123754.00 |                                              47352.00 |
+| tidb-1-1-1 | tidb-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         422.51 |                      420.65 |         0.00 |                                                      93952.00 |                                              37856.00 |
+| tidb-1-1-2 | tidb-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                         390.25 |                      385.65 |         0.00 |                                                     105555.00 |                                              41053.50 |
 
 ### Monitoring
 
@@ -247,67 +272,90 @@ Benchbase Workload tpcc SF=16
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      1045.59 |      8.60 |           3.99 |                  4.32 |
-| TiDB-1-1-2-1 |      1045.59 |      8.60 |           3.99 |                  4.32 |
+| tidb-1-1-1-1 |       928.99 |      4.98 |           1.34 |                  1.88 |
+| tidb-1-1-2-1 |       928.99 |      4.98 |           1.34 |                  1.88 |
 
 ### Loading phase: component pd
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       119.00 |      0.55 |           0.33 |                  0.33 |
-| TiDB-1-1-2-1 |       119.00 |      0.55 |           0.33 |                  0.33 |
+| tidb-1-1-1-1 |        63.84 |      0.30 |           0.21 |                  0.21 |
+| tidb-1-1-2-1 |        63.84 |      0.30 |           0.21 |                  0.21 |
 
 ### Loading phase: component tikv
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      2840.89 |     18.27 |          10.96 |                 30.53 |
-| TiDB-1-1-2-1 |      2840.89 |     18.27 |          10.96 |                 30.53 |
+| tidb-1-1-1-1 |      2708.40 |     15.77 |          13.60 |                 29.90 |
+| tidb-1-1-2-1 |      2708.40 |     15.77 |          13.60 |                 29.90 |
 
 ### Loading phase: component loader
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       136.53 |      1.55 |           0.68 |                  0.68 |
-| TiDB-1-1-2-1 |       136.53 |      1.55 |           0.68 |                  0.68 |
+| tidb-1-1-1-1 |       114.09 |      1.05 |           0.49 |                  0.49 |
+| tidb-1-1-2-1 |       114.09 |      1.05 |           0.49 |                  0.49 |
 
-### Execution phase: SUT deployment
-
-| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      2304.24 |      9.02 |           2.10 |                  2.44 |
-| TiDB-1-1-2-1 |      2166.24 |      8.52 |           2.82 |                  3.16 |
-
-### Execution phase: component pd
+### Benchmarking phase: SUT deployment
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       361.50 |      1.41 |           0.32 |                  0.32 |
-| TiDB-1-1-2-1 |       372.91 |      1.37 |           0.32 |                  0.33 |
+| tidb-1-1-1-1 |      3102.39 |     11.66 |           2.44 |                  2.98 |
+| tidb-1-1-2-1 |      2993.80 |     10.78 |           2.70 |                  3.24 |
 
-### Execution phase: component tikv
-
-| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |      3910.02 |     16.52 |          14.30 |                 32.54 |
-| TiDB-1-1-2-1 |      3875.33 |     15.20 |          16.49 |                 35.40 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: component pd
 
 | DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------|-------------:|----------:|---------------:|----------------------:|
-| TiDB-1-1-1-1 |       219.99 |      0.93 |           0.50 |                  0.50 |
-| TiDB-1-1-2-1 |       219.99 |      1.85 |           0.50 |                  0.50 |
+| tidb-1-1-1-1 |       306.06 |      1.04 |           0.22 |                  0.22 |
+| tidb-1-1-2-1 |       297.88 |      1.05 |           0.22 |                  0.22 |
+
+### Benchmarking phase: component tikv
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| tidb-1-1-1-1 |      3836.32 |     14.60 |          15.44 |                 31.98 |
+| tidb-1-1-2-1 |      4229.86 |     15.56 |          17.59 |                 37.38 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS         |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------|-------------:|----------:|---------------:|----------------------:|
+| tidb-1-1-1-1 |       221.98 |      0.80 |           0.34 |                  0.34 |
+| tidb-1-1-2-1 |       221.98 |      2.14 |           0.34 |                  0.34 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvloading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-1-1 (bexhoma-metrics-tidb-1-1-1-1-tikvloading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-tikvbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection tidb-1-1-2-1 (bexhoma-metrics-tidb-1-1-2-1-tikvbenchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component pd contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component tikv contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component pd contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component tikv contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component pd contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component tikv contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: Workflow as planned

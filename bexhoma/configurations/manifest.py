@@ -29,6 +29,36 @@ ARG_STYLE_FLAG = 'flag'
 #: ``--set`` parameter prefix that targets the container's ``env`` list instead of its args.
 ENV_PARAM_PREFIX = 'env.'
 
+#: Stands in for ``{serverip}`` while the worker host list is put into a JDBC URL template.
+_HOSTS_TOKEN = 'BEXHOMA-WORKER-HOSTS'
+
+
+def worker_url_list(url_template: str, workers: List[str], worker_port=None, **values) -> str:
+    """Fill a JDBC URL template with the list of worker hosts (``BEXHOMA_URL_LIST``).
+
+    The template's ``{serverip}:<port>`` is the SUT service and its port. The
+    workers are reached through their headless service, on the port the DBMS
+    listens on in the pod, and a multi-host URL needs that port on every host:
+    a host without one gets the driver's default port.
+
+    :param url_template: The docker's ``JDBC.url``, with ``{serverip}``.
+    :param workers: Worker host names (``<pod>.<headless service>``).
+    :param worker_port: Port of the DBMS in a worker pod (docker key ``worker_port``);
+        None keeps the old list ``w0,w1,w2`` followed by the template's port.
+    :param values: The other placeholders of the template.
+    :return: The URL.
+    :rtype: str
+    """
+    url = url_template.format(serverip=_HOSTS_TOKEN, **values)
+    if worker_port is None:
+        return url.replace(_HOSTS_TOKEN, ",".join(workers))
+    hosts = ",".join(f"{worker}:{worker_port}" for worker in workers)
+    head, sep, tail = url.partition(_HOSTS_TOKEN)
+    if tail.startswith(':'):
+        # drop the SUT service port that follows the host in the template
+        tail = tail[1:].lstrip('0123456789')
+    return head + hosts + tail
+
 
 def find_workloads(doc: dict, kind: str, name: str) -> bool:
     """Return True if this YAML document matches the requested kind and name.
@@ -411,8 +441,8 @@ class ManifestBuilder:
                 database=database,
                 schema=schema,
             )
-            env_default['BEXHOMA_URL_LIST'] = c['JDBC']['url'].format(
-                serverip=list_of_workers_as_string,
+            env_default['BEXHOMA_URL_LIST'] = worker_url_list(
+                c['JDBC']['url'], list_of_workers, cfg.dockertemplate.get('worker_port'),
                 dbname=cfg.experiment.volume,
                 DBNAME=cfg.experiment.volume.upper(),
                 timout_s=c['connectionmanagement']['timeout'],

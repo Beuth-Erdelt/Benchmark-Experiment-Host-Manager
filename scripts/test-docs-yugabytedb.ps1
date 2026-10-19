@@ -80,7 +80,7 @@ Wait-BexhomaProcess "ycsb"
 
 
 # install YugabyteDB
-Install-YugabyteDB -Persistent "no"
+Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 
 #### YCSB Ingestion (Example-YugaByteDB.md)
 bexhoma ycsb `
@@ -141,7 +141,7 @@ Remove-YugabyteDB -RemovePVC "no"
 Start-Sleep -Seconds 30
 
 # install YugabyteDB
-Install-YugabyteDB -Persistent "no"
+Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
 #### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
@@ -179,7 +179,7 @@ Remove-YugabyteDB -RemovePVC "no"
 Start-Sleep -Seconds 30
 
 # install YugabyteDB
-Install-YugabyteDB -Persistent "no"
+Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
 
@@ -209,7 +209,7 @@ Remove-YugabyteDB -RemovePVC "no"
 Start-Sleep -Seconds 30
 
 # install YugabyteDB
-Install-YugabyteDB -Persistent "no"
+Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
 
@@ -246,7 +246,7 @@ Remove-YugabyteDB -RemovePVC "no"
 
 
 # install YugabyteDB
-Install-YugabyteDB -Persistent "no"
+Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
 bexhoma ycsb `
@@ -278,7 +278,7 @@ Remove-YugabyteDB -RemovePVC "no"
 
 
 # install YugabyteDB
-Install-YugabyteDB -Persistent "no"
+Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
 

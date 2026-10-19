@@ -1,6 +1,17 @@
 # Plan: choose whether SUTs are kept, and never deadlock on a kept SUT
 
-Status: **implemented** (2026-10-15), uncommitted, not run on the cluster.
+Status: **implemented** (2026-10-15), committed (`6d60215e`). Cluster check
+2026-10-19 (TPC-H SF1 PostgreSQL `load -rst nvme,cephcsi -rsr -mse 1`):
+the first run crashed when PostgreSQL-1 finished loading: `_waits_for_slot()`
+called `sut_exists()` of the waiting PostgreSQL-2, whose `deployment_infos`
+is still empty before its SUT starts (`KeyError: 'deployment'`); the unit
+tests used stub status objects. Fixed in `configurations/status.py`
+(`sut_exists()` is False without deployment infos), regression test with the
+real `ComponentStatus` in `tests/test_keep_sut.py`. Rerun (1792368663):
+PostgreSQL-1 "stopped instead of kept, PostgreSQL-2 waits for its slot"
+(once), PostgreSQL-2 started, loaded and was kept (port-forward printed),
+summary line "stopped instead of kept: PostgreSQL-2 waited for its slot".
+**Done.**
 Deviations: the workload info adds "stopped after loading" only for
 `load -ks no` (a line on every `run` would be noise); the catalog
 translators emit `-ks no` for every mode but `start`, so agent runs never

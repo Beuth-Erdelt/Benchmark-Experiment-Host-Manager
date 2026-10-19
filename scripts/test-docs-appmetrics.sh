@@ -723,8 +723,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 80Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
-# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
   -dbms PGBouncer \
   -sf 16 \
@@ -750,7 +748,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 80Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT \
   run &>$LOG_DIR/docs_ycsb_pgbouncer_appmetrics.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer appmetrics  sf=16  nbp=16"
@@ -775,8 +773,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer appmetrics  sf=16  nbp=
 # -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
-# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma benchbase \
   -dbms PGBouncer \
   -sf 16 \
@@ -795,7 +791,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_appmetrics.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PGBouncer appmetrics  sf=16  nbp=1,2"

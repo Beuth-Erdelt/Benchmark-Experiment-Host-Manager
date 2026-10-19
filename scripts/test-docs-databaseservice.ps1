@@ -250,11 +250,6 @@ bexhoma tpch `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
 
-# delete pvc of placeholder
-kubectl delete pvc bexhoma-storage-databaseservice-tpch-3
-
-Start-Sleep -Seconds 10
-
 # delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
@@ -282,6 +277,7 @@ bexhoma tpch `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `

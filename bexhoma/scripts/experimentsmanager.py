@@ -512,3 +512,9 @@ def manage():
                 df = df.reindex(index=evaluators.natural_sort(df.index))
                 print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
     benchmarker.logger.setLevel(logging.ERROR)
+
+
+# `python -m bexhoma.scripts.experimentsmanager ...` runs the same as `bexperiments ...`;
+# without this the module was only imported and nothing happened
+if __name__ == '__main__':
+    manage()

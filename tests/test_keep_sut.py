@@ -107,6 +107,16 @@ class LeavesSutRunningTest(unittest.TestCase):
         first.experiment_done = True
         self.assertTrue(self.decide(_experiment([first, second], max_sut=1), second))
 
+    def test_a_configuration_that_never_started_waits(self):
+        """Real status object: deployment_infos is empty until the SUT starts (cluster run 2026-10-19)."""
+        from bexhoma.configurations.status import ComponentStatus
+        first = _config('PostgreSQL-1')
+        second = _config('PostgreSQL-2')
+        second.appname, second.deployment_infos = 'bexhoma', {}
+        second.status = ComponentStatus(second)
+        self.assertFalse(second.status.sut_exists())
+        self.assertFalse(self.decide(_experiment([first, second], max_sut=1), first))
+
     def test_without_a_cap_every_configuration_keeps_its_sut(self):
         first, second = _config('PostgreSQL-1'), _config('PostgreSQL-2')
         self.assertTrue(self.decide(_experiment([first, second]), first))
@@ -145,12 +155,19 @@ class PrepareNextRepetitionTest(unittest.TestCase):
         experiment.wait = mock.Mock()
         with mock.patch('builtins.print'):
             experiment._prepare_next_repetition(config)
-        experiment.wait.assert_called_once_with(30)
-        config.reset_sut.assert_called_once_with()
-        config.lifecycle.start_sut.assert_not_called()
-        self.assertEqual(config.benchmark_list, ['b1', 'b2'])
-        self.assertEqual(experiment.client, 0)
-        # it now counts as waiting for a slot, like a configuration that has not started yet
+            # it does not block the loop until the stopped SUT is gone
+            experiment.wait.assert_not_called()
+            config.reset_sut.assert_called_once_with()
+            config.lifecycle.start_sut.assert_not_called()
+            self.assertEqual(config.benchmark_list, ['b1', 'b2'])
+            self.assertEqual(experiment.client, 0)
+            # while its old SUT is removed it already counts as waiting for a slot
+            self.assertEqual(experiment._waits_for_slot(_config('PostgreSQL-1')), 'PostgreSQL-2')
+            # the loop skips it while the SUT exists, then lets it start again
+            self.assertTrue(experiment._sut_still_removing(config))
+            self.assertFalse(experiment._sut_still_removing(config))
+            self.assertFalse(config.sut_removing)
+        # after removal it counts as waiting for a slot, like a configuration that has not started yet
         self.assertEqual(experiment._waits_for_slot(_config('PostgreSQL-1')), 'PostgreSQL-2')
 
 

@@ -193,32 +193,45 @@ class LoadingFailureTest(unittest.TestCase):
     def _queue_cluster() -> Kubernetes:
         """Build a cluster whose message-queue commands are mocked."""
         cluster = Kubernetes.__new__(Kubernetes)
-        cluster.delete_messagequeue_key = mock.Mock()
-        cluster.add_to_messagequeue = mock.Mock()
+        cluster.refill_messagequeue = mock.Mock()
         cluster.wait = mock.Mock()
         return cluster
 
     def test_chunk_queue_is_refilled_after_a_transient_push_failure(self) -> None:
         """A lost push reply must be retried from a cleared queue."""
         cluster = self._queue_cluster()
-        # First attempt: the second push gets no reply (dropped connection).
-        cluster.add_to_messagequeue.side_effect = [1, None, 1, 2]
+        # First attempt: the reply is lost (dropped connection).
+        cluster.refill_messagequeue.side_effect = [None, 2]
 
         cluster.fill_messagequeue(queue="chunks", length=2)
 
-        self.assertEqual(cluster.delete_messagequeue_key.call_count, 2)
+        self.assertEqual(cluster.refill_messagequeue.call_count, 2)
         cluster.wait.assert_called_once_with(10)
 
     def test_chunk_queue_gives_up_after_every_attempt_fails(self) -> None:
         """A queue that never reaches its length must raise after all attempts."""
         cluster = self._queue_cluster()
-        cluster.add_to_messagequeue.return_value = None
+        cluster.refill_messagequeue.return_value = 1
 
         with self.assertRaisesRegex(RuntimeError, "in 3 attempts"):
             cluster.fill_messagequeue(queue="chunks", length=2)
 
-        self.assertEqual(cluster.delete_messagequeue_key.call_count, 3)
+        self.assertEqual(cluster.refill_messagequeue.call_count, 3)
         self.assertEqual(cluster.wait.call_count, 2)
+
+    def test_chunk_queue_is_cleared_and_filled_in_one_exec(self) -> None:
+        """One exec clears the queue and pushes 1..n at once; its last line is the length."""
+        cluster = Kubernetes.__new__(Kubernetes)
+        cluster.logger = mock.Mock()
+        cluster.get_pods = mock.Mock(return_value=["redis-pod"])
+        cluster.execute_command_in_pod_api = mock.Mock(return_value=("", "3\n", ""))
+
+        self.assertEqual(cluster.refill_messagequeue(queue="chunks", length=3), 3)
+
+        cluster.execute_command_in_pod_api.assert_called_once_with(
+            command="redis-cli del chunks > /dev/null && redis-cli rpush chunks 1 2 3", pod="redis-pod")
+        cluster.execute_command_in_pod_api.return_value = ("", "", "error")
+        self.assertIsNone(cluster.refill_messagequeue(queue="chunks", length=3))
 
     def test_loading_job_is_not_started_when_its_chunk_queue_fails(self) -> None:
         """The loading job must be sized by its entry and depend on a filled queue."""

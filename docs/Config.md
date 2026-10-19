@@ -91,8 +91,9 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 'monitor': {
     'service_monitoring':             'http://prometheus.monitor.svc.cluster.local:9090/api/v1/',
     'service_monitoring_application': 'http://{service}.{namespace}.svc.cluster.local:9090/api/v1/',
-    'extend': 20,
+    'extend': 0,
     'shift':  0,
+    'scrape_interval': 30,
     'metrics': {
         'total_cpu_memory':     { ... },
         'total_cpu_util':       { ... },
@@ -122,8 +123,9 @@ The `monitor` block sits inside `credentials.k8s` and controls how Prometheus me
 
 | Key | Description |
 |---|---|
-| `extend` | Number of seconds added to both ends of each monitoring interval. An interval `[t, t']` becomes `[t − extend, t' + extend]`. A value of 20 compensates for minor clock skew and scrape timing. |
+| `extend` | Number of seconds added to both ends of each monitoring interval. An interval `[t, t']` becomes `[t − extend, t' + extend]`. Default 0. Only for clocks that are out of sync; keep it well below the gap between phases (≤ 5 s), otherwise peak values (Max RAM) of the next phase are counted. |
 | `shift` | Number of seconds to shift the entire interval forward. An interval `[t, t']` becomes `[t + shift, t' + shift]`. Useful if container clocks are systematically ahead of the Prometheus clock. |
+| `scrape_interval` | Seconds between two scrapes of the cluster Prometheus (default 30). Phases shorter than 1.2 intervals (SUT, workers, jobs selected by `{pods}`) or 2 intervals (jobs with an old query) are not measurable: their `CPU [CPUs]` is shown as `n/a` and left out of the CPU test (see [Monitoring.md](Monitoring.md#short-phases)). Not the same as `prometheus_interval`, which only sets bexhoma's own Prometheus. |
 
 #### Hardware metric definitions (`metrics`)
 
@@ -134,8 +136,8 @@ Each entry has:
 'total_cpu_util': {
     'type':   'cluster',    # 'cluster' = hardware metric; 'application' = DBMS-specific
     'active': True,         # False = skip this metric
-    'metric': 'gauge',      # 'gauge' (mean), 'counter' (max−min delta), or 'ratio' (max)
-    'query':  '<promql>',   # PromQL; {configuration}, {experiment}, {host}, {gpuid}, {database}, {schema} are substituted
+    'metric': 'gauge',      # 'gauge' (mean), 'counter' (increase), or 'ratio' (max)
+    'query':  '<promql>',   # PromQL; {configuration}, {experiment}, {pods}, {namespace}, {host}, {gpuid}, {database}, {schema} are substituted
     'title':  'CPU Utilization [CPUs]',   # unit in brackets: what the query's value is measured in
 },
 ```
@@ -146,9 +148,9 @@ Each entry has:
 | `type` | `application` | Queried from `service_monitoring_application` (DBMS-specific metrics) |
 | `active` | `True` / `False` | Set to `False` to disable a metric without removing it |
 | `metric` | `gauge` | Aggregated as mean over the interval |
-| `metric` | `counter` | Aggregated as max − min (delta) over the interval |
+| `metric` | `counter` | Aggregated as the increase over the interval (see [Monitoring.md](Monitoring.md#metric-kinds)) |
 | `metric` | `ratio` | Aggregated as max over the interval |
-| `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{host}`, `{gpuid}`, `{database}`, `{schema}`; literal PromQL braces are written `{{ }}` |
+| `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{pods}` (pod regex of the query set, see [Monitoring.md](Monitoring.md#pods-of-a-phase)), `{namespace}`, `{host}`, `{gpuid}`, `{database}`, `{schema}`; literal PromQL braces are written `{{ }}` |
 | `sparse` | `True` (optional) | The metric only has a Prometheus series while its value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit). No data then means 0, so the report lists the gap as expected instead of failing the "No monitoring metrics missing" test |
 
 The default set of hardware metrics covers CPU utilization, CPU throttle, memory (working set and including page cache), network RX/TX, filesystem read/write, and, for the whole node rather than the container, I/O wait and per-core utilization (maximum and variance).

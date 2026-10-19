@@ -64,6 +64,7 @@ from __future__ import annotations
 import fnmatch
 import os
 import re
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -74,7 +75,7 @@ from bexhoma import evaluators
 from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
-from bexhoma.monitoring_math import counter_total
+from bexhoma.monitoring_math import counter_total, read_connections, scoped_job_connections
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
 
@@ -83,7 +84,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.11.0"
+SCHEMA_VERSION = "1.12.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -589,15 +590,19 @@ def _build_monitoring_sections(
                    f"it names a reason, the zeros are correct: `{missing_metrics.EXPECTED_DATA_PREEXISTING}` "
                    "means an optional component (the data generator) had nothing to do and exited "
                    f"before the first scrape; `{missing_metrics.EXPECTED_SPARSE}` means the metric "
-                   "only has a series while its value is non-zero. `source` is the log that reported "
+                   "only has a series while its value is non-zero; "
+                   f"`{missing_metrics.EXPECTED_SHORT_PHASE}` means the phase was too short for the "
+                   "scrapes it needs, so its CPU is shown as n/a. `source` is the log that reported "
                    "it (see files.md)."],
         ))
     monitoring_components = experiment.workload.get('monitoring_components', {})
     for component, title in monitoring_components.items():
-        df_monitoring, _insufficient_samples = experiment.show_summary_monitoring_table(evaluator, component)
+        df_monitoring, short = experiment.show_summary_monitoring_table(evaluator, component)
         if len(df_monitoring) > 0:
             df = pd.concat(df_monitoring, axis=1).round(2)
             df = df.reindex(index=evaluators.natural_sort(df.index))
+            # phases too short to measure their CPU show n/a, as in show_summary()
+            df = experiment.mark_not_measurable(df, short)
             df.index.names = ["DBMS"]
             sections.append(Section(heading=title, level=3, dataframe=df, link_connections=True))
     if monitoring_applications:
@@ -613,12 +618,15 @@ def _build_monitoring_sections(
         sections.append(ceph_section)
     catalog_rows = []
     catalog_value_sections = []
+    # named like the monitoring columns, unlike a connections.config rewritten by DBMSBenchmarker
+    connections_scope = read_connections(evaluator.path) or connections_sorted
     for component, component_title in monitoring_components.items():
         for metric_key, meta in metric_defs.items():
             df = evaluator.get_monitoring_metric(metric=metric_key, component=component)
             if df.empty:
                 continue
-            aggregated = _aggregate_metric(df, meta['metric'], component)
+            aggregated = _aggregate_metric(
+                df, meta['metric'], component, scoped_job_connections(connections_scope, component, metric_key))
             df_cleaned = pd.DataFrame(aggregated)
             df_cleaned.columns = [meta['title']]
             df_cleaned = _add_not_applicable(
@@ -642,7 +650,7 @@ def _build_monitoring_sections(
     return sections
 
 
-def _aggregate_metric(df: pd.DataFrame, kind: str, component: str) -> pd.Series:
+def _aggregate_metric(df: pd.DataFrame, kind: str, component: str, scoped: Iterable[str] = ()) -> pd.Series:
     """
     Reduce one metric's per-scrape values to one value per connection.
 
@@ -654,11 +662,13 @@ def _aggregate_metric(df: pd.DataFrame, kind: str, component: str) -> pd.Series:
     :param df: One column per connection, one row per Prometheus scrape.
     :param kind: The metric's ``metric`` field (``counter``, ``ratio``, ``gauge``).
     :param component: The monitoring component the values belong to.
+    :param scoped: Connections whose job queries select only the job's own pods
+        (:func:`bexhoma.monitoring_math.scoped_job_connections`).
     :return: One value per connection, sorted by connection.
     :rtype: pandas.Series
     """
     if kind == 'counter':
-        return counter_total(df, component)
+        return counter_total(df, component, scoped)
     if kind == 'ratio':
         return df.max().sort_index()
     return df.mean().sort_index()
@@ -1155,7 +1165,8 @@ def write_markdown_report(
     missing = None
     if experiment.monitoring_active or experiment.cluster.monitor_cluster_active:
         missing = missing_metrics.collect_missing_metrics(
-            result_dir, experiment.workload.get('optional_monitoring_components', []))
+            result_dir, experiment.workload.get('optional_monitoring_components', []),
+            scrape_interval=experiment.scrape_interval())
     monitoring_sections = _build_monitoring_sections(
         experiment, benchmark.evaluator, connections_sorted, monitoring_applications, missing,
     )

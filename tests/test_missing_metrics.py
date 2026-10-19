@@ -135,6 +135,41 @@ class CollectMissingMetricsTest(unittest.TestCase):
             "benchmarking": "",
         })
 
+    def test_gaps_in_short_windows_are_expected(self) -> None:
+        """A gap is expected below the window the component needs at the scrape interval (30 s)."""
+        windows = {("pg-1", "benchmarking"): 11, ("pg-2", "benchmarking"): 45,
+                   ("pg-1", "benchmarker"): 45, ("pg-2", "benchmarker"): 600}
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            def gap(connection: str) -> str:
+                return f"ERROR:root:Metrics missing for CPU (sum(x)) for connection {connection}: {_URL}"
+            for (connection, component), window in windows.items():
+                (result_dir / missing_metrics.fetch_log_name(connection, component)).write_text(
+                    f"### python metrics.py\nInterval length {window}s\n{gap(connection)}\n")
+            # an old log without the Interval length line
+            (result_dir / missing_metrics.fetch_log_name("pg-3", "benchmarking")).write_text(gap("pg-3"))
+            missing = missing_metrics.collect_missing_metrics(result_dir, scrape_interval=30)
+            without_interval = missing_metrics.collect_missing_metrics(result_dir)
+        expected = {(entry.connection.split("-")[1], entry.component): entry.expected for entry in missing}
+        short = missing_metrics.EXPECTED_SHORT_PHASE
+        self.assertEqual(expected, {
+            ("1", "benchmarking"): short,     # SUT: 11 s < 1.2 x 30
+            ("2", "benchmarking"): "",        # SUT: 45 s measurable
+            ("1", "benchmarker"): short,      # job: 45 s < 2 x 30
+            ("2", "benchmarker"): "",         # job: 600 s, a real gap
+            ("3", "benchmarking"): "",        # no Interval length line: as before
+        })
+        self.assertTrue(all(entry.expected == "" for entry in without_interval))
+
+    def test_fetch_window(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            log = Path(tmp_dir) / "bexhoma-metrics-pg-1-loader.log"
+            self.assertIsNone(missing_metrics.fetch_window(log))
+            log.write_text("### python metrics.py\nInterval length 118s\nMetric total_cpu_util\n")
+            self.assertEqual(missing_metrics.fetch_window(log), 118)
+            log.write_text("### python metrics.py\n")
+            self.assertIsNone(missing_metrics.fetch_window(log))
+
     def test_fetch_logs_have_their_own_files_md_group(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             result_dir = Path(tmp_dir)

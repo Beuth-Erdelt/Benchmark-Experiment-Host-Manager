@@ -313,7 +313,8 @@ class SwitchOffTest(unittest.TestCase):
 class TemplateMetricsTest(unittest.TestCase):
     """The Ceph metrics in k8s-cluster.config, and that every other query formats as before."""
 
-    _BASE = {"host": "n1", "gpuid": "", "configuration": "pg", "experiment": "1", "schema": "s", "database": "d"}
+    _BASE = {"host": "n1", "gpuid": "", "configuration": "pg", "experiment": "1", "schema": "s", "database": "d",
+             "pods": "(.*)pg-1(.*)", "namespace": "ns"}
 
     def test_existing_queries_are_unchanged(self) -> None:
         values = {"storage_class": "nvme", "pool": "nvme", "rbd_images": "csi-vol-a"}

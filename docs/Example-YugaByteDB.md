@@ -66,6 +66,9 @@ replicas.tserver=3,\
 enableLoadBalancer=True
 ```
 
+Optionally pin master and tserver pods to nodes with a values file (`-f nodes.yaml`) holding a node affinity for `master` and `tserver` (`kubernetes.io/hostname In [...]`).
+The test script does this with `Install-YugabyteDB -Nodes $BEXHOMA_NODES_WORKER`: without persistent storage the data sits on the nodes' local disks, so the nodes decide the results.
+
 
 Test the installation
 ```bash
