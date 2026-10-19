@@ -2409,7 +2409,7 @@ class ExperimentBase():
                 #print("{:30s}: looking for completed startup pods".format(config.configuration))
                 app = self.cluster.appname
                 component = 'init'
-                pods = self.cluster.get_job_pods(app=app, component=component, experiment=self.code, configuration=configuration)
+                pods = self.cluster.get_job_pods(app=app, component=component, experiment=self.code, configuration=config.configuration)
                 for pod in pods:
                     status = self.cluster.get_pod_status(pod)
                     self.cluster.logger.debug("Pod {} has status {}".format(pod, status))
