@@ -708,14 +708,15 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     if num_worker > 0:
                         #config.sut_template = "deploymenttemplate-DragonflyCluster.yml"
                         config.monitoring_sut = False # should not be monitored since only dummy
+                        config.set_sut_role('placeholder') # data lives in the worker StatefulSet
+                        # SAVE on every worker: it is an admin command, not replicated,
+                        # so the replicas would not snapshot otherwise
+                        config.set_script_target('workers')
                         if num_worker_replicas > 0:
-                            # SUT pod is the master and holds the data; replicas get it by replication,
-                            # so SAVE stays on the master
+                            # worker-0 is the master (the service points there), the other workers replicate it
                             config.sut_template = "deploymenttemplate-DragonflyReplica.yml"
                         else:
                             BEXHOMA_DBMS_TYPE = "redis-cluster" # multi-master aware client, finds correct master for each write
-                            config.set_sut_role('placeholder') # data lives in the worker StatefulSet
-                            config.set_script_target('workers') # SAVE on every cluster node
                     config.set_storage(
                         storageConfiguration = 'dragonfly'
                         )

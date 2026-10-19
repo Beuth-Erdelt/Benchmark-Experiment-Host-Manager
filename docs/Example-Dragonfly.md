@@ -64,6 +64,7 @@ bexhoma ycsb \
   -ma \
   -mc \
   -tr \
+  -ar \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -89,6 +90,7 @@ This
       * target throughput is `s` * 16384
       * threads = 64/`m` (`-nbt`)
     * with a maximum of 1 DBMS per time (`-ms`)
+    * before each round writes a snapshot of the data with `SAVE` (`-ar`, see [Snapshots](#snapshots))
 * tests if results match workflow (`-tr`)
 * monitors (`-m`) all components (`-mc`), including application metrics ( `-ma`)
 * shows a summary
@@ -322,6 +324,7 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
+  -ar \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -520,6 +523,8 @@ YCSB SF=1
 We can set the number of replicas with the parameter `-nwr`.
 However, only the basic master-copy replication is implemented in bexhoma.
 Whenever `-nwr` is greater than 0, it is set to the number of workers minus 1.
+The first worker pod is the master and receives all writes; the other workers replicate it.
+As in the cluster, the main pod deployed by bexhoma holds no data.
 
 ```bash
 bexhoma ycsb \
@@ -542,6 +547,7 @@ bexhoma ycsb \
   -ma \
   -mc \
   -tr \
+  -ar \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_3.log
@@ -760,6 +766,7 @@ bexhoma ycsb \
   -ma \
   -mc \
   -tr \
+  -ar \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -986,6 +993,7 @@ bexhoma ycsb \
   -ma \
   -mc \
   -tr \
+  -ar \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1001,6 +1009,15 @@ At the same time, the length of hostnames is limited.
 Therefore bexhoma will shorten the name of the pods and pvcs in this case.
 The first volume is attached to the (dummy) coordinator and is used to persist infos across experiments (and not to store actual data).
 The other volumes (worker volumes) are attached to the worker pods and store the actual data.
+
+### Snapshots
+
+Dragonfly keeps the data in memory and writes it to disk only on `SAVE` or on shutdown.
+With `-ar`, bexhoma runs `save-snapshot.sh` (`SAVE`) before each benchmarking round, so the volume holds the data that the round starts from.
+In a cluster and with replication the script runs on every worker pod, where the data is.
+`SAVE` is not replicated, so each replica writes its own snapshot.
+The data pods save under the fixed name `dump` (`DFLY_dbfilename`), so each `SAVE` overwrites the previous snapshot and a restarted pod loads it.
+The output of the script is stored per pod in the result folder (`...-reset_<run>_<client>_<benchmark>-...-save-snapshot-<pod>.sh.stdout.log`).
 
 
 ```bash

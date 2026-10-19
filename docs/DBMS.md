@@ -769,7 +769,8 @@ The monitoring section scrapes Dragonfly's native Prometheus endpoint at `/metri
 
 Dragonfly settings are environment variables `DFLY_<flag>` in the templates (e.g. `DFLY_maxmemory`), not command-line flags, because a flag on the command line would win over the variable.
 Change them per run with `--set`, e.g. `--set deployment[bexhoma-deployment-dragonfly].container[dbms].env.DFLY_snapshot_cron="*/5 * * * *"` (for the cluster workers: `statefulset[bexhoma-worker]`).
-In a Dragonfly or Redis cluster, `save-snapshot.sh` (`SAVE`) runs on every worker; with replicas (DragonflyReplica) only on the master.
+With `-ar`, `save-snapshot.sh` (`SAVE`) runs before each benchmarking round. In a Dragonfly or Redis cluster it runs on every worker, with replicas (DragonflyReplica) too: `SAVE` is not replicated, so each replica writes its own snapshot.
+The data pods save under the fixed name `dump` (`DFLY_dbfilename`), so each `SAVE` overwrites the previous snapshot and a restart loads it.
 
 **DDL scripts:**
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Dragonfly)
