@@ -126,8 +126,9 @@ Changes:
 2. For `'workers'`: run each script in every pod of `get_worker_pods(only_stateful=True)`
    (`configurations/base.py:793`), container `dbms`, in parallel threads; logs per pod
    (`...-<pod>.stdout.log`); returned time = maximum over the pods.
-3. Set `'workers'` in `ycsb.py` for `DragonflyCluster` and `RedisCluster`. `DragonflyReplica`: master
-   only (as today; replicas get the data by replication).
+3. Set `'workers'` in `ycsb.py` for `DragonflyCluster` and `RedisCluster`. `DragonflyReplica`: also
+   `'workers'` (corrected 2026-10-19, #667): its SUT Deployment is a dummy, the master is `bexhoma-worker-0`,
+   and `SAVE` (`CO::ADMIN`, not journaled) does not reach the replicas.
 4. Tests: target selection, per-pod logs, timing = max.
 
 ### WP5. TLS Secret for MySQL and HammerDB (D5)
@@ -235,7 +236,7 @@ Design (R4, detailed 2026-10-17):
    | CockroachDB | all (`worker`) | placeholder (client pod) |
    | Citus | all (`worker`) | data (coordinator holds metadata, plans queries) |
    | Redis cluster, Dragonfly cluster | all (`worker`) | placeholder |
-   | Dragonfly replica | all | data (SUT = master) |
+   | Dragonfly replica | all (`worker`) | placeholder (master = `bexhoma-worker-0`; corrected 2026-10-19) |
    | YugabyteDB | - (Helm) | placeholder (helper pod) |
    | DatabaseService | - | placeholder (DBMS outside Kubernetes; pod is a client) |
    | PostgreSQL, MySQL, MariaDB, Redis, Dragonfly standalone | - | data |
@@ -421,7 +422,7 @@ Ready, with these defaults taken from this plan unless the user decides otherwis
 | # | Point | Default in this plan |
 |---|---|---|
 | R1 | WP2 argument style | annotation in the template, detection as fallback |
-| R2 | WP4 DragonflyReplica | `SAVE` on the master only |
+| R2 | WP4 DragonflyReplica | ~~`SAVE` on the master only~~ corrected 2026-10-19: `SAVE` on all workers (see WP4) |
 | R3 | WP6 `-rnw` | `+` joins nodes, commas sweep (paired with the resource cells), `sut` = `-rnn` node |
 | R4 | WP7 data components / placeholder SUT | **decided:** design in WP7 (`data_components`, `sut_role`, template sizes 250m-1 CPU / 512Mi-1Gi), confirmed by the user 2026-10-17 |
 | R5 | WP8 DBMS folders for TPC-H/TPC-DS check scripts | PostgreSQL, MySQL, MariaDB, Citus, PgDuckDB, MonetDB |

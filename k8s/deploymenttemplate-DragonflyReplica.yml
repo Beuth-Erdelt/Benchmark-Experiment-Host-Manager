@@ -138,6 +138,9 @@ spec:
           # Settings as DFLY_<flag> (see --set ...env.DFLY_<flag>); a command-line flag would win.
           - name: DFLY_maxmemory
             value: "128GiB"
+          # fixed name instead of dump-{timestamp}: SAVE overwrites the snapshot, start loads it
+          - name: DFLY_dbfilename
+            value: "dump"
           - name: POD_NAME
             valueFrom:
               fieldRef:
