@@ -322,6 +322,24 @@ is mostly these two passes.
   follows the order the submissions reach the lock (was configuration
   order). Log lines of several configurations interleave.
 - Tests: `ParallelStepsTest` in `tests/test_fewer_calls.py`.
+- Found in the first cluster run (2026-10-19, 1792401429): submitting 8
+  rounds took 47.8 s instead of about 15 s, "224 API requests 218 s".
+  Plain API requests scale with threads (48 x `read_namespaced_pod`: 3.76 s
+  one by one, 0.67 s from 8 threads, 0.076 s each either way), API execs did
+  not: one exec client per cluster object behind `_exec_lock` (needed,
+  `stream()` swaps the request method of its client), so the ~15 host info
+  execs per tenant queued (8 threads: 1.3x, 3.15 s per exec incl. waiting).
+  Fix: `_take_exec_client()` / `_return_exec_client()`, a free list of exec
+  clients (the first is `self.v1exec`, more only for execs at the same time,
+  reused across passes, dropped after `cluster_access()`); the lock only
+  guards the list. Measured with bexhoma's path: 8 threads 2.1x, 0.28 s per
+  exec, same outputs. The rest is the exec itself (kubelet, websocket).
+  Tests in `ExecApiTest`. Not yet in a cluster run.
+- Also fixed: the first loop looked up init job pods with `configuration`,
+  which only the old job-end loop set (to the last configuration of the
+  previous pass); since M6 it was undefined (NameError at the first loading
+  pass, run 1792401119). Now `config.configuration`: init pod logs of every
+  tenant are stored, not only of the last one.
 
 Expected: tenancy_8 round transition from about 220 s to about 60 s (fetch
 and follow-up batches stay); no change with one configuration.

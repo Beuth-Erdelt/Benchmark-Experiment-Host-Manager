@@ -9,6 +9,7 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import contextlib
 import time
 import threading
 import kubernetes.client as kubernetes_client
@@ -385,7 +386,7 @@ class Kubernetes():
             self.v1batches = kubernetes_client.BatchV1Api(api_client=self._new_api_client())
             self.v1storage = kubernetes_client.StorageV1Api(api_client=self._new_api_client())
             # exec swaps the request method of its client while it runs, so it
-            # gets a client of its own (see execute_command_in_pod_api())
+            # gets clients of its own, one per exec at a time (see _take_exec_client())
             self.v1exec = kubernetes_client.CoreV1Api(api_client=self._new_api_client())
         except Exception:
             print("WARN: Could not connect to Kubernetes")
@@ -1828,17 +1829,17 @@ class Kubernetes():
         if not pod:
             return "", "", ""
         for attempt in range(2):
-            v1exec = getattr(self, 'v1exec', None)
-            if v1exec is None:
+            if getattr(self, 'v1exec', None) is None:
                 break
             kwargs = {'container': container} if container else {}
             started = time.monotonic()
+            v1exec = None
             try:
-                with self.__dict__.setdefault('_exec_lock', threading.Lock()):
-                    client = kubernetes_stream(
-                        v1exec.connect_get_namespaced_pod_exec, pod, self.namespace,
-                        command=['sh', '-c', command], stderr=True, stdin=False, stdout=True,
-                        tty=False, _preload_content=False, **kwargs)
+                v1exec = self._take_exec_client()
+                client = kubernetes_stream(
+                    v1exec.connect_get_namespaced_pod_exec, pod, self.namespace,
+                    command=['sh', '-c', command], stderr=True, stdin=False, stdout=True,
+                    tty=False, _preload_content=False, **kwargs)
                 try:
                     client.run_forever(timeout=timeout)
                     if client.is_open():
@@ -1859,8 +1860,54 @@ class Kubernetes():
                 self.logger.debug(f'execute_command_in_pod_api({command}) failed, using kubectl: {e!r}')
                 break
             finally:
+                if v1exec is not None:
+                    self._return_exec_client(v1exec)
                 CALL_STATS.record_api(time.monotonic() - started)
         return self.execute_command_in_pod(command=command, pod=pod, container=container)
+
+    def _take_exec_client(self):
+        """Take an exec client no other thread uses at the moment.
+
+        ``kubernetes.stream.stream()`` swaps the request method of its client
+        while it opens the websocket, so two execs at the same time need two
+        clients (one shared client with a lock made them queue: 8 threads got
+        1.3x instead of 2x). Clients are kept in a free list and reused across
+        loop passes, so there are only as many as execs ran at the same time;
+        the first one is ``self.v1exec``. After :meth:`cluster_access` (a new
+        ``self.v1exec``) the older clients are dropped.
+
+        :return: A ``CoreV1Api`` for exec; give it back with :meth:`_return_exec_client`.
+        """
+        with self._exec_clients_current():
+            if self._exec_clients_free:
+                return self._exec_clients_free.pop()
+        v1exec = kubernetes_client.CoreV1Api(api_client=self._new_api_client())
+        with self._exec_clients_current():
+            self._exec_clients_all.append(v1exec)
+        return v1exec
+
+    def _return_exec_client(self, v1exec) -> None:
+        """Give back a client from :meth:`_take_exec_client` (dropped if :meth:`cluster_access` renewed the clients meanwhile).
+
+        :param v1exec: The client.
+        """
+        with self._exec_clients_current():
+            if any(v1exec is c for c in self._exec_clients_all) and not any(v1exec is c for c in self._exec_clients_free):
+                self._exec_clients_free.append(v1exec)
+
+    @contextlib.contextmanager
+    def _exec_clients_current(self):
+        """Hold the exec lock; start a new set of exec clients if ``self.v1exec`` changed.
+
+        Sets ``_exec_clients_all`` (clients of the current ``self.v1exec``)
+        and ``_exec_clients_free`` (those not in use).
+        """
+        with self.__dict__.setdefault('_exec_lock', threading.Lock()):
+            if self.__dict__.get('_exec_clients_of') is not self.v1exec:
+                self._exec_clients_of = self.v1exec
+                self._exec_clients_all = [self.v1exec]
+                self._exec_clients_free = [self.v1exec]
+            yield
 
     def upload_file(self, filename_remote, filename_local, pod, container="dashboard",
                     max_retries: int = 3) -> str:

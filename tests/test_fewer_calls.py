@@ -308,6 +308,36 @@ class ExecApiTest(unittest.TestCase):
         self.cluster.v1exec = None
         self.assertEqual(self.cluster.execute_command_in_pod_api('uname -r', pod='p'), ('', 'from kubectl', ''))
 
+    def test_execs_at_the_same_time_use_different_clients(self) -> None:
+        self.cluster._new_api_client = mock.Mock()
+        barrier = threading.Barrier(3, timeout=5)
+        used = []
+
+        def stream(method, *args, **kwargs):
+            used.append(method)     # connect_get_namespaced_pod_exec of the client in use
+            barrier.wait()          # all three execs are open at the same time
+            return _FakeStream(stdout='ok')
+        with mock.patch.object(clusters, 'kubernetes_stream', side_effect=stream), \
+                mock.patch.object(clusters.kubernetes_client, 'CoreV1Api', side_effect=lambda api_client: mock.Mock()):
+            results = run_steps([lambda: self.cluster.execute_command_in_pod_api('uname -r', pod='p')] * 3, max_workers=3)
+            self.assertEqual(results, [('', 'ok', '')] * 3)
+            self.assertEqual(len({id(method) for method in used}), 3)
+            self.assertIn(self.cluster.v1exec.connect_get_namespaced_pod_exec, used)
+            # given back and reused: no further clients for later execs
+            used.clear()
+            barrier.reset()
+            run_steps([lambda: self.cluster.execute_command_in_pod_api('uname -r', pod='p')] * 3, max_workers=3)
+        self.assertEqual(self.cluster._new_api_client.call_count, 2)
+
+    def test_renewed_access_drops_the_old_clients(self) -> None:
+        old = self.cluster._take_exec_client()
+        self.cluster.v1exec = mock.Mock()       # what cluster_access() does
+        self.cluster._return_exec_client(old)
+        self.assertIs(self.cluster._take_exec_client(), self.cluster.v1exec)
+        self.cluster._new_api_client = mock.Mock()
+        with mock.patch.object(clusters.kubernetes_client, 'CoreV1Api', return_value='new client'):
+            self.assertEqual(self.cluster._take_exec_client(), 'new client')
+
 
 def _probe(outputs: dict, pod_object=None):
     """A HostProbe whose commands answer from ``outputs`` (command prefix -> stdout)."""
