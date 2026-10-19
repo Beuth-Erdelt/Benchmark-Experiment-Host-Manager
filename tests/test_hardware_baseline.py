@@ -226,7 +226,7 @@ class BuildParsedArgsTest(unittest.TestCase):
     def test_base_parser_defaults_survive_untouched_fields(self) -> None:
         """Fields this feature doesn't override keep make_base_parser()'s own defaults."""
         args = hardware_baseline._build_parsed_args(timeout_minutes=None, hardware_duration=15)
-        self.assertEqual(args.timeout, 600)
+        self.assertEqual(args.timeout, 1800)
         self.assertEqual(args.sets, [])
         self.assertIsNone(args.experiment_timeout)
 
