@@ -25,6 +25,8 @@ import pandas as pd
 import json
 import ast
 import copy
+import functools
+import threading
 from collections import Counter
 from types import SimpleNamespace
 from importlib.metadata import version
@@ -40,6 +42,7 @@ from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_stora
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
 from bexhoma.metric_fetching import DEFAULT_MAX_PARALLEL_FETCHES, MetricFetchBatch
+from bexhoma.parallel_steps import DEFAULT_MAX_PARALLEL_STEPS, OrderedUpload, run_steps
 from bexhoma.cluster_calls import CALL_STATS, stored_pods
 
 if TYPE_CHECKING:
@@ -203,6 +206,7 @@ class ExperimentBase():
         self.num_experiment_to_apply = num_experiment_to_apply          # how many times should the experiment run in a row?
         self.max_sut = None                                             # max number of SUT in the cluster at the same time
         self.max_parallel_fetches = DEFAULT_MAX_PARALLEL_FETCHES        # metrics.py runs at the same time after a loop pass (1 = one by one)
+        self.max_parallel_steps = DEFAULT_MAX_PARALLEL_STEPS            # configurations whose job submissions / job ends of a loop pass run at the same time (1 = one by one)
         self._copy_metrics_script = ""                                  # name of the uploaded copy script, see ensure_copy_metrics_script()
         self.keep_sut = False                                          # keep each configuration's last SUT running at the end (-ks/-ss, resolved in prepare_testbed)
         self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
@@ -455,6 +459,33 @@ class ExperimentBase():
         return self.cluster.upload_files(
             filenames_local=[self.path+'/'+filename for filename in filenames],
             dir_remote='/results/'+str(self.code), pod=self.pod_dashboard)
+    def result_files_lock(self) -> threading.RLock:
+        """Lock for the result files every connection reads and rewrites.
+
+        ``connections.config``, ``protocol.json`` and ``experiments.config``
+        are read, changed and written again by each job submission and job
+        end; with several configurations at once (see
+        :func:`~bexhoma.parallel_steps.run_steps`) only one may do so at a time.
+
+        :return: The lock of this experiment.
+        """
+        return self.__dict__.setdefault('_result_files_lock', threading.RLock())
+    def upload_result_files(self, filenames: list) -> None:
+        """Upload result files that other configurations may rewrite meanwhile.
+
+        Like :meth:`upload_experiment_files`, but uploads requested by several
+        threads at the same time are merged and never overtake each other (see
+        :class:`~bexhoma.parallel_steps.OrderedUpload`): the pod always ends
+        with the newest local version.
+
+        :param filenames: Names of files relative to the experiment result folder.
+        """
+        with self.result_files_lock():
+            uploader = self.__dict__.get('_ordered_upload')
+            if uploader is None:
+                uploader = self._ordered_upload = OrderedUpload(
+                    lambda names: self.upload_experiment_files(names))
+        uploader.upload(filenames)
     #: Copies metric CSVs of one connection to another (``MetricsCollector.copy_fetched``).
     #: Shipped as a file, because ``$`` in an inline ``sh -c`` would be expanded by
     #: the local shell on Linux and not on Windows.
@@ -2010,6 +2041,146 @@ class ExperimentBase():
             except Exception as exc:
                 print("{:30s}: WARNING - could not upload {}: {}".format("Experiment", filename, exc))
 
+    def _run_parallel_steps(self, steps: list, summary: str, count=len) -> list:
+        """Run the steps of one loop pass side by side, one per configuration.
+
+        Up to :attr:`max_parallel_steps` at once (1 = one by one, in order, as
+        before); see :func:`~bexhoma.parallel_steps.run_steps`.
+
+        :param steps: Callables without arguments.
+        :param summary: Line printed when more than one unit was done, with ``{}`` for the number.
+        :param count: Number of units done, from the list of results.
+        :return: The results, in the order of ``steps``.
+        """
+        started = time.monotonic()
+        calls_started = CALL_STATS.snapshot()
+        results = run_steps(steps, self.max_parallel_steps)
+        done = count(results)
+        if done > 1:
+            print("{:30s}: {} in {:.1f}s ({} at once; {})".format(
+                "Experiment", summary.format(done), time.monotonic() - started,
+                max(1, min(self.max_parallel_steps, len(steps))), CALL_STATS.since(calls_started)))
+        return results
+
+    def _submit_round(self, config, client_round: list, experiment_run: str, client: str,
+                      round_counter_key: str, fetch_batch: MetricFetchBatch) -> None:
+        """Submit the benchmarker jobs of one client round of a configuration (experiment dict path).
+
+        Runs side by side with the rounds of other configurations; the round
+        and experiment pod counters are set before (in the loop).
+
+        :param config: The configuration.
+        :param client_round: Its entries of ``experiment_dict['benchmarker']`` for this round.
+        :param experiment_run: Repetition, 1-based, as string.
+        :param client: Client round, 1-based, as string.
+        :param round_counter_key: Redis key of the round pod counter.
+        :param fetch_batch: Batch for the loading-metric fetches.
+        """
+        for bm_idx, bench_entry in enumerate(client_round):
+            benchmark_index = bm_idx + 1
+            connection = f"{config.configuration}-{experiment_run}-{client}-{benchmark_index}".lower()
+            print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
+            reset_seconds = 0
+            if self.resetscript_active and bench_entry.get("resetscript"):
+                reset_seconds = config.loader.exec_reset_script(
+                    'reset_{}_{}_{}'.format(experiment_run, client, benchmark_index),
+                    bench_entry["resetscript"])
+            if bench_entry.get("parameters"):
+                # Assign directly to avoid the side effect in
+                # set_benchmarking_parameters() that overwrites
+                # experiment_dict["benchmarker"][0], which would
+                # corrupt subsequent -nc repetitions.
+                config.benchmarking_parameters = bench_entry["parameters"].copy()
+            config.runner.run_pod(
+                connection=connection,
+                configuration=config.configuration,
+                client=client,
+                parallelism=bench_entry["parallelism"],
+                benchmark_run=str(benchmark_index),
+                template_override=bench_entry.get("template", ""),
+                reset_seconds=reset_seconds,
+                fetch_batch=fetch_batch,
+            )
+        # Timed from here, not from the counter, so that reset
+        # scripts run before submission do not count.
+        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
+
+    def _submit_legacy_round(self, config, parallelism: int, benchmarking_parameters: Optional[dict],
+                             experiment_run: str, client: str, round_counter_key: str,
+                             fetch_batch: MetricFetchBatch) -> None:
+        """Submit the benchmarker job of one round of a configuration (legacy ``benchmark_list`` path).
+
+        :param config: The configuration.
+        :param parallelism: Number of benchmarker pods.
+        :param benchmarking_parameters: Parameters of this round, or None to keep the current ones.
+        :param experiment_run: Repetition, 1-based, as string.
+        :param client: Client round, 1-based, as string.
+        :param round_counter_key: Redis key of the round pod counter.
+        :param fetch_batch: Batch for the loading-metric fetches.
+        """
+        reset_seconds = 0
+        if self.resetscript_active and config.resetscript:
+            reset_seconds = config.loader.exec_reset_script(
+                'reset_{}_{}'.format(experiment_run, client), config.resetscript)
+        if benchmarking_parameters is not None:
+            print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
+            config.set_benchmarking_parameters(**benchmarking_parameters)
+        connection = (config.configuration+'-'+experiment_run+'-'+client).lower()
+        print("{:30s}: start benchmarking".format(connection))
+        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds, fetch_batch=fetch_batch)
+        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
+
+    def _end_finished_jobs(self, config, end_batch: MetricFetchBatch, end_uploads: list) -> tuple:
+        """Store the pods of a configuration's benchmarker jobs and end the jobs that succeeded.
+
+        Runs side by side with the other configurations of the pass.
+
+        :param config: The configuration.
+        :param end_batch: Batch for the benchmarking-metric fetches.
+        :param end_uploads: Collects the files to upload before ``end_batch`` runs.
+        :return: ``(running, incomplete, ended)``: a job is listed, a job has
+            not succeeded yet, names of the jobs ended and deleted now.
+        """
+        running = False
+        incomplete = False
+        ended = []
+        app = self.cluster.appname
+        component = 'benchmarker'
+        configuration = config.configuration
+        # jobs already ended and deleted by this process may still be listed
+        jobs = [job for job in (self.cluster.get_jobs(app, component, self.code, configuration) or [])
+                if job not in self._ended_jobs()]
+        # all pods to these jobs
+        pods = self.cluster.get_job_pods(app, component, self.code, configuration) or []
+        # status per job
+        for job in jobs:
+            running = True
+            # status per pod
+            for p in pods:
+                if p not in stored_pods(self.cluster) and not self.cluster.pod_log_exists(p):
+                    status = self.cluster.get_pod_status(p)
+                    self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                    if status == 'Succeeded' or status == 'Failed':
+                        self._store_finished_job_pod(job, p)
+            success = self.cluster.get_job_status(job)
+            self.cluster.logger.debug('job {} has success status {}'.format(job, success))
+            if not success:
+                incomplete = True
+                continue
+            # status per pod
+            for p in pods:
+                status = self.cluster.get_pod_status(p)
+                self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
+                if status == 'Succeeded' or status == 'Failed':
+                    self._store_finished_job_pod(job, p)
+                    self.cluster.delete_pod(p)
+            self.end_benchmarking(job, config, fetch_batch=end_batch, pending_uploads=end_uploads)
+            self.cluster.delete_job(job)
+            self._ended_jobs().add(job)
+            config.host.check_volumes()
+            ended.append(job)
+        return running, incomplete, ended
+
     def _follow_up_wait(self, current: int, reason: str) -> int:
         """Shorten the next wait of the main loop after a step that needs no cluster change.
 
@@ -2117,6 +2288,8 @@ class ExperimentBase():
             num_pods_pending_dbms: dict[str, int] = {}
             # metric fetches of all configurations of this pass run together, in parallel
             submit_batch = MetricFetchBatch()
+            # job submissions of this pass, run side by side after the loop (_submit_round())
+            submissions: list = []
             for config in self.configurations:
                 # a SUT stopped between repetitions: wait until it is gone
                 if getattr(config, 'sut_removing', False):
@@ -2385,34 +2558,10 @@ class ExperimentBase():
                             self.cluster.set_pod_counter(queue=exp_bm_key, value=total_exp_pods)
                             print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_exp_pods))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
-                        for bm_idx, bench_entry in enumerate(client_round):
-                            benchmark_index = bm_idx + 1
-                            connection = f"{config.configuration}-{experiment_run}-{client}-{benchmark_index}".lower()
-                            print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
-                            reset_seconds = 0
-                            if self.resetscript_active and bench_entry.get("resetscript"):
-                                reset_seconds = config.loader.exec_reset_script(
-                                    'reset_{}_{}_{}'.format(experiment_run, client, benchmark_index),
-                                    bench_entry["resetscript"])
-                            if bench_entry.get("parameters"):
-                                # Assign directly to avoid the side effect in
-                                # set_benchmarking_parameters() that overwrites
-                                # experiment_dict["benchmarker"][0], which would
-                                # corrupt subsequent -nc repetitions.
-                                config.benchmarking_parameters = bench_entry["parameters"].copy()
-                            config.runner.run_pod(
-                                connection=connection,
-                                configuration=config.configuration,
-                                client=client,
-                                parallelism=bench_entry["parallelism"],
-                                benchmark_run=str(benchmark_index),
-                                template_override=bench_entry.get("template", ""),
-                                reset_seconds=reset_seconds,
-                                fetch_batch=submit_batch,
-                            )
-                        # Timed from here, not from the counter, so that reset
-                        # scripts run before submission do not count.
-                        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
+                        # counters are set; the jobs of all configurations are submitted together after this loop
+                        submissions.append(functools.partial(
+                            self._submit_round, config, client_round, experiment_run, client,
+                            round_counter_key, submit_batch))
                         _benchmark_just_submitted = True
                     elif not _use_experiment_dict and len(config.benchmark_list) > 0:
                         # legacy benchmark_list path
@@ -2435,18 +2584,12 @@ class ExperimentBase():
                             self.cluster.set_pod_counter(queue=exp_bm_key, value=parallelism)
                             print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, parallelism))
                         print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
-                        reset_seconds = 0
-                        if self.resetscript_active and config.resetscript:
-                            reset_seconds = config.loader.exec_reset_script(
-                                'reset_{}_{}'.format(experiment_run, client), config.resetscript)
+                        benchmarking_parameters = None
                         if len(config.benchmarking_parameters_list) > 0:
                             benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
-                            print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
-                            config.set_benchmarking_parameters(**benchmarking_parameters)
-                        connection = (config.configuration+'-'+str(config.num_experiment_to_apply_done+1)+'-'+client).lower()
-                        print("{:30s}: start benchmarking".format(connection))
-                        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds, fetch_batch=submit_batch)
-                        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
+                        submissions.append(functools.partial(
+                            self._submit_legacy_round, config, parallelism, benchmarking_parameters,
+                            experiment_run, client, round_counter_key, submit_batch))
                         _benchmark_just_submitted = True
                     else:
                         # no list element left
@@ -2534,81 +2677,23 @@ class ExperimentBase():
                                 progress = " ({}/{} parallel loading jobs done)".format(
                                     num_data_jobs_ready, num_data_jobs)
                     print("{:30s}: is loading{}".format(config.configuration, progress))
+            self._run_parallel_steps(submissions, "submitted {} benchmark rounds")
             submit_batch.run(self.max_parallel_fetches)
             _we_have_running_benchmarks = False
             _we_have_incomplete_jobs = False
             end_batch = MetricFetchBatch()
             # files of the jobs ended in this pass, uploaded together before end_batch runs
             end_uploads: list = []
-            for config in self.configurations:
-                # all jobs of configuration - benchmarker
-                #app = self.cluster.appname
-                #component = 'benchmarker'
-                #configuration = ''
-                #jobs = self.cluster.get_jobs(app, component, self.code, configuration)
-                # success of job
-                app = self.cluster.appname
-                component = 'benchmarker'
-                configuration = config.configuration#''
-                #success = self.cluster.get_job_status(app=app, component=component, experiment=self.code, configuration=configuration)
-                # jobs already ended and deleted by this process may still be listed
-                jobs = [job for job in (self.cluster.get_jobs(app, component, self.code, configuration) or [])
-                        if job not in self._ended_jobs()]
-                # all pods to these jobs
-                pods = self.cluster.get_job_pods(app, component, self.code, configuration) or []
-                # status per job
-                for job in jobs:
-                    _we_have_running_benchmarks = True
-                    # status per pod
-                    for p in pods:
-                        if p not in stored_pods(self.cluster) and not self.cluster.pod_log_exists(p):
-                            status = self.cluster.get_pod_status(p)
-                            self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                            #print(p,status)
-                            if status == 'Succeeded' or status == 'Failed':
-                                self._store_finished_job_pod(job, p)
-                            #if status == 'Succeeded':
-                            #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                            #    #if status != 'Running':
-                            #    self.cluster.store_pod_log(p)
-                            #    #self.cluster.delete_pod(p)
-                            #if status == 'Failed':
-                            #    self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                            #    #if status != 'Running':
-                            #    self.cluster.store_pod_log(p)
-                            #    #self.cluster.delete_pod(p)
-                    success = self.cluster.get_job_status(job)
-                    self.cluster.logger.debug('job {} has success status {}'.format(job, success))
-                    if not success:
-                        _we_have_incomplete_jobs = True
-                    #print(job, success)
-                    if success:
-                        # status per pod
-                        for p in pods:
-                            status = self.cluster.get_pod_status(p)
-                            self.cluster.logger.debug('job-pod {} has status {}'.format(p, status))
-                            if status == 'Succeeded' or status == 'Failed':
-                                self._store_finished_job_pod(job, p)
-                                self.cluster.delete_pod(p)
-                            #print(p,status)
-                            #if status == 'Succeeded':
-                            #    #if status != 'Running':
-                            #    if not self.cluster.pod_log_exists(p):
-                            #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                            #        self.cluster.store_pod_log(p)
-                            #    self.cluster.delete_pod(p)
-                            #if status == 'Failed':
-                            #    #if status != 'Running':
-                            #    if not self.cluster.pod_log_exists(p):
-                            #        self.cluster.logger.debug("Store logs of job {} pod {}".format(job, p))
-                            #        self.cluster.store_pod_log(p)
-                            #    self.cluster.delete_pod(p)
-                        self.end_benchmarking(job, config, fetch_batch=end_batch, pending_uploads=end_uploads)
-                        self.cluster.delete_job(job)
-                        self._ended_jobs().add(job)
-                        config.host.check_volumes()
-                        # the next round needs nothing from the cluster
-                        intervals_wait = self._follow_up_wait(intervals_wait, "{} job ended".format(job))
+            # the job ends of all configurations run side by side (_end_finished_jobs())
+            for running, incomplete, ended in self._run_parallel_steps(
+                    [functools.partial(self._end_finished_jobs, config, end_batch, end_uploads)
+                     for config in self.configurations],
+                    "ended {} benchmarker jobs", count=lambda results: sum(len(ended) for _, _, ended in results)):
+                _we_have_running_benchmarks = _we_have_running_benchmarks or running
+                _we_have_incomplete_jobs = _we_have_incomplete_jobs or incomplete
+                for job in ended:
+                    # the next round needs nothing from the cluster
+                    intervals_wait = self._follow_up_wait(intervals_wait, "{} job ended".format(job))
             self._upload_ended_job_files(end_uploads)
             end_batch.run(self.max_parallel_fetches)
             print("{:30s}: took {:.1f}s ({})".format(
@@ -2849,18 +2934,20 @@ class ExperimentBase():
                     #print("Times", config.benchmarking_timespans)
                     #print("Find connection =", config.connection)
                     if config.benchmark is not None:
-                        config.benchmark.getConnectionsFromFile(filename=connectionfile)
-                        #print("Connection file:")
-                        #print(config.benchmark.connections)
-                        for k,c in enumerate(config.benchmark.connections):
-                            #print(c['name'])
-                            if c['name'] == connection:
-                                config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
-                                print("{:30s}: found and updated times {}".format(c['name'], config.benchmarking_timespans))
-                                break
-                        #print(config.benchmark.connections)
-                        with open(connectionfile, 'w') as f:
-                            f.write(str(config.benchmark.connections))
+                        # jobs of other configurations may end at the same time (see parallel_steps)
+                        with self.result_files_lock():
+                            config.benchmark.getConnectionsFromFile(filename=connectionfile)
+                            #print("Connection file:")
+                            #print(config.benchmark.connections)
+                            for k,c in enumerate(config.benchmark.connections):
+                                #print(c['name'])
+                                if c['name'] == connection:
+                                    config.benchmark.connections[k]['hostsystem']['benchmarking_timespans'] = config.benchmarking_timespans
+                                    print("{:30s}: found and updated times {}".format(c['name'], config.benchmarking_timespans))
+                                    break
+                            #print(config.benchmark.connections)
+                            with open(connectionfile, 'w') as f:
+                                f.write(str(config.benchmark.connections))
                         # upload connections infos with benchmarking times
                         stdout = upload(filename)
                         #cmd['upload_connection_file'] = 'cp {from_file} {to} -c dashboard'.format(to=pod_dashboard+':/results/'+str(self.code)+'/'+filename, from_file=self.path+"/"+filename)
@@ -3035,7 +3122,9 @@ class ExperimentBase():
                 evaluator = self.evaluator
         else:
             evaluator = self.evaluator
-        evaluator.end_benchmarking(jobname)
+        # the evaluator keeps counters; parsing is CPU-bound and gains nothing from threads
+        with self.result_files_lock():
+            evaluator.end_benchmarking(jobname)
 
     def end_loading(self,
                     jobname: str) -> None:

@@ -2,7 +2,8 @@
 
 Status: M0-M4 and M7-M14 implemented and committed 2026-10-18 (`9152423e`,
 `7ebfc8dd`), unit tests in `tests/test_fewer_calls.py`; cluster check done
-(see "Cluster check"). M5, M6 and the optional section not done. Note
+(see "Cluster check"). M6 implemented 2026-10-19, uncommitted, cluster check
+open (see "M6: result"). M5 and the optional section not done. Note
 2026-10-18: `extend` never took effect (`configurations/metrics.py` read
 `grafanaextend`); it is now read and defaults to 0, so O1's `time_end +
 extend` is `time_end` unless a cluster sets it. Deviations from the text below:
@@ -276,6 +277,59 @@ writes in `run_pod()` serialised (`connections.config`, `queries.config`,
 `protocol.json` in the shared result folder; `cfg.benchmark` per configuration
 is fine) and the round/experiment counters set before any job starts. Only if
 M1-M3 and M7 leave too much.
+
+**Why it was done (2026-10-19).** After M0-M14, tenancy_8 still spent about
+3.5 minutes per round transition (`dev/logs_fewer_calls/tenancy_8.log`):
+the pass ending 8 jobs took 96 s (about 77 s of it the 8 `end_benchmarking()`
+calls one after another, 19 s fetches), the pass submitting the next round
+122 s (8 `run_pod()` of 8-17 s each, 20 s follow-up actions). Passes without
+transitions take about 10 s. The SUT idle time between rounds (median 212 s)
+is mostly these two passes.
+
+**M6: result.** Module `bexhoma/parallel_steps.py`:
+- `run_steps(steps, max_workers)`: one step per configuration in a thread
+  pool; `ExperimentBase.max_parallel_steps` (default 8, no CLI flag, as
+  `max_parallel_fetches`); 1 runs them one by one in the loop thread, as
+  before. Every step runs to its end; the first error (in configuration
+  order) is raised afterwards.
+- First loop: the counters (round, experiment) are set in the loop as before;
+  the submission itself (reset script, parameters, `run_pod()` per entry,
+  start timer of the round) becomes `_submit_round()` /
+  `_submit_legacy_round()`, collected and run after the loop, before
+  `submit_batch.run()`.
+- Second loop: the body per configuration became `_end_finished_jobs()`
+  (store pods, `end_benchmarking()`, delete job, `check_volumes()`), run
+  side by side; the follow-up waits (M11) and the flags are combined in the
+  loop thread.
+- Shared result files: `result_files_lock()` (RLock) around the
+  read-change-write of `connections.config`, `protocol.json`,
+  `experiments.config` and `queries.config` in `run_pod()`, around the
+  `connections.config` update in `end_benchmarking()` and around the
+  evaluator (it keeps counters).
+- Upload order: `run_pod()` uploads through `upload_result_files()`
+  (`OrderedUpload`): one upload at a time, requests that arrive meanwhile are
+  merged into the next one, and a request returns only after an upload that
+  started after its write. The pod never gets an older `connections.config`
+  after a newer one, and 8 submissions need about 2 uploads instead of 8.
+- `MetricFetchBatch.add_fetch()` / `add_after()` under a lock;
+  `CALL_STATS.snapshot/since(own_thread=True)` so each "submitted
+  benchmarker job" line counts its own calls. A line `submitted N benchmark
+  rounds in Xs` / `ended N benchmarker jobs in Xs` follows when more than one
+  ran.
+- Not parallel: the "can be stopped" branch (`-m load` / keep-SUT
+  `run_pod(only_prepare=True)`, `stop_sut()`), loading, starts.
+- Changes for the results: the order of connections in `connections.config`
+  follows the order the submissions reach the lock (was configuration
+  order). Log lines of several configurations interleave.
+- Tests: `ParallelStepsTest` in `tests/test_fewer_calls.py`.
+
+Expected: tenancy_8 round transition from about 220 s to about 60 s (fetch
+and follow-up batches stay); no change with one configuration.
+
+Cluster check (open): tenancy_8 as before; `submitted 8 benchmark rounds in`
+and `ended 8 benchmarker jobs in` lines; `connections.config` in the pod
+lists all 8 connections of every round with their benchmarking timespans;
+same result files (6393); SUT idle time between rounds.
 
 ### M7 - host info through the Python client exec, getters stay modular
 

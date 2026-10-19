@@ -19,6 +19,8 @@ import os
 import shutil
 import subprocess
 import tempfile
+import threading
+import time
 import unittest
 from types import SimpleNamespace
 from unittest import mock
@@ -34,6 +36,7 @@ from bexhoma.cluster_calls import (
 from bexhoma.clusters import Kubernetes, POD_NOT_READ
 from bexhoma.configurations.host import HostProbe, STATIC_HOST_INFO, _field
 from bexhoma.experiments.base import ExperimentBase, MAX_FOLLOW_UP_WAITS_IN_A_ROW
+from bexhoma.parallel_steps import OrderedUpload, run_steps
 
 __all__ = []
 
@@ -598,6 +601,128 @@ class LoopTest(unittest.TestCase):
         self.assertEqual(pending, ['conn.config'])
         experiment.upload_experiment_file.assert_not_called()
         self.assertEqual(config.benchmarking_timespans, {'benchmarker': [(100, 200)]})
+
+
+class ParallelStepsTest(unittest.TestCase):
+    """M6: steps of several configurations side by side, shared files safe."""
+
+    def test_one_worker_runs_in_order_in_this_thread(self) -> None:
+        seen = []
+        steps = [lambda i=i: seen.append((i, threading.get_ident())) or i for i in range(3)]
+        self.assertEqual(run_steps(steps, max_workers=1), [0, 1, 2])
+        self.assertEqual(seen, [(i, threading.get_ident()) for i in range(3)])
+
+    def test_steps_run_at_the_same_time(self) -> None:
+        barrier = threading.Barrier(3, timeout=5)
+        self.assertEqual(run_steps([lambda i=i: barrier.wait() * 0 + i for i in range(3)], max_workers=3), [0, 1, 2])
+
+    def test_every_step_ends_before_the_first_error_is_raised(self) -> None:
+        done = []
+
+        def fails() -> None:
+            raise RuntimeError('first')
+
+        def slow() -> None:
+            time.sleep(0.2)
+            done.append('slow')
+        with self.assertRaisesRegex(RuntimeError, 'first'):
+            run_steps([fails, slow], max_workers=2)
+        self.assertEqual(done, ['slow'])
+
+    def test_ordered_upload_ends_with_the_newest_content(self) -> None:
+        local = {'connections.config': 0}
+        pod = {}
+        uploads = []
+        lock = threading.Lock()
+
+        def upload_files(names: list) -> None:
+            copy = dict(local)              # read when the upload starts
+            time.sleep(0.05)
+            pod.update(copy)
+            uploads.append(names)
+        uploader = OrderedUpload(upload_files)
+
+        def step(i: int) -> None:
+            with lock:                      # the result files lock; each write is a newer version
+                local['connections.config'] += 1
+                mine = local['connections.config']
+            uploader.upload(['connections.config', f'c{i}.config'])
+            # back from upload(): the pod has this step's version or a newer one
+            self.assertGreaterEqual(pod['connections.config'], mine)
+        run_steps([lambda i=i: step(i) for i in range(1, 9)], max_workers=8)
+        self.assertEqual(pod['connections.config'], local['connections.config'])
+        self.assertLess(len(uploads), 8)
+        self.assertEqual({name for names in uploads for name in names},
+                         {'connections.config'} | {f'c{i}.config' for i in range(1, 9)})
+
+    def test_ordered_upload_error_reaches_the_requests_of_its_upload_only(self) -> None:
+        calls = []
+
+        def upload_files(names: list) -> None:
+            calls.append(names)
+            if len(calls) == 1:
+                raise RuntimeError('cp failed')
+        uploader = OrderedUpload(upload_files)
+        with self.assertRaisesRegex(RuntimeError, 'cp failed'):
+            uploader.upload(['a'])
+        uploader.upload(['b'])
+        self.assertEqual(calls, [['a'], ['b']])
+
+    def test_call_stats_of_the_own_thread(self) -> None:
+        stats = CallStats()
+        before = stats.snapshot(own_thread=True)
+        stats.record_kubectl(1.0)
+        other = threading.Thread(target=stats.record_kubectl, args=(5.0,))
+        other.start()
+        other.join()
+        self.assertEqual(stats.since(before, own_thread=True), "1 kubectl calls 1.0s, 0 API requests 0.0s")
+        self.assertEqual(stats.snapshot()[0], 2)
+
+    def test_end_finished_jobs_of_one_configuration(self) -> None:
+        experiment = _experiment()
+        experiment.code = '42'
+        experiment.end_benchmarking = mock.Mock()
+        cluster = experiment.cluster
+        cluster.get_jobs.return_value = ['job-done', 'job-running', 'job-gone']
+        cluster.get_job_pods.return_value = []
+        cluster.get_job_status.side_effect = lambda job: job == 'job-done'
+        experiment._ended_jobs().add('job-gone')
+        config = SimpleNamespace(configuration='PostgreSQL-1', host=mock.Mock())
+        uploads = []
+        running, incomplete, ended = experiment._end_finished_jobs(config, 'batch', uploads)
+        self.assertEqual((running, incomplete, ended), (True, True, ['job-done']))
+        experiment.end_benchmarking.assert_called_once_with('job-done', config, fetch_batch='batch', pending_uploads=uploads)
+        cluster.delete_job.assert_called_once_with('job-done')
+        self.assertIn('job-done', experiment._ended_jobs())
+
+    def test_submit_round_runs_every_entry_and_starts_the_timer(self) -> None:
+        experiment = _experiment()
+        experiment.resetscript_active = False
+        experiment._benchmark_rounds_starting = {}
+        config = SimpleNamespace(configuration='PostgreSQL-1', runner=mock.Mock(), benchmarking_parameters={})
+        entries = [{'parallelism': 2, 'parameters': {'SF': '1'}}, {'parallelism': 1, 'template': 't.yml'}]
+        with mock.patch('builtins.print'):
+            experiment._submit_round(config, entries, '1', '3', 'key', 'batch')
+        calls = config.runner.run_pod.call_args_list
+        self.assertEqual([call.kwargs['connection'] for call in calls], ['postgresql-1-1-3-1', 'postgresql-1-1-3-2'])
+        self.assertEqual(calls[1].kwargs['template_override'], 't.yml')
+        self.assertEqual(calls[0].kwargs['fetch_batch'], 'batch')
+        self.assertEqual(experiment._benchmark_rounds_starting['PostgreSQL-1'][0], 'key')
+
+    def test_parallel_steps_summary_only_for_several(self) -> None:
+        experiment = _experiment()
+        experiment.max_parallel_steps = 4
+        with mock.patch('builtins.print') as printed:
+            self.assertEqual(experiment._run_parallel_steps([lambda: 1], "submitted {} rounds"), [1])
+            printed.assert_not_called()
+            experiment._run_parallel_steps([lambda: 1, lambda: 2], "submitted {} rounds")
+        self.assertIn('submitted 2 rounds', printed.call_args.args[0])
+
+    def test_result_files_are_uploaded_in_order(self) -> None:
+        experiment = _experiment()
+        experiment.upload_experiment_files = mock.Mock()
+        experiment.upload_result_files(['connections.config', 'a.config'])
+        experiment.upload_experiment_files.assert_called_once_with(['connections.config', 'a.config'])
 
 
 if __name__ == '__main__':

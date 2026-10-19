@@ -81,7 +81,8 @@ class BenchmarkRunner:
         """
         cfg = self._config
         started = time.monotonic()
-        calls_started = CALL_STATS.snapshot()
+        # submissions of several configurations may run side by side (see parallel_steps)
+        calls_started = CALL_STATS.snapshot(own_thread=True)
         cfg.logger.debug('BenchmarkRunner.run_pod()')
         resultfolder = cfg.experiment.cluster.config['benchmarker']['resultfolder']
         experiments_configfolder = cfg.experiment.cluster.experiments_configfolder
@@ -164,69 +165,73 @@ class BenchmarkRunner:
                 c['JDBC']['jar'] = (
                     cfg.experiment.cluster.config['benchmarker']['jarfolder'] + c['JDBC']['jar'])
         cfg.logger.debug('BenchmarkRunner.run_pod(): {}'.format(connection))
-        cfg.benchmark = benchmarker.benchmarker(
-            fixedConnection=connection,
-            fixedQuery=query,
-            result_path=resultfolder,
-            batch=True,
-            working='connection',
-            code=code,
-        )
-        cfg.code = cfg.benchmark.code
-        print("{:30s}: benchmarking results in folder {}".format(
-            configuration, cfg.benchmark.path))
-        cfg.logger.debug('BenchmarkRunner.run_pod(Code={})'.format(cfg.code))
-        connectionfile = cfg.benchmark.path + '/connections.config'
-        if not os.path.isfile(connectionfile):
-            connectionfile = experiments_configfolder + '/connections.config'
-        if cfg.experiment.queryfile is not None:
-            queryfile = experiments_configfolder + '/' + cfg.experiment.queryfile
-        else:
-            queryfile = experiments_configfolder + '/queries.config'
-        cfg.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
-        active_queries = getattr(cfg.experiment, 'active_queries', None)
-        if active_queries is not None:
-            for query_number, query_entry in enumerate(cfg.benchmark.queryconfig['queries'], start=1):
-                query_entry['active'] = query_number in active_queries
-        if c['name'] in cfg.benchmark.dbms:
-            print("Rerun connection " + connection)
-        else:
-            cfg.benchmark.connections.append(c)
-        cfg.benchmark.dbms[c['name']] = tools.dbms(c, False)
-        filename = cfg.benchmark.path + '/connections.config'
-        with open(filename, 'w') as output_file:
-            output_file.write(str(cfg.benchmark.connections))
-        filename = cfg.benchmark.path + '/' + c['name'] + '.config'
-        with open(filename, 'w') as output_file:
-            output_file.write(str([c]))
-        if len(cfg.experiment.workload) > 0:
-            for workload_key, workload_val in cfg.experiment.workload.items():
-                cfg.benchmark.queryconfig[workload_key] = workload_val
-            filename = cfg.benchmark.path + '/queries.config'
-            # atomic write: benchmarker pods read this shared file concurrently via
-            # shutil.copyfile() while other configs' run_pod() calls may rewrite it;
-            # a plain open(filename, 'w') truncates before writing, so a pod can
-            # observe a 0-byte file mid-write. os.replace() is a single directory-entry
-            # swap, so a concurrent reader always sees either the old or the new
-            # complete file, never a truncated one.
-            tmp_filename = filename + '.tmp'
-            with open(tmp_filename, 'w') as output_file:
-                output_file.write(str(cfg.benchmark.queryconfig))
-            os.replace(tmp_filename, filename)
-        cfg.benchmark.reporterStore.readProtocol()
-        cfg.benchmark.generateAllParameters()
-        cfg.benchmark.reporterStore.writeProtocol()
-        experiment_log = {
-            'delay': 0,
-            'step': "runBenchmarks",
-            'connection': connection,
-            'connectionmanagement': cfg.connection_management.copy(),
-        }
-        cfg.experiment.cluster.log_experiment(experiment_log)
+        # connections.config, protocol.json and experiments.config are read and
+        # rewritten by every connection: one configuration at a time
+        with cfg.experiment.result_files_lock():
+            cfg.benchmark = benchmarker.benchmarker(
+                fixedConnection=connection,
+                fixedQuery=query,
+                result_path=resultfolder,
+                batch=True,
+                working='connection',
+                code=code,
+            )
+            cfg.code = cfg.benchmark.code
+            print("{:30s}: benchmarking results in folder {}".format(
+                configuration, cfg.benchmark.path))
+            cfg.logger.debug('BenchmarkRunner.run_pod(Code={})'.format(cfg.code))
+            connectionfile = cfg.benchmark.path + '/connections.config'
+            if not os.path.isfile(connectionfile):
+                connectionfile = experiments_configfolder + '/connections.config'
+            if cfg.experiment.queryfile is not None:
+                queryfile = experiments_configfolder + '/' + cfg.experiment.queryfile
+            else:
+                queryfile = experiments_configfolder + '/queries.config'
+            cfg.benchmark.getConfig(connectionfile=connectionfile, queryfile=queryfile)
+            active_queries = getattr(cfg.experiment, 'active_queries', None)
+            if active_queries is not None:
+                for query_number, query_entry in enumerate(cfg.benchmark.queryconfig['queries'], start=1):
+                    query_entry['active'] = query_number in active_queries
+            if c['name'] in cfg.benchmark.dbms:
+                print("Rerun connection " + connection)
+            else:
+                cfg.benchmark.connections.append(c)
+            cfg.benchmark.dbms[c['name']] = tools.dbms(c, False)
+            filename = cfg.benchmark.path + '/connections.config'
+            with open(filename, 'w') as output_file:
+                output_file.write(str(cfg.benchmark.connections))
+            filename = cfg.benchmark.path + '/' + c['name'] + '.config'
+            with open(filename, 'w') as output_file:
+                output_file.write(str([c]))
+            if len(cfg.experiment.workload) > 0:
+                for workload_key, workload_val in cfg.experiment.workload.items():
+                    cfg.benchmark.queryconfig[workload_key] = workload_val
+                filename = cfg.benchmark.path + '/queries.config'
+                # atomic write: benchmarker pods read this shared file concurrently via
+                # shutil.copyfile() while other configs' run_pod() calls may rewrite it;
+                # a plain open(filename, 'w') truncates before writing, so a pod can
+                # observe a 0-byte file mid-write. os.replace() is a single directory-entry
+                # swap, so a concurrent reader always sees either the old or the new
+                # complete file, never a truncated one.
+                tmp_filename = filename + '.tmp'
+                with open(tmp_filename, 'w') as output_file:
+                    output_file.write(str(cfg.benchmark.queryconfig))
+                os.replace(tmp_filename, filename)
+            cfg.benchmark.reporterStore.readProtocol()
+            cfg.benchmark.generateAllParameters()
+            cfg.benchmark.reporterStore.writeProtocol()
+            experiment_log = {
+                'delay': 0,
+                'step': "runBenchmarks",
+                'connection': connection,
+                'connectionmanagement': cfg.connection_management.copy(),
+            }
+            cfg.experiment.cluster.log_experiment(experiment_log)
         pods = cfg.experiment.cluster.get_pods(component='dashboard')
         if len(pods) > 0:
-            # one copy and one exec for all four; the upload creates /results/{code}
-            cfg.experiment.upload_experiment_files(
+            # one copy and one exec for all four; the upload creates /results/{code};
+            # merged with the uploads of configurations submitting at the same time
+            cfg.experiment.upload_result_files(
                 ['queries.config', c['name'] + '.config', 'connections.config', 'protocol.json'])
         redisQueue = '{}-{}-{}-{}'.format(app, component, connection, cfg.code)
         cfg.experiment.cluster.fill_messagequeue(queue=redisQueue, length=parallelism)
@@ -262,7 +267,7 @@ class BenchmarkRunner:
             # round whose pods do not start is skipped after BENCHMARK_START_TIMEOUT_MINUTES.
             # Waiting per job made N tenants start one after another.
             print("{:30s}: submitted benchmarker job in {:.1f}s ({})".format(
-                configuration, time.monotonic() - started, CALL_STATS.since(calls_started)))
+                configuration, time.monotonic() - started, CALL_STATS.since(calls_started, own_thread=True)))
         pods = cfg.experiment.cluster.get_pods(component='dashboard')
         if len(pods) > 0 and cfg.monitoring_active and cfg.monitor_loading:
             self._loading_metrics(connection, c['name'] + '.config', pods[0], fetch_batch)

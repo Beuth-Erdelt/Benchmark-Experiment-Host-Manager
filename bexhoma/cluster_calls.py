@@ -44,7 +44,8 @@ class CallStats:
 
     The counters are global; a step reads :meth:`snapshot` at its start and
     :meth:`since` at its end. Calls made by other threads meanwhile (e.g. a
-    metric fetch batch) are counted too.
+    metric fetch batch) are counted too, unless the step asks for the calls
+    of its own thread (``own_thread=True``), as steps running side by side do.
     """
 
     def __init__(self) -> None:
@@ -53,34 +54,52 @@ class CallStats:
         self.kubectl_seconds = 0.0
         self.api_calls = 0
         self.api_seconds = 0.0
+        self._threads = threading.local()
+
+    def _own(self) -> list:
+        """Counters of the calling thread: ``[kubectl_calls, kubectl_seconds, api_calls, api_seconds]``."""
+        counters = getattr(self._threads, 'counters', None)
+        if counters is None:
+            counters = self._threads.counters = [0, 0.0, 0, 0.0]
+        return counters
 
     def record_kubectl(self, seconds: float) -> None:
         """Count one kubectl subprocess that took ``seconds``."""
         with self._lock:
             self.kubectl_calls += 1
             self.kubectl_seconds += seconds
+        own = self._own()
+        own[0] += 1
+        own[1] += seconds
 
     def record_api(self, seconds: float) -> None:
         """Count one Kubernetes API request (or exec stream) that took ``seconds``."""
         with self._lock:
             self.api_calls += 1
             self.api_seconds += seconds
+        own = self._own()
+        own[2] += 1
+        own[3] += seconds
 
-    def snapshot(self) -> tuple:
+    def snapshot(self, own_thread: bool = False) -> tuple:
         """Current counters, to pass to :meth:`since` later.
 
+        :param own_thread: Only the calls of the calling thread.
         :return: ``(kubectl_calls, kubectl_seconds, api_calls, api_seconds)``.
         """
+        if own_thread:
+            return tuple(self._own())
         with self._lock:
             return (self.kubectl_calls, self.kubectl_seconds, self.api_calls, self.api_seconds)
 
-    def since(self, snapshot: tuple) -> str:
+    def since(self, snapshot: tuple, own_thread: bool = False) -> str:
         """Describe the calls made since ``snapshot``.
 
-        :param snapshot: Value of :meth:`snapshot` taken earlier.
+        :param snapshot: Value of :meth:`snapshot` taken earlier (with the same ``own_thread``).
+        :param own_thread: Only the calls of the calling thread.
         :return: E.g. ``23 kubectl calls 38.2s, 40 API requests 3.1s``.
         """
-        kubectl_calls, kubectl_seconds, api_calls, api_seconds = self.snapshot()
+        kubectl_calls, kubectl_seconds, api_calls, api_seconds = self.snapshot(own_thread)
         return "{} kubectl calls {:.1f}s, {} API requests {:.1f}s".format(
             kubectl_calls - snapshot[0], kubectl_seconds - snapshot[1],
             api_calls - snapshot[2], api_seconds - snapshot[3])

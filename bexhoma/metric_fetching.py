@@ -12,6 +12,7 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, Callable
@@ -53,6 +54,8 @@ class MetricFetchBatch:
     def __init__(self) -> None:
         self.fetches: list[tuple[Any, dict]] = []
         self.after: list[Callable[[], None]] = []
+        # filled by job submissions / job ends running side by side (parallel_steps)
+        self._lock = threading.Lock()
 
     def __len__(self) -> int:
         return len(self.fetches) + len(self.after)
@@ -64,14 +67,16 @@ class MetricFetchBatch:
         :param kwargs: Arguments of :meth:`MetricsCollector.fetch`.
         """
         config.metrics.register(kwargs['component_type'], kwargs['title'], kwargs.get('optional', False))
-        self.fetches.append((config, kwargs))
+        with self._lock:
+            self.fetches.append((config, kwargs))
 
     def add_after(self, action: Callable[[], None]) -> None:
         """Queue an action to run after all fetches of this batch.
 
         :param action: Callable without arguments.
         """
-        self.after.append(action)
+        with self._lock:
+            self.after.append(action)
 
     def run(self, max_workers: int = DEFAULT_MAX_PARALLEL_FETCHES) -> None:
         """Run all queued fetches (up to ``max_workers`` at once), then the queued actions.
