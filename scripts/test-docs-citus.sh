@@ -75,9 +75,6 @@ bexhoma ycsb \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nbp=1"
 
-kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-0
-kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-1
-kubectl delete pvc bxw-bexhoma-worker-citus-ycsb-1-2
 sleep 30
 
 
@@ -185,10 +182,6 @@ bexhoma benchbase \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus  sf=16  nbp=1,2"
 
-kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-0
-kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-1
-kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-2
-kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-tpcc-128-3
 sleep 30
 
 
@@ -338,10 +331,6 @@ bexhoma hammerdb \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus  sf=16  nbp=1"
 
-kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-0
-kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-1
-kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-2
-kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-128-3
 sleep 30
 
 
@@ -398,10 +387,6 @@ bexhoma hammerdb \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
-kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-0
-kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-1
-kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-2
-kubectl delete pvc bxw-bexhoma-worker-citus-hammerdb-500-3
 sleep 30
 
 
@@ -508,10 +493,6 @@ bexhoma tpch \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus  sf=1  nbp=1"
 
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 
@@ -568,10 +549,6 @@ bexhoma tpch \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus storage  sf=10  ne=1,1  nc=2"
 
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
 sleep 30
 
 

@@ -1029,14 +1029,7 @@ Benchbase Workload tpcc SF=16
 
 TPC-C is performed at 128 warehouses.
 The 64 threads of the client are split into a cascading sequence of 1,2,4 and 8 pods.
-At first, we remove old PVC of the workers:
-
-```bash
-kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-0
-kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-1
-kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-2
-kubectl delete pvc bxw-bexhoma-worker-citus-benchbase-128-3
-```
+Old PVCs of the workers are removed before loading (`-rsr`).
 
 The benchmark is run via
 
@@ -3968,16 +3961,8 @@ TEST passed: Workflow as planned
 
 ### TPC-H More Complex Example
 
-At first we remove possibly existing PVC of the workers:
-
-```bash
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
-```
-
-Then we run TPC-H Power Test at SF=10.
+We run TPC-H Power Test at SF=10.
+Possibly existing PVCs of the workers are removed before loading (`-rsr`).
 Note that this takes a lot of disk space including for indexes.
 
 ```bash
@@ -4409,14 +4394,7 @@ Citus provides the option to make a table using columnar storage via `USING COLU
 For Bexhoma's TPC-H, you can activate makeing the distributed tables `orders` and `lineitem` use columnar storage via `-xcol`.
 Note that this also means there will be no foreign key constraints and no indexes on these tables.
 
-At first we remove possibly existing PVC of the workers:
-
-```bash
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-0
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-1
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-2
-kubectl delete pvc bxw-bexhoma-worker-citus-tpch-10-3
-```
+Possibly existing PVCs of the workers are removed before loading (`-rsr`).
 
 The experiment runs like this:
 

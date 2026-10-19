@@ -1167,12 +1167,8 @@ TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
 
 We now use a PVC to store infos about the loading process.
 At first, we remove the placeholder and recreate it again.
+An existing PVC of the placeholder is removed before loading (`-rsr`).
 ```bash
-# delete pvc of placeholder
-kubectl delete pvc bexhoma-storage-databaseservice-tpch-3
-
-sleep 10
-
 # delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
@@ -1200,6 +1196,7 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
+  -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
