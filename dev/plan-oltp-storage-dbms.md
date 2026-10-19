@@ -1,11 +1,11 @@
 # Plan: OLTP SUTs in bexhoma - current images, settings, CLI and placement
 
-Status: **WP1-WP9 implemented 2026-10-17, uncommitted; WP10 not (later, R7).** Unit tests:
+Status: **WP1-WP9 implemented 2026-10-17, committed (`7ed91c36`, released in v0.11.5); WP10 not (later, R7).** Unit tests:
 `tests/test_set_arg_styles.py` (WP2/WP3), `tests/test_tls_secret.py` (WP5),
 `tests/test_cluster_sut_settings.py` (WP4/WP6/WP7/WP8/WP9). The WP8 init/check scripts were run on
 PostgreSQL 18.6, MySQL 9.7.2, MariaDB 12.3.3, Citus 14.2.0 and MonetDB Dec2025-SP3 pods (MySQL: startup
-values restored after every check). Open: HammerDB images must be rebuilt (base 6.0), and the smoke
-runs of section 3. Deviation from the plan: the HammerDB scripts read the generic `BEXHOMA_TLS`
+values restored after every check). HammerDB images rebuilt on base 6.0 and checked (2026-10-17).
+Open: the smoke runs of section 3. Deviation from the plan: the HammerDB scripts read the generic `BEXHOMA_TLS`
 (set by bexhoma where the job mounts the CA) instead of `HAMMERDB_MYSQL_SSL`. cadvisor stays v0.47.0.
 Revised 2026-10-16 to cover only changes to bexhoma (code, templates, config, scripts, images, tests,
 docs). Running the storage study itself is out of scope.

@@ -1,7 +1,9 @@
 # Plan: Ceph storage placeholders for monitoring
 
 Status: **implemented** (2026-10-11, branch `feature/storage-class-sweep`),
-M1–M5. Not yet run against the cluster. Queries below were run against the
+M1–M5, released in v0.11.3. First cluster run 2026-10-15/16 (1792091105,
+1792099970, 1792116019, 1792123892): CSVs filled and plausible; the summary
+report has no Ceph table yet. Queries below were run against the
 reference cluster's Prometheus on 2026-10-11.
 
 Where it landed: `bexhoma/ceph_storage.py` (pure helpers shared by all
