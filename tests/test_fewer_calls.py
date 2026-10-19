@@ -388,8 +388,26 @@ class HostProbeTest(unittest.TestCase):
         probe, commands = _probe(_HOST_OUTPUTS)
         self.assertEqual(probe.get_host_diskspace_used(), 856817)
         self.assertEqual(probe.get_host_diskspace_used_data('/data'), 1234)
-        self.assertEqual(commands, ['df -m /', 'du --block-size=1M -Ls /data'])
+        self.assertEqual(commands, ['df -m /', 'du --block-size=1M -xLs /data'])
         self.assertFalse(any('$' in command for command in commands))
+
+    def test_data_path_on_root_has_no_volume(self) -> None:
+        # ephemeral storage: the data path is on the overlay, bexhoma-data is
+        # mounted below it and must not be taken as the data volume
+        probe, commands = _probe({
+            'df -hP /cockroach/cockroach-data': 'Filesystem Size Used Avail Use% Mounted on\n'
+                                                'overlay 879G 680G 155G 82% /\n',
+            'df -hP | grep volumes': 'csi-cephfs-node@x=/volumes/csi/csi-vol-1/2 1000G 674G 327G 68% '
+                                     '/cockroach/cockroach-data/extern/data\n',
+        })
+        self.assertEqual(probe.get_host_volume(mount_path='/cockroach/cockroach-data'), (0, 0))
+        self.assertEqual(commands, ['df -hP /cockroach/cockroach-data'])
+
+    def test_volume_fallback_only_without_path(self) -> None:
+        probe, commands = _probe({'df -hP | grep volumes': 'dev/x 100G 55G 46G 55% /var/lib/kubelet/volumes/x\n'})
+        probe._config.deployment_infos = {}
+        self.assertEqual(probe.get_host_volume(), ('100G', '55G'))
+        self.assertEqual(commands, ['df -hP | grep volumes'])
 
     def test_failed_disk_probes_give_zero(self) -> None:
         probe, _ = _probe({})
@@ -410,7 +428,7 @@ class HostProbeTest(unittest.TestCase):
         commands.clear()
         second = probe.get_host_all()
         self.assertEqual(second, first)
-        self.assertEqual(commands, ['df -m /', 'du --block-size=1M -Ls /data', 'df -hP /data',
+        self.assertEqual(commands, ['df -m /', 'du --block-size=1M -xLs /data', 'df -hP /data',
                                     'cat /proc/meminfo | grep HugePages_Free'])
         # a recreated pod (same name, new uid) is measured again
         pod.metadata.uid = 'uid-2'

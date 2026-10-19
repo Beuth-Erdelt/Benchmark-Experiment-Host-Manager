@@ -125,8 +125,11 @@ class HostProbe:
         Asks ``df`` for the filesystem holding ``mount_path``, which works for
         every provisioner (an RBD device has no "volumes" in its df line).
         Without ``mount_path``, uses the SUT's pvc mount path, then its data
-        path (:meth:`get_data_paths`), then the first df line matching
-        "volumes".
+        path (:meth:`get_data_paths`). A known path on the container's root
+        filesystem has no volume (ephemeral storage): (0, 0). Only without
+        any path, the first df line matching "volumes" is taken - with a
+        path it could be another volume, e.g. bexhoma-data mounted below
+        the data directory.
 
         :param pod: Optional pod name override; defaults to current SUT pod.
         :param mount_path: Optional mount path of the volume inside the pod.
@@ -148,6 +151,7 @@ class HostProbe:
                     return parts[1], parts[2]
             except Exception as exc:
                 logging.error(exc)
+            return 0, 0
         try:
             command = "df -hP | grep volumes"
             _, stdout, _ = self._run(command, pod=pod)
@@ -384,8 +388,10 @@ class HostProbe:
         if not datadir:
             return 0
         # the first field of du's last line, as awk 'END{print $1}' gave it; no
-        # awk, so no '$' that a local shell (kubectl fallback) could expand
-        command = "du --block-size=1M -Ls " + datadir
+        # awk, so no '$' that a local shell (kubectl fallback) could expand.
+        # -x: stay on the data directory's filesystem, volumes mounted below
+        # it (bexhoma-data at .../extern/data) are not database data
+        command = "du --block-size=1M -xLs " + datadir
         try:
             _, stdout, _ = self._run(command)
             return int(_field(stdout, -1, 0) or 0)
