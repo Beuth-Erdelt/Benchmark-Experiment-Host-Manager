@@ -166,7 +166,7 @@ def _format_event(event: FailureEvent, windows: dict[str, PhaseWindow]) -> str:
     if event.begin is None:
         when = "time unknown"
     elif event.end is not None and event.end != event.begin:
-        when = f"{event.begin:%Y-%m-%d %H:%M:%S} – {event.end:%H:%M:%S}"
+        when = f"{event.begin:%Y-%m-%d %H:%M:%S} - {event.end:%H:%M:%S}"
     else:
         when = f"{event.begin:%Y-%m-%d %H:%M:%S}"
     if event.phase:
@@ -180,7 +180,7 @@ def _format_event(event: FailureEvent, windows: dict[str, PhaseWindow]) -> str:
         where = "no benchmark phase running"
     line = f"{when}, {where}: {event.text}"
     if event.see:
-        line += f" — see {event.see}"
+        line += f" - see {event.see}"
     return line
 
 

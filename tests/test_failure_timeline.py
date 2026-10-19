@@ -94,7 +94,7 @@ class TimelineLinesTest(unittest.TestCase):
         ], _connections())
         numbered = [line for line in lines if line[:2] in ("1.", "2.")]
         self.assertIn("phase p-1-2 (4 pods): queries failed", numbered[0])
-        self.assertIn("1 s after phase p-1-2 (4 pods) ended: restart — see connections.md", numbered[1])
+        self.assertIn("1 s after phase p-1-2 (4 pods) ended: restart - see connections.md", numbered[1])
         self.assertIn("not a diagnosis", "\n".join(lines))
 
     def test_long_timeline_is_cut(self) -> None:

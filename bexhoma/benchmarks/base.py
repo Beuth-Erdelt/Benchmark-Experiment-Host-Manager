@@ -664,7 +664,7 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             completion, columns=['phase', 'tenant_id'] if is_multitenant else ['phase'])
         note = (f"Only the {int(complete.sum())} of {len(complete)} phases in which every pod completed every "
                 f"active query; each row covers all {len(queries)} active queries, so the rows are comparable "
-                f"with each other. Left out: {', '.join(incomplete)} — see Query Completion per Phase.")
+                f"with each other. Left out: {', '.join(incomplete)} - see Query Completion per Phase.")
         sections.append(Section(
             heading="Per Phase (Complete Phases Only)", level=4, dataframe=df_complete, skip_if_empty=True,
             lines=[note] if df_complete.empty else ["", note],
@@ -700,7 +700,7 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         incomplete = sorted(set(completion['phase']) - set(complete_phases))
         note = (f"Mean execution time per query and connection, over the {len(complete_phases)} of "
                 f"{len(complete_phases) + len(incomplete)} phases in which every pod completed every "
-                f"active query. Left out: {', '.join(incomplete)} — see Query Completion per Phase.")
+                f"active query. Left out: {', '.join(incomplete)} - see Query Completion per Phase.")
         # No blank line after the heading: the table follows it directly, as in
         # the pooled latency section.
         return Section(heading="Latency of Timer Execution [ms] (Complete Phases Only)", level=3,

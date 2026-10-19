@@ -112,7 +112,7 @@ _UNLINKED_FILENAMES = frozenset({"agent_summary.yml"})
 _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     ("inputs", "Experiment Inputs", tuple(sorted(_INPUT_PROVENANCE_FILENAMES)),
      "The experiment.yml/.yaml this run was actually built from, plus provenance "
-     "copies of the contract(s)/catalog/environment file(s) that governed it — "
+     "copies of the contract(s)/catalog/environment file(s) that governed it - "
      "not a Kubernetes manifest; see docs/AgentResultContract.md and "
      "docs/Design-Catalog-Contract.md for what each one means."),
     ("configs", "Connection and Workload Configs", ("*.config",),
@@ -121,31 +121,31 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
      "backup; `queries.config` is the workload definition, including the literal "
      "SQL text of every query for DBMSBenchmarker-family benchmarks (TPC-H/TPC-DS)."),
     ("job-describe", "Job Descriptions", ("*.describe.job.log",),
-     "`kubectl describe job` output for every loading/generator Job — unlike a "
+     "`kubectl describe job` output for every loading/generator Job - unlike a "
      "single pod's describe, this covers the Job's full pod-creation history, so "
      "a failed pod replaced under `backoffLimit` still shows up here."),
     ("sut-describe", "SUT Pod Descriptions", ("bexhoma-sut-*.describe.log",),
      "`kubectl describe pod` output for every SUT pod, one capture per "
-     "experiment_run — event history (scheduling, image pulls, restarts, "
+     "experiment_run - event history (scheduling, image pulls, restarts, "
      "OOMKills), each container's Last State (why its latest restart "
      "happened), and the volumes it mounts (whether its data survived)."),
     ("pod-describe", "Other Pod Descriptions", ("*.describe.log",),
-     "`kubectl describe pod` output for every loading and benchmarker pod — "
+     "`kubectl describe pod` output for every loading and benchmarker pod - "
      "event history (scheduling, image pulls, restarts, OOMKills) for that "
      "specific pod object, not just static spec."),
     ("plans", "Submitted Experiment Plans", ("bexhoma-experiment-dict-*.json",),
-     "The loader/benchmarker plan of each configuration — the exact round and "
+     "The loader/benchmarker plan of each configuration - the exact round and "
      "entry layout submitted, written once at experiment start."),
     ("manifests", "Kubernetes Manifests", ("*.yml", "*.yaml"),
-     "Rendered Kubernetes Job/Deployment/Service manifests actually submitted — "
+     "Rendered Kubernetes Job/Deployment/Service manifests actually submitted - "
      "check for the exact resource requests/limits, image tag, env vars, and "
      "replica/parallelism counts."),
     ("loading-scripts", "Loading Scripts", ("*-loading-*.sql.log", "*-loading-*.sh.log"),
      "The exact rendered SQL/bash script that ran for each configuration's "
-     "loading phase — despite the `.log` suffix, this is the script source "
+     "loading phase - despite the `.log` suffix, this is the script source "
      "itself, not output. Check here to see exactly what schema/DDL was applied."),
     ("loading-output", "Loading Script Output", ("*-loading-*.stdout.log", "*-loading-*.stderr.log"),
-     "stdout and stderr of running each loading script — check stderr first if "
+     "stdout and stderr of running each loading script - check stderr first if "
      "a loading phase failed silently."),
     ("loading-pods", "Loading Pod Logs", ("*-loading-*.sensor.log", "*-loading-*.datagenerator.log"),
      "`.sensor.log`: the per-table client command each loading pod issued and "
@@ -153,11 +153,11 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
      "`.datagenerator.log`: stdout of that pod's data-generation init container."),
     ("benchmarker", "Benchmarker Logs", ("bexhoma-benchmarker-*.log", "bexhoma-benchmarker.*.all.df.pickle"),
      "Raw per-pod benchmarker/driver logs and the cached aggregated DataFrame "
-     "they were parsed into — read the logs for the literal output behind a "
+     "they were parsed into - read the logs for the literal output behind a "
      "surprising number."),
     ("sut-logs", "SUT Container Logs", ("bexhoma-sut-*.log",),
      "stdout of each SUT container, one capture per experiment_run "
-     "(`.dbms.log` is the DBMS process itself) — read for the literal error "
+     "(`.dbms.log` is the DBMS process itself) - read for the literal error "
      "text behind a failed or slow query. A restarted container's log starts "
      "after the restart; `.<container>.previous.log` is the log of the "
      "instance that died, the one that says why it crashed."),
@@ -166,11 +166,11 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
      "restartCount is cumulative across runs, so aggregate by max per pod."),
     ("monitoring", "Monitoring Metrics", ("query_*_metric_*.csv",),
      "Wide-format monitoring CSVs (one column per connection, one row per "
-     "Prometheus scrape), one per metric and component — find each "
+     "Prometheus scrape), one per metric and component - find each "
      "connection's own column by name."),
     ("metrics-fetch", "Metric Fetch Logs", ("bexhoma-metrics-*.log",),
      "Output of each Prometheus fetch bexhoma ran in the dashboard pod, one file "
-     "per connection and component — a `Metrics missing for` line marks a "
+     "per connection and component - a `Metrics missing for` line marks a "
      "metric that returned no data and was filled with zeros."),
     ("other", "Other Result Files", ("*",),
      "Further raw outputs of the benchmark driver and evaluator that no tier-2 "
@@ -180,7 +180,7 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
 _NAMING_CONVENTIONS_MD = """### Naming Conventions
 
 Every identifier in this report is a positional concatenation. Decode any of
-them by counting dash-separated segments from the right — no lookup table is
+them by counting dash-separated segments from the right - no lookup table is
 needed, just the position rule:
 
 - `connection` = `<configuration>-<experiment_run>-<client>-<benchmark_run>-<pod>`
@@ -201,10 +201,10 @@ needed, just the position rule:
 **Experiment code convention**: `code` (this experiment's result-folder name)
 is a Unix epoch timestamp in seconds, generated at experiment start. It is
 unique and monotonically increasing across experiments, but is **not**
-evidence that two different codes ran under comparable conditions — see
+evidence that two different codes ran under comparable conditions - see
 Interpretation Rules below.
 
-**Result-folder filenames** (manifests, logs, `.describe.log` — all linked
+**Result-folder filenames** (manifests, logs, `.describe.log` - all linked
 from [files.md](files.md)) follow a related but distinct
 convention: `<app>-<component>-<configuration>-<code>[-<experiment_run>[-<client>[-<benchmark_run>]]]`,
 optionally followed by Kubernetes' own pod-hash/random suffix on files tied to
@@ -219,27 +219,27 @@ file holds the connection dict of one job.
 _VALIDITY_RULES_MD = """### Validity-First Rules
 
 If any row in the Tests table below is **failed**, treat it as a scope
-restriction on every metric elsewhere in this report — check it *before*
+restriction on every metric elsewhere in this report - check it *before*
 quoting any number, not after:
 
 | Failed test | Scopes / invalidates | Check |
 |---|---|---|
-| `No SUT container restarts` | Every metric of the restarted configuration from the restart's `Finished` time onward — the Health Summary names the termination reason (e.g. `OOMKilled`) | `connections.md`'s SUT Container Restarts |
-| `SUT data survived container restarts` | Every query of that configuration after the restart ran against a freshly initialized, empty database; its SQL errors (`relation … does not exist`, connection/I/O errors) are consequences of the restart, not findings about the queries | `connections.md`'s SUT Container Restarts |
+| `No SUT container restarts` | Every metric of the restarted configuration from the restart's `Finished` time onward - the Health Summary names the termination reason (e.g. `OOMKilled`) | `connections.md`'s SUT Container Restarts |
+| `SUT data survived container restarts` | Every query of that configuration after the restart ran against a freshly initialized, empty database; its SQL errors (`relation ... does not exist`, connection/I/O errors) are consequences of the restart, not findings about the queries | `connections.md`'s SUT Container Restarts |
 | `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
-| `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured — dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
-| `Workflow as planned` | Whether pod counts matched the intended sweep — cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
-| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row — for DBMSBenchmarker usually because a query failed somewhere, which removes it from every row; the note under the Per Phase table says which | `benchmarking.md`'s Per Phase table, Query Completion per Phase, and Per Phase (Complete Phases Only) for the phases that still measured every query |
+| `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured - dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
+| `Workflow as planned` | Whether pod counts matched the intended sweep - cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
+| `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row - for DBMSBenchmarker usually because a query failed somewhere, which removes it from every row; the note under the Per Phase table says which | `benchmarking.md`'s Per Phase table, Query Completion per Phase, and Per Phase (Complete Phases Only) for the phases that still measured every query |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
-| `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros — their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason | `monitoring.md`'s Missing Metrics |
+| `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros - their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason | `monitoring.md`'s Missing Metrics |
 
 A **skipped** test (e.g. monitoring skipped because data was pre-existing, or
 a phase shorter than the Prometheus scrape interval) does not invalidate
-anything — only a **failed** row does.
+anything - only a **failed** row does.
 
 One skipped test still says something about the numbers:
-`Loading measured in this experiment (storage reused, …)` lists the
+`Loading measured in this experiment (storage reused, ...)` lists the
 configurations whose volume an earlier experiment had already loaded. Reusing
 it is deliberate (the experiment did not remove its volumes), so loading was
 skipped: their loading times are inherited from that experiment, not measured
@@ -255,13 +255,13 @@ _INTERPRETATION_RULES_MD = """### Interpretation Rules
 - **Compare only within this experiment code.** Every table in this report
   describes one controlled run. Do not treat numbers from a different
   `report/` folder (a different experiment code) as directly comparable
-  without independently verifying equivalent conditions — cross-code
+  without independently verifying equivalent conditions - cross-code
   comparison is what the `collectors` module is built for, not this report.
 - **Start from the first failure, not the sum of failures.** The Failure
   Timeline above lists failures in the order they began and the phase each
   happened in; begin with its first entry. Later failures may be its
-  consequences — e.g. after a restart without a data volume, every query
-  fails on missing relations — but the timeline only orders them; check the
+  consequences - e.g. after a restart without a data volume, every query
+  fails on missing relations - but the timeline only orders them; check the
   evidence before calling one failure the cause of another. For a restart,
   state its reason and what was running when it happened: the round, the
   number of concurrent streams, and the query.
@@ -275,7 +275,7 @@ _INTERPRETATION_RULES_MD = """### Interpretation Rules
   repetitions rather than citing one row as the only data point.
 - **Cite file paths.** Any number stated in an agent's own output must be
   attributed to the specific report file (and ideally row/column) it came
-  from — never asserted from memory of an earlier read.
+  from - never asserted from memory of an earlier read.
 """
 
 _ENTRY_POINT_MD = (
@@ -289,9 +289,9 @@ _TIER_TABLE_MD = """### Report Structure
 
 | Tier | Files | Read when |
 |---|---|---|
-| 1 — Answers | `index.md` (this file) | Always, first |
-| 2 — Evidence | linked below, one file per active phase/topic | An actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase |
-| 3 — Diagnosis | raw result-folder files, each linked once from [files.md](files.md) and grouped by kind; each tier-2 file's Provenance footer names the groups behind it | Tier 2's aggregated tables do not resolve the question |
+| 1 - Answers | `index.md` (this file) | Always, first |
+| 2 - Evidence | linked below, one file per active phase/topic | An actual metric value is needed, or a Tests-table failure needs tracing to its connection/phase |
+| 3 - Diagnosis | raw result-folder files, each linked once from [files.md](files.md) and grouped by kind; each tier-2 file's Provenance footer names the groups behind it | Tier 2's aggregated tables do not resolve the question |
 """
 
 
@@ -638,7 +638,7 @@ def _build_monitoring_sections(
                 'metric': meta['metric'], 'component': component, 'component_title': component_title,
             })
             catalog_value_sections.append(Section(
-                heading=f"{meta['title']} (`{metric_key}`, {component} — {component_title})", level=4,
+                heading=f"{meta['title']} (`{metric_key}`, {component} - {component_title})", level=4,
                 dataframe=df_cleaned, link_connections=True,
             ))
     if catalog_rows:
@@ -812,7 +812,7 @@ def _build_monitoring_summary_lines(monitoring_sections: list[Section]) -> list[
         return []
     lines = [
         "### Monitoring", "",
-        "Peak CPU/RAM per monitored component, across all phases — see "
+        "Peak CPU/RAM per monitored component, across all phases - see "
         "[monitoring.md](monitoring.md) for per-phase detail and the full metric catalog.",
         "",
     ]
@@ -897,25 +897,25 @@ def _build_health_summary_lines(
             line += " (" + ", ".join(f"{reason}: {count}" for reason, count in reasons.items()) + ")"
             lost = sum(1 for d in restart_details if d.data_volume is False)
             if lost:
-                line += (f"; {lost} without a data volume — the database restarted empty, so every "
+                line += (f"; {lost} without a data volume - the database restarted empty, so every "
                          "later query of that configuration is invalid")
-        lines.append(line + " — see [connections.md](connections.md) for per-pod detail")
+        lines.append(line + " - see [connections.md](connections.md) for per-pod detail")
     if 'num_errors' in extra_context:
         num_errors = extra_context['num_errors']
         num_warnings = extra_context.get('num_warnings', 0)
         if num_errors == 0:
             lines.append("- SQL errors: none")
         else:
-            lines.append(f"- SQL errors: {num_errors} — see [benchmarking.md](benchmarking.md)'s Errors subsection for the affected queries")
+            lines.append(f"- SQL errors: {num_errors} - see [benchmarking.md](benchmarking.md)'s Errors subsection for the affected queries")
         if num_warnings == 0:
             lines.append("- SQL warnings: none")
         else:
-            lines.append(f"- SQL warnings: {num_warnings} — see [benchmarking.md](benchmarking.md)'s Warnings subsection for the affected queries")
+            lines.append(f"- SQL warnings: {num_warnings} - see [benchmarking.md](benchmarking.md)'s Warnings subsection for the affected queries")
     if 'phases_total' in extra_context:
         complete, total = extra_context['phases_complete'], extra_context['phases_total']
         line = f"- Phases in which every pod completed every query: {complete} of {total}"
         if complete < total:
-            line += (" — see [benchmarking.md](benchmarking.md)'s Query Completion per Phase, and its "
+            line += (" - see [benchmarking.md](benchmarking.md)'s Query Completion per Phase, and its "
                      "Per Phase (Complete Phases Only) for their metrics")
         lines.append(line)
     if missing is not None:
@@ -925,11 +925,11 @@ def _build_health_summary_lines(
             lines.append("- Missing monitoring metrics: none")
         else:
             titles = sorted({entry.title for entry in unexpected})
-            lines.append(f"- Missing monitoring metrics: {len(unexpected)} ({', '.join(titles)}) — zero-filled, "
+            lines.append(f"- Missing monitoring metrics: {len(unexpected)} ({', '.join(titles)}) - zero-filled, "
                          "see [monitoring.md](monitoring.md)'s Missing Metrics")
         if expected:
             reasons = "; ".join(sorted({entry.expected for entry in expected}))
-            lines.append(f"- Expected monitoring gaps: {len(expected)} ({reasons}) — the zeros are correct, "
+            lines.append(f"- Expected monitoring gaps: {len(expected)} ({reasons}) - the zeros are correct, "
                          "see [monitoring.md](monitoring.md)'s Missing Metrics")
     return lines
 
@@ -1346,6 +1346,6 @@ def _write_index_md(
         lines.append("### Sections")
         lines.append("")
         for section in written_sections:
-            lines.append(f"* [{section['title']}]({section['file']}) — {section['description']}")
+            lines.append(f"* [{section['title']}]({section['file']}) - {section['description']}")
     text = frontmatter + "\n".join(lines).strip("\n") + "\n"
     _write_file(report_dir / "index.md", text)
