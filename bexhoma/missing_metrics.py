@@ -5,17 +5,19 @@ DBMSBenchmarker's ``monitor.metrics.getMetrics()`` does not fail when a
 Prometheus query comes back empty: it logs
 ``ERROR:root:Metrics missing for <title> (<query>)[ for connection <c>]: <url>``
 and substitutes a series of zeros, which then reads like a measured idle
-component. Two processes run that code, and both leave their output in the
-result folder:
+component. That code leaves its output in the result folder:
 
 * ``bexhoma-metrics-{connection}-{component_type}.log`` — output of
   ``metrics.py`` in the dashboard pod, written by
-  :meth:`bexhoma.configurations.metrics.MetricsCollector.fetch`.
-* ``bexhoma-benchmarker-*.log`` — the DBMSBenchmarker pod (e.g. TPC-H, run
-  with ``-mps``) fetching per-stream metrics itself.
+  :meth:`bexhoma.configurations.metrics.MetricsCollector.fetch`. This is the
+  only source for current runs.
+* ``bexhoma-benchmarker-*.log`` — the DBMSBenchmarker pod log. Only results
+  from before ``-mps`` was dropped from ``benchmarker.sh`` contain gaps here,
+  from the pod fetching per-stream metrics itself; they are still read so
+  those results evaluate the same.
 
-Both processes may fetch the same metric for the same connection, so a gap
-is reported once. Some gaps are expected and carry the reason in
+In such older results both processes may fetch the same metric for the same
+connection, so a gap is reported once. Some gaps are expected and carry the reason in
 ``expected``: an optional component whose data was pre-existing (the data
 generator then exits before the first scrape), and a metric that
 ``cluster.config`` marks ``sparse`` because its series only exists while the
