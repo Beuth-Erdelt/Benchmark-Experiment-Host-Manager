@@ -156,8 +156,9 @@ Pods always synchronise before starting: each pod increments the Redis counter
 
 * `BENCHBASE_BENCH`: Benchmark name — `tpcc`, `twitter`, `chbenchmark`, or `ycsb`.
 * `BENCHBASE_PROFILE`: DBMS profile name. Selects the XML config subdirectory (e.g. `postgres`, `mysql`).
-* `BENCHBASE_TARGET`: Target throughput in requests per second. Substituted into the XML config.
+* `BENCHBASE_TARGET`: Target throughput in requests per second. `0` is replaced by `unlimited`. Substituted into the XML config.
 * `BENCHBASE_TIME`: Benchmark duration in seconds. Substituted into the XML config.
+* `BENCHBASE_WARMUP`: Warmup in seconds before the measured `BENCHBASE_TIME` (default `0`). Transactions in the warmup are not part of the results. Substituted into the XML config.
 * `BENCHBASE_TERMINALS`: Number of simulated client terminals (threads). Substituted into the XML config.
 * `BENCHBASE_BATCHSIZE`: Batch size for grouped query submission. Substituted into the XML config.
 * `BENCHBASE_ISOLATION`: Transaction isolation level (e.g. `TRANSACTION_SERIALIZABLE`, `TRANSACTION_READ_COMMITTED`). Substituted into the XML config.
@@ -222,8 +223,9 @@ An experiment-level sync barrier on `bexhoma-benchmarker-podcount-<EXPERIMENT>` 
 
 * `BENCHBASE_BENCH`: Benchmark name — `tpcc`, `twitter`, `chbenchmark`, or `ycsb`.
 * `BENCHBASE_PROFILE`: DBMS profile name. Selects the XML config subdirectory (e.g. `postgres`, `mysql`).
-* `BENCHBASE_TARGET`: Target throughput. Substituted into the XML config (not meaningful for the load phase).
+* `BENCHBASE_TARGET`: Target throughput. `0` is replaced by `unlimited`. Substituted into the XML config (not meaningful for the load phase).
 * `BENCHBASE_TIME`: Benchmark duration in seconds. Substituted into the XML config (not meaningful for the load phase).
+* `BENCHBASE_WARMUP`: Warmup in seconds. Substituted into the XML config (not meaningful for the load phase).
 * `BENCHBASE_TERMINALS`: Number of simulated client terminals. Substituted into the XML config.
 * `BENCHBASE_BATCHSIZE`: Batch size for grouped query submission. Substituted into the XML config.
 * `BENCHBASE_ISOLATION`: Transaction isolation level. Substituted into the XML config.
@@ -250,7 +252,8 @@ replaced by `sed` at container startup:
 | `BEXHOMA_SCHEMA` | Schema name |
 | `BEXHOMA_SF` | Scale factor (`SF`) |
 | `BENCHBASE_TIME` | Benchmark duration in seconds |
-| `BENCHBASE_TARGET` | Target throughput |
+| `BENCHBASE_WARMUP` | Warmup in seconds (only templates with `BENCHBASE_TIME`) |
+| `BENCHBASE_TARGET` | Target throughput (`unlimited` for `0`) |
 | `BENCHBASE_TERMINALS` | Number of client terminals |
 | `BENCHBASE_BATCHSIZE` | Batch size |
 | `BENCHBASE_ISOLATION` | Transaction isolation level |

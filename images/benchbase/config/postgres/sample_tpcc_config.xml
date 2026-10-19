@@ -19,6 +19,7 @@
     <works>
         <work>
             <time>BENCHBASE_TIME</time>
+            <warmup>BENCHBASE_WARMUP</warmup>
             <rate>BENCHBASE_TARGET</rate>
             <weights>45,43,4,4,4</weights>
         </work>

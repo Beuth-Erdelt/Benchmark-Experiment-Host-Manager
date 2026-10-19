@@ -20,6 +20,22 @@ import argparse
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+
+def target_per_pod(target, pods):
+    """
+    Split a throughput target over the benchmarking pods.
+
+    A target of 0 stays 0 and means unlimited (patched in benchmarker.sh).
+    A positive target never rounds down to 0, so it never becomes unlimited by accident.
+
+    :param target: Total target in requests per second.
+    :param pods: Number of benchmarking pods.
+    :return: Target per pod.
+    """
+    if target <= 0:
+        return 0
+    return max(1, int(target/pods))
+
 if __name__ == '__main__':
     description = """Run Benchbase benchmarks (TPC-C, YCSB, Twitter, CH-Benchmark) against a DBMS in Kubernetes.
     Controls loading concurrency, benchmarking throughput targets, optional connection pooling, and resource allocation.
@@ -41,7 +57,8 @@ if __name__ == '__main__':
     parser.add_argument('-xconn', '--extra-new-connection', help='open a new database connection for every transaction', action='store_true', default=False)
     parser.add_argument('-xbatch','--extra-batchsize', help='number of rows per INSERT batch during loading', default=128)
     parser.add_argument('-xbt',   '--xbenchmark-type', help='Benchbase benchmark suite to run', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark', 'ycsb'], dest='benchmark')
-    parser.add_argument('-xtb',   '--xtarget-base', help='base ops-per-second target; multiply by -xnbf factors to get per-pod target', default="1024", dest='target_base')
+    parser.add_argument('-xtb',   '--xtarget-base', help='base ops-per-second target; multiply by -xnbf factors to get per-pod target (0 = unlimited)', default="1024", dest='target_base')
+    parser.add_argument('-xwu',   '--xwarmup', help='warmup in seconds before the measured benchmark duration (not part of the results)', default=0, dest='warmup')
     parser.set_defaults(num_worker=1)
     # evaluate args
     args = parser.parse_args()
@@ -89,6 +106,7 @@ if __name__ == '__main__':
     ### specific to: Benchbase
     ##############
     SD = int(args.scaling_duration)*60
+    warmup = int(args.warmup)                             # seconds, not measured
     target_base = int(args.target_base)
     type_of_benchmark = args.benchmark                    # twitter, tpccc, ycsb etc
     scaling_logging = int(args.scaling_logging)*1000      # adjust unit to miliseconds
@@ -168,6 +186,7 @@ if __name__ == '__main__':
         SF = SF,
         BENCHBASE_BENCH = type_of_benchmark,
         BENCHBASE_TIME = SD,
+        BENCHBASE_WARMUP = warmup,
         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
         BENCHBASE_BATCHSIZE = extra_batchsize,
         BENCHBASE_STATUS_INTERVAL = scaling_logging,
@@ -177,6 +196,7 @@ if __name__ == '__main__':
         SF = SF,
         BENCHBASE_BENCH = type_of_benchmark,
         BENCHBASE_TIME = SD,
+        BENCHBASE_WARMUP = warmup,
         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
         BENCHBASE_BATCHSIZE = extra_batchsize,
         BENCHBASE_STATUS_INTERVAL = scaling_logging,
@@ -229,7 +249,7 @@ if __name__ == '__main__':
                                         for num_executor in list_clients:
                                             benchmarking_pods_scaled = num_executor*benchmarking_pods
                                             benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                            benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                            benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                             """
                                             print("benchmarking_target", benchmarking_target)
                                             print("benchmarking_pods", benchmarking_pods)
@@ -297,7 +317,7 @@ if __name__ == '__main__':
                                     for num_executor in list_clients:
                                         benchmarking_pods_scaled = num_executor*benchmarking_pods
                                         benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                        benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                        benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                         """
                                         print("benchmarking_target", benchmarking_target)
                                         print("benchmarking_pods", benchmarking_pods)
@@ -343,7 +363,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -413,7 +433,7 @@ if __name__ == '__main__':
                                             for num_executor in list_clients:
                                                 benchmarking_pods_scaled = num_executor*benchmarking_pods
                                                 benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                                benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                                 """
                                                 print("benchmarking_target", benchmarking_target)
                                                 print("benchmarking_pods", benchmarking_pods)
@@ -471,7 +491,7 @@ if __name__ == '__main__':
                                         for num_executor in list_clients:
                                             benchmarking_pods_scaled = num_executor*benchmarking_pods
                                             benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                            benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                            benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                             """
                                             print("benchmarking_target", benchmarking_target)
                                             print("benchmarking_pods", benchmarking_pods)
@@ -538,7 +558,7 @@ if __name__ == '__main__':
                                     for num_executor in list_clients:
                                         benchmarking_pods_scaled = num_executor*benchmarking_pods
                                         benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                        benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                        benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                         """
                                         print("benchmarking_target", benchmarking_target)
                                         print("benchmarking_pods", benchmarking_pods)
@@ -587,7 +607,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -659,7 +679,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -721,7 +741,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -787,7 +807,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -834,7 +854,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -898,7 +918,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)

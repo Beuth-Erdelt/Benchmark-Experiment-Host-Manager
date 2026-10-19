@@ -31,6 +31,7 @@
         <!-- A Basic WorkPhase for Mixed Workloads -->
         <work>
             <time>BENCHBASE_TIME</time>
+            <warmup>BENCHBASE_WARMUP</warmup>
 
             <!-- Note: The rate can be set to UNLIMITED or DISABLED -->
             <rate>BENCHBASE_TARGET</rate>

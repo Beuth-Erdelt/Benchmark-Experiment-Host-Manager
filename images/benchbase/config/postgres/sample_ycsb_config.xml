@@ -22,6 +22,7 @@
     <works>
         <work>
             <time>BENCHBASE_TIME</time>
+            <warmup>BENCHBASE_WARMUP</warmup>
             <rate>BENCHBASE_TARGET</rate>
             <weights>BENCHBASE_YCSB_WEIGHTS</weights>
         </work>

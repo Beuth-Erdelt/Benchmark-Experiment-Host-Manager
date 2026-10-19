@@ -302,6 +302,7 @@ usage: benchbase.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
                     [-xsd SCALING_DURATION] [-xli SCALING_LOGGING] [-xkey]
                     [-xconn] [-xbatch EXTRA_BATCHSIZE]
                     [-xbt {tpcc,twitter,chbenchmark,ycsb}] [-xtb TARGET_BASE]
+                    [-xwu WARMUP]
                     {run,start,load}
 
 Run Benchbase benchmarks (TPC-C, YCSB, Twitter, CH-Benchmark) against a DBMS
@@ -469,7 +470,10 @@ options:
                         Benchbase benchmark suite to run
   -xtb, --xtarget-base TARGET_BASE
                         base ops-per-second target; multiply by -xnbf factors
-                        to get per-pod target
+                        to get per-pod target (0 = unlimited)
+  -xwu, --xwarmup WARMUP
+                        warmup in seconds before the measured benchmark
+                        duration (not part of the results)
 ```
 
 ## Monitoring
