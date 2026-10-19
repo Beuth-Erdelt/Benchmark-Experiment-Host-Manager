@@ -32,6 +32,8 @@ You will have to change the node selectors there (to names of nodes, that exist 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+BEXHOMA_NODES_WORKER="cl-worker36+cl-worker37+cl-worker29"
+BEXHOMA_NODES_WORKER_4="cl-worker36+cl-worker37+cl-worker29+cl-worker39"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
 BEXHOMA_STORAGE_CLASS="shared"
@@ -67,7 +69,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_citus_1.log
 ```
 
@@ -401,7 +403,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_citus_2.log
 ```
 The following status shows we have one volume of type `shared`.
@@ -815,7 +817,7 @@ bexhoma benchbase \
   -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_citus_1.log
 ```
 
@@ -1054,7 +1056,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_benchbase_citus_2.log
 ```
 
@@ -1591,7 +1593,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_benchbase_citus_3.log
 ```
 
@@ -2462,7 +2464,7 @@ bexhoma hammerdb \
   -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_hammerdb_citus_1.log
 ```
 
@@ -2633,7 +2635,7 @@ bexhoma hammerdb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_hammerdb_citus_2.log
 ```
 
@@ -3107,7 +3109,7 @@ bexhoma hammerdb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_hammerdb_citus_3.log
 ```
 
@@ -3797,7 +3799,7 @@ bexhoma tpch \
   -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus_1.log
 ```
 
@@ -3988,7 +3990,7 @@ bexhoma tpch \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus_2.log
 ```
 
@@ -4421,7 +4423,7 @@ bexhoma tpch \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus_3.log
 ```
 

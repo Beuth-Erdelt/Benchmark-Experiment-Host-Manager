@@ -47,6 +47,7 @@ bexhoma ycsb `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB  sf=1  nbp=1"
@@ -80,6 +81,7 @@ bexhoma ycsb `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes (PD and TiKV) #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB storage  sf=1  nbp=1  nc=2"
@@ -112,6 +114,7 @@ bexhoma ycsb `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB monitoring  sf=1  nbp=1"
@@ -136,6 +139,7 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
@@ -163,6 +167,7 @@ bexhoma benchbase `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes (PD and TiKV) #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"

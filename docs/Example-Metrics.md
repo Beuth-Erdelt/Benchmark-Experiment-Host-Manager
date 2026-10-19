@@ -3488,6 +3488,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb_appmetrics.log
 ```
 
@@ -3831,6 +3832,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_tidb_appmetrics.log
 ```
 

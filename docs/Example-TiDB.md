@@ -52,6 +52,7 @@ You will have to change the node selectors there (to names of nodes, that exist 
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+BEXHOMA_NODES_WORKER="cl-worker36+cl-worker37+cl-worker29"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
 BEXHOMA_STORAGE_CLASS="shared"
@@ -88,6 +89,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb_1.log
 ```
 
@@ -442,6 +444,7 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb_3.log
 ```
 
@@ -793,6 +796,7 @@ bexhoma ycsb \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb_2.log
 ```
 
@@ -1290,6 +1294,7 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_tidb_1.log
 ```
 
@@ -1648,6 +1653,7 @@ bexhoma benchbase \
   -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_tidb_2.log
 ```
 
