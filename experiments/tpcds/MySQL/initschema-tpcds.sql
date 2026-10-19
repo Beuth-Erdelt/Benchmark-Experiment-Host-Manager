@@ -5,6 +5,9 @@
 -- See LICENSE for details.
 -- Purpose: Initialize MySQL user access, session settings, and create all 25
 --          TPC-DS tables. Run once as root before initdata-tpcds-SF*.sql.
+--          Settings relaxed here hold for the load only: their startup values
+--          are saved in bexhoma.saved_settings and checkschema-tpcds.sql (always
+--          the last post-load script) restores them.
 
 DROP USER 'root'@'%';
 FLUSH PRIVILEGES;
@@ -14,6 +17,23 @@ ALTER USER 'root'@'%' IDENTIFIED BY 'root';
 
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
+
+-- Save the startup values of the settings relaxed below (first save wins)
+CREATE DATABASE IF NOT EXISTS bexhoma;
+CREATE TABLE IF NOT EXISTS bexhoma.saved_settings (name VARCHAR(64) PRIMARY KEY, value VARCHAR(255));
+INSERT IGNORE INTO bexhoma.saved_settings VALUES
+  ('innodb_flush_log_at_trx_commit', @@GLOBAL.innodb_flush_log_at_trx_commit),
+  ('foreign_key_checks', @@GLOBAL.foreign_key_checks),
+  ('unique_checks', @@GLOBAL.unique_checks);
+SELECT * FROM bexhoma.saved_settings;
+
+-- durability relaxed for bulk load (binlog is off, see --skip-log-bin)
+SET GLOBAL innodb_flush_log_at_trx_commit = 2;
+
+-- disable checks globally because loaders use separate sessions
+-- (autocommit stays on: the TPC-DS loader sends no COMMIT after LOAD DATA)
+SET GLOBAL foreign_key_checks = 0;
+SET GLOBAL unique_checks = 0;
 
 -- allow load local in file
 SET GLOBAL local_infile=true;

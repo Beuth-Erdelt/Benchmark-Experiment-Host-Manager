@@ -4,10 +4,27 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Last post-load script, always run (also without -xii/-xic/-xis).
---          Reports row counts, sizes, the redo log written so far and the
---          non-default configuration. initschema-tpcds.sql relaxes no
---          durability setting, so nothing is restored here.
+--          Restores the settings relaxed for the load to the startup values
+--          saved by initschema-tpcds.sql, and reports row counts, sizes, the
+--          redo log written so far and the non-default configuration.
 --          No curly braces in this file: bexhoma may fill it with str.format().
+
+-- Restore the settings saved before the load (SET GLOBAL x = DEFAULT would give
+-- compiled defaults, not the server's startup values). @v starts at the current
+-- value, so a setting without a saved row stays as it is.
+SET @v = @@GLOBAL.innodb_flush_log_at_trx_commit;
+SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'innodb_flush_log_at_trx_commit';
+SET GLOBAL innodb_flush_log_at_trx_commit = @v;
+SET @v = @@GLOBAL.foreign_key_checks;
+SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'foreign_key_checks';
+SET GLOBAL foreign_key_checks = @v;
+SET @v = @@GLOBAL.unique_checks;
+SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'unique_checks';
+SET GLOBAL unique_checks = @v;
+
+SELECT name, value AS saved_value FROM bexhoma.saved_settings ORDER BY name;
+SELECT @@GLOBAL.innodb_flush_log_at_trx_commit, @@GLOBAL.foreign_key_checks,
+       @@GLOBAL.unique_checks;
 
 -- Row counts per table (exact counts)
 SELECT 'call_center' AS table_name, COUNT(*) AS row_count FROM tpcds.call_center
