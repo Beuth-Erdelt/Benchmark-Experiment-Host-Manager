@@ -2,8 +2,11 @@
 
 Status: M0-M4 and M7-M14 implemented and committed 2026-10-18 (`9152423e`,
 `7ebfc8dd`), unit tests in `tests/test_fewer_calls.py`; cluster check done
-(see "Cluster check"). M6 implemented 2026-10-19, uncommitted, cluster check
-open (see "M6: result"). M5 and the optional section not done. Note
+(see "Cluster check"). M6 implemented and committed 2026-10-19 (`f3d8f6bb`,
+then the exec client pool and the init pod fix), cluster check done: tenancy_8 88.8 ->
+78.7 min, SUT idle between rounds 212 -> 114 s (see "M6: result"). M15
+(repetition boundaries side by side) planned 2026-10-19, not implemented. M5
+and the optional section not done. Note
 2026-10-18: `extend` never took effect (`configurations/metrics.py` read
 `grafanaextend`); it is now read and defaults to 0, so O1's `time_end +
 extend` is `time_end` unless a cluster sets it. Deviations from the text below:
@@ -334,20 +337,40 @@ is mostly these two passes.
   reused across passes, dropped after `cluster_access()`); the lock only
   guards the list. Measured with bexhoma's path: 8 threads 2.1x, 0.28 s per
   exec, same outputs. The rest is the exec itself (kubelet, websocket).
-  Tests in `ExecApiTest`. Not yet in a cluster run.
+  Tests in `ExecApiTest`. Cluster check: see below.
 - Also fixed: the first loop looked up init job pods with `configuration`,
   which only the old job-end loop set (to the last configuration of the
   previous pass); since M6 it was undefined (NameError at the first loading
-  pass, run 1792401119). Now `config.configuration`: init pod logs of every
-  tenant are stored, not only of the last one.
+  pass, run 1792401119). Now `config.configuration`. (Init pod logs of all
+  tenants were stored before too, see the cluster check.)
 
 Expected: tenancy_8 round transition from about 220 s to about 60 s (fetch
 and follow-up batches stay); no change with one configuration.
 
-Cluster check (open): tenancy_8 as before; `submitted 8 benchmark rounds in`
-and `ended 8 benchmarker jobs in` lines; `connections.config` in the pod
-lists all 8 connections of every round with their benchmarking timespans;
-same result files (6393); SUT idle time between rounds.
+Cluster check 2026-10-19 (tenancy_8 as on 2026-10-18, run 1792410057 with
+M6 and the exec client pool, log `dev/logs_fewer_calls/tenancy_8_m6.log`):
+
+| | 2026-10-18 (1792337757) | M6 (1792410057) |
+|---|---|---|
+| total | 88.8 min | 78.7 min |
+| SUT idle between rounds (median, min-max) | 212 s (190-221) | 114 s (96-121) |
+| submit 8 rounds, first / second round of a repetition | ~100 s | 28-35 s / 15-35 s |
+| end 8 jobs | ~77 s | 20-29 s |
+| result files | 6393 | 6393 |
+| connections in `connections.config` | 48, all with timespans | 48, all with timespans |
+
+Every job ended once (48), tests as before (only "Monitoring metrics
+missing", the CPU throttling metrics), `datadisk` set everywhere. One joint
+upload (repetition 2, round 2) could not be verified on its first attempt and
+succeeded on the second; the 10 s retry held up the other 7 submissions of
+that pass (34.9 s instead of about 15 s). First round of a repetition: about
+13 more host info execs per tenant (fresh SUT pods, static values measured
+once per pod UID) plus the first PVC label write. Init pod logs: stored for
+all 8 tenants in both runs, so the old `configuration` name did not lose
+them in practice. Still sequential: the pass that stops the 8 SUTs between
+repetitions (101-113 s, 40 kubectl calls; "can be stopped" branch), and
+three more passes per repetition (start SUTs, start loading, loading end):
+see M15.
 
 ### M7 - host info through the Python client exec, getters stay modular
 
@@ -639,6 +662,86 @@ token revoked) is refreshed and retried as today. kubectl is not affected
 Expected (estimate from the per-call times): a loop pass with 8 tenants from
 about a minute to about 10 s; every Python client call in `run_pod()` 7x
 faster; the M7 exec 0.26 s instead of 0.75 s.
+
+### M15 - repetition boundaries side by side (planned 2026-10-19)
+
+**Why.** After M6 a round transition with 8 tenants takes about 1 minute, but
+every repetition still has four passes that handle the tenants one after
+another (`tenancy_8_m6.log`, per repetition, 8 tenants):
+
+| Pass | Time | kubectl | Where |
+|---|---|---|---|
+| A stop SUTs ("can be stopped") | 101-113 s | 40 | first loop, `else` branch: pod logs, previous logs, describe, restart counts, `stop_sut()`, `_prepare_next_repetition()` |
+| B start SUTs | 106-113 s | 8 | `config.lifecycle.start_sut()`; with `-rsrp` each waits >= 10 s for its PVC to go ([lifecycle.py:633-643](../bexhoma/configurations/lifecycle.py#L633)) |
+| C start loading (container tenancy, "is not loaded yet") | 106-133 s | 40 | "#### Starting to load": `start_exec()` + `start_pod()` per tenant |
+| D loading ended + index start | 138-151 s | 64 | `config.loader.check()` per tenant, then "#### Starting to index" |
+
+About 8 minutes per repetition, 23 of the 79 minutes of tenancy_8. D's index
+start is G3 of [plan-shorter-phase-gaps.md](plan-shorter-phase-gaps.md); not
+repeated here.
+
+**How.** As in M6: the **decisions** stay in the loop thread, in
+configuration order (caps, who keeps its SUT, who waits for whom); only the
+**work** per configuration is collected and run with `_run_parallel_steps()`
+at the end of the first loop, before the submissions.
+
+- **M15a - stop (A).** `_leaves_sut_running()` / `_waits_for_slot()` decide in
+  the loop (they look at other configurations). The rest of the branch
+  becomes `_stop_repetition(config)`: store logs (current, previous),
+  descriptions, restart snapshot file, `stop_sut()`, count the repetition,
+  `_prepare_next_repetition()` or `experiment_done`. Writes per configuration
+  only (own files, own counters); `self.workload['sut_stopped'/'sut_service']`
+  are dict assignments of distinct keys. `-m load` (`run_pod(only_prepare=True)`)
+  already uses the M6 lock and ordered upload. Expected: about 100 s -> 15-20 s.
+- **M15b - start (B).** The cap checks (`-ms`, `-mse`, `max_sut_dbms`) and
+  their optimistic pending counters stay in the loop, exactly as today; the
+  `start_sut()` call itself is deferred. The 8 PVC removals then wait their
+  10 s at the same time. Check before: `start_sut()` writes its manifest per
+  configuration (file names), `delete_pvc`/`get_pvc` per PVC, the shared
+  `storage_label` of PVC names (one per tenant: `postgresql-<i>-8-...`).
+  Expected: about 110 s -> 20-25 s.
+- **M15c - start loading (C).** The "all tenants ready" decision stays; the
+  inner `for config_tmp in self.configurations: start_exec(); start_pod()`
+  runs side by side. `load_data()` already starts its scripts in a thread;
+  check `start_pod()` (loader manifest per job, Redis queue per job; the
+  experiment-wide loader counters are set before, in the loop) and the init
+  script uploads (`upload_file` per SUT pod). Only container tenancy has more
+  than one configuration here; single configurations are unchanged.
+  Expected: about 115 s -> 20-30 s.
+- **M15d - loading end (D without the index start).** `config.loader.check()`
+  per configuration at the top of the first loop (end the loader job, timing,
+  PVC labels, `end_loading()`): run the checks of all configurations whose
+  loading is running side by side at the start of the pass, then the loop
+  reads their results. Coordinate with G3 (same pass). Expected: together
+  with G3 about 145 s -> 30 s.
+
+**Not changed:** what the pods and the SUT see; the order of decisions; the
+caps. Each step is a single configuration's own work.
+
+**Risks.**
+- Several SUTs start at the same moment on the same node (they did within
+  about 90 s before). Image pulls, PVC provisioning and scheduling run in
+  parallel; under `-ms` nothing changes (caps decided before).
+- More concurrent kubectl processes (up to 8): each gets slower (seen in
+  M6: ~3 s instead of 1.6 s), but the pass gets shorter.
+- Interleaved log lines of several tenants (as in M6).
+- Results: loading of tenants starts closer together (container tenancy
+  already waits for all tenants; the spread of loader starts was ~90 s,
+  it gets smaller). Loading times per tenant may change slightly with more
+  overlap; they are in the results.
+
+**Tests.** Stub configurations: decisions in configuration order, work in
+steps; a cap reached by the first start still blocks the second (counters
+set in the loop); `_stop_repetition` keeps the repetition counters and
+`experiment_done` as today; `max_parallel_steps = 1` gives today's order.
+
+**Cluster check.** tenancy_8 as before: the four passes of the table above
+per repetition; total time (expected about 15 minutes less, ~63 min); same
+result files (6393), tests, `connections.config`; no SUT started beyond `-ms`
+in a run with `-ms 4`.
+
+**Order.** M15a and M15b first (largest, simplest: no shared files), then
+M15c, then M15d together with G3.
 
 ### Not worth it (checked)
 
