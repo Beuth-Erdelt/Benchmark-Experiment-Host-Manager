@@ -30,11 +30,18 @@ $images = [ordered]@{
     'loader_tpch_mysql'          = 'images\tpch\loader_mysql\README.md'
     'loader_tpch_mariadb'        = 'images\tpch\loader_mariadb\README.md'
     'loader_tpch_monetdb'        = 'images\tpch\loader_monetdb\README.md'
+    'generator_tpch_refresh'           = 'images\tpch_refresh\generator\README.md'
+    'loader_tpch_refresh_postgresql'   = 'images\tpch_refresh\loader_postgresql\README.md'
+    'loader_tpch_refresh_mysql'        = 'images\tpch_refresh\loader_mysql\README.md'
+    'loader_tpch_refresh_mariadb'      = 'images\tpch_refresh\loader_mariadb\README.md'
+    'loader_tpch_refresh_monetdb'      = 'images\tpch_refresh\loader_monetdb\README.md'
     'generator_tpcds'            = 'images\tpcds\generator\README.md'
     'loader_tpcds_postgresql'    = 'images\tpcds\loader_postgresql\README.md'
     'loader_tpcds_mysql'         = 'images\tpcds\loader_mysql\README.md'
     'loader_tpcds_mariadb'       = 'images\tpcds\loader_mariadb\README.md'
     'loader_tpcds_monetdb'       = 'images\tpcds\loader_monetdb\README.md'
+    'benchmarker_hardware'       = 'images\hardware\benchmarker\README.md'
+    'sut_hardware'               = 'images\hardware\sut\README.md'
 }
 
 # Authenticate
