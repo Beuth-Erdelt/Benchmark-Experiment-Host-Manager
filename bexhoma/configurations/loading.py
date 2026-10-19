@@ -614,9 +614,11 @@ class LoadingCoordinator:
                 success = cfg.experiment.cluster.get_job_status(job)
                 cfg.experiment.cluster.logger.debug(
                     'job {} has success status {}'.format(job, success))
+                # only this job's pods: a finished job deletes them below, while
+                # parallel loading jobs of the same configuration may still run
                 pods = cfg.experiment.cluster.get_job_pods(
                     app=app, component=component,
-                    experiment=experiment, configuration=configuration)
+                    experiment=experiment, configuration=configuration, jobname=job) or []
                 for pod in pods:
                     # finished pods whose files are all stored are not inspected again
                     if pod in stored_pods(cfg.experiment.cluster):

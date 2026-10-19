@@ -2548,7 +2548,7 @@ class Kubernetes():
                     configuration=configuration, client=client
                 )
 
-    def get_job_pods(self, app='', component='', experiment='', configuration='', client=''):
+    def get_job_pods(self, app='', component='', experiment='', configuration='', client='', jobname=''):
         """
         Return names of Pods belonging to Jobs matching the given label selectors.
 
@@ -2557,6 +2557,7 @@ class Kubernetes():
         :param experiment: ``experiment`` label value.
         :param configuration: ``configuration`` label value.
         :param client: ``client`` label value (legacy).
+        :param jobname: Only the pods of this Job (``job-name`` label, set by Kubernetes).
         :return: List of Pod names, or ``None`` on a 404 error.
         """
         if not app:
@@ -2570,6 +2571,8 @@ class Kubernetes():
             label += ',configuration=' + configuration
         if client:
             label += ',client=' + client
+        if jobname:
+            label += ',job-name=' + jobname
         self.logger.debug('getJobPods ' + label)
         try:
             api_response = self.v1core.list_namespaced_pod(self.namespace, label_selector=label)
@@ -2585,7 +2588,7 @@ class Kubernetes():
             if e.status != 404:
                 return self.get_job_pods(
                     app=app, component=component, experiment=experiment,
-                    configuration=configuration, client=client
+                    configuration=configuration, client=client, jobname=jobname
                 )
 
     def get_dashboard_name(self, app='', component='dashboard'):
