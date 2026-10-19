@@ -1,8 +1,9 @@
 # Plan: `resources.storage_class` as a sweep list
 
 Status: **implemented** (2026-10-10, branch `feature/storage-class-sweep`):
-M0, M0b, M1–M5. Catalog contract 1.11.0, result contract 1.10.0. Not yet
-run against the cluster. Deviations from the sketch below: the handbook got
+M0, M0b, M1–M5. Catalog contract 1.11.0, result contract 1.10.0. Run on
+the cluster 2026-10-15 to 2026-10-18 (nvme vs cephcsi for TPC-H, TPC-C, YCSB
+and fio; logs and figures in `dev/logs_storage/`, commit `784ebc41`). Deviations from the sketch below: the handbook got
 no new guideline (M4.1/M4.2 already cover storage regimes); the result side
 records `storage_reused` per connection and a validity test
 `Loading measured in this experiment` instead of a `known_gaps` entry.

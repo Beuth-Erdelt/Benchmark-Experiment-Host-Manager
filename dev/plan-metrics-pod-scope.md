@@ -10,8 +10,12 @@ one query set per scope, see "How"), `{namespace}`, and the 90 s filter for
 stale series (option (a): template change, no code-side query rewriting; no
 warning about old copies). M3 cluster runs **done 2026-10-19** (TPC-C SF1
 `-nc 2 -rsrp -xnbf 1,4`, YugabyteDB, Citus `-nw 3 -nc 2`). **Plan done.**
-Optional, not run: several benchmarker jobs per round (`experiment_dict`),
-the SUT gap with `-ks` / inherited loading. Release note: users copy the
+SUT gap with inherited loading measured 2026-10-19 (TPC-H SF1 `-rst nvme
+-rsr -nc 2 -ne 1,1`, 1792369868): old SUT's last sample 00:38:52, repetition
+2's first benchmark window 00:43:00, 248 s (> 90 s); repetition 2 round 1
+Max RAM 0.39 GB (fresh SUT, old one not counted). `-ks` keeps only the last
+repetition's SUT, so it adds no restart gap. Optional, not run: several
+benchmarker jobs per round (`experiment_dict`). Release note: users copy the
 cAdvisor queries of `k8s-cluster.config` into their `cluster.config`.
 
 ## M2-M4: result (2026-10-18)

@@ -107,6 +107,16 @@ class LeavesSutRunningTest(unittest.TestCase):
         first.experiment_done = True
         self.assertTrue(self.decide(_experiment([first, second], max_sut=1), second))
 
+    def test_a_configuration_that_never_started_waits(self):
+        """Real status object: deployment_infos is empty until the SUT starts (cluster run 2026-10-19)."""
+        from bexhoma.configurations.status import ComponentStatus
+        first = _config('PostgreSQL-1')
+        second = _config('PostgreSQL-2')
+        second.appname, second.deployment_infos = 'bexhoma', {}
+        second.status = ComponentStatus(second)
+        self.assertFalse(second.status.sut_exists())
+        self.assertFalse(self.decide(_experiment([first, second], max_sut=1), first))
+
     def test_without_a_cap_every_configuration_keeps_its_sut(self):
         first, second = _config('PostgreSQL-1'), _config('PostgreSQL-2')
         self.assertTrue(self.decide(_experiment([first, second]), first))
