@@ -143,18 +143,55 @@ def counter_total(df: pd.DataFrame, component: str, scoped: Iterable[str] = ()) 
     return total
 
 
+def _connection_dicts(path: Path) -> list:
+    """The connection dicts in one ``*.config`` file; empty for other files."""
+    try:
+        content = ast.literal_eval(path.read_text(encoding='utf-8'))
+    except (OSError, SyntaxError, ValueError, TypeError, MemoryError, RecursionError):
+        return []
+    if not isinstance(content, list):
+        return []
+    return [c for c in content if isinstance(c, dict) and 'name' in c and 'monitoring' in c]
+
+
+_CONNECTIONS_CACHE: dict = {}
+
+
 def read_connections(result_dir) -> list:
-    """Read a result folder's ``connections.config``.
+    """Read the connections of a result folder.
+
+    ``connections.config`` plus every per-connection ``<connection>.config``
+    that bexhoma writes. DBMSBenchmarker may rewrite ``connections.config``
+    with only some connections, renamed with the client appended
+    (``…-1-1-1-1-1``); the per-connection files keep the names of the
+    monitoring columns. A per-connection file wins over an entry of the same
+    name. Cached per folder until a ``*.config`` file changes.
 
     :param result_dir: The experiment's result folder.
-    :return: The connection dicts; empty when the file is missing or unreadable.
+    :return: The connection dicts; empty when there are none.
     :rtype: list
     """
+    folder = Path(result_dir)
     try:
-        connections = ast.literal_eval(Path(result_dir, 'connections.config').read_text(encoding='utf-8'))
-    except (OSError, SyntaxError, ValueError, TypeError):
+        files = sorted(p for p in folder.glob('*.config') if p.is_file())
+        key = (str(folder), tuple((p.name, p.stat().st_mtime_ns) for p in files))
+    except OSError:
         return []
-    return connections if isinstance(connections, list) else []
+    if key in _CONNECTIONS_CACHE:
+        return _CONNECTIONS_CACHE[key]
+    by_name: dict = {}
+    for path in files:
+        if path.name == 'connections.config':
+            for connection in _connection_dicts(path):
+                by_name.setdefault(connection['name'], connection)
+    for path in files:
+        if path.name not in ('connections.config', 'queries.config'):
+            for connection in _connection_dicts(path):
+                by_name[connection['name']] = connection
+    connections = list(by_name.values())
+    _CONNECTIONS_CACHE.clear()
+    _CONNECTIONS_CACHE[key] = connections
+    return connections
 
 
 def scoped_job_connections(connections: list, component: str, metric: Optional[str] = None) -> set:

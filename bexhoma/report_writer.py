@@ -75,7 +75,7 @@ from bexhoma import evaluators
 from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
-from bexhoma.monitoring_math import counter_total, scoped_job_connections
+from bexhoma.monitoring_math import counter_total, read_connections, scoped_job_connections
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
 
@@ -618,13 +618,15 @@ def _build_monitoring_sections(
         sections.append(ceph_section)
     catalog_rows = []
     catalog_value_sections = []
+    # named like the monitoring columns, unlike a connections.config rewritten by DBMSBenchmarker
+    connections_scope = read_connections(evaluator.path) or connections_sorted
     for component, component_title in monitoring_components.items():
         for metric_key, meta in metric_defs.items():
             df = evaluator.get_monitoring_metric(metric=metric_key, component=component)
             if df.empty:
                 continue
             aggregated = _aggregate_metric(
-                df, meta['metric'], component, scoped_job_connections(connections_sorted, component, metric_key))
+                df, meta['metric'], component, scoped_job_connections(connections_scope, component, metric_key))
             df_cleaned = pd.DataFrame(aggregated)
             df_cleaned.columns = [meta['title']]
             df_cleaned = _add_not_applicable(

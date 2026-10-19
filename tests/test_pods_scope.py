@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import ast
 import math
+import os
 import re
 import shutil
 import tempfile
@@ -228,6 +229,23 @@ class ScopedConnectionsTest(unittest.TestCase):
             self.assertEqual(read_connections(tmp_dir), [])
             (Path(tmp_dir) / 'connections.config').write_text(repr(self.connections))
             self.assertEqual([c['name'] for c in read_connections(tmp_dir)], ['new', 'old', 'older'])
+
+    def test_per_connection_files_when_connections_config_was_rewritten(self) -> None:
+        """test_parallel_tpch_ycsb 1792366946: DBMSBenchmarker left one connection, renamed with its client."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            folder = Path(tmp_dir)
+            renamed = dict(_connection('pg-1-1-1-1', True), name='pg-1-1-1-1-1')
+            (folder / 'connections.config').write_text(repr([renamed]))
+            for name in ('pg-1-1-1-1', 'pg-1-1-1-2'):
+                (folder / f'{name}.config').write_text(repr([_connection(name, True)]))
+            (folder / 'queries.config').write_text(repr({'name': 'q', 'queries': []}))
+            connections = read_connections(folder)
+            self.assertEqual(scoped_job_connections(connections, 'benchmarker', 'cpu'),
+                             {'pg-1-1-1-1-1', 'pg-1-1-1-1', 'pg-1-1-1-2'})
+            # a changed file is read again
+            (folder / 'pg-1-1-1-2.config').write_text(repr([_connection('pg-1-1-1-2', False)]))
+            os.utime(folder / 'pg-1-1-1-2.config', ns=(1, 1))
+            self.assertNotIn('pg-1-1-1-2', scoped_job_connections(read_connections(folder), 'benchmarker', 'cpu'))
 
 
 class ScopedCounterTest(unittest.TestCase):
