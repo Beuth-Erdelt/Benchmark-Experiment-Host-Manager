@@ -349,23 +349,26 @@ import is always visible in the results.
 | MonetDB | `COPY ... LOCKED` (?) | per statement | - |
 
 **Design.**
-1. **CLI, all entry scripts:** `-xld/--load-durability {default,relaxed,off}`.
-   - `default`: what the init scripts do today, no change in behavior.
-   - `relaxed`: commit without flushing (PostgreSQL `synchronous_commit=off`, MySQL/MariaDB
-     `innodb_flush_log_at_trx_commit=2`, Redis `appendfsync no`).
-   - `off`: the strongest lever of the DBMS (table above).
+1. **CLI, all entry scripts:** `-xld/--load-durability {durable,relaxed,unsafe}`, default `relaxed`.
+   - `durable`: the DBMS as configured by the template / `--set`; the load changes nothing.
+   - `relaxed`: commit without flushing plus skipped checks, i.e. what the init scripts do today
+     (PostgreSQL `synchronous_commit=off`, MySQL/MariaDB `innodb_flush_log_at_trx_commit=2` and
+     `foreign_key_checks`/`unique_checks` 0, Redis `appendfsync no`).
+   - `unsafe`: the strongest lever of the DBMS (table above); a crash during the load can lose or
+     corrupt data.
 2. **Scripts per DBMS, not per benchmark**, in a shared folder such as `experiments/_durability/<DBMS>/`:
-   - `load-durability-relaxed.*` / `load-durability-off.*`: appended by bexhoma as the last pre-load script.
+   - `load-durability-relaxed.*` / `load-durability-unsafe.*`: appended by bexhoma as the last pre-load script.
    - `load-durability-restore.*`: inserted by bexhoma before the check script in every post-load list
      (WP8 'Checks' runs always), so a load never leaves the server weakened for the benchmark.
 3. **Restore** as in WP8: save startup values before relaxing (MySQL `bexhoma.saved_settings`), restore
-   exactly those (PostgreSQL `ALTER SYSTEM RESET` + reload). `off` ends with a `CHECKPOINT` (or the DBMS
+   exactly those (PostgreSQL `ALTER SYSTEM RESET` + reload). `unsafe` ends with a `CHECKPOINT` (or the DBMS
    equivalent) in the restore, so the first benchmark round does not pay for it.
-4. **Unsupported level:** no file for the level -> message ("load durability 'off' not supported by TiDB,
-   using default"), no failure; the effective level is what gets reported.
+4. **Unsupported level:** no file for the level -> fall back to the next weaker level that exists, down
+   to `durable`, with a message ("load durability 'unsafe' not supported by TiDB, using 'durable'"), no
+   failure; the effective level is what gets reported.
 5. **Reporting:** requested and effective level in the workload info and the connection parameters;
    the summary shows it next to the loading times.
-6. **Safety:** with `off`, a SUT restart during the load can lose data; bexhoma already detects SUT
+6. **Safety:** with `unsafe`, a SUT restart during the load can lose data; bexhoma already detects SUT
    restarts and then marks the load as failed.
 7. **Tests:** script-list insertion per level, restore always present, unsupported level falls back,
    reporting; scripts run on the DBMS pods as for WP8.
@@ -374,13 +377,15 @@ import is always visible in the results.
 (`relaxed` only); Redis later; TiDB, CockroachDB, YugabyteDB, MonetDB report "not supported".
 
 **Decisions (user, 2026-10-20):**
-- Levels: `default/relaxed/off` (all three).
+- Levels: three, named `durable/relaxed/unsafe` (first drafted as `default/relaxed/off`; renamed
+  because the CLI default is not the level called `default`).
 - Today's init-script relaxations (PostgreSQL `synchronous_commit=off`; MySQL flush 2/0,
   `foreign_key_checks`/`unique_checks` 0, TPC-H `autocommit` 0; their save/restore in the check
   scripts) move into `relaxed`. Init scripts then only create schemas; restore moves into
   `load-durability-restore.*`.
-- Consequence: `default` becomes "DBMS as configured" (fully durable). To keep results comparable
-  with earlier runs, the CLI default of `-xld` is `relaxed` (confirmed).
+- `durable` = DBMS as configured. To keep results comparable with earlier runs, the CLI default of
+  `-xld` is `relaxed` (confirmed). MySQL redo log off (`ALTER INSTANCE DISABLE INNODB REDO_LOG`) is
+  MySQL's `unsafe`.
 - Port to TPC-DS MySQL (#709, 2026-10-20) is in the init/check scripts for now and moves with the rest.
 
 Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DISABLE` twice are no-ops;
@@ -431,7 +436,7 @@ Ready, with these defaults taken from this plan unless the user decides otherwis
 | R4 | WP7 data components / placeholder SUT | **decided:** design in WP7 (`data_components`, `sut_role`, template sizes 250m-1 CPU / 512Mi-1Gi), confirmed by the user 2026-10-17 |
 | R5 | WP8 DBMS folders for TPC-H/TPC-DS check scripts | PostgreSQL, MySQL, MariaDB, Citus, PgDuckDB, MonetDB |
 | R6 | WP8 row counts | **decided:** counts only, no expected values (user 2026-10-17) |
-| R7 | WP10 | later, not part of the first implementation; revised 2026-10-17 to a general import-durability option (`-xld`), two open decisions in WP10 |
+| R7 | WP10 | later, not part of the first implementation; revised 2026-10-17 to a general import-durability option (`-xld durable/relaxed/unsafe`), decisions made 2026-10-20 |
 | R8 | HammerDB image | **decided:** move to 6.0 (user 2026-10-17); check the other DBMS at the start of WP5 |
 
 R1, R2, R3, R5 and R7 are the plan's defaults; the user did not object (2026-10-17).
