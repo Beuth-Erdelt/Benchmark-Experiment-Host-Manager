@@ -116,6 +116,8 @@ class TPCDS(DBMSBenchmarkerBenchmark):
             if init_columns:
                 experiment.workload['info'] += "\nStorage is set to columnar."
             experiment.workload['info'] += f"\nTimeout per query is {timeout}."
+            if getattr(args, 'activate_reset', False):
+                experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
             if datatransfer:
                 experiment.workload['info'] += "\nData transfer volume per query is also measured."
             if verbose_explain:

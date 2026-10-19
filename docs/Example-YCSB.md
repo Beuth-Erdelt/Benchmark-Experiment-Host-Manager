@@ -1466,8 +1466,9 @@ YCSB SF=1
 ## Reset Scripts
 
 For repeated benchmarking rounds against the same database, bloat and stale planner statistics can drift the result away from the first round.
-Bexhoma can run a pre-benchmark reset script (`CHECKPOINT` + `VACUUM ANALYZE` on `usertable` for PostgreSQL) before each round to start every round from a comparable state.
+Bexhoma can run a pre-benchmark reset script (for PostgreSQL `VACUUM ANALYZE`, `CHECKPOINT` and a reset of the statistics counters) before each round to start every round from a comparable state.
 The feature is off by default; pass `-ar` to activate it.
+Every DBMS of YCSB has a reset with the same three steps (statistics, persist, counters); see [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
 
 Example (`-ne 1,2` sweeps two rounds, so the reset script runs twice):
 ```bash

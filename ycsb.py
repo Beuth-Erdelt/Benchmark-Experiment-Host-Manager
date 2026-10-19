@@ -234,8 +234,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                     # , configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
-                    # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
-                    # to produce a consistent, cold-cache starting state.
+                    # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
+                    # each benchmarking round (caches stay warm).
                     config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     # A catalog-driven run (experiment.py) sets apply_sut_resources
                     # when the experiment.yml carries a resources: block; a plain
@@ -335,6 +335,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                                 #, configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out)
                                 config = configurations.default(experiment=experiment, docker='PGBouncer', alias='DBMS A')
                                 config.path_experiment_docker = 'PostgreSQL'                   # take init scripts of PostgreSQL
+                                config.set_benchmark_resetscript(['reset-ycsb.sql'])           # reset of PostgreSQL, through the pooler
                                 config.sut_has_pool = True                                     # in particular monitor pool component
                                 config.sut_parameters = {
                                     # do not split connections between pool pods:
@@ -385,9 +386,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     name_format = 'MySQL-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS B')
-                    # Run ANALYZE TABLE before each benchmarking round to keep
-                    # optimizer statistics fresh between rounds.
-                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
+                    # With -ar: ANALYZE TABLE, then flush of the dirty pages and
+                    # FLUSH STATUS before each benchmarking round.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql', 'reset-flush.sh'])
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
@@ -424,9 +425,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
                     # , configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS C')
-                    # Run ANALYZE TABLE before each benchmarking round to keep
-                    # optimizer statistics fresh between rounds.
-                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
+                    # With -ar: ANALYZE TABLE, then flush of the dirty pages and
+                    # FLUSH STATUS before each benchmarking round.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql', 'reset-flush.sh'])
                     config.set_storage(
                         storageConfiguration = 'mariadb'
                         )
@@ -469,9 +470,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_sut_role('placeholder') # helper pod; data lives in the Helm-managed tservers
                     config.set_pvc_selector('app=yb-tserver') # storage metrics of the tserver volumes
-                    # YSQL has no CHECKPOINT; ANALYZE VERBOSE refreshes
-                    # planner statistics before each benchmarking round.
-                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
+                    # With -ar: ANALYZE, then a stats reset on every tserver before
+                    # each round; YSQL has no CHECKPOINT.
+                    config.set_benchmark_resetscript(['reset-ycsb.sql', 'reset-counters.sh'])
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
                         )
@@ -533,8 +534,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     config = configurations.default(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_sut_role('placeholder') # client pod; data lives in the worker StatefulSet
-                    # Pebble has no user-invokable checkpoint; ANALYZE
-                    # refreshes planner statistics before each round.
+                    # With -ar: ANALYZE and a SQL stats reset before each round;
+                    # Pebble has no user-invokable checkpoint.
                     config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
@@ -591,9 +592,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
                     config.set_data_components(['tikv']) # PD keeps its template resources and volume size
-                    # TiKV has no user-invokable checkpoint; ANALYZE TABLE
-                    # forces fresh histograms before each round instead of
-                    # relying on TiDB's async auto-analyze job timing.
+                    # With -ar: ANALYZE TABLE and FLUSH STATUS before each round;
+                    # TiKV has no user-invokable checkpoint.
                     config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
@@ -701,8 +701,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker=docker, alias='DBMS KV', worker=num_worker_inc_replicas)
                     config.path_experiment_docker = 'Dragonfly'          # reset script lives here regardless of single/cluster mode
-                    # Dragonfly is a pure in-memory store: reset is a SAVE
-                    # snapshot, there is no planner/statistics concept.
+                    # With -ar: SAVE snapshot and CONFIG RESETSTAT before each
+                    # round; there is no planner/statistics concept.
                     config.set_benchmark_resetscript(['save-snapshot.sh'])
                     BEXHOMA_DBMS_TYPE = "redis"
                     if num_worker > 0:
@@ -776,6 +776,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     num_worker_inc_replicas = num_worker * (1+num_worker_replicas)
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='Redis', alias='DBMS KV', worker=num_worker_inc_replicas)
+                    # With -ar: SAVE snapshot and CONFIG RESETSTAT before each round
+                    config.set_benchmark_resetscript(['save-snapshot.sh'])
                     config.monitoring_sut = False # should not be monitored since only dummy
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-RedisCluster.yml"
@@ -842,8 +844,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS F', worker=num_worker)
-                    # CHECKPOINT only reaches the coordinator; VACUUM and
-                    # ANALYZE refresh planner statistics before each round.
+                    # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset
+                    # on the coordinator and every worker before each round.
                     config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     if skip_loading:
                         config.loading_deactivated = True

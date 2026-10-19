@@ -276,6 +276,42 @@ With `config.set_script_target('workers')` (Redis cluster, Dragonfly cluster), s
 
 **Post-load checks.** The last post-load script always runs, also for TPC-H and TPC-DS without `-xii/-xic/-xis` (key `Checks`): `checkschema-<benchmark>.sql` restores settings relaxed for the import (PostgreSQL `synchronous_commit`; MySQL settings saved in `bexhoma.saved_settings` before the load), writes a checkpoint (PostgreSQL, Citus) and reports row counts, sizes, the WAL/redo written by the load and the non-default configuration.
 
+### Reset scripts (`-ar`)
+
+With `-ar`, a reset runs before each benchmarking round (also before the first round after loading), for YCSB, Benchbase, HammerDB, TPC-H and TPC-DS.
+It is off by default.
+Every reset does the same steps in the same order, so rounds and systems start from comparable states:
+
+1. **Statistics**: `VACUUM` / `ANALYZE` or the equivalent.
+2. **Persist**: write dirty data to disk (`CHECKPOINT`, flush, `SAVE`), so that no checkpoint or flush left over from loading or the previous round falls into the measured round. It comes after step 1, because `VACUUM` dirties pages again.
+3. **Counters**: zero the cumulative activity counters, so application metrics start at 0.
+
+The reset does not make caches cold: a checkpoint writes dirty pages but keeps them in memory.
+A step without an equivalent is a comment line `step N (...): n/a - <reason>` in the script; no other operation stands in for it.
+
+| DBMS | 1 Statistics | 2 Persist | 3 Counters |
+|---|---|---|---|
+| PostgreSQL, PGBouncer, PgDuckDB | `VACUUM VERBOSE ANALYZE` (whole database) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
+| Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (passed on to the shards) | `CHECKPOINT` on the coordinator and with `run_command_on_workers` on every worker | as PostgreSQL, on the coordinator and every worker |
+| MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
+| MonetDB | `ANALYZE` | `CALL sys.flush_log()` | n/a |
+| YugabyteDB | `ANALYZE VERBOSE` (cluster-wide) | n/a (no `CHECKPOINT` in YSQL, no `yb-admin` in the helper pod) | `reset-counters.sh`: `pg_stat_reset()` on every tserver (`yb-tserver-N.yb-tservers`), not once through the service, which picks one tserver per connection |
+| CockroachDB | `ANALYZE` (cluster-wide) | n/a (Pebble flushes on its own) | `crdb_internal.reset_sql_stats()` (cluster-wide) |
+| TiDB | `ANALYZE TABLE` (cluster-wide) | n/a (no flush in SQL) | `FLUSH STATUS` on the TiDB server the connection reaches |
+| Dragonfly | n/a | `SAVE` on every data pod | `CONFIG RESETSTAT` |
+| Redis | n/a | `SAVE` (standalone: SUT pod; cluster: every worker) | `CONFIG RESETSTAT` |
+
+CedarDB and DatabaseService have no reset.
+Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL and PGBouncer only (the other DBMS have no scripts for them).
+With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
+
+Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis).
+SQL files run through `loadData` (once per tenant for schema and database tenancy), shell files in the SUT pod or, with script target `workers`, in every worker pod.
+With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both streams start.
+Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
+
+Runs with `-ar` from before this contract (October 2026) are not directly comparable to newer ones for PostgreSQL (checkpoint now after `VACUUM`), Citus (checkpoints on the workers) and MySQL/MariaDB (dirty-page flush): these move I/O out of round 1.
+
 ### Minimal SUT template skeleton
 
 ```yaml

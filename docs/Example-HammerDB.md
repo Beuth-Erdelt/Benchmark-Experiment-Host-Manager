@@ -593,6 +593,11 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during load
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.
 
+## Reset Scripts
+
+With `-ar`, a reset script runs before each benchmarking round (statistics, persist, counters; e.g. `VACUUM ANALYZE`, `CHECKPOINT` and a statistics reset for PostgreSQL), so every round starts from a comparable state.
+See [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
+
 
 ## Use Persistent Storage
 

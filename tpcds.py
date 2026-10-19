@@ -188,6 +188,8 @@ if __name__ == '__main__':
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
+                # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each round
+                config.set_benchmark_resetscript(['reset-tpcds.sql'])
                 config.set_storage(
                     storageConfiguration = 'postgresql'
                     )
@@ -203,6 +205,8 @@ if __name__ == '__main__':
                 name_format = 'MonetDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB', alias='DBMS A1')
+                # With -ar: ANALYZE and flush of the write-ahead log before each round
+                config.set_benchmark_resetscript(['reset-tpcds.sql'])
                 config.set_storage(
                     storageConfiguration = 'monetdb'
                     )
@@ -218,6 +222,8 @@ if __name__ == '__main__':
                 name_format = 'MariaDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL', alias='DBMS A1')
+                # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
+                config.set_benchmark_resetscript(['reset-tpcds.sql', 'reset-flush.sh'])
                 config.set_storage(
                     storageConfiguration = 'mariadb'
                     )
@@ -240,6 +246,8 @@ if __name__ == '__main__':
                     name_format = 'MySQL-{cluster}-{pods_times_threads}'
                     #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads)
                     config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS A1')
+                    # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
+                    config.set_benchmark_resetscript(['reset-tpcds.sql', 'reset-flush.sh'])
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )

@@ -1145,6 +1145,11 @@ You can change this via
 * `-xrcp`: Each stream has it's own random parameters
 * `-xshq`: Use the ordering per stream as required by the TPC-DS specification
 
+## Reset Scripts
+
+With `-ar`, a reset script runs before each benchmarking round (statistics, persist, counters; e.g. `VACUUM ANALYZE`, `CHECKPOINT` and a statistics reset for PostgreSQL), so every stream starts from a comparable state.
+See [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
+
 ## Use Persistent Storage
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.

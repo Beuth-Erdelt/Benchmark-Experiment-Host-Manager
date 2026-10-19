@@ -268,6 +268,10 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                         config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
                         #config.num_tenants = multi_tenant_num
                         #config.tenant_per = multi_tenant_by
+                        # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each
+                        # round, in each tenant's own container; only before the query
+                        # stream, which also precedes the refresh stream (-xrs)
+                        config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
                         config.set_storage(
                             storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
                             )
@@ -300,6 +304,10 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
                     #config.num_tenants = multi_tenant_num
                     #config.tenant_per = multi_tenant_by
+                    # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each
+                    # round; only before the query stream, which also precedes the
+                    # refresh stream (-xrs)
+                    config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
                     if config.tenant_per:
                         config.set_storage(
                             storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
@@ -356,6 +364,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='PgDuckDB', dialect='PostgreSQL', alias='DBMS A2')
                 config.path_experiment_docker = 'PostgreSQL'   # pg_duckdb IS PostgreSQL: reuse its DDL/init scripts
+                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')   # reset of PostgreSQL
                 config.set_storage(
                     storageConfiguration = 'PgDuckDB'
                     )
@@ -378,6 +387,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 name_format = 'MonetDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB', alias='DBMS A1')
+                # With -ar: ANALYZE and flush of the write-ahead log before each round
+                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
                 config.set_storage(
                     storageConfiguration = 'monetdb'
                     )
@@ -395,6 +406,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 name_format = 'MariaDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL', alias='DBMS A1')
+                # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
+                config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
                 config.set_storage(
                     storageConfiguration = 'mariadb'
                     )
@@ -418,6 +431,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     name_format = 'MySQL-{cluster}-{pods_times_threads}'
                     #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads)
                     config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS A1')
+                    # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
+                    config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
                     config.set_storage(
                         storageConfiguration = 'mysql'
                         )
@@ -458,6 +473,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 name_format = 'Citus-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
                 config = configurations.default(experiment=experiment, docker='Citus', dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
+                # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset on the
+                # coordinator and every worker before each round
+                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
                 if skip_loading:
                     config.loading_deactivated = True
                 if init_columns:

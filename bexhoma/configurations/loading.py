@@ -995,6 +995,9 @@ class LoadingCoordinator:
         here because each container tenant is already a separate :class:`SutConfiguration`
         (and therefore a separate call to this method) upstream.
 
+        Scripts missing in the experiment folder are skipped with a message, as
+        in :meth:`run_scripts_on_workers`.
+
         On completion the SUT pod is labelled with:
 
         - ``<script_type>=True``
@@ -1020,6 +1023,14 @@ class LoadingCoordinator:
         if 'loadData' not in cfg.dockertemplate:
             print("{:30s}: no loadData command found, skipping reset".format(cfg.configuration))
             return 0
+        folder = cfg.experiment.cluster.experiments_configfolder + '/' + cfg.path_experiment_docker
+        missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
+        if missing:
+            print("{:30s}: reset scripts {} not found in {}, skipped".format(
+                cfg.configuration, missing, folder))
+            scripts = [s for s in scripts if s not in missing]
+            if not scripts:
+                return 0
         scripts, scripts_workers = self.split_worker_scripts(scripts)
         elapsed_workers = self.run_scripts_on_workers(scripts_workers, script_type)
         if not scripts:

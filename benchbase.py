@@ -218,10 +218,9 @@ if __name__ == '__main__':
                             name_format = 'PostgreSQL-{threads}-{pods}-{target}-{tenant}'
                             #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
                             config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
-                            if type_of_benchmark == 'tpcc':
-                                # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
-                                # (with -ar), in each tenant's own container
-                                config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                            # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
+                            # each benchmarking round, in each tenant's own container
+                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
                             config.set_storage(
                                 storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
                                 )
@@ -275,10 +274,9 @@ if __name__ == '__main__':
                         name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                         config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
-                        if type_of_benchmark == 'tpcc':
-                            # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
-                            # to produce a consistent, cold-cache starting state.
-                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                        # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
+                        # each benchmarking round (caches stay warm).
+                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
@@ -401,6 +399,7 @@ if __name__ == '__main__':
                                 #, configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out)
                                 config = configurations.default(experiment=experiment, docker='PGBouncer', alias='DBMS A')
                                 config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
+                                config.set_benchmark_resetscript(['reset-benchbase.sql'])                 # reset of PostgreSQL, through the pooler
                                 config.sut_has_pool = True                                                # in particular monitor pool component
                                 config.sut_parameters = {
                                     # do not split connections between pool pods:
@@ -460,9 +459,9 @@ if __name__ == '__main__':
                             #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
                             config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
                             if type_of_benchmark == 'tpcc':
-                                # Run ANALYZE TABLE before each benchmarking round (with -ar),
-                                # in each tenant's own container
-                                config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                                # With -ar: ANALYZE TABLE, then flush of the dirty pages and
+                                # FLUSH STATUS before each round, in each tenant's own container
+                                config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
                             config.set_storage(
                                 storageConfiguration = f'mysql-{tenant}'+"-"+str(config.num_tenants)
                                 )
@@ -516,9 +515,9 @@ if __name__ == '__main__':
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                         config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
                         if type_of_benchmark == 'tpcc':
-                            # Run ANALYZE TABLE before each benchmarking round to
-                            # keep optimizer statistics fresh between rounds.
-                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                            # With -ar: ANALYZE TABLE, then flush of the dirty pages and
+                            # FLUSH STATUS before each benchmarking round.
+                            config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'mysql-'+config.tenant_per+"-"+str(config.num_tenants)
@@ -584,9 +583,9 @@ if __name__ == '__main__':
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS A')
                     if type_of_benchmark == 'tpcc':
-                        # Run ANALYZE TABLE before each benchmarking round to
-                        # keep optimizer statistics fresh between rounds.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                        # With -ar: ANALYZE TABLE, then flush of the dirty pages and
+                        # FLUSH STATUS before each benchmarking round.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
                     config.set_storage(
                         storageConfiguration = 'mariadb'
                         )
@@ -635,9 +634,9 @@ if __name__ == '__main__':
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
-                        # YSQL has no CHECKPOINT; ANALYZE VERBOSE refreshes
-                        # planner statistics before each benchmarking round.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                        # With -ar: ANALYZE, then a stats reset on every tserver before
+                        # each round; YSQL has no CHECKPOINT.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-counters.sh'])
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
@@ -706,8 +705,8 @@ if __name__ == '__main__':
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_sut_role('placeholder') # client pod; data lives in the worker StatefulSet
                     if type_of_benchmark == 'tpcc':
-                        # Pebble has no user-invokable checkpoint; ANALYZE
-                        # refreshes planner statistics before each round.
+                        # With -ar: ANALYZE and a SQL stats reset before each round;
+                        # Pebble has no user-invokable checkpoint.
                         config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
@@ -767,9 +766,8 @@ if __name__ == '__main__':
                     config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
                     config.set_data_components(['tikv']) # PD keeps its template resources and volume size
                     if type_of_benchmark == 'tpcc':
-                        # TiKV has no user-invokable checkpoint; ANALYZE TABLE
-                        # forces fresh histograms before each round instead of
-                        # relying on TiDB's async auto-analyze job timing.
+                        # With -ar: ANALYZE TABLE and FLUSH STATUS before each round;
+                        # TiKV has no user-invokable checkpoint.
                         config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
@@ -882,8 +880,8 @@ if __name__ == '__main__':
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
-                        # CHECKPOINT only reaches the coordinator; VACUUM ANALYZE
-                        # refreshes planner statistics before each round.
+                        # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset
+                        # on the coordinator and every worker before each round.
                         config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True

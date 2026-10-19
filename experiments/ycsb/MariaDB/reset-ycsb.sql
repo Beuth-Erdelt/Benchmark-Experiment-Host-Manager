@@ -3,12 +3,9 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Pre-benchmark reset for YCSB on MariaDB. InnoDB has no
---          user-invokable checkpoint; ANALYZE TABLE refreshes optimizer
---          statistics on usertable before each benchmarking round. FLUSH
---          STATUS zeros the cumulative SHOW GLOBAL STATUS counters so the
---          upcoming round's stats aren't mixed with earlier rounds.
+-- Purpose: Step 1 (statistics) of the reset contract (docs/DBMS.md) for YCSB
+--          on MariaDB, run before each benchmarking round with -ar. ANALYZE
+--          TABLE refreshes optimizer statistics on usertable. Steps 2
+--          (persist) and 3 (counters) follow in reset-flush.sh.
 
-ANALYZE TABLE usertable;
-
-FLUSH STATUS;
+ANALYZE TABLE ycsb.usertable;

@@ -1,6 +1,7 @@
 # Plan: reset scripts (`-ar`) for every DBMS and benchmark, comparable between systems
 
-Status: **plan only (2026-10-19), nothing implemented.**
+Status: **M1-M10 implemented 2026-10-19 (uncommitted); M0 answered from code where possible (section 6);
+cluster checks (M0 rest, M11) open.**
 
 Goal: with `-ar`, every benchmark runs a reset before each benchmarking round for every DBMS in scope,
 and the reset does the same steps everywhere, so results are comparable between systems and
@@ -196,3 +197,39 @@ stderr errors except documented NOTICEs, `reset_seconds` reported, step 2 visibl
 | R3 | YugabyteDB persist without `yb-admin` in the helper pod | n/a, no extra pod |
 | R4 | Benchbase twitter/ycsb/chbenchmark for DBMS other than PostgreSQL | only the pairs found in M0.9 |
 | R5 | TPC-H/TPC-DS reset also before the first round after loading | yes (same as OLTP: before every round) |
+
+---
+
+## 6. Implementation notes (2026-10-19)
+
+M0 answered from code and templates (no cluster run):
+
+| M0 | Answer |
+|---|---|
+| 2 | All PostgreSQL-family images are 18 (`postgres:18.6`, `pgduckdb:18-v1.1.1`, `citus:14.2.0`): targets `bgwriter`, `checkpointer`, `io`, `wal`. |
+| 5 | The YugabyteDB helper pod is `postgres:15.0`: no `yb-admin`, so persist is n/a (R3). `script_target('workers')` does not work (`run_scripts_on_workers` uses container `dbms`, the Helm tserver container is `yb-tserver`). Counters instead: `reset-counters.sh` in the helper pod connects to every tserver pod directly. Checked on the cluster 2026-10-19 (YugabyteDB 2025.2.7, from a `postgres:15.0` pod): `yb-tserver-N.yb-tservers` (short names) resolve and accept `psql -U yugabyte`; `pg_stat_reset()` changes `stats_reset` only on the tserver it runs on; `yb-tserver-service` spread 6 connections over 2 of 3 tservers, so the old single reset hit a random tserver. |
+| 8 | TPC-H/TPC-DS use the experiment-dict path (`experiment_dict_template` in `experiments/tpch.py`, `tpcds.py`), so `set_benchmark_resetscript` reaches the round loop. With `-xrs` the template has a second entry `tpch_refresh`; the reset targets `name='tpch'` only, otherwise it would run twice per round. |
+| 9 | Benchbase twitter/ycsb/chbenchmark folders exist for PostgreSQL only: resets for PostgreSQL and PGBouncer (R4). |
+
+Open on the cluster: M0.1 (Citus worker checkpoint duration, `success` rows), M0.3 (MySQL/MariaDB flush
+duration; timeout set to 600 s = R1 maximum, `reset-flush.sh` has `TIMEOUT=600`), M0.4 (MonetDB
+`sys.flush_log()`), M0.6 (TiDB `FLUSH STATUS`), M0.7 (Dragonfly `CONFIG RESETSTAT`). All of them are in
+the scripts; a statement that is not supported only writes an error to the stderr log, the round still starts.
+
+Deviations from the plan:
+- Citus: `run_command_on_workers(...)` plus the same statement locally on the coordinator, not
+  `run_command_on_all_nodes`, which reaches the coordinator only if it is registered in `pg_dist_node`.
+- MySQL/MariaDB `.sql`: table names qualified with the database (`ycsb.usertable`, `tpch.*`, `tpcds.*`) or
+  `USE <db>` (Benchbase `benchbase`, HammerDB `tpcc`). The old YCSB scripts ran `ANALYZE TABLE usertable`
+  against the default database of `loadData`. Same for TiDB (`ycsb.usertable`, `benchbase.*`).
+- MariaDB `reset-flush.sh` connects as root (`MARIADB_ROOT_PASSWORD` of the container), because `SET GLOBAL`
+  needs it; `loadData` uses user `bexhoma`.
+- `reset-flush.sh` exits early (code 1) if it cannot read `innodb_max_dirty_pages_pct`, so a broken connection
+  does not wait for the full timeout.
+- `experiments/tpcc/CockroachDB/reset-tpcc.sql` (not offered by `hammerdb.py`) follows the contract too;
+  `experiments/tpcc/SingleStore` is unchanged.
+- M1.2 also warns when a listed script is missing in the folder (`ExperimentBase.warn_missing_reset_scripts`).
+- Docs anchor: `docs/DBMS.md#reset-scripts--ar`.
+
+Tests: `tests/test_reset_scripts.py` (completeness matrix per CLI incl. all Benchbase benchmarks, `-xrs`,
+step order, no braces, Citus workers, identical flush scripts, missing-file skip, warning, info line).

@@ -1348,6 +1348,13 @@ No warnings
 
 
 
+## Reset Scripts
+
+With `-ar`, a reset script runs before each benchmarking round (statistics, persist, counters; e.g. `VACUUM ANALYZE`, `CHECKPOINT` and a statistics reset for PostgreSQL), so every stream starts from a comparable state.
+With a refresh stream (`-xrs`), it runs once per round, before both streams start.
+See [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
+
+
 ## Refresh Stream
 
 TPC-H specifies RF1/RF2 operations that insert new orders and delete retired orders to keep the database current during a throughput test.

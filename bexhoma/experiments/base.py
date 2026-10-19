@@ -345,6 +345,7 @@ class ExperimentBase():
             print("{:30s}: has code {}".format("Experiment", self.code))
             print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
             print("{:30s}: {}".format("Experiment", self.workload['info']))
+            self.warn_missing_reset_scripts()
             # persist workflow_planned before work_benchmark_list() so a crash mid-run
             # (e.g. during cube building on resume) still leaves it in queries.config
             self.store_workflow_results()
@@ -2061,6 +2062,37 @@ class ExperimentBase():
                 "Experiment", summary.format(done), time.monotonic() - started,
                 max(1, min(self.max_parallel_steps, len(steps))), CALL_STATS.since(calls_started)))
         return results
+
+    def warn_missing_reset_scripts(self) -> list:
+        """Warn once per configuration when ``-ar`` is set but no reset will run.
+
+        A configuration gets a warning when it has no reset script at all (the
+        DBMS has none for this benchmark) or when a listed script is missing in
+        its experiment folder (it would be skipped before every round).
+
+        :return: Names of the configurations that got a warning.
+        :rtype: list
+        """
+        if not self.resetscript_active:
+            return []
+        warned = []
+        for config in self.configurations:
+            scripts = list(config.resetscript)
+            for client_round in config.experiment_dict.get('benchmarker') or []:
+                for entry in client_round:
+                    scripts += [s for s in entry.get('resetscript') or [] if s not in scripts]
+            if not scripts:
+                print("{:30s}: WARNING - -ar is set, but there is no reset script for this DBMS and benchmark".format(
+                    config.configuration))
+                warned.append(config.configuration)
+                continue
+            folder = self.cluster.experiments_configfolder + '/' + config.path_experiment_docker
+            missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
+            if missing:
+                print("{:30s}: WARNING - reset scripts {} not found in {}, they will be skipped".format(
+                    config.configuration, missing, folder))
+                warned.append(config.configuration)
+        return warned
 
     def _submit_round(self, config, client_round: list, experiment_run: str, client: str,
                       round_counter_key: str, fetch_batch: MetricFetchBatch) -> None:
