@@ -1004,6 +1004,48 @@ Benchbase Workload tpcc SF=4
 The `#### Reset` section appears once per experiment repeat (`-nc 2`), right after `#### Per Phase`.
 At SF=4 the 9 TPC-C tables are small, so `CHECKPOINT` + `VACUUM ANALYZE` finish in about 2 seconds here; at larger scaling factors this cost grows with table size and is worth comparing against the benchmarking duration itself.
 
+## Unlimited Target and Warmup
+
+By default the benchmarker throttles to a throughput target of `-xtb` × `-xnbf` requests per second, split over the benchmarking pods.
+With `-xtb 0` there is no target: each pod sends transactions as fast as its terminals (`-nbt`) allow (Benchbase's `<rate>unlimited</rate>`).
+A factor of 0 in `-xnbf` does the same for a single entry of the sweep, e.g. `-xnbf 0,1,2` compares an unlimited run with two throttled ones.
+
+`-xwu` sets a warmup in seconds before the measured duration (`-xsd`).
+Benchbase runs the workload during the warmup, but does not count these transactions in throughput and latency.
+Each benchmarker pod therefore runs for about warmup + `-xsd`.
+Note that hardware metrics of the benchmarking phase (`-m`, `-mc`) cover the complete pod runtime, including the warmup, and so does a status log (`-xli`).
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 4 \
+  -xsd 2 \
+  -xwu 60 \
+  -xtb 0 \
+  -xnbf 1 \
+  -nbp 1,2 \
+  -nbt 40 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_unlimited.log
+```
+
+The result looks something like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_unlimited_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_unlimited.log</a></summary>
+
+```markdown
+TODO: insert docs_benchbase_postgresql_unlimited_summary.md after the first run
+```
+
+</details>
+
+The workload description says `Target is unlimited.` and mentions the warmup.
+In `#### Per Connection` the column `target` is 0 for both pod counts, and `time` is the measured duration (120 seconds) without the warmup.
+
 ## Keying and Thinking Time
 
 We can activate waiting times before and after execution of transactions with `-xkey` to follow TPC-C specifications more closely.
