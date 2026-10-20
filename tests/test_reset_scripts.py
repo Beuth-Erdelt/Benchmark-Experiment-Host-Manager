@@ -274,6 +274,32 @@ class ExecResetScriptTest(unittest.TestCase):
             LoadingCoordinator(self.cfg).exec_reset_script('reset_1_1_1', ['reset-ycsb.sql', 'reset-flush.sh'])
         split.assert_called_once_with(['reset-ycsb.sql'])
 
+    def test_newline_in_load_data_is_escaped(self):
+        """MonetDB's loadData holds a newline; a raw one breaks the sh -c command."""
+        os.makedirs(os.path.join(self.cfg.experiment.cluster.experiments_configfolder, 'MonetDB'))
+        open(os.path.join(self.cfg.experiment.cluster.experiments_configfolder, 'MonetDB', 'reset-tpch.sql'), 'w').close()
+        sent = []
+        cluster = self.cfg.experiment.cluster
+        cluster.namespace = 'ns'
+        cluster.get_pods = lambda **kw: ['sut-pod']
+        cluster.kubectl = lambda command: None
+        self.cfg.experiment.path = self.cfg.experiment.cluster.experiments_configfolder
+        self.cfg.__dict__.update(
+            path_experiment_docker='MonetDB', appname='bexhoma', code='1', num_tenants=0, tenant_per='',
+            script_target='sut', dockertemplate={
+                'loadData': "cd /home/monetdb;printf 'user=monetdb\npassword=monetdb\n' > .monetdb;mclient demo < {scriptname}",
+                'template': {'JDBC': {'database': 'demo'}}},
+            get_service_sut=lambda configuration: 'svc',
+            execute_command_in_pod_sut=lambda cmd, retry_interrupted=True: sent.append(cmd) or ('', '', ''))
+        with (
+            mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            LoadingCoordinator(self.cfg).exec_reset_script('reset_1_1_1', ['reset-tpch.sql'])
+        self.assertEqual(len(sent), 1)
+        self.assertNotIn('\n', sent[0])
+        self.assertIn("printf 'user=monetdb\\npassword=monetdb\\n'", sent[0])
+
 
 class WarnMissingResetScriptsTest(unittest.TestCase):
     """``-ar`` on a configuration without (existing) reset scripts warns once at start (M1.2)."""

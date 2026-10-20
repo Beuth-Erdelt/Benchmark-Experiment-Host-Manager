@@ -664,6 +664,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C PostgreSQL"
 # -ne 1,2                       two client rounds -- the reset runs before each
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 40                       threads per benchmarking pod
+# -xnpp 1                       number of PGBouncer proxy pods
+# -xnpi 128                     maximum incoming connections per PGBouncer instance (default: loading threads = 1)
+# -xnpo 64                      maximum outgoing connections per PGBouncer instance
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -680,6 +683,9 @@ bexhoma benchbase \
   -ne 1,2 \
   -nbp 1 \
   -nbt 40 \
+  -xnpp 1 \
+  -xnpi 128 \
+  -xnpo 64 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

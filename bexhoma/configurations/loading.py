@@ -1078,6 +1078,9 @@ class LoadingCoordinator:
                 cmd = shellcommand.format(s=scriptfolder + script_in_pod)
             else:
                 continue
+            # loadData may hold a newline (MonetDB: printf of the credentials);
+            # escape it as the loading path does, a raw one breaks the sh -c string
+            cmd = cmd.replace('\n', '\\n')
             # A reset script may be half-applied when the connection breaks,
             # so it is only retried if it never reached the pod.
             _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False)

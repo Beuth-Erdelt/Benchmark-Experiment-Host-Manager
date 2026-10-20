@@ -231,5 +231,18 @@ Deviations from the plan:
 - M1.2 also warns when a listed script is missing in the folder (`ExperimentBase.warn_missing_reset_scripts`).
 - Docs anchor: `docs/DBMS.md#reset-scripts--ar`.
 
+M11 run 2026-10-20 (`scripts/test-docs-reset.sh`, YCSB, Benchbase, HammerDB, TPC-H; TPC-DS pending):
+every configuration ran its reset before both rounds, no warnings.
+- Confirmed: MySQL/MariaDB flush reaches 0 dirty pages and restores the setting (YCSB SF 1: MySQL
+  140-165 s, MariaDB up to 291 s, below the 600 s timeout; watch larger SF); Citus 18/18 worker
+  commands `success = t`; YugabyteDB counters on 3 tservers; Dragonfly `CONFIG RESETSTAT` OK (M0.7);
+  TiDB `FLUSH STATUS` OK (M0.6); TPC-H `-xrs`: one reset per round.
+- Fixed after the run: Benchbase TiDB loads into `test`, not `benchbase` (table names unqualified again);
+  MonetDB reset never ran, because the reset path did not escape the newline in `loadData`
+  (`exec_reset_script` now does, as the loading path); the test script's Benchbase PGBouncer run lacked
+  pooler flags (throughput 0).
+- Open: M0.4 MonetDB `sys.flush_log()` (rerun TPC-H/TPC-DS MonetDB); HammerDB MySQL did not load
+  (`tpcc` missing, NOPM 0), unrelated to the reset.
+
 Tests: `tests/test_reset_scripts.py` (completeness matrix per CLI incl. all Benchbase benchmarks, `-xrs`,
 step order, no braces, Citus workers, identical flush scripts, missing-file skip, warning, info line).
