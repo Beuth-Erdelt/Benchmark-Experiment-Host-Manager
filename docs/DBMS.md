@@ -309,6 +309,7 @@ Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS
 SQL files run through `loadData` (once per tenant for schema and database tenancy), shell files in the SUT pod or, with script target `workers`, in every worker pod.
 With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both streams start.
 Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
+`scripts/test-docs-reset.sh` (`.ps1`) checks every reset on a cluster: one run per DBMS and benchmark with two rounds, and its header lists what to look for in the logs.
 
 Runs with `-ar` from before this contract (October 2026) are not directly comparable to newer ones for PostgreSQL (checkpoint now after `VACUUM`), Citus (checkpoints on the workers) and MySQL/MariaDB (dirty-page flush): these move I/O out of round 1.
 

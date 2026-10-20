@@ -56,6 +56,8 @@ After the experiments finish, `clean_logs`/`Invoke-CleanLogs` extracts the `## S
 
 The summary files are the content embedded inside ` ```markdown ``` ` blocks in the `docs/` pages.
 
+`test-docs-reset` is a check, not a source of examples: it runs every reset script of `-ar` (one run per DBMS and benchmark, two rounds each, logs `docs_reset_*.log`), and its header lists what to check in the logs (see "Reset scripts" in `docs/DBMS.md`).
+
 **Node variables** (set at the top of each script, or inherited from `testfunctions.sh/.ps1`);
 these are also the defaults used by `test-docs-collector.ps1` / `test-docs-collector.sh`:
 
