@@ -107,7 +107,6 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 |:-----------------|:-------------------|-----------------:|---------:|----------------:|-------------:|
 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |         4.00 |
 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |        13.00 |
-| postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |        13.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment

@@ -259,9 +259,10 @@ class Benchmark:
         """
         if df_connections.empty or 'time_reset' not in df_connections.columns:
             return None
+        # the reset runs once per job, but df_connections has one row per pod of the job
         df_reset = df_connections[df_connections['time_reset'] > 0][
             ['phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'time_reset']
-        ]
+        ].drop_duplicates(subset=['job'])
         if df_reset.empty:
             return None
         return Section(heading="Reset", level=4, dataframe=df_reset, index=False)

@@ -326,5 +326,21 @@ class ResetInfoLineTest(unittest.TestCase):
                 self.assertNotIn('A reset script', self._info(benchmark, False))
 
 
+class ResetSectionTest(unittest.TestCase):
+    """The Reset table has one row per job, although the connections have one row per pod."""
+
+    def test_one_row_per_job(self):
+        import pandas as pd
+        df_connections = pd.DataFrame([
+            dict(phase='pg-1-1-1', job='pg-1-1-1-1', experiment_run=1, client=1, benchmark_run=1, time_reset=4.0),
+            dict(phase='pg-1-1-2', job='pg-1-1-2-1', experiment_run=1, client=2, benchmark_run=1, time_reset=13.0),
+            dict(phase='pg-1-1-2', job='pg-1-1-2-1', experiment_run=1, client=2, benchmark_run=1, time_reset=13.0),
+            dict(phase='pg-1-1-3', job='pg-1-1-3-1', experiment_run=1, client=3, benchmark_run=1, time_reset=0.0),
+        ])
+        section = TPCH(SF='1')._build_reset_section(df_connections)
+        self.assertEqual(section.dataframe['job'].tolist(), ['pg-1-1-1-1', 'pg-1-1-2-1'])
+        self.assertEqual(section.dataframe['time_reset'].tolist(), [4.0, 13.0])
+
+
 if __name__ == '__main__':
     unittest.main()
