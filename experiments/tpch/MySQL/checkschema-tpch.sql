@@ -5,8 +5,9 @@
 -- See LICENSE for details.
 -- Purpose: Last post-load script, always run (also without -xii/-xic/-xis).
 --          Restores the settings relaxed for the load to the startup values
---          saved by initschema-tpch.sql, and reports row counts, sizes, the
---          redo log written so far and the non-default configuration.
+--          saved by initschema-tpch.sql, and reports row counts, primary and
+--          foreign keys, sizes, the redo log written so far and the
+--          non-default configuration.
 --          No curly braces in this file: bexhoma may fill it with str.format().
 
 -- Restore the settings saved before the load (SET GLOBAL x = DEFAULT would give
@@ -38,6 +39,14 @@ UNION ALL SELECT 'part',     COUNT(*) FROM tpch.part
 UNION ALL SELECT 'partsupp', COUNT(*) FROM tpch.partsupp
 UNION ALL SELECT 'region',   COUNT(*) FROM tpch.region
 UNION ALL SELECT 'supplier', COUNT(*) FROM tpch.supplier;
+
+-- Primary and foreign keys per table (8 primary keys; with -xic 9 foreign keys)
+SELECT TABLE_NAME, CONSTRAINT_TYPE, COUNT(*) AS constraint_count
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'tpch'
+  AND CONSTRAINT_TYPE IN ('PRIMARY KEY', 'FOREIGN KEY')
+GROUP BY TABLE_NAME, CONSTRAINT_TYPE
+ORDER BY TABLE_NAME, CONSTRAINT_TYPE;
 
 -- Sizes (InnoDB estimates)
 SELECT table_name,
