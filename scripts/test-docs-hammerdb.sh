@@ -92,6 +92,49 @@ bexhoma hammerdb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB monitoring  sf=16  nbp=1,2"
 
 
+#### HammerDB Transaction Counter (Example-HammerDB.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 16                        scaling factor (number of warehouses)
+# -xrt 1                        rampup time in minutes
+# -xsd 5                        benchmark duration in minutes
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nc 1                         number of repeated runs per configuration
+# -nlt 16                       threads per loader pod
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod (virtual users)
+# -xlat                         collect per-operation latency histograms
+# -ar                           reset script before each round (VACUUM ANALYZE, CHECKPOINT, stats reset)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma hammerdb \
+  -dbms PostgreSQL \
+  -sf 16 \
+  -xrt 1 \
+  -xsd 5 \
+  -ne 1 \
+  -nc 1 \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -xlat \
+  -ar \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hammerdb_postgresql_timeseries.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB transaction counter  sf=16  nbp=1,2"
+
+
 #### HammerDB Persistent Storage (Example-HammerDB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 16                        scaling factor (number of warehouses)

@@ -268,6 +268,20 @@ For [HammerDB](https://hammerdb.com/) TPC-C experiments.
 
 Evaluator parses TPM (Transactions Per Minute) and NOPM (New Orders Per Minute) from HammerDB log output.
 
+It also provides the time series of HammerDB's transaction counter, which logs the database's `tpm` every 10 seconds (rampup included).
+The counter measures the whole database, not one pod, and it reports no NOPM:
+
+```python
+evaluate = collect.get_evaluator(code)
+evaluate.get_benchmark_logs_timeseries_df_aggregated(metric, configuration, client, experiment_run)
+evaluate.get_benchmark_logs_timeseries_df_single(metric, configuration, client, experiment_run)
+```
+
+`metric` is `"tpm"`. Parallel pods are averaged, as for NOPM and TPM.
+
+**`get_benchmark_timeseries_per_phase(metric='tpm')`** and **`get_benchmark_timeseries_all(metric='tpm')`**  
+Same layout as for `collectors.benchbase`; the index is seconds since the pod's first counter value.
+
 ### `collectors.ycsb`
 
 For [YCSB](https://github.com/brianfrankcooper/YCSB) experiments.

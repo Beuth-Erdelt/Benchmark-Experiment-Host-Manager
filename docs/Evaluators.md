@@ -345,6 +345,40 @@ identifier (`configuration-experiment_run-client-benchmark_run`).  Default
 job.  NOPM and TPM are averaged (not summed) across pods; efficiency is recomputed after
 aggregation.
 
+### `parse_hammerdb_log_file(file_path)`
+
+Low-level parser for HammerDB's transaction counter.  The benchmarker prints one
+counter log per VU test after the run, with a line `<n> <DBMS> tpm @ <date>` every
+10 seconds.  Returns a list of `{'second': …, 'tpm': …}` dicts, seconds counted from
+the pod's first counter value and rounded to the 10 s refresh rate (the counter's
+timestamps drift, e.g. 180, 191, 201).  The first line of each counter log is skipped,
+as it is always 0.
+
+### `benchmark_logs_to_timeseries_df(list_logs, metric='tpm', aggregate=True)`
+
+Builds the time-series DataFrame from all pod logs matching each ID in `list_logs`.
+The counter measures the whole database, so pods are **averaged** per second (like
+NOPM and TPM).  Returns an aggregated DataFrame indexed by `'second'` (with an `'avg'`
+column) when `aggregate=True`, or a list of per-pod DataFrames when `aggregate=False`.
+
+### `get_benchmark_logs_timeseries_df_aggregated(metric='tpm', configuration='', client='1', experiment_run='1')`
+
+Convenience wrapper around `benchmark_logs_to_timeseries_df` with `aggregate=True`,
+filtered by `configuration`, `client`, and `experiment_run`.
+
+```python
+df_ts = ev.get_benchmark_logs_timeseries_df_aggregated(
+    configuration="PostgreSQL-1",
+    client=1,
+    experiment_run=1)
+# df_ts.index  → seconds since the first counter value
+# df_ts['tpm']  → transactions per minute of the database, averaged across pods
+```
+
+### `get_benchmark_logs_timeseries_df_single(metric='tpm', configuration='', client='1', experiment_run='1')`
+
+Like the aggregated variant but returns a list of per-pod DataFrames instead.
+
 ---
 
 ## Class `ycsb`

@@ -593,6 +593,157 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during load
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.
 
+## Transaction Counter
+
+HammerDB's summary reports one NOPM and one TPM value per run.
+In addition, every benchmarker runs HammerDB's transaction counter during the run, which logs the transactions per minute (`tpm`) of the database every 10 seconds.
+The counter starts before the ramp-up, so the first minute (`-xrt 1`) is warm-up.
+
+Example:
+```bash
+bexhoma hammerdb \
+  -dbms PostgreSQL \
+  -sf 16 \
+  -xrt 1 \
+  -xsd 5 \
+  -ne 1 \
+  -nc 1 \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -xlat \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hammerdb_postgresql_timeseries.log
+```
+
+The result looks something like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_timeseries_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_timeseries.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+HammerDB Workload SF=16 (warehouses for TPC-C)
+* Type: tpcc
+* Duration: 1215s 
+* Code: 1792483112
+* HammerDB runs the benchmark.
+* This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
+  * TPC-C data is generated and loaded using several threads.
+  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 1 minutes before measurements begin. Benchmarking also logs latencies.
+  * Experiment uses bexhoma version 0.11.7.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Database uses ephemeral storage of size 50Gi.
+  * Loading is tested with [16] threads, split into [1] pods.
+  * Benchmarking is tested with [16] threads, split into [1, 2] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: hammerdb (2 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: hammerdb (2 pods)
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 283671 | 652916 |         0.00 |          5 |        0 |       1.75 |       2.47 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        8 |        2 |               1 |       1 |  47040 | 108195 |         0.00 |          5 |        0 |       1.56 |       1.97 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        8 |        2 |               1 |       2 |  47024 | 108177 |         0.00 |          5 |        0 |       1.61 |       2.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
+|:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |       16 |        1 |               1 |           1 |       1.75 |       2.47 |         0.00 | 283671.00 | 652916.00 |          5 |        0 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |       16 |        2 |               1 |           2 |       1.62 |       2.00 |         0.00 |  47032.00 | 108186.00 |          5 |        0 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: NOPM contains no 0 or NaN
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+The log of each benchmarker pod contains the counter, for example
+```
+/tmp/hdbtcount_6AD7205F11B603E233638343.log
+Hammerdb Transaction Counter Log @ Tue Oct 20 08:03:43 UTC 2026
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+0 PostgreSQL tpm @ Tue Oct 20 08:03:43 UTC 2026
+558000 PostgreSQL tpm @ Tue Oct 20 08:03:53 UTC 2026
+843276 PostgreSQL tpm @ Tue Oct 20 08:04:03 UTC 2026
+```
+
+The evaluator turns these lines into a time series (see [Evaluators](Evaluators.html) and [Collectors](Collectors.html)):
+
+```python
+from bexhoma import collectors
+
+collect = collectors.tpcc(path=resultfolder, codes=["1792483112"])
+# one column per phase, index is seconds since the first counter value
+df = collect.get_benchmark_timeseries_per_phase(metric="tpm")
+# one DataFrame per benchmarker pod
+evaluate = collect.get_evaluator()
+pods = evaluate.get_benchmark_logs_timeseries_df_single(configuration="PostgreSQL-1", client=2, experiment_run=1)
+```
+
+<details>
+<summary>Show time series per phase (excerpt)</summary>
+
+```
+        1792483112-PostgreSQL-1-1-1-1  1792483112-PostgreSQL-1-2-1-1
+second                                                              
+0                            558000.0                        81426.0
+10                           843276.0                        98550.0
+20                           822984.0                        99789.0
+...
+270                          793212.0                       123288.0
+280                          769710.0                       110961.0
+290                          552492.0                       108933.0
+300                           57648.0                       104238.0
+310                          514998.0                       114036.0
+320                            3168.0                       121590.0
+330                            2718.0                       111615.0
+340                            2370.0                       116700.0
+350                          285708.0                       114279.0
+360                           51666.0                        37314.0
+```
+
+</details>
+
+Some remarks:
+* The counter measures the whole database, not a single pod.
+  Both pods of client 2 report almost the same series, so parallel pods are averaged (like NOPM and TPM in the summary), not summed.
+* Timestamps are rounded to the 10 seconds of the counter, so the pods line up.
+* The first counter value of each log is always 0 and is skipped.
+* The series shows what the summary hides: client 1 runs at about 800,000 tpm, but almost stops between seconds 300 and 340, shortly before the end of the run.
+* The counter reports transactions per minute only, not NOPM.
+
 ## Reset Scripts
 
 With `-ar`, a reset script runs before each benchmarking round (statistics, persist, counters; e.g. `VACUUM ANALYZE`, `CHECKPOINT` and a statistics reset for PostgreSQL), so every round starts from a comparable state.
