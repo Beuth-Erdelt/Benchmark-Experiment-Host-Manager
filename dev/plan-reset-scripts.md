@@ -80,7 +80,7 @@ Target content per DBMS:
 | PostgreSQL, PGBouncer, PgDuckDB | `VACUUM VERBOSE ANALYZE` (whole database, no table list) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared(...)` for the PostgreSQL 18 targets (`bgwriter`, `checkpointer`, `io`, `wal`; M0) |
 | Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (Citus passes it on to the shards) | `SELECT * FROM run_command_on_all_nodes('CHECKPOINT')` (coordinator + workers) | `pg_stat_reset()` and `pg_stat_reset_shared(...)` through `run_command_on_all_nodes` |
 | MySQL, MariaDB | `ANALYZE TABLE <tables>` (`.sql`, per benchmark) | `reset-flush.sh`: set `innodb_max_dirty_pages_pct=0`, wait until `Innodb_buffer_pool_pages_dirty = 0` (with timeout), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`, after the flush) |
-| MonetDB | `ANALYZE sys.<table>` | `CALL sys.flush_log()` | n/a |
+| MonetDB | `ANALYZE sys.<table>` | n/a (no `sys.flush_log()` in Dec2025, see section 6) | n/a |
 | YugabyteDB | `ANALYZE VERBOSE <tables>` (cluster-wide) | `yb-admin flush_table ysql.<db> <table>` if `yb-admin` is reachable (M0), else n/a | `pg_stat_reset()` - reaches only the tserver behind the service; on all tservers if `script_target('workers')` works for the Helm StatefulSet (M0) |
 | CockroachDB | `ANALYZE <tables>` (cluster-wide) | n/a (Pebble flushes on its own; no SQL command) | `SELECT crdb_internal.reset_sql_stats();` (cluster-wide) |
 | TiDB | `ANALYZE TABLE <tables>` (cluster-wide) | n/a (no user-invokable flush in SQL) | `FLUSH STATUS` if supported (M0), else n/a |
@@ -241,7 +241,11 @@ every configuration ran its reset before both rounds, no warnings.
   MonetDB reset never ran, because the reset path did not escape the newline in `loadData`
   (`exec_reset_script` now does, as the loading path); the test script's Benchbase PGBouncer run lacked
   pooler flags (throughput 0).
-- Open: M0.4 MonetDB `sys.flush_log()` (rerun TPC-H/TPC-DS MonetDB); HammerDB MySQL did not load
+- M0.4 answered 2026-10-21 (reruns 1792538505 TPC-H, 1792538525 TPC-DS): the reset now runs before both
+  rounds, but MonetDB Dec2025-SP3 has no `sys.flush_log()` ("no such operator"). `sys.functions` has
+  only `suspend/resume_log_flushing` (pause the background WAL flusher), `logging.flush` (trace log),
+  `vacuum`, `hot_snapshot`: none forces the WAL into the BATs, so persist is n/a for MonetDB.
+- Open: HammerDB MySQL did not load
   (`tpcc` missing, NOPM 0), unrelated to the reset.
 
 Tests: `tests/test_reset_scripts.py` (completeness matrix per CLI incl. all Benchbase benchmarks, `-xrs`,
