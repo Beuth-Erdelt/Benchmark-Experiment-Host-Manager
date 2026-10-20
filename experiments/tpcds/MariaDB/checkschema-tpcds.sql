@@ -4,8 +4,8 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Last post-load script, always run (also without -xii/-xic/-xis).
---          Reports row counts, sizes, the redo log written so far and the
---          non-default configuration. The init scripts relax no durability
+--          Reports row counts, primary and foreign keys, sizes, the redo log
+--          written so far and the non-default configuration. The init scripts relax no durability
 --          setting, so nothing is restored here.
 --          No curly braces in this file: bexhoma may fill it with str.format().
 
@@ -35,6 +35,22 @@ UNION ALL SELECT 'web_page',               COUNT(*) FROM tpcds.web_page
 UNION ALL SELECT 'web_returns',            COUNT(*) FROM tpcds.web_returns
 UNION ALL SELECT 'web_sales',              COUNT(*) FROM tpcds.web_sales
 UNION ALL SELECT 'web_site',               COUNT(*) FROM tpcds.web_site;
+
+-- Primary and foreign keys (primary keys from initschema-tpcds.sql, foreign keys
+-- from initconstraints-tpcds.sql with -xic): totals, then per table
+SELECT CONSTRAINT_TYPE, COUNT(*) AS constraint_count
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'tpcds'
+  AND CONSTRAINT_TYPE IN ('PRIMARY KEY', 'FOREIGN KEY')
+GROUP BY CONSTRAINT_TYPE
+ORDER BY CONSTRAINT_TYPE;
+
+SELECT TABLE_NAME, CONSTRAINT_TYPE, COUNT(*) AS constraint_count
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'tpcds'
+  AND CONSTRAINT_TYPE IN ('PRIMARY KEY', 'FOREIGN KEY')
+GROUP BY TABLE_NAME, CONSTRAINT_TYPE
+ORDER BY TABLE_NAME, CONSTRAINT_TYPE;
 
 -- Sizes (InnoDB estimates)
 SELECT table_name,

@@ -5,8 +5,9 @@
 -- See LICENSE for details.
 -- Purpose: Last post-load script, always run (also without -xii/-xic/-xis).
 --          Restores the settings relaxed for the load to the startup values
---          saved by initschema-tpcds.sql, and reports row counts, sizes, the
---          redo log written so far and the non-default configuration.
+--          saved by initschema-tpcds.sql, and reports row counts, primary and
+--          foreign keys, sizes, the redo log written so far and the
+--          non-default configuration.
 --          No curly braces in this file: bexhoma may fill it with str.format().
 
 -- Restore the settings saved before the load (SET GLOBAL x = DEFAULT would give
@@ -52,6 +53,22 @@ UNION ALL SELECT 'web_page',               COUNT(*) FROM tpcds.web_page
 UNION ALL SELECT 'web_returns',            COUNT(*) FROM tpcds.web_returns
 UNION ALL SELECT 'web_sales',              COUNT(*) FROM tpcds.web_sales
 UNION ALL SELECT 'web_site',               COUNT(*) FROM tpcds.web_site;
+
+-- Primary and foreign keys (primary keys from initschema-tpcds.sql, foreign keys
+-- from initconstraints-tpcds.sql with -xic): totals, then per table
+SELECT CONSTRAINT_TYPE, COUNT(*) AS constraint_count
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'tpcds'
+  AND CONSTRAINT_TYPE IN ('PRIMARY KEY', 'FOREIGN KEY')
+GROUP BY CONSTRAINT_TYPE
+ORDER BY CONSTRAINT_TYPE;
+
+SELECT TABLE_NAME, CONSTRAINT_TYPE, COUNT(*) AS constraint_count
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'tpcds'
+  AND CONSTRAINT_TYPE IN ('PRIMARY KEY', 'FOREIGN KEY')
+GROUP BY TABLE_NAME, CONSTRAINT_TYPE
+ORDER BY TABLE_NAME, CONSTRAINT_TYPE;
 
 -- Sizes (InnoDB estimates)
 SELECT table_name,
