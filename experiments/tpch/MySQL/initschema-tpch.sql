@@ -5,9 +5,7 @@
 -- See LICENSE for details.
 -- Purpose: Configure the MySQL server for TPC-H loading, create the TPC-H
 --          tables in the tpch database, then add primary key constraints.
---          Settings relaxed here hold for the load only: their startup values
---          are saved in bexhoma.saved_settings and checkschema-tpch.sql (always
---          the last post-load script) restores them.
+--          Import settings (load durability, -xld) are in durability-relaxed.sql.
 
 -- Create a passworded root account accessible from any host
 DROP USER 'root'@'%';
@@ -16,19 +14,6 @@ CREATE USER 'root'@'%';
 ALTER USER 'root'@'%' IDENTIFIED BY 'root';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
-
--- Save the startup values of the settings relaxed below (first save wins)
-CREATE DATABASE IF NOT EXISTS bexhoma;
-CREATE TABLE IF NOT EXISTS bexhoma.saved_settings (name VARCHAR(64) PRIMARY KEY, value VARCHAR(255));
-INSERT IGNORE INTO bexhoma.saved_settings VALUES
-  ('innodb_flush_log_at_trx_commit', @@GLOBAL.innodb_flush_log_at_trx_commit),
-  ('foreign_key_checks', @@GLOBAL.foreign_key_checks),
-  ('unique_checks', @@GLOBAL.unique_checks),
-  ('autocommit', @@GLOBAL.autocommit);
-SELECT * FROM bexhoma.saved_settings;
-
--- durability relaxed for bulk load (binlog is off, see --skip-log-bin)
-SET GLOBAL innodb_flush_log_at_trx_commit = 2;
 
 -- io tuning
 -- SET GLOBAL innodb_io_capacity = 4000;
@@ -43,11 +28,6 @@ SET GLOBAL innodb_flush_log_at_trx_commit = 2;
 
 -- buffer pool (config file / restart)
 -- innodb_buffer_pool_size = 96G
-
--- disable checks globally because loaders use separate sessions
-SET GLOBAL foreign_key_checks = 0;
-SET GLOBAL unique_checks = 0;
-SET GLOBAL autocommit = 0;
 
 -- Enable server-side LOAD DATA INFILE (required for bulk loading from /data/)
 SET GLOBAL local_infile = 1;

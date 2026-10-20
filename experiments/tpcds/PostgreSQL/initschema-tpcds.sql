@@ -4,9 +4,8 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Create the 25 TPC-DS tables in the public schema for PostgreSQL.
---          Planner hints and synchronous_commit are set before table creation
---          to accelerate bulk loading; synchronous_commit is restored in
---          checkschema-tpcds.sql (always the last post-load script).
+--          Planner hints for the queries are set before table creation.
+--          Import settings (load durability, -xld) are in durability-*.sql.
 
 -- Planner settings: disable nested loops and tune parallelism for TPC-DS queries.
 ALTER SYSTEM SET enable_nestloop = 'off';
@@ -22,10 +21,6 @@ SELECT pg_reload_conf();
 SHOW enable_nestloop;
 SHOW parallel_tuple_cost;
 SHOW parallel_setup_cost;
-
--- Disable synchronous commit to speed up bulk loading; restored in checkschema-tpcds.sql.
-ALTER SYSTEM SET synchronous_commit = off;
-SELECT pg_reload_conf();
 
 CREATE TABLE public.dbgen_version
 (

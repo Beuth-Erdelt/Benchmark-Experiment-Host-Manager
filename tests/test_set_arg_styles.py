@@ -118,9 +118,10 @@ class TemplatePatchTest(unittest.TestCase):
     def test_mariadb_template_flag_style_append(self):
         docs = _load('deploymenttemplate-MariaDB.yml')
         dep = _workload(docs, 'Deployment', 'bexhoma-deployment-mariadb')
-        self.assertTrue(patch_container(dep, 'dbms', 'innodb_flush_log_at_trx_commit', '1'))
+        # not in the template (durability is the DBMS default): appended as given
+        self.assertTrue(patch_container(dep, 'dbms', 'innodb_flush_log_at_trx_commit', '2'))
         args = _container(dep)['args']
-        self.assertIn('--innodb-flush-log-at-trx-commit=1', args)
+        self.assertIn('--innodb_flush_log_at_trx_commit=2', args)
         self.assertNotIn('--innodb-buffer-pool-chunk-size=2G', args)
 
     def test_postgresql_template_unaffected(self):

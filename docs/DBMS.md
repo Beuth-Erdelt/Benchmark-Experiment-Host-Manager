@@ -471,8 +471,10 @@ bexhoma therefore creates a TLS Secret per SUT (see `'tls'` in the configuration
 
 **Deployment template:** [`k8s/deploymenttemplate-MySQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml)
 
-The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=96G`, `--innodb-flush-log-at-trx-commit=2`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=10G`.
-The init scripts relax settings only for the import (e.g. `innodb_flush_log_at_trx_commit`, `foreign_key_checks`); the check scripts restore them to the server's startup values afterwards.
+The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=96G`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=10G`.
+The template sets no durability options: MySQL runs crash-safe by default (`innodb_flush_log_at_trx_commit=1`, doublewrite on); relax the benchmark per run with `--set ...container[dbms].innodb_flush_log_at_trx_commit=2`.
+`-xld` sets the durability for the import only (`durability-<level>.sql`, e.g. `innodb_flush_log_at_trx_commit`, `foreign_key_checks`); `restoredurability-<level>.sql` restores the server's startup values (template and `--set`) afterwards.
+Doublewrite cannot be switched on at runtime in MySQL, so with `--set ...innodb_doublewrite=OFF` it stays off during an `-xld durable` load.
 See the [MySQL 9.7 documentation](https://dev.mysql.com/doc/refman/9.7/en/) for parameter explanations.
 
 **Configuration** (from `cluster.config`):

@@ -15,6 +15,8 @@ import ast
 import os
 import re
 
+from bexhoma.load_durability import DEFAULT_LEVEL as LOAD_DURABILITY_DEFAULT, LEVELS as LOAD_DURABILITY_LEVELS
+
 __all__ = [
     "make_base_parser", "resolve_scaling_factor",
     "parse_metric_overrides", "format_metric_overrides",
@@ -297,6 +299,7 @@ def make_base_parser():
     p.add_argument('-sl',  '--skip-loading', help='skip data loading and start benchmarking immediately', action='store_true', default=False)
     p.add_argument('-ss',  '--skip-shutdown', help='keep SUT pods running after the experiment finishes; same as --keep-sut yes', action='store_true', default=False)
     p.add_argument('-ks',  '--keep-sut', help="keep the SUT of each configuration's last repetition running at the end: auto (default) keeps it in modes load and start and stops it otherwise; yes keeps it, no stops it. A kept SUT that another configuration waits for (-ms/-mse) is stopped", choices=KEEP_SUT_CHOICES, default='auto')
+    p.add_argument('-xld', '--load-durability', help="durability of the DBMS during the load only (afterwards the configured state of template and --set is restored): durable makes the load crash-safe (e.g. PostgreSQL synchronous_commit/fsync on, MySQL innodb_flush_log_at_trx_commit=1); relaxed (default) commits without flushing and skips checks (e.g. PostgreSQL synchronous_commit=off, MySQL innodb_flush_log_at_trx_commit); unsafe uses the strongest lever of the DBMS (e.g. MySQL redo log off, PostgreSQL fsync=off), a crash during the load can lose data. Runs the scripts durability-<level>.* and restoredurability-<level>.* the DBMS folder has", choices=LOAD_DURABILITY_LEVELS, default=LOAD_DURABILITY_DEFAULT)
     p.add_argument('-ar',  '--activate-reset', help='activate configured reset scripts (e.g. CHECKPOINT/VACUUM) when set on a benchmarker entry; off by default', action='store_true', default=False)
     p.add_argument('-cx',  '--context', help='kubectl context to use (default: current context)', default=None)
     p.add_argument('-e',   '--experiment', help='resume an existing experiment by its code', default=None)

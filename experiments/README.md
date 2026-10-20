@@ -187,23 +187,31 @@ column that absorbs the trailing `|` delimiter dbgen appends to every row in
 - `l_suppkey` alone is not selective enough to benefit the TPC-H query workload.
 Document with a comment at the top of every `initindexes` file.
 
-**synchronous_commit pattern (PostgreSQL only)**:
-- `initschema-tpch.sql` disables synchronous commit at the end (`ALTER SYSTEM SET synchronous_commit = off; SELECT pg_reload_conf();`) to accelerate bulk loading.
-- `initstatistics-tpch.sql` re-enables it at the end after `ANALYZE`.
-- The commented-out `fsync = off` alternative has been removed (dead code).
+**Load durability (`-xld durable|relaxed|unsafe`, all DBMS)**: init scripts only
+create schemas. Settings that make the import faster (PostgreSQL
+`synchronous_commit = off`, MySQL `innodb_flush_log_at_trx_commit`, ...) live in
+`durability-<level>.*` and are undone by `restoredurability-<level>.*`. The
+init script lists of the cluster config carry the placeholders `durability.sql`
+(first in every pre-load list) and `restoredurability.sql` (before
+`checkschema-*`), which bexhoma replaces by the scripts of the `-xld` level.
+They sit in every benchmark's DBMS folder (PostgreSQL, MySQL, Citus, MariaDB); copies
+must be identical across benchmarks unless the deviation is declared in
+`tests/test_load_durability.py` (e.g. `tpch/MySQL/durability-relaxed.sql` adds
+autocommit 0). `unsafe` includes the `relaxed` scripts too; a script a folder
+does not have is not run.
+No curly braces in these scripts: bexhoma may fill them with `str.format()`.
 
 **Scale factor data path**: `/data/tpch/<SF>/` where `<SF>` is `SF1`, `SF10`,
 `SF30`, or `SF100`. All `.tbl` files are pipe-delimited with a trailing `|`.
 
 **{BEXHOMA_SCHEMA} variants**: `-schema` files create a named schema
 (`CREATE SCHEMA {BEXHOMA_SCHEMA}`) and qualify every table reference with it.
-They do **not** include the `ALTER SYSTEM synchronous_commit` lines.
 
 ### DBMS dialect notes (to be extended as each folder is cleaned)
 
 | DBMS | Schema/DB | Data load method | Constraint support | Notes |
 |---|---|---|---|---|
-| PostgreSQL | `public` (default) or `{BEXHOMA_SCHEMA}` | `COPY … FROM … DELIMITER '|' NULL ''` | Full PK + FK; combined `ALTER TABLE` | synchronous_commit pattern; -schema variants |
+| PostgreSQL | `public` (default) or `{BEXHOMA_SCHEMA}` | `COPY … FROM … DELIMITER '|' NULL ''` | Full PK + FK; combined `ALTER TABLE` | load durability via `durability-*.sql`; -schema variants |
 | MySQL / MariaDB | `tpch` database | `LOAD DATA INFILE … FIELDS TERMINATED BY '|'` | Full PK + FK; combined `ALTER TABLE` | `SET GLOBAL local_infile = 1`; zero-date mode |
 | MariaDBCS | `tpch` database | `cpimport` bulk loader | None (columnar engine) | `engine=columnstore` on every table |
 | Clickhouse | `tpch` database | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; uses `Int32` not `INTEGER` |

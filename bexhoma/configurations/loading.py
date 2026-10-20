@@ -388,6 +388,7 @@ class LoadingCoordinator:
             cfg.logger.debug("check if {} is running".format(pod_sut))
             self.check()
             if not cfg.loading_started:
+                cfg.apply_load_durability()
                 try:
                     self.load_data(scripts=cfg.initscript)
                 except RuntimeError as exc:

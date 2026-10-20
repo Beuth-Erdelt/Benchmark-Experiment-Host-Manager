@@ -4,8 +4,7 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Create TPC-H tables in the public schema.
---          Disables synchronous commit at the end to accelerate subsequent
---          bulk loading; restored by checkschema-tpch.sql (always the last post-load script).
+--          Import settings (load durability, -xld) are in durability-*.sql.
 
 CREATE TABLE public.nation (
     n_nationkey  INTEGER      NOT NULL,
@@ -91,7 +90,3 @@ CREATE TABLE public.lineitem (
     l_shipmode      CHAR(10)      NOT NULL,
     l_comment       VARCHAR(44)   NOT NULL
 );
-
--- Relax WAL durability to speed up bulk loading; restored in checkschema-tpch.sql
-ALTER SYSTEM SET synchronous_commit = off;
-SELECT pg_reload_conf();

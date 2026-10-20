@@ -31,6 +31,3 @@ ANALYZE VERBOSE public.web_page;
 ANALYZE VERBOSE public.web_returns;
 ANALYZE VERBOSE public.web_sales;
 ANALYZE VERBOSE public.web_site;
-
--- synchronous_commit (disabled in initschema-tpcds.sql) is restored by
--- checkschema-tpcds.sql, which always runs last.

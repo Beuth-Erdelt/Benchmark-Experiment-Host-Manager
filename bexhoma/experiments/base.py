@@ -39,6 +39,7 @@ from bexhoma import missing_metrics
 from bexhoma.monitoring_math import (counter_total, min_measurable_window, read_connections,
                                      scoped_job_connections, DEFAULT_SCRAPE_INTERVAL_SECONDS)
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes
+from bexhoma.load_durability import DEFAULT_LEVEL as LOAD_DURABILITY_DEFAULT
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
 from bexhoma.metric_fetching import DEFAULT_MAX_PARALLEL_FETCHES, MetricFetchBatch
@@ -209,6 +210,7 @@ class ExperimentBase():
         self.max_parallel_steps = DEFAULT_MAX_PARALLEL_STEPS            # configurations whose job submissions / job ends of a loop pass run at the same time (1 = one by one)
         self._copy_metrics_script = ""                                  # name of the uploaded copy script, see ensure_copy_metrics_script()
         self.keep_sut = False                                          # keep each configuration's last SUT running at the end (-ks/-ss, resolved in prepare_testbed)
+        self.load_durability = LOAD_DURABILITY_DEFAULT                 # durability of the DBMS during the load (-xld): durable, relaxed or unsafe
         self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
         self.max_loading_minutes: Optional[int] = None                   # abort a configuration that remains in loading after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
@@ -685,6 +687,10 @@ class ExperimentBase():
         num_worker_replicas = int(args.num_worker_replicas)
         num_worker_shards = int(args.num_worker_shards)
         self.resetscript_active = args.activate_reset
+        # entry scripts with their own parser may not know -xld
+        self.load_durability = getattr(args, 'load_durability', LOAD_DURABILITY_DEFAULT)
+        self.workload['load_durability'] = self.load_durability
+        self.workload['info'] = self.workload['info']+"\nLoad durability is {} (-xld; restored after the load).".format(self.load_durability)
         if args.experiment_timeout is not None:
             self.max_experiment_minutes = int(args.experiment_timeout)
         if args.loading_timeout is not None:
@@ -3287,6 +3293,8 @@ class ExperimentBase():
                         for component, entry in parameters.get('components', {}).items():
                             print("    * {}: {} x, {} CPU, {} GiB RAM".format(
                                 component, entry.get('replicas'), entry.get('cpu'), entry.get('memory_gib')))
+                    if i == "load_durability":
+                        print("  * load_durability: {}".format(parameters))
                     if i == "eval_parameters":
                         print("  * "+i)
                         infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]

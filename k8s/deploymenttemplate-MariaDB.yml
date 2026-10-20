@@ -63,13 +63,10 @@ spec:
           # --- Redo Log ---
           - "--innodb-log-buffer-size=1G"         # Bigger buffer for commits
           # --- Transaction Commit Behavior ---
-          - "--innodb-flush-log-at-trx-commit=2"  # Good for OLAP
-          - "--sync-binlog=0"                     # Skip fsync on binlog
+          # --- Durability: DBMS defaults (crash-safe); relax per run with --set, e.g. --set ...container[dbms].innodb_flush_log_at_trx_commit=2
           # --- Temporary Tables ---
           - "--tmp-table-size=1G"                 # Avoid disk spills
           - "--max-heap-table-size=1G"            # In-memory tables
-          # --- Doublewrite Buffer ---
-          - "--innodb-doublewrite=0"              # Disable on CephFS
         env:
           #- {name: MARIADB_ROOT_PASSWORD, value: 'password'}
           #- {name: MYSQL_ROOT_PASSWORD, value: 'password'}

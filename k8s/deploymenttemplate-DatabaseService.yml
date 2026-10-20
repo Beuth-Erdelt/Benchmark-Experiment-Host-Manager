@@ -137,7 +137,6 @@ spec:
           "-c", "effective_io_concurrency=32",
           "-c", "wal_level=minimal",
           "-c", "max_wal_senders=0",
-          "-c", "synchronous_commit=off",
           "-c", "checkpoint_timeout=1h",
           "-c", "checkpoint_warning=0",
           "-c", "autovacuum=off",

@@ -57,6 +57,7 @@ After the experiments finish, `clean_logs`/`Invoke-CleanLogs` extracts the `## S
 The summary files are the content embedded inside ` ```markdown ``` ` blocks in the `docs/` pages.
 
 `test-docs-reset` is a check, not a source of examples: it runs every reset script of `-ar` (one run per DBMS and benchmark, two rounds each, logs `docs_reset_*.log`), and its header lists what to check in the logs (see "Reset scripts" in `docs/DBMS.md`).
+`test-docs-durability` (PowerShell only) is a check of the same kind for `-xld durable|relaxed|unsafe`: one run per DBMS, benchmark and level with durability scripts (and a few without, e.g. MariaDB, TiDB), logs `docs_durability_*.log`; its header lists what to check.
 
 **Node variables** (set at the top of each script, or inherited from `testfunctions.sh/.ps1`);
 these are also the defaults used by `test-docs-collector.ps1` / `test-docs-collector.sh`:
@@ -102,7 +103,7 @@ are listed alphabetically except where noted:
 | H — SUT topology | `-xnsr`, `-nw`, `-xnpd`, `-nwr`, `-nws` | SUT replicas, worker nodes, PD nodes (TiDB only), worker replicas/shards |
 | I — Connection pooling | `-xnpp`, `-xnpi`, `-xnpo` | pod count, inbound, outbound |
 | J — Post-load init | `-xii`, `-xic`, `-xis`, `-xcol` | **logical order** (indexes → constraints → statistics → columnar) |
-| K — Query/load modifiers | `-xlit`, `-xnls`, `-xrcp`, `-xshq` | alphabetical |
+| K — Query/load modifiers | `-xld`, `-xlit`, `-xnls`, `-xrcp`, `-xshq` | alphabetical |
 | L — Extra features | `-xbatch`, `-xconn`, `-xdt`, `-xio`, `-xkey`, `-xlat`, `-xli`, `-xmet`, `-xop`, `-xsbs` | alphabetical |
 | M — Monitoring | `-m`, `-ma`, `-mc` | alphabetical |
 | N — Experiment control | `-ms`, `-sl`, `-ss`, `-t`, `-tr` | alphabetical |

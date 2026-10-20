@@ -11,6 +11,7 @@ from typing import List, Optional, Tuple
 
 from bexhoma import ceph_storage, experiments
 from bexhoma.cli_args import storage_suffix
+from bexhoma.load_durability import DEFAULT_LEVEL, expand_durability_placeholders
 
 from .benchmarking import BenchmarkRunner
 from .host import HostProbe
@@ -102,6 +103,8 @@ class SutConfiguration:
         else:
             self.indexscript = []                                                #: Empty when no separate indexing step is configured.
         self.resetscript = []                                                    #: Scripts exec'd synchronously before each round on the legacy (non experiment_dict) benchmark_list path.
+        self.load_durability = getattr(experiment, 'load_durability', DEFAULT_LEVEL)  #: Requested import durability (-xld): durable, relaxed or unsafe.
+        self.load_durability_scripts = None                                      #: Durability scripts included in the loading phase; None until loading starts.
         self.alias = alias                                                       #: Human-readable alias for this configuration in result reports.
         if num_experiment_to_apply is not None:
             self.num_experiment_to_apply = num_experiment_to_apply              #: Number of benchmarking runs to perform.
@@ -700,6 +703,29 @@ class SutConfiguration:
             self.indexing = indexing
             self.indexscript = self.experiment.cluster.volumes[
                 self.experiment.volume]['initscripts'][self.indexing]
+
+    def apply_load_durability(self) -> list:
+        """Replace the ``-xld`` placeholders of the init and post-load scripts (once).
+
+        ``durability.sql`` and ``restoredurability.sql`` in :attr:`initscript` /
+        :attr:`indexscript` (from the cluster config) become the scripts of the
+        level that the DBMS folder (``experiments/<benchmark>/<path_experiment_docker>``)
+        has, as for index or constraint scripts.
+
+        :return: The included durability scripts.
+        :rtype: list
+        """
+        if self.load_durability_scripts is not None:
+            return self.load_durability_scripts
+        folder = os.path.join(self.experiment.cluster.experiments_configfolder, self.path_experiment_docker)
+        before = set(self.initscript) | set(self.indexscript)
+        self.initscript = expand_durability_placeholders(self.initscript, self.load_durability, folder)
+        self.indexscript = expand_durability_placeholders(self.indexscript, self.load_durability, folder)
+        self.load_durability_scripts = [s for s in self.initscript + self.indexscript if s not in before]
+        print("{:30s}: load durability {}, scripts {}".format(
+            self.configuration, self.load_durability, self.load_durability_scripts))
+        self.connection_parameter['load_durability'] = self.load_durability
+        return self.load_durability_scripts
 
     # ------------------------------------------------------------------
     # Pod config distribution

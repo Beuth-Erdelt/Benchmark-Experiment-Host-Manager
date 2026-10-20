@@ -1,6 +1,7 @@
 # Plan: OLTP SUTs in bexhoma - current images, settings, CLI and placement
 
-Status: **WP1-WP9 implemented 2026-10-17, committed (`7ed91c36`, released in v0.11.5); WP10 not (later, R7).** Unit tests:
+Status: **WP1-WP9 implemented 2026-10-17, committed (`7ed91c36`, released in v0.11.5); WP10 implemented 2026-10-20
+(uncommitted, cluster checks open, see WP10 "Implementation").** Unit tests:
 `tests/test_set_arg_styles.py` (WP2/WP3), `tests/test_tls_secret.py` (WP5),
 `tests/test_cluster_sut_settings.py` (WP4/WP6/WP7/WP8/WP9). The WP8 init/check scripts were run on
 PostgreSQL 18.6, MySQL 9.7.2, MariaDB 12.3.3, Citus 14.2.0 and MonetDB Dec2025-SP3 pods (MySQL: startup
@@ -23,7 +24,7 @@ Related: [plan-storage-class-sweep](plan-storage-class-sweep.md).
 
 | # | Decision |
 |---|---|
-| D1 | Durability: keep the current settings as they are (MySQL/MariaDB `flush-log-at-trx-commit=2`, YugabyteDB `durable_wal_write=false`). |
+| D1 | ~~Durability: keep the current settings as they are (MySQL/MariaDB `flush-log-at-trx-commit=2`, YugabyteDB `durable_wal_write=false`).~~ **Replaced 2026-10-21 (WP10):** templates are generic and set no durability options (removed: MySQL flush 2 + doublewrite 0; MariaDB flush 2 + sync-binlog 0 + doublewrite 0; `synchronous_commit` in PGBouncer, PGBouncerReplica, PGBouncerSidecar, PostgreSQLService, DatabaseService, Citus), so every DBMS runs with its own crash-safe defaults; a less durable benchmark is set visibly per run with `--set`. Reason: PostgreSQL `-c` values cannot be overridden by `ALTER SYSTEM`, so `-xld` had no effect on PGBouncer/Citus (found in verification run 1792529390). `-xld` only sets the durability **during the load**; afterwards the configured state (template + `--set`) is restored. YugabyteDB (Helm) unchanged. Benchmark results of MySQL, MariaDB, PGBouncer variants (write-heavy OLTP) are not comparable with earlier runs. |
 | D2 | Replication: realistic, 3 (CockroachDB/TiDB `-nw 3 -nwr 3`, YugabyteDB RF 3). |
 | D3 | Versions: LTS lines; newest release where there is no LTS. |
 | D4 | CockroachDB: latest version without a license key = **v24.2.4** (unchanged). |
@@ -390,6 +391,60 @@ import is always visible in the results.
 
 Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DISABLE` twice are no-ops;
 `root@localhost` and `root@'%'` hold `INNODB_REDO_LOG_ENABLE`; MySQL logs a warning while off.
+
+**Implementation (2026-10-20, uncommitted).**
+- Code: `bexhoma/load_durability.py` (levels, `resolve_load_durability`, `insert_durability_scripts`);
+  `-xld/--load-durability` in `cli_args.make_base_parser` (default `relaxed`); `ExperimentBase.prepare_testbed`
+  sets `experiment.load_durability` and an info line; `SutConfiguration.apply_load_durability()` runs once in
+  `LoadingCoordinator.start_exec` right before the init scripts. **Kept simple (user 2026-10-20/21): the init
+  script lists in `k8s-cluster.config`/`cluster.config` carry the placeholders `durability.sql` (first in every
+  pre-load list) and `restoredurability.sql` (before `checkschema-*`), placed like index/constraint scripts;
+  `expand_durability_placeholders()` replaces them by the level's scripts (`load_durability.PLACEHOLDERS`) the
+  folder has; no fallback logic, no "effective level".** Reporting:
+  `connection_parameter['load_durability'] = <level>`, shown in the summary. Tests:
+  `tests/test_load_durability.py`, WP8 test `test_relaxed_settings_are_restored` moved to the new files.
+- Deviations from the design above:
+  - Names: `durability-<level>.*` (pre-load) and `restoredurability-<level>.*` (one restore per level) instead
+    of `load-durability-*`; the part before the first `-` is the pod time label (`time_durability`,
+    `time_restoredurability`). `.sql` and `.sh` per name (SQL first).
+  - `unsafe` includes `durability-relaxed` + `durability-unsafe`, restores `restoredurability-unsafe(.sql,.sh)`
+    then `-relaxed`. `durable` has its own scripts (user 2026-10-20: `-xld` is only about the load, `durable`
+    = crash-safe load whatever the template says; the restore returns to template + `--set`): PostgreSQL /
+    Citus `synchronous_commit`, `fsync`, `full_page_writes` on; MySQL flush 1; MariaDB flush 1 + doublewrite ON.
+    Runtime checks 2026-10-20 (throwaway pods): MySQL 9.7.2 refuses `SET GLOBAL innodb_doublewrite=ON` when
+    started with 0 ("Please shutdown and change value to ON") -> MySQL `durable` has no torn-page protection
+    unless started with `--set ...innodb_doublewrite=ON`; MariaDB 12.3.3 switches doublewrite and flush at
+    runtime. YugabyteDB: no load scripts (Helm), `durable_wal_write` stays as installed.
+    Citus `relaxed` checked on 1792519080 (reset suite): `run_command_on_workers` with `ALTER SYSTEM` OK on all
+    workers, restore back to the template's `synchronous_commit=local`.
+  - **No shared folder (user decision 2026-10-20, option "everywhere"):** the scripts sit next to the init
+    scripts in every benchmark's DBMS folder (`experiments/<benchmark>/<path_experiment_docker>/`), explicitly
+    in all PostgreSQL, MySQL and Citus folders of tpch, tpcds, tpcc, ycsb and benchbase/* (PgDuckDB and
+    PGBouncer use the PostgreSQL folder). `tests/test_load_durability.py` classifies every DBMS folder
+    (`EXPECTED_LEVEL` / `NOT_SUPPORTED` with reason) and checks that copies are identical to the reference copy
+    (`REFERENCE_BENCHMARK`) except declared `ALLOWED_DEVIATIONS` (which must really deviate). Declared:
+    `tpch/MySQL` relaxed (flush 2, fk/unique/autocommit 0), `tpcc/MySQL` and `ycsb/MySQL` relaxed (flush 0,
+    log buffer 1G), i.e. the pre-`-xld` settings; all other MySQL = TPC-DS's (flush 2, fk/unique 0). The MySQL
+    restore restores every setting any variant saves (missing rows keep the current value) and then
+    **deletes** `bexhoma.saved_settings`, so a reused volume cannot restore stale values.
+  - **Pre-load scripts are prepended**, not appended: in-pod loads list the data scripts in the same init
+    list (e.g. MySQL TPC-H `initdata-*`), which would otherwise run unrelaxed.
+  - PostgreSQL `unsafe` restore = `RESET fsync/full_page_writes`, reload, `CHECKPOINT`, then
+    `restoredurability-unsafe.sh` with `sync` (PG docs: after fsync off->on flush the OS cache).
+  - Levels: PostgreSQL and MySQL `relaxed` + `unsafe`; Citus `relaxed` only (coordinator + workers via
+    `run_command_on_workers`; `unsafe` would need `sync` on every worker); MariaDB `relaxed` only, as `.sh`
+    running as root (loadData connects as `bexhoma` without global privileges), flush 2 = the template's old
+    value. `SCRIPTS` lists `.sql` and `.sh` per name. Redis, TiDB, CockroachDB, YugabyteDB, MonetDB: no
+    scripts, they load as configured (crash-safe for the SQL DBMS since D1 was reversed).
+- Behavior changes (release note): with the default `relaxed`, loads that relaxed nothing before now do:
+  PostgreSQL/PgDuckDB/PGBouncer/Citus for TPC-C, YCSB, Benchbase (`synchronous_commit=off`), MySQL Benchbase
+  (fk/unique checks off). Their loading times are not directly comparable to earlier runs; `-xld durable`
+  reproduces the old behavior for them (but not for TPC-H/TPC-DS/TPC-C/YCSB on MySQL and TPC-H/TPC-DS on
+  PostgreSQL, which relaxed before).
+- Open cluster checks (smoke, `-sf 1`, `-nc 1`): MySQL TPC-H and YCSB with `relaxed` and `unsafe` (redo
+  status in the check log, settings restored), PostgreSQL TPC-H `unsafe` (`fsync`/`full_page_writes` back on,
+  `sync` log), Citus TPC-C `relaxed` (`run_command_on_workers` with `ALTER SYSTEM`),
+  tenancy `-mtb schema` with PostgreSQL.
 
 ---
 
