@@ -1,7 +1,9 @@
 # Plan: reset scripts (`-ar`) for every DBMS and benchmark, comparable between systems
 
-Status: **M1-M10 implemented 2026-10-19 (uncommitted); M0 answered from code where possible (section 6);
-cluster checks (M0 rest, M11) open.**
+Status: **done (2026-10-21).** M0-M11 implemented, committed and checked on the cluster
+(`scripts/test-docs-reset.sh`); fixes from the M11 run in 979506a3 and 1c3be9b9 (MonetDB persist n/a),
+the HammerDB MySQL load race it exposed in d48712b6. Details in section 6. Optional: watch the
+MySQL/MariaDB flush time at larger SF (600 s timeout); YugabyteDB persist needs `yb-admin`.
 
 Goal: with `-ar`, every benchmark runs a reset before each benchmarking round for every DBMS in scope,
 and the reset does the same steps everywhere, so results are comparable between systems and
