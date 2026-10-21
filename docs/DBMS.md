@@ -313,6 +313,24 @@ Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), 
 
 Runs with `-ar` from before this contract (October 2026) are not directly comparable to newer ones for PostgreSQL (checkpoint now after `VACUUM`), Citus (checkpoints on the workers) and MySQL/MariaDB (dirty-page flush): these move I/O out of round 1.
 
+### Load durability (`-xld`)
+
+`-xld durable|relaxed|unsafe` (default `relaxed`) sets the durability during the load only; the benchmark runs with the configured state (template and `--set`).
+Templates set no durability options.
+Details and the placeholders `durability.sql` / `restoredurability.sql`: [Prepare Testbeds](Prepare-Testbeds.md).
+
+| DBMS | durable | relaxed | unsafe |
+|---|---|---|---|
+| PostgreSQL, PgDuckDB, PGBouncer | `synchronous_commit`, `fsync`, `full_page_writes` on | `synchronous_commit=off` | also `fsync`, `full_page_writes` off; restore with `CHECKPOINT` + `sync` |
+| Citus (coordinator + workers) | as PostgreSQL | `synchronous_commit=off` | - (= relaxed) |
+| MySQL | flush 1 | flush 2 (TPC-C/YCSB 0), key checks off | also redo log off, doublewrite `DETECT_ONLY` |
+| MariaDB (`.sh`, root) | flush 1, doublewrite on | flush 2 | also doublewrite off |
+| others | - | - | - |
+
+For a new DBMS: put `durability-<level>.sql`/`.sh` and `restoredurability-<level>.sql`/`.sh` next to its init scripts; the restore must return to the startup values, not to the defaults (MySQL/MariaDB save them in `bexhoma.saved_settings`).
+No curly braces (scripts may be filled with `str.format()`).
+PostgreSQL: a parameter set on the command line (`-c`, also from `--set`) cannot be changed by `ALTER SYSTEM`, so `-xld` has no effect on it.
+
 ### Minimal SUT template skeleton
 
 ```yaml
@@ -473,8 +491,7 @@ bexhoma therefore creates a TLS Secret per SUT (see `'tls'` in the configuration
 
 The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=96G`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=10G`.
 The template sets no durability options: MySQL runs crash-safe by default (`innodb_flush_log_at_trx_commit=1`, doublewrite on); relax the benchmark per run with `--set ...container[dbms].innodb_flush_log_at_trx_commit=2`.
-`-xld` sets the durability for the import only (`durability-<level>.sql`, e.g. `innodb_flush_log_at_trx_commit`, `foreign_key_checks`); `restoredurability-<level>.sql` restores the server's startup values (template and `--set`) afterwards.
-Doublewrite cannot be switched on at runtime in MySQL, so with `--set ...innodb_doublewrite=OFF` it stays off during an `-xld durable` load.
+Load durability (`-xld`): see [Load durability](#load-durability--xld). Doublewrite cannot be switched between on and off at runtime in MySQL, so with `--set ...innodb_doublewrite=OFF` it stays off during an `-xld durable` load.
 The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row and its memory grew past 16 GB while adding lineitem->orders at TPC-H SF 1 (OOM-killed, 2026-10-21).
 See the [MySQL 9.7 documentation](https://dev.mysql.com/doc/refman/9.7/en/) for parameter explanations.
 
