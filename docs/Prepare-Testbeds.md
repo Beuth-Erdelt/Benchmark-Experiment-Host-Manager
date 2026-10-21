@@ -77,8 +77,6 @@ bexhoma replaces the placeholders according to `-xld` by the scripts the DBMS fo
 | `relaxed` | `durability-relaxed.*` | `restoredurability-relaxed.*` |
 | `unsafe` | `durability-relaxed.*`, `durability-unsafe.*` | `restoredurability-unsafe.*`, `restoredurability-relaxed.*` |
 
-Known issue for MySQL: TPC-H with `-xic` and `-xld durable` was OOM-killed while adding the foreign keys (16Gi and 32Gi); see the MySQL section of [DBMS](DBMS.md).
-
 `.*` is `.sql`, then `.sh` (MariaDB uses shell scripts, as `SET GLOBAL` needs root). A script the DBMS folder does not have is not run; a list without a placeholder gets no durability scripts.
 They exist for PostgreSQL (also used by PgDuckDB and PGBouncer), MySQL and MariaDB (all levels) and Citus (`durable`, `relaxed`), in every benchmark; other DBMS load as configured.
 The copies in different benchmarks are identical; `tests/test_load_durability.py` fails on any difference that is not declared there (TPC-H, TPC-C and YCSB on MySQL keep their own `relaxed` settings).

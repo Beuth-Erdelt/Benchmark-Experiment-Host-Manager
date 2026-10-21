@@ -33,7 +33,7 @@
 #       MariaDB:           .sh as root: relaxed flush 2 -> 1; unsafe also doublewrite OFF -> ON
 #       Citus:             synchronous_commit off on coordinator and every worker -> on again
 #   - durable with --set (TPC-H MySQL): flush 1 during the load, back to the --set value 2
-#     (known issue: OOM-killed in initconstraints at 16Gi and 32Gi so far, cause open)
+#     (initconstraints adds the FKs with foreign_key_checks=0; before, durable was OOM-killed there)
 #   - -tr passes, no SUT restarts
 #   - loading times: relaxed < durable expected; unsafe <= relaxed
 #   - TPC-H PostgreSQL unsafe on -rst with -nc 2: repetition 2 finds the loaded volume

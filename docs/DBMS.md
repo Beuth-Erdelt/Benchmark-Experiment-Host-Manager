@@ -475,7 +475,7 @@ The template sets the server options as `--key=value` arguments (e.g. `--innodb-
 The template sets no durability options: MySQL runs crash-safe by default (`innodb_flush_log_at_trx_commit=1`, doublewrite on); relax the benchmark per run with `--set ...container[dbms].innodb_flush_log_at_trx_commit=2`.
 `-xld` sets the durability for the import only (`durability-<level>.sql`, e.g. `innodb_flush_log_at_trx_commit`, `foreign_key_checks`); `restoredurability-<level>.sql` restores the server's startup values (template and `--set`) afterwards.
 Doublewrite cannot be switched on at runtime in MySQL, so with `--set ...innodb_doublewrite=OFF` it stays off during an `-xld durable` load.
-Known issue (2026-10-21, cause open): TPC-H with `-xic` and `-xld durable` (key checks stay on while the foreign keys are added) was OOM-killed during `initconstraints` at SF 1, with 16Gi and with 32Gi (buffer pool 10G); the same run with `-xld relaxed` was not. The template's tmpdir `/mysqltmp` is a memory-backed volume (`medium: Memory`, up to 32Gi), which counts against the pod's memory limit.
+The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row and its memory grew past 16 GB while adding lineitem->orders at TPC-H SF 1 (OOM-killed, 2026-10-21).
 See the [MySQL 9.7 documentation](https://dev.mysql.com/doc/refman/9.7/en/) for parameter explanations.
 
 **Configuration** (from `cluster.config`):

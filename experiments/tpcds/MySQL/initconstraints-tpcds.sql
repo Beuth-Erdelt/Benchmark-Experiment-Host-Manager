@@ -40,6 +40,11 @@
 -- Contributors:
 -- Gradient Systems
 
+-- foreign_key_checks is off for this session only (as for MariaDB): InnoDB then
+-- adds a foreign key as a metadata change. With checks on it validates every
+-- row, which made the MySQL server memory grow past 16 GB for TPC-H SF 1.
+SET SESSION foreign_key_checks = 0;
+
 ALTER TABLE tpcds.household_demographics
     ADD CONSTRAINT hd_ib FOREIGN KEY (hd_income_band_sk) REFERENCES tpcds.income_band (ib_income_band_sk);
 

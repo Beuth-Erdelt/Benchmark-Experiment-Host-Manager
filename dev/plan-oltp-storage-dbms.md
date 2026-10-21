@@ -424,6 +424,11 @@ Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DIS
     tmpdir `/mysqltmp` is memory-backed (32Gi). Decision (user 2026-10-21): document only (tmpdir on disk might
     be too slow). **But at 32Gi (1792540682) it was OOM-killed too, in `initconstraints` after ~10 min: the
     tmpdir explanation does not fit the size (SF 1 ~1 GB); cause open.** Docs state the observation only.
+    **Cause found (1792569991, cgroup samples every 15 s):** MySQL process memory (anon) grows 4.4 -> 15.5 GB
+    (+1.6 GB / 20 s) during `ALTER TABLE lineitem ADD FOREIGN KEY (l_orderkey)` with `foreign_key_checks=1`;
+    page cache shrinks, `/mysqltmp` stays empty, the datadir hardly grows. **Fix (user 2026-10-21): MySQL
+    `initconstraints-tpch.sql`/`-tpcds.sql` set `SET SESSION foreign_key_checks = 0`, as the MariaDB scripts do**
+    (a constraint setting, not durability; works at every `-xld` level).
     Citus `relaxed` checked on 1792519080 (reset suite): `run_command_on_workers` with `ALTER SYSTEM` OK on all
     workers, restore back to the template's `synchronous_commit=local`.
   - **No shared folder (user decision 2026-10-20, option "everywhere"):** the scripts sit next to the init
