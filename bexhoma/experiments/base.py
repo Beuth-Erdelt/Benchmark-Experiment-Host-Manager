@@ -2119,10 +2119,12 @@ class ExperimentBase():
             connection = f"{config.configuration}-{experiment_run}-{client}-{benchmark_index}".lower()
             print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
             reset_seconds = 0
+            reset_failed = None                 # None: no reset ran for this entry
             if self.resetscript_active and bench_entry.get("resetscript"):
                 reset_seconds = config.loader.exec_reset_script(
                     'reset_{}_{}_{}'.format(experiment_run, client, benchmark_index),
                     bench_entry["resetscript"])
+                reset_failed = config.loader.last_reset_failed
             if bench_entry.get("parameters"):
                 # Assign directly to avoid the side effect in
                 # set_benchmarking_parameters() that overwrites
@@ -2137,6 +2139,7 @@ class ExperimentBase():
                 benchmark_run=str(benchmark_index),
                 template_override=bench_entry.get("template", ""),
                 reset_seconds=reset_seconds,
+                reset_failed=reset_failed,
                 fetch_batch=fetch_batch,
             )
         # Timed from here, not from the counter, so that reset
@@ -2157,15 +2160,17 @@ class ExperimentBase():
         :param fetch_batch: Batch for the loading-metric fetches.
         """
         reset_seconds = 0
+        reset_failed = None                     # None: no reset ran for this round
         if self.resetscript_active and config.resetscript:
             reset_seconds = config.loader.exec_reset_script(
                 'reset_{}_{}'.format(experiment_run, client), config.resetscript)
+            reset_failed = config.loader.last_reset_failed
         if benchmarking_parameters is not None:
             print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
             config.set_benchmarking_parameters(**benchmarking_parameters)
         connection = (config.configuration+'-'+experiment_run+'-'+client).lower()
         print("{:30s}: start benchmarking".format(connection))
-        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds, fetch_batch=fetch_batch)
+        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds, reset_failed=reset_failed, fetch_batch=fetch_batch)
         self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
 
     def _end_finished_jobs(self, config, end_batch: MetricFetchBatch, end_uploads: list) -> tuple:

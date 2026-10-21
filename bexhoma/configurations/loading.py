@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -19,7 +20,28 @@ from ..cluster_calls import stored_pods
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
-__all__ = ['LoadingCoordinator', 'load_data_asynch']
+__all__ = ['LoadingCoordinator', 'load_data_asynch', 'script_failed']
+
+# kubectl exec reports a non-zero exit of the command on stderr; psql/ysqlsh go on
+# after a failed statement and exit 0, so their error lines count too
+# ("psql:/tmp/x.sql:14: ERROR:", mysql "ERROR 1146 ...", cockroach "ERROR: ...")
+_SCRIPT_ERROR_STDERR = re.compile(r'command terminated with exit code [1-9]|(^|:\s)(ERROR|FATAL|PANIC)\b', re.M)
+# redis-cli prints error replies on stdout and exits 0
+_SCRIPT_ERROR_STDOUT = re.compile(r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b', re.M)
+
+
+def script_failed(stdout: str, stderr: str) -> bool:
+    """Whether a script run in a pod failed, judged from its output.
+
+    No output at all means success; NOTICE/INFO lines (e.g. of ``VACUUM VERBOSE``)
+    and client warnings do not count.
+
+    :param stdout: Standard output of the script.
+    :param stderr: Standard error of the script (with kubectl's exit-code line).
+    :return: True if the script failed.
+    :rtype: bool
+    """
+    return bool(_SCRIPT_ERROR_STDERR.search(stderr or '') or _SCRIPT_ERROR_STDOUT.search(stdout or ''))
 
 
 def load_data_asynch(
@@ -249,6 +271,8 @@ class LoadingCoordinator:
         :type config: SutConfiguration
         """
         self._config = config
+        self.last_reset_failed = []                                             # scripts that failed in the last reset (exec_reset_script)
+        self.workers_failed = []                                                # scripts that failed in the last run on the workers
 
     def start_pod(
         self,
@@ -978,9 +1002,12 @@ class LoadingCoordinator:
         :param script_type: Label of the phase, used in the log file names
             (e.g. ``'reset_1_1_1'`` or ``'index'``).
         :return: Seconds until the slowest pod finished (0 if nothing ran).
+            The scripts that failed (see :func:`script_failed`) are in
+            :attr:`workers_failed` as ``'<script> (<pod>)'``.
         :rtype: int
         """
         cfg = self._config
+        self.workers_failed = []
         sources = []
         for script in scripts:
             source = (cfg.experiment.cluster.experiments_configfolder
@@ -1006,6 +1033,8 @@ class LoadingCoordinator:
                     "sed -i 's/\\r$//' {}".format(target), pod=pod, container='dbms')
                 _, stdout, stderr = cfg.experiment.cluster.execute_command_in_pod(
                     'sh {}'.format(target), pod=pod, container='dbms', retry_interrupted=False)
+                if script_failed(stdout, stderr):
+                    self.workers_failed.append('{} ({})'.format(script, pod))
                 filename, file_extension = os.path.splitext(script)
                 for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
                     if content:
@@ -1028,6 +1057,19 @@ class LoadingCoordinator:
         print("{:30s}: scripts {} ran on {} worker pods in {}s".format(
             cfg.configuration, [s for s, _ in sources], len(pods), elapsed))
         return elapsed
+
+    def _report_reset(self, script_type: str, elapsed: int) -> None:
+        """Print the duration of a reset and the scripts that failed in it.
+
+        :param script_type: Label of the reset (e.g. ``'reset_1_1_1'``), part of the log file names.
+        :param elapsed: Seconds the reset took.
+        """
+        cfg = self._config
+        failed = getattr(self, 'last_reset_failed', [])
+        print("{:30s}: reset ({}) completed in {}s{}".format(
+            cfg.configuration, script_type, elapsed,
+            " - FAILED: {} (see {}-{}-*.stderr.log)".format(
+                ', '.join(failed), cfg.appname, script_type) if failed else ""))
 
     def exec_reset_script(self, script_type: str, scripts: list) -> int:
         """Execute reset scripts synchronously in the SUT pod before a benchmarking round.
@@ -1064,10 +1106,13 @@ class LoadingCoordinator:
         :param scripts: List of script filenames to execute (from the calling
             entry's ``resetscript`` list).
         :return: Elapsed seconds spent running the scripts (0 if none ran), so the
-            caller can attach it to the connection about to be submitted.
+            caller can attach it to the connection about to be submitted. The
+            scripts that failed (see :func:`script_failed`) or were missing are in
+            :attr:`last_reset_failed`.
         :rtype: int
         """
         cfg = self._config
+        self.last_reset_failed = []
         if not scripts:
             return 0
         if 'loadData' not in cfg.dockertemplate:
@@ -1078,12 +1123,15 @@ class LoadingCoordinator:
         if missing:
             print("{:30s}: reset scripts {} not found in {}, skipped".format(
                 cfg.configuration, missing, folder))
+            self.last_reset_failed = ['{} (missing)'.format(s) for s in missing]
             scripts = [s for s in scripts if s not in missing]
             if not scripts:
                 return 0
         scripts, scripts_workers = self.split_worker_scripts(scripts)
         elapsed_workers = self.run_scripts_on_workers(scripts_workers, script_type)
+        self.last_reset_failed += getattr(self, 'workers_failed', [])
         if not scripts:
+            self._report_reset(script_type, elapsed_workers)
             cfg.pod_sut = cfg.experiment.cluster.get_pods(
                 component='sut', configuration=cfg.configuration, experiment=cfg.code)[0]
             cfg.experiment.cluster.kubectl(
@@ -1133,6 +1181,10 @@ class LoadingCoordinator:
             # A reset script may be half-applied when the connection breaks,
             # so it is only retried if it never reached the pod.
             _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False)
+            if script_failed(stdout, stderr):
+                name = '{} ({})'.format(script, tenant_tag) if tenant_tag else script
+                if name not in self.last_reset_failed:
+                    self.last_reset_failed.append(name)
             for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
                 if content:
                     tenant_infix = f'-{tenant_tag}' if tenant_tag else ''
@@ -1146,8 +1198,7 @@ class LoadingCoordinator:
                     with open(log_path, 'w') as fh:
                         fh.write(content)
         elapsed = int(default_timer() - t_start) + elapsed_workers
-        print("{:30s}: reset ({}) completed in {}s".format(
-            cfg.configuration, script_type, elapsed))
+        self._report_reset(script_type, elapsed)
         cfg.experiment.cluster.kubectl(
             'label pod {} --overwrite {}=True time_{}={}'.format(
                 cfg.pod_sut, script_type, script_type, elapsed))

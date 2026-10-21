@@ -259,13 +259,52 @@ class Benchmark:
         """
         if df_connections.empty or 'time_reset' not in df_connections.columns:
             return None
-        # the reset runs once per job, but df_connections has one row per pod of the job
-        df_reset = df_connections[df_connections['time_reset'] > 0][
-            ['phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'time_reset']
-        ].drop_duplicates(subset=['job'])
+        df_reset = self._reset_rows(df_connections)
         if df_reset.empty:
             return None
         return Section(heading="Reset", level=4, dataframe=df_reset, index=False)
+
+    @staticmethod
+    def _reset_rows(df_connections: pd.DataFrame) -> pd.DataFrame:
+        """
+        One row per job whose round ran a reset, with duration and failed scripts.
+
+        A reset ran when ``reset_failed`` is set (``''`` = without errors, else the
+        failed scripts); experiments from before that column only have
+        ``time_reset > 0``.
+
+        :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
+        :return: Columns ``phase, job, experiment_run, client, benchmark_run,
+            time_reset`` and ``reset_failed`` when known.
+        :rtype: pd.DataFrame
+        """
+        columns = ['phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'time_reset']
+        ran = df_connections['time_reset'] > 0
+        if 'reset_failed' in df_connections.columns:
+            ran = ran | df_connections['reset_failed'].notna()
+            columns.append('reset_failed')
+        # the reset runs once per job, but df_connections has one row per pod of the job
+        return df_connections[ran][columns].drop_duplicates(subset=['job'])
+
+    def _record_reset_test(self, experiment, df_connections: pd.DataFrame) -> None:
+        """
+        Record whether all reset scripts ran without errors (only when a reset ran).
+
+        :param experiment: The owning experiment object.
+        :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
+        """
+        if df_connections.empty or 'reset_failed' not in df_connections.columns:
+            return
+        df_reset = self._reset_rows(df_connections)
+        df_reset = df_reset[df_reset['reset_failed'].notna()]
+        if df_reset.empty:
+            return
+        failed = df_reset[df_reset['reset_failed'] != '']
+        label = "Reset scripts ran without errors"
+        if not failed.empty:
+            label += " (failed: " + "; ".join(
+                "{}: {}".format(row['job'], row['reset_failed']) for _, row in failed.iterrows()) + ")"
+        experiment._record_test(failed.empty, label)
 
     def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> tuple[list[Section], dict, Section | None]:
         """
@@ -442,6 +481,7 @@ class Benchmark:
             experiment, df_loading, df_aggregated_reduced,
             workflow_actual, workflow_planned, **extra_context
         )
+        self._record_reset_test(experiment, df_connections)
         if write_report:
             print("{:30s}: cleaning up per-connection artefacts".format("Experiment"))
             component_types = ['loading', 'benchmarking', 'loader', 'benchmarker'] + list(experiment.workload['monitoring_components'])

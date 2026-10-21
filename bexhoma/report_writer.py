@@ -147,6 +147,11 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     ("loading-output", "Loading Script Output", ("*-loading-*.stdout.log", "*-loading-*.stderr.log"),
      "stdout and stderr of running each loading script - check stderr first if "
      "a loading phase failed silently."),
+    ("reset-output", "Reset Script Output", ("*-reset_*.stdout.log", "*-reset_*.stderr.log"),
+     "stdout and stderr of each reset script (`-ar`) before a benchmarking round, "
+     "named `<app>-reset_<run>_<client>_<entry>-<configuration>-<script>...`; no "
+     "file means the script printed nothing. Check stderr for the scripts the "
+     "Reset table lists as `reset_failed`."),
     ("loading-pods", "Loading Pod Logs", ("*-loading-*.sensor.log", "*-loading-*.datagenerator.log"),
      "`.sensor.log`: the per-table client command each loading pod issued and "
      "what it returned (a row count on success, a client error otherwise); "
@@ -230,6 +235,7 @@ quoting any number, not after:
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
 | `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured - dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
 | `Workflow as planned` | Whether pod counts matched the intended sweep - cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
+| `Reset scripts ran without errors` | The rounds of the listed jobs did not start from the reset state (`-ar`: statistics, persist, counters) - background flushes or stale statistics may fall into them, and application counters may not start at 0; compare them to other rounds with care | `benchmarking.md`'s Reset table (`reset_failed` column) and the `bexhoma-reset_<run>_<client>_<entry>-*.stderr.log` files |
 | `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row - for DBMSBenchmarker usually because a query failed somewhere, which removes it from every row; the note under the Per Phase table says which | `benchmarking.md`'s Per Phase table, Query Completion per Phase, and Per Phase (Complete Phases Only) for the phases that still measured every query |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
 | `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros - their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason | `monitoring.md`'s Missing Metrics |
@@ -1158,7 +1164,7 @@ def write_markdown_report(
             report_dir, "benchmarking.md", "benchmarking",
             "Benchmarking phase results, including any secondary (co-running) benchmarks.",
             benchmarking_all, connections_index,
-            _provenance_lines(groups, ("benchmarker", "configs")),
+            _provenance_lines(groups, ("benchmarker", "configs", "reset-output")),
         )
         written_sections.append({"title": "Benchmarking", "file": "benchmarking.md", "description": "Per-connection/per-phase benchmarking results, query completion per phase and metrics of the complete phases (DBMSBenchmarker), secondary-benchmark sections, latency, errors, warnings, EXPLAIN (when captured via -se/--store-explain)."})
 

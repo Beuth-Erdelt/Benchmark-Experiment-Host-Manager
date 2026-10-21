@@ -26,7 +26,7 @@ from unittest import mock
 
 from bexhoma.benchmarks.tpcds import TPCDS
 from bexhoma.benchmarks.tpch import TPCH
-from bexhoma.configurations.loading import LoadingCoordinator
+from bexhoma.configurations.loading import LoadingCoordinator, script_failed
 from bexhoma.experiments.base import ExperimentBase
 
 from .test_load_mode_workload import _FakeExperiment
@@ -299,6 +299,127 @@ class ExecResetScriptTest(unittest.TestCase):
         self.assertEqual(len(sent), 1)
         self.assertNotIn('\n', sent[0])
         self.assertIn("printf 'user=monetdb\\npassword=monetdb\\n'", sent[0])
+
+
+class ScriptFailedTest(unittest.TestCase):
+    """Failure detection from the output the cluster runs produced."""
+
+    def test_failed(self):
+        cases = {
+            'TiDB, wrong database': ("", "ERROR 1146 (42S02) at line 14: Table 'benchbase.customer' doesn't exist\n"
+                                         "command terminated with exit code 1\n"),
+            'MonetDB, missing procedure': ("", "SELECT: no such operator 'sys'.'flush_log'()\n"
+                                               "command terminated with exit code 1\n"),
+            'psql error, exit 0': ("", "psql:/tmp/reset-ycsb.sql:14: ERROR:  relation \"usertable\" does not exist\n"),
+            'cockroach': ("", "ERROR: relation \"usertable\" does not exist\nSQLSTATE: 42P01\n"),
+            'flush timeout': ("dirty pages: 3 after 600 s\n",
+                              "flush timeout: 3 dirty pages left after 600 s\ncommand terminated with exit code 1\n"),
+            'redis error reply': ("invoking CONFIG RESETSTAT\nERR unknown subcommand 'RESETSTAT'\n", ""),
+        }
+        for name, (stdout, stderr) in cases.items():
+            with self.subTest(name):
+                self.assertTrue(script_failed(stdout, stderr))
+
+    def test_ok(self):
+        cases = {
+            'no output': ("", ""),
+            'psql VERBOSE notices': ("Timing is on.\nCHECKPOINT\n",
+                                     "INFO:  vacuuming \"postgres.public.usertable\"\n"
+                                     "INFO:  finished vacuuming \"postgres.public.usertable\": index scans: 0\n"
+                                     "NOTICE:  table \"x\" does not exist, skipping\n"),
+            'mariadb password warning': ("dirty pages: 0 after 3 s\nFLUSH STATUS done\n",
+                                         "Warning: Using a password on the command line interface can be insecure.\n"),
+            'redis OK': ("invoking SAVE\nOK\ninvoking CONFIG RESETSTAT\nOK\n", ""),
+            'citus success rows': ("nodename | nodeport | success | result\n w1 | 5432 | t | CHECKPOINT\n", ""),
+        }
+        for name, (stdout, stderr) in cases.items():
+            with self.subTest(name):
+                self.assertFalse(script_failed(stdout, stderr))
+
+
+class ResetFailedRecordedTest(unittest.TestCase):
+    """exec_reset_script names the failed and missing scripts in last_reset_failed."""
+
+    def test_failed_and_missing(self):
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            os.makedirs(os.path.join(tmp_dir, 'MySQL'))
+            for name in ('reset-ycsb.sql', 'reset-flush.sh'):
+                open(os.path.join(tmp_dir, 'MySQL', name), 'w').close()
+            outputs = {'reset-ycsb.sql': ('', ''),
+                       'reset-flush.sh': ('', 'flush timeout\ncommand terminated with exit code 1\n')}
+            cluster = types.SimpleNamespace(
+                experiments_configfolder=tmp_dir, namespace='ns',
+                get_pods=lambda **kw: ['sut-pod'], kubectl=lambda command: None)
+            cfg = types.SimpleNamespace(
+                configuration='MySQL-1', path_experiment_docker='MySQL', appname='bexhoma', code='1',
+                num_tenants=0, tenant_per='', script_target='sut',
+                dockertemplate={'loadData': 'mysql < {scriptname}', 'template': {'JDBC': {'database': 'ycsb'}}},
+                experiment=types.SimpleNamespace(cluster=cluster, path=tmp_dir, volume='ycsb'),
+                get_service_sut=lambda configuration: 'svc',
+                execute_command_in_pod_sut=lambda cmd, retry_interrupted=True: (
+                    '', *outputs['reset-flush.sh' if 'reset-flush.sh' in cmd else 'reset-ycsb.sql']))
+            loader = LoadingCoordinator(cfg)
+            with mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'), \
+                    contextlib.redirect_stdout(io.StringIO()) as out:
+                loader.exec_reset_script('reset_1_1_1', ['reset-ycsb.sql', 'reset-flush.sh', 'gone.sql'])
+        self.assertEqual(loader.last_reset_failed, ['gone.sql (missing)', 'reset-flush.sh'])
+        self.assertIn('FAILED: gone.sql (missing), reset-flush.sh', out.getvalue())
+
+
+class ResetSummaryTest(unittest.TestCase):
+    """The Reset table shows the failed scripts; a test line says whether all resets ran fine."""
+
+    def _df(self, failed):
+        import pandas as pd
+        rows = []
+        for job, (seconds, value) in failed.items():
+            for pod in (1, 2):                     # one row per pod of the job
+                rows.append({'phase': job[:-2], 'job': job, 'experiment_run': 1, 'client': 1,
+                             'benchmark_run': 1, 'time_reset': seconds, 'reset_failed': value})
+        return pd.DataFrame(rows)
+
+    def _record(self, df):
+        from bexhoma.benchmarks.base import Benchmark
+        recorded = []
+        experiment = types.SimpleNamespace(_record_test=lambda passed, label: recorded.append((passed, label)))
+        Benchmark._record_reset_test(Benchmark.__new__(Benchmark), experiment, df)
+        return recorded
+
+    def test_table_shows_failed_and_fast_resets(self):
+        from bexhoma.benchmarks.base import Benchmark
+        df = self._df({'pg-1-1-1': (0, ''), 'pg-1-2-1': (40, 'reset-flush.sh'), 'pg-1-3-1': (0, None)})
+        rows = Benchmark._reset_rows(df)
+        self.assertEqual(list(rows['job']), ['pg-1-1-1', 'pg-1-2-1'])  # 0 s reset shown, no-reset row not
+        self.assertEqual(list(rows['reset_failed']), ['', 'reset-flush.sh'])
+
+    def test_test_line(self):
+        self.assertEqual(self._record(self._df({'pg-1-1-1': (3, '')})),
+                         [(True, 'Reset scripts ran without errors')])
+        passed, label = self._record(self._df({'pg-1-1-1': (3, ''), 'pg-1-2-1': (40, 'reset-flush.sh')}))[0]
+        self.assertFalse(passed)
+        self.assertIn('pg-1-2-1: reset-flush.sh', label)
+        self.assertEqual(self._record(self._df({'pg-1-1-1': (0, None)})), [])   # no reset ran
+
+
+class ResetInAgentReportTest(unittest.TestCase):
+    """The agent report explains a failed reset and links the reset logs."""
+
+    def test_validity_rule(self):
+        from bexhoma import report_writer
+        self.assertIn('| `Reset scripts ran without errors` |', report_writer._VALIDITY_RULES_MD)
+
+    def test_reset_logs_have_their_own_group(self):
+        from pathlib import Path
+        from bexhoma import report_writer
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            names = ['bexhoma-reset_1_1_1-mysql-1-reset-flush-mysql.sh.stdout.log',
+                     'bexhoma-reset_1_2_1-mysql-1-reset-ycsb-ycsb.sql.stderr.log',
+                     'bexhoma-loading-mysql-1-reset-flush-mysql.sh.log']   # uploaded script, not output
+            for name in names:
+                open(os.path.join(tmp_dir, name), 'w').close()
+            groups = report_writer._group_result_files(Path(tmp_dir))
+        self.assertEqual(sorted(p.name for p in groups['reset-output']), sorted(names[:2]))
+        self.assertEqual([p.name for p in groups['loading-scripts']], names[2:])
 
 
 class WarnMissingResetScriptsTest(unittest.TestCase):
