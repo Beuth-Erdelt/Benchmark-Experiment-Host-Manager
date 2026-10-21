@@ -183,7 +183,7 @@ def load_data_asynch(
                                         namespace=namespace, database=db),
                     pod_sut, context)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}{database}{extension}.stdout.log'
+                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stdout.log'
                     .format(app=app, configuration=configuration,
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
@@ -191,7 +191,7 @@ def load_data_asynch(
                     with open(filename_log, 'w') as file:
                         file.write(stdout)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}{database}{extension}.stderr.log'
+                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stderr.log'
                     .format(app=app, configuration=configuration,
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())

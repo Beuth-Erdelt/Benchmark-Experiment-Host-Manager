@@ -92,6 +92,41 @@ def split_worker_nodes(value, sut_node=None) -> list:
     return cells
 
 
+def check_tenant_loading_pods(num_loading_pods, num_tenants: int, tenant_by: str,
+                              one_pod_per_tenant: bool = False) -> None:
+    """Check that schema/database tenancy gets the same number of loader pods per tenant.
+
+    The loaders split the pods evenly across tenants (``BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM``);
+    with a remainder, a tenant would load a part twice. Container tenancy runs one loader
+    job per tenant and needs no check.
+
+    :param num_loading_pods: Parsed ``-nlp`` values.
+    :param num_tenants: ``-mtn``; 0 means no tenancy.
+    :param tenant_by: ``-mtb``: ``schema``, ``database`` or ``container``.
+    :param one_pod_per_tenant: ``-nlp`` counts pods per tenant (the experiment starts
+        ``-nlp`` x ``-mtn`` pods) and the loader maps pod k to tenant k-1 (Benchbase),
+        so ``-nlp`` must be 1.
+    :raises ValueError: When an ``-nlp`` value is not a multiple of ``-mtn`` (or, with
+        ``one_pod_per_tenant``, not 1).
+    """
+    if num_tenants <= 0 or tenant_by not in ('schema', 'database'):
+        return
+    if one_pod_per_tenant:
+        several = [pods for pods in num_loading_pods if int(pods) != 1]
+        if several:
+            raise ValueError(
+                f"-nlp {','.join(map(str, several))} is not 1: {tenant_by} tenancy of this "
+                f"benchmark loads each of the -mtn {num_tenants} tenants with one pod"
+            )
+        return
+    uneven = [pods for pods in num_loading_pods if int(pods) % num_tenants != 0]
+    if uneven:
+        raise ValueError(
+            f"-nlp {','.join(map(str, uneven))} is not a multiple of -mtn {num_tenants}: "
+            f"{tenant_by} tenancy needs the same number of loader pods per tenant"
+        )
+
+
 def resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list, storage_type_list=None,
                    worker_nodes_list=None):
     """Zip per-dimension resource CLI lists into one resource cell per swept value.

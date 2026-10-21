@@ -38,7 +38,7 @@ from bexhoma import evaluators
 from bexhoma import missing_metrics
 from bexhoma.monitoring_math import (counter_total, min_measurable_window, read_connections,
                                      scoped_job_connections, DEFAULT_SCRAPE_INTERVAL_SECONDS)
-from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes
+from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes, check_tenant_loading_pods
 from bexhoma.load_durability import DEFAULT_LEVEL as LOAD_DURABILITY_DEFAULT
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
@@ -165,6 +165,10 @@ class ExperimentBase():
     #: experiment, so :meth:`expand_resource_cells` sweeps every DBMS
     #: configuration across them (see :func:`bexhoma.cli_args.resource_cells`).
     supports_storage_sweep = False
+    #: Whether schema/database tenancy needs exactly one loader pod per tenant
+    #: (``-nlp 1``, counted per tenant) instead of a multiple of ``-mtn`` (see
+    #: :func:`bexhoma.cli_args.check_tenant_loading_pods`).
+    tenant_loading_one_pod_per_tenant = False
 
     def __init__(self,
                  cluster,
@@ -704,6 +708,8 @@ class ExperimentBase():
         self.workload['num_tenants'] = self.num_tenants
         self.workload['tenant_per'] = self.tenant_per
         self.workload['multi_tenant_volume'] = self.multi_tenant_volume
+        check_tenant_loading_pods(num_loading_pods, multi_tenant_num, multi_tenant_by,
+                                  one_pod_per_tenant=self.tenant_loading_one_pod_per_tenant)
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
