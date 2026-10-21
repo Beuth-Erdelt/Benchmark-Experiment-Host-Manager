@@ -8,6 +8,8 @@
 --          nation->region and supplier->nation. Citus enforces FKs between
 --          distributed and reference tables at the coordinator.
 --          Statements are ordered by FK dependency: referenced tables first.
+--          One ADD CONSTRAINT per ALTER TABLE: Citus rejects several subcommands
+--          ("cannot execute ADD CONSTRAINT command with other subcommands").
 
 ALTER TABLE nation
     ADD CONSTRAINT nation_region_fkey
@@ -19,7 +21,9 @@ ALTER TABLE supplier
 
 ALTER TABLE partsupp
     ADD CONSTRAINT partsupp_part_fkey
-        FOREIGN KEY (ps_partkey) REFERENCES part (p_partkey),
+        FOREIGN KEY (ps_partkey) REFERENCES part (p_partkey);
+
+ALTER TABLE partsupp
     ADD CONSTRAINT partsupp_supplier_fkey
         FOREIGN KEY (ps_suppkey) REFERENCES supplier (s_suppkey);
 
@@ -33,6 +37,8 @@ ALTER TABLE orders
 
 ALTER TABLE lineitem
     ADD CONSTRAINT lineitem_orders_fkey
-        FOREIGN KEY (l_orderkey) REFERENCES orders (o_orderkey),
+        FOREIGN KEY (l_orderkey) REFERENCES orders (o_orderkey);
+
+ALTER TABLE lineitem
     ADD CONSTRAINT lineitem_partsupp_fkey
         FOREIGN KEY (l_partkey, l_suppkey) REFERENCES partsupp (ps_partkey, ps_suppkey);
