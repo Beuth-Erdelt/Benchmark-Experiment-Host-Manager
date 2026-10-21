@@ -415,6 +415,15 @@ Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DIS
     started with 0 ("Please shutdown and change value to ON") -> MySQL `durable` has no torn-page protection
     unless started with `--set ...innodb_doublewrite=ON`; MariaDB 12.3.3 switches doublewrite and flush at
     runtime. YugabyteDB: no load scripts (Helm), `durable_wal_write` stays as installed.
+    Doublewrite in `unsafe` (user 2026-10-21): MySQL 9.7.2 refuses ON->OFF and OFF->ON at runtime but allows
+    ON<->DETECT_ONLY, so MySQL `unsafe` sets DETECT_ONLY (last statement; fails harmlessly when started OFF);
+    MariaDB `unsafe` (new) sets OFF. Both restore the saved value. Script sequence relaxed -> unsafe -> restore
+    checked on throwaway pods (MySQL started ON and OFF, MariaDB 12.3.3).
+    MySQL `-xld durable` + TPC-H `-xii -xic -xis` at 16Gi: OOM-killed while adding the FKs (1792537227 with 96G
+    pool, 1792538269 with 10G); same with `relaxed` (key checks off): no restart (1792539198). The template's
+    tmpdir `/mysqltmp` is memory-backed (32Gi). Decision (user 2026-10-21): document only (tmpdir on disk might
+    be too slow). **But at 32Gi (1792540682) it was OOM-killed too, in `initconstraints` after ~10 min: the
+    tmpdir explanation does not fit the size (SF 1 ~1 GB); cause open.** Docs state the observation only.
     Citus `relaxed` checked on 1792519080 (reset suite): `run_command_on_workers` with `ALTER SYSTEM` OK on all
     workers, restore back to the template's `synchronous_commit=local`.
   - **No shared folder (user decision 2026-10-20, option "everywhere"):** the scripts sit next to the init

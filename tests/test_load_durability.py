@@ -122,8 +122,9 @@ class ApplyTest(unittest.TestCase):
 
     def test_mariadb_shell_scripts(self):
         cfg = self.apply('MariaDB', 'unsafe')
-        self.assertEqual(cfg.initscript, ['durability-relaxed.sh', 'initschema-ycsb.sql'])
-        self.assertEqual(cfg.indexscript, ['restoredurability-relaxed.sh', 'checkschema-ycsb.sql'])
+        self.assertEqual(cfg.initscript, ['durability-relaxed.sh', 'durability-unsafe.sh', 'initschema-ycsb.sql'])
+        self.assertEqual(cfg.indexscript, ['restoredurability-unsafe.sh', 'restoredurability-relaxed.sh',
+                                           'checkschema-ycsb.sql'])
 
     def test_durable(self):
         cfg = self.apply('PGBouncer', 'durable', path='PostgreSQL')

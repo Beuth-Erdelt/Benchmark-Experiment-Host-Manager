@@ -59,7 +59,7 @@ Experiments run by the agent harness always stop their SUTs (except in `start`).
 |---|---|---|
 | `durable` | crash-safe, whatever the server was started with | PostgreSQL `synchronous_commit`, `fsync`, `full_page_writes` on; MySQL/MariaDB `innodb_flush_log_at_trx_commit=1` (MariaDB also doublewrite on; MySQL cannot switch it on at runtime) |
 | `relaxed` (default) | commits do not wait for the log flush; key checks are skipped | PostgreSQL `synchronous_commit=off`; MySQL `innodb_flush_log_at_trx_commit`, `foreign_key_checks=0` |
-| `unsafe` | the strongest lever of the DBMS; a crash during the load can corrupt the data | MySQL redo log off; PostgreSQL `fsync=off`, `full_page_writes=off` |
+| `unsafe` | the strongest lever of the DBMS; a crash during the load can corrupt the data | MySQL redo log off and doublewrite `DETECT_ONLY` (MySQL cannot switch it off at runtime); MariaDB doublewrite off; PostgreSQL `fsync=off`, `full_page_writes=off` |
 
 `-xld` affects the load only, like `-xii`/`-xic`/`-xis`. Before the check script, the server returns to its configured state (template and `--set`), so the benchmark always runs as configured, whatever the level. `unsafe` ends with a checkpoint (PostgreSQL also flushes the OS cache).
 `relaxed` is the default; for TPC-H, TPC-DS and the MySQL loads of TPC-C and YCSB it is what the load always did.
@@ -77,8 +77,10 @@ bexhoma replaces the placeholders according to `-xld` by the scripts the DBMS fo
 | `relaxed` | `durability-relaxed.*` | `restoredurability-relaxed.*` |
 | `unsafe` | `durability-relaxed.*`, `durability-unsafe.*` | `restoredurability-unsafe.*`, `restoredurability-relaxed.*` |
 
+Known issue for MySQL: TPC-H with `-xic` and `-xld durable` was OOM-killed while adding the foreign keys (16Gi and 32Gi); see the MySQL section of [DBMS](DBMS.md).
+
 `.*` is `.sql`, then `.sh` (MariaDB uses shell scripts, as `SET GLOBAL` needs root). A script the DBMS folder does not have is not run; a list without a placeholder gets no durability scripts.
-They exist for PostgreSQL (also used by PgDuckDB and PGBouncer) and MySQL (all levels), Citus and MariaDB (`durable`, `relaxed`), in every benchmark; other DBMS load as configured.
+They exist for PostgreSQL (also used by PgDuckDB and PGBouncer), MySQL and MariaDB (all levels) and Citus (`durable`, `relaxed`), in every benchmark; other DBMS load as configured.
 The copies in different benchmarks are identical; `tests/test_load_durability.py` fails on any difference that is not declared there (TPC-H, TPC-C and YCSB on MySQL keep their own `relaxed` settings).
 
 ---

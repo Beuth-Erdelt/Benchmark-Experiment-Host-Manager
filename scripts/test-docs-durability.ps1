@@ -17,7 +17,7 @@
 #
 # What to check per log:
 #   - "load durability <level>, scripts [...]" lists exactly the scripts of the level
-#     the DBMS folder has (none for TiDB; Citus/MariaDB unsafe = relaxed scripts only)
+#     the DBMS folder has (none for TiDB; Citus unsafe = relaxed scripts only)
 #   - summary: "load_durability: <level>" per configuration
 #   - result folder: bexhoma-loading-<config>-durability-*.stdout/.stderr logs
 #     (pre-load) and -restoredurability-*.* logs (post-load), no errors in .stderr
@@ -28,11 +28,12 @@
 #                          full_page_writes off -> on, CHECKPOINT, "sync after fsync=off ... done"
 #                          (PGBouncer included: its template no longer fixes synchronous_commit)
 #       MySQL:             relaxed flush 2 (TPC-C/YCSB 0, log buffer 1G), key checks (TPC-H also
-#                          autocommit) 0 -> 1/1/1; unsafe: Innodb_redo_log_enabled OFF -> ON;
-#                          bexhoma.saved_settings empty after the restore
-#       MariaDB:           durability-relaxed.sh (root): flush 2 during the load, 1 afterwards
+#                          autocommit) 0 -> 1/1/1; unsafe: Innodb_redo_log_enabled OFF -> ON,
+#                          doublewrite DETECT_ONLY -> ON; bexhoma.saved_settings empty afterwards
+#       MariaDB:           .sh as root: relaxed flush 2 -> 1; unsafe also doublewrite OFF -> ON
 #       Citus:             synchronous_commit off on coordinator and every worker -> on again
 #   - durable with --set (TPC-H MySQL): flush 1 during the load, back to the --set value 2
+#     (known issue: OOM-killed in initconstraints at 16Gi and 32Gi so far, cause open)
 #   - -tr passes, no SUT restarts
 #   - loading times: relaxed < durable expected; unsafe <= relaxed
 #   - TPC-H PostgreSQL unsafe on -rst with -nc 2: repetition 2 finds the loaded volume
@@ -203,7 +204,8 @@ bexhoma tpch `
   -xic                          <# create constraints after loading #> `
   -xis                          <# recompute statistics after loading #> `
   -xld durable                  <# load durability: crash-safe load #> `
-  --set "deployment[sut].container[dbms].innodb_flush_log_at_trx_commit=2" <# relaxed benchmark, visible in the command #> `
+  --set "deployment[bexhoma-deployment-mysql].container[dbms].innodb_flush_log_at_trx_commit=2" <# relaxed benchmark, visible in the command #> `
+  --set "deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=10G" <# template's 96G is OOM-killed in a 16Gi pod #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
