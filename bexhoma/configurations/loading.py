@@ -310,6 +310,8 @@ class LoadingCoordinator:
         # chunk index a pod gets (see delete + length-check below).
         experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         cfg.logger.debug("LoadingCoordinator.start_pod({})".format(configuration))
+        if not self.wait_for_schema(app=app, experiment=experiment, configuration=configuration):
+            return
         loader_entries = cfg.experiment_dict['loader'] or [
             {'parallelism': parallelism, 'num_pods': num_pods}]
         num_data_jobs = len(loader_entries)
@@ -366,6 +368,53 @@ class LoadingCoordinator:
                 template_override=loader_entry.get('template', ''))
             cfg.logger.debug("Deploy " + job)
             cfg.experiment.cluster.create_object_from_file(job)
+
+    def wait_for_schema(self, app: str, experiment: str, configuration: str, interval: int = 2) -> bool:
+        """Wait until the Schema scripts have labeled the SUT pod ``schema=True``.
+
+        :meth:`start_exec` runs the Schema scripts in a background thread, and
+        :meth:`start_pod` is called right after it. The loaders may need what the
+        scripts create (e.g. the MySQL user ``root@'%'`` with its password), so
+        the jobs are created only when the label is set.
+
+        The wait is limited by ``--loading-timeout`` (no limit without it). On
+        timeout, ``loading_started_at`` is set to the start of the wait, so the
+        experiment loop's loading timeout aborts the configuration in its next
+        pass (with diagnostics); the wait blocks that loop meanwhile.
+
+        :param app: App label of the SUT pod.
+        :param experiment: Experiment code.
+        :param configuration: DBMS configuration name.
+        :param interval: Seconds between two checks of the label.
+        :return: False if the loading timeout ran out before the label was set.
+        :rtype: bool
+        """
+        cfg = self._config
+        timeout_minutes = getattr(cfg.experiment, 'max_loading_minutes', None)
+        wait_started_at = datetime.utcnow()
+        t_start = default_timer()
+        waiting = False
+        while True:
+            pod_labels = cfg.experiment.cluster.get_pods_labels(
+                app=app, component='sut', experiment=experiment, configuration=configuration)
+            if any(labels.get('schema') == 'True' for labels in pod_labels.values()):
+                break
+            if cfg.loading_finished:
+                # start_exec() could not upload the scripts: no label will come
+                break
+            if timeout_minutes is not None and default_timer() - t_start >= timeout_minutes * 60:
+                print("{:30s}: WARNING - no schema=True after the {} minute loading timeout, "
+                      "loading jobs not started".format(configuration, timeout_minutes))
+                cfg.loading_started_at = wait_started_at
+                return False
+            if not waiting:
+                print("{:30s}: waits for the Schema scripts (schema=True) before starting the loading jobs".format(
+                    configuration))
+                waiting = True
+            time.sleep(interval)
+        if waiting:
+            print("{:30s}: Schema scripts done after {}s".format(configuration, int(default_timer() - t_start)))
+        return True
 
     def start_exec(self, delay: int = 0) -> bool:
         """Start data ingestion by running init scripts directly inside the SUT pod.
