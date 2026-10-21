@@ -247,8 +247,10 @@ every configuration ran its reset before both rounds, no warnings.
   rounds, but MonetDB Dec2025-SP3 has no `sys.flush_log()` ("no such operator"). `sys.functions` has
   only `suspend/resume_log_flushing` (pause the background WAL flusher), `logging.flush` (trace log),
   `vacuum`, `hot_snapshot`: none forces the WAL into the BATs, so persist is n/a for MonetDB.
-- Open: HammerDB MySQL did not load
-  (`tpcc` missing, NOPM 0), unrelated to the reset.
+- HammerDB MySQL did not load (`tpcc` missing, NOPM 0), unrelated to the reset: race between loader
+  and SUT schema init, fixed in d48712b6 (loading waits for `schema=True`), cluster checks OK.
+- 2026-10-21: test script aligned: MonetDB comments say persist n/a; YCSB PGBouncer with pooler flags
+  (`-xnpp 1 -xnpi 128 -xnpo 64`); Citus HammerDB/TPC-H with `-nwr 1 -nws 48` as YCSB/Benchbase.
 
 Tests: `tests/test_reset_scripts.py` (completeness matrix per CLI incl. all Benchbase benchmarks, `-xrs`,
 step order, no braces, Citus workers, identical flush scripts, missing-file skip, warning, info line).

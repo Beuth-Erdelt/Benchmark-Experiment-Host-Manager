@@ -17,7 +17,7 @@
 #       Citus:             run_command_on_workers rows with success = t for every worker
 #       MySQL/MariaDB:     reset-flush.sh ends with "dirty pages: 0", no "flush timeout";
 #                          note the flush time (sets TIMEOUT, plan M0.3)
-#       MonetDB:           CALL sys.flush_log() without error (M0.4)
+#       MonetDB:           none (persist n/a, Dec2025 has no sys.flush_log())
 #       Dragonfly/Redis:   SAVE returns OK on every data pod
 #   - step 3 visible:
 #       YugabyteDB:        "counters reset on 3 tservers"
@@ -128,7 +128,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset PostgreSQL"
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xop 1                        number of operations for the benchmark phase (in millions)
+# -xnpp 1                       number of PGBouncer proxy pods
+# -xnpi 128                     maximum incoming connections per PGBouncer instance (default: loading threads)
+# -xnpo 64                      maximum outgoing connections per PGBouncer instance
+# -xop 1                       number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -148,6 +151,9 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
+  -xnpp 1 \
+  -xnpi 128 \
+  -xnpo 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1076,6 +1082,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset MariaDB"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -nw 3                         number of worker nodes
+# -nwr 1                        replication factor (Dragonfly: replica mode)
+# -nws 48                       number of shards
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1092,6 +1100,8 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 4 \
   -nw 3 \
+  -nwr 1 \
+  -nws 48 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1175,7 +1185,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset PgDuckDB"
 
 
 #### TPC-H Reset MonetDB
-# -dbms MonetDB                 ANALYZE, CALL sys.flush_log(), counters n/a
+# -dbms MonetDB                 ANALYZE, persist n/a, counters n/a
 # -sf 1                         scaling factor
 # -nc 1                         number of repeated runs per configuration
 # -ne 1,2                       two client rounds -- the reset runs before each
@@ -1281,6 +1291,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset MariaDB"
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
 # -nw 3                         number of worker nodes
+# -nwr 1                        replication factor (Dragonfly: replica mode)
+# -nws 48                       number of shards
 # -xii                          create indexes after loading
 # -xic                          create constraints after loading
 # -xis                          recompute statistics after loading
@@ -1298,6 +1310,8 @@ bexhoma tpch \
   -nlp 8 \
   -nlt 8 \
   -nw 3 \
+  -nwr 1 \
+  -nws 48 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1386,7 +1400,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset PostgreSQL"
 
 
 #### TPC-DS Reset MonetDB
-# -dbms MonetDB                 ANALYZE, CALL sys.flush_log(), counters n/a
+# -dbms MonetDB                 ANALYZE, persist n/a, counters n/a
 # -sf 1                         scaling factor
 # -nc 1                         number of repeated runs per configuration
 # -ne 1,2                       two client rounds -- the reset runs before each
