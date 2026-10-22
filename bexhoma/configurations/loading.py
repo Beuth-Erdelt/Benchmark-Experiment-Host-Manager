@@ -14,7 +14,7 @@ from math import ceil
 from timeit import default_timer
 from typing import TYPE_CHECKING
 
-from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, wait_for_cluster
+from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, start_process, wait_for_cluster
 from ..cluster_calls import stored_pods
 
 if TYPE_CHECKING:
@@ -86,7 +86,8 @@ def load_data_asynch(
             .format(context=context, pod=pod,
                     command=command.replace('"', '\\"').replace('\n', '\\n')))
         logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
-        proc = subprocess.Popen(
+        proc = start_process(
+            subprocess.Popen,
             fullcommand, stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
@@ -102,7 +103,8 @@ def load_data_asynch(
         logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
         deadline = time.monotonic() + CLUSTER_OUTAGE_BUDGET_SECONDS
         while True:
-            proc = subprocess.Popen(
+            proc = start_process(
+                subprocess.Popen,
                 fullcommand, stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             stdout, stderr = proc.communicate()
