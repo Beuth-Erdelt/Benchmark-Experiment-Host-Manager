@@ -299,6 +299,65 @@ bexhoma ycsb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 
+# Cluster of 3 Dragonfly instances with a changed setting (--set)
+# -dbms Dragonfly               DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 12                      loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nw 3                         number of worker nodes in the cluster
+# -xop 10                       number of operations for the benchmark phase (in millions)
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# --set ...                     8 io threads per worker instead of 16 (template), see "Settings of Dragonfly"
+bexhoma ycsb \
+  -dbms Dragonfly \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 128 \
+  -nw 3 \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -ar \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set "statefulset[bexhoma-worker].container[dbms].env.DFLY_proactor_threads=8" \
+  run &>$LOG_DIR/docs_ycsb_dragonfly_6.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=1  nbp=1"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################
