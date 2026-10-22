@@ -1477,3 +1477,34 @@ As of bexhoma v0.9.4, this is (see demo configuration):
     }
 },
 ```
+
+### Settings of Dragonfly
+
+The templates set Dragonfly's flags as environment variables `DFLY_<flag>`:
+
+| Variable | Value | Meaning |
+|---|---|---|
+| `DFLY_maxmemory` | `128GiB` (data pods) | memory limit of Dragonfly |
+| `DFLY_dbfilename` | `dump` (data pods) | fixed snapshot name, see [Snapshots](#snapshots) |
+| `DFLY_proactor_threads` | `16` | number of io threads, equal to the CPU limit of the container |
+
+Without `DFLY_proactor_threads`, Dragonfly starts one io thread per core of the host, pinned to that core, regardless of the CPU request and limit of the pod.
+On a node with 224 cores and other workloads, this made Dragonfly stall for up to 2 seconds, so that YCSB clients ran into read timeouts.
+
+A setting can be changed per experiment with `--set`.
+The name in `deployment[...]` or `statefulset[...]` is `metadata.name` of the workload in the template, the container is `dbms`:
+
+```bash
+# single host (k8s/deploymenttemplate-Dragonfly.yml)
+bexhoma ycsb -dbms Dragonfly ... \
+  --set deployment[bexhoma-deployment-redis].container[dbms].env.DFLY_proactor_threads=4 \
+  run
+
+# cluster and replication: the data pods (k8s/deploymenttemplate-DragonflyCluster.yml, -DragonflyReplica.yml)
+bexhoma ycsb -dbms Dragonfly -nw 3 ... \
+  --set statefulset[bexhoma-worker].container[dbms].env.DFLY_proactor_threads=8 \
+  run
+```
+
+The output of bexhoma confirms each override, e.g. `updated deployment[bexhoma-deployment-redis].container[dbms].env.DFLY_proactor_threads = 4`.
+A name that does not exist in the template only prints `... not found in file` and changes nothing.
