@@ -7,12 +7,26 @@
 #          benchmarking round with -ar: in the SUT pod (standalone) or on
 #          every worker (cluster, script target 'workers'). Steps of the reset
 #          contract (docs/DBMS.md): 1 statistics, 2 persist, 3 counters. SAVE
-#          is synchronous and returns when the RDB snapshot is on disk.
+#          is synchronous and returns when the RDB snapshot is on disk. It
+#          fails while a background save is running (e.g. one triggered by
+#          the save schedule after the writes of the previous round), so the
+#          script first waits for that to finish.
 #          No curly braces in this file: bexhoma may fill it with str.format().
 
 # step 1 (statistics): n/a - key-value store without optimizer statistics
 
 # step 2 (persist)
+TIMEOUT=600
+waited=0
+while redis-cli INFO persistence | grep -q "rdb_bgsave_in_progress:1"; do
+  if [ $waited -ge $TIMEOUT ]; then
+    echo "background save still in progress after $waited s"
+    break
+  fi
+  sleep 1
+  waited=$((waited+1))
+done
+echo "waited $waited s for background save"
 echo "invoking SAVE"
 redis-cli SAVE
 
