@@ -57,6 +57,10 @@ spec:
         # a flag on the command line would win over the env var.
         - name: DFLY_maxmemory
           value: "128GiB"
+        # io threads = CPU limit; the default (one pinned thread per host core, 224 on
+        # cl-worker36) stalled Dragonfly for up to 2 s on a shared node
+        - name: DFLY_proactor_threads
+          value: "16"
         # fixed name instead of dump-{timestamp}: SAVE overwrites the snapshot, start loads it
         - name: DFLY_dbfilename
           value: "dump"

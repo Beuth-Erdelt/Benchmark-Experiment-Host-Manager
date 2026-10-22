@@ -58,6 +58,9 @@ spec:
         # Settings as DFLY_<flag> (see --set ...env.DFLY_<flag>); a command-line flag would win.
         - name: DFLY_maxmemory
           value: "64GiB"
+        # io threads fixed instead of one pinned thread per host core (see deploymenttemplate-Dragonfly.yml)
+        - name: DFLY_proactor_threads
+          value: "16"
         ports:
           - containerPort: 6379
             name: server
@@ -138,6 +141,9 @@ spec:
           # Settings as DFLY_<flag> (see --set ...env.DFLY_<flag>); a command-line flag would win.
           - name: DFLY_maxmemory
             value: "128GiB"
+          # io threads = CPU limit instead of one pinned thread per host core (see deploymenttemplate-Dragonfly.yml)
+          - name: DFLY_proactor_threads
+            value: "16"
           # fixed name instead of dump-{timestamp}: SAVE overwrites the snapshot, start loads it
           - name: DFLY_dbfilename
             value: "dump"
