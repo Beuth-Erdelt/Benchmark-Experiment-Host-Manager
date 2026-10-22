@@ -42,7 +42,7 @@ if __name__ == '__main__':
     """
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
-    parser.add_argument('mode', help='experiment phase: start SUT only, load data, or run the full benchmark', choices=['run', 'start', 'load'])
+    parser.add_argument('mode', help='experiment phase: start SUT only, load data, run the full benchmark, or summarize results', choices=['run', 'start', 'load', 'summary'])
     parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'Citus', 'PGBouncer', 'CedarDB'], default=[], nargs='*')
     parser.add_argument('-xnsr',  '--xnum-sut-replicas', help='number of SUT replicas per configuration', default=1, dest='num_sut_replicas')
     parser.add_argument('-xnpd',  '--xnum-pd-nodes', help='number of PD (Placement Driver) nodes, independent of -nw (TiDB only; keep odd)', default=3, dest='num_pd_nodes')

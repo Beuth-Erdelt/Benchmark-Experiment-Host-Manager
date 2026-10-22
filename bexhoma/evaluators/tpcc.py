@@ -175,13 +175,13 @@ class TpccEvaluator(LogEvaluator):
             rows = [
                 (connection, phase, job, configuration_name, experiment_run, client, benchmark_run, child, pod_name, pod_count,
                  code, iterations, duration, rampup, sf, run_idx, num_errors, vusers_loading,
-                 vuser, efficiency, result[0], result[1], result[2]) + tuple(latency_values)
+                 vuser, efficiency, result[0], result[1], result[2], keyandthink) + tuple(latency_values)
                 for run_idx, (result, vuser) in enumerate(result_tuples)
             ]
             df = pd.DataFrame(rows)
             col_names = ['connection', 'phase', 'job', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child', 'pod',
                          'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run',
-                         'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
+                         'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms', 'keyandthink']
             col_names.extend(list(extracted_data.keys()))
             df.columns = col_names
             df.index.name = connection_name
@@ -356,6 +356,9 @@ class TpccEvaluator(LogEvaluator):
                     'dbms':'max',
                     'tenant_id': 'min',
                 }
+            if 'keyandthink' in grp:
+                # missing in results parsed before it was kept
+                aggregate['keyandthink'] = 'max'
             dict_grp = dict()
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
@@ -364,9 +367,11 @@ class TpccEvaluator(LogEvaluator):
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             df_grp = pd.DataFrame(dict_grp, index=["-".join(map(str, key))])
             df_aggregated = pd.concat([df_aggregated, df_grp])
-        # efficiency is only valid when vusers == 10 × SF (standard TPC-C convention)
+        # efficiency is only valid with key-and-think time and vusers == 10 × SF (standard TPC-C convention)
         df_aggregated['efficiency'] = 0.
         tpcc_mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']
+        if 'keyandthink' in df_aggregated:
+            tpcc_mask &= df_aggregated['keyandthink'] == "true"
         df_aggregated.loc[tpcc_mask, 'efficiency'] = (
             100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
         )
@@ -624,6 +629,12 @@ class TpccEvaluator(LogEvaluator):
         """
         if experiment.benchmarking_is_active():
             experiment._test_column(df_reduced, "NOPM")
+            # log_to_df computes efficiency only with key-and-think time
+            keyandthink = str(experiment.default_benchmarking_parameters.get('HAMMERDB_KEYANDTHINK', 'false')) == "true"
+            experiment._test_efficiency(
+                df_reduced, "vusers",
+                computed=keyandthink,
+                reason="needs key-and-think time (-xkey)")
             experiment._record_test(
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"

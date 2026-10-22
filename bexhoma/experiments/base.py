@@ -1735,6 +1735,32 @@ class ExperimentBase():
         full_title = f"{title} {column}" if len(title) > 0 else column
         suffix = "contains no 0 or NaN" if passed else "contains 0 or NaN"
         return self._record_test(passed, f"{full_title} {suffix}")
+    def _test_efficiency(self, df, threads_column: str, computed: bool, reason: str) -> None:
+        """
+        Test the TPC-C efficiency of the phases where the evaluator computes it.
+
+        Efficiency is only computed with key-and-think time and
+        ``threads_column == 10 x SF`` (TPC-C convention); everywhere else it is 0
+        by design, so the test is skipped instead of failed.
+
+        :param df: Per-phase execution DataFrame with ``efficiency`` and ``threads_column``.
+        :param threads_column: ``terminals`` (Benchbase) or ``vusers`` (HammerDB).
+        :param computed: Whether the settings let the evaluator compute efficiency at all.
+        :param reason: Why it is not computed, for the skipped label, when ``computed`` is False.
+        """
+        if not computed:
+            self._record_skipped_test(f"efficiency (not computed: {reason})")
+            return
+        if df.empty or 'efficiency' not in df.columns or threads_column not in df.columns:
+            self._record_skipped_test("efficiency (no benchmarking results)")
+            return
+        sf = int(self.SF)
+        df_eligible = df[df[threads_column] == 10 * sf]
+        if df_eligible.empty:
+            self._record_skipped_test(
+                f"efficiency (not computed: no phase with {threads_column} = 10 x SF = {10 * sf})")
+            return
+        self._test_column(df_eligible, "efficiency")
     def _print_test_summary(self) -> None:
         """Print all results collected in _test_results as a single summary block."""
         print("\n### Tests")

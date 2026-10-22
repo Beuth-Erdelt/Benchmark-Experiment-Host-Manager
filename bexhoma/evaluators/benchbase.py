@@ -578,6 +578,13 @@ class BenchbaseEvaluator(LogEvaluator):
         """
         if experiment.benchmarking_is_active():
             experiment._test_column(df_reduced, "Throughput (requests/second)")
+            # log_to_df and benchmarking_aggregate_by_parallel_pods compute efficiency only for these settings
+            keyandthink = str(experiment.default_benchmarking_parameters.get('BENCHBASE_KEY_AND_THINK', 'false')) == "true"
+            bench = getattr(experiment, 'benchmark_type', '')
+            experiment._test_efficiency(
+                df_reduced, "terminals",
+                computed=keyandthink and bench == "tpcc",
+                reason="needs key-and-think time (-xkey) and the tpcc benchmark")
             experiment._record_test(
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"
