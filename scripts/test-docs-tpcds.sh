@@ -38,6 +38,16 @@ source ./scripts/testfunctions.sh
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 lower planner cost for random reads (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 allow more concurrent prefetch I/O requests (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring use io_uring for asynchronous I/O
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 parallel workers per query node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 total parallel worker pool
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 total background worker processes
+# --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB PostgreSQL buffer cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB planner estimate of OS-level cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB per-operation sort/hash memory
+# --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB memory for index/vacuum maintenance
 bexhoma tpcds \
   -dbms PostgreSQL \
   -sf 1 \
@@ -52,6 +62,16 @@ bexhoma tpcds \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
@@ -77,6 +97,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 lower planner cost for random reads (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 allow more concurrent prefetch I/O requests (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring use io_uring for asynchronous I/O
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 parallel workers per query node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 total parallel worker pool
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 total background worker processes
+# --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB PostgreSQL buffer cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB planner estimate of OS-level cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB per-operation sort/hash memory
+# --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB memory for index/vacuum maintenance
 bexhoma tpcds \
   -dbms PostgreSQL \
   -sf 3 \
@@ -93,6 +123,16 @@ bexhoma tpcds \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
@@ -118,6 +158,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 lower planner cost for random reads (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 allow more concurrent prefetch I/O requests (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring use io_uring for asynchronous I/O
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 parallel workers per query node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 total parallel worker pool
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 total background worker processes
+# --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB PostgreSQL buffer cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB planner estimate of OS-level cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB per-operation sort/hash memory
+# --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB memory for index/vacuum maintenance
 bexhoma tpcds \
   -dbms PostgreSQL \
   -sf 1 \
@@ -134,6 +184,16 @@ bexhoma tpcds \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql_throughput.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS throughput  sf=1  ne=1,2"
@@ -160,6 +220,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS throughput  sf=1  ne=1,2"
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 lower planner cost for random reads (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 allow more concurrent prefetch I/O requests (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring use io_uring for asynchronous I/O
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 parallel workers per query node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 total parallel worker pool
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 total background worker processes
+# --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB PostgreSQL buffer cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB planner estimate of OS-level cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB per-operation sort/hash memory
+# --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB memory for index/vacuum maintenance
 bexhoma tpcds \
   -dbms PostgreSQL \
   -sf 1 \
@@ -177,6 +247,16 @@ bexhoma tpcds \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS storage  sf=1  nc=2"
@@ -338,6 +418,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 lower planner cost for random reads (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 allow more concurrent prefetch I/O requests (SSD)
+# --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring use io_uring for asynchronous I/O
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 parallel workers per query node
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 total parallel worker pool
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 total background worker processes
+# --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB PostgreSQL buffer cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB planner estimate of OS-level cache size
+# --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB per-operation sort/hash memory
+# --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB memory for index/vacuum maintenance
 bexhoma tpcds \
   -dbms PostgreSQL \
   -sf 10 \
@@ -355,6 +445,16 @@ bexhoma tpcds \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB \
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   profiling &>$LOG_DIR/docs_tpcds_postgresql_profiling.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS profiling  sf=10  ne=1,1"
