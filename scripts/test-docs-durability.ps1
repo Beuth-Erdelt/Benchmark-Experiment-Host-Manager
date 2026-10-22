@@ -205,7 +205,7 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld durable                  <# load durability: crash-safe load #> `
   --set "deployment[bexhoma-deployment-mysql].container[dbms].innodb_flush_log_at_trx_commit=2" <# relaxed benchmark, visible in the command #> `
-  --set "deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=10G" <# template's 96G is OOM-killed in a 16Gi pod #> `
+  --set "deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=10G" <# same pool as the -xld comparison 1792540834/1792542350 (template: 8G) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `

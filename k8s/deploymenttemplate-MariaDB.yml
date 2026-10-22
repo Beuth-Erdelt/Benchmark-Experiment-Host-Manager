@@ -56,7 +56,9 @@ spec:
           # --- Async I/O ---
           - "--innodb-use-native-aio=0"           # CephFS-compatible async I/O
           # --- Buffer Pool (memory use) ---
-          - "--innodb-buffer-pool-size=96G"       # ca 75% of 128Gi container limit
+          # 8G fits the default -rr 16Gi (the namespace sets limit = request); larger pods set it per run,
+          # e.g. --set ...container[dbms].innodb_buffer_pool_size=32G
+          - "--innodb-buffer-pool-size=8G"
           # --- I/O Capacity ---
           - "--innodb-io-capacity=200"            # CephFS-friendly
           - "--innodb-io-capacity-max=1000"       # Allow bursts

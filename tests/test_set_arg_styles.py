@@ -111,7 +111,7 @@ class TemplatePatchTest(unittest.TestCase):
         self.assertTrue(patch_container(dep, sel['container'], sel['param'], val))
         args = _container(dep)['args']
         self.assertIn('--innodb-buffer-pool-size=10G', args)
-        self.assertNotIn('--innodb-buffer-pool-size=96G', args)
+        self.assertNotIn('--innodb-buffer-pool-size=8G', args)
         self.assertNotIn('-c', args)
         self.assertNotIn('--mysql-native-password=ON', args)
 
@@ -123,6 +123,16 @@ class TemplatePatchTest(unittest.TestCase):
         args = _container(dep)['args']
         self.assertIn('--innodb_flush_log_at_trx_commit=2', args)
         self.assertNotIn('--innodb-buffer-pool-chunk-size=2G', args)
+
+    def test_buffer_pool_fits_default_request(self):
+        # -rr defaults to 16Gi and the namespace sets limit = request; the template pool must
+        # leave room for connections and page cache (the 96G pool was OOM-killed at TPC-H SF 10)
+        for template, name in (('deploymenttemplate-MySQL.yml', 'bexhoma-deployment-mysql'),
+                               ('deploymenttemplate-MariaDB.yml', 'bexhoma-deployment-mariadb')):
+            with self.subTest(template=template):
+                args = _container(_workload(_load(template), 'Deployment', name))['args']
+                pool = next(a for a in args if a.startswith('--innodb-buffer-pool-size='))
+                self.assertEqual(pool, '--innodb-buffer-pool-size=8G')
 
     def test_postgresql_template_unaffected(self):
         docs = _load('deploymenttemplate-PostgreSQL.yml')

@@ -65,9 +65,11 @@ spec:
           # --- Async I/O (for CephFS) ---
           - "--innodb-use-native-aio=0"            # Disable native AIO (improves CephFS compatibility)
           # --- Buffer Pool (Main memory cache) ---
-          - "--innodb-buffer-pool-size=96G"        # Increased (out of 500G total RAM?)
-          - "--innodb-buffer-pool-instances=16"    # One per core for high concurrency
-          - "--innodb-buffer-pool-chunk-size=2G"   # Aligns pool size with chunks
+          # 8G fits the default -rr 16Gi (the namespace sets limit = request); larger pods set it per run,
+          # e.g. --set ...container[dbms].innodb_buffer_pool_size=32G. Default chunk size (128M) x 8
+          # instances: MySQL rounds a --set value up to the next multiple of 1G only.
+          - "--innodb-buffer-pool-size=8G"
+          - "--innodb-buffer-pool-instances=8"
           # --- I/O Capacity (for background flushing) ---
           - "--innodb-flush-method=O_DIRECT"
           - "--innodb-flush-neighbors=0"

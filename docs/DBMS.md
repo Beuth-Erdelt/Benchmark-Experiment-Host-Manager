@@ -240,7 +240,7 @@ How `PARAM` is written depends on the template:
 | env | env entry `PARAM=VALUE` | all | `PARAM` = `env.NAME`, e.g. Dragonfly `env.DFLY_maxmemory` |
 
 An existing setting is replaced in place, a new one is appended.
-In the `flag` style, `-` and `_` in names are equal (`innodb_buffer_pool_size` replaces `--innodb-buffer-pool-size=96G`).
+In the `flag` style, `-` and `_` in names are equal (`innodb_buffer_pool_size` replaces `--innodb-buffer-pool-size=8G`).
 Valueless flags (`--skip-log-bin`) cannot be set this way.
 Flags inside `bash -c` command strings (CockroachDB, TiDB) and Helm values (YugabyteDB) are not reachable by `--set`.
 
@@ -491,7 +491,8 @@ bexhoma therefore creates a TLS Secret per SUT (see `'tls'` in the configuration
 
 **Deployment template:** [`k8s/deploymenttemplate-MySQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml)
 
-The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=96G`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=10G`.
+The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=8G`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=32G`.
+The buffer pool of 8G fits the default pod size (`-rr 16Gi`; the namespace sets the memory limit equal to the request when `-lr` is not given). bexhoma does not adapt it to `-rr`/`-lr`: give larger pods a larger pool with `--set`. Until 2026-10-22 the template had 96G, which was OOM-killed in a 16Gi pod as soon as the data filled it (TPC-H SF 10).
 The template sets no durability options: MySQL runs crash-safe by default (`innodb_flush_log_at_trx_commit=1`, doublewrite on); relax the benchmark per run with `--set ...container[dbms].innodb_flush_log_at_trx_commit=2`.
 Load durability (`-xld`): see [Load durability](#load-durability--xld). Doublewrite cannot be switched between on and off at runtime in MySQL, so with `--set ...innodb_doublewrite=OFF` it stays off during an `-xld durable` load.
 The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row and its memory grew past 16 GB while adding lineitem->orders at TPC-H SF 1 (OOM-killed, 2026-10-21).
@@ -546,7 +547,8 @@ It uses a dedicated `bexhoma` database user rather than `root`.
 
 **Deployment template:** [`k8s/deploymenttemplate-MariaDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml)
 
-The default deployment sets `innodb_log_buffer_size`, `innodb-write-io-threads=16`, and `innodb-log-file-size`.
+The default deployment sets the I/O threads, `innodb-log-buffer-size=1G`, temporary table sizes and `innodb-buffer-pool-size=8G`.
+As for MySQL, the 8G pool fits the default pod size (`-rr 16Gi`); give larger pods a larger pool with `--set ...container[dbms].innodb_buffer_pool_size=32G`.
 
 **Configuration** (from `cluster.config`):
 

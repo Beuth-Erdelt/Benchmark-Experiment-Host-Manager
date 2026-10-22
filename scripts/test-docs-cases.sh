@@ -1521,7 +1521,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL complex  sf=16  n
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1561,7 +1561,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL simple  sf=16"
 # -xnbf 8                       benchmarking thread multiplier factor
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -1607,7 +1607,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL persistency  sf=16  nc
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1651,7 +1651,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL monitoring  sf=16"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -1700,7 +1700,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL complex  sf=16  nc=2  
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1740,7 +1740,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB simple  sf=16"
 # -xnbf 8                       benchmarking thread multiplier factor
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -1786,7 +1786,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB persistency  sf=16  
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -1830,7 +1830,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB monitoring  sf=16"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -1999,7 +1999,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL complex  sf=16  nc
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -2037,7 +2037,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL simple  sf=16"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 128Gi                    size of the persistent volume claim
@@ -2081,7 +2081,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL monitoring  sf=16"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -2127,7 +2127,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL complex  sf=16  nc=2  n
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -2165,7 +2165,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB simple  sf=16"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -2209,7 +2209,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB monitoring  sf=16"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -2496,7 +2496,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL monitoring  sf=1"
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -2542,7 +2542,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL loader scaling  sf=1"
 # -xnbf 1                       benchmarking thread multiplier factor
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -2591,7 +2591,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL persistency  sf=1  nc=2"
 # -xnbf 1                       benchmarking thread multiplier factor
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -2638,7 +2638,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL scaling  sf=1  nc=2  ne=1,2
 # -xnbf 1                       benchmarking thread multiplier factor
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -2687,7 +2687,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL workload e  sf=1"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -2742,7 +2742,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL monitoring  sf=1"
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -2788,7 +2788,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB loader scaling  sf=1"
 # -xnbf 1                       benchmarking thread multiplier factor
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -2837,7 +2837,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB persistency  sf=1  nc=2"
 # -xnbf 1                       benchmarking thread multiplier factor
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -2884,7 +2884,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB scaling  sf=1  nc=2  ne=1
 # -xnbf 1                       benchmarking thread multiplier factor
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
@@ -2933,7 +2933,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB workload e  sf=1"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
-# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 96G)
+# --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim

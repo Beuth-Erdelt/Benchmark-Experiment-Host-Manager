@@ -1,6 +1,6 @@
 # Plan: failed loads are detected, MySQL/MariaDB sizing fits the container
 
-Status: plan only (2026-10-21). Nothing implemented.
+Status: plan (2026-10-21). P1 implemented as option A3 (2026-10-22, uncommitted); rest open.
 
 Origin: #709 follow-up. The `-xld relaxed` vs `-xld unsafe` comparison (TPC-H MySQL SF 10, nvme,
 `-nlp 16`, SUT cl-worker36) failed twice by OOM kill, and bexhoma did not notice. The rerun with a
@@ -24,9 +24,13 @@ kill; 10G pool runs working set 13.4 / 12.5 GiB (page cache up to 6.6 GiB, mostl
 
 - `k8s/deploymenttemplate-MySQL.yml:68` and `deploymenttemplate-MariaDB.yml:59`:
   `--innodb-buffer-pool-size=96G`, written for the templates' own limit of 128Gi (lines 130 / 95).
-- bexhoma overwrites the limit with `-rr/-lr` (default 16Gi), but not the buffer pool. Every run
+- bexhoma overwrites the request with `-rr` (default 16Gi) and the limit with `-lr` (default 0 =
+  bexhoma removes the limit, `lifecycle.py:1457`). The namespace then sets the limit equal to the
+  request, so the effective limit is `-lr`, else `-rr`. The buffer pool is not touched. Every run
   without `--set ...innodb_buffer_pool_size` therefore has a pool 6x the limit. It survived so far
-  because the data did not fill it (SF 1) or only just (SF 10 before `daed9c02`).
+  because the data did not fill it (SF 1, small OLTP) or only just (SF 10 before `daed9c02`).
+- Affects every benchmark on these templates: TPC-H, TPC-DS, HammerDB TPC-C, YCSB, Benchbase. The
+  test scripts work around it with ~90 `--set ...innodb_buffer_pool_size=32G` lines.
 - `deploymenttemplate-MySQL.yml:174-177`: `/mysqltmp` (`--tmpdir`) is an `emptyDir` with
   `medium: Memory`, `sizeLimit: 32Gi`. Files there count against the container limit. Index builds
   (`initindexes`) write sort files there. Not the cause this time (cache 0.03 GiB in 1792538799), but
@@ -73,20 +77,37 @@ kill; 10G pool runs working set 13.4 / 12.5 GiB (page cache up to 6.6 GiB, mostl
 
 ## 2. Proposed work packages
 
-### P1. Buffer pool follows the memory limit (A)
-- In bexhoma, where `-rr/-lr` are written into the SUT container (lifecycle, see WP7/M10 of
-  `plan-oltp-storage-dbms.md`): for MySQL and MariaDB, if no `--set ...innodb_buffer_pool_size` is
-  given, set it to a share of the memory limit (proposal 60 %, rounded down to whole GiB; >= 1G).
-- The share is a config value per DBMS in `k8s-cluster.config` (e.g. `'buffer_pool_share': 0.6`),
-  so other DBMS can follow (PostgreSQL `shared_buffers`, later).
-- Template comment changes from "ca 75% of 128Gi" to "replaced by bexhoma from the limit".
-- `--set` keeps priority; the effective value is printed and reported in the connection info.
-- Tests: manifest patch with/without `--set`, limit 16Gi -> 9G, 128Gi -> 76G, MariaDB same.
+### P1. Buffer pool fits the container (A)
+
+Options (2026-10-22):
+
+| | Idea | For | Against |
+|---|---|---|---|
+| A1 | bexhoma sets the pool to a share of the effective limit (`-lr`, else `-rr`), e.g. 60 %, unless `--set` gives one | always fits, follows `-rr` sweeps | bexhoma decides a DBMS setting; must be reported |
+| A2 | template placeholder `--innodb-buffer-pool-size={buffer_pool}`, filled by A1's rule | visible in the template that it is computed | more template machinery |
+| A3 | small static default in the template (8G); larger pools only via `--set` | simple, no hidden logic | wastes memory with large `-rr`; scripts keep their `--set` |
+| A4 | start check: pool (template or `--set`) > ~80 % of the effective limit -> warning or stop | cheap guard, works for every DBMS setting | fixes nothing alone |
+| A5 | MySQL sizes itself: `--container-aware=ON` + `--innodb-dedicated-server=ON` | native | MySQL only; behaviour on 9.7.2 to check |
+
+**Decision (user, 2026-10-22): A3.** Implemented 2026-10-22:
+- MySQL: `--innodb-buffer-pool-size=8G`, `--innodb-buffer-pool-instances=8`, no
+  `--innodb-buffer-pool-chunk-size` (default 128M). With 2G chunks x 16 instances MySQL rounds a
+  pool up to a multiple of 32G (unless the pool is smaller than that, then it shrinks the chunk);
+  with 128M x 8 a `--set` value is rounded to at most the next 1G.
+- MariaDB: `--innodb-buffer-pool-size=8G` (no instances/chunk setting in 12.x).
+- 8G = half of the default `-rr 16Gi`: the 10G runs peaked at 13.4 GiB working set (page cache,
+  16 loader connections), so 8G leaves room. Runs with more memory set the pool with `--set`.
+- Comments in the test scripts ("template: 96G") and docs/DBMS.md updated; recorded outputs
+  (docs/TestCases.md, docs/Example-*.md) unchanged.
+- Results of runs without `--set` change compared with earlier ones (pool 96G -> 8G); for SF 1 and
+  small OLTP the old pool never filled, so the difference is the smaller cache only.
+- A4 remains useful as a guard later (also for PostgreSQL `shared_buffers`).
 
 ### P2. tmpdir inside the budget (A)
-- Option a: `/mysqltmp` as plain `emptyDir` (disk). Safe for any SF; sort files go to node disk.
-- Option b: keep `medium: Memory`, size it with P1 (pool share + tmpfs share <= ~80 % of limit).
-- Proposal: a (simpler, no hidden memory use); MariaDB template checked for the same pattern.
+- Option a (T1): `/mysqltmp` as plain `emptyDir` (disk). Safe for any SF; sort files go to node disk.
+- Option b (T2): keep `medium: Memory`, size it inside the budget (pool + tmpfs <= ~80 % of limit).
+- Proposal: a (simpler, no hidden memory use). The MariaDB template has no RAM-backed tmpdir.
+- Not part of A3; open.
 
 ### P3. Loaders fail loudly (B1)
 - `loader.sh` (TPC-H/TPC-DS, MySQL/MariaDB): unknown error -> retry a few times, then `exit 1`
@@ -131,7 +152,7 @@ kill; 10G pool runs working set 13.4 / 12.5 GiB (page cache up to 6.6 GiB, mostl
 
 ## 4. Open decisions (user)
 
-1. P1 share of the memory limit: 60 %? Configurable per DBMS?
+1. P1: decided A3 (static 8G) on 2026-10-22; A1/A2/A4/A5 kept as later options.
 2. P2: tmpdir on disk (a) or sized tmpfs (b)?
 3. P4: on a failed load, delete the PVC always, or only with `-xld unsafe` / `-rsr`?
 4. P5: implement `-nlt` for MySQL/MariaDB or drop it?
