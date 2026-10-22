@@ -1,6 +1,7 @@
 # Plan: failed loads are detected, MySQL/MariaDB sizing fits the container
 
-Status: plan (2026-10-21). P1 implemented as option A3 (2026-10-22, uncommitted); rest open.
+Status: **parked 2026-10-22.** P1 implemented as option A3 and committed (`8a530999`); cluster
+check done 2026-10-22 (section 3, "Pending test runs": passed). P2-P6 open.
 
 Origin: #709 follow-up. The `-xld relaxed` vs `-xld unsafe` comparison (TPC-H MySQL SF 10, nvme,
 `-nlp 16`, SUT cl-worker36) failed twice by OOM kill, and bexhoma did not notice. The rerun with a
@@ -149,6 +150,45 @@ Options (2026-10-22):
     during postload; expect `loading_failed`, no `data=True`, `TEST failed`, `-ks no` honoured,
     results uploaded. Same with `-xld unsafe` (PVC removed).
 - Re-run the relaxed/unsafe comparison without `--set` once P1 is in.
+
+### Pending test runs (P1/A3, parked 2026-10-22, to be run by the user)
+
+TPC-H SF 10, load only, nvme, no `--set` (template 8G), one after the other:
+
+```powershell
+foreach ($dbms in @('MySQL','MariaDB')) {
+  bexhoma tpch -dbms $dbms -sf 10 -nc 1 -nlp 16 -xii -xic -xis -rst nvme -rss 100Gi -rsr -ks no -ms 10 `
+    -rnn <SUT node> -rnl <loader node> -rnb <loader node> `
+    load 2>&1 | Out-File "logs_tests\testcase_tpch_$($dbms.ToLower())_bp8g_default.log" -Encoding utf8
+}
+```
+
+Check per run: config dump `innodb_buffer_pool_size` = 8589934592; no SUT restart; peak working set
+< 16Gi (Prometheus `container_memory_working_set_bytes`, `dbms`); lineitem 59,986,052, 8 PK / 9 FK;
+no `ERROR` in the `*.stderr.log` of the postload scripts.
+
+First attempt 1792662245 (MySQL, SUT cl-worker37, loaders cl-worker39) was stopped after 83 min and
+cleaned up: 15 of 16 loader pods waited for the 16th, which stayed `Pending` with "Too many pods" -
+cl-worker39 was at its pod limit. Pick a loader node with free pod slots (cl-worker38 took 16
+loaders before), or lower `-nlp`. This hang is the loader barrier (all pods of a job must run) - no
+timeout fails it; candidate for P4.
+- The volume `bexhoma-storage-mysql-nvme-tpch-10` holds a partial load from 1792662245; `-rsr`
+  removes it.
+
+**Result (2026-10-22, SUT cl-worker36, loaders cl-worker38): passed.**
+
+| | MySQL 1792675567 | MariaDB 1792677130 |
+|---|---|---|
+| Buffer pool (config dump) | 8589934592 (8G) | 8589934592 (8G) |
+| SUT restarts | 0 | 0 |
+| Peak RSS / cache / working set | 9.2 / 7.3 / 10.5 GiB | 8.6 / 1.0 / 8.6 GiB |
+| lineitem, orders | 59,986,052 / 15,000,000 | 59,986,052 / 15,000,000 |
+| Keys | 8 PK / 9 FK | 8 PK / 9 FK |
+| Errors (postload stderr, loader logs) | none | none |
+| Load (ingest / postload) | 970 s (134 / 762) | 1359 s (169 / 1114) |
+
+MySQL with 8G vs. the 10G run 1792540834 (same nodes, `-xld relaxed`): 970 s vs. 928 s; postload
+762 vs. 687 s. Postload dominates at a pool smaller than lineitem (8.7 GB data + 3.5 GB index).
 
 ## 4. Open decisions (user)
 
