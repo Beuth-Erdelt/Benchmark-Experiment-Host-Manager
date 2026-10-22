@@ -378,5 +378,5 @@ def make_base_parser():
     p.add_argument('-mtv', '--multi-tenant-volume', help='allocate a separate persistent volume per tenant', action='store_true', default=False)
     p.add_argument('-tr',  '--test-result', help='validate that results meet basic correctness requirements', action='store_true', default=False)
     p.add_argument('-rp',  '--report', help='also write a tiered Markdown summary report (report/index.md + detail files) to the result folder', action='store_true', default=False, dest='write_report')
-    p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[sut].container[dbms].max_worker_processes=128 (PostgreSQL -c key=value, MySQL/MariaDB --key=value, chosen by the template) or an environment variable via ...container[dbms].env.NAME=VALUE")
+    p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=128; the name in deployment[...] is metadata.name of the Deployment in the DBMS template (PostgreSQL -c key=value, MySQL/MariaDB --key=value, chosen by the template) or an environment variable via ...container[dbms].env.NAME=VALUE")
     return p

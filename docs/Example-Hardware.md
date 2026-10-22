@@ -3381,8 +3381,9 @@ options:
                         requirements
   -rp, --report         also write a tiered Markdown summary report
                         (report/index.md + detail files) to the result folder
-  --set SETS            override a deployment parameter, e.g. deployment[sut].
-                        container[dbms].max_worker_processes=128
+  --set SETS            override a deployment parameter, e.g.
+                        deployment[bexhoma-deployment-postgres].container[dbms].
+                        max_worker_processes=128
   -dbms, --dbms [{Hardware} ...]
                         hardware target(s) to test
   -xht, --xhardware-type {fio,sysbench,sockperf,netperf}

@@ -433,8 +433,9 @@ options:
                         requirements
   -rp, --report         also write a tiered Markdown summary report
                         (report/index.md + detail files) to the result folder
-  --set SETS            override a deployment parameter, e.g. deployment[sut].
-                        container[dbms].max_worker_processes=128
+  --set SETS            override a deployment parameter, e.g.
+                        deployment[bexhoma-deployment-postgres].container[dbms].
+                        max_worker_processes=128
   -dbms, --dbms [{PostgreSQL,MySQL,MariaDB,YugabyteDB,CockroachDB,TiDB,DatabaseService,Citus,PGBouncer,CedarDB} ...]
                         one or more DBMS engines to test
   -xnsr, --xnum-sut-replicas NUM_SUT_REPLICAS
