@@ -1,0 +1,18 @@
+-- Benchmark-Experiment-Host-Manager | experiments/ycsb/PostgreSQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2026 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Undo load durability 'durable' after the load (post-load phase, right
+--          before the check script): back to the configured values (template
+--          and --set arguments), which may be less durable than the load was.
+--          No curly braces in this file: bexhoma may fill it with str.format().
+
+ALTER SYSTEM RESET synchronous_commit;
+ALTER SYSTEM RESET fsync;
+ALTER SYSTEM RESET full_page_writes;
+SELECT pg_reload_conf();
+SELECT pg_sleep(1);
+SHOW synchronous_commit;
+SHOW fsync;
+SHOW full_page_writes;

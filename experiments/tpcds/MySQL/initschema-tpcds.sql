@@ -5,6 +5,9 @@
 -- See LICENSE for details.
 -- Purpose: Initialize MySQL user access, session settings, and create all 25
 --          TPC-DS tables. Run once as root before initdata-tpcds-SF*.sql.
+--          Import settings (load durability, -xld) are in durability-relaxed.sql;
+--          the TPC-DS
+--          loader sends no COMMIT after LOAD DATA, so autocommit stays on.
 
 DROP USER 'root'@'%';
 FLUSH PRIVILEGES;

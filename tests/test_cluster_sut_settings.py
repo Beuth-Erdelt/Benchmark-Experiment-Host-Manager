@@ -173,21 +173,28 @@ class CheckScriptsAlwaysRunTest(unittest.TestCase):
                 text.format()
 
     def test_relaxed_settings_are_restored(self):
-        """Every MySQL script that relaxes a setting for the load saves it, and its check script restores it."""
-        pairs = [('tpch', 'initschema-tpch.sql', 'checkschema-tpch.sql'),
-                 ('tpcc', 'initschema-tpcc.sql', 'checkschema-tpcc.sql'),
-                 ('ycsb', 'initschema-ycsb.sql', 'checkschema-ycsb.sql')]
-        for benchmark, init, check in pairs:
+        """Every MySQL durability-relaxed.sql (-xld, WP10) saves what it relaxes, and its restore restores it.
+
+        The init scripts relax nothing themselves any more.
+        """
+        for benchmark in ('tpch', 'tpcds', 'tpcc', 'ycsb', 'benchbase/tpcc'):
             folder = os.path.join(_REPO, 'experiments', benchmark, 'MySQL')
-            with open(os.path.join(folder, init), encoding='utf-8') as f:
-                init_text = f.read()
-            with open(os.path.join(folder, check), encoding='utf-8') as f:
-                check_text = f.read()
-            relaxed = set(re.findall(r'^SET GLOBAL (\w+) =', init_text, re.M)) - {'local_infile', 'sql_mode'}
-            self.assertTrue(relaxed, init)
+            path = os.path.join(folder, 'durability-relaxed.sql')
+            with open(os.path.join(folder, 'restoredurability-relaxed.sql'), encoding='utf-8') as f:
+                restore_text = f.read()
+            with open(path, encoding='utf-8') as f:
+                relax_text = f.read()
+            relaxed = set(re.findall(r'^SET GLOBAL (\w+) =', relax_text, re.M))
+            self.assertTrue(relaxed, path)
             for setting in relaxed:
-                self.assertIn(f"('{setting}', @@GLOBAL.{setting})", init_text, f'{init}: {setting} not saved')
-                self.assertIn(f'SET GLOBAL {setting} = @v;', check_text, f'{check}: {setting} not restored')
+                self.assertIn(f"('{setting}', @@GLOBAL.{setting})", relax_text, f'{path}: {setting} not saved')
+                self.assertIn(f'SET GLOBAL {setting} = @v;', restore_text, f'{setting} not restored')
+        for benchmark in ('tpch', 'tpcc', 'ycsb', 'tpcds'):
+            init = os.path.join(_REPO, 'experiments', benchmark, 'MySQL', f'initschema-{benchmark}.sql')
+            with open(init, encoding='utf-8') as f:
+                init_text = f.read()
+            self.assertEqual(set(re.findall(r'^SET GLOBAL (\w+) ?=', init_text, re.M)) - {'local_infile', 'sql_mode'},
+                             set(), init)
             # memory sizes come from the template or --set, not from the init scripts
             self.assertNotRegex(init_text, r'(?m)^SET GLOBAL (innodb_buffer_pool_size|tmp_table_size|max_heap_table_size)\b')
 

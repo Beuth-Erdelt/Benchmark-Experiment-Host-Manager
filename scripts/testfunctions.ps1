@@ -20,8 +20,8 @@
 # ---------------------------------------------------------------------------
 
 $BEXHOMA_NODE_SUT         = "cl-worker36"
-$BEXHOMA_NODE_LOAD        = "cl-worker19"
-$BEXHOMA_NODE_BENCHMARK   = "cl-worker19"
+$BEXHOMA_NODE_LOAD        = "cl-worker38"
+$BEXHOMA_NODE_BENCHMARK   = "cl-worker38"
 # worker pods of distributed DBMS (CockroachDB, Citus, TiDB, YugabyteDB), joined by '+'
 # as bexhoma -rnw expects; without -rst their data sits on the nodes' local disks, so
 # the nodes decide the results. _4 for 4 workers (one per node).

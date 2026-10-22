@@ -154,6 +154,15 @@ CLUSTER_INTERRUPTED_MESSAGES = (
     'unexpected EOF',
 )
 
+#: Attempts at starting a local process (kubectl) before giving up. On the
+#: Windows host CreateProcess now and then fails with "[WinError 5] Access is
+#: denied" (seen 2026-10-22 in three runs of test-docs-reset, during the
+#: result transfer). The process never started, so any command can be repeated.
+PROCESS_START_ATTEMPTS = 5
+
+#: Pause between two attempts at starting a local process.
+PROCESS_START_RETRY_SECONDS = 5
+
 #: Attempts at filling a chunk-assignment queue before giving up. Each attempt
 #: clears and refills the queue, so a retry is always safe; it covers a push
 #: whose reply was lost, which leaves the queue one entry short or long.
@@ -209,6 +218,29 @@ def wait_for_cluster(deadline: float) -> bool:
           f"(giving up in {int(remaining)}s) ...")
     time.sleep(CLUSTER_OUTAGE_RETRY_SECONDS)
     return True
+
+
+def start_process(start, *args, **kwargs):
+    """
+    Call ``subprocess.Popen`` or ``subprocess.run``, retrying when the host refuses to start the process.
+
+    Only a :class:`PermissionError` raised while starting is retried (see
+    :data:`PROCESS_START_ATTEMPTS`); the command itself never ran then.
+
+    :param start: ``subprocess.Popen`` or ``subprocess.run``.
+    :param args: Positional arguments for ``start``.
+    :param kwargs: Keyword arguments for ``start``.
+    :return: What ``start`` returns.
+    """
+    for attempt in range(1, PROCESS_START_ATTEMPTS + 1):
+        try:
+            return start(*args, **kwargs)
+        except PermissionError as e:
+            if attempt == PROCESS_START_ATTEMPTS:
+                raise
+            print(f"Starting a local process failed ({e}), retrying in "
+                  f"{PROCESS_START_RETRY_SECONDS}s (attempt {attempt}/{PROCESS_START_ATTEMPTS}) ...")
+            time.sleep(PROCESS_START_RETRY_SECONDS)
 
 
 def to_unc(path: str) -> str:
@@ -1696,7 +1728,8 @@ class Kubernetes():
                 # container name; see CLUSTER_CLIENT_WARNING_PREFIXES.
                 started = time.monotonic()
                 try:
-                    result = subprocess.run(
+                    result = start_process(
+                        subprocess.run,
                         fullcommand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                         timeout=CLUSTER_KUBECTL_TIMEOUT_SECONDS, check=True)
                 finally:
@@ -1787,7 +1820,8 @@ class Kubernetes():
         deadline = time.monotonic() + CLUSTER_OUTAGE_BUDGET_SECONDS
         while True:
             started = time.monotonic()
-            proc = subprocess.Popen(
+            proc = start_process(
+                subprocess.Popen,
                 fullcommand, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE, shell=True
             )

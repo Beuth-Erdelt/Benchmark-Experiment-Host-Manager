@@ -35,7 +35,7 @@ FLAG_ORDER = [
     # J: Post-load init (logical order)
     '-xii', '-xic', '-xis', '-xcol',
     # K: Query/load modifiers
-    '-xlit', '-xnls', '-xrcp', '-xshq',
+    '-xld', '-xlit', '-xnls', '-xrcp', '-xshq',
     # L: Extra features
     '-xbatch', '-xconn', '-xdt', '-xio', '-xkey', '-xlat', '-xli', '-xmet', '-xop', '-xsbs',
     # M: Monitoring

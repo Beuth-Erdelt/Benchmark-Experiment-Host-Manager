@@ -40,6 +40,11 @@
 -- Contributors:
 -- Gradient Systems
 
+-- foreign_key_checks is off for this session only: InnoDB then adds a foreign
+-- key in place as a metadata change. With checks on it needs ALGORITHM=COPY,
+-- i.e. a row-by-row copy of each table.
+SET SESSION foreign_key_checks = 0;
+
 ALTER TABLE tpcds.household_demographics
     ADD CONSTRAINT hd_ib FOREIGN KEY (hd_income_band_sk) REFERENCES tpcds.income_band (ib_income_band_sk);
 

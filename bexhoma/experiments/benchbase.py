@@ -34,6 +34,9 @@ class BenchbaseExperiment(MixedExperiment):
 
     #: Every DBMS may be swept across CPU, RAM and storage class.
     supports_storage_sweep = True
+    #: -nlp counts pods per tenant and the generator maps loader pod k to tenant k-1,
+    #: so schema/database tenancy needs -nlp 1.
+    tenant_loading_one_pod_per_tenant = True
 
     def __init__(self,
                  cluster,

@@ -212,15 +212,16 @@ for i in *tbl*; do
         echo "skipping $basename, import is limited to other table ($TPCH_TABLE)"
         continue
     fi
+    # only the first pod (of each tenant: schema/database remap BEXHOMA_CHILD per tenant) loads the reference tables
     if [[ $basename == "nation" ]]
     then
-        if [ "$BEXHOMA_CHILD" -gt 1 ] && [ -z "$BEXHOMA_TENANT_BY" ]; then
+        if [ "$BEXHOMA_CHILD" -gt 1 ]; then
             continue
         fi
     fi
     if [[ $basename == "region" ]]
     then
-        if [ "$BEXHOMA_CHILD" -gt 1 ] && [ -z "$BEXHOMA_TENANT_BY" ]; then
+        if [ "$BEXHOMA_CHILD" -gt 1 ]; then
             continue
         fi
     fi

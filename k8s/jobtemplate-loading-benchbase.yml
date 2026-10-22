@@ -38,6 +38,9 @@ spec:
         - {name: RNGSEED, value: '123'}
         - {name: YCSB_THREADCOUNT, value: '1'}
         resources:
+          # measured peaks are far below; without a request the cluster default reserves 16Gi
+          requests: {memory: 1Gi}
+          limits: {memory: 16Gi}
           #limits: {cpu: 1000m, memory: 16Gi}
           #requests: {cpu: 1000m, memory: 16Gi}
         securityContext:

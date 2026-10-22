@@ -62,8 +62,10 @@ if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
     echo "BEXHOMA_TENANT_BY is schema"
     #BEXHOMA_NUM_PODS=1
 	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
-	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
-    BEXHOMA_SCHEMA="tenant_$((BEXHOMA_CHILD - 1))"
+	# same mapping as the loader: tenant = (child-1) % tenants, part within tenant = (child-1) / tenants + 1
+	SCHEMA_INDEX=$(( ( BEXHOMA_CHILD - 1 ) % BEXHOMA_TENANT_NUM ))
+	BEXHOMA_CHILD=$(( ( BEXHOMA_CHILD - 1 ) / BEXHOMA_TENANT_NUM + 1 ))
+    BEXHOMA_SCHEMA="tenant_${SCHEMA_INDEX}"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 	echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"
@@ -72,8 +74,10 @@ elif [ "$BEXHOMA_TENANT_BY" = "database" ]; then
     echo "BEXHOMA_TENANT_BY is database"
     #BEXHOMA_NUM_PODS=1
 	BEXHOMA_NUM_PODS=$(( BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM ))
-	BEXHOMA_CHILD=$(( BEXHOMA_CHILD % BEXHOMA_TENANT_NUM + 1 ))
-    BEXHOMA_DATABASE="tenant_$((BEXHOMA_CHILD - 1))"
+	# same mapping as the loader: tenant = (child-1) % tenants, part within tenant = (child-1) / tenants + 1
+	DB_INDEX=$(( ( BEXHOMA_CHILD - 1 ) % BEXHOMA_TENANT_NUM ))
+	BEXHOMA_CHILD=$(( ( BEXHOMA_CHILD - 1 ) / BEXHOMA_TENANT_NUM + 1 ))
+    BEXHOMA_DATABASE="tenant_${DB_INDEX}"
     echo "BEXHOMA_DATABASE:$BEXHOMA_DATABASE"
     echo "BEXHOMA_SCHEMA:$BEXHOMA_SCHEMA"
 	echo "BEXHOMA_CHILD:$BEXHOMA_CHILD"

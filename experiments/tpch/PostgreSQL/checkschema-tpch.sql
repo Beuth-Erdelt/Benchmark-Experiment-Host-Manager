@@ -4,15 +4,12 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Last post-load script, always run (also without -xii/-xic/-xis).
---          Restores the durability relaxed for the load (initschema-tpch.sql),
---          writes a checkpoint, and reports row counts, sizes, the WAL written
---          so far and the non-default configuration.
+--          Writes a checkpoint and reports row counts, sizes, the WAL written
+--          so far and the non-default configuration. Load settings (-xld) are
+--          restored before, by restoredurability-*.sql.
 --          No VACUUM/ANALYZE here: statistics are -xis (initstatistics-tpch.sql).
 --          No curly braces in this file: bexhoma may fill it with str.format().
 
--- Restore what initschema-tpch.sql relaxed for the load
-ALTER SYSTEM RESET synchronous_commit;
-SELECT pg_reload_conf();
 SHOW synchronous_commit;
 
 -- Persist the loaded data now, not during the first queries

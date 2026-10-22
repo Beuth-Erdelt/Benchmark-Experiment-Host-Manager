@@ -48,6 +48,7 @@ class BenchmarkRunner:
         benchmark_run: str = '',
         template_override: str = '',
         reset_seconds: float = 0.0,
+        reset_failed: Optional[list] = None,
         fetch_batch: Optional[MetricFetchBatch] = None,
     ) -> None:
         """Start a benchmarker job pod and upload configs; the job is not waited for.
@@ -72,6 +73,9 @@ class BenchmarkRunner:
         :param template_override: When non-empty, overrides the default YAML job template.
         :param reset_seconds: Seconds spent running this connection's reset script
             (0 if none ran), recorded on the connection as ``time_reset``.
+        :param reset_failed: Reset scripts of this connection that failed, ``[]``
+            if all ran fine, ``None`` if no reset ran; recorded on the connection
+            as ``reset_failed`` (comma-separated, ``''`` = OK).
         :param fetch_batch: Queue the loading-metric fetches here instead of
             fetching right away, so the fetches of all configurations of one loop
             pass run in parallel.
@@ -133,6 +137,7 @@ class BenchmarkRunner:
             connection, alias, dialect,
             serverip=service_host, monitoring_host=monitoring_host, job_pods=job_pods)
         c['time_reset'] = reset_seconds
+        c['reset_failed'] = None if reset_failed is None else ', '.join(reset_failed)
         if len(cfg.loading_parameters) > 0:
             cfg.connection_parameter['loading_parameters'] = cfg.loading_parameters.copy()
         if len(cfg.benchmarking_parameters) > 0:

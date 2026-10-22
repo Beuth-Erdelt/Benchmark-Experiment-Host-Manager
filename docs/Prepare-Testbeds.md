@@ -51,6 +51,36 @@ Use `load -ks no` to measure loading only, e.g. bulk-write throughput per storag
 A kept SUT never blocks the experiment: when a cap (`-ms`, `-mse`, or a per-DBMS limit) leaves no room for a configuration that still has to start, the finished SUT is stopped instead, and the summary's "Services" section says so. With `-ms 1` and several configurations, only the last one to finish stays running.
 Experiments run by the agent harness always stop their SUTs (except in `start`).
 
+### Durability during the load
+
+`-xld/--load-durability {durable,relaxed,unsafe}` sets how much durability the DBMS gives up while data is loaded:
+
+| Level | During the load | Example |
+|---|---|---|
+| `durable` | crash-safe, whatever the server was started with | PostgreSQL `synchronous_commit`, `fsync`, `full_page_writes` on; MySQL/MariaDB `innodb_flush_log_at_trx_commit=1` (MariaDB also doublewrite on; MySQL cannot switch it on at runtime) |
+| `relaxed` (default) | commits do not wait for the log flush; key checks are skipped | PostgreSQL `synchronous_commit=off`; MySQL `innodb_flush_log_at_trx_commit`, `foreign_key_checks=0` |
+| `unsafe` | the strongest lever of the DBMS; a crash during the load can corrupt the data | MySQL redo log off and doublewrite `DETECT_ONLY` (MySQL cannot switch it off at runtime); MariaDB doublewrite off; PostgreSQL `fsync=off`, `full_page_writes=off` |
+
+`-xld` affects the load only, like `-xii`/`-xic`/`-xis`. Before the check script, the server returns to its configured state (template and `--set`), so the benchmark always runs as configured, whatever the level. `unsafe` ends with a checkpoint (PostgreSQL also flushes the OS cache).
+`relaxed` is the default; for TPC-H, TPC-DS and the MySQL loads of TPC-C and YCSB it is what the load always did.
+
+**Durability of the benchmark.** The SUT templates set no durability options, so every DBMS runs with its own defaults, which are crash-safe (MySQL/MariaDB flush the redo log at every commit and use doublewrite, PostgreSQL waits for the WAL flush at commit).
+A less durable benchmark is set per run with `--set`, so it is visible in the command and the results, e.g. `--set deployment[bexhoma-deployment-mysql].container[dbms].innodb_flush_log_at_trx_commit=2` or `--set ...container[dbms].innodb_doublewrite=OFF`.
+For PostgreSQL, `--set` passes the value as `-c` on the command line, and a command-line value cannot be changed by `ALTER SYSTEM`: `-xld` then has no effect on that parameter during the load.
+
+**Where the scripts run.** Like index or constraint scripts, the durability scripts are part of the init script lists in the cluster config (`volumes.<benchmark>.initscripts`): every pre-load list starts with the placeholder `durability.sql`, every post-load list has `restoredurability.sql` right before `checkschema-*`.
+bexhoma replaces the placeholders according to `-xld` by the scripts the DBMS folder has (e.g. `experiments/tpch/MySQL/`):
+
+| `-xld` | `durability.sql` becomes | `restoredurability.sql` becomes |
+|---|---|---|
+| `durable` | `durability-durable.*` | `restoredurability-durable.*` |
+| `relaxed` | `durability-relaxed.*` | `restoredurability-relaxed.*` |
+| `unsafe` | `durability-relaxed.*`, `durability-unsafe.*` | `restoredurability-unsafe.*`, `restoredurability-relaxed.*` |
+
+`.*` is `.sql`, then `.sh` (MariaDB uses shell scripts, as `SET GLOBAL` needs root). A script the DBMS folder does not have is not run; a list without a placeholder gets no durability scripts.
+They exist for PostgreSQL (also used by PgDuckDB and PGBouncer), MySQL and MariaDB (all levels) and Citus (`durable`, `relaxed`), in every benchmark; other DBMS load as configured.
+The copies in different benchmarks are identical; `tests/test_load_durability.py` fails on any difference that is not declared there (TPC-H, TPC-C and YCSB on MySQL keep their own `relaxed` settings).
+
 ---
 
 ## Environment Variables

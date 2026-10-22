@@ -4,8 +4,8 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Last post-load script, always run (also without -xii/-xic/-xis).
---          Reports row counts, sizes, the redo log written so far and the
---          non-default configuration. initschema-tpch.sql relaxes no
+--          Reports row counts, primary and foreign keys, sizes, the redo log
+--          written so far and the non-default configuration. initschema-tpch.sql relaxes no
 --          durability setting, so nothing is restored here.
 --          No curly braces in this file: bexhoma may fill it with str.format().
 
@@ -18,6 +18,14 @@ UNION ALL SELECT 'part',     COUNT(*) FROM tpch.part
 UNION ALL SELECT 'partsupp', COUNT(*) FROM tpch.partsupp
 UNION ALL SELECT 'region',   COUNT(*) FROM tpch.region
 UNION ALL SELECT 'supplier', COUNT(*) FROM tpch.supplier;
+
+-- Primary and foreign keys per table (with -xic: 8 primary keys, 9 foreign keys)
+SELECT TABLE_NAME, CONSTRAINT_TYPE, COUNT(*) AS constraint_count
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'tpch'
+  AND CONSTRAINT_TYPE IN ('PRIMARY KEY', 'FOREIGN KEY')
+GROUP BY TABLE_NAME, CONSTRAINT_TYPE
+ORDER BY TABLE_NAME, CONSTRAINT_TYPE;
 
 -- Sizes (InnoDB estimates)
 SELECT table_name,

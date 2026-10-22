@@ -144,6 +144,15 @@ if [ "$BEXHOMA_TLS" = "true" ]; then
 fi
 echo "BEXHOMA_TLS:$BEXHOMA_TLS"
 
+######################## Transaction counter (#455) ########################
+# tcset only configures the counter; tcstart/tcstop around each VU test run it.
+# It logs "<n> <DBMS> tpm @ <date>" every refreshrate seconds to /tmp/hdbtcount*.log.
+# unique 1 gives every tcstart its own file, so VU tests do not overwrite each other.
+TCOUNT_CONFIG="tcset refreshrate 10
+tcset timestamps 1
+tcset unique 1
+tcset logtotemp 1"
+
 ######################## Generate workflow file (MySQL) ########################
 
 if [ "$HAMMERDB_TYPE" = "mysql" ]; then
@@ -180,15 +189,18 @@ diset tpcc mysql_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc mysql_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc mysql_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
+$TCOUNT_CONFIG
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
 puts \"\$z VU TEST\"
 vuset vu \$z
 vucreate
+tcstart
 vurun
 runtimer 600
 vudestroy
+tcstop
 after 5000
         }
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
@@ -229,15 +241,18 @@ diset tpcc maria_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc maria_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc maria_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
+$TCOUNT_CONFIG
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
 puts \"\$z VU TEST\"
 vuset vu \$z
 vucreate
+tcstart
 vurun
 runtimer 600
 vudestroy
+tcstop
 after 5000
         }
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
@@ -267,18 +282,17 @@ diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc pg_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
-tcset unique 0
-tcset refreshrate 10
-tcset timestamps 1
-tcset logtotemp 1
+$TCOUNT_CONFIG
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
     puts \"\$z VU TEST\"
     vuset vu \$z
     vucreate
+    tcstart
     vurun
     vudestroy
+    tcstop
     after 5000
 }
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
@@ -325,6 +339,7 @@ diset tpcc pg_timeprofile $HAMMERDB_TIMEPROFILE
 diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc pg_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
+$TCOUNT_CONFIG
 loadscript
 print vuconf
 puts \"SEQUENCE STARTED\"
@@ -332,9 +347,11 @@ foreach z { $HAMMERDB_VUSERS } {
 puts \"\$z VU TEST\"
 vuset vu \$z
 vucreate
+tcstart
 runtimer $HAMMERDB_DURATION
 vurun
 vudestroy
+tcstop
 after 5000
         }
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
@@ -365,6 +382,11 @@ echo "/results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.
 # cat /results/$BEXHOMA_EXPERIMENT/hammerdb.$BEXHOMA_CONNECTION.$BEXHOMA_CLIENT.$UUID.log
 echo "/tmp/hdbxtprofile.log"
 cat /tmp/hdbxtprofile.log
+# Transaction counter logs, one per VU test, oldest first
+for f in $(ls -tr /tmp/hdbtcount*.log 2>/dev/null); do
+    echo "$f"
+    cat "$f"
+done
 # Without a profile the report has no latency, and stdout only says
 # "Vuser 1:FINISHED FAILED". /results is not persisted for this job, so show
 # the error lines of HammerDB's own log here. Result lines are left out and

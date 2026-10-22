@@ -3,7 +3,9 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Create TPC-H tables in the tpch database on MariaDB.
+-- Purpose: Create TPC-H tables in the tpch database on MariaDB, then add
+--          primary key constraints (as for MySQL). Adding them to the empty
+--          tables is cheap; adding them after loading rebuilds each table.
 --          Database creation is left commented out; Bexhoma creates it
 --          externally before running this script.
 
@@ -93,3 +95,27 @@ CREATE TABLE tpch.lineitem (
     l_shipmode       CHAR(10)      NOT NULL,
     l_comment        VARCHAR(44)   NOT NULL
 );
+
+ALTER TABLE tpch.region
+    ADD PRIMARY KEY (r_regionkey);
+
+ALTER TABLE tpch.nation
+    ADD PRIMARY KEY (n_nationkey);
+
+ALTER TABLE tpch.part
+    ADD PRIMARY KEY (p_partkey);
+
+ALTER TABLE tpch.supplier
+    ADD PRIMARY KEY (s_suppkey);
+
+ALTER TABLE tpch.partsupp
+    ADD PRIMARY KEY (ps_partkey, ps_suppkey);
+
+ALTER TABLE tpch.customer
+    ADD PRIMARY KEY (c_custkey);
+
+ALTER TABLE tpch.orders
+    ADD PRIMARY KEY (o_orderkey);
+
+ALTER TABLE tpch.lineitem
+    ADD PRIMARY KEY (l_orderkey, l_linenumber);

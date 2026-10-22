@@ -104,3 +104,6 @@ LOAD DATA INFILE '/data/tpch/SF100/supplier.tbl' IGNORE INTO TABLE tpch.supplier
         s_phone     = NULLIF(@s_phone, ''),
         s_acctbal   = NULLIF(@s_acctbal, ''),
         s_comment   = NULLIF(@s_comment, '');
+
+-- durability-relaxed.sql (-xld relaxed) sets GLOBAL autocommit = 0, so this session must commit
+COMMIT;

@@ -395,12 +395,13 @@ Early exit when `"start time has already passed"` appears.
 `connection`, `configuration`, `experiment_run`, `client`, `benchmark_run`,
 `child`, `pod`, `pod_count`, `iterations`, `duration`, `rampup`, `sf`,
 `run` (0-based iteration index), `errors`, `vusers_loading`, `vusers`,
-`NOPM`, `TPM`, `dbms`, `efficiency` (only when `keyandthink == 'true'`:
+`NOPM`, `TPM`, `dbms`, `keyandthink`, `efficiency` (only when `keyandthink == 'true'`:
 `round(100 × NOPM / vusers / 1.286, 2)`).
 
 **Aggregation across parallel pods**: mean for `NOPM`, `TPM`; sum for `vusers`,
 `errors`; max for percentiles.  `efficiency` recomputed from aggregated values
-only when `vusers == sf × 10`.
+only when `keyandthink == 'true'` and `vusers == sf × 10` (results parsed before
+`keyandthink` was kept: `vusers == sf × 10` only).
 
 ---
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import time
@@ -13,13 +14,34 @@ from math import ceil
 from timeit import default_timer
 from typing import TYPE_CHECKING
 
-from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, wait_for_cluster
+from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, start_process, wait_for_cluster
 from ..cluster_calls import stored_pods
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
-__all__ = ['LoadingCoordinator', 'load_data_asynch']
+__all__ = ['LoadingCoordinator', 'load_data_asynch', 'script_failed']
+
+# kubectl exec reports a non-zero exit of the command on stderr; psql/ysqlsh go on
+# after a failed statement and exit 0, so their error lines count too
+# ("psql:/tmp/x.sql:14: ERROR:", mysql "ERROR 1146 ...", cockroach "ERROR: ...")
+_SCRIPT_ERROR_STDERR = re.compile(r'command terminated with exit code [1-9]|(^|:\s)(ERROR|FATAL|PANIC)\b', re.M)
+# redis-cli prints error replies on stdout and exits 0
+_SCRIPT_ERROR_STDOUT = re.compile(r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b', re.M)
+
+
+def script_failed(stdout: str, stderr: str) -> bool:
+    """Whether a script run in a pod failed, judged from its output.
+
+    No output at all means success; NOTICE/INFO lines (e.g. of ``VACUUM VERBOSE``)
+    and client warnings do not count.
+
+    :param stdout: Standard output of the script.
+    :param stderr: Standard error of the script (with kubectl's exit-code line).
+    :return: True if the script failed.
+    :rtype: bool
+    """
+    return bool(_SCRIPT_ERROR_STDERR.search(stderr or '') or _SCRIPT_ERROR_STDOUT.search(stdout or ''))
 
 
 def load_data_asynch(
@@ -64,7 +86,8 @@ def load_data_asynch(
             .format(context=context, pod=pod,
                     command=command.replace('"', '\\"').replace('\n', '\\n')))
         logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
-        proc = subprocess.Popen(
+        proc = start_process(
+            subprocess.Popen,
             fullcommand, stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = proc.communicate()
@@ -80,7 +103,8 @@ def load_data_asynch(
         logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
         deadline = time.monotonic() + CLUSTER_OUTAGE_BUDGET_SECONDS
         while True:
-            proc = subprocess.Popen(
+            proc = start_process(
+                subprocess.Popen,
                 fullcommand, stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             stdout, stderr = proc.communicate()
@@ -161,7 +185,7 @@ def load_data_asynch(
                                         namespace=namespace, database=db),
                     pod_sut, context)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}{database}{extension}.stdout.log'
+                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stdout.log'
                     .format(app=app, configuration=configuration,
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
@@ -169,7 +193,7 @@ def load_data_asynch(
                     with open(filename_log, 'w') as file:
                         file.write(stdout)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}{database}{extension}.stderr.log'
+                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stderr.log'
                     .format(app=app, configuration=configuration,
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
@@ -249,6 +273,8 @@ class LoadingCoordinator:
         :type config: SutConfiguration
         """
         self._config = config
+        self.last_reset_failed = []                                             # scripts that failed in the last reset (exec_reset_script)
+        self.workers_failed = []                                                # scripts that failed in the last run on the workers
 
     def start_pod(
         self,
@@ -310,6 +336,8 @@ class LoadingCoordinator:
         # chunk index a pod gets (see delete + length-check below).
         experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         cfg.logger.debug("LoadingCoordinator.start_pod({})".format(configuration))
+        if not self.wait_for_schema(app=app, experiment=experiment, configuration=configuration):
+            return
         loader_entries = cfg.experiment_dict['loader'] or [
             {'parallelism': parallelism, 'num_pods': num_pods}]
         num_data_jobs = len(loader_entries)
@@ -367,6 +395,53 @@ class LoadingCoordinator:
             cfg.logger.debug("Deploy " + job)
             cfg.experiment.cluster.create_object_from_file(job)
 
+    def wait_for_schema(self, app: str, experiment: str, configuration: str, interval: int = 2) -> bool:
+        """Wait until the Schema scripts have labeled the SUT pod ``schema=True``.
+
+        :meth:`start_exec` runs the Schema scripts in a background thread, and
+        :meth:`start_pod` is called right after it. The loaders may need what the
+        scripts create (e.g. the MySQL user ``root@'%'`` with its password), so
+        the jobs are created only when the label is set.
+
+        The wait is limited by ``--loading-timeout`` (no limit without it). On
+        timeout, ``loading_started_at`` is set to the start of the wait, so the
+        experiment loop's loading timeout aborts the configuration in its next
+        pass (with diagnostics); the wait blocks that loop meanwhile.
+
+        :param app: App label of the SUT pod.
+        :param experiment: Experiment code.
+        :param configuration: DBMS configuration name.
+        :param interval: Seconds between two checks of the label.
+        :return: False if the loading timeout ran out before the label was set.
+        :rtype: bool
+        """
+        cfg = self._config
+        timeout_minutes = getattr(cfg.experiment, 'max_loading_minutes', None)
+        wait_started_at = datetime.utcnow()
+        t_start = default_timer()
+        waiting = False
+        while True:
+            pod_labels = cfg.experiment.cluster.get_pods_labels(
+                app=app, component='sut', experiment=experiment, configuration=configuration)
+            if any(labels.get('schema') == 'True' for labels in pod_labels.values()):
+                break
+            if cfg.loading_finished:
+                # start_exec() could not upload the scripts: no label will come
+                break
+            if timeout_minutes is not None and default_timer() - t_start >= timeout_minutes * 60:
+                print("{:30s}: WARNING - no schema=True after the {} minute loading timeout, "
+                      "loading jobs not started".format(configuration, timeout_minutes))
+                cfg.loading_started_at = wait_started_at
+                return False
+            if not waiting:
+                print("{:30s}: waits for the Schema scripts (schema=True) before starting the loading jobs".format(
+                    configuration))
+                waiting = True
+            time.sleep(interval)
+        if waiting:
+            print("{:30s}: Schema scripts done after {}s".format(configuration, int(default_timer() - t_start)))
+        return True
+
     def start_exec(self, delay: int = 0) -> bool:
         """Start data ingestion by running init scripts directly inside the SUT pod.
 
@@ -388,6 +463,7 @@ class LoadingCoordinator:
             cfg.logger.debug("check if {} is running".format(pod_sut))
             self.check()
             if not cfg.loading_started:
+                cfg.apply_load_durability()
                 try:
                     self.load_data(scripts=cfg.initscript)
                 except RuntimeError as exc:
@@ -928,9 +1004,12 @@ class LoadingCoordinator:
         :param script_type: Label of the phase, used in the log file names
             (e.g. ``'reset_1_1_1'`` or ``'index'``).
         :return: Seconds until the slowest pod finished (0 if nothing ran).
+            The scripts that failed (see :func:`script_failed`) are in
+            :attr:`workers_failed` as ``'<script> (<pod>)'``.
         :rtype: int
         """
         cfg = self._config
+        self.workers_failed = []
         sources = []
         for script in scripts:
             source = (cfg.experiment.cluster.experiments_configfolder
@@ -956,6 +1035,8 @@ class LoadingCoordinator:
                     "sed -i 's/\\r$//' {}".format(target), pod=pod, container='dbms')
                 _, stdout, stderr = cfg.experiment.cluster.execute_command_in_pod(
                     'sh {}'.format(target), pod=pod, container='dbms', retry_interrupted=False)
+                if script_failed(stdout, stderr):
+                    self.workers_failed.append('{} ({})'.format(script, pod))
                 filename, file_extension = os.path.splitext(script)
                 for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
                     if content:
@@ -979,6 +1060,19 @@ class LoadingCoordinator:
             cfg.configuration, [s for s, _ in sources], len(pods), elapsed))
         return elapsed
 
+    def _report_reset(self, script_type: str, elapsed: int) -> None:
+        """Print the duration of a reset and the scripts that failed in it.
+
+        :param script_type: Label of the reset (e.g. ``'reset_1_1_1'``), part of the log file names.
+        :param elapsed: Seconds the reset took.
+        """
+        cfg = self._config
+        failed = getattr(self, 'last_reset_failed', [])
+        print("{:30s}: reset ({}) completed in {}s{}".format(
+            cfg.configuration, script_type, elapsed,
+            " - FAILED: {} (see {}-{}-*.stderr.log)".format(
+                ', '.join(failed), cfg.appname, script_type) if failed else ""))
+
     def exec_reset_script(self, script_type: str, scripts: list) -> int:
         """Execute reset scripts synchronously in the SUT pod before a benchmarking round.
 
@@ -994,6 +1088,9 @@ class LoadingCoordinator:
         database ``tenant_<n>``; for ``tenant_per == 'container'`` no fan-out is needed
         here because each container tenant is already a separate :class:`SutConfiguration`
         (and therefore a separate call to this method) upstream.
+
+        Scripts missing in the experiment folder are skipped with a message, as
+        in :meth:`run_scripts_on_workers`.
 
         On completion the SUT pod is labelled with:
 
@@ -1011,18 +1108,32 @@ class LoadingCoordinator:
         :param scripts: List of script filenames to execute (from the calling
             entry's ``resetscript`` list).
         :return: Elapsed seconds spent running the scripts (0 if none ran), so the
-            caller can attach it to the connection about to be submitted.
+            caller can attach it to the connection about to be submitted. The
+            scripts that failed (see :func:`script_failed`) or were missing are in
+            :attr:`last_reset_failed`.
         :rtype: int
         """
         cfg = self._config
+        self.last_reset_failed = []
         if not scripts:
             return 0
         if 'loadData' not in cfg.dockertemplate:
             print("{:30s}: no loadData command found, skipping reset".format(cfg.configuration))
             return 0
+        folder = cfg.experiment.cluster.experiments_configfolder + '/' + cfg.path_experiment_docker
+        missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
+        if missing:
+            print("{:30s}: reset scripts {} not found in {}, skipped".format(
+                cfg.configuration, missing, folder))
+            self.last_reset_failed = ['{} (missing)'.format(s) for s in missing]
+            scripts = [s for s in scripts if s not in missing]
+            if not scripts:
+                return 0
         scripts, scripts_workers = self.split_worker_scripts(scripts)
         elapsed_workers = self.run_scripts_on_workers(scripts_workers, script_type)
+        self.last_reset_failed += getattr(self, 'workers_failed', [])
         if not scripts:
+            self._report_reset(script_type, elapsed_workers)
             cfg.pod_sut = cfg.experiment.cluster.get_pods(
                 component='sut', configuration=cfg.configuration, experiment=cfg.code)[0]
             cfg.experiment.cluster.kubectl(
@@ -1066,9 +1177,16 @@ class LoadingCoordinator:
                 cmd = shellcommand.format(s=scriptfolder + script_in_pod)
             else:
                 continue
+            # loadData may hold a newline (MonetDB: printf of the credentials);
+            # escape it as the loading path does, a raw one breaks the sh -c string
+            cmd = cmd.replace('\n', '\\n')
             # A reset script may be half-applied when the connection breaks,
             # so it is only retried if it never reached the pod.
             _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False)
+            if script_failed(stdout, stderr):
+                name = '{} ({})'.format(script, tenant_tag) if tenant_tag else script
+                if name not in self.last_reset_failed:
+                    self.last_reset_failed.append(name)
             for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
                 if content:
                     tenant_infix = f'-{tenant_tag}' if tenant_tag else ''
@@ -1082,8 +1200,7 @@ class LoadingCoordinator:
                     with open(log_path, 'w') as fh:
                         fh.write(content)
         elapsed = int(default_timer() - t_start) + elapsed_workers
-        print("{:30s}: reset ({}) completed in {}s".format(
-            cfg.configuration, script_type, elapsed))
+        self._report_reset(script_type, elapsed)
         cfg.experiment.cluster.kubectl(
             'label pod {} --overwrite {}=True time_{}={}'.format(
                 cfg.pod_sut, script_type, script_type, elapsed))

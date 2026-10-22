@@ -77,6 +77,7 @@ class Benchbase(Benchmark):
         SF = str(self.SF)
         SD = int(args.scaling_duration) * 60
         target_base = int(args.target_base)
+        warmup = int(getattr(args, 'warmup', 0))   # missing in experiments from older versions
         type_of_benchmark = args.benchmark
         workload = args.workload
         extra_keying = int(args.extra_keying)
@@ -122,7 +123,10 @@ class Benchbase(Benchmark):
         if experiment.loading_is_active() or experiment.benchmarking_is_active():
             if SF:
                 experiment.workload['info'] += f" Scaling factor is {SF}."
-            experiment.workload['info'] += f" Target is based on multiples of '{target_base}'."
+            if target_base > 0:
+                experiment.workload['info'] += f" Target is based on multiples of '{target_base}'."
+            else:
+                experiment.workload['info'] += " Target is unlimited."
         if experiment.benchmarking_is_active():
             experiment.workload['info'] += f" Factors for benchmarking are {num_benchmarking_target_factors}."
             if extra_keying:
@@ -131,6 +135,8 @@ class Benchbase(Benchmark):
                 experiment.workload['info'] += " There is a reconnect for each transaction."
             if SD:
                 experiment.workload['info'] += f" Benchmarking runs for {int(SD / 60)} minutes."
+            if warmup:
+                experiment.workload['info'] += f" Each benchmarker has a warmup of {warmup} seconds before that, which is not part of the results."
             if args.activate_reset:
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
         if scaling_logging > 0:

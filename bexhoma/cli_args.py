@@ -15,6 +15,8 @@ import ast
 import os
 import re
 
+from bexhoma.load_durability import DEFAULT_LEVEL as LOAD_DURABILITY_DEFAULT, LEVELS as LOAD_DURABILITY_LEVELS
+
 __all__ = [
     "make_base_parser", "resolve_scaling_factor",
     "parse_metric_overrides", "format_metric_overrides",
@@ -88,6 +90,41 @@ def split_worker_nodes(value, sut_node=None) -> list:
                 nodes.append(node)
         cells.append(nodes)
     return cells
+
+
+def check_tenant_loading_pods(num_loading_pods, num_tenants: int, tenant_by: str,
+                              one_pod_per_tenant: bool = False) -> None:
+    """Check that schema/database tenancy gets the same number of loader pods per tenant.
+
+    The loaders split the pods evenly across tenants (``BEXHOMA_NUM_PODS / BEXHOMA_TENANT_NUM``);
+    with a remainder, a tenant would load a part twice. Container tenancy runs one loader
+    job per tenant and needs no check.
+
+    :param num_loading_pods: Parsed ``-nlp`` values.
+    :param num_tenants: ``-mtn``; 0 means no tenancy.
+    :param tenant_by: ``-mtb``: ``schema``, ``database`` or ``container``.
+    :param one_pod_per_tenant: ``-nlp`` counts pods per tenant (the experiment starts
+        ``-nlp`` x ``-mtn`` pods) and the loader maps pod k to tenant k-1 (Benchbase),
+        so ``-nlp`` must be 1.
+    :raises ValueError: When an ``-nlp`` value is not a multiple of ``-mtn`` (or, with
+        ``one_pod_per_tenant``, not 1).
+    """
+    if num_tenants <= 0 or tenant_by not in ('schema', 'database'):
+        return
+    if one_pod_per_tenant:
+        several = [pods for pods in num_loading_pods if int(pods) != 1]
+        if several:
+            raise ValueError(
+                f"-nlp {','.join(map(str, several))} is not 1: {tenant_by} tenancy of this "
+                f"benchmark loads each of the -mtn {num_tenants} tenants with one pod"
+            )
+        return
+    uneven = [pods for pods in num_loading_pods if int(pods) % num_tenants != 0]
+    if uneven:
+        raise ValueError(
+            f"-nlp {','.join(map(str, uneven))} is not a multiple of -mtn {num_tenants}: "
+            f"{tenant_by} tenancy needs the same number of loader pods per tenant"
+        )
 
 
 def resource_cells(request_cpu_list, limit_cpu_list, request_ram_list, limit_ram_list, storage_type_list=None,
@@ -297,6 +334,7 @@ def make_base_parser():
     p.add_argument('-sl',  '--skip-loading', help='skip data loading and start benchmarking immediately', action='store_true', default=False)
     p.add_argument('-ss',  '--skip-shutdown', help='keep SUT pods running after the experiment finishes; same as --keep-sut yes', action='store_true', default=False)
     p.add_argument('-ks',  '--keep-sut', help="keep the SUT of each configuration's last repetition running at the end: auto (default) keeps it in modes load and start and stops it otherwise; yes keeps it, no stops it. A kept SUT that another configuration waits for (-ms/-mse) is stopped", choices=KEEP_SUT_CHOICES, default='auto')
+    p.add_argument('-xld', '--load-durability', help="durability of the DBMS during the load only (afterwards the configured state of template and --set is restored): durable makes the load crash-safe (e.g. PostgreSQL synchronous_commit/fsync on, MySQL innodb_flush_log_at_trx_commit=1); relaxed (default) commits without flushing and skips checks (e.g. PostgreSQL synchronous_commit=off, MySQL innodb_flush_log_at_trx_commit); unsafe uses the strongest lever of the DBMS (e.g. MySQL redo log off, PostgreSQL fsync=off), a crash during the load can lose data. Runs the scripts durability-<level>.* and restoredurability-<level>.* the DBMS folder has", choices=LOAD_DURABILITY_LEVELS, default=LOAD_DURABILITY_DEFAULT)
     p.add_argument('-ar',  '--activate-reset', help='activate configured reset scripts (e.g. CHECKPOINT/VACUUM) when set on a benchmarker entry; off by default', action='store_true', default=False)
     p.add_argument('-cx',  '--context', help='kubectl context to use (default: current context)', default=None)
     p.add_argument('-e',   '--experiment', help='resume an existing experiment by its code', default=None)
@@ -340,5 +378,5 @@ def make_base_parser():
     p.add_argument('-mtv', '--multi-tenant-volume', help='allocate a separate persistent volume per tenant', action='store_true', default=False)
     p.add_argument('-tr',  '--test-result', help='validate that results meet basic correctness requirements', action='store_true', default=False)
     p.add_argument('-rp',  '--report', help='also write a tiered Markdown summary report (report/index.md + detail files) to the result folder', action='store_true', default=False, dest='write_report')
-    p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[sut].container[dbms].max_worker_processes=128 (PostgreSQL -c key=value, MySQL/MariaDB --key=value, chosen by the template) or an environment variable via ...container[dbms].env.NAME=VALUE")
+    p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=128; the name in deployment[...] is metadata.name of the Deployment in the DBMS template (PostgreSQL -c key=value, MySQL/MariaDB --key=value, chosen by the template) or an environment variable via ...container[dbms].env.NAME=VALUE")
     return p

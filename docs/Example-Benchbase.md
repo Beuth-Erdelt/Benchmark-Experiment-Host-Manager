@@ -302,6 +302,7 @@ usage: benchbase.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
                     [-xsd SCALING_DURATION] [-xli SCALING_LOGGING] [-xkey]
                     [-xconn] [-xbatch EXTRA_BATCHSIZE]
                     [-xbt {tpcc,twitter,chbenchmark,ycsb}] [-xtb TARGET_BASE]
+                    [-xwu WARMUP]
                     {run,start,load}
 
 Run Benchbase benchmarks (TPC-C, YCSB, Twitter, CH-Benchmark) against a DBMS
@@ -432,8 +433,9 @@ options:
                         requirements
   -rp, --report         also write a tiered Markdown summary report
                         (report/index.md + detail files) to the result folder
-  --set SETS            override a deployment parameter, e.g. deployment[sut].
-                        container[dbms].max_worker_processes=128
+  --set SETS            override a deployment parameter, e.g.
+                        deployment[bexhoma-deployment-postgres].container[dbms].
+                        max_worker_processes=128
   -dbms, --dbms [{PostgreSQL,MySQL,MariaDB,YugabyteDB,CockroachDB,TiDB,DatabaseService,Citus,PGBouncer,CedarDB} ...]
                         one or more DBMS engines to test
   -xnsr, --xnum-sut-replicas NUM_SUT_REPLICAS
@@ -469,7 +471,10 @@ options:
                         Benchbase benchmark suite to run
   -xtb, --xtarget-base TARGET_BASE
                         base ops-per-second target; multiply by -xnbf factors
-                        to get per-pod target
+                        to get per-pod target (0 = unlimited)
+  -xwu, --xwarmup WARMUP
+                        warmup in seconds before the measured benchmark
+                        duration (not part of the results)
 ```
 
 ## Monitoring
@@ -845,8 +850,9 @@ Also note the size increases from first to second run (benchmark writes data).
 ## Reset Scripts
 
 For repeated benchmarking rounds against the same TPC-C database, bloat and stale planner statistics can drift the result away from the first round.
-Bexhoma can run a pre-benchmark reset script (`CHECKPOINT` + `VACUUM ANALYZE` on all 9 TPC-C tables for PostgreSQL) before each round to start every round from a comparable state.
+Bexhoma can run a pre-benchmark reset script (for PostgreSQL `VACUUM ANALYZE`, `CHECKPOINT` and a reset of the statistics counters) before each round to start every round from a comparable state.
 The feature is off by default; pass `-ar` to activate it.
+Every DBMS has a reset for `tpcc`, PostgreSQL and PGBouncer also for `twitter`, `ycsb` and `chbenchmark`; see [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
 It also works with multi-tenancy (`-mtb`): with `schema` or `database` the script runs once per tenant, with `container` in each tenant's own container.
 
 Example (`-nc 2` repeats the experiment twice, so the reset script runs before each repeat):
@@ -999,6 +1005,159 @@ Benchbase Workload tpcc SF=4
 
 The `#### Reset` section appears once per experiment repeat (`-nc 2`), right after `#### Per Phase`.
 At SF=4 the 9 TPC-C tables are small, so `CHECKPOINT` + `VACUUM ANALYZE` finish in about 2 seconds here; at larger scaling factors this cost grows with table size and is worth comparing against the benchmarking duration itself.
+
+## Unlimited Target and Warmup
+
+By default the benchmarker throttles to a throughput target of `-xtb` × `-xnbf` requests per second, split over the benchmarking pods.
+With `-xtb 0` there is no target: each pod sends transactions as fast as its terminals (`-nbt`) allow (Benchbase's `<rate>unlimited</rate>`).
+A factor of 0 in `-xnbf` does the same for a single entry of the sweep, e.g. `-xnbf 0,1,2` compares an unlimited run with two throttled ones.
+
+`-xwu` sets a warmup in seconds before the measured duration (`-xsd`).
+Benchbase runs the workload during the warmup, but does not count these transactions in throughput and latency.
+Each benchmarker pod therefore runs for about warmup + `-xsd`.
+Note that hardware metrics of the benchmarking phase (`-m`, `-mc`) cover the complete pod runtime, including the warmup, and so does a status log (`-xli`).
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 4 \
+  -xsd 2 \
+  -xwu 60 \
+  -xtb 0 \
+  -xnbf 1 \
+  -nbp 1,2 \
+  -nbt 40 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_unlimited.log
+```
+
+The result looks something like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_unlimited_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_unlimited.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=4
+* Type: benchbase
+* Duration: 825s 
+* Code: 1792435792
+* Benchbase runs a TPC-C experiment.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'tpcc'. Scaling factor is 4. Target is unlimited. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes. Each benchmarker has a warmup of 60 seconds before that, which is not part of the results.
+  * Experiment uses bexhoma version 0.11.7.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker39.
+  * Benchmarking is fixed to cl-worker39.
+  * SUT is fixed to cl-worker36.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [40] threads, split into [1, 2] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:941091
+  * datadisk:1132
+  * volume_size:1.8T
+  * volume_used:920G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * eval_parameters
+    * code:1792435792
+    * TENANT_VOL:False
+* postgresql-1-1-2-1 uses docker image postgres:18.6
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:946875
+  * datadisk:2913
+  * volume_size:1.8T
+  * volume_used:925G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * eval_parameters
+    * code:1792435792
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1792435792-6549d865d6-hpwpx: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: benchbase (2 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: benchbase (2 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    4 |       46.00 |           4.00 |            0.00 |         36.00 |            6.00 |              1 |           1 |             |                |             0 | False         |              313.04 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |          40 |        0 |        1 |               1 |       1 |           0 | 120.00 |           13 |                        2843.04 |                     4521.18 |         0.00 |                                                      38117.00 |                                              14049.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |        0 |        2 |               1 |       1 |           0 | 120.00 |            9 |                        1789.99 |                     2379.63 |         0.00 |                                                      32602.00 |                                              11163.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |        0 |        2 |               1 |       2 |           0 | 120.00 |            2 |                        1824.17 |                     2422.02 |         0.00 |                                                      31776.00 |                                              10956.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |          40 |        0 |               1 |           1 |           0 | 120.00 |           13 |                        2843.04 |                     4521.18 |         0.00 |                                                      38117.00 |                                              14049.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |          40 |        0 |               1 |           2 |           0 | 120.00 |           11 |                        3614.16 |                     4801.65 |         0.00 |                                                      32602.00 |                                              11059.50 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+The workload description says `Target is unlimited.` and mentions the warmup.
+In `#### Per Connection` the column `target` is 0 for both pod counts, and `time` is the measured duration (120 seconds) without the warmup.
 
 ## Keying and Thinking Time
 

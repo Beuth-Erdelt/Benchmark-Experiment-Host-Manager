@@ -4,10 +4,8 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Pre-load setup for TPC-C on MySQL. Configures the root user,
---          enables local infile loading, sets session modes, and relaxes
---          InnoDB settings to accelerate the bulk import. The relaxed settings
---          hold for the load only: their startup values are saved in
---          bexhoma.saved_settings and checkschema-tpcc.sql restores them.
+--          enables local infile loading and sets session modes.
+--          Import settings (load durability, -xld) are in durability-relaxed.sql.
 --          Memory sizes (buffer pool, tmp tables) come from the template or --set.
 
 DROP USER 'root'@'%';
@@ -28,15 +26,3 @@ SET GLOBAL local_infile = 1;
 -- allow zero date
 SET sql_mode='';
 SET GLOBAL sql_mode='';
-
--- Save the startup values of the settings relaxed below (first save wins)
-CREATE DATABASE IF NOT EXISTS bexhoma;
-CREATE TABLE IF NOT EXISTS bexhoma.saved_settings (name VARCHAR(64) PRIMARY KEY, value VARCHAR(255));
-INSERT IGNORE INTO bexhoma.saved_settings VALUES
-  ('innodb_flush_log_at_trx_commit', @@GLOBAL.innodb_flush_log_at_trx_commit),
-  ('innodb_log_buffer_size', @@GLOBAL.innodb_log_buffer_size);
-SELECT * FROM bexhoma.saved_settings;
-
--- speed up import (load phase only)
-SET GLOBAL innodb_log_buffer_size = 1024*1024*1024;
-SET GLOBAL innodb_flush_log_at_trx_commit = 0;

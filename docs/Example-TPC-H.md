@@ -456,8 +456,9 @@ options:
                         requirements
   -rp, --report         also write a tiered Markdown summary report
                         (report/index.md + detail files) to the result folder
-  --set SETS            override a deployment parameter, e.g. deployment[sut].
-                        container[dbms].max_worker_processes=128
+  --set SETS            override a deployment parameter, e.g.
+                        deployment[bexhoma-deployment-postgres].container[dbms].
+                        max_worker_processes=128
   -dbms, --dbms [{PostgreSQL,MonetDB,MySQL,MariaDB,DatabaseService,Citus,CedarDB,PgDuckDB} ...]
                         one or more DBMS engines to test
   -xlit, --xlimit-import-table LIMIT_IMPORT_TABLE
@@ -1346,6 +1347,13 @@ No warnings
 </details>
 
 
+
+
+## Reset Scripts
+
+With `-ar`, a reset script runs before each benchmarking round (statistics, persist, counters; e.g. `VACUUM ANALYZE`, `CHECKPOINT` and a statistics reset for PostgreSQL), so every stream starts from a comparable state.
+With a refresh stream (`-xrs`), it runs once per round, before both streams start.
+See [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
 
 
 ## Refresh Stream

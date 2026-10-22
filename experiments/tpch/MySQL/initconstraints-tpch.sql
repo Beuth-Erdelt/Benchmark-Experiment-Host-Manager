@@ -6,8 +6,14 @@
 -- Purpose: Add foreign key constraints to TPC-H tables.
 --          Run after primary keys are in place (initschema-tpch.sql) and
 --          data has been loaded (initdata-tpch-SF*.sql).
+--          foreign_key_checks is off for this session only (as for MariaDB):
+--          InnoDB then adds a foreign key as a metadata change. With checks on
+--          it validates every row; at SF 1 the server memory grew past 16 GB
+--          while adding lineitem->orders and the SUT was OOM-killed (1792569991).
 --          Each ALTER TABLE combines all FK actions for that table so it is
 --          locked only once. Statements are ordered by FK dependency.
+
+SET SESSION foreign_key_checks = 0;
 
 -- supplier->nation FK not applied: not required by the TPC-H query workload
 

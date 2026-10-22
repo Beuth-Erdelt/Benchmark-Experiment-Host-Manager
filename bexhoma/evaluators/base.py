@@ -625,6 +625,8 @@ class EvaluatorBase:
             'time_ingest': float(c['time_ingested']),
             'time_postload': float(c['time_index']),
             'time_reset': float(c.get('time_reset', 0) or 0),
+            # None: no reset ran; '': it ran without errors; else the failed scripts
+            'reset_failed': c.get('reset_failed'),
             'terminals': self.get_terminals(loading_parameters),
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,

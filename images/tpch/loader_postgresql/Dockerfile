@@ -12,7 +12,7 @@
 # Version: 1.0
 # Description: This container loads pre-generated TPC-H .tbl files into PostgreSQL
 # via psql \COPY. The child index is read from /tmp/tpch/BEXHOMA_CHILD written by
-# the generator pod. nation and region are only loaded by pod 1 in non-tenant mode.
+# the generator pod. nation and region are only loaded by pod 1 (of each tenant).
 # Multi-tenancy (schema and database isolation) is supported. redis and postgresql-client
 # are installed via apk.
 ######################################################################################

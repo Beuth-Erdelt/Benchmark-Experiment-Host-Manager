@@ -36,6 +36,11 @@ __all__ = ["TpccEvaluator"]
 _PROFILE_COLUMNS = {'CALLS', 'SD', 'RATIO'}
 
 
+#: Refresh rate of HammerDB's transaction counter in seconds (``tcset refreshrate``
+#: in images/hammerdb/benchmarker/benchmarker.sh).
+_TCOUNT_REFRESH = 10
+
+
 def _is_profile_column(column) -> bool:
     return column in _PROFILE_COLUMNS or str(column).endswith(' [ms]')
 
@@ -170,13 +175,13 @@ class TpccEvaluator(LogEvaluator):
             rows = [
                 (connection, phase, job, configuration_name, experiment_run, client, benchmark_run, child, pod_name, pod_count,
                  code, iterations, duration, rampup, sf, run_idx, num_errors, vusers_loading,
-                 vuser, efficiency, result[0], result[1], result[2]) + tuple(latency_values)
+                 vuser, efficiency, result[0], result[1], result[2], keyandthink) + tuple(latency_values)
                 for run_idx, (result, vuser) in enumerate(result_tuples)
             ]
             df = pd.DataFrame(rows)
             col_names = ['connection', 'phase', 'job', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child', 'pod',
                          'pod_count', 'code', 'iterations', 'duration', 'rampup', 'sf', 'run',
-                         'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms']
+                         'errors', 'vusers_loading', 'vusers', 'efficiency', 'NOPM', 'TPM', 'dbms', 'keyandthink']
             col_names.extend(list(extracted_data.keys()))
             df.columns = col_names
             df.index.name = connection_name
@@ -351,6 +356,9 @@ class TpccEvaluator(LogEvaluator):
                     'dbms':'max',
                     'tenant_id': 'min',
                 }
+            if 'keyandthink' in grp:
+                # missing in results parsed before it was kept
+                aggregate['keyandthink'] = 'max'
             dict_grp = dict()
             dict_grp['configuration'] = grp['configuration'].iloc[0]
             dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
@@ -359,13 +367,143 @@ class TpccEvaluator(LogEvaluator):
             dict_grp = {**dict_grp, **grp.agg(aggregate)}
             df_grp = pd.DataFrame(dict_grp, index=["-".join(map(str, key))])
             df_aggregated = pd.concat([df_aggregated, df_grp])
-        # efficiency is only valid when vusers == 10 × SF (standard TPC-C convention)
+        # efficiency is only valid with key-and-think time and vusers == 10 × SF (standard TPC-C convention)
         df_aggregated['efficiency'] = 0.
         tpcc_mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']
+        if 'keyandthink' in df_aggregated:
+            tpcc_mask &= df_aggregated['keyandthink'] == "true"
         df_aggregated.loc[tpcc_mask, 'efficiency'] = (
             100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
         )
         return df_aggregated
+    def parse_hammerdb_log_file(self, file_path):
+        """
+        Parses the HammerDB transaction counter lines of a pod log file.
+
+        The benchmarker prints each transaction counter log (one per VU test) after
+        the run.  Every counter line ``<n> <DBMS> tpm @ <date>`` becomes a dict with
+        keys ``second`` (elapsed since the first counter line of the pod) and ``tpm``.
+        ``second`` is rounded to the refresh rate: the counter sleeps 10 s and then
+        queries, so its timestamps drift (180, 191, 201, ...) and pods would not line up.
+        The first line after each ``Hammerdb Transaction Counter Log`` header is
+        skipped: the counter always starts with 0, as it has no previous sample.
+
+        :param file_path: Absolute path to the HammerDB pod log file.
+        :type file_path: str
+        :return: List of ``{'second': int, 'tpm': int}`` dicts.
+        :rtype: list[dict]
+        """
+        pattern = re.compile(r'^(\d+) \S+ tpm @ \w+ (\w+)\s+(\d+) (\d{2}:\d{2}:\d{2}) \S+ (\d{4})$')
+        datetime_first_measure = None
+        skip_next = False
+        results = []
+        with open(file_path, 'r') as file:
+            for line in file:
+                line = line.strip()
+                if line.startswith('Hammerdb Transaction Counter Log'):
+                    skip_next = True
+                    continue
+                match = pattern.match(line)
+                if not match:
+                    continue
+                if skip_next:
+                    skip_next = False
+                    continue
+                tpm, month, day, time, year = match.groups()
+                dt = datetime.strptime('{} {} {} {}'.format(year, month, day, time), '%Y %b %d %H:%M:%S')
+                if datetime_first_measure is None:
+                    datetime_first_measure = dt
+                elapsed = (dt - datetime_first_measure).total_seconds()
+                results.append({
+                    "second": int(round(elapsed / _TCOUNT_REFRESH)) * _TCOUNT_REFRESH,
+                    "tpm": int(tpm),
+                })
+        return results
+    def benchmark_logs_to_timeseries_df(self, list_logs, metric="tpm", aggregate=True):
+        """
+        Parses HammerDB log files for the given pod IDs and assembles a time-series DataFrame.
+
+        Each pod ID in ``list_logs`` is resolved to matching log files via a glob pattern.
+        The transaction counter measures the whole database, so parallel pods report the
+        same quantity: when ``aggregate`` is ``True`` the values are averaged per second
+        (like NOPM and TPM in :meth:`benchmarking_aggregate_by_parallel_pods`).
+        When ``aggregate`` is ``False`` a list of per-pod DataFrames is returned instead.
+
+        :param list_logs: Pod IDs (short suffixes) used to locate matching log files.
+        :type list_logs: list[str]
+        :param metric: Metric column to extract (default ``'tpm'``).
+        :type metric: str
+        :param aggregate: Whether to aggregate all pod DataFrames into one.
+        :type aggregate: bool
+        :return: Aggregated DataFrame indexed by ``'second'`` (with an ``'avg'`` column
+                 appended) when ``aggregate`` is ``True``, or a list of per-pod DataFrames.
+        :rtype: pandas.DataFrame or list[pandas.DataFrame]
+        """
+        def find_matching_files(directory, pattern):
+            return glob.glob(os.path.abspath(os.path.normpath(os.path.join(directory, pattern))))
+        list_df = []
+        for file_logs in list_logs:
+            pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
+            for file in find_matching_files(self.path, pattern):
+                parsed_results = self.parse_hammerdb_log_file(file)
+                if not parsed_results:
+                    continue
+                df = pd.DataFrame(parsed_results).set_index('second')
+                df = df.groupby(df.index).mean()  # collapse samples rounded to the same second
+                list_df.append(df[[metric]])
+        if not aggregate:
+            return list_df
+        if not list_df:
+            return pd.DataFrame()
+        df_total = pd.concat(list_df).groupby(level=0).mean()
+        df_total['avg'] = int(df_total[metric].mean())
+        return df_total
+    def get_benchmark_logs_timeseries_df_aggregated(self, metric="tpm", configuration="", client='1', experiment_run='1'):
+        """
+        Returns a DataFrame of time series of a metric for the benchmarking phase,
+        aggregated over all pods per second.
+
+        Retrieves pod IDs from :meth:`get_df_benchmarking` filtered by the given
+        ``configuration``, ``client``, and ``experiment_run``, then delegates to
+        :meth:`benchmark_logs_to_timeseries_df` with ``aggregate=True``.
+
+        :param metric: Metric column to extract (default ``'tpm'``).
+        :type metric: str
+        :param configuration: Configuration name (e.g. ``'PostgreSQL-1'``).
+        :type configuration: str
+        :param client: Client number (default ``'1'``).
+        :type client: str or int
+        :param experiment_run: Experiment run number (default ``'1'``).
+        :type experiment_run: str or int
+        :return: DataFrame indexed by ``'second'`` with the metric and an ``'avg'`` column.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].unique().tolist()
+        return self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=True)
+    def get_benchmark_logs_timeseries_df_single(self, metric="tpm", configuration="", client='1', experiment_run='1'):
+        """
+        Returns a list of DataFrames of time series of a metric for the benchmarking
+        phase, one per pod.
+
+        Retrieves pod IDs from :meth:`get_df_benchmarking` filtered by the given
+        ``configuration``, ``client``, and ``experiment_run``, then delegates to
+        :meth:`benchmark_logs_to_timeseries_df` with ``aggregate=False``.
+
+        :param metric: Metric column to extract (default ``'tpm'``).
+        :type metric: str
+        :param configuration: Configuration name (e.g. ``'PostgreSQL-1'``).
+        :type configuration: str
+        :param client: Client number (default ``'1'``).
+        :type client: str or int
+        :param experiment_run: Experiment run number (default ``'1'``).
+        :type experiment_run: str or int
+        :return: List of DataFrames, one per pod, each indexed by ``'second'``.
+        :rtype: list[pandas.DataFrame]
+        """
+        df = self.get_df_benchmarking()
+        list_logs = df[(df['client'] == str(client)) & (df['configuration'] == configuration) & (df['experiment_run'] == str(experiment_run))]['pod'].unique().tolist()
+        return self.benchmark_logs_to_timeseries_df(list_logs, metric=metric, aggregate=False)
     def get_summary_benchmark_per_connection(self):
         """
         Returns benchmarking results with one row per pod, filtered to the key
@@ -491,6 +629,12 @@ class TpccEvaluator(LogEvaluator):
         """
         if experiment.benchmarking_is_active():
             experiment._test_column(df_reduced, "NOPM")
+            # log_to_df computes efficiency only with key-and-think time
+            keyandthink = str(experiment.default_benchmarking_parameters.get('HAMMERDB_KEYANDTHINK', 'false')) == "true"
+            experiment._test_efficiency(
+                df_reduced, "vusers",
+                computed=keyandthink,
+                reason="needs key-and-think time (-xkey)")
             experiment._record_test(
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"

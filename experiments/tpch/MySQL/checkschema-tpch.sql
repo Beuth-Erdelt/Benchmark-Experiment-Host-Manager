@@ -4,28 +4,12 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Last post-load script, always run (also without -xii/-xic/-xis).
---          Restores the settings relaxed for the load to the startup values
---          saved by initschema-tpch.sql, and reports row counts, sizes, the
---          redo log written so far and the non-default configuration.
+--          Reports the settings in effect, row counts, primary and foreign
+--          keys, sizes, the redo log written so far and the non-default
+--          configuration. Load settings (-xld) are restored before, by
+--          restoredurability-*.sql.
 --          No curly braces in this file: bexhoma may fill it with str.format().
 
--- Restore the settings saved before the load (SET GLOBAL x = DEFAULT would give
--- compiled defaults, not the server's startup values). @v starts at the current
--- value, so a setting without a saved row stays as it is.
-SET @v = @@GLOBAL.innodb_flush_log_at_trx_commit;
-SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'innodb_flush_log_at_trx_commit';
-SET GLOBAL innodb_flush_log_at_trx_commit = @v;
-SET @v = @@GLOBAL.foreign_key_checks;
-SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'foreign_key_checks';
-SET GLOBAL foreign_key_checks = @v;
-SET @v = @@GLOBAL.unique_checks;
-SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'unique_checks';
-SET GLOBAL unique_checks = @v;
-SET @v = @@GLOBAL.autocommit;
-SELECT CAST(value AS UNSIGNED) INTO @v FROM bexhoma.saved_settings WHERE name = 'autocommit';
-SET GLOBAL autocommit = @v;
-
-SELECT name, value AS saved_value FROM bexhoma.saved_settings ORDER BY name;
 SELECT @@GLOBAL.innodb_flush_log_at_trx_commit, @@GLOBAL.foreign_key_checks,
        @@GLOBAL.unique_checks, @@GLOBAL.autocommit;
 
@@ -38,6 +22,14 @@ UNION ALL SELECT 'part',     COUNT(*) FROM tpch.part
 UNION ALL SELECT 'partsupp', COUNT(*) FROM tpch.partsupp
 UNION ALL SELECT 'region',   COUNT(*) FROM tpch.region
 UNION ALL SELECT 'supplier', COUNT(*) FROM tpch.supplier;
+
+-- Primary and foreign keys per table (8 primary keys; with -xic 9 foreign keys)
+SELECT TABLE_NAME, CONSTRAINT_TYPE, COUNT(*) AS constraint_count
+FROM information_schema.TABLE_CONSTRAINTS
+WHERE CONSTRAINT_SCHEMA = 'tpch'
+  AND CONSTRAINT_TYPE IN ('PRIMARY KEY', 'FOREIGN KEY')
+GROUP BY TABLE_NAME, CONSTRAINT_TYPE
+ORDER BY TABLE_NAME, CONSTRAINT_TYPE;
 
 -- Sizes (InnoDB estimates)
 SELECT table_name,

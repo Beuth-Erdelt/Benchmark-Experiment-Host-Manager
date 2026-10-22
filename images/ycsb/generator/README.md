@@ -4,20 +4,20 @@ The image is based on https://github.com/brianfrankcooper/YCSB
 
 This folder contains the Dockerfile for a data generator that loads data into a DBMS using the YCSB `load` phase. Parallel pods each receive a contiguous slice of the key space so the full dataset is loaded without overlap.
 
-See [../README.md](../README.md) for shared design decisions, bundled JDBC
+See [images/ycsb/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/README.md) for shared design decisions, bundled JDBC
 drivers, and the workload template placeholder reference.
 
 ## Execution flow (`generator.sh`)
 
-Same as the benchmarker (`../benchmarker/README.md`) except:
+Same as the benchmarker ([images/ycsb/benchmarker/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/benchmarker/README.md)) except:
 
 - Queue key is `bexhoma-loading-<CONNECTION>-<EXPERIMENT>-<EXPERIMENT_RUN>-<DATA_JOB>` (scoped by
   `EXPERIMENT_RUN` because loading is redone from scratch for every experiment_run — see
-  `bexhoma/README.md`'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
+  [bexhoma/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/README.md)'s "Chunk-assignment queue" section). Exits with `exit 1` if the queue is
   empty rather than defaulting to a fixed child index, since another pod may already own it.
 - Counter key is `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`, followed by the round
   counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always initialized by
-  Python; only meaningful with more than one parallel loader entry — see `bexhoma/README.md`).
+  Python; only meaningful with more than one parallel loader entry — see [bexhoma/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/README.md)).
 - Row partitioning is **per-pod** (`ROW_PART = YCSB_ROWS / BEXHOMA_NUM_PODS`,
   `ROW_START = ROW_PART × (BEXHOMA_CHILD − 1)`) so each pod loads a distinct
   slice of keys without overlap.

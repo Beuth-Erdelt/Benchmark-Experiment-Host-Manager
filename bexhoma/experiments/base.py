@@ -38,7 +38,8 @@ from bexhoma import evaluators
 from bexhoma import missing_metrics
 from bexhoma.monitoring_math import (counter_total, min_measurable_window, read_connections,
                                      scoped_job_connections, DEFAULT_SCRAPE_INTERVAL_SECONDS)
-from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes
+from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes, check_tenant_loading_pods
+from bexhoma.load_durability import DEFAULT_LEVEL as LOAD_DURABILITY_DEFAULT
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
 from bexhoma.metric_fetching import DEFAULT_MAX_PARALLEL_FETCHES, MetricFetchBatch
@@ -145,8 +146,8 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
     if not m:
         raise ValueError(
             "Invalid selector. Expected e.g. "
-            "deployment[sut].container[dbms].max_worker_processes "
-            "or deployment[sut]@PostgreSQL-2.container[dbms].shared_buffers"
+            "deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes "
+            "or deployment[bexhoma-deployment-postgres]@PostgreSQL-2.container[dbms].shared_buffers"
         )
     d = m.groupdict()
     d["kind"] = d["kind"].lower()
@@ -164,6 +165,10 @@ class ExperimentBase():
     #: experiment, so :meth:`expand_resource_cells` sweeps every DBMS
     #: configuration across them (see :func:`bexhoma.cli_args.resource_cells`).
     supports_storage_sweep = False
+    #: Whether schema/database tenancy needs exactly one loader pod per tenant
+    #: (``-nlp 1``, counted per tenant) instead of a multiple of ``-mtn`` (see
+    #: :func:`bexhoma.cli_args.check_tenant_loading_pods`).
+    tenant_loading_one_pod_per_tenant = False
 
     def __init__(self,
                  cluster,
@@ -209,6 +214,7 @@ class ExperimentBase():
         self.max_parallel_steps = DEFAULT_MAX_PARALLEL_STEPS            # configurations whose job submissions / job ends of a loop pass run at the same time (1 = one by one)
         self._copy_metrics_script = ""                                  # name of the uploaded copy script, see ensure_copy_metrics_script()
         self.keep_sut = False                                          # keep each configuration's last SUT running at the end (-ks/-ss, resolved in prepare_testbed)
+        self.load_durability = LOAD_DURABILITY_DEFAULT                 # durability of the DBMS during the load (-xld): durable, relaxed or unsafe
         self.max_experiment_minutes: Optional[int] = None                # abort and remove experiment from cluster after this many minutes; None = no limit
         self.max_loading_minutes: Optional[int] = None                   # abort a configuration that remains in loading after this many minutes; None = no limit
         self.client = 0                                                 # number of client in benchmarking list - for synching between different configs (multi-tenant container-wise)
@@ -345,6 +351,7 @@ class ExperimentBase():
             print("{:30s}: has code {}".format("Experiment", self.code))
             print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
             print("{:30s}: {}".format("Experiment", self.workload['info']))
+            self.warn_missing_reset_scripts()
             # persist workflow_planned before work_benchmark_list() so a crash mid-run
             # (e.g. during cube building on resume) still leaves it in queries.config
             self.store_workflow_results()
@@ -684,6 +691,10 @@ class ExperimentBase():
         num_worker_replicas = int(args.num_worker_replicas)
         num_worker_shards = int(args.num_worker_shards)
         self.resetscript_active = args.activate_reset
+        # entry scripts with their own parser may not know -xld
+        self.load_durability = getattr(args, 'load_durability', LOAD_DURABILITY_DEFAULT)
+        self.workload['load_durability'] = self.load_durability
+        self.workload['info'] = self.workload['info']+"\nLoad durability is {} (-xld; restored after the load).".format(self.load_durability)
         if args.experiment_timeout is not None:
             self.max_experiment_minutes = int(args.experiment_timeout)
         if args.loading_timeout is not None:
@@ -697,6 +708,8 @@ class ExperimentBase():
         self.workload['num_tenants'] = self.num_tenants
         self.workload['tenant_per'] = self.tenant_per
         self.workload['multi_tenant_volume'] = self.multi_tenant_volume
+        check_tenant_loading_pods(num_loading_pods, multi_tenant_num, multi_tenant_by,
+                                  one_pod_per_tenant=self.tenant_loading_one_pod_per_tenant)
         self.cluster.start_datadir()
         self.cluster.start_resultdir()
         self.cluster.start_dashboard()
@@ -1722,6 +1735,32 @@ class ExperimentBase():
         full_title = f"{title} {column}" if len(title) > 0 else column
         suffix = "contains no 0 or NaN" if passed else "contains 0 or NaN"
         return self._record_test(passed, f"{full_title} {suffix}")
+    def _test_efficiency(self, df, threads_column: str, computed: bool, reason: str) -> None:
+        """
+        Test the TPC-C efficiency of the phases where the evaluator computes it.
+
+        Efficiency is only computed with key-and-think time and
+        ``threads_column == 10 x SF`` (TPC-C convention); everywhere else it is 0
+        by design, so the test is skipped instead of failed.
+
+        :param df: Per-phase execution DataFrame with ``efficiency`` and ``threads_column``.
+        :param threads_column: ``terminals`` (Benchbase) or ``vusers`` (HammerDB).
+        :param computed: Whether the settings let the evaluator compute efficiency at all.
+        :param reason: Why it is not computed, for the skipped label, when ``computed`` is False.
+        """
+        if not computed:
+            self._record_skipped_test(f"efficiency (not computed: {reason})")
+            return
+        if df.empty or 'efficiency' not in df.columns or threads_column not in df.columns:
+            self._record_skipped_test("efficiency (no benchmarking results)")
+            return
+        sf = int(self.SF)
+        df_eligible = df[df[threads_column] == 10 * sf]
+        if df_eligible.empty:
+            self._record_skipped_test(
+                f"efficiency (not computed: no phase with {threads_column} = 10 x SF = {10 * sf})")
+            return
+        self._test_column(df_eligible, "efficiency")
     def _print_test_summary(self) -> None:
         """Print all results collected in _test_results as a single summary block."""
         print("\n### Tests")
@@ -2062,6 +2101,37 @@ class ExperimentBase():
                 max(1, min(self.max_parallel_steps, len(steps))), CALL_STATS.since(calls_started)))
         return results
 
+    def warn_missing_reset_scripts(self) -> list:
+        """Warn once per configuration when ``-ar`` is set but no reset will run.
+
+        A configuration gets a warning when it has no reset script at all (the
+        DBMS has none for this benchmark) or when a listed script is missing in
+        its experiment folder (it would be skipped before every round).
+
+        :return: Names of the configurations that got a warning.
+        :rtype: list
+        """
+        if not self.resetscript_active:
+            return []
+        warned = []
+        for config in self.configurations:
+            scripts = list(config.resetscript)
+            for client_round in config.experiment_dict.get('benchmarker') or []:
+                for entry in client_round:
+                    scripts += [s for s in entry.get('resetscript') or [] if s not in scripts]
+            if not scripts:
+                print("{:30s}: WARNING - -ar is set, but there is no reset script for this DBMS and benchmark".format(
+                    config.configuration))
+                warned.append(config.configuration)
+                continue
+            folder = self.cluster.experiments_configfolder + '/' + config.path_experiment_docker
+            missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
+            if missing:
+                print("{:30s}: WARNING - reset scripts {} not found in {}, they will be skipped".format(
+                    config.configuration, missing, folder))
+                warned.append(config.configuration)
+        return warned
+
     def _submit_round(self, config, client_round: list, experiment_run: str, client: str,
                       round_counter_key: str, fetch_batch: MetricFetchBatch) -> None:
         """Submit the benchmarker jobs of one client round of a configuration (experiment dict path).
@@ -2081,10 +2151,12 @@ class ExperimentBase():
             connection = f"{config.configuration}-{experiment_run}-{client}-{benchmark_index}".lower()
             print("{:30s}: start benchmarking (benchmark_run={})".format(connection, benchmark_index))
             reset_seconds = 0
+            reset_failed = None                 # None: no reset ran for this entry
             if self.resetscript_active and bench_entry.get("resetscript"):
                 reset_seconds = config.loader.exec_reset_script(
                     'reset_{}_{}_{}'.format(experiment_run, client, benchmark_index),
                     bench_entry["resetscript"])
+                reset_failed = config.loader.last_reset_failed
             if bench_entry.get("parameters"):
                 # Assign directly to avoid the side effect in
                 # set_benchmarking_parameters() that overwrites
@@ -2099,6 +2171,7 @@ class ExperimentBase():
                 benchmark_run=str(benchmark_index),
                 template_override=bench_entry.get("template", ""),
                 reset_seconds=reset_seconds,
+                reset_failed=reset_failed,
                 fetch_batch=fetch_batch,
             )
         # Timed from here, not from the counter, so that reset
@@ -2119,15 +2192,17 @@ class ExperimentBase():
         :param fetch_batch: Batch for the loading-metric fetches.
         """
         reset_seconds = 0
+        reset_failed = None                     # None: no reset ran for this round
         if self.resetscript_active and config.resetscript:
             reset_seconds = config.loader.exec_reset_script(
                 'reset_{}_{}'.format(experiment_run, client), config.resetscript)
+            reset_failed = config.loader.last_reset_failed
         if benchmarking_parameters is not None:
             print("{:30s}: we will change parameters of benchmark as {}".format(config.configuration, benchmarking_parameters))
             config.set_benchmarking_parameters(**benchmarking_parameters)
         connection = (config.configuration+'-'+experiment_run+'-'+client).lower()
         print("{:30s}: start benchmarking".format(connection))
-        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds, fetch_batch=fetch_batch)
+        config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds, reset_failed=reset_failed, fetch_batch=fetch_batch)
         self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
 
     def _end_finished_jobs(self, config, end_batch: MetricFetchBatch, end_uploads: list) -> tuple:
@@ -3255,6 +3330,8 @@ class ExperimentBase():
                         for component, entry in parameters.get('components', {}).items():
                             print("    * {}: {} x, {} CPU, {} GiB RAM".format(
                                 component, entry.get('replicas'), entry.get('cpu'), entry.get('memory_gib')))
+                    if i == "load_durability":
+                        print("  * load_durability: {}".format(parameters))
                     if i == "eval_parameters":
                         print("  * "+i)
                         infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]

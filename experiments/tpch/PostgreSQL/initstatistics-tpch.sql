@@ -4,8 +4,6 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Collect table statistics and verify row counts after data loading.
---          synchronous_commit (disabled in initschema-tpch.sql) is restored by
---          checkschema-tpch.sql, which always runs last.
 
 ANALYZE VERBOSE public.customer;
 ANALYZE VERBOSE public.lineitem;

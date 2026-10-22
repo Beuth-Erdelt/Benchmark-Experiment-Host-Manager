@@ -30,11 +30,18 @@ $images = [ordered]@{
     'loader_tpch_mysql'          = 'images\tpch\loader_mysql\README.md'
     'loader_tpch_mariadb'        = 'images\tpch\loader_mariadb\README.md'
     'loader_tpch_monetdb'        = 'images\tpch\loader_monetdb\README.md'
+    'generator_tpch_refresh'           = 'images\tpch_refresh\generator\README.md'
+    'loader_tpch_refresh_postgresql'   = 'images\tpch_refresh\loader_postgresql\README.md'
+    'loader_tpch_refresh_mysql'        = 'images\tpch_refresh\loader_mysql\README.md'
+    'loader_tpch_refresh_mariadb'      = 'images\tpch_refresh\loader_mariadb\README.md'
+    'loader_tpch_refresh_monetdb'      = 'images\tpch_refresh\loader_monetdb\README.md'
     'generator_tpcds'            = 'images\tpcds\generator\README.md'
     'loader_tpcds_postgresql'    = 'images\tpcds\loader_postgresql\README.md'
     'loader_tpcds_mysql'         = 'images\tpcds\loader_mysql\README.md'
     'loader_tpcds_mariadb'       = 'images\tpcds\loader_mariadb\README.md'
     'loader_tpcds_monetdb'       = 'images\tpcds\loader_monetdb\README.md'
+    'benchmarker_hardware'       = 'images\hardware\benchmarker\README.md'
+    'sut_hardware'               = 'images\hardware\sut\README.md'
 }
 
 # Authenticate
@@ -74,6 +81,13 @@ foreach ($entry in $images.GetEnumerator()) {
         continue
     }
     $readme = Get-Content $readmePath -Raw -Encoding UTF8
+    # Relative links resolve against hub.docker.com and break there; use GitHub URLs
+    $relative = [regex]::Matches($readme, '\]\((?!https?://|#|mailto:)[^)]*\)')
+    if ($relative.Count -gt 0) {
+        Write-Host "  FAIL $repo - relative link(s), use https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/...: $(($relative | ForEach-Object { $_.Value }) -join ', ')"
+        $failed += $repo
+        continue
+    }
     $body = $serializer.Serialize(@{ full_description = [string]$readme })
     $uri = "https://hub.docker.com/v2/repositories/bexhoma/$repo/"
     try {

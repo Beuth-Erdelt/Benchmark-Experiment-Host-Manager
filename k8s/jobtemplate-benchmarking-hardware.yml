@@ -46,6 +46,9 @@ spec:
         - {name: HARDWARE_SOCKPERF_MPS, value: 'max'}
         - {name: HARDWARE_NETPERF_PROTOCOL, value: 'tcp'}
         resources:
+          # measured peaks are far below; without a request the cluster default reserves 16Gi
+          requests: {memory: 256Mi}
+          limits: {memory: 16Gi}
           #limits: {cpu: 4000m}
           #, memory: 16Gi}
           #requests: {cpu: 4000m}

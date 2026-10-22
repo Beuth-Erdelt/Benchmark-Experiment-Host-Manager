@@ -187,6 +187,8 @@ class LoadingFailureTest(unittest.TestCase):
         config.experiment_dict = {"loader": [{"parallelism": 2, "num_pods": 2}]}
         config.experiment.cluster = cluster
         config.manifest.create_manifest_loading.return_value = "loading-job.yml"
+        # start_pod() waits for the Schema scripts' label
+        cluster.get_pods_labels.return_value = {"sut-pod": {"schema": "True"}}
         return config
 
     @staticmethod

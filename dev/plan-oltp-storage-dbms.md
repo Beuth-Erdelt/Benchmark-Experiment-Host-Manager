@@ -1,6 +1,7 @@
 # Plan: OLTP SUTs in bexhoma - current images, settings, CLI and placement
 
-Status: **WP1-WP9 implemented 2026-10-17, committed (`7ed91c36`, released in v0.11.5); WP10 not (later, R7).** Unit tests:
+Status: **WP1-WP9 implemented 2026-10-17, committed (`7ed91c36`, released in v0.11.5); WP10 implemented 2026-10-20
+(uncommitted, cluster checks open, see WP10 "Implementation").** Unit tests:
 `tests/test_set_arg_styles.py` (WP2/WP3), `tests/test_tls_secret.py` (WP5),
 `tests/test_cluster_sut_settings.py` (WP4/WP6/WP7/WP8/WP9). The WP8 init/check scripts were run on
 PostgreSQL 18.6, MySQL 9.7.2, MariaDB 12.3.3, Citus 14.2.0 and MonetDB Dec2025-SP3 pods (MySQL: startup
@@ -23,7 +24,7 @@ Related: [plan-storage-class-sweep](plan-storage-class-sweep.md).
 
 | # | Decision |
 |---|---|
-| D1 | Durability: keep the current settings as they are (MySQL/MariaDB `flush-log-at-trx-commit=2`, YugabyteDB `durable_wal_write=false`). |
+| D1 | ~~Durability: keep the current settings as they are (MySQL/MariaDB `flush-log-at-trx-commit=2`, YugabyteDB `durable_wal_write=false`).~~ **Replaced 2026-10-21 (WP10):** templates are generic and set no durability options (removed: MySQL flush 2 + doublewrite 0; MariaDB flush 2 + sync-binlog 0 + doublewrite 0; `synchronous_commit` in PGBouncer, PGBouncerReplica, PGBouncerSidecar, PostgreSQLService, DatabaseService, Citus), so every DBMS runs with its own crash-safe defaults; a less durable benchmark is set visibly per run with `--set`. Reason: PostgreSQL `-c` values cannot be overridden by `ALTER SYSTEM`, so `-xld` had no effect on PGBouncer/Citus (found in verification run 1792529390). `-xld` only sets the durability **during the load**; afterwards the configured state (template + `--set`) is restored. YugabyteDB (Helm) unchanged. Benchmark results of MySQL, MariaDB, PGBouncer variants (write-heavy OLTP) are not comparable with earlier runs. |
 | D2 | Replication: realistic, 3 (CockroachDB/TiDB `-nw 3 -nwr 3`, YugabyteDB RF 3). |
 | D3 | Versions: LTS lines; newest release where there is no LTS. |
 | D4 | CockroachDB: latest version without a license key = **v24.2.4** (unchanged). |
@@ -126,8 +127,9 @@ Changes:
 2. For `'workers'`: run each script in every pod of `get_worker_pods(only_stateful=True)`
    (`configurations/base.py:793`), container `dbms`, in parallel threads; logs per pod
    (`...-<pod>.stdout.log`); returned time = maximum over the pods.
-3. Set `'workers'` in `ycsb.py` for `DragonflyCluster` and `RedisCluster`. `DragonflyReplica`: master
-   only (as today; replicas get the data by replication).
+3. Set `'workers'` in `ycsb.py` for `DragonflyCluster` and `RedisCluster`. `DragonflyReplica`: also
+   `'workers'` (corrected 2026-10-19, #667): its SUT Deployment is a dummy, the master is `bexhoma-worker-0`,
+   and `SAVE` (`CO::ADMIN`, not journaled) does not reach the replicas.
 4. Tests: target selection, per-pod logs, timing = max.
 
 ### WP5. TLS Secret for MySQL and HammerDB (D5)
@@ -235,7 +237,7 @@ Design (R4, detailed 2026-10-17):
    | CockroachDB | all (`worker`) | placeholder (client pod) |
    | Citus | all (`worker`) | data (coordinator holds metadata, plans queries) |
    | Redis cluster, Dragonfly cluster | all (`worker`) | placeholder |
-   | Dragonfly replica | all | data (SUT = master) |
+   | Dragonfly replica | all (`worker`) | placeholder (master = `bexhoma-worker-0`; corrected 2026-10-19) |
    | YugabyteDB | - (Helm) | placeholder (helper pod) |
    | DatabaseService | - | placeholder (DBMS outside Kubernetes; pod is a client) |
    | PostgreSQL, MySQL, MariaDB, Redis, Dragonfly standalone | - | data |
@@ -348,23 +350,26 @@ import is always visible in the results.
 | MonetDB | `COPY ... LOCKED` (?) | per statement | - |
 
 **Design.**
-1. **CLI, all entry scripts:** `-xld/--load-durability {default,relaxed,off}`.
-   - `default`: what the init scripts do today, no change in behavior.
-   - `relaxed`: commit without flushing (PostgreSQL `synchronous_commit=off`, MySQL/MariaDB
-     `innodb_flush_log_at_trx_commit=2`, Redis `appendfsync no`).
-   - `off`: the strongest lever of the DBMS (table above).
+1. **CLI, all entry scripts:** `-xld/--load-durability {durable,relaxed,unsafe}`, default `relaxed`.
+   - `durable`: the DBMS as configured by the template / `--set`; the load changes nothing.
+   - `relaxed`: commit without flushing plus skipped checks, i.e. what the init scripts do today
+     (PostgreSQL `synchronous_commit=off`, MySQL/MariaDB `innodb_flush_log_at_trx_commit=2` and
+     `foreign_key_checks`/`unique_checks` 0, Redis `appendfsync no`).
+   - `unsafe`: the strongest lever of the DBMS (table above); a crash during the load can lose or
+     corrupt data.
 2. **Scripts per DBMS, not per benchmark**, in a shared folder such as `experiments/_durability/<DBMS>/`:
-   - `load-durability-relaxed.*` / `load-durability-off.*`: appended by bexhoma as the last pre-load script.
+   - `load-durability-relaxed.*` / `load-durability-unsafe.*`: appended by bexhoma as the last pre-load script.
    - `load-durability-restore.*`: inserted by bexhoma before the check script in every post-load list
      (WP8 'Checks' runs always), so a load never leaves the server weakened for the benchmark.
 3. **Restore** as in WP8: save startup values before relaxing (MySQL `bexhoma.saved_settings`), restore
-   exactly those (PostgreSQL `ALTER SYSTEM RESET` + reload). `off` ends with a `CHECKPOINT` (or the DBMS
+   exactly those (PostgreSQL `ALTER SYSTEM RESET` + reload). `unsafe` ends with a `CHECKPOINT` (or the DBMS
    equivalent) in the restore, so the first benchmark round does not pay for it.
-4. **Unsupported level:** no file for the level -> message ("load durability 'off' not supported by TiDB,
-   using default"), no failure; the effective level is what gets reported.
+4. **Unsupported level:** no file for the level -> fall back to the next weaker level that exists, down
+   to `durable`, with a message ("load durability 'unsafe' not supported by TiDB, using 'durable'"), no
+   failure; the effective level is what gets reported.
 5. **Reporting:** requested and effective level in the workload info and the connection parameters;
    the summary shows it next to the loading times.
-6. **Safety:** with `off`, a SUT restart during the load can lose data; bexhoma already detects SUT
+6. **Safety:** with `unsafe`, a SUT restart during the load can lose data; bexhoma already detects SUT
    restarts and then marks the load as failed.
 7. **Tests:** script-list insertion per level, restore always present, unsupported level falls back,
    reporting; scripts run on the DBMS pods as for WP8.
@@ -372,14 +377,88 @@ import is always visible in the results.
 **First step (proposal).** Mechanism (1-7); scripts for MySQL, PostgreSQL/PgDuckDB, Citus, MariaDB
 (`relaxed` only); Redis later; TiDB, CockroachDB, YugabyteDB, MonetDB report "not supported".
 
-**Open decisions (user):**
-- Levels `default/relaxed/off`, or only `default/off`?
-- Move today's init-script relaxations (PostgreSQL `synchronous_commit=off`, MySQL flush 2/0) into
-  `relaxed` and make that the default (init scripts then only create schemas; changes what `default`
-  means), or leave them where they are?
+**Decisions (user, 2026-10-20):**
+- Levels: three, named `durable/relaxed/unsafe` (first drafted as `default/relaxed/off`; renamed
+  because the CLI default is not the level called `default`).
+- Today's init-script relaxations (PostgreSQL `synchronous_commit=off`; MySQL flush 2/0,
+  `foreign_key_checks`/`unique_checks` 0, TPC-H `autocommit` 0; their save/restore in the check
+  scripts) move into `relaxed`. Init scripts then only create schemas; restore moves into
+  `load-durability-restore.*`.
+- `durable` = DBMS as configured. To keep results comparable with earlier runs, the CLI default of
+  `-xld` is `relaxed` (confirmed). MySQL redo log off (`ALTER INSTANCE DISABLE INNODB REDO_LOG`) is
+  MySQL's `unsafe`.
+- Port to TPC-DS MySQL (#709, 2026-10-20) is in the init/check scripts for now and moves with the rest.
 
 Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DISABLE` twice are no-ops;
 `root@localhost` and `root@'%'` hold `INNODB_REDO_LOG_ENABLE`; MySQL logs a warning while off.
+
+**Implementation (2026-10-20, uncommitted).**
+- Code: `bexhoma/load_durability.py` (levels, `resolve_load_durability`, `insert_durability_scripts`);
+  `-xld/--load-durability` in `cli_args.make_base_parser` (default `relaxed`); `ExperimentBase.prepare_testbed`
+  sets `experiment.load_durability` and an info line; `SutConfiguration.apply_load_durability()` runs once in
+  `LoadingCoordinator.start_exec` right before the init scripts. **Kept simple (user 2026-10-20/21): the init
+  script lists in `k8s-cluster.config`/`cluster.config` carry the placeholders `durability.sql` (first in every
+  pre-load list) and `restoredurability.sql` (before `checkschema-*`), placed like index/constraint scripts;
+  `expand_durability_placeholders()` replaces them by the level's scripts (`load_durability.PLACEHOLDERS`) the
+  folder has; no fallback logic, no "effective level".** Reporting:
+  `connection_parameter['load_durability'] = <level>`, shown in the summary. Tests:
+  `tests/test_load_durability.py`, WP8 test `test_relaxed_settings_are_restored` moved to the new files.
+- Deviations from the design above:
+  - Names: `durability-<level>.*` (pre-load) and `restoredurability-<level>.*` (one restore per level) instead
+    of `load-durability-*`; the part before the first `-` is the pod time label (`time_durability`,
+    `time_restoredurability`). `.sql` and `.sh` per name (SQL first).
+  - `unsafe` includes `durability-relaxed` + `durability-unsafe`, restores `restoredurability-unsafe(.sql,.sh)`
+    then `-relaxed`. `durable` has its own scripts (user 2026-10-20: `-xld` is only about the load, `durable`
+    = crash-safe load whatever the template says; the restore returns to template + `--set`): PostgreSQL /
+    Citus `synchronous_commit`, `fsync`, `full_page_writes` on; MySQL flush 1; MariaDB flush 1 + doublewrite ON.
+    Runtime checks 2026-10-20 (throwaway pods): MySQL 9.7.2 refuses `SET GLOBAL innodb_doublewrite=ON` when
+    started with 0 ("Please shutdown and change value to ON") -> MySQL `durable` has no torn-page protection
+    unless started with `--set ...innodb_doublewrite=ON`; MariaDB 12.3.3 switches doublewrite and flush at
+    runtime. YugabyteDB: no load scripts (Helm), `durable_wal_write` stays as installed.
+    Doublewrite in `unsafe` (user 2026-10-21): MySQL 9.7.2 refuses ON->OFF and OFF->ON at runtime but allows
+    ON<->DETECT_ONLY, so MySQL `unsafe` sets DETECT_ONLY (last statement; fails harmlessly when started OFF);
+    MariaDB `unsafe` (new) sets OFF. Both restore the saved value. Script sequence relaxed -> unsafe -> restore
+    checked on throwaway pods (MySQL started ON and OFF, MariaDB 12.3.3).
+    MySQL `-xld durable` + TPC-H `-xii -xic -xis` at 16Gi: OOM-killed while adding the FKs (1792537227 with 96G
+    pool, 1792538269 with 10G); same with `relaxed` (key checks off): no restart (1792539198). The template's
+    tmpdir `/mysqltmp` is memory-backed (32Gi). Decision (user 2026-10-21): document only (tmpdir on disk might
+    be too slow). **But at 32Gi (1792540682) it was OOM-killed too, in `initconstraints` after ~10 min: the
+    tmpdir explanation does not fit the size (SF 1 ~1 GB); cause open.** Docs state the observation only.
+    **Cause found (1792569991, cgroup samples every 15 s):** MySQL process memory (anon) grows 4.4 -> 15.5 GB
+    (+1.6 GB / 20 s) during `ALTER TABLE lineitem ADD FOREIGN KEY (l_orderkey)` with `foreign_key_checks=1`;
+    page cache shrinks, `/mysqltmp` stays empty, the datadir hardly grows. **Fix (user 2026-10-21): MySQL
+    `initconstraints-tpch.sql`/`-tpcds.sql` set `SET SESSION foreign_key_checks = 0`, as the MariaDB scripts do**
+    (a constraint setting, not durability; works at every `-xld` level).
+    Citus `relaxed` checked on 1792519080 (reset suite): `run_command_on_workers` with `ALTER SYSTEM` OK on all
+    workers, restore back to the template's `synchronous_commit=local`.
+  - **No shared folder (user decision 2026-10-20, option "everywhere"):** the scripts sit next to the init
+    scripts in every benchmark's DBMS folder (`experiments/<benchmark>/<path_experiment_docker>/`), explicitly
+    in all PostgreSQL, MySQL and Citus folders of tpch, tpcds, tpcc, ycsb and benchbase/* (PgDuckDB and
+    PGBouncer use the PostgreSQL folder). `tests/test_load_durability.py` classifies every DBMS folder
+    (`EXPECTED_LEVEL` / `NOT_SUPPORTED` with reason) and checks that copies are identical to the reference copy
+    (`REFERENCE_BENCHMARK`) except declared `ALLOWED_DEVIATIONS` (which must really deviate). Declared:
+    `tpch/MySQL` relaxed (flush 2, fk/unique/autocommit 0), `tpcc/MySQL` and `ycsb/MySQL` relaxed (flush 0,
+    log buffer 1G), i.e. the pre-`-xld` settings; all other MySQL = TPC-DS's (flush 2, fk/unique 0). The MySQL
+    restore restores every setting any variant saves (missing rows keep the current value) and then
+    **deletes** `bexhoma.saved_settings`, so a reused volume cannot restore stale values.
+  - **Pre-load scripts are prepended**, not appended: in-pod loads list the data scripts in the same init
+    list (e.g. MySQL TPC-H `initdata-*`), which would otherwise run unrelaxed.
+  - PostgreSQL `unsafe` restore = `RESET fsync/full_page_writes`, reload, `CHECKPOINT`, then
+    `restoredurability-unsafe.sh` with `sync` (PG docs: after fsync off->on flush the OS cache).
+  - Levels: PostgreSQL and MySQL `relaxed` + `unsafe`; Citus `relaxed` only (coordinator + workers via
+    `run_command_on_workers`; `unsafe` would need `sync` on every worker); MariaDB `relaxed` only, as `.sh`
+    running as root (loadData connects as `bexhoma` without global privileges), flush 2 = the template's old
+    value. `SCRIPTS` lists `.sql` and `.sh` per name. Redis, TiDB, CockroachDB, YugabyteDB, MonetDB: no
+    scripts, they load as configured (crash-safe for the SQL DBMS since D1 was reversed).
+- Behavior changes (release note): with the default `relaxed`, loads that relaxed nothing before now do:
+  PostgreSQL/PgDuckDB/PGBouncer/Citus for TPC-C, YCSB, Benchbase (`synchronous_commit=off`), MySQL Benchbase
+  (fk/unique checks off). Their loading times are not directly comparable to earlier runs; `-xld durable`
+  reproduces the old behavior for them (but not for TPC-H/TPC-DS/TPC-C/YCSB on MySQL and TPC-H/TPC-DS on
+  PostgreSQL, which relaxed before).
+- Open cluster checks (smoke, `-sf 1`, `-nc 1`): MySQL TPC-H and YCSB with `relaxed` and `unsafe` (redo
+  status in the check log, settings restored), PostgreSQL TPC-H `unsafe` (`fsync`/`full_page_writes` back on,
+  `sync` log), Citus TPC-C `relaxed` (`run_command_on_workers` with `ALTER SYSTEM`),
+  tenancy `-mtb schema` with PostgreSQL.
 
 ---
 
@@ -421,12 +500,12 @@ Ready, with these defaults taken from this plan unless the user decides otherwis
 | # | Point | Default in this plan |
 |---|---|---|
 | R1 | WP2 argument style | annotation in the template, detection as fallback |
-| R2 | WP4 DragonflyReplica | `SAVE` on the master only |
+| R2 | WP4 DragonflyReplica | ~~`SAVE` on the master only~~ corrected 2026-10-19: `SAVE` on all workers (see WP4) |
 | R3 | WP6 `-rnw` | `+` joins nodes, commas sweep (paired with the resource cells), `sut` = `-rnn` node |
 | R4 | WP7 data components / placeholder SUT | **decided:** design in WP7 (`data_components`, `sut_role`, template sizes 250m-1 CPU / 512Mi-1Gi), confirmed by the user 2026-10-17 |
 | R5 | WP8 DBMS folders for TPC-H/TPC-DS check scripts | PostgreSQL, MySQL, MariaDB, Citus, PgDuckDB, MonetDB |
 | R6 | WP8 row counts | **decided:** counts only, no expected values (user 2026-10-17) |
-| R7 | WP10 | later, not part of the first implementation; revised 2026-10-17 to a general import-durability option (`-xld`), two open decisions in WP10 |
+| R7 | WP10 | later, not part of the first implementation; revised 2026-10-17 to a general import-durability option (`-xld durable/relaxed/unsafe`), decisions made 2026-10-20 |
 | R8 | HammerDB image | **decided:** move to 6.0 (user 2026-10-17); check the other DBMS at the start of WP5 |
 
 R1, R2, R3, R5 and R7 are the plan's defaults; the user did not object (2026-10-17).

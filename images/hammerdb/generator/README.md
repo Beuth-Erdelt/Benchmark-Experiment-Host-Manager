@@ -6,7 +6,7 @@ This folder contains the Dockerfile for a data generator that loads TPC-C data
 into a DBMS using HammerDB's `buildschema` command.
 Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`.
 
-See [../README.md](../README.md) for shared design decisions and the full
+See [images/hammerdb/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hammerdb/README.md) for shared design decisions and the full
 supported-backend table.
 
 ## Execution flow (`generator.sh`)

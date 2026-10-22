@@ -65,9 +65,11 @@ spec:
           # --- Async I/O (for CephFS) ---
           - "--innodb-use-native-aio=0"            # Disable native AIO (improves CephFS compatibility)
           # --- Buffer Pool (Main memory cache) ---
-          - "--innodb-buffer-pool-size=96G"        # Increased (out of 500G total RAM?)
-          - "--innodb-buffer-pool-instances=16"    # One per core for high concurrency
-          - "--innodb-buffer-pool-chunk-size=2G"   # Aligns pool size with chunks
+          # 8G fits the default -rr 16Gi (the namespace sets limit = request); larger pods set it per run,
+          # e.g. --set ...container[dbms].innodb_buffer_pool_size=32G. Default chunk size (128M) x 8
+          # instances: MySQL rounds a --set value up to the next multiple of 1G only.
+          - "--innodb-buffer-pool-size=8G"
+          - "--innodb-buffer-pool-instances=8"
           # --- I/O Capacity (for background flushing) ---
           - "--innodb-flush-method=O_DIRECT"
           - "--innodb-flush-neighbors=0"
@@ -77,8 +79,7 @@ spec:
           #- "--innodb-log-buffer-size=16G"        # Buffer before flushing to disk
           #- "--innodb-redo-log-capacity=32G"      # Redo log capacity for large write bursts
           # --- Transaction Commit Behavior ---
-          #- "--innodb-flush-log-at-trx-commit=1"  # Default
-          - "--innodb-flush-log-at-trx-commit=2"   # Flush every second (safe compromise)
+          # --- Durability: DBMS defaults (crash-safe); relax per run with --set, e.g. --set ...container[dbms].innodb_flush_log_at_trx_commit=2
           - "--skip-log-bin"                        # Disable binary logging; reduces disk usage by ~50% during load
           #- "--sync-binlog=0"                     # No fsync per transaction (OLAP-friendly)
           # --- Temporary Tables ---
@@ -90,8 +91,6 @@ spec:
           #- "--innodb-parallel-read-threads=64"   # For multi-threaded table scans (OLAP)
           #- "--innodb-ddl-threads=32"             # Parallel DDL ops (index creation, etc.)
           #- "--innodb-ddl-buffer-size=256M"       # DDL metadata operations memory
-          # --- Doublewrite Buffer ---
-          - "--innodb-doublewrite=0"               # Disable for CephFS redundancy and speed
           - "--tmpdir=/mysqltmp"
           # --- TLS (Secret created by bexhoma; volume and these args are removed when the config has no 'tls') ---
           - "--ssl-ca=/etc/mysql/certs/ca.pem"

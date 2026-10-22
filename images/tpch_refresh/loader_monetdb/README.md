@@ -5,7 +5,7 @@ Reads pre-generated update files from `/data/tpch-refresh/SF<SF>/` on the PVC.
 Runs as the main container (`benchmark_run=2`) of the refresh benchmarker job,
 in parallel with the query-stream benchmarker (`benchmark_run=1`).
 
-See [../README.md](../README.md) for the shared refresh-stream pipeline design.
+See [images/tpch_refresh/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/tpch_refresh/README.md) for the shared refresh-stream pipeline design.
 
 ## Environment variables
 

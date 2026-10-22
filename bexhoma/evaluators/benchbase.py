@@ -99,6 +99,8 @@ class BenchbaseEvaluator(LogEvaluator):
             if target == "unlimited":
                 target = 0
             time = re.findall('BENCHBASE_TIME:(.+?)\n', stdout)[0]
+            warmup = re.findall('BENCHBASE_WARMUP:(.+?)\n', stdout)
+            warmup = warmup[0] if warmup else '0'   # missing in logs of older images
             batchsize = re.findall('BENCHBASE_BATCHSIZE:(.+?)\n', stdout)[0]
             keyandthink = re.findall('BENCHBASE_KEY_AND_THINK:(.+?)\n', stdout)[0]
             child = re.findall('BEXHOMA_CHILD:(.+?)\n', stdout)[0]
@@ -125,6 +127,7 @@ class BenchbaseEvaluator(LogEvaluator):
                 'profile': profile,
                 'target': target,
                 'time': time,
+                'warmup': warmup,
                 'batchsize': batchsize,
                 'sf': int(sf),
                 'num_errors': num_errors,
@@ -178,8 +181,8 @@ class BenchbaseEvaluator(LogEvaluator):
         """
         Casts all benchmarking result columns to their appropriate data types.
 
-        Adds a ``tenant_id`` column (value ``-1``) when the column is absent so that
-        DataFrames loaded from older pickles remain compatible.
+        Adds a ``tenant_id`` column (value ``-1``) and a ``warmup`` column (value ``0``)
+        when absent so that DataFrames loaded from older pickles remain compatible.
 
         :param df: DataFrame of raw benchmarking results.
         :type df: pandas.DataFrame
@@ -188,6 +191,8 @@ class BenchbaseEvaluator(LogEvaluator):
         """
         if 'tenant_id' not in df.columns:
             df = df.assign(tenant_id=-1)
+        if 'warmup' not in df.columns:
+            df = df.assign(warmup=0)
         df_typed = df.astype({
             'connection':'str',
             'phase':'str',
@@ -204,6 +209,7 @@ class BenchbaseEvaluator(LogEvaluator):
             'profile':'str',
             'target':'int',
             'time':'float',
+            'warmup':'float',
             'batchsize':'int',
             'sf':'int',
             'num_errors':'int',
@@ -268,6 +274,7 @@ class BenchbaseEvaluator(LogEvaluator):
                 'profile':'max',
                 'target':'sum',
                 'time':'max',
+                'warmup':'max',
                 'batchsize':'mean',
                 'sf':'max',
                 'num_errors':'sum',
@@ -571,6 +578,13 @@ class BenchbaseEvaluator(LogEvaluator):
         """
         if experiment.benchmarking_is_active():
             experiment._test_column(df_reduced, "Throughput (requests/second)")
+            # log_to_df and benchmarking_aggregate_by_parallel_pods compute efficiency only for these settings
+            keyandthink = str(experiment.default_benchmarking_parameters.get('BENCHBASE_KEY_AND_THINK', 'false')) == "true"
+            bench = getattr(experiment, 'benchmark_type', '')
+            experiment._test_efficiency(
+                df_reduced, "terminals",
+                computed=keyandthink and bench == "tpcc",
+                reason="needs key-and-think time (-xkey) and the tpcc benchmark")
             experiment._record_test(
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"

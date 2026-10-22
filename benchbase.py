@@ -20,13 +20,29 @@ import argparse
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
 
+
+def target_per_pod(target, pods):
+    """
+    Split a throughput target over the benchmarking pods.
+
+    A target of 0 stays 0 and means unlimited (patched in benchmarker.sh).
+    A positive target never rounds down to 0, so it never becomes unlimited by accident.
+
+    :param target: Total target in requests per second.
+    :param pods: Number of benchmarking pods.
+    :return: Target per pod.
+    """
+    if target <= 0:
+        return 0
+    return max(1, int(target/pods))
+
 if __name__ == '__main__':
     description = """Run Benchbase benchmarks (TPC-C, YCSB, Twitter, CH-Benchmark) against a DBMS in Kubernetes.
     Controls loading concurrency, benchmarking throughput targets, optional connection pooling, and resource allocation.
     """
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
-    parser.add_argument('mode', help='experiment phase: start SUT only, load data, or run the full benchmark', choices=['run', 'start', 'load'])
+    parser.add_argument('mode', help='experiment phase: start SUT only, load data, run the full benchmark, or summarize results', choices=['run', 'start', 'load', 'summary'])
     parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'Citus', 'PGBouncer', 'CedarDB'], default=[], nargs='*')
     parser.add_argument('-xnsr',  '--xnum-sut-replicas', help='number of SUT replicas per configuration', default=1, dest='num_sut_replicas')
     parser.add_argument('-xnpd',  '--xnum-pd-nodes', help='number of PD (Placement Driver) nodes, independent of -nw (TiDB only; keep odd)', default=3, dest='num_pd_nodes')
@@ -41,7 +57,8 @@ if __name__ == '__main__':
     parser.add_argument('-xconn', '--extra-new-connection', help='open a new database connection for every transaction', action='store_true', default=False)
     parser.add_argument('-xbatch','--extra-batchsize', help='number of rows per INSERT batch during loading', default=128)
     parser.add_argument('-xbt',   '--xbenchmark-type', help='Benchbase benchmark suite to run', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark', 'ycsb'], dest='benchmark')
-    parser.add_argument('-xtb',   '--xtarget-base', help='base ops-per-second target; multiply by -xnbf factors to get per-pod target', default="1024", dest='target_base')
+    parser.add_argument('-xtb',   '--xtarget-base', help='base ops-per-second target; multiply by -xnbf factors to get per-pod target (0 = unlimited)', default="1024", dest='target_base')
+    parser.add_argument('-xwu',   '--xwarmup', help='warmup in seconds before the measured benchmark duration (not part of the results)', default=0, dest='warmup')
     parser.set_defaults(num_worker=1)
     # evaluate args
     args = parser.parse_args()
@@ -89,6 +106,7 @@ if __name__ == '__main__':
     ### specific to: Benchbase
     ##############
     SD = int(args.scaling_duration)*60
+    warmup = int(args.warmup)                             # seconds, not measured
     target_base = int(args.target_base)
     type_of_benchmark = args.benchmark                    # twitter, tpccc, ycsb etc
     scaling_logging = int(args.scaling_logging)*1000      # adjust unit to miliseconds
@@ -168,6 +186,7 @@ if __name__ == '__main__':
         SF = SF,
         BENCHBASE_BENCH = type_of_benchmark,
         BENCHBASE_TIME = SD,
+        BENCHBASE_WARMUP = warmup,
         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
         BENCHBASE_BATCHSIZE = extra_batchsize,
         BENCHBASE_STATUS_INTERVAL = scaling_logging,
@@ -177,6 +196,7 @@ if __name__ == '__main__':
         SF = SF,
         BENCHBASE_BENCH = type_of_benchmark,
         BENCHBASE_TIME = SD,
+        BENCHBASE_WARMUP = warmup,
         BENCHBASE_ISOLATION = "TRANSACTION_READ_COMMITTED",
         BENCHBASE_BATCHSIZE = extra_batchsize,
         BENCHBASE_STATUS_INTERVAL = scaling_logging,
@@ -198,10 +218,9 @@ if __name__ == '__main__':
                             name_format = 'PostgreSQL-{threads}-{pods}-{target}-{tenant}'
                             #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
                             config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
-                            if type_of_benchmark == 'tpcc':
-                                # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
-                                # (with -ar), in each tenant's own container
-                                config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                            # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
+                            # each benchmarking round, in each tenant's own container
+                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
                             config.set_storage(
                                 storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
                                 )
@@ -229,7 +248,7 @@ if __name__ == '__main__':
                                         for num_executor in list_clients:
                                             benchmarking_pods_scaled = num_executor*benchmarking_pods
                                             benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                            benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                            benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                             """
                                             print("benchmarking_target", benchmarking_target)
                                             print("benchmarking_pods", benchmarking_pods)
@@ -255,10 +274,9 @@ if __name__ == '__main__':
                         name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                         config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
-                        if type_of_benchmark == 'tpcc':
-                            # Run CHECKPOINT + VACUUM ANALYZE before each benchmarking round
-                            # to produce a consistent, cold-cache starting state.
-                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                        # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
+                        # each benchmarking round (caches stay warm).
+                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
@@ -297,7 +315,7 @@ if __name__ == '__main__':
                                     for num_executor in list_clients:
                                         benchmarking_pods_scaled = num_executor*benchmarking_pods
                                         benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                        benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                        benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                         """
                                         print("benchmarking_target", benchmarking_target)
                                         print("benchmarking_pods", benchmarking_pods)
@@ -343,7 +361,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -381,6 +399,7 @@ if __name__ == '__main__':
                                 #, configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out)
                                 config = configurations.default(experiment=experiment, docker='PGBouncer', alias='DBMS A')
                                 config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
+                                config.set_benchmark_resetscript(['reset-benchbase.sql'])                 # reset of PostgreSQL, through the pooler
                                 config.sut_has_pool = True                                                # in particular monitor pool component
                                 config.sut_parameters = {
                                     # do not split connections between pool pods:
@@ -413,7 +432,7 @@ if __name__ == '__main__':
                                             for num_executor in list_clients:
                                                 benchmarking_pods_scaled = num_executor*benchmarking_pods
                                                 benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                                benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                                 """
                                                 print("benchmarking_target", benchmarking_target)
                                                 print("benchmarking_pods", benchmarking_pods)
@@ -440,9 +459,9 @@ if __name__ == '__main__':
                             #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
                             config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
                             if type_of_benchmark == 'tpcc':
-                                # Run ANALYZE TABLE before each benchmarking round (with -ar),
-                                # in each tenant's own container
-                                config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                                # With -ar: ANALYZE TABLE, then flush of the dirty pages and
+                                # FLUSH STATUS before each round, in each tenant's own container
+                                config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
                             config.set_storage(
                                 storageConfiguration = f'mysql-{tenant}'+"-"+str(config.num_tenants)
                                 )
@@ -471,7 +490,7 @@ if __name__ == '__main__':
                                         for num_executor in list_clients:
                                             benchmarking_pods_scaled = num_executor*benchmarking_pods
                                             benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                            benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                            benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                             """
                                             print("benchmarking_target", benchmarking_target)
                                             print("benchmarking_pods", benchmarking_pods)
@@ -496,9 +515,9 @@ if __name__ == '__main__':
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                         config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
                         if type_of_benchmark == 'tpcc':
-                            # Run ANALYZE TABLE before each benchmarking round to
-                            # keep optimizer statistics fresh between rounds.
-                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                            # With -ar: ANALYZE TABLE, then flush of the dirty pages and
+                            # FLUSH STATUS before each benchmarking round.
+                            config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
                         if config.tenant_per:
                             config.set_storage(
                                 storageConfiguration = 'mysql-'+config.tenant_per+"-"+str(config.num_tenants)
@@ -538,7 +557,7 @@ if __name__ == '__main__':
                                     for num_executor in list_clients:
                                         benchmarking_pods_scaled = num_executor*benchmarking_pods
                                         benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                        benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                        benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                         """
                                         print("benchmarking_target", benchmarking_target)
                                         print("benchmarking_pods", benchmarking_pods)
@@ -564,9 +583,9 @@ if __name__ == '__main__':
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS A')
                     if type_of_benchmark == 'tpcc':
-                        # Run ANALYZE TABLE before each benchmarking round to
-                        # keep optimizer statistics fresh between rounds.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                        # With -ar: ANALYZE TABLE, then flush of the dirty pages and
+                        # FLUSH STATUS before each benchmarking round.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
                     config.set_storage(
                         storageConfiguration = 'mariadb'
                         )
@@ -587,7 +606,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -615,9 +634,9 @@ if __name__ == '__main__':
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
-                        # YSQL has no CHECKPOINT; ANALYZE VERBOSE refreshes
-                        # planner statistics before each benchmarking round.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
+                        # With -ar: ANALYZE, then a stats reset on every tserver before
+                        # each round; YSQL has no CHECKPOINT.
+                        config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-counters.sh'])
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_storage(
                         storageConfiguration = 'yugabytedb'
@@ -659,7 +678,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -686,8 +705,8 @@ if __name__ == '__main__':
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_sut_role('placeholder') # client pod; data lives in the worker StatefulSet
                     if type_of_benchmark == 'tpcc':
-                        # Pebble has no user-invokable checkpoint; ANALYZE
-                        # refreshes planner statistics before each round.
+                        # With -ar: ANALYZE and a SQL stats reset before each round;
+                        # Pebble has no user-invokable checkpoint.
                         config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
@@ -721,7 +740,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -747,9 +766,8 @@ if __name__ == '__main__':
                     config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
                     config.set_data_components(['tikv']) # PD keeps its template resources and volume size
                     if type_of_benchmark == 'tpcc':
-                        # TiKV has no user-invokable checkpoint; ANALYZE TABLE
-                        # forces fresh histograms before each round instead of
-                        # relying on TiDB's async auto-analyze job timing.
+                        # With -ar: ANALYZE TABLE and FLUSH STATUS before each round;
+                        # TiKV has no user-invokable checkpoint.
                         config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
@@ -787,7 +805,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -834,7 +852,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)
@@ -862,8 +880,8 @@ if __name__ == '__main__':
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
-                        # CHECKPOINT only reaches the coordinator; VACUUM ANALYZE
-                        # refreshes planner statistics before each round.
+                        # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset
+                        # on the coordinator and every worker before each round.
                         config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     if skip_loading:
                         config.loading_deactivated = True
@@ -898,7 +916,7 @@ if __name__ == '__main__':
                                 for num_executor in list_clients:
                                     benchmarking_pods_scaled = num_executor*benchmarking_pods
                                     benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
                                     """
                                     print("benchmarking_target", benchmarking_target)
                                     print("benchmarking_pods", benchmarking_pods)

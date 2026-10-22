@@ -240,7 +240,7 @@ How `PARAM` is written depends on the template:
 | env | env entry `PARAM=VALUE` | all | `PARAM` = `env.NAME`, e.g. Dragonfly `env.DFLY_maxmemory` |
 
 An existing setting is replaced in place, a new one is appended.
-In the `flag` style, `-` and `_` in names are equal (`innodb_buffer_pool_size` replaces `--innodb-buffer-pool-size=96G`).
+In the `flag` style, `-` and `_` in names are equal (`innodb_buffer_pool_size` replaces `--innodb-buffer-pool-size=8G`).
 Valueless flags (`--skip-log-bin`) cannot be set this way.
 Flags inside `bash -c` command strings (CockroachDB, TiDB) and Helm values (YugabyteDB) are not reachable by `--set`.
 
@@ -275,6 +275,63 @@ The summary reports what the whole SUT requests (`resources_total`: SUT pod plus
 With `config.set_script_target('workers')` (Redis cluster, Dragonfly cluster), shell scripts (`.sh`, e.g. `save-snapshot.sh`) run in every worker pod instead; SQL scripts still run once through `loadData`.
 
 **Post-load checks.** The last post-load script always runs, also for TPC-H and TPC-DS without `-xii/-xic/-xis` (key `Checks`): `checkschema-<benchmark>.sql` restores settings relaxed for the import (PostgreSQL `synchronous_commit`; MySQL settings saved in `bexhoma.saved_settings` before the load), writes a checkpoint (PostgreSQL, Citus) and reports row counts, sizes, the WAL/redo written by the load and the non-default configuration.
+
+### Reset scripts (`-ar`)
+
+With `-ar`, a reset runs before each benchmarking round (also before the first round after loading), for YCSB, Benchbase, HammerDB, TPC-H and TPC-DS.
+It is off by default.
+Every reset does the same steps in the same order, so rounds and systems start from comparable states:
+
+1. **Statistics**: `VACUUM` / `ANALYZE` or the equivalent.
+2. **Persist**: write dirty data to disk (`CHECKPOINT`, flush, `SAVE`), so that no checkpoint or flush left over from loading or the previous round falls into the measured round. It comes after step 1, because `VACUUM` dirties pages again.
+3. **Counters**: zero the cumulative activity counters, so application metrics start at 0.
+
+The reset does not make caches cold: a checkpoint writes dirty pages but keeps them in memory.
+A step without an equivalent is a comment line `step N (...): n/a - <reason>` in the script; no other operation stands in for it.
+
+| DBMS | 1 Statistics | 2 Persist | 3 Counters |
+|---|---|---|---|
+| PostgreSQL, PGBouncer, PgDuckDB | `VACUUM VERBOSE ANALYZE` (whole database) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
+| Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (passed on to the shards) | `CHECKPOINT` on the coordinator and with `run_command_on_workers` on every worker | as PostgreSQL, on the coordinator and every worker |
+| MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
+| MonetDB | `ANALYZE` | n/a (the write-ahead log is applied in the background; no call to force it) | n/a |
+| YugabyteDB | `ANALYZE VERBOSE` (cluster-wide) | n/a (no `CHECKPOINT` in YSQL, no `yb-admin` in the helper pod) | `reset-counters.sh`: `pg_stat_reset()` on every tserver (`yb-tserver-N.yb-tservers`), not once through the service, which picks one tserver per connection |
+| CockroachDB | `ANALYZE` (cluster-wide) | n/a (Pebble flushes on its own) | `crdb_internal.reset_sql_stats()` (cluster-wide) |
+| TiDB | `ANALYZE TABLE` (cluster-wide) | n/a (no flush in SQL) | `FLUSH STATUS` on the TiDB server the connection reaches |
+| Dragonfly | n/a | `SAVE` on every data pod | `CONFIG RESETSTAT` |
+| Redis | n/a | `SAVE` (standalone: SUT pod; cluster: every worker) | `CONFIG RESETSTAT` |
+
+CedarDB and DatabaseService have no reset.
+Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL and PGBouncer only (the other DBMS have no scripts for them).
+With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
+
+Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis).
+SQL files run through `loadData` (once per tenant for schema and database tenancy), shell files in the SUT pod or, with script target `workers`, in every worker pod.
+With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both streams start.
+Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
+A script counts as failed when it exits non-zero, writes an error line (`ERROR`, `FATAL`) to stderr, or (redis-cli) an `ERR` reply to stdout; no output means success.
+The summary's Reset table lists the failed scripts per job (`reset_failed`), and the test `Reset scripts ran without errors` fails when there are any; the agent report links the reset logs in `files.md`.
+`scripts/test-docs-reset.sh` (`.ps1`) checks every reset on a cluster: one run per DBMS and benchmark with two rounds, and its header lists what to look for in the logs.
+
+Runs with `-ar` from before this contract (October 2026) are not directly comparable to newer ones for PostgreSQL (checkpoint now after `VACUUM`), Citus (checkpoints on the workers) and MySQL/MariaDB (dirty-page flush): these move I/O out of round 1.
+
+### Load durability (`-xld`)
+
+`-xld durable|relaxed|unsafe` (default `relaxed`) sets the durability during the load only; the benchmark runs with the configured state (template and `--set`).
+Templates set no durability options.
+Details and the placeholders `durability.sql` / `restoredurability.sql`: [Prepare Testbeds](Prepare-Testbeds.md).
+
+| DBMS | durable | relaxed | unsafe |
+|---|---|---|---|
+| PostgreSQL, PgDuckDB, PGBouncer | `synchronous_commit`, `fsync`, `full_page_writes` on | `synchronous_commit=off` | also `fsync`, `full_page_writes` off; restore with `CHECKPOINT` + `sync` |
+| Citus (coordinator + workers) | as PostgreSQL | `synchronous_commit=off` | - (= relaxed) |
+| MySQL | flush 1 | flush 2 (TPC-C/YCSB 0), key checks off | also redo log off, doublewrite `DETECT_ONLY` |
+| MariaDB (`.sh`, root) | flush 1, doublewrite on | flush 2 | also doublewrite off |
+| others | - | - | - |
+
+For a new DBMS: put `durability-<level>.sql`/`.sh` and `restoredurability-<level>.sql`/`.sh` next to its init scripts; the restore must return to the startup values, not to the defaults (MySQL/MariaDB save them in `bexhoma.saved_settings`).
+No curly braces (scripts may be filled with `str.format()`).
+PostgreSQL: a parameter set on the command line (`-c`, also from `--set`) cannot be changed by `ALTER SYSTEM`, so `-xld` has no effect on it.
 
 ### Minimal SUT template skeleton
 
@@ -434,8 +491,11 @@ bexhoma therefore creates a TLS Secret per SUT (see `'tls'` in the configuration
 
 **Deployment template:** [`k8s/deploymenttemplate-MySQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml)
 
-The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=96G`, `--innodb-flush-log-at-trx-commit=2`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=10G`.
-The init scripts relax settings only for the import (e.g. `innodb_flush_log_at_trx_commit`, `foreign_key_checks`); the check scripts restore them to the server's startup values afterwards.
+The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=8G`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=32G`.
+The buffer pool of 8G fits the default pod size (`-rr 16Gi`; the namespace sets the memory limit equal to the request when `-lr` is not given). bexhoma does not adapt it to `-rr`/`-lr`: give larger pods a larger pool with `--set`. Until 2026-10-22 the template had 96G, which was OOM-killed in a 16Gi pod as soon as the data filled it (TPC-H SF 10).
+The template sets no durability options: MySQL runs crash-safe by default (`innodb_flush_log_at_trx_commit=1`, doublewrite on); relax the benchmark per run with `--set ...container[dbms].innodb_flush_log_at_trx_commit=2`.
+Load durability (`-xld`): see [Load durability](#load-durability--xld). Doublewrite cannot be switched between on and off at runtime in MySQL, so with `--set ...innodb_doublewrite=OFF` it stays off during an `-xld durable` load.
+The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row and its memory grew past 16 GB while adding lineitem->orders at TPC-H SF 1 (OOM-killed, 2026-10-21).
 See the [MySQL 9.7 documentation](https://dev.mysql.com/doc/refman/9.7/en/) for parameter explanations.
 
 **Configuration** (from `cluster.config`):
@@ -487,7 +547,8 @@ It uses a dedicated `bexhoma` database user rather than `root`.
 
 **Deployment template:** [`k8s/deploymenttemplate-MariaDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml)
 
-The default deployment sets `innodb_log_buffer_size`, `innodb-write-io-threads=16`, and `innodb-log-file-size`.
+The default deployment sets the I/O threads, `innodb-log-buffer-size=1G`, temporary table sizes and `innodb-buffer-pool-size=8G`.
+As for MySQL, the 8G pool fits the default pod size (`-rr 16Gi`); give larger pods a larger pool with `--set ...container[dbms].innodb_buffer_pool_size=32G`.
 
 **Configuration** (from `cluster.config`):
 
@@ -769,7 +830,8 @@ The monitoring section scrapes Dragonfly's native Prometheus endpoint at `/metri
 
 Dragonfly settings are environment variables `DFLY_<flag>` in the templates (e.g. `DFLY_maxmemory`), not command-line flags, because a flag on the command line would win over the variable.
 Change them per run with `--set`, e.g. `--set deployment[bexhoma-deployment-dragonfly].container[dbms].env.DFLY_snapshot_cron="*/5 * * * *"` (for the cluster workers: `statefulset[bexhoma-worker]`).
-In a Dragonfly or Redis cluster, `save-snapshot.sh` (`SAVE`) runs on every worker; with replicas (DragonflyReplica) only on the master.
+With `-ar`, `save-snapshot.sh` (`SAVE`) runs before each benchmarking round. In a Dragonfly or Redis cluster it runs on every worker, with replicas (DragonflyReplica) too: `SAVE` is not replicated, so each replica writes its own snapshot.
+The data pods save under the fixed name `dump` (`DFLY_dbfilename`), so each `SAVE` overwrites the previous snapshot and a restart loads it.
 
 **DDL scripts:**
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Dragonfly)

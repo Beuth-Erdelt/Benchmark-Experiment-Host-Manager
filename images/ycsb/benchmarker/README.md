@@ -4,7 +4,7 @@ The image is based on https://github.com/brianfrankcooper/YCSB
 
 This folder contains the Dockerfile for a benchmarker that runs a YCSB workload against an already-loaded DBMS.
 
-See [../README.md](../README.md) for shared design decisions, bundled JDBC
+See [images/ycsb/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/README.md) for shared design decisions, bundled JDBC
 drivers, and the workload template placeholder reference.
 
 ## Execution flow (`benchmarker.sh`)

@@ -156,6 +156,37 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset script  sf=4  nc=2"
 
 
+#### Benchbase Unlimited Target and Warmup (Example-Benchbase.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 4                         scaling factor (controls database size)
+# -xsd 2                        benchmark duration in minutes (measured, after warmup)
+# -xwu 60                       warmup in seconds before the measured duration, not part of the results
+# -xtb 0                        no throughput target (unlimited rate)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1,2                      benchmarking pod counts to sweep -- 0 stays unlimited when split over pods
+# -nbt 40                       threads per benchmarking pod (10x warehouses)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 4 \
+  -xsd 2 \
+  -xwu 60 \
+  -xtb 0 \
+  -xnbf 1 \
+  -nbp 1,2 \
+  -nbt 40 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_unlimited.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase unlimited target + warmup  sf=4  nbp=1,2"
+
+
 #### Benchbase Keying and Thinking Time (Example-Benchbase.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 160                       scaling factor (controls database size)

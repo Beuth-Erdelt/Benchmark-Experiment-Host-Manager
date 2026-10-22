@@ -208,6 +208,44 @@ class ClusterOutageTest(unittest.TestCase):
         self.assertEqual(stdout, 'OK\n')
         pause.assert_called_once()
 
+    def test_pod_command_retries_when_the_host_refuses_to_start_kubectl(self) -> None:
+        """A [WinError 5] while starting kubectl must not end the experiment."""
+        cluster = _bare_cluster()
+        with (
+            mock.patch.object(clusters.subprocess, 'Popen', side_effect=[
+                PermissionError(13, 'Zugriff verweigert'),
+                _completed_exec('OK\n', ''),
+            ]) as run,
+            mock.patch.object(clusters.time, 'sleep') as pause,
+        ):
+            _, stdout, _ = cluster.execute_command_in_pod('ls /results', pod='dashboard')
+        self.assertEqual(stdout, 'OK\n')
+        self.assertEqual(run.call_count, 2)
+        pause.assert_called_once_with(clusters.PROCESS_START_RETRY_SECONDS)
+
+    def test_kubectl_retries_when_the_host_refuses_to_start_it(self) -> None:
+        """The same holds for kubectl() itself."""
+        cluster = _bare_cluster()
+        success = mock.Mock(stdout=b'labelled')
+        with (
+            mock.patch.object(clusters.subprocess, 'run',
+                              side_effect=[PermissionError(13, 'Zugriff verweigert'), success]) as run,
+            mock.patch.object(clusters.time, 'sleep'),
+        ):
+            self.assertEqual(cluster.kubectl('label pod x a=b --overwrite'), 'labelled')
+        self.assertEqual(run.call_count, 2)
+
+    def test_process_start_gives_up_after_the_attempts(self) -> None:
+        """A host that keeps refusing must still raise, after the last attempt."""
+        refused = PermissionError(13, 'Zugriff verweigert')
+        with (
+            mock.patch.object(clusters.subprocess, 'Popen', side_effect=refused) as run,
+            mock.patch.object(clusters.time, 'sleep'),
+        ):
+            with self.assertRaises(PermissionError):
+                clusters.start_process(clusters.subprocess.Popen, 'kubectl version')
+        self.assertEqual(run.call_count, clusters.PROCESS_START_ATTEMPTS)
+
     def test_interrupted_command_that_is_unsafe_to_repeat_is_not_rerun(self) -> None:
         """A command that may have run must not be repeated when the caller forbids it."""
         cluster = _bare_cluster()

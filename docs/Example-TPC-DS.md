@@ -548,8 +548,9 @@ options:
                         requirements
   -rp, --report         also write a tiered Markdown summary report
                         (report/index.md + detail files) to the result folder
-  --set SETS            override a deployment parameter, e.g. deployment[sut].
-                        container[dbms].max_worker_processes=128
+  --set SETS            override a deployment parameter, e.g.
+                        deployment[bexhoma-deployment-postgres].container[dbms].
+                        max_worker_processes=128
   -dbms, --dbms [{PostgreSQL,MonetDB,MySQL,MariaDB} ...]
                         one or more DBMS engines to test
   -xlit, --xlimit-import-table LIMIT_IMPORT_TABLE
@@ -1144,6 +1145,11 @@ Per default, all 3 streams use the same random parameters (like YEAR in Q1) and 
 You can change this via
 * `-xrcp`: Each stream has it's own random parameters
 * `-xshq`: Use the ordering per stream as required by the TPC-DS specification
+
+## Reset Scripts
+
+With `-ar`, a reset script runs before each benchmarking round (statistics, persist, counters; e.g. `VACUUM ANALYZE`, `CHECKPOINT` and a statistics reset for PostgreSQL), so every stream starts from a comparable state.
+See [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
 
 ## Use Persistent Storage
 

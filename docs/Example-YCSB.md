@@ -502,8 +502,9 @@ options:
                         requirements
   -rp, --report         also write a tiered Markdown summary report
                         (report/index.md + detail files) to the result folder
-  --set SETS            override a deployment parameter, e.g. deployment[sut].
-                        container[dbms].max_worker_processes=128
+  --set SETS            override a deployment parameter, e.g.
+                        deployment[bexhoma-deployment-postgres].container[dbms].
+                        max_worker_processes=128
   -dbms, --dbms [{PostgreSQL,MySQL,MariaDB,YugabyteDB,CockroachDB,TiDB,DatabaseService,PGBouncer,Redis,Citus,CedarDB,Dragonfly} ...]
                         one or more DBMS engines to test
   -xnlf, --xnum-loading-target-factors NUM_LOADING_TARGET_FACTORS
@@ -1466,8 +1467,9 @@ YCSB SF=1
 ## Reset Scripts
 
 For repeated benchmarking rounds against the same database, bloat and stale planner statistics can drift the result away from the first round.
-Bexhoma can run a pre-benchmark reset script (`CHECKPOINT` + `VACUUM ANALYZE` on `usertable` for PostgreSQL) before each round to start every round from a comparable state.
+Bexhoma can run a pre-benchmark reset script (for PostgreSQL `VACUUM ANALYZE`, `CHECKPOINT` and a reset of the statistics counters) before each round to start every round from a comparable state.
 The feature is off by default; pass `-ar` to activate it.
+Every DBMS of YCSB has a reset with the same three steps (statistics, persist, counters); see [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
 
 Example (`-ne 1,2` sweeps two rounds, so the reset script runs twice):
 ```bash

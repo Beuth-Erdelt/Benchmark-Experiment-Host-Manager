@@ -1,8 +1,8 @@
 # Loader for TPC-H data into PostgreSQL
 
-Loads pre-generated TPC-H `.tbl` files into PostgreSQL using `psql \COPY`. The child index is read from `/tmp/tpch/BEXHOMA_CHILD` (written by the generator pod running in the same Kubernetes pod). `nation` and `region` are only loaded by the first pod in non-tenant mode to avoid duplicate key errors. Supports schema and database multi-tenancy with different index-mapping logic.
+Loads pre-generated TPC-H `.tbl` files into PostgreSQL using `psql \COPY`. The child index is read from `/tmp/tpch/BEXHOMA_CHILD` (written by the generator pod running in the same Kubernetes pod). `nation` and `region` are only loaded by the first pod (per tenant in schema/database mode, where `BEXHOMA_CHILD` is remapped) to avoid duplicate key errors. Supports schema and database multi-tenancy with different index-mapping logic.
 
-See [../README.md](../README.md) for the shared TPC-H pipeline design.
+See [images/tpch/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/tpch/README.md) for the shared TPC-H pipeline design.
 
 ## Execution flow (`loader.sh`)
 
@@ -12,9 +12,9 @@ See [../README.md](../README.md) for the shared TPC-H pipeline design.
 4. If `BEXHOMA_SYNCH_LOAD=1`: sync on the job counter `bexhoma-loader-podcount-job-<CONNECTION>-<EXPERIMENT>`,
    then the round counter `bexhoma-loader-podcount-round-<CONFIGURATION>-<EXPERIMENT>` (always
    initialized by Python, even for a single loader entry; only meaningful when the SUT
-   configuration has more than one parallel loader entry — see `bexhoma/README.md`).
+   configuration has more than one parallel loader entry — see [bexhoma/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/README.md)).
    Additionally syncs on `bexhoma-loader-podcount-<EXPERIMENT>` when `BEXHOMA_TENANT_BY=container`.
-5. Loop over `.tbl` files; skip `nation` and `region` for pods > 1 in non-tenant mode.
+5. Loop over `.tbl` files; skip `nation` and `region` for pods > 1 (after the per-tenant remapping, so with more loader pods than tenants only the first pod of each tenant loads them).
 6. If `TPCH_TABLE` is set: only load that table.
 7. Execute `psql \COPY` per table, using `PGOPTIONS --search_path` for schema isolation; retry on known transient errors.
 8. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
