@@ -680,6 +680,9 @@ bexhoma benchbase `
   -ne 1                         <# one client round #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 40                       <# threads per benchmarking pod #> `
+  -xnpp 1                       <# number of PGBouncer proxy pods #> `
+  -xnpi 128                     <# maximum incoming connections per PGBouncer instance (default: loading threads = 1) #> `
+  -xnpo 64                      <# maximum outgoing connections per PGBouncer instance #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
