@@ -44,7 +44,6 @@ spec:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
-      #priorityClassName: important
       initContainers:
         - name: fix-permissions
           image: busybox:stable
