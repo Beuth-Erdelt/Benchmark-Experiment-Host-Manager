@@ -737,6 +737,8 @@ Every variant returns the same result as the original query on ClickHouse.
 bexhoma tpch -dbms ClickHouse -sf 1 -nlp 8 -tr run
 ```
 
+See [Example: ClickHouse](Example-ClickHouse.md) for a worked example.
+
 ---
 
 ## ClickHouseCluster
@@ -764,6 +766,8 @@ In `tpch.py` and `tpcds.py` the configuration sets `set_script_target('workers')
 ```bash
 bexhoma tpch -dbms ClickHouseCluster -nw 3 -sf 1 -nlp 8 -tr run
 ```
+
+See [Example: ClickHouse](Example-ClickHouse.md#clickhouse-as-a-cluster) for a worked example.
 
 ---
 

@@ -33,6 +33,7 @@
     ./Example-YugaByteDB.md
     ./Example-CockroachDB.md
     ./Example-TiDB.md
+    ./Example-ClickHouse.md
     ./Example-Redis.md
     ./Example-Dragonfly.md
     ./Example-PGBouncer.md
