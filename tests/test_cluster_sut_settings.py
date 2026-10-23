@@ -280,6 +280,59 @@ class StartSutClusterManifestTest(naming.SutManifestPerRunTest):
         self.assertEqual(self._dbms(sut)['resources']['requests']['memory'], '16Gi')
 
 
+class StartSutClickHouseManifestTest(naming.SutManifestPerRunTest):
+    """start_sut() on the ClickHouse (standalone) and ClickHouseCluster templates."""
+
+    _start = StartSutClusterManifestTest._start
+    _workload = staticmethod(StartSutClusterManifestTest._workload)
+    _dbms = staticmethod(StartSutClusterManifestTest._dbms)
+
+    @staticmethod
+    def _env(container):
+        return {e['name']: e.get('value') for e in container.get('env') or []}
+
+    def test_standalone(self):
+        docs = self._start('deploymenttemplate-ClickHouse.yml', num_worker=0)
+        self.assertEqual([d['kind'] for d in docs if d['kind'] == 'StatefulSet'], [])
+        sut = self._workload(docs, 'Deployment', 'sut')
+        self.assertRegex(sut['metadata']['name'], r'^bexhoma-sut-')
+        dbms = self._dbms(sut)
+        self.assertEqual(dbms['resources']['requests']['memory'], '16Gi')
+        self.assertEqual(self._env(dbms)['CLICKHOUSE_SKIP_USER_SETUP'], '1')
+        self.assertNotIn('privileged', dbms.get('securityContext') or {})
+        pvc = next(d for d in docs if d['kind'] == 'PersistentVolumeClaim')
+        self.assertEqual(pvc['spec']['storageClassName'], 'nvme')
+        claim = next(v for v in sut['spec']['template']['spec']['volumes'] if v['name'] == 'benchmark-storage-volume')
+        self.assertEqual(claim['persistentVolumeClaim']['claimName'], pvc['metadata']['name'])
+        service = next(d for d in docs if d['kind'] == 'Service')
+        ports = {p['name'] for p in service['spec']['ports']}
+        self.assertTrue({'port-dbms', 'port-sut-native'} <= ports)
+
+    def test_cluster(self):
+        docs = self._start('deploymenttemplate-ClickHouseCluster.yml', num_worker=3)
+        sut = self._workload(docs, 'Deployment', 'sut')
+        worker = self._workload(docs, 'StatefulSet', 'worker')
+        self.assertEqual(worker['spec']['replicas'], 3)
+        self.assertEqual(worker['spec']['serviceName'], worker['metadata']['name'])
+        self.assertEqual(self._dbms(worker)['resources']['requests']['memory'], '16Gi')
+        claim = worker['spec']['volumeClaimTemplates'][0]['spec']
+        self.assertEqual(claim['storageClassName'], 'nvme')
+        self.assertEqual(claim['resources']['requests']['storage'], '50Gi')
+        # the startup scripts build remote_servers from the worker list and find the
+        # coordinator's Keeper by the SUT service name
+        for workload in (sut, worker):
+            env = self._env(self._dbms(workload))
+            hosts = env['BEXHOMA_WORKER_LIST_SPACE'].split()
+            self.assertEqual(hosts, [f"{worker['metadata']['name']}-{i}.{worker['metadata']['name']}"
+                                     for i in range(3)])
+            self.assertEqual(env['BEXHOMA_SUT_NAME'], sut['metadata']['name'])
+        services = {d['metadata']['labels']['component']: d for d in docs if d['kind'] == 'Service'}
+        self.assertEqual(services['sut']['metadata']['name'], sut['metadata']['name'])
+        self.assertIn('port-sut-keeper', {p['name'] for p in services['sut']['spec']['ports']})
+        self.assertEqual(services['worker']['metadata']['name'], worker['metadata']['name'])
+        self.assertEqual(services['worker']['spec']['clusterIP'], 'None')
+
+
 class PvcSelectorTest(unittest.TestCase):
     """PVCs of a label selector join the volumes of the storage metrics."""
 
