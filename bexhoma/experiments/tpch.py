@@ -68,6 +68,11 @@ DBMS_DEFAULTS: dict[str, dict[str, str]] = {
         'jobtemplate_loading': 'jobtemplate-loading-tpch-PostgreSQL.yml',
         'storage_prefix': 'cedardb',
     },
+    'ClickHouse': {
+        'docker': 'ClickHouse', 'dialect': 'Clickhouse',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-ClickHouse.yml',
+        'storage_prefix': 'clickhouse',
+    },
 }
 
 

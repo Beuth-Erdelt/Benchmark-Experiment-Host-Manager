@@ -146,6 +146,14 @@ build_and_push_tpcds() {
     docker push "bexhoma/loader_tpcds_monetdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpcds_monetdb:$version"
+
+  (
+    set -e
+    cd images/tpcds/loader_clickhouse
+    docker build -f Dockerfile -t "bexhoma/loader_tpcds_clickhouse:$version" .
+    docker push "bexhoma/loader_tpcds_clickhouse:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpcds_clickhouse:$version"
 }
 
 
@@ -197,6 +205,14 @@ build_and_push_tpch() {
     docker push "bexhoma/loader_tpch_monetdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_monetdb:$version"
+
+  (
+    set -e
+    cd images/tpch/loader_clickhouse
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_clickhouse:$version" .
+    docker push "bexhoma/loader_tpch_clickhouse:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_clickhouse:$version"
 }
 
 

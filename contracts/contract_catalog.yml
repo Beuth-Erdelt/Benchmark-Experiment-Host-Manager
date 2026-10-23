@@ -458,7 +458,7 @@ workloads:
           template, so peak-resource validation for a pinned benchmarking node
           must count them rather than the SUT limits"
     out_of_scope:
-      systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB]
+      systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB, ClickHouse, ClickHouseCluster]
       why: "the full tpch workload also supports these systems. They are trimmed
         out here to keep this contract focused on the PostgreSQL/PgDuckDB pair
         chosen for the prototype, so an experiment.yml naming any of them fails

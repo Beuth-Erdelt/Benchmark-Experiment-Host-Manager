@@ -739,6 +739,11 @@ order by o_orderpriority
 
 </details>
 
+<details>
+<summary>Clickhouse — <code>EXISTS</code> as <code>o_orderkey in (select l_orderkey from lineitem where l_commitdate &lt; l_receiptdate)</code> (ClickHouseCluster runs no correlated subqueries)</summary>
+
+</details>
+
 ---
 
 ## Q5 – Local Supplier Volume Query
@@ -1017,22 +1022,6 @@ where
 l_shipdate >= to_date('{DATE}')
 and l_shipdate < add_years(to_date('{DATE}'),1)
 and l_discount between {DISCOUNT} - 0.01 and {DISCOUNT} + 0.01
-and l_quantity < {QUANTITY}
-```
-
-</details>
-
-<details>
-<summary>Clickhouse — <code>CAST(… AS Decimal(16,2))</code> for BETWEEN on discount column</summary>
-
-```sql
-select
-sum(l_extendedprice*l_discount) as revenue
-from lineitem
-where
-l_shipdate >= toDate('{DATE}')
-and l_shipdate < addYears(toDate('{DATE}'),1)
-and l_discount between CAST({DISCOUNT} - 0.01 AS Decimal(16, 2)) and CAST({DISCOUNT} + 0.01 AS Decimal(16, 2))
 and l_quantity < {QUANTITY}
 ```
 
@@ -2547,15 +2536,15 @@ and p.p_container = '{CONTAINER1} {CONTAINER2}'
 </details>
 
 <details>
-<summary>Clickhouse — JOIN rewrite; decimal cast for <code>avg_yearly</code></summary>
+<summary>Clickhouse — correlated subquery as a JOIN to the threshold per part (ClickHouseCluster runs no correlated subqueries); no cast of the threshold, a cast to DECIMAL(16,2) truncates</summary>
 
 ```sql
 select
-cast(sum(li.l_extendedprice) as DECIMAL(16,2)) / cast(7.00 as decimal(16,2)) as avg_yearly
+sum(li.l_extendedprice) / 7.0 as avg_yearly
 from lineitem li
 join part p on li.l_partkey = p.p_partkey
 join (
-   select l_partkey, CAST(0.2 * avg(l_quantity) AS DECIMAL(16,2)) as quantity
+   select l_partkey, 0.2 * avg(l_quantity) as quantity
    from lineitem group by l_partkey
 ) as quantities on li.l_partkey = quantities.l_partkey
 where p.p_brand = 'Brand#{BRAND1}{BRAND2}'
@@ -3128,6 +3117,11 @@ fetch next 100 rows only
 
 </details>
 
+<details>
+<summary>Clickhouse — <code>EXISTS</code> l2 as "the order has more than one supplier", <code>NOT EXISTS</code> l3 as "l1's supplier is the only one of the order that delivered late", both as <code>IN</code> over <code>group by l_orderkey having count(distinct l_suppkey) &gt; 1</code> (ClickHouseCluster runs no correlated subqueries)</summary>
+
+</details>
+
 ---
 
 ## Q22 – Global Sales Opportunity Query
@@ -3263,6 +3257,11 @@ order by cntrycode
 
 </details>
 
+<details>
+<summary>Clickhouse — <code>NOT EXISTS</code> as <code>c_custkey not in (select o_custkey from orders)</code> (ClickHouseCluster runs no correlated subqueries)</summary>
+
+</details>
+
 ---
 
 ## Cross-Reference: Dialect Overrides by Query
@@ -3274,9 +3273,9 @@ A checkmark means that DBMS has a SQL override in the config; blank means the de
 | Q1 | ✓ | ✓ | | ✓ | ✓ | ✓ | | | | | |
 | Q2 | | ✓ | ✓ | | | | ✓ | ✓ | ✓ | | |
 | Q3 | ✓ | ✓ | ✓ | | | | | | | | |
-| Q4 | ✓ | ✓ | | ✓ | ✓ | | | | | ✓ | |
+| Q4 | ✓ | ✓ | | ✓ | ✓ | | ✓ | | | ✓ | |
 | Q5 | ✓ | ✓ | | ✓ | ✓ | | | | ✓ | | |
-| Q6 | ✓ | ✓ | | ✓ | ✓ | | ✓ | | | | |
+| Q6 | ✓ | ✓ | | ✓ | ✓ | | | | | | |
 | Q7 | ✓ | ✓ | | | | | | | | | |
 | Q8 | ✓ | ✓ | | | | | | | | ✓ | ✓ |
 | Q9 | ✓ | ✓ | | | | | | ✓ | | | |
@@ -3291,8 +3290,8 @@ A checkmark means that DBMS has a SQL override in the config; blank means the de
 | Q18 | ✓ | ✓ | ✓ | | | | | | | | |
 | Q19 | | | | | | | | | ✓ | | |
 | Q20 | ✓ | ✓ | | ✓ | ✓ | | ✓ | ✓ | | ✓ | |
-| Q21 | | ✓ | ✓ | | | | | | | | |
-| Q22 | | ✓ | ✓ | ✓ | | | | | | ✓ | |
+| Q21 | | ✓ | ✓ | | | | ✓ | | | | |
+| Q22 | | ✓ | ✓ | ✓ | | | ✓ | | | ✓ | |
 
 ---
 

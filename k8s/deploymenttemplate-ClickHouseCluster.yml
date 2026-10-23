@@ -34,6 +34,7 @@ spec:
   - {port: 9000, protocol: TCP, name: port-sut-native, targetPort: 9000}
   - {port: 9181, protocol: TCP, name: port-sut-keeper, targetPort: 9181}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  - {port: 9363, protocol: TCP, name: port-monitoring-application, targetPort: 9363}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
 apiVersion: apps/v1
@@ -89,9 +90,35 @@ spec:
               <zookeeper>
                 <node><host>localhost</host><port>9181</port></node>
               </zookeeper>
+              <!-- application metrics (-ma) -->
+              <prometheus>
+                <port>9363</port>
+                <endpoint>/metrics</endpoint>
+                <metrics>true</metrics>
+                <events>true</events>
+                <asynchronous_metrics>true</asynchronous_metrics>
+              </prometheus>
             </clickhouse>
             EOF
             cat /etc/clickhouse-server/config.d/bexhoma-cluster.xml
+            # SQL-standard results: outer joins fill NULL (not 0 or ''), UNION means DISTINCT,
+            # CAST keeps NULL, mixed Decimal/Float branches (CASE, COALESCE) get a numeric
+            # common type;
+            # a Distributed table inside a join or IN is read once and sent to all shards
+            # (GLOBAL), which is correct whatever the sharding keys of the tables are
+            cat > /etc/clickhouse-server/users.d/bexhoma.xml <<EOF
+            <clickhouse>
+              <profiles>
+                <default>
+                  <join_use_nulls>1</join_use_nulls>
+                  <union_default_mode>DISTINCT</union_default_mode>
+                  <cast_keep_nullable>1</cast_keep_nullable>
+                  <allow_lossy_numeric_supertype>1</allow_lossy_numeric_supertype>
+                  <distributed_product_mode>global</distributed_product_mode>
+                </default>
+              </profiles>
+            </clickhouse>
+            EOF
             exec /entrypoint.sh
         env:
         # keep user 'default' without password and with network access (clients and
@@ -101,6 +128,7 @@ spec:
         - {containerPort: 8123, name: http}
         - {containerPort: 9000, name: native}
         - {containerPort: 9181, name: keeper}
+        - {containerPort: 9363, name: metrics}
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
           requests: {cpu: 1000m, memory: 1Gi}
@@ -183,6 +211,7 @@ spec:
   - {port: 9000, protocol: TCP, name: port-dbms, targetPort: 9000}
   - {port: 8123, protocol: TCP, name: port-sut-http, targetPort: 8123}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  - {port: 9363, protocol: TCP, name: port-monitoring-application, targetPort: 9363}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -234,25 +263,54 @@ spec:
                 <shard>${HOSTNAME##*-}</shard>
                 <replica>${HOSTNAME}</replica>
               </macros>
+              <prometheus>
+                <port>9363</port>
+                <endpoint>/metrics</endpoint>
+                <metrics>true</metrics>
+                <events>true</events>
+                <asynchronous_metrics>true</asynchronous_metrics>
+              </prometheus>
             </clickhouse>
             EOF
             cat /etc/clickhouse-server/config.d/bexhoma-cluster.xml
+            cat > /etc/clickhouse-server/users.d/bexhoma.xml <<EOF
+            <clickhouse>
+              <profiles>
+                <default>
+                  <join_use_nulls>1</join_use_nulls>
+                  <union_default_mode>DISTINCT</union_default_mode>
+                  <cast_keep_nullable>1</cast_keep_nullable>
+                  <allow_lossy_numeric_supertype>1</allow_lossy_numeric_supertype>
+                </default>
+              </profiles>
+            </clickhouse>
+            EOF
+            # the server resolves the names in remote_servers at start: wait until the headless
+            # service publishes this pod
+            self="${HOSTNAME}.${BEXHOMA_WORKER_SERVICE}"
+            for i in $(seq 1 60); do
+              getent hosts "$self" > /dev/null && break
+              echo "waiting for DNS of $self"
+              sleep 2
+            done
             exec /entrypoint.sh
         env:
         - {name: CLICKHOUSE_SKIP_USER_SETUP, value: '1'}
         ports:
         - {containerPort: 8123, name: http}
         - {containerPort: 9000, name: native}
+        - {containerPort: 9363, name: metrics}
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
           requests: {cpu: 1000m, memory: 1Gi}
         securityContext:
           capabilities:
             add: ["SYS_NICE", "IPC_LOCK", "NET_ADMIN"]
+        # ready = has a session with the coordinator's Keeper, so it takes part in ON CLUSTER
+        # statements; bexhoma runs the init scripts only after all workers are ready
         readinessProbe:
-          httpGet:
-            path: /ping
-            port: http
+          exec:
+            command: ["clickhouse-client", "--query", "SELECT count() FROM system.zookeeper WHERE path = '/'"]
           initialDelaySeconds: 5
           periodSeconds: 10
           timeoutSeconds: 5

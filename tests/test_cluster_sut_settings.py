@@ -163,7 +163,7 @@ class CheckScriptsAlwaysRunTest(unittest.TestCase):
 
     def test_check_scripts_exist_without_braces(self):
         for benchmark in ('tpch', 'tpcds'):
-            for dbms in ('PostgreSQL', 'MySQL', 'MariaDB', 'Citus', 'MonetDB'):
+            for dbms in ('PostgreSQL', 'MySQL', 'MariaDB', 'Citus', 'MonetDB', 'ClickHouse', 'ClickHouseCluster'):
                 path = os.path.join(_REPO, 'experiments', benchmark, dbms, f'checkschema-{benchmark}.sql')
                 self.assertTrue(os.path.isfile(path), path)
                 with open(path, encoding='utf-8') as f:
@@ -331,6 +331,27 @@ class StartSutClickHouseManifestTest(naming.SutManifestPerRunTest):
         self.assertIn('port-sut-keeper', {p['name'] for p in services['sut']['spec']['ports']})
         self.assertEqual(services['worker']['metadata']['name'], worker['metadata']['name'])
         self.assertEqual(services['worker']['spec']['clusterIP'], 'None')
+        # a worker is ready only with a Keeper session: init scripts (ON CLUSTER) wait for it
+        probe = self._dbms(worker)['readinessProbe']['exec']['command']
+        self.assertIn('system.zookeeper', ' '.join(probe))
+        self.assertEqual(self._env(self._dbms(worker))['BEXHOMA_WORKER_SERVICE'], worker['metadata']['name'])
+
+    def test_init_scripts_match_the_cluster_name_and_tables(self):
+        """The cluster scripts address cluster 'bexhoma' of the template and the standalone tables."""
+        for benchmark in ('tpch', 'tpcds'):
+            folder = os.path.join(_REPO, 'experiments', benchmark)
+            with open(os.path.join(folder, 'ClickHouse', f'initschema-{benchmark}.sql'), encoding='utf-8') as f:
+                tables = re.findall(r'CREATE TABLE (\w+) \(', f.read())
+            with open(os.path.join(folder, 'ClickHouseCluster', f'initschema-{benchmark}.sql'), encoding='utf-8') as f:
+                cluster = f.read()
+            self.assertEqual(re.findall(r'CREATE TABLE (\w+)_local ON CLUSTER bexhoma \(', cluster), tables)
+            # Distributed tables on the shards (ON CLUSTER) and on the coordinator (not a shard)
+            self.assertEqual(re.findall(r'CREATE TABLE (\w+)( ON CLUSTER bexhoma)? \([^;]*\) ENGINE = Distributed\(bexhoma, currentDatabase\(\), \1_local,', cluster),
+                             [(t, on_cluster) for t in tables for on_cluster in (' ON CLUSTER bexhoma', '')])
+            with open(os.path.join(folder, 'ClickHouseCluster', f'reset-{benchmark}.sql'), encoding='utf-8') as f:
+                self.assertEqual(re.findall(r'SYSTEM FLUSH DISTRIBUTED (\w+);', f.read()), tables)
+        with open(os.path.join(_REPO, 'k8s', 'deploymenttemplate-ClickHouseCluster.yml'), encoding='utf-8') as f:
+            self.assertIn('<bexhoma>$shards</bexhoma>', f.read())
 
 
 class PvcSelectorTest(unittest.TestCase):

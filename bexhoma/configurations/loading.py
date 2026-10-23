@@ -168,7 +168,7 @@ def load_data_asynch(
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
                 if len(stdout) > 0:
-                    with open(filename_log, 'w') as file:
+                    with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stdout)
                 filename_log = (
                     path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stderr.log'
@@ -176,7 +176,7 @@ def load_data_asynch(
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
                 if len(stderr) > 0:
-                    with open(filename_log, 'w') as file:
+                    with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stderr)
             elif file_extension.lower() == '.sh':
                 _, stdout, stderr = execute_command_in_pod_sut(
@@ -190,7 +190,7 @@ def load_data_asynch(
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
                 if len(stdout) > 0:
-                    with open(filename_log, 'w') as file:
+                    with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stdout)
                 filename_log = (
                     path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stderr.log'
@@ -198,7 +198,7 @@ def load_data_asynch(
                             filename=filename, database=db,
                             extension=file_extension.lower()).lower())
                 if len(stderr) > 0:
-                    with open(filename_log, 'w') as file:
+                    with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stderr)
             time_scrip_end = default_timer()
             sep = filename.find("-")
@@ -1046,7 +1046,7 @@ class LoadingCoordinator:
                                 app=cfg.appname, script_type=script_type,
                                 configuration=cfg.configuration, filename=filename, pod=pod,
                                 ext=file_extension.lower(), suffix=suffix).lower())
-                        with open(log_path, 'w') as fh:
+                        with open(log_path, 'w', encoding='utf-8') as fh:
                             fh.write(content)
             elapsed_per_pod[pod] = default_timer() - t_start
 
@@ -1197,7 +1197,7 @@ class LoadingCoordinator:
                               app=cfg.appname, script_type=script_type, configuration=cfg.configuration,
                               tenant=tenant_infix, filename=filename, database=database,
                               ext=file_extension.lower(), suffix=suffix).lower())
-                    with open(log_path, 'w') as fh:
+                    with open(log_path, 'w', encoding='utf-8') as fh:
                         fh.write(content)
         elapsed = int(default_timer() - t_start) + elapsed_workers
         self._report_reset(script_type, elapsed)

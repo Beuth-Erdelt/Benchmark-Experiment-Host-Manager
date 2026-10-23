@@ -77,12 +77,16 @@ EXPECTED = {
         'MySQL': ['reset-tpch.sql', _FLUSH],
         'MariaDB': ['reset-tpch.sql', _FLUSH],
         'Citus': ['reset-tpch.sql'],
+        'ClickHouse': [_FLUSH],
+        'ClickHouseCluster': ['reset-tpch.sql', _FLUSH],
     },
     'tpcds.py': {
         'PostgreSQL': ['reset-tpcds.sql'],
         'MonetDB': ['reset-tpcds.sql'],
         'MySQL': ['reset-tpcds.sql', _FLUSH],
         'MariaDB': ['reset-tpcds.sql', _FLUSH],
+        'ClickHouse': [_FLUSH],
+        'ClickHouseCluster': ['reset-tpcds.sql', _FLUSH],
     },
 }
 
