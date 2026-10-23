@@ -132,6 +132,10 @@ RUN cp singlestore-jdbc-client-1.1.4.jar jars/singlestore-jdbc-client-1.1.4.jar
 RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
 RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
 
+# ClickHouse 0.11.0 (all-dependencies: -all lacks slf4j-api, the driver class does not load without it)
+RUN wget https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc/0.11.0/clickhouse-jdbc-0.11.0-all-dependencies.jar
+RUN cp clickhouse-jdbc-0.11.0-all-dependencies.jar jars/clickhouse-jdbc-0.11.0-all-dependencies.jar
+
 ######################################################################################
 # Build and install redis-cli from source
 ######################################################################################
