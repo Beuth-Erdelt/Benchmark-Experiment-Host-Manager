@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1785195502
-Experiment                    : starts at 2026-07-28 01:38:22.910588 (954478.7695348)
+Experiment                    : has code 1792708107
+Experiment                    : starts at 2026-10-23 00:28:28.517444 (33451.4344668)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
@@ -11,11 +11,12 @@ All instances use the same query parameters.
 Timeout per query is 1200.
 Data transfer volume per query is also measured.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.10.8.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.8.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
 SUT is fixed to cl-worker36.
 Database uses ephemeral storage of size 50Gi.
 Loading is tested with [8] threads, split into [8] pods.
@@ -24,96 +25,132 @@ Benchmarking is run as [1, 2] times the number of benchmarking pods.
 Experiment is run once.
 Maximum DBMS across the whole cluster is 10.
 Results are validated against basic correctness requirements.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2GB')].
 SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 Cluster monitoring            : is running
 PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1785195502
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1785195502
-- waiting 30s -               : done
-PostgreSQL-1                  : is pending
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1792708107
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1792708107
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather = 2
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers = 4
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes = 6
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 20GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 48GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].work_mem = 1GB
+PostgreSQL-1                  : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
+Loop pass                     : took 5.2s (1 kubectl calls 2.4s, 9 API requests 1.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 16 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1785195502-864dd966b8-4fqrv to load scripts
+PostgreSQL-1                  : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792708107-84cf9b955b-855vx to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type schema
+PostgreSQL-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
+PostgreSQL-1                  : Schema scripts done after 8s
 PostgreSQL-1                  : is loading
+Loop pass                     : took 45.9s (8 kubectl calls 17.7s, 39 API requests 7.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 4.4s (0 kubectl calls 0.0s, 34 API requests 4.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 43.4s (21 kubectl calls 36.2s, 41 API requests 5.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : showing loader times (tpcds-loader)
-PostgreSQL-1                  : generator times (start/end per pod and container) [(1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740)]
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1785195749, 1785195763), (1785195749, 1785195763), (1785195749, 1785195761), (1785195749, 1785195762), (1785195749, 1785195763), (1785195749, 1785195763), (1785195748, 1785195795), (1785195749, 1785195762)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195740, 1785195740), (1785195749, 1785195763), (1785195749, 1785195763), (1785195749, 1785195761), (1785195749, 1785195762), (1785195749, 1785195763), (1785195749, 1785195763), (1785195748, 1785195795), (1785195749, 1785195762)]
-PostgreSQL-1                  : generator timespan (first to last [s]) = 0
-PostgreSQL-1                  : loader timespan (first to last [s]) = 47
-PostgreSQL-1                  : total timespan (first to last [s]) = 55
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1785195502-864dd966b8-4fqrv to load scripts
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1792708316, 1792708316), (1792708316, 1792708316), (1792708316, 1792708316), (1792708316, 1792708316), (1792708316, 1792708317), (1792708316, 1792708316), (1792708316, 1792708316), (1792708316, 1792708316)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1792708327, 1792708341), (1792708327, 1792708370), (1792708327, 1792708341), (1792708327, 1792708341), (1792708327, 1792708341), (1792708327, 1792708340), (1792708327, 1792708341), (1792708327, 1792708337)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1792708316, 1792708316), (1792708316, 1792708316), (1792708316, 1792708316), (1792708316, 1792708316), (1792708316, 1792708317), (1792708316, 1792708316), (1792708316, 1792708316), (1792708316, 1792708316), (1792708327, 1792708341), (1792708327, 1792708370), (1792708327, 1792708341), (1792708327, 1792708341), (1792708327, 1792708341), (1792708327, 1792708340), (1792708327, 1792708341), (1792708327, 1792708337)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 1
+PostgreSQL-1                  : loader timespan (first to last [s]) = 43
+PostgreSQL-1                  : total timespan (first to last [s]) = 54
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792708107-84cf9b955b-855vx to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type index
 PostgreSQL-1                  : is loading
+Loop pass                     : took 44.3s (20 kubectl calls 36.6s, 48 API requests 6.4s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 14 API requests 1.4s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1785195502 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1792708107 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
-PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1785195502
-- waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1785195502-1-1-1-b59sw: .found
+postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792708107
+PostgreSQL-1                  : submitted benchmarker job in 29.5s (4 kubectl calls 7.7s, 24 API requests 8.0s)
+Loop pass                     : took 37.3s (5 kubectl calls 9.3s, 44 API requests 11.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.6s (0 kubectl calls 0.0s, 20 API requests 2.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 18 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 18 API requests 2.1s)
 - waiting 30s -               : done
-PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1785195502/PostgreSQL-1-1-1-1.config
-PostgreSQL-1-1-1-1            : showing benchmarker times
-PostgreSQL-1-1-1-1            : benchmarker timespan job from 1785195906 to 1785196094
-PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1785195917 to 1785196078
-PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 161
-PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1785195917, 1785196078)]
-PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1785195917, 1785196078)]}
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
+postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1792708107/postgresql-1-1-1-1.config
+postgresql-1-1-1-1            : showing benchmarker times
+postgresql-1-1-1-1            : benchmarker timespan job from 1792708567 to 1792708776
+postgresql-1-1-1-1            : benchmarker timespan pods from 1792708576 to 1792708736
+postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 160
+postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1792708576, 1792708736)]
+postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1792708576, 1792708736)]}
+Loop pass                     : took 11.4s (4 kubectl calls 7.8s, 24 API requests 3.0s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-1-1785195502 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-1-1792708107 initialized to 2.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 2
-PostgreSQL-1-1-2-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1785195502
-- waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1785195502-1-2-1-hdr5v: .found
+postgresql-1-1-2-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792708107
+PostgreSQL-1                  : submitted benchmarker job in 19.9s (3 kubectl calls 6.0s, 13 API requests 2.5s)
+Loop pass                     : took 23.3s (3 kubectl calls 6.0s, 34 API requests 5.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 21 API requests 2.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 8.8s (0 kubectl calls 0.0s, 19 API requests 2.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 19 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
-PostgreSQL-1-1-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1785195502/PostgreSQL-1-1-2-1.config
-PostgreSQL-1-1-2-1            : showing benchmarker times
-PostgreSQL-1-1-2-1            : benchmarker timespan job from 1785196158 to 1785196350
-PostgreSQL-1-1-2-1            : benchmarker timespan pods from 1785196173 to 1785196337
-PostgreSQL-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 164
-PostgreSQL-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1785196173, 1785196337), (1785196174, 1785196335)]
-PostgreSQL-1-1-2-1            : found and updated times {'benchmarker': [(1785196173, 1785196337), (1785196174, 1785196335)]}
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
+postgresql-1-1-2-1            : wrote benchmarking_timespans to /data/benchmarks/1792708107/postgresql-1-1-2-1.config
+postgresql-1-1-2-1            : showing benchmarker times
+postgresql-1-1-2-1            : benchmarker timespan job from 1792708801 to 1792709017
+postgresql-1-1-2-1            : benchmarker timespan pods from 1792708812 to 1792708976
+postgresql-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 164
+postgresql-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1792708812, 1792708976), (1792708813, 1792708972)]
+postgresql-1-1-2-1            : found and updated times {'benchmarker': [(1792708812, 1792708976), (1792708813, 1792708972)]}
+Loop pass                     : took 16.7s (6 kubectl calls 11.8s, 28 API requests 3.7s)
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1785195502-864dd966b8-4fqrv
-Experiment                    : ends at 2026-07-28 01:53:07.458772 (955363.3178731) - 884.55s total
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1792708107-84cf9b955b-855vx
+Loop pass                     : took 10.0s (4 kubectl calls 6.3s, 29 API requests 3.1s)
+Experiment                    : ends at 2026-10-23 00:43:51.720571 (34374.6294442) - 923.19s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -126,8 +163,8 @@ Result workflow complete
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 885s 
-* Code: 1785195502
+* Duration: 924s 
+* Code: 1792708107
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -136,11 +173,12 @@ TPC-DS Queries SF=1
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.8.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.8.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
   * SUT is fixed to cl-worker36.
   * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [8] threads, split into [8] pods.
@@ -149,54 +187,73 @@ TPC-DS Queries SF=1
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2GB')].
   * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:816851
+  * disk:925841
+  * datadisk:5794
+  * volume_size:1.8T
+  * volume_used:905G
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1785195502
-* PostgreSQL-1-1-2-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+    * code:1792708107
+* postgresql-1-1-2-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:817022
+  * disk:925843
+  * datadisk:5794
+  * volume_size:1.8T
+  * volume_used:905G
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1785195502
-* PostgreSQL-1-1-2-1-2 uses docker image postgres:18.3
-  * RAM:2164173213696
+    * code:1792708107
+* postgresql-1-1-2-1-2 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:817022
+  * disk:925843
+  * datadisk:5794
+  * volume_size:1.8T
+  * volume_used:905G
   * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1785195502
+    * code:1792708107
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1785195502-864dd966b8-4fqrv: 0 0
+* bexhoma-sut-postgresql-1-1792708107-84cf9b955b-855vx: 0
 
 ### Workflow
 
@@ -214,129 +271,138 @@ TPC-DS Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 |    1 |      230.00 |           1.00 |            0.00 |         47.00 |          174.00 |              8 |           0 |             | None           |             0 | False         |               15.65 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |      100.00 |           6.00 |            1.00 |         43.00 |           40.00 |              8 |           0 |             | None           |             0 | False         |               36.00 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1    | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |        161 |            0.29 |            12740.32 |           2213.66 |          -1 | PostgreSQL-1-1-1-1-1 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1    | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |        164 |            0.30 |            12297.11 |           2173.17 |          -1 | PostgreSQL-1-1-2-1-1 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1    | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |        161 |            0.31 |            12127.19 |           2213.66 |          -1 | PostgreSQL-1-1-2-1-2 |
+| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        160 |            0.32 |            11645.48 |           2227.50 |          -1 | postgresql-1-1-1-1-1 |
+| postgresql-1-1-2-1-1 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        164 |            0.32 |            11379.37 |           2173.17 |          -1 | postgresql-1-1-2-1-1 |
+| postgresql-1-1-2-1-2 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        159 |            0.32 |            11387.77 |           2241.51 |          -1 | postgresql-1-1-2-1-2 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |        161 |            0.29 |            12740.32 |           2213.66 |          -1 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |              198 |        164 |            0.30 |            12211.86 |           4346.34 |          -1 |
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        160 |            0.32 |            11645.48 |           2227.50 |          -1 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |              198 |                 198 |        164 |            0.32 |            11383.57 |           4346.34 |          -1 |
+
+#### Query Completion per Phase
+
+| phase            |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:-----------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| postgresql-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| postgresql-1-1-2 |      2 | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries       |   PostgreSQL-1-1-1-1-1 |   PostgreSQL-1-1-2-1-1 |   PostgreSQL-1-1-2-1-2 |
+| Queries       |   postgresql-1-1-1-1-1 |   postgresql-1-1-2-1-1 |   postgresql-1-1-2-1-2 |
 |:--------------|-----------------------:|-----------------------:|-----------------------:|
-| TPC-DS Q1     |                 106.18 |                 107.42 |                 103.17 |
-| TPC-DS Q2     |                 184.50 |                 182.91 |                 182.88 |
-| TPC-DS Q3     |                 139.18 |                 132.11 |                 134.50 |
-| TPC-DS Q4     |                6705.71 |                6624.58 |                6521.45 |
-| TPC-DS Q5     |                 374.29 |                 371.06 |                 366.61 |
-| TPC-DS Q6     |               51964.98 |               54028.23 |               52468.61 |
-| TPC-DS Q7     |                 287.65 |                 285.44 |                 301.32 |
-| TPC-DS Q8     |                  94.12 |                  91.97 |                  87.91 |
-| TPC-DS Q9     |                1720.50 |                1697.48 |                1693.86 |
-| TPC-DS Q10    |                 860.98 |                 864.21 |                 857.61 |
-| TPC-DS Q11    |                3900.98 |                4756.54 |                4206.76 |
-| TPC-DS Q12    |                  55.57 |                  56.82 |                  58.07 |
-| TPC-DS Q13    |                 471.63 |                 474.69 |                 490.93 |
-| TPC-DS Q14a+b |                2356.39 |                1592.23 |                1657.78 |
-| TPC-DS Q15    |                  98.82 |                 100.20 |                  98.97 |
-| TPC-DS Q16    |                 153.21 |                 149.33 |                 166.58 |
-| TPC-DS Q17    |                 256.80 |                 493.12 |                 267.67 |
-| TPC-DS Q18    |                 307.60 |                 397.33 |                 340.31 |
-| TPC-DS Q19    |                 136.99 |                 140.54 |                 132.91 |
-| TPC-DS Q20    |                  83.11 |                  85.24 |                  86.68 |
-| TPC-DS Q21    |                 180.67 |                 171.44 |                 167.90 |
-| TPC-DS Q22    |                2618.08 |                2627.61 |                2853.36 |
-| TPC-DS Q23a+b |                4000.45 |                5248.84 |                4625.11 |
-| TPC-DS Q24a+b |                 485.37 |                 474.16 |                 524.08 |
-| TPC-DS Q25    |                 250.69 |                 250.10 |                 259.74 |
-| TPC-DS Q26    |                 205.62 |                 184.50 |                 211.95 |
-| TPC-DS Q27    |                  20.26 |                  16.61 |                  18.69 |
-| TPC-DS Q28    |                 563.38 |                 549.98 |                 574.49 |
-| TPC-DS Q29    |                 271.92 |                 263.55 |                 283.31 |
-| TPC-DS Q30    |                7574.89 |                8709.46 |                7664.16 |
-| TPC-DS Q31    |                1284.96 |                1258.18 |                1541.14 |
-| TPC-DS Q32    |                 116.25 |                 111.57 |                 173.54 |
-| TPC-DS Q33    |                 326.44 |                 316.42 |                 431.05 |
-| TPC-DS Q34    |                  20.14 |                  20.56 |                  21.73 |
-| TPC-DS Q35    |                 953.13 |                 960.19 |                 961.27 |
-| TPC-DS Q36    |                  16.67 |                  20.83 |                  19.84 |
-| TPC-DS Q37    |                 190.20 |                 383.73 |                 189.42 |
-| TPC-DS Q38    |                1022.46 |                1375.93 |                1030.78 |
-| TPC-DS Q39a+b |                1822.88 |                1838.23 |                2155.70 |
-| TPC-DS Q40    |                 108.57 |                 107.57 |                 153.13 |
-| TPC-DS Q41    |                 721.27 |                 775.94 |                 762.86 |
-| TPC-DS Q42    |                  65.00 |                  63.05 |                  67.97 |
-| TPC-DS Q43    |                  21.63 |                  20.76 |                  20.21 |
-| TPC-DS Q44    |                 363.74 |                 356.02 |                 411.50 |
-| TPC-DS Q45    |                  71.04 |                  71.55 |                  73.99 |
-| TPC-DS Q46    |                  25.61 |                  27.40 |                  27.87 |
-| TPC-DS Q47    |                1532.01 |                1797.48 |                1170.42 |
-| TPC-DS Q48    |                 488.99 |                 479.31 |                 468.33 |
-| TPC-DS Q49    |                 334.71 |                 328.72 |                 326.59 |
-| TPC-DS Q50    |                 323.77 |                 309.97 |                 375.24 |
-| TPC-DS Q51    |                 691.33 |                 646.80 |                 766.26 |
-| TPC-DS Q52    |                  66.84 |                  62.71 |                 121.89 |
-| TPC-DS Q53    |                  78.92 |                  73.44 |                 163.76 |
-| TPC-DS Q54    |                  63.27 |                  62.51 |                 105.44 |
-| TPC-DS Q55    |                  63.56 |                  61.18 |                 120.23 |
-| TPC-DS Q56    |                 308.41 |                 298.90 |                 428.22 |
-| TPC-DS Q57    |                 589.85 |                 649.97 |                 586.46 |
-| TPC-DS Q58    |                 319.35 |                 303.87 |                 323.93 |
-| TPC-DS Q59    |                 290.96 |                 288.42 |                 282.94 |
-| TPC-DS Q60    |                 319.56 |                 307.62 |                 305.75 |
-| TPC-DS Q61    |                 102.03 |                  97.53 |                 100.13 |
-| TPC-DS Q62    |                  76.15 |                  73.38 |                  77.35 |
-| TPC-DS Q63    |                  81.45 |                 123.29 |                  78.20 |
-| TPC-DS Q64    |                 442.34 |                1094.73 |                 440.12 |
-| TPC-DS Q65    |                 626.57 |                 586.61 |                 408.72 |
-| TPC-DS Q66    |                 351.38 |                 172.55 |                 163.65 |
-| TPC-DS Q67    |                2436.39 |                2311.29 |                2720.61 |
-| TPC-DS Q68    |                  31.67 |                  29.93 |                  41.06 |
-| TPC-DS Q69    |                 206.84 |                 200.94 |                 419.69 |
-| TPC-DS Q70    |                 279.56 |                 282.03 |                 319.49 |
-| TPC-DS Q71    |                 261.06 |                 258.98 |                 254.93 |
-| TPC-DS Q72    |                 734.15 |                 743.40 |                 739.32 |
-| TPC-DS Q73    |                  22.05 |                  22.01 |                  20.53 |
-| TPC-DS Q74    |                 841.81 |                1185.84 |                 781.92 |
-| TPC-DS Q75    |                 570.92 |                1415.90 |                 555.30 |
-| TPC-DS Q76    |                 189.39 |                 186.56 |                 170.35 |
-| TPC-DS Q77    |                 238.20 |                 250.86 |                 234.44 |
-| TPC-DS Q78    |                1692.42 |                1409.04 |                1229.87 |
-| TPC-DS Q79    |                 113.02 |                 111.79 |                 104.38 |
-| TPC-DS Q80    |                 362.75 |                 352.65 |                 760.09 |
-| TPC-DS Q81    |               32340.66 |               32888.77 |               34285.62 |
-| TPC-DS Q82    |                 242.82 |                 234.56 |                 239.81 |
-| TPC-DS Q83    |                  70.44 |                  69.56 |                  68.32 |
-| TPC-DS Q84    |                  65.79 |                  69.72 |                  64.37 |
-| TPC-DS Q85    |                 238.82 |                 257.74 |                 238.14 |
-| TPC-DS Q86    |                 147.66 |                 165.17 |                 150.87 |
-| TPC-DS Q87    |                1021.58 |                1045.36 |                1032.90 |
-| TPC-DS Q88    |                1909.65 |                2299.74 |                1972.22 |
-| TPC-DS Q89    |                 116.30 |                 118.70 |                 114.81 |
-| TPC-DS Q90    |                 100.08 |                  88.12 |                  91.91 |
-| TPC-DS Q91    |                  75.79 |                  73.01 |                  74.38 |
-| TPC-DS Q92    |                  62.16 |                  62.31 |                  64.06 |
-| TPC-DS Q93    |                 163.50 |                 159.26 |                 152.83 |
-| TPC-DS Q94    |                 124.60 |                 140.77 |                 137.53 |
-| TPC-DS Q95    |                2460.48 |                2452.51 |                2629.43 |
-| TPC-DS Q96    |                  71.91 |                  72.11 |                  68.50 |
-| TPC-DS Q97    |                 277.37 |                 281.39 |                 280.80 |
-| TPC-DS Q98    |                 131.31 |                 134.46 |                 140.95 |
-| TPC-DS Q99    |                 107.82 |                 107.61 |                 110.10 |
+| TPC-DS Q1     |                 391.40 |                  97.67 |                 441.61 |
+| TPC-DS Q2     |                 333.13 |                 345.76 |                 345.76 |
+| TPC-DS Q3     |                  97.23 |                  98.99 |                 107.71 |
+| TPC-DS Q4     |                5379.31 |                5467.30 |                5438.00 |
+| TPC-DS Q5     |                 476.68 |                 636.88 |                 636.44 |
+| TPC-DS Q6     |               47658.71 |               50814.04 |               48169.94 |
+| TPC-DS Q7     |                 323.51 |                 320.88 |                 322.18 |
+| TPC-DS Q8     |                  47.12 |                  51.51 |                  47.60 |
+| TPC-DS Q9     |                1789.15 |                1821.68 |                1826.34 |
+| TPC-DS Q10    |                 875.50 |                 868.53 |                 898.50 |
+| TPC-DS Q11    |                3041.75 |                3062.88 |                3234.48 |
+| TPC-DS Q12    |                  56.76 |                  55.73 |                  61.42 |
+| TPC-DS Q13    |                 476.07 |                 470.41 |                 483.25 |
+| TPC-DS Q14a+b |                2162.14 |                2395.81 |                2420.20 |
+| TPC-DS Q15    |                 103.16 |                 102.92 |                 104.42 |
+| TPC-DS Q16    |                 187.54 |                 196.54 |                 185.30 |
+| TPC-DS Q17    |                 248.18 |                 261.52 |                 264.95 |
+| TPC-DS Q18    |                 328.97 |                 354.21 |                 322.18 |
+| TPC-DS Q19    |                 121.46 |                 132.01 |                 122.58 |
+| TPC-DS Q20    |                  79.60 |                  85.40 |                  80.03 |
+| TPC-DS Q21    |                 236.14 |                 332.79 |                 244.76 |
+| TPC-DS Q22    |                2722.02 |                2777.73 |                2612.50 |
+| TPC-DS Q23a+b |                3761.90 |                3984.62 |                3592.24 |
+| TPC-DS Q24a+b |                 574.97 |                 483.85 |                 488.04 |
+| TPC-DS Q25    |                 264.87 |                 251.12 |                 258.42 |
+| TPC-DS Q26    |                 195.10 |                 195.91 |                 203.09 |
+| TPC-DS Q27    |                  41.72 |                  42.41 |                  41.41 |
+| TPC-DS Q28    |                1317.54 |                1330.61 |                1357.25 |
+| TPC-DS Q29    |                 280.36 |                 277.40 |                 278.16 |
+| TPC-DS Q30    |                7669.54 |                7574.95 |                7584.00 |
+| TPC-DS Q31    |                1381.16 |                1287.82 |                1305.37 |
+| TPC-DS Q32    |                 143.38 |                 138.15 |                 145.05 |
+| TPC-DS Q33    |                 323.02 |                 328.97 |                 323.56 |
+| TPC-DS Q34    |                  17.97 |                  17.59 |                  20.61 |
+| TPC-DS Q35    |                 956.96 |                 980.66 |                 942.37 |
+| TPC-DS Q36    |                  19.34 |                  22.55 |                  17.77 |
+| TPC-DS Q37    |                 330.94 |                 334.74 |                 324.89 |
+| TPC-DS Q38    |                 999.47 |                1437.44 |                1001.64 |
+| TPC-DS Q39a+b |                2003.78 |                2325.63 |                2071.85 |
+| TPC-DS Q40    |                 109.94 |                 110.64 |                 104.01 |
+| TPC-DS Q41    |                 816.17 |                 827.47 |                 761.81 |
+| TPC-DS Q42    |                  87.37 |                  82.12 |                  88.91 |
+| TPC-DS Q43    |                  22.89 |                  17.12 |                  20.04 |
+| TPC-DS Q44    |                 385.38 |                 401.94 |                 391.54 |
+| TPC-DS Q45    |                  75.49 |                  73.26 |                  74.58 |
+| TPC-DS Q46    |                  24.97 |                  23.85 |                  33.55 |
+| TPC-DS Q47    |                1041.93 |                1116.78 |                1068.21 |
+| TPC-DS Q48    |                 507.97 |                 486.16 |                 486.80 |
+| TPC-DS Q49    |                 439.10 |                 488.63 |                 419.82 |
+| TPC-DS Q50    |                 384.80 |                 382.78 |                 369.53 |
+| TPC-DS Q51    |                 742.13 |                 924.35 |                 858.04 |
+| TPC-DS Q52    |                  88.73 |                  87.48 |                  89.67 |
+| TPC-DS Q53    |                 110.59 |                 104.69 |                 110.18 |
+| TPC-DS Q54    |                  70.81 |                  61.71 |                  55.97 |
+| TPC-DS Q55    |                  84.32 |                  83.79 |                  83.01 |
+| TPC-DS Q56    |                 287.77 |                 285.27 |                 268.62 |
+| TPC-DS Q57    |                 640.66 |                 710.14 |                 694.98 |
+| TPC-DS Q58    |                 316.72 |                 328.34 |                 301.99 |
+| TPC-DS Q59    |                 425.92 |                 427.70 |                 411.96 |
+| TPC-DS Q60    |                 328.00 |                 324.23 |                 309.52 |
+| TPC-DS Q61    |                 105.83 |                 110.34 |                 107.48 |
+| TPC-DS Q62    |                  95.22 |                  95.80 |                  89.76 |
+| TPC-DS Q63    |                 114.69 |                 115.94 |                 103.12 |
+| TPC-DS Q64    |                 599.72 |                 587.42 |                 595.72 |
+| TPC-DS Q65    |                 504.19 |                 707.76 |                 540.20 |
+| TPC-DS Q66    |                 169.02 |                 173.51 |                 166.43 |
+| TPC-DS Q67    |                2088.65 |                2177.48 |                2083.48 |
+| TPC-DS Q68    |                  35.25 |                  29.85 |                  29.37 |
+| TPC-DS Q69    |                 299.23 |                 403.58 |                 382.98 |
+| TPC-DS Q70    |                 346.20 |                 358.38 |                 525.05 |
+| TPC-DS Q71    |                 262.64 |                 289.84 |                 257.85 |
+| TPC-DS Q72    |                 763.98 |                 812.98 |                 770.80 |
+| TPC-DS Q73    |                  22.25 |                  22.50 |                  19.51 |
+| TPC-DS Q74    |                 920.61 |                 962.38 |                 928.48 |
+| TPC-DS Q75    |                 578.30 |                 614.21 |                 586.16 |
+| TPC-DS Q76    |                 222.73 |                 235.13 |                 366.93 |
+| TPC-DS Q77    |                 288.42 |                 270.82 |                 280.77 |
+| TPC-DS Q78    |                1065.69 |                1072.72 |                1034.25 |
+| TPC-DS Q79    |                 157.68 |                 155.16 |                 156.51 |
+| TPC-DS Q80    |                 362.85 |                 365.85 |                 371.13 |
+| TPC-DS Q81    |               31421.22 |               31589.30 |               31448.59 |
+| TPC-DS Q82    |                 344.95 |                 338.26 |                 346.72 |
+| TPC-DS Q83    |                  64.16 |                  67.62 |                  68.52 |
+| TPC-DS Q84    |                  66.95 |                  70.76 |                  70.08 |
+| TPC-DS Q85    |                 265.68 |                 266.23 |                 272.46 |
+| TPC-DS Q86    |                 177.83 |                 159.62 |                 163.62 |
+| TPC-DS Q87    |                1114.59 |                1018.78 |                1094.30 |
+| TPC-DS Q88    |                1985.77 |                1950.95 |                1956.44 |
+| TPC-DS Q89    |                 112.94 |                 116.12 |                 227.50 |
+| TPC-DS Q90    |                  98.45 |                  93.09 |                  92.93 |
+| TPC-DS Q91    |                 119.27 |                 119.57 |                 123.53 |
+| TPC-DS Q92    |                  45.79 |                  47.15 |                  51.38 |
+| TPC-DS Q93    |                 239.68 |                 467.64 |                 304.20 |
+| TPC-DS Q94    |                 130.40 |                 121.94 |                 125.35 |
+| TPC-DS Q95    |                2755.35 |                2593.97 |                2633.09 |
+| TPC-DS Q96    |                  93.57 |                  97.98 |                  92.22 |
+| TPC-DS Q97    |                 325.73 |                 333.63 |                 328.48 |
+| TPC-DS Q98    |                 132.10 |                 266.12 |                 132.61 |
+| TPC-DS Q99    |                 156.55 |                 156.24 |                 162.25 |
 
 ### Errors (failed queries)
 
@@ -346,14 +412,18 @@ No errors
 
 |                      |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
 |:---------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| PostgreSQL-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| PostgreSQL-1-1-2-1-2 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+| postgresql-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+| postgresql-1-1-2-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
 * TEST failed: SQL warnings (result mismatch)
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned

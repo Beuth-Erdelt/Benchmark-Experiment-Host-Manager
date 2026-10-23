@@ -329,7 +329,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 PVC  sf=1  nb
 # --set ...                     8 io threads per worker instead of 16 (template), see "Settings of Dragonfly"
 bexhoma ycsb \
   -dbms Dragonfly \
-  -sf 1 \
+  -sf 10 \
   -xwl a \
   -xtb 16384 \
   -xnbf 4 \
@@ -355,7 +355,7 @@ bexhoma ycsb \
   --set "statefulset[bexhoma-worker].container[dbms].env.DFLY_proactor_threads=8" \
   run &>$LOG_DIR/docs_ycsb_dragonfly_6.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=1  nbp=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=10  nbp=1"
 
 
 ###########################################

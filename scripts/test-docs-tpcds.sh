@@ -283,7 +283,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS storage  sf=1  nc=2"
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
-# -rr 1024Gi                    RAM requested for the SUT container
+# -rr 900Gi                     RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 2000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -301,7 +301,7 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \
-  -rr 1024Gi \
+  -rr 900Gi \
   -rsr \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -326,7 +326,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
-# -rr 1024Gi                    RAM requested for the SUT container
+# -rr 900Gi                     RAM requested for the SUT container
 # -rss 2000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 bexhoma tpcds \
@@ -343,7 +343,7 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \
-  -rr 1024Gi \
+  -rr 900Gi \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpcds_monetdb_2.log
@@ -367,7 +367,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
-# -rr 1024Gi                    RAM requested for the SUT container
+# -rr 900Gi                     RAM requested for the SUT container
 # -rss 2000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 bexhoma tpcds \
@@ -384,7 +384,7 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \
-  -rr 1024Gi \
+  -rr 900Gi \
   -rss 2000Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpcds_monetdb_3.log

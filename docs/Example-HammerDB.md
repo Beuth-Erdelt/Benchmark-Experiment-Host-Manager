@@ -656,6 +656,49 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:893978
+  * datadisk:3303
+  * volume_size:1.8T
+  * volume_used:874G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * eval_parameters
+    * code:1792485256
+* postgresql-1-1-2-1 uses docker image postgres:18.6
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:910406
+  * datadisk:19458
+  * volume_size:1.8T
+  * volume_used:890G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * eval_parameters
+    * code:1792485256
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1792485256-6f5bc89f84-t5d8q: 0
+
 ### Workflow
 
 #### Actual
@@ -667,6 +710,14 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 * DBMS PostgreSQL-1 - Experiment 1 Client 1: hammerdb (1 pods)
 * DBMS PostgreSQL-1 - Experiment 1 Client 2: hammerdb (2 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |   16 |      109.00 |           3.00 |            0.00 |         97.00 |            9.00 |              1 |          16 |             | None           |             0 | False         |              528.44 | False               |
 
 ### Benchmarking
 
@@ -690,6 +741,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 | phase            | job                |   experiment_run |   client |   benchmark_run |   time_reset |
 |:-----------------|:-------------------|-----------------:|---------:|----------------:|-------------:|
 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |         4.00 |
+| postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |        13.00 |
 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |        13.00 |
 
 ### Tests

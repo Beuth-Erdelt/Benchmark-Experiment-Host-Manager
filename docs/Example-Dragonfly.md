@@ -1514,7 +1514,7 @@ Example: a cluster of 3 workers with 8 instead of 16 io threads per worker
 ```bash
 bexhoma ycsb \
   -dbms Dragonfly \
-  -sf 1 \
+  -sf 10 \
   -xwl a \
   -xtb 16384 \
   -xnbf 4 \
