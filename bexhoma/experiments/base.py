@@ -36,7 +36,7 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
-from bexhoma.monitoring_math import (counter_total, min_measurable_window, read_connections,
+from bexhoma.monitoring_math import (counter_total, job_lifetime, min_measurable_window, read_connections,
                                      scoped_job_connections, DEFAULT_SCRAPE_INTERVAL_SECONDS)
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes, check_tenant_loading_pods
 from bexhoma.load_durability import DEFAULT_LEVEL as LOAD_DURABILITY_DEFAULT
@@ -3591,7 +3591,9 @@ class ExperimentBase():
         Connections whose phase window was too short to measure the component's CPU.
 
         The window is the one the fetch queried (``Interval length`` in its
-        ``bexhoma-metrics-{connection}-{component}.log``); the threshold is
+        ``bexhoma-metrics-{connection}-{component}.log``), or for a job the
+        time its pods ran when that is shorter
+        (:func:`~bexhoma.monitoring_math.job_lifetime`); the threshold is
         :func:`~bexhoma.monitoring_math.min_measurable_window`, lower for a job
         whose queries select only its own pods. A connection without such a
         log line (older results) is never short.
@@ -3602,13 +3604,19 @@ class ExperimentBase():
         :return: The short ones.
         :rtype: set
         """
-        scoped = scoped_job_connections(read_connections(evaluate.path), component)
+        connections_config = read_connections(evaluate.path)
+        scoped = scoped_job_connections(connections_config, component)
         short = set()
         for connection in connections:
             threshold = min_measurable_window(component, self.scrape_interval(), connection in scoped)
             window = missing_metrics.fetch_window(
                 Path(evaluate.path) / missing_metrics.fetch_log_name(connection, component))
-            if window is not None and window < threshold:
+            if window is None:
+                continue
+            lifetime = job_lifetime(connections_config, connection, component)
+            if lifetime is not None:
+                window = min(window, lifetime)
+            if window < threshold:
                 short.add(connection)
         return short
     @staticmethod

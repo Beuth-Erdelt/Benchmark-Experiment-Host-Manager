@@ -598,7 +598,10 @@ def _build_monitoring_sections(
                    f"before the first scrape; `{missing_metrics.EXPECTED_SPARSE}` means the metric "
                    "only has a series while its value is non-zero; "
                    f"`{missing_metrics.EXPECTED_SHORT_PHASE}` means the phase was too short for the "
-                   "scrapes it needs, so its CPU is shown as n/a. `source` is the log that reported "
+                   "scrapes it needs, so its CPU is shown as n/a; "
+                   f"`{missing_metrics.EXPECTED_SHORT_JOB}` means the same for the pods of a job "
+                   "(loader, data generator, benchmarker), which ran only part of the phase. "
+                   "`source` is the log that reported "
                    "it (see files.md)."],
         ))
     monitoring_components = experiment.workload.get('monitoring_components', {})
