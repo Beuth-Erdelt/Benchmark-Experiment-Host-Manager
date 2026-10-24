@@ -176,6 +176,8 @@ bexhoma benchbase `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
+  --set deployment[bexhoma-deployment-citus].container[dbms].max_connections=2000 <# raise coordinator connection limit above -nbt terminals #> `
+  --set statefulset[bexhoma-worker].container[dbms].max_connections=2000 <# workers too: the coordinator's pool to each worker follows its max_connections #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_citus_3.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
