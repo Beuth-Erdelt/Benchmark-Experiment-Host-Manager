@@ -315,7 +315,7 @@ With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both
 Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
 A script counts as failed when it exits non-zero, writes an error line (`ERROR`, `FATAL`) to stderr, or (redis-cli) an `ERR` reply to stdout; no output means success.
 The summary's Reset table lists the failed scripts per job (`reset_failed`), and the test `Reset scripts ran without errors` fails when there are any; the agent report links the reset logs in `files.md`.
-`scripts/test-docs-reset.sh` (`.ps1`) checks every reset on a cluster: one run per DBMS and benchmark with two rounds, and its header lists what to look for in the logs.
+`scripts/test-docs-reset.sh` (`.ps1`) checks every reset on a cluster: one run per DBMS and benchmark with two rounds, and its header lists what to look for in the logs; see [Test: Reset Scripts](Test-Reset.md) for the commands and the logs of the last run.
 
 Runs with `-ar` from before this contract (October 2026) are not directly comparable to newer ones for PostgreSQL (checkpoint now after `VACUUM`), Citus (checkpoints on the workers) and MySQL/MariaDB (dirty-page flush): these move I/O out of round 1.
 
@@ -324,6 +324,7 @@ Runs with `-ar` from before this contract (October 2026) are not directly compar
 `-xld durable|relaxed|unsafe` (default `relaxed`) sets the durability during the load only; the benchmark runs with the configured state (template and `--set`).
 Templates set no durability options.
 Details and the placeholders `durability.sql` / `restoredurability.sql`: [Prepare Testbeds](Prepare-Testbeds.md).
+Commands and logs of the test runs: [Test: Load Durability](Test-Durability.md).
 
 | DBMS | durable | relaxed | unsafe |
 |---|---|---|---|

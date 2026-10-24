@@ -1,0 +1,273 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792628169
+Experiment                    : starts at 2026-10-22 02:16:10.348520 (40112.2020908)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Ordering of inserts is hashed.
+Number of operations is 1000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [4].
+Factors for benchmarking are [1]. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
+Status is logged every 10s.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.7.
+Experiment is limited to DBMS ['MySQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1] pods.
+Benchmarking is run as [1, 2] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+SUT requests 4 CPU and 16Gi RAM.
+Cluster monitoring            : is running
+MySQL-1                       : will start now
+MySQL-1                       : deployments ['sut']
+MySQL-1                       : stateful sets []
+MySQL-1                       : pvcs ['sut']
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1792628169
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1792628169
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1792628169
+Loop pass                     : took 5.1s (1 kubectl calls 2.4s, 10 API requests 1.5s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 16 API requests 1.9s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 4.7s (0 kubectl calls 0.0s, 16 API requests 2.0s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 16 API requests 1.9s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-22 00:20:29 (that is in 120 secs)
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 16 API requests 2.5s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-22 00:20:29
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 13 API requests 1.7s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-22 00:20:29
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 13 API requests 1.8s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-22 00:20:29
+Loop pass                     : took 8.2s (0 kubectl calls 0.0s, 13 API requests 1.8s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1792628169-6fb8d577f6-6x95p to load scripts
+MySQL-1                       : start asynch loading scripts of type schema
+MySQL-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
+MySQL-1                       : Schema scripts done after 8s
+MySQL-1                       : is loading
+Loop pass                     : took 30.1s (8 kubectl calls 14.8s, 36 API requests 6.2s)
+- waiting 30s -               : done
+MySQL-1                       : showing loader times (ycsb-loader)
+MySQL-1                       : generator times (start/end per pod and container) []
+MySQL-1                       : loader times (start/end per pod and container) [(1792628482, 1792628499), (1792628481, 1792628498), (1792628482, 1792628499), (1792628482, 1792628498), (1792628482, 1792628499), (1792628482, 1792628499), (1792628482, 1792628499), (1792628482, 1792628498)]
+MySQL-1                       : total times (start/end per pod and container) [(1792628482, 1792628499), (1792628481, 1792628498), (1792628482, 1792628499), (1792628482, 1792628498), (1792628482, 1792628499), (1792628482, 1792628499), (1792628482, 1792628499), (1792628482, 1792628498)]
+MySQL-1                       : loader timespan (first to last [s]) = 18
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1792628169-6fb8d577f6-6x95p to load scripts
+MySQL-1                       : start asynch loading scripts of type index
+MySQL-1                       : is loading
+Loop pass                     : took 70.8s (24 kubectl calls 57.9s, 62 API requests 9.1s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1792628169 initialized to 1.
+MySQL-1                       : benchmarks done 0 of 1. This will be client 1
+mysql-1-1-1-1                 : start benchmarking (benchmark_run=1)
+MySQL-1                       : reset (reset_1_1_1) completed in 141s
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1792628169
+MySQL-1                       : submitted benchmarker job in 14.2s (4 kubectl calls 7.2s, 24 API requests 6.2s)
+Loop pass                     : took 175.9s (14 kubectl calls 164.2s, 46 API requests 10.3s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 20 API requests 2.3s)
+- waiting 30s -               : done
+mysql-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1792628169/mysql-1-1-1-1.config
+mysql-1-1-1-1                 : showing benchmarker times
+mysql-1-1-1-1                 : benchmarker timespan job from 1792628776 to 1792628851
+mysql-1-1-1-1                 : benchmarker timespan pods from 1792628779 to 1792628842
+mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 63
+mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1792628779, 1792628842)]
+mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1792628779, 1792628842)]}
+Loop pass                     : took 12.6s (4 kubectl calls 7.8s, 24 API requests 3.0s)
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MySQL-1-1792628169 initialized to 2.
+MySQL-1                       : benchmarks done 0 of 1. This will be client 2
+mysql-1-1-2-1                 : start benchmarking (benchmark_run=1)
+MySQL-1                       : reset (reset_1_2_1) completed in 170s
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1792628169
+MySQL-1                       : submitted benchmarker job in 12.3s (3 kubectl calls 3.3s, 23 API requests 7.7s)
+Loop pass                     : took 199.3s (12 kubectl calls 186.1s, 46 API requests 10.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 21 API requests 2.5s)
+- waiting 30s -               : done
+mysql-1-1-2-1                 : wrote benchmarking_timespans to /data/benchmarks/1792628169/mysql-1-1-2-1.config
+mysql-1-1-2-1                 : showing benchmarker times
+mysql-1-1-2-1                 : benchmarker timespan job from 1792629052 to 1792629125
+mysql-1-1-2-1                 : benchmarker timespan pods from 1792629055 to 1792629089
+mysql-1-1-2-1                 : benchmarker timespan (start to end single container [s]) = 34
+mysql-1-1-2-1                 : benchmarker times (start/end per pod and container) = [(1792629055, 1792629089), (1792629056, 1792629089)]
+mysql-1-1-2-1                 : found and updated times {'benchmarker': [(1792629055, 1792629089), (1792629056, 1792629089)]}
+Loop pass                     : took 9.3s (6 kubectl calls 6.3s, 28 API requests 2.9s)
+MySQL-1                       : can be stopped
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1792628169-6fb8d577f6-6x95p
+Loop pass                     : took 6.8s (4 kubectl calls 3.6s, 30 API requests 3.0s)
+Experiment                    : ends at 2026-10-22 02:32:14.644273 (41076.4960527) - 964.29s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+* Type: ycsb
+* Duration: 965s 
+* Code: 1792628169
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 1000000.
+  * Batch size is ''.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [4].
+  * Factors for benchmarking are [1]. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.7.
+  * Experiment is limited to DBMS ['MySQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Loading is tested with [64] threads, split into [8] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1, 2] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:942119
+  * datadisk:34754
+  * volume_size:1.8T
+  * volume_used:921G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792628169
+* mysql-1-1-2-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:942154
+  * datadisk:34786
+  * volume_size:1.8T
+  * volume_used:921G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792628169
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1792628169-6fb8d577f6-6x95p: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: ycsb (2 pods)
+
+#### Planned
+
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: ycsb (2 pods)
+
+### Loading
+
+#### Per Connection
+
+| connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| mysql-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7562.47 |                16529.00 |            125000.00 |                              6611.00 | 1.00 |              217.80 |
+| mysql-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7551.05 |                16554.00 |            125000.00 |                              6567.00 | 1.00 |              217.47 |
+| mysql-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7550.59 |                16555.00 |            125000.00 |                              6547.00 | 1.00 |              217.46 |
+| mysql-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7525.59 |                16610.00 |            125000.00 |                              6539.00 | 1.00 |              216.74 |
+| mysql-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7462.24 |                16751.00 |            125000.00 |                              6603.00 | 1.00 |              214.91 |
+| mysql-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7597.86 |                16452.00 |            125000.00 |                              6663.00 | 1.00 |              218.82 |
+| mysql-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7584.49 |                16481.00 |            125000.00 |                              6563.00 | 1.00 |              218.43 |
+| mysql-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7518.34 |                16626.00 |            125000.00 |                              6531.00 | 1.00 |              216.53 |
+
+#### Per Run
+
+| DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:----------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| MySQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 1.00 |              214.91 |                        60352.62 |                16751.00 |           1000000.00 |                              6578.00 |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |    16384 |           1 |            0 |                        15961.44 |                62651.00 |             499757 |                             918.00 |               500243 |                              5339.00 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       1 |        64 |    16384 |           2 |            0 |                        14998.80 |                33336.00 |             250486 |                             722.00 |               249514 |                              5123.00 |
+| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       2 |        64 |    16384 |           2 |            0 |                        15221.63 |                32848.00 |             249790 |                             727.00 |               250210 |                              4947.00 |
+
+#### Per Phase
+
+| DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |    16384 |               1 |           1 |            0 |                        15961.44 |                62651.00 |             499757 |                             918.00 |               500243 |                              5339.00 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |       128 |    32768 |               1 |           2 |            0 |                        30220.43 |                33336.00 |             500276 |                             727.00 |               499724 |                              5123.00 |
+
+#### Reset
+
+| phase       | job           |   experiment_run |   client |   benchmark_run |   time_reset | reset_failed   |
+|:------------|:--------------|-----------------:|---------:|----------------:|-------------:|:---------------|
+| mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       141.00 |                |
+| mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       170.00 |                |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column
+* TEST passed: Reset scripts ran without errors

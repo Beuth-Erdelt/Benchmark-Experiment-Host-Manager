@@ -1,0 +1,201 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792624300
+Experiment                    : starts at 2026-10-22 01:11:41.118585 (36242.9889177)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+Benchmark is 'tpcc'. Scaling factor is 4. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.7.
+Experiment is limited to DBMS ['MySQL'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [40] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+SUT requests 4 CPU and 16Gi RAM.
+Cluster monitoring            : is running
+MySQL-1                       : will start now
+MySQL-1                       : deployments ['sut']
+MySQL-1                       : stateful sets []
+MySQL-1                       : pvcs ['sut']
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1792624300
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1792624300
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1792624300
+Loop pass                     : took 4.6s (1 kubectl calls 1.8s, 10 API requests 1.8s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.8s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 4.0s (0 kubectl calls 0.0s, 16 API requests 2.0s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 16 API requests 2.2s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-21 23:16:01 (that is in 120 secs)
+Loop pass                     : took 5.7s (0 kubectl calls 0.0s, 16 API requests 2.6s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-21 23:16:01
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 13 API requests 2.1s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-21 23:16:01
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 13 API requests 1.6s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-21 23:16:01
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 13 API requests 1.5s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1792624300-75d4b7687f-7pfch to load scripts
+MySQL-1                       : start asynch loading scripts of type schema
+MySQL-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
+MySQL-1                       : Schema scripts done after 11s
+MySQL-1                       : is loading
+Loop pass                     : took 35.5s (8 kubectl calls 15.3s, 37 API requests 7.4s)
+- waiting 30s -               : done
+MySQL-1                       : showing loader times (benchbase-loader)
+MySQL-1                       : generator times (start/end per pod and container) []
+MySQL-1                       : loader times (start/end per pod and container) [(1792624604, 1792624630)]
+MySQL-1                       : total times (start/end per pod and container) [(1792624604, 1792624630)]
+MySQL-1                       : loader timespan (first to last [s]) = 26
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1792624300-75d4b7687f-7pfch to load scripts
+MySQL-1                       : start asynch loading scripts of type index
+MySQL-1                       : is loading
+Loop pass                     : took 29.0s (10 kubectl calls 23.8s, 27 API requests 3.4s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1792624300 initialized to 1.
+MySQL-1                       : benchmarks done 0 of 1. This will be client 1
+mysql-1-1-1-1                 : start benchmarking (benchmark_run=1)
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1792624300
+MySQL-1                       : submitted benchmarker job in 17.1s (4 kubectl calls 7.3s, 24 API requests 8.7s)
+Loop pass                     : took 26.7s (5 kubectl calls 9.0s, 44 API requests 13.3s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.9s (0 kubectl calls 0.0s, 20 API requests 3.1s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 18 API requests 2.2s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 18 API requests 2.3s)
+- waiting 30s -               : done
+mysql-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1792624300/mysql-1-1-1-1.config
+mysql-1-1-1-1                 : showing benchmarker times
+mysql-1-1-1-1                 : benchmarker timespan job from 1792624714 to 1792624858
+mysql-1-1-1-1                 : benchmarker timespan pods from 1792624717 to 1792624839
+mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 122
+mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1792624717, 1792624839)]
+mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1792624717, 1792624839)]}
+Loop pass                     : took 10.4s (4 kubectl calls 7.3s, 24 API requests 3.0s)
+MySQL-1                       : can be stopped
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1792624300-75d4b7687f-7pfch
+Loop pass                     : took 10.6s (4 kubectl calls 6.6s, 30 API requests 3.5s)
+Experiment                    : ends at 2026-10-22 01:21:13.239850 (36815.1063211) - 572.12s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=4
+* Type: benchbase
+* Duration: 573s 
+* Code: 1792624300
+* Benchbase runs a TPC-C experiment.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'tpcc'. Scaling factor is 4. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.7.
+  * Experiment is limited to DBMS ['MySQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [40] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173172736
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:940760
+  * datadisk:33422
+  * volume_size:1.8T
+  * volume_used:919G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792624300
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1792624300-75d4b7687f-7pfch: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS MySQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS MySQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |    4 |       39.00 |           7.00 |            0.00 |         26.00 |            6.00 |              1 |           1 |             |                |             0 | False         |              369.23 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS            | phase       | job           |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:----------------|:------------|:--------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |          40 |     1024 |        1 |               1 |       1 |          -1 | 120.00 |            0 |                        1023.96 |                     1014.58 |         0.00 |                                                      19913.00 |                                              12331.00 |
+
+#### Per Phase
+
+| DBMS        | phase       |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:------------|:------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |          40 |     1024 |               1 |           1 |          -1 | 120.00 |            0 |                        1023.96 |                     1014.58 |         0.00 |                                                      19913.00 |                                              12331.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST passed: Workflow as planned
