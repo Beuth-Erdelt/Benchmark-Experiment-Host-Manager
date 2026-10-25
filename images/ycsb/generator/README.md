@@ -59,7 +59,7 @@ Same as the benchmarker ([images/ycsb/benchmarker/README.md](https://github.com/
 
 ### YCSB workload parameters
 
-* `YCSB_WORKLOAD`: YCSB workload name — `a`, `b`, `c`, `c2` (C with uniform request distribution), `d`, `e`, or `f`.
+* `YCSB_WORKLOAD`: YCSB workload name — `a`, `a2` (A with uniform request distribution), `b`, `c`, `c2` (C with uniform request distribution), `d`, `e`, or `f`.
 * `YCSB_ROWS`: Total number of records to load. Defaults to `SF × 100,000`.
 * `YCSB_OPERATIONS`: Number of operations per pod. Defaults to `SF × 100,000`.
 * `YCSB_THREADCOUNT`: YCSB workload property `threadcount`.

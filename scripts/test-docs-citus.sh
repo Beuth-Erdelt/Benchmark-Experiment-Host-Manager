@@ -257,6 +257,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# --set deployment[bexhoma-deployment-citus].container[dbms].max_connections=2000 raise coordinator connection limit above -nbt terminals
+# --set statefulset[bexhoma-worker].container[dbms].max_connections=2000 workers too: the coordinator's pool to each worker follows its max_connections
 bexhoma benchbase \
   -dbms Citus \
   -sf 128 \
@@ -280,6 +282,8 @@ bexhoma benchbase \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  --set deployment[bexhoma-deployment-citus].container[dbms].max_connections=2000 \
+  --set statefulset[bexhoma-worker].container[dbms].max_connections=2000 \
   run &>$LOG_DIR/docs_benchbase_citus_3.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"

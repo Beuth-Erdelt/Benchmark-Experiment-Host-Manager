@@ -27,7 +27,10 @@ marks a metric sparse only for the listed component types (e.g. the
 filesystem I/O of client containers that may never touch disk). A gap in a
 fetch whose window is shorter than the component needs at the cluster's
 scrape interval (:func:`bexhoma.monitoring_math.min_measurable_window`) is
-expected too: no scrape may have landed inside it.
+expected too: no scrape may have landed inside it. For a job (loader, data
+generator, benchmarker) the time its pods ran counts when it is shorter than
+the window (:func:`bexhoma.monitoring_math.job_lifetime`): the loading window
+also holds schema, index and waiting for the loader pods.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -42,11 +45,12 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable
 
-from .monitoring_math import min_measurable_window, read_connections, scoped_job_connections
+from .monitoring_math import job_lifetime, min_measurable_window, read_connections, scoped_job_connections
 
 __all__ = [
     "MissingMetric", "parse_missing_metrics", "collect_missing_metrics", "fetch_log_name",
     "fetch_window", "EXPECTED_DATA_PREEXISTING", "EXPECTED_SPARSE", "EXPECTED_SHORT_PHASE",
+    "EXPECTED_SHORT_JOB",
 ]
 
 #: Log files that can carry the message, relative to the result folder.
@@ -64,6 +68,8 @@ EXPECTED_DATA_PREEXISTING = "data pre-existing"
 EXPECTED_SPARSE = "series exists only while non-zero"
 #: ``expected`` reason for a gap in a fetch whose window is too short to hold a scrape.
 EXPECTED_SHORT_PHASE = "phase shorter than scrape interval"
+#: ``expected`` reason for a gap of a job whose pods ran too short to be scraped.
+EXPECTED_SHORT_JOB = "job pods ran shorter than scrape interval"
 
 
 @dataclass(frozen=True)
@@ -240,7 +246,9 @@ def collect_missing_metrics(
         pre-existing (the experiment's ``optional_monitoring_components``).
     :param scrape_interval: Scrape interval of the cluster Prometheus in
         seconds; with it, a gap in a fetch whose window is shorter than
-        :func:`~bexhoma.monitoring_math.min_measurable_window` is expected.
+        :func:`~bexhoma.monitoring_math.min_measurable_window` is expected,
+        and so is a gap of a job whose pods ran shorter than that
+        (:func:`~bexhoma.monitoring_math.job_lifetime`).
         ``None`` (default) leaves short windows unmarked.
     :param jobs_scoped: Passed on to :func:`~bexhoma.monitoring_math.min_measurable_window`;
         ``None`` (default) decides per connection from ``connections.config``
@@ -253,13 +261,14 @@ def collect_missing_metrics(
     sparse, sparse_components = _sparse_titles(result_dir)
     missing: dict[tuple[str, str, str], MissingMetric] = {}
     scoped_by_component: dict[str, set] = {}
+    connections = read_connections(result_dir)
 
     def is_scoped(entry: MissingMetric) -> bool:
         if jobs_scoped is not None:
             return jobs_scoped
         if entry.component not in scoped_by_component:
             scoped_by_component[entry.component] = scoped_job_connections(
-                read_connections(result_dir), entry.component)
+                connections, entry.component)
         scoped = scoped_by_component[entry.component]
         # a DBMSBenchmarker pod appends its client to the connection name
         return entry.connection in scoped or entry.connection.rsplit("-", 1)[0] in scoped
@@ -275,9 +284,15 @@ def collect_missing_metrics(
                 entry = replace(entry, expected=EXPECTED_DATA_PREEXISTING)
             elif entry.title in sparse or (entry.title, entry.component) in sparse_components:
                 entry = replace(entry, expected=EXPECTED_SPARSE)
-            elif too_short and int(window.group("seconds")) < min_measurable_window(
-                    entry.component, scrape_interval, is_scoped(entry)):
-                entry = replace(entry, expected=EXPECTED_SHORT_PHASE)
+            elif too_short:
+                seconds = int(window.group("seconds"))
+                lifetime = job_lifetime(connections, entry.connection, entry.component)
+                threshold = min_measurable_window(
+                    entry.component, scrape_interval, is_scoped(entry), rate="rate(" in entry.query)
+                if seconds < threshold:
+                    entry = replace(entry, expected=EXPECTED_SHORT_PHASE)
+                elif lifetime is not None and lifetime < threshold:
+                    entry = replace(entry, expected=EXPECTED_SHORT_JOB)
             missing.setdefault((entry.title, entry.connection, entry.query, entry.component), entry)
     # A DBMSBenchmarker pod names its connection with the client appended
     # ("pgduckdb-1-1-1-1-1" for the fetch log's "pgduckdb-1-1-1-1"), so its

@@ -47,7 +47,6 @@ spec:
       # pause container is PID 1 and reaps orphans (e.g. of a timed-out probe);
       # postgres as PID 1 would take them for crashed backends and restart all of them
       shareProcessNamespace: true
-      priorityClassName: important
       initContainers:
         - name: fix-permissions
           image: busybox:stable

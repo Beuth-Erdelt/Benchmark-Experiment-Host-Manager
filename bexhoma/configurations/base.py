@@ -1204,7 +1204,7 @@ class SutConfiguration:
                         f"{resultfolder}/{self.code}/{pod}.attach."
                         f"{self.num_experiment_to_apply_done + 1}.log"
                     )
-                    with open(filename_log, "w") as logfile:
+                    with open(filename_log, "w", encoding='utf-8') as logfile:
                         logfile.write(stdout)
 
     def check_sut(self) -> bool:

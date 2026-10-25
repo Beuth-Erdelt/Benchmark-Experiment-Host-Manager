@@ -51,7 +51,7 @@ def build_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB', 'PgDuckDB'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB', 'PgDuckDB', 'ClickHouse', 'ClickHouseCluster'], default=[], nargs='*')
     parser.add_argument('-xlit',  '--xlimit-import-table', help='import only this table (useful for partial re-loads)', default='', dest='limit_import_table')
     parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query', action='store_true', default=False, dest='datatransfer')
     parser.add_argument('-xqr',   '--xnum-query-runs', help='number of times to repeat each query', default=1, dest='num_run')
@@ -507,6 +507,45 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 config.set_benchmarking_parameters(
                     BEXHOMA_REPLICAS = num_worker_replicas,
                     )
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("ClickHouse" in args.dbms):
+                # ClickHouse
+                config = configurations.default(experiment=experiment, docker='ClickHouse', dialect='Clickhouse', alias='DBMS A1')
+                # With -ar: sync of the loaded parts to disk before each round
+                config.set_benchmark_resetscript(['reset-flush.sh'], name='tpch')
+                if skip_loading:
+                    config.loading_deactivated = True
+                config.set_storage(
+                    storageConfiguration = 'clickhouse'
+                    )
+                config.jobtemplate_loading = "jobtemplate-loading-tpch-ClickHouse.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("ClickHouseCluster" in args.dbms):
+                # ClickHouse cluster: coordinator (SUT) and num_worker shards
+                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', alias='DBMS C1', worker=num_worker)
+                # With -ar: rows held by the Distributed tables are sent to the shards
+                # (coordinator), then the loaded parts are synced to disk (every worker)
+                config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
+                config.set_script_target('workers')
+                if skip_loading:
+                    config.loading_deactivated = True
+                config.set_storage(
+                    storageConfiguration = 'clickhousecluster'
+                    )
+                config.set_eval_parameters(
+                    BEXHOMA_WORKERS = num_worker,
+                    )
+                config.jobtemplate_loading = "jobtemplate-loading-tpch-ClickHouse.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
     ##############
     ### per-system physical-design overrides (yaml-governed runs only; see

@@ -17,6 +17,8 @@ This document covers all DBMS currently supported by bexhoma.
 - [MariaDB](#mariadb)
 - [MonetDB](#monetdb)
 - [Citus](#citus)
+- [ClickHouse](#clickhouse)
+- [ClickHouseCluster](#clickhousecluster)
 
 **Distributed SQL / Cloud-Native**
 - [YugabyteDB](#yugabytedb)
@@ -295,6 +297,8 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (passed on to the shards) | `CHECKPOINT` on the coordinator and with `run_command_on_workers` on every worker | as PostgreSQL, on the coordinator and every worker |
 | MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
 | MonetDB | `ANALYZE` | n/a (the write-ahead log is applied in the background; no call to force it) | n/a |
+| ClickHouse | n/a (no optimizer statistics unless declared per column) | `reset-flush.sh`: `sync` (an `INSERT` writes its parts without fsync) | n/a (`system.events` cannot be reset) |
+| ClickHouseCluster | n/a | `SYSTEM FLUSH DISTRIBUTED` on every Distributed table (`reset-<benchmark>.sql`, coordinator), then `reset-flush.sh` (`sync`) in every worker | n/a |
 | YugabyteDB | `ANALYZE VERBOSE` (cluster-wide) | n/a (no `CHECKPOINT` in YSQL, no `yb-admin` in the helper pod) | `reset-counters.sh`: `pg_stat_reset()` on every tserver (`yb-tserver-N.yb-tservers`), not once through the service, which picks one tserver per connection |
 | CockroachDB | `ANALYZE` (cluster-wide) | n/a (Pebble flushes on its own) | `crdb_internal.reset_sql_stats()` (cluster-wide) |
 | TiDB | `ANALYZE TABLE` (cluster-wide) | n/a (no flush in SQL) | `FLUSH STATUS` on the TiDB server the connection reaches |
@@ -305,13 +309,13 @@ CedarDB and DatabaseService have no reset.
 Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL and PGBouncer only (the other DBMS have no scripts for them).
 With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
 
-Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis).
+Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis).
 SQL files run through `loadData` (once per tenant for schema and database tenancy), shell files in the SUT pod or, with script target `workers`, in every worker pod.
 With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both streams start.
 Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
 A script counts as failed when it exits non-zero, writes an error line (`ERROR`, `FATAL`) to stderr, or (redis-cli) an `ERR` reply to stdout; no output means success.
 The summary's Reset table lists the failed scripts per job (`reset_failed`), and the test `Reset scripts ran without errors` fails when there are any; the agent report links the reset logs in `files.md`.
-`scripts/test-docs-reset.sh` (`.ps1`) checks every reset on a cluster: one run per DBMS and benchmark with two rounds, and its header lists what to look for in the logs.
+`scripts/test-docs-reset.sh` (`.ps1`) checks every reset on a cluster: one run per DBMS and benchmark with two rounds, and its header lists what to look for in the logs; see [Test: Reset Scripts](Test-Reset.md) for the commands and the logs of the last run.
 
 Runs with `-ar` from before this contract (October 2026) are not directly comparable to newer ones for PostgreSQL (checkpoint now after `VACUUM`), Citus (checkpoints on the workers) and MySQL/MariaDB (dirty-page flush): these move I/O out of round 1.
 
@@ -320,6 +324,7 @@ Runs with `-ar` from before this contract (October 2026) are not directly compar
 `-xld durable|relaxed|unsafe` (default `relaxed`) sets the durability during the load only; the benchmark runs with the configured state (template and `--set`).
 Templates set no durability options.
 Details and the placeholders `durability.sql` / `restoredurability.sql`: [Prepare Testbeds](Prepare-Testbeds.md).
+Commands and logs of the test runs: [Test: Load Durability](Test-Durability.md).
 
 | DBMS | durable | relaxed | unsafe |
 |---|---|---|---|
@@ -665,6 +670,105 @@ Coordinator and workers set `PGDATA=/var/lib/postgresql/data/pgdata`; PostgreSQL
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Citus)
 
 See [Example: Citus](Example-Citus.md) for a worked example.
+
+---
+
+## ClickHouse
+
+ClickHouse is a column-store DBMS for analytical workloads (TPC-H, TPC-DS).
+
+**Deployment template:** [`k8s/deploymenttemplate-ClickHouse.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-ClickHouse.yml)
+
+The template uses the official image `clickhouse/clickhouse-server:26.8.34.13` (LTS).
+Clients use the HTTP interface (JDBC, service port 9091 → 8123); loaders and init scripts use the native protocol (`clickhouse-client`, port 9000, service port `port-sut-native`).
+`CLICKHOUSE_SKIP_USER_SETUP=1` keeps user `default` without password and with network access; without it the image restricts `default` to localhost.
+Instead of `privileged`, the container gets the capabilities `SYS_NICE`, `IPC_LOCK` and `NET_ADMIN` (thread priorities, mlock, per-query OS metrics).
+
+At start, the container writes two files:
+- `config.d/bexhoma.xml`: ClickHouse's own Prometheus endpoint on port 9363 (application metrics, `-ma`).
+- `users.d/bexhoma.xml`: settings of profile `default` for SQL-standard results, which the queries of TPC-H and TPC-DS rely on.
+
+| Setting | Value | Without it |
+|---|---|---|
+| `join_use_nulls` | 1 | an outer join fills unmatched columns with 0 or `''` instead of NULL (wrong counts in TPC-H Q13) |
+| `union_default_mode` | `DISTINCT` | a plain `UNION` is a syntax error |
+| `cast_keep_nullable` | 1 | `CAST` of a NULL fails |
+| `allow_lossy_numeric_supertype` | 1 | `CASE`/`COALESCE` over Decimal and Float has no common type |
+
+`prefer_column_name_to_alias` is not set: it would also apply to `ORDER BY`, where standard SQL resolves the alias of the select list first.
+
+**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/ClickHouse), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/ClickHouse)):
+tables are MergeTree in database `default`; the sorting key is the primary key of the benchmark, which also is ClickHouse's sparse primary index.
+There are no secondary indexes, constraints or statistics, so `-xii`, `-xic` and `-xis` have no scripts.
+CHAR/VARCHAR are `String` (`FixedString` pads with `\0`, not blanks).
+TPC-DS columns without `NOT NULL` are `Nullable` (empty fields load as NULL), dates are `Date32` (TPC-DS dates start in 1900).
+The loaders (`bexhoma/loader_tpch_clickhouse`, `bexhoma/loader_tpcds_clickhouse`) send each flat file with `INSERT INTO <table> FORMAT CSV` (delimiter `|`, double quotes are data).
+
+**Queries:** the variants for ClickHouse have the key `Clickhouse` in the query files (selected by `dialect` and by the connection name).
+They are needed where ClickHouse differs from standard SQL (identifier case, the name of a selected `t.col` is `t.col`, `ORDER BY` after a parenthesized `UNION`, an alias visible in its own select list) and for correlated subqueries, which ClickHouseCluster cannot run.
+Every variant returns the same result as the original query on ClickHouse.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'ClickHouse': {
+    'loadData': 'clickhouse-client --multiquery < {scriptname}',
+    'template': {
+        'version': '26.8',
+        'alias': 'Columnwise-B',
+        'docker_alias': 'Columnwise-B',
+        'dialect': 'Clickhouse',
+        'JDBC': {
+            'auth': ['default', ''],
+            'driver': 'com.clickhouse.jdbc.Driver',
+            'jar': 'clickhouse-jdbc-0.11.0-all-dependencies.jar',
+            'url': 'jdbc:clickhouse://{serverip}:9091/default',
+            'database': 'default',
+            'explain': ['EXPLAIN {query}'],
+        }
+    },
+    'logfile': '/var/log/clickhouse-server/clickhouse-server.log',
+    'datadir': '/var/lib/clickhouse/',
+    'priceperhourdollar': 0.0,
+    'monitor': {'sut': {'metrics': 'clickhouse', 'discovery': True, ...}},
+},
+```
+
+```bash
+bexhoma tpch -dbms ClickHouse -sf 1 -nlp 8 -tr run
+```
+
+See [Example: ClickHouse](Example-ClickHouse.md) for a worked example.
+
+---
+
+## ClickHouseCluster
+
+A ClickHouse cluster of one coordinator (the SUT) and `-nw` shards (worker StatefulSet, one replica per shard), for TPC-H and TPC-DS.
+
+**Deployment template:** [`k8s/deploymenttemplate-ClickHouseCluster.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-ClickHouseCluster.yml)
+
+Image, ports, capabilities and settings as [ClickHouse](#clickhouse); in addition:
+- At start, every pod writes the cluster `bexhoma` (`remote_servers`, one shard per worker, from `BEXHOMA_WORKER_LIST_SPACE`).
+- The coordinator is not a shard. It is the entry point of clients and loaders and runs a single-node ClickHouse Keeper (port 9181, service port `port-sut-keeper`), which `ON CLUSTER` statements need; the workers reach it through the SUT service.
+- The coordinator sets `distributed_product_mode = global`: a Distributed table inside a join or `IN` is read once and sent to all shards, which is correct whatever the sharding keys are.
+- A worker is ready when it has a session with the Keeper (readiness probe on `system.zookeeper`); bexhoma runs the init scripts only after all workers are ready. Workers start before the Keeper and retry every 5 s, so with `/ping` as probe the first `ON CLUSTER` statement would time out.
+- Workers set the macros `{shard}` (pod ordinal) and `{replica}` (pod name) for later `ReplicatedMergeTree` setups.
+
+**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/ClickHouseCluster), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/ClickHouseCluster)):
+per table a MergeTree table `<name>_local` on every shard (`ON CLUSTER bexhoma`, columns and sorting key as ClickHouse), and a Distributed table `<name>` on the coordinator and on every shard (the parts of a distributed query that name a table resolve it there).
+Rows are spread by the first column of the sorting key.
+The loader writes into the Distributed tables on the coordinator with `distributed_foreground_insert=1`, so the load time includes sending the rows to the shards.
+The check script reports rows, parts and sizes per table summed over the shards and per shard.
+
+The configuration equals ClickHouse plus `'attachWorker': ''` (the shards are in `remote_servers`, nothing to register) and the monitor component `worker`, which scrapes coordinator and shards (the metrics are totals of the cluster).
+In `tpch.py` and `tpcds.py` the configuration sets `set_script_target('workers')`, so the reset's `reset-flush.sh` runs in every worker.
+
+```bash
+bexhoma tpch -dbms ClickHouseCluster -nw 3 -sf 1 -nlp 8 -tr run
+```
+
+See [Example: ClickHouse](Example-ClickHouse.md#clickhouse-as-a-cluster) for a worked example.
 
 ---
 

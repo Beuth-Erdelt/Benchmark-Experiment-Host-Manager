@@ -113,6 +113,7 @@ function Build-AndPush-Tpcds {
     _BgDockerJob "bexhoma/loader_tpcds_mysql:$Version"       "images/tpcds/loader_mysql"      "loader_tpcds_mysql"       $Version
     _BgDockerJob "bexhoma/loader_tpcds_mariadb:$Version"     "images/tpcds/loader_mariadb"    "loader_tpcds_mariadb"     $Version
     _BgDockerJob "bexhoma/loader_tpcds_monetdb:$Version"     "images/tpcds/loader_monetdb"    "loader_tpcds_monetdb"     $Version
+    _BgDockerJob "bexhoma/loader_tpcds_clickhouse:$Version"  "images/tpcds/loader_clickhouse" "loader_tpcds_clickhouse"  $Version
 }
 
 function Build-AndPush-Tpch {
@@ -123,6 +124,7 @@ function Build-AndPush-Tpch {
     _BgDockerJob "bexhoma/loader_tpch_mysql:$Version"       "images/tpch/loader_mysql"      "loader_tpch_mysql"       $Version
     _BgDockerJob "bexhoma/loader_tpch_mariadb:$Version"     "images/tpch/loader_mariadb"    "loader_tpch_mariadb"     $Version
     _BgDockerJob "bexhoma/loader_tpch_monetdb:$Version"     "images/tpch/loader_monetdb"    "loader_tpch_monetdb"     $Version
+    _BgDockerJob "bexhoma/loader_tpch_clickhouse:$Version"  "images/tpch/loader_clickhouse" "loader_tpch_clickhouse"  $Version
 }
 
 function Build-AndPush-TpchRefresh {
@@ -182,7 +184,7 @@ function Build-AndPush-Hardware {
 
 #### Main ####
 
-$dbmsbenchmarker = "v0.15.3"
+$dbmsbenchmarker = "v0.15.4"
 $version = (pip show bexhoma | Select-String "^Version:" | ForEach-Object { ($_ -split '\s+')[1] })
 Write-Output $version
 

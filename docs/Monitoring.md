@@ -250,7 +250,7 @@ Used by: **PostgreSQL**, **PgDuckDB**
 The exporter automatically exposes metrics for all databases in the instance via its default metrics endpoint.
 No per-database probing is needed; `blackbox` is `False` or left out.
 
-Used by: **MySQL**, **PGBouncer**, **TiDB**, **TiKV**, **Placement Driver**, **YugabyteDB**, **CockroachDB**, **Dragonfly**, **Redis**
+Used by: **MySQL**, **PGBouncer**, **TiDB**, **TiKV**, **Placement Driver**, **YugabyteDB**, **CockroachDB**, **Dragonfly**, **Redis**, **ClickHouse** (its own endpoint on port 9363, no exporter sidecar)
 
 ### Named application metric sets
 
@@ -270,6 +270,7 @@ Each DBMS configuration in `dockers` references the relevant set by component (`
 | `cockroachdb` | CockroachDB (worker nodes) |
 | `dragonfly` | Dragonfly, DragonflyCluster (worker nodes) |
 | `redis` | Redis (worker nodes) |
+| `clickhouse` | ClickHouse (SUT), ClickHouseCluster (coordinator and shards, summed) |
 
 Each named set follows the same metric schema as the hardware metrics (`type`, `active`, `metric`, `query`, `title`, optional `sparse`).
 The `type` field must be `application` so bexhoma routes queries to `service_monitoring_application` rather than `service_monitoring`.

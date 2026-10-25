@@ -44,8 +44,8 @@ from typing import Iterable, Optional
 import pandas as pd
 
 __all__ = [
-    "JOB_COMPONENTS", "JOB_QUERY_SETS", "DEFAULT_SCRAPE_INTERVAL_SECONDS", "SCRAPE_JITTER",
-    "counter_increase", "counter_total", "min_measurable_window",
+    "JOB_COMPONENTS", "JOB_QUERY_SETS", "JOB_TIMESPANS", "DEFAULT_SCRAPE_INTERVAL_SECONDS", "SCRAPE_JITTER",
+    "counter_increase", "counter_total", "min_measurable_window", "job_lifetime",
     "read_connections", "scoped_job_connections",
 ]
 
@@ -60,6 +60,14 @@ JOB_QUERY_SETS = {
     'datagenerator': 'metrics_loading',
 }
 
+#: Where a connection's ``hostsystem`` keeps the (start, end) pairs of a job
+#: component's containers (see ``configurations/loading.py``, ``benchmarking.py``).
+JOB_TIMESPANS = {
+    'loader': ('loading_timespans', 'sensor'),
+    'datagenerator': ('loading_timespans', 'datagenerator'),
+    'benchmarker': ('benchmarking_timespans', 'benchmarker'),
+}
+
 #: Scrape interval of the cluster Prometheus when ``cluster.config`` names none
 #: (``monitor.scrape_interval``).
 DEFAULT_SCRAPE_INTERVAL_SECONDS = 30
@@ -69,7 +77,8 @@ DEFAULT_SCRAPE_INTERVAL_SECONDS = 30
 SCRAPE_JITTER = 1.2
 
 
-def min_measurable_window(component: str, scrape_interval: float, jobs_scoped: bool = False) -> float:
+def min_measurable_window(component: str, scrape_interval: float, jobs_scoped: bool = False,
+                          rate: bool = False) -> float:
     """Shortest phase window, in seconds, whose CPU total can be measured.
 
     The fetch repeats the latest scrape in every 1 s row, so the first row of a
@@ -78,18 +87,49 @@ def min_measurable_window(component: str, scrape_interval: float, jobs_scoped: b
     has no scrape before it, so ``max - min`` needs two scrapes inside; once its
     query covers only its own pods and its first value counts as growth
     (``jobs_scoped``), one is enough. See ``dev/plan-metrics-pod-scope.md`` (M1b).
+    A ``rate()``/``irate()`` query of a job needs two samples of its pods in any
+    case; a running pod has its earlier samples in the range.
 
     :param component: The monitoring component, e.g. ``loading`` or ``benchmarker``.
     :param scrape_interval: Seconds between two scrapes of the Prometheus the metrics come from.
     :param jobs_scoped: Whether job counters count their first value (their
         query covers only their own pods).
-    :return: ``2 x scrape_interval`` for a job counted by ``max - min``, else
-        ``SCRAPE_JITTER x scrape_interval``.
+    :param rate: Whether the query takes ``rate()`` or ``irate()`` of a counter.
+    :return: ``2 x scrape_interval`` for a job counted by ``max - min`` or
+        by a rate, else ``SCRAPE_JITTER x scrape_interval``.
     :rtype: float
     """
-    if component in JOB_COMPONENTS and not jobs_scoped:  # scoped: see scoped_job_connections()
+    if component in JOB_COMPONENTS and (rate or not jobs_scoped):  # scoped: see scoped_job_connections()
         return 2 * scrape_interval
     return SCRAPE_JITTER * scrape_interval
+
+
+def job_lifetime(connections: list, connection: str, component: str) -> Optional[int]:
+    """Seconds from the first start to the last end of a job component's containers.
+
+    A job's pods may live only part of the phase window its metrics are
+    fetched for (the loading window also holds schema, index and waiting for
+    the pods), so this, not the window, bounds the scrapes that can hit them.
+    A DBMSBenchmarker pod names its connection with the client appended, so
+    the name without its last part is tried too.
+
+    :param connections: Connection dicts (:func:`read_connections`).
+    :param connection: Connection name.
+    :param component: The monitoring component; only :data:`JOB_TIMESPANS` have pods to time.
+    :return: Seconds, or ``None`` when the component is no job or its times
+        are not stored (e.g. older results, inherited loading).
+    :rtype: int or None
+    """
+    keys = JOB_TIMESPANS.get(component)
+    if keys is None:
+        return None
+    by_name = {c.get('name'): c for c in connections}
+    found = by_name.get(connection) or by_name.get(connection.rsplit('-', 1)[0])
+    try:
+        spans = found['hostsystem'][keys[0]][keys[1]]
+        return int(max(end for _, end in spans) - min(start for start, _ in spans))
+    except (KeyError, TypeError, ValueError):
+        return None
 
 
 def counter_increase(df: pd.DataFrame) -> pd.Series:

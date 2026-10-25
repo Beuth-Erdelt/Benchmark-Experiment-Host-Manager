@@ -448,7 +448,7 @@ scrape_configs:
             for container in containers:
                 stdout = cfg.experiment.cluster.pod_log(pod=pod, container=container)
                 filename_log = cfg.path + '/' + pod + '.' + container + '.log'
-                with open(filename_log, "w") as log_file:
+                with open(filename_log, "w", encoding='utf-8') as log_file:
                     log_file.write(stdout)
             cfg.experiment.cluster.delete_pod(pod)
 

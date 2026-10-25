@@ -1,0 +1,678 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792777045
+Experiment                    : starts at 2026-10-23 19:37:26.560867 (102389.348474)
+Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+TPC-H (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q22.
+All instances use the same query parameters.
+Timeout per query is 1800.
+Data transfer volume per query is also measured.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.8.
+System metrics are monitored by sidecar containers.
+Application metrics are monitored by sidecar containers.
+Experiment is limited to DBMS ['ClickHouseCluster'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Workers are fixed to cl-worker36, cl-worker37, cl-worker29.
+Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
+Loading is tested with [1] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run 2 times.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+Distributed DBMS uses 3 worker nodes, 0 replicas and 0 shards per node.
+SUT requests 16 CPU and 64Gi RAM. CPU limit is 16. RAM limit is 64Gi.
+Cluster monitoring            : is running
+ClickHouseCluster-1           : will start now
+ClickHouseCluster-1           : deployments ['sut']
+ClickHouseCluster-1           : stateful sets ['worker']
+ClickHouseCluster-1           : pvcs ['sut']
+ClickHouseCluster-1           : found labels on pvc = []
+ClickHouseCluster-1           : name of SUT pods = bexhoma-sut-clickhousecluster-1-1792777045
+ClickHouseCluster-1           : name of SUT service = bexhoma-sut-clickhousecluster-1-1792777045
+ClickHouseCluster-1           : name of SUT PVC name = bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : name of worker pods = bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : name of worker service headless = bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0 exists
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0 should be removed
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1 exists
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1 should be removed
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2 exists
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2 should be removed
+- waiting 10s -               : done
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0 is gone
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1 is gone
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2 is gone
+ClickHouseCluster-1           : storage bexhoma-storage-clickhousecluster-nvme-tpch-1 should be removed
+- waiting 10s -               : done
+ClickHouseCluster-1           : storage bexhoma-storage-clickhousecluster-nvme-tpch-1 is gone
+Loop pass                     : took 26.8s (1 kubectl calls 3.1s, 21 API requests 2.6s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : waits for monitoring
+ClickHouseCluster-1           : starts monitoring with prometheus pod
+ClickHouseCluster-1           : need application monitoring for worker
+ClickHouseCluster-1           : worker pods found: ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker endpoint: bexhoma-worker-clickhousecluster-nvme-tpch-1-0.bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : worker endpoint: bexhoma-worker-clickhousecluster-nvme-tpch-1-1.bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : worker endpoint: bexhoma-worker-clickhousecluster-nvme-tpch-1-2.bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : found worker endpoint (cAdvisor) for monitoring GPUs of bexhoma-worker-clickhousecluster-nvme-tpch-1-0.bexhoma-worker-clickhousecluster-nvme-tpch-1 (added to Prometheus) of sidecar container
+ClickHouseCluster-1           : found worker endpoint (cAdvisor) for monitoring GPUs of bexhoma-worker-clickhousecluster-nvme-tpch-1-1.bexhoma-worker-clickhousecluster-nvme-tpch-1 (added to Prometheus) of sidecar container
+ClickHouseCluster-1           : found worker endpoint (cAdvisor) for monitoring GPUs of bexhoma-worker-clickhousecluster-nvme-tpch-1-2.bexhoma-worker-clickhousecluster-nvme-tpch-1 (added to Prometheus) of sidecar container
+Loop pass                     : took 5.7s (2 kubectl calls 3.5s, 14 API requests 1.8s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : worker pods found: ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : found 3 / 3 running workers (component worker)
+ClickHouseCluster-1           : is not loaded yet
+ClickHouseCluster-1           : will start loading but not before 2026-10-23 17:40:04 (that is in 60 secs)
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 25 API requests 2.8s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : is not loaded yet
+ClickHouseCluster-1           : will start loading but not before 2026-10-23 17:40:04
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 15 API requests 1.5s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : is not loaded yet
+ClickHouseCluster-1           : load durability relaxed, scripts []
+ClickHouseCluster-1           : connect to pod bexhoma-sut-clickhousecluster-1-1792777045-89c8dbc74-k9g96 to load scripts
+ClickHouseCluster-1           : list of pvcs ['bexhoma-storage-clickhousecluster-nvme-tpch-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : will be labeling bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : start asynch loading scripts of type schema
+ClickHouseCluster-1           : waits for the Schema scripts (schema=True) before starting the loading jobs
+ClickHouseCluster-1           : Schema scripts done after 8s
+ClickHouseCluster-1           : is loading
+Loop pass                     : took 34.4s (5 kubectl calls 9.8s, 38 API requests 6.4s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : is loading
+Loop pass                     : took 4.3s (0 kubectl calls 0.0s, 34 API requests 4.2s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : is loading
+Loop pass                     : took 5.0s (0 kubectl calls 0.0s, 34 API requests 3.8s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : showing loader times (tpch-loader)
+ClickHouseCluster-1           : generator times (start/end per pod and container) [(1792777260, 1792777260), (1792777268, 1792777268), (1792777271, 1792777271), (1792777276, 1792777276), (1792777288, 1792777288), (1792777284, 1792777284), (1792777263, 1792777263), (1792777251, 1792777251)]
+ClickHouseCluster-1           : loader times (start/end per pod and container) [(1792777292, 1792777294), (1792777291, 1792777293), (1792777291, 1792777293), (1792777292, 1792777294), (1792777291, 1792777293), (1792777291, 1792777294), (1792777291, 1792777293), (1792777292, 1792777295)]
+ClickHouseCluster-1           : total times (start/end per pod and container) [(1792777260, 1792777260), (1792777268, 1792777268), (1792777271, 1792777271), (1792777276, 1792777276), (1792777288, 1792777288), (1792777284, 1792777284), (1792777263, 1792777263), (1792777251, 1792777251), (1792777292, 1792777294), (1792777291, 1792777293), (1792777291, 1792777293), (1792777292, 1792777294), (1792777291, 1792777293), (1792777291, 1792777294), (1792777291, 1792777293), (1792777292, 1792777295)]
+ClickHouseCluster-1           : generator timespan (first to last [s]) = 37
+ClickHouseCluster-1           : loader timespan (first to last [s]) = 4
+ClickHouseCluster-1           : total timespan (first to last [s]) = 44
+ClickHouseCluster-1           : list of pvcs ['bexhoma-storage-clickhousecluster-nvme-tpch-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : will be labeling bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : connect to pod bexhoma-sut-clickhousecluster-1-1792777045-89c8dbc74-k9g96 to load scripts
+ClickHouseCluster-1           : list of pvcs ['bexhoma-storage-clickhousecluster-nvme-tpch-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : will be labeling bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : start asynch loading scripts of type index
+ClickHouseCluster-1           : is loading
+Loop pass                     : took 66.3s (30 kubectl calls 55.7s, 62 API requests 9.3s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : list of pvcs ['bexhoma-storage-clickhousecluster-nvme-tpch-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : will be labeling bexhoma-storage-clickhousecluster-nvme-tpch-1
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-ClickHouseCluster-1-1792777045 initialized to 1.
+ClickHouseCluster-1           : benchmarks done 0 of 2. This will be client 1
+clickhousecluster-1-1-1-1     : start benchmarking (benchmark_run=1)
+ClickHouseCluster-1           : worker pods found: ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : distributed system - get host info for worker bexhoma-worker-clickhousecluster-nvme-tpch-1-0
+ClickHouseCluster-1           : distributed system - get host info for worker bexhoma-worker-clickhousecluster-nvme-tpch-1-1
+ClickHouseCluster-1           : distributed system - get host info for worker bexhoma-worker-clickhousecluster-nvme-tpch-1-2
+clickhousecluster-1-1-1-1     : needs monitoring (common metrics) for deployment sut
+clickhousecluster-1-1-1-1     : needs monitoring (custom metrics) for stateful set worker
+ClickHouseCluster-1           : need application metrics for worker
+ClickHouseCluster-1           : load application metrics of type clickhouse
+ClickHouseCluster-1           : get size via pod bexhoma-sut-clickhousecluster-1-1792777045-89c8dbc74-k9g96 and write to pvc bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-0 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-1 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-2 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2
+ClickHouseCluster-1           : benchmarking results in folder C:\data\benchmarks/1792777045
+ClickHouseCluster-1           : submitted benchmarker job in 36.3s (8 kubectl calls 14.1s, 85 API requests 20.2s)
+clickhousecluster-1-1-1-1     : needs monitoring (common metrics) for deployment sut
+clickhousecluster-1-1-1-1     : collecting loading metrics of SUT at connection clickhousecluster-1-1-1-1
+clickhousecluster-1-1-1-1     : needs monitoring (custom metrics) for stateful set worker
+clickhousecluster-1-1-1-1     : collecting metrics of data generator at connection clickhousecluster-1-1-1-1
+clickhousecluster-1-1-1-1     : collecting metrics of data injector at connection clickhousecluster-1-1-1-1
+clickhousecluster-1-1-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)clickhousecluster-1-1792777045(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)clickhousecluster-1-1792777045(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-1-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-clickhousecluster-nvme-tpch-1-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-clickhousecluster-nvme-tpch-1-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-1-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-clickhousecluster-1-1792777045-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-clickhousecluster-1-1792777045-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-1-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-clickhousecluster-1-1792777045-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-clickhousecluster-1-1792777045-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: CPU User Time [s]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: CPU System Time [s]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+clickhousecluster-1-1-1-1     : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+clickhousecluster-1-1-1-1     : WARNING metric missing for loader: CPU Utilization [CPUs]
+clickhousecluster-1-1-1-1     : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+clickhousecluster-1-1-1-1     : WARNING metric missing for loader: CPU Throttled Time [s]
+clickhousecluster-1-1-1-1     : WARNING metric missing for loader: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+clickhousecluster-1-1-1-1     : WARNING metric missing for loader: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Experiment                    : fetched 4 metric sets in 11s (4 at once, 0 repeated, 0 follow-up actions; 6 kubectl calls 29.7s, 0 API requests 0.0s)
+Loop pass                     : took 61.0s (17 kubectl calls 49.7s, 109 API requests 24.3s)
+- waiting 30s -               : done
+clickhousecluster-1-1-1-1     : wrote benchmarking_timespans to /data/benchmarks/1792777045/clickhousecluster-1-1-1-1.config
+clickhousecluster-1-1-1-1     : showing benchmarker times
+clickhousecluster-1-1-1-1     : benchmarker timespan job from 1792777479 to 1792777537
+clickhousecluster-1-1-1-1     : benchmarker timespan pods from 1792777485 to 1792777510
+clickhousecluster-1-1-1-1     : benchmarker timespan (start to end single container [s]) = 25
+clickhousecluster-1-1-1-1     : benchmarker times (start/end per pod and container) = [(1792777485, 1792777510)]
+clickhousecluster-1-1-1-1     : found and updated times {'benchmarker': [(1792777485, 1792777510)]}
+clickhousecluster-1-1-1-1     : needs monitoring (common metrics) for deployment sut
+clickhousecluster-1-1-1-1     : collecting execution metrics of SUT at connection clickhousecluster-1-1-1-1
+clickhousecluster-1-1-1-1     : needs monitoring (custom metrics) for stateful set worker
+clickhousecluster-1-1-1-1     : collecting execution metrics of worker at connection clickhousecluster-1-1-1-1
+clickhousecluster-1-1-1-1     : collecting metrics of benchmarker at connection clickhousecluster-1-1-1-1
+ClickHouseCluster-1           : get size via pod bexhoma-sut-clickhousecluster-1-1792777045-89c8dbc74-k9g96 and write to pvc bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-0 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-1 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-2 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2
+clickhousecluster-1-1-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)clickhousecluster-1-1792777045(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)clickhousecluster-1-1792777045(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-1-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-clickhousecluster-nvme-tpch-1-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-clickhousecluster-nvme-tpch-1-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-1-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-clickhousecluster-1-1792777045-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-clickhousecluster-1-1792777045-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-1-1-1     : WARNING metric missing for benchmarker: CPU Utilization [CPUs]
+clickhousecluster-1-1-1-1     : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+clickhousecluster-1-1-1-1     : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+clickhousecluster-1-1-1-1     : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+Experiment                    : fetched 3 metric sets in 9s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 18.2s, 0 API requests 0.0s)
+Loop pass                     : took 30.0s (14 kubectl calls 33.0s, 33 API requests 5.5s)
+ClickHouseCluster-1           : can be stopped
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-sut-clickhousecluster-1-1792777045-89c8dbc74-k9g96
+ClickHouseCluster-1           : worker pods found: ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-worker-clickhousecluster-nvme-tpch-1-0
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-worker-clickhousecluster-nvme-tpch-1-1
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-worker-clickhousecluster-nvme-tpch-1-2
+Loop pass                     : took 22.4s (10 kubectl calls 16.5s, 46 API requests 5.2s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : still being removed
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 8 API requests 1.2s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : starts again
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 8 API requests 0.8s)
+ClickHouseCluster-1           : will start now
+ClickHouseCluster-1           : deployments ['sut']
+ClickHouseCluster-1           : stateful sets ['worker']
+ClickHouseCluster-1           : pvcs ['sut']
+ClickHouseCluster-1           : list of pvcs ['bexhoma-storage-clickhousecluster-nvme-tpch-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : storage bexhoma-storage-clickhousecluster-nvme-tpch-1 exists
+ClickHouseCluster-1           : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '37', 'time_index': '6', 'time_ingested': '4', 'time_initschema': '4', 'time_loading': '56', 'time_loading_end': '1792777411', 'time_loading_start': '1792777227', 'time_schema': '6'}
+ClickHouseCluster-1           : name of SUT pods = bexhoma-sut-clickhousecluster-1-1792777045
+ClickHouseCluster-1           : name of SUT service = bexhoma-sut-clickhousecluster-1-1792777045
+ClickHouseCluster-1           : name of SUT PVC name = bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : name of worker pods = bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : name of worker service headless = bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0 exists
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1 exists
+ClickHouseCluster-1           : storage bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2 exists
+ClickHouseCluster-1           : copied label data = True
+ClickHouseCluster-1           : copied label index = True
+ClickHouseCluster-1           : copied label loaded = True
+ClickHouseCluster-1           : copied label schema = True
+ClickHouseCluster-1           : copied label time_generated = 37
+ClickHouseCluster-1           : copied label time_index = 6
+ClickHouseCluster-1           : copied label time_ingested = 4
+ClickHouseCluster-1           : copied label time_initschema = 4
+ClickHouseCluster-1           : copied label time_loading = 56
+ClickHouseCluster-1           : copied label time_loading_end = 1792777411
+ClickHouseCluster-1           : copied label time_loading_start = 1792777227
+ClickHouseCluster-1           : copied label time_schema = 6
+ClickHouseCluster-1           : loading is set to finished
+Loop pass                     : took 4.3s (1 kubectl calls 2.0s, 15 API requests 1.8s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : waits for monitoring
+ClickHouseCluster-1           : starts monitoring with prometheus pod
+ClickHouseCluster-1           : need application monitoring for worker
+ClickHouseCluster-1           : worker pods found: ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker endpoint: bexhoma-worker-clickhousecluster-nvme-tpch-1-0.bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : worker endpoint: bexhoma-worker-clickhousecluster-nvme-tpch-1-1.bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : worker endpoint: bexhoma-worker-clickhousecluster-nvme-tpch-1-2.bexhoma-worker-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : found worker endpoint (cAdvisor) for monitoring GPUs of bexhoma-worker-clickhousecluster-nvme-tpch-1-0.bexhoma-worker-clickhousecluster-nvme-tpch-1 (added to Prometheus) of sidecar container
+ClickHouseCluster-1           : found worker endpoint (cAdvisor) for monitoring GPUs of bexhoma-worker-clickhousecluster-nvme-tpch-1-1.bexhoma-worker-clickhousecluster-nvme-tpch-1 (added to Prometheus) of sidecar container
+ClickHouseCluster-1           : found worker endpoint (cAdvisor) for monitoring GPUs of bexhoma-worker-clickhousecluster-nvme-tpch-1-2.bexhoma-worker-clickhousecluster-nvme-tpch-1 (added to Prometheus) of sidecar container
+Loop pass                     : took 7.4s (2 kubectl calls 3.9s, 12 API requests 1.5s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : worker pods found: ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : found 3 / 3 running workers (component worker)
+ClickHouseCluster-1           : will start benchmarking but not before 2026-10-23 17:49:38 (that is in 60 secs)
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 24 API requests 2.3s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : will start benchmarking but not before 2026-10-23 17:49:38
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 14 API requests 1.4s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-ClickHouseCluster-1-1792777045 initialized to 1.
+ClickHouseCluster-1           : benchmarks done 1 of 2. This will be client 1
+clickhousecluster-1-2-1-1     : start benchmarking (benchmark_run=1)
+ClickHouseCluster-1           : worker pods found: ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : distributed system - get host info for worker bexhoma-worker-clickhousecluster-nvme-tpch-1-0
+ClickHouseCluster-1           : distributed system - get host info for worker bexhoma-worker-clickhousecluster-nvme-tpch-1-1
+ClickHouseCluster-1           : distributed system - get host info for worker bexhoma-worker-clickhousecluster-nvme-tpch-1-2
+Create new access token
+clickhousecluster-1-2-1-1     : needs monitoring (common metrics) for deployment sut
+clickhousecluster-1-2-1-1     : needs monitoring (custom metrics) for stateful set worker
+ClickHouseCluster-1           : need application metrics for worker
+ClickHouseCluster-1           : load application metrics of type clickhouse
+ClickHouseCluster-1           : get size via pod bexhoma-sut-clickhousecluster-1-1792777045-7675d6f964-blmqf and write to pvc bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-0 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-1 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-2 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2
+ClickHouseCluster-1           : benchmarking results in folder C:\data\benchmarks/1792777045
+ClickHouseCluster-1           : submitted benchmarker job in 62.1s (7 kubectl calls 12.3s, 83 API requests 45.4s)
+Loop pass                     : took 66.2s (7 kubectl calls 12.3s, 105 API requests 48.9s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : has running benchmarks
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 22 API requests 3.3s)
+- waiting 30s -               : done
+clickhousecluster-1-2-1-1     : wrote benchmarking_timespans to /data/benchmarks/1792777045/clickhousecluster-1-2-1-1.config
+clickhousecluster-1-2-1-1     : showing benchmarker times
+clickhousecluster-1-2-1-1     : benchmarker timespan job from 1792777845 to 1792777919
+clickhousecluster-1-2-1-1     : benchmarker timespan pods from 1792777854 to 1792777876
+clickhousecluster-1-2-1-1     : benchmarker timespan (start to end single container [s]) = 22
+clickhousecluster-1-2-1-1     : benchmarker times (start/end per pod and container) = [(1792777854, 1792777876)]
+clickhousecluster-1-2-1-1     : found and updated times {'benchmarker': [(1792777854, 1792777876)]}
+clickhousecluster-1-2-1-1     : needs monitoring (common metrics) for deployment sut
+clickhousecluster-1-2-1-1     : collecting execution metrics of SUT at connection clickhousecluster-1-2-1-1
+clickhousecluster-1-2-1-1     : needs monitoring (custom metrics) for stateful set worker
+clickhousecluster-1-2-1-1     : collecting execution metrics of worker at connection clickhousecluster-1-2-1-1
+clickhousecluster-1-2-1-1     : collecting metrics of benchmarker at connection clickhousecluster-1-2-1-1
+ClickHouseCluster-1           : get size via pod bexhoma-sut-clickhousecluster-1-1792777045-7675d6f964-blmqf and write to pvc bexhoma-storage-clickhousecluster-nvme-tpch-1
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-0 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-0
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-1 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-1
+ClickHouseCluster-1           : get size via pod bexhoma-worker-clickhousecluster-nvme-tpch-1-2 and write to pvc bxw-bexhoma-worker-clickhousecluster-nvme-tpch-1-2
+clickhousecluster-1-2-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)clickhousecluster-1-1792777045(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)clickhousecluster-1-1792777045(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-2-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-clickhousecluster-nvme-tpch-1-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bexhoma-worker-clickhousecluster-nvme-tpch-1-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-2-1-1     : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-clickhousecluster-1-1792777045-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-clickhousecluster-1-1792777045-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: Memory Usage, Working Set [MiB]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: CPU Utilization [CPUs]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: Memory Usage incl. Page Cache [MiB]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: CPU Utilization Time [s]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: CPU System Time [s]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: CPU User Time [s]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: Network Rx Total [MiB]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: Network Tx Total [MiB]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+clickhousecluster-1-2-1-1     : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+Experiment                    : fetched 3 metric sets in 9s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 17.9s, 0 API requests 0.0s)
+Loop pass                     : took 29.5s (14 kubectl calls 32.6s, 31 API requests 5.1s)
+ClickHouseCluster-1           : can be stopped
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-sut-clickhousecluster-1-1792777045-7675d6f964-blmqf
+ClickHouseCluster-1           : worker pods found: ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bexhoma-worker-clickhousecluster-nvme-tpch-1-0', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-1', 'bexhoma-worker-clickhousecluster-nvme-tpch-1-2']
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-worker-clickhousecluster-nvme-tpch-1-0
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-worker-clickhousecluster-nvme-tpch-1-1
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-worker-clickhousecluster-nvme-tpch-1-2
+Loop pass                     : took 22.3s (10 kubectl calls 16.7s, 44 API requests 5.0s)
+Experiment                    : ends at 2026-10-23 19:52:44.238562 (103307.0212629) - 917.67s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+* Type: tpch
+* Duration: 918s 
+* Code: 1792777045
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 1800.
+  * Data transfer volume per query is also measured.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.8.
+  * System metrics are monitored by sidecar containers.
+  * Application metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['ClickHouseCluster'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Workers are fixed to cl-worker36, cl-worker37, cl-worker29.
+  * Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
+  * Loading is tested with [1] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 3 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 16 CPU and 64Gi RAM. CPU limit is 16. RAM limit is 64Gi.
+
+### Connections
+* clickhousecluster-1-1-1-1-1 uses docker image clickhouse/clickhouse-server:26.8.34.13
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:958486
+  * datadisk:169
+  * volume_size:49G
+  * volume_used:169M
+  * cpu_list:0-223
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * worker 0
+    * RAM:2164173172736
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-137-generic
+    * node:cl-worker36
+    * disk:958486
+    * datadisk:329
+    * volume_size:49G
+    * volume_used:329M
+    * cpu_list:0-223
+  * worker 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:471929
+    * datadisk:327
+    * volume_size:49G
+    * volume_used:327M
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:350156
+    * datadisk:329
+    * volume_size:49G
+    * volume_used:329M
+    * cpu_list:0-127
+  * resources_total: 64.0 CPU, 256.0 GiB RAM requested in 4 pods
+    * sut: 1 x, 16.0 CPU, 64.0 GiB RAM
+    * worker: 3 x, 48.0 CPU, 192.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792777045
+    * BEXHOMA_WORKERS:3
+* clickhousecluster-1-2-1-1-1 uses docker image clickhouse/clickhouse-server:26.8.34.13
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:958485
+  * datadisk:208
+  * volume_size:49G
+  * volume_used:208M
+  * cpu_list:0-223
+  * requests_cpu:16
+  * requests_memory:64Gi
+  * limits_cpu:16
+  * limits_memory:64Gi
+  * worker 0
+    * RAM:2164173172736
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-137-generic
+    * node:cl-worker36
+    * disk:958486
+    * datadisk:378
+    * volume_size:49G
+    * volume_used:380M
+    * cpu_list:0-223
+  * worker 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:471929
+    * datadisk:374
+    * volume_size:49G
+    * volume_used:374M
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:350155
+    * datadisk:390
+    * volume_size:49G
+    * volume_used:390M
+    * cpu_list:0-127
+  * resources_total: 64.0 CPU, 256.0 GiB RAM requested in 4 pods
+    * sut: 1 x, 16.0 CPU, 64.0 GiB RAM
+    * worker: 3 x, 48.0 CPU, 192.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792777045
+    * BEXHOMA_WORKERS:3
+
+### Inherited Loading
+* loading skipped, loading times copied from an earlier repetition: ClickHouseCluster-1-2
+
+### SUT Container Restarts
+* bexhoma-sut-clickhousecluster-1-1792777045-89c8dbc74-k9g96: 0
+* bexhoma-worker-clickhousecluster-nvme-tpch-1-0: 0
+* bexhoma-worker-clickhousecluster-nvme-tpch-1-1: 0
+* bexhoma-worker-clickhousecluster-nvme-tpch-1-2: 0
+* bexhoma-sut-clickhousecluster-1-1792777045-7675d6f964-blmqf: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS ClickHouseCluster-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS ClickHouseCluster-1 - Experiment 2 Client 1: tpch (1 pods)
+
+#### Planned
+
+* DBMS ClickHouseCluster-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS ClickHouseCluster-1 - Experiment 2 Client 1: tpch (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                       |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouseCluster-1-1 |                1 |    1 |       56.00 |           6.00 |           37.00 |          4.00 |            6.00 |              8 |           0 |             | None           |             0 | False         |               64.29 | False               |
+| ClickHouseCluster-1-2 |                2 |    1 |       56.00 |           6.00 |           37.00 |          4.00 |            6.00 |              8 |           0 |             | None           |             0 | False         |               64.29 | True                |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                        | configuration       | phase                   | job                       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                         |
+|:----------------------------|:--------------------|:------------------------|:--------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------------------|
+| clickhousecluster-1-1-1-1-1 | ClickHouseCluster-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         25 |            0.47 |             8250.98 |           3168.00 |          -1 | clickhousecluster-1-1-1-1-1 |
+| clickhousecluster-1-2-1-1-1 | ClickHouseCluster-1 | clickhousecluster-1-2-1 | clickhousecluster-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         22 |            0.49 |             7899.68 |           3600.00 |          -1 | clickhousecluster-1-2-1-1-1 |
+
+#### Per Phase
+
+|                         | phase                   |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         25 |            0.47 |             8250.98 |           3168.00 |          -1 |
+| clickhousecluster-1-2-1 | clickhousecluster-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         22 |            0.49 |             7899.68 |           3600.00 |          -1 |
+
+#### Query Completion per Phase
+
+| phase                   |   pods | Pricing Summary Report (TPC-H Q1)   | Minimum Cost Supplier Query (TPC-H Q2)   | Shipping Priority (TPC-H Q3)   | Order Priority Checking Query (TPC-H Q4)   | Local Supplier Volume (TPC-H Q5)   | Forecasting Revenue Change (TPC-H Q6)   | Volume Shipping Query (TPC-H Q7)   | National Market Share (TPC-H Q8)   | Product Type Profit Measure (TPC-H Q9)   | Returned Item Reporting Query (TPC-H Q10)   | Important Stock Identification (TPC-H Q11)   | Shipping Modes and Order Priority (TPC-H Q12)   | Customer Distribution (TPC-H Q13)   | Promotion Effect Query (TPC-H Q14)   | Top Supplier Query (TPC-H Q15)   | Parts/Supplier Relationship (TPC-H Q16)   | Small-Quantity-Order Revenue (TPC-H Q17)   | Large Volume Customer (TPC-H Q18)   | Discounted Revenue (TPC-H Q19)   | Potential Part Promotion (TPC-H Q20)   | Suppliers Who Kept Orders Waiting Query (TPC-H Q21)   | Global Sales Opportunity Query (TPC-H Q22)   | complete   |
+|:------------------------|-------:|:------------------------------------|:-----------------------------------------|:-------------------------------|:-------------------------------------------|:-----------------------------------|:----------------------------------------|:-----------------------------------|:-----------------------------------|:-----------------------------------------|:--------------------------------------------|:---------------------------------------------|:------------------------------------------------|:------------------------------------|:-------------------------------------|:---------------------------------|:------------------------------------------|:-------------------------------------------|:------------------------------------|:---------------------------------|:---------------------------------------|:------------------------------------------------------|:---------------------------------------------|:-----------|
+| clickhousecluster-1-1-1 |      1 | 1/1                                 | 1/1                                      | 1/1                            | 1/1                                        | 1/1                                | 1/1                                     | 1/1                                | 1/1                                | 1/1                                      | 1/1                                         | 1/1                                          | 1/1                                             | 1/1                                 | 1/1                                  | 1/1                              | 1/1                                       | 1/1                                        | 1/1                                 | 1/1                              | 1/1                                    | 1/1                                                   | 1/1                                          | yes        |
+| clickhousecluster-1-2-1 |      1 | 1/1                                 | 1/1                                      | 1/1                            | 1/1                                        | 1/1                                | 1/1                                     | 1/1                                | 1/1                                | 1/1                                      | 1/1                                         | 1/1                                          | 1/1                                             | 1/1                                 | 1/1                                  | 1/1                              | 1/1                                       | 1/1                                        | 1/1                                 | 1/1                              | 1/1                                    | 1/1                                                   | 1/1                                          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   clickhousecluster-1-1-1-1-1 |   clickhousecluster-1-2-1-1-1 |
+|:----------------------------------------------------|------------------------------:|------------------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |                        125.85 |                        307.76 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                        669.37 |                        749.49 |
+| Shipping Priority (TPC-H Q3)                        |                        836.56 |                       1076.55 |
+| Order Priority Checking Query (TPC-H Q4)            |                        414.28 |                        431.09 |
+| Local Supplier Volume (TPC-H Q5)                    |                       1765.53 |                       1501.83 |
+| Forecasting Revenue Change (TPC-H Q6)               |                         42.02 |                         37.35 |
+| Volume Shipping Query (TPC-H Q7)                    |                       1940.70 |                       1850.15 |
+| National Market Share (TPC-H Q8)                    |                       3225.95 |                       2895.72 |
+| Product Type Profit Measure (TPC-H Q9)              |                       2668.09 |                       2503.39 |
+| Returned Item Reporting Query (TPC-H Q10)           |                       1225.07 |                       1222.27 |
+| Important Stock Identification (TPC-H Q11)          |                        125.14 |                        120.95 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                        579.87 |                        554.69 |
+| Customer Distribution (TPC-H Q13)                   |                        552.30 |                        581.57 |
+| Promotion Effect Query (TPC-H Q14)                  |                        122.49 |                        119.40 |
+| Top Supplier Query (TPC-H Q15)                      |                        168.91 |                        161.66 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                        172.49 |                        161.42 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                        248.92 |                        284.02 |
+| Large Volume Customer (TPC-H Q18)                   |                        696.36 |                        692.37 |
+| Discounted Revenue (TPC-H Q19)                      |                        170.15 |                        170.72 |
+| Potential Part Promotion (TPC-H Q20)                |                        449.38 |                        438.12 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                       1349.58 |                       1556.96 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                        104.93 |                        113.09 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS                      |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------------|-------------:|----------:|---------------:|----------------------:|
+| clickhousecluster-1-1-1-1 |        21.25 |      0.30 |           0.49 |                  0.55 |
+
+### Loading phase: component worker
+
+| DBMS                      |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------------|-------------:|----------:|---------------:|----------------------:|
+| clickhousecluster-1-1-1-1 |        99.20 |      0.93 |           1.21 |                  2.14 |
+
+### Loading phase: component data generator
+
+| DBMS                      |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------------|-------------:|----------:|---------------:|----------------------:|
+| clickhousecluster-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS                      |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------------|-------------:|----------:|---------------:|----------------------:|
+| clickhousecluster-1-1-1-1 |         0.88 |      0.00 |           0.00 |                  0.00 |
+
+### Benchmarking phase: SUT deployment
+
+| DBMS                      | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------------|:-------------|----------:|---------------:|----------------------:|
+| clickhousecluster-1-1-1-1 | n/a          |      0.36 |           1.00 |                  1.08 |
+| clickhousecluster-1-2-1-1 | n/a          |      0.10 |           0.39 |                  0.50 |
+
+### Benchmarking phase: component worker
+
+| DBMS                      | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------------|:-------------|----------:|---------------:|----------------------:|
+| clickhousecluster-1-1-1-1 | n/a          |      0.98 |           2.18 |                  3.18 |
+| clickhousecluster-1-2-1-1 | n/a          |      1.32 |           2.09 |                  2.60 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS                      | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------------------|:-------------|----------:|---------------:|----------------------:|
+| clickhousecluster-1-1-1-1 | n/a          |      0.00 |           0.00 |                  0.00 |
+| clickhousecluster-1-2-1-1 | n/a          |      0.00 |           0.00 |                  0.00 |
+
+### Missing Monitoring Metrics
+* CPU Utilization [CPUs] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Throttling Rate [s/s] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-loader.log)
+* CPU Throttling Rate [s/s] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection clickhousecluster-1-1-1-1 (bexhoma-metrics-clickhousecluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Memory Usage, Working Set [MiB] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Throttling Rate [s/s] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Memory Usage incl. Page Cache [MiB] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Throttled Time [s] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Utilization Time [s] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU System Time [s] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU User Time [s] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Network Rx Total [MiB] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Network Tx Total [MiB] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection clickhousecluster-1-2-1-1 (bexhoma-metrics-clickhousecluster-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+
+### Application Metrics
+
+#### Loading phase: component worker
+
+| DBMS                      |   Queries [queries/s] |   Running Queries [count] |   Failed Queries [count] |   Rows Read [rows/s] |   Data Read, uncompressed [MiB/s] |
+|:--------------------------|----------------------:|--------------------------:|-------------------------:|---------------------:|----------------------------------:|
+| clickhousecluster-1-1-1-1 |                  1.22 |                      1.00 |                     0.00 |            108039.41 |                             13.71 |
+
+#### Benchmarking phase: component worker
+
+| DBMS                      |   Queries [queries/s] |   Running Queries [count] |   Failed Queries [count] |   Rows Read [rows/s] |   Data Read, uncompressed [MiB/s] |
+|:--------------------------|----------------------:|--------------------------:|-------------------------:|---------------------:|----------------------------------:|
+| clickhousecluster-1-1-1-1 |                  1.50 |                      3.00 |                     0.00 |           1253816.81 |                             42.21 |
+| clickhousecluster-1-2-1-1 |                  0.52 |                      2.00 |                     0.00 |           1403891.74 |                             35.47 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Benchmarking phase: SUT deployment contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
+* TEST skipped: Benchmarking phase: component worker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
+* TEST skipped: Benchmarking phase: component benchmarker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
+* TEST failed: Monitoring metrics missing
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned

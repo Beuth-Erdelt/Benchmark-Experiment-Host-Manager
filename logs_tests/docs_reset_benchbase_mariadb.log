@@ -1,0 +1,251 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792638034
+Experiment                    : starts at 2026-10-22 05:00:34.893660 (49976.7383056)
+Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+Benchmark is 'tpcc'. Scaling factor is 4. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.7.
+Experiment is limited to DBMS ['MariaDB'].
+Import is handled by 1 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Loading is tested with [1] threads, split into [1] pods.
+Benchmarking is tested with [40] threads, split into [1] pods.
+Benchmarking is run as [1, 2] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+SUT requests 4 CPU and 16Gi RAM.
+Cluster monitoring            : is running
+MariaDB-1                     : will start now
+MariaDB-1                     : deployments ['sut']
+MariaDB-1                     : stateful sets []
+MariaDB-1                     : pvcs ['sut']
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1792638034
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1792638034
+Loop pass                     : took 2.8s (1 kubectl calls 1.2s, 9 API requests 1.3s)
+- waiting 30s -               : done
+MariaDB-1                     : waits for health check to succeed
+Loop pass                     : took 4.1s (0 kubectl calls 0.0s, 16 API requests 1.7s)
+- waiting 30s -               : done
+MariaDB-1                     : waits for health check to succeed
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 16 API requests 1.5s)
+- waiting 30s -               : done
+MariaDB-1                     : waits for health check to succeed
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 16 API requests 1.5s)
+- waiting 30s -               : done
+MariaDB-1                     : is not loaded yet
+MariaDB-1                     : will start loading but not before 2026-10-22 03:03:49 (that is in 60 secs)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 16 API requests 1.7s)
+- waiting 30s -               : done
+MariaDB-1                     : is not loaded yet
+MariaDB-1                     : will start loading but not before 2026-10-22 03:03:49
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 13 API requests 1.3s)
+- waiting 30s -               : done
+MariaDB-1                     : is not loaded yet
+MariaDB-1                     : load durability relaxed, scripts ['durability-relaxed.sh', 'restoredurability-relaxed.sh']
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1792638034-d885c6665-h88wj to load scripts
+MariaDB-1                     : start asynch loading scripts of type schema
+MariaDB-1                     : waits for the Schema scripts (schema=True) before starting the loading jobs
+MariaDB-1                     : Schema scripts done after 6s
+MariaDB-1                     : is loading
+Loop pass                     : took 21.8s (8 kubectl calls 9.9s, 35 API requests 5.4s)
+- waiting 30s -               : done
+MariaDB-1                     : showing loader times (benchbase-loader)
+MariaDB-1                     : generator times (start/end per pod and container) []
+MariaDB-1                     : loader times (start/end per pod and container) [(1792638254, 1792638276)]
+MariaDB-1                     : total times (start/end per pod and container) [(1792638254, 1792638276)]
+MariaDB-1                     : loader timespan (first to last [s]) = 22
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1792638034-d885c6665-h88wj to load scripts
+MariaDB-1                     : start asynch loading scripts of type index
+MariaDB-1                     : is loading
+Loop pass                     : took 11.4s (7 kubectl calls 7.5s, 27 API requests 3.4s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1792638034 initialized to 1.
+MariaDB-1                     : benchmarks done 0 of 1. This will be client 1
+mariadb-1-1-1-1               : start benchmarking (benchmark_run=1)
+MariaDB-1                     : reset (reset_1_1_1) completed in 11s
+MariaDB-1                     : benchmarking results in folder C:\data\benchmarks/1792638034
+MariaDB-1                     : submitted benchmarker job in 10.4s (4 kubectl calls 4.7s, 24 API requests 5.5s)
+Loop pass                     : took 34.5s (14 kubectl calls 25.7s, 46 API requests 8.3s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 5.4s (0 kubectl calls 0.0s, 20 API requests 2.5s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 18 API requests 1.9s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 18 API requests 2.0s)
+- waiting 30s -               : done
+mariadb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1792638034/mariadb-1-1-1-1.config
+mariadb-1-1-1-1               : showing benchmarker times
+mariadb-1-1-1-1               : benchmarker timespan job from 1792638357 to 1792638495
+mariadb-1-1-1-1               : benchmarker timespan pods from 1792638359 to 1792638481
+mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 122
+mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1792638359, 1792638481)]
+mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1792638359, 1792638481)]}
+Loop pass                     : took 7.9s (4 kubectl calls 4.7s, 24 API requests 2.7s)
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MariaDB-1-1792638034 initialized to 2.
+MariaDB-1                     : benchmarks done 0 of 1. This will be client 2
+mariadb-1-1-2-1               : start benchmarking (benchmark_run=1)
+MariaDB-1                     : reset (reset_1_2_1) completed in 68s
+MariaDB-1                     : benchmarking results in folder C:\data\benchmarks/1792638034
+MariaDB-1                     : submitted benchmarker job in 6.6s (3 kubectl calls 3.5s, 13 API requests 2.8s)
+Loop pass                     : took 85.7s (12 kubectl calls 79.8s, 36 API requests 5.4s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 21 API requests 2.5s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 19 API requests 2.2s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 2.2s)
+- waiting 30s -               : done
+mariadb-1-1-2-1               : wrote benchmarking_timespans to /data/benchmarks/1792638034/mariadb-1-1-2-1.config
+mariadb-1-1-2-1               : showing benchmarker times
+mariadb-1-1-2-1               : benchmarker timespan job from 1792638582 to 1792638724
+mariadb-1-1-2-1               : benchmarker timespan pods from 1792638585 to 1792638708
+mariadb-1-1-2-1               : benchmarker timespan (start to end single container [s]) = 123
+mariadb-1-1-2-1               : benchmarker times (start/end per pod and container) = [(1792638585, 1792638707), (1792638586, 1792638708)]
+mariadb-1-1-2-1               : found and updated times {'benchmarker': [(1792638585, 1792638707), (1792638586, 1792638708)]}
+Loop pass                     : took 15.7s (6 kubectl calls 7.6s, 28 API requests 3.5s)
+MariaDB-1                     : can be stopped
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1792638034-d885c6665-h88wj
+Loop pass                     : took 6.0s (3 kubectl calls 2.8s, 29 API requests 2.9s)
+Experiment                    : ends at 2026-10-22 05:12:14.459210 (50676.2977706) - 699.56s total
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=4
+* Type: benchbase
+* Duration: 700s 
+* Code: 1792638034
+* Benchbase runs a TPC-C experiment.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'tpcc'. Scaling factor is 4. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.7.
+  * Experiment is limited to DBMS ['MariaDB'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [40] threads, split into [1] pods.
+  * Benchmarking is run as [1, 2] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:908089
+  * datadisk:649
+  * volume_size:1.8T
+  * volume_used:887G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792638034
+* mariadb-1-1-2-1 uses docker image mariadb:12.3.3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:908179
+  * datadisk:737
+  * volume_size:1.8T
+  * volume_used:887G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792638034
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1792638034-d885c6665-h88wj: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS MariaDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: benchbase (2 pods)
+
+#### Planned
+
+* DBMS MariaDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: benchbase (2 pods)
+
+### Loading
+
+#### Per Run
+
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |    4 |       29.00 |           4.00 |            0.00 |         22.00 |            3.00 |              1 |           1 |             | None           |             0 | False         |              496.55 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS              | phase         | job             |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:------------------|:--------------|:----------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |          40 |     1024 |        1 |               1 |       1 |          -1 | 120.00 |            0 |                        1023.98 |                     1015.92 |         0.00 |                                                      14618.00 |                                               6398.00 |
+| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |          40 |     1024 |        2 |               1 |       1 |          -1 | 120.00 |            0 |                        1023.98 |                     1013.22 |         0.00 |                                                      41392.00 |                                              11248.00 |
+| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |          40 |     1024 |        2 |               1 |       2 |          -1 | 120.00 |            0 |                        1023.98 |                     1013.10 |         0.00 |                                                      41284.00 |                                              10874.00 |
+
+#### Per Phase
+
+| DBMS          | phase         |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:--------------|:--------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |          40 |     1024 |               1 |           1 |          -1 | 120.00 |            0 |                        1023.98 |                     1015.92 |         0.00 |                                                      14618.00 |                                               6398.00 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |          80 |     2048 |               1 |           2 |          -1 | 120.00 |            0 |                        2047.96 |                     2026.32 |         0.00 |                                                      41392.00 |                                              11061.00 |
+
+#### Reset
+
+| phase         | job             |   experiment_run |   client |   benchmark_run |   time_reset | reset_failed   |
+|:--------------|:----------------|-----------------:|---------:|----------------:|-------------:|:---------------|
+| mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |        11.00 |                |
+| mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |        68.00 |                |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Reset scripts ran without errors

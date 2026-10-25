@@ -2,502 +2,754 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1783974695
-Experiment                    : starts at 2026-07-13 22:31:36.009122 (127830.4283309)
+Experiment                    : has code 1792720916
+Experiment                    : starts at 2026-10-23 04:01:57.221037 (46260.099616)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-Benchbase data is generated and loaded using several threads.
+Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
 Benchmark is 'chbenchmark'. Scaling factor is 100. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 20 minutes.
-Experiment uses bexhoma version 0.10.5.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.8.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
 SUT is fixed to cl-worker36.
 Database uses ephemeral storage of size 100Gi.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [100] threads, split into [1, 2, 5, 10] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 Cluster monitoring            : is running
 PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1783974695
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1783974695
-- waiting 30s -               : done
-PostgreSQL-1                  : is pending
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1792720916
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1792720916
+Loop pass                     : took 4.2s (1 kubectl calls 1.9s, 9 API requests 1.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 14.3s (0 kubectl calls 0.0s, 16 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 16 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 1.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1783974695-859fdbbb5f-p7l7q to load scripts
-PostgreSQL-1                  : start asynch loading scripts of type loaded
+PostgreSQL-1                  : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792720916-68cdccf5d5-8h4mh to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type schema
+PostgreSQL-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
+PostgreSQL-1                  : Schema scripts done after 8s
 PostgreSQL-1                  : is loading
+Loop pass                     : took 33.8s (8 kubectl calls 18.0s, 39 API requests 6.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 20 API requests 2.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 20 API requests 2.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 3.4s (0 kubectl calls 0.0s, 20 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 20 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 15.2s (0 kubectl calls 0.0s, 20 API requests 3.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 20 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 20 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 20 API requests 2.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 3.4s (0 kubectl calls 0.0s, 20 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 3.4s (0 kubectl calls 0.0s, 20 API requests 3.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 20 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 20 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
+Loop pass                     : took 3.6s (0 kubectl calls 0.0s, 20 API requests 2.3s)
 - waiting 30s -               : done
-PostgreSQL-1                  : showing loader times
+PostgreSQL-1                  : is loading
+Loop pass                     : took 7.2s (0 kubectl calls 0.0s, 20 API requests 2.3s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 20 API requests 1.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 20 API requests 2.3s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 20 API requests 2.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 4.1s (0 kubectl calls 0.0s, 20 API requests 3.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 20 API requests 2.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 20 API requests 2.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 20 API requests 2.4s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 20 API requests 2.3s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 6.8s (0 kubectl calls 0.0s, 20 API requests 2.4s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 20 API requests 2.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 20 API requests 2.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 20 API requests 2.5s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 20 API requests 2.4s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 20 API requests 2.4s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.4s (0 kubectl calls 0.0s, 20 API requests 2.3s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 20 API requests 2.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 20 API requests 2.3s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 6.1s (0 kubectl calls 0.0s, 20 API requests 2.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 20 API requests 2.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.8s (0 kubectl calls 0.0s, 20 API requests 2.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 20 API requests 2.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 20 API requests 2.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 20 API requests 3.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : showing loader times (benchbase-loader)
 PostgreSQL-1                  : generator times (start/end per pod and container) []
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1783974928, 1783975342)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1783974928, 1783975342)]
-PostgreSQL-1                  : loader timespan (first to last [s]) = 414
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1783974695-859fdbbb5f-p7l7q to load scripts
-PostgreSQL-1                  : start asynch loading scripts of type indexed
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1792721135, 1792722367)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1792721135, 1792722367)]
+PostgreSQL-1                  : loader timespan (first to last [s]) = 1232
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792720916-68cdccf5d5-8h4mh to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type index
 PostgreSQL-1                  : is loading
+Loop pass                     : took 25.4s (10 kubectl calls 20.3s, 27 API requests 3.8s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1783974695 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1792720916 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
-PostgreSQL-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1783974695
-- waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1783974695-1-1-1-l4n47: found
+postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792720916
+PostgreSQL-1                  : submitted benchmarker job in 15.7s (4 kubectl calls 7.9s, 24 API requests 6.3s)
+Loop pass                     : took 24.3s (5 kubectl calls 9.6s, 44 API requests 9.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 4.7s (0 kubectl calls 0.0s, 20 API requests 3.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 18 API requests 2.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 18 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 18 API requests 2.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 11.6s (0 kubectl calls 0.0s, 18 API requests 3.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 18 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.4s (0 kubectl calls 0.0s, 18 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 18 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 13.9s (0 kubectl calls 0.0s, 18 API requests 3.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 18 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 18 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 18 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 18 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 4.2s (0 kubectl calls 0.0s, 18 API requests 2.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 18 API requests 2.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 11.8s (0 kubectl calls 0.0s, 18 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 18 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 18 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 18 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 18 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 10.0s (0 kubectl calls 0.0s, 18 API requests 2.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-- waiting 30s -               : done
-PostgreSQL-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1783974695/PostgreSQL-1-1-1-1.config
-PostgreSQL-1-1-1-1            : showing benchmarker times
-PostgreSQL-1-1-1-1            : benchmarker timespan job from 1783975421 to 1783976964
-PostgreSQL-1-1-1-1            : benchmarker timespan pods from 1783975423 to 1783976942
-PostgreSQL-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 1519
-PostgreSQL-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1783975423, 1783976942)]
-PostgreSQL-1-1-1-1            : found and updated times {'benchmarker': [(1783975423, 1783976942)]}
-- waiting 30s -               : done
+postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1792720916/postgresql-1-1-1-1.config
+postgresql-1-1-1-1            : showing benchmarker times
+postgresql-1-1-1-1            : benchmarker timespan job from 1792722474 to 1792723778
+postgresql-1-1-1-1            : benchmarker timespan pods from 1792722477 to 1792723742
+postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 1265
+postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1792722477, 1792723742)]
+postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1792722477, 1792723742)]}
+Loop pass                     : took 11.8s (4 kubectl calls 7.8s, 24 API requests 2.9s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-1-1783974695 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-1-1792720916 initialized to 2.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 2
-PostgreSQL-1-1-2-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1783974695
-- waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1783974695-1-2-1-bfhhm: found
+postgresql-1-1-2-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792720916
+PostgreSQL-1                  : submitted benchmarker job in 8.9s (3 kubectl calls 5.6s, 13 API requests 3.1s)
+Loop pass                     : took 13.0s (3 kubectl calls 5.6s, 34 API requests 7.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 21 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 19 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.1s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 19 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.1s (0 kubectl calls 0.0s, 19 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.0s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 4.9s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 1.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 19 API requests 2.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.7s (0 kubectl calls 0.0s, 19 API requests 2.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
-PostgreSQL-1-1-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1783974695/PostgreSQL-1-1-2-1.config
-PostgreSQL-1-1-2-1            : showing benchmarker times
-PostgreSQL-1-1-2-1            : benchmarker timespan job from 1783977010 to 1783978496
-PostgreSQL-1-1-2-1            : benchmarker timespan pods from 1783977013 to 1783978461
-PostgreSQL-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 1448
-PostgreSQL-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1783977013, 1783978460), (1783977013, 1783978461)]
-PostgreSQL-1-1-2-1            : found and updated times {'benchmarker': [(1783977013, 1783978460), (1783977013, 1783978461)]}
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
+postgresql-1-1-2-1            : wrote benchmarking_timespans to /data/benchmarks/1792720916/postgresql-1-1-2-1.config
+postgresql-1-1-2-1            : showing benchmarker times
+postgresql-1-1-2-1            : benchmarker timespan job from 1792723793 to 1792725319
+postgresql-1-1-2-1            : benchmarker timespan pods from 1792723797 to 1792725299
+postgresql-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 1502
+postgresql-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1792723798, 1792725291), (1792723797, 1792725299)]
+postgresql-1-1-2-1            : found and updated times {'benchmarker': [(1792723798, 1792725291), (1792723797, 1792725299)]}
+Loop pass                     : took 17.2s (6 kubectl calls 13.7s, 28 API requests 3.1s)
 Experiment                    : Reset experiment counter. This is first run of client number 3.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-PostgreSQL-1-1783974695 initialized to 5.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-PostgreSQL-1-1792720916 initialized to 5.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 3
-PostgreSQL-1-1-3-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1783974695
-- waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1783974695-1-3-1-9ddxk: found
+postgresql-1-1-3-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792720916
+PostgreSQL-1                  : submitted benchmarker job in 7.5s (3 kubectl calls 4.5s, 13 API requests 2.8s)
+Loop pass                     : took 10.0s (3 kubectl calls 4.5s, 37 API requests 5.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 24 API requests 2.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 22 API requests 2.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 22 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 22 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.9s (0 kubectl calls 0.0s, 22 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 4.0s (0 kubectl calls 0.0s, 22 API requests 3.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 22 API requests 2.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 22 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 22 API requests 2.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 22 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.9s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 22 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 22 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 22 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 22 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 22 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 22 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 4.7s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 6.3s (0 kubectl calls 0.0s, 22 API requests 2.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 22 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-PostgreSQL-1-1-3-1            : wrote benchmarking_timespans to D:/data/benchmarks/1783974695/PostgreSQL-1-1-3-1.config
-PostgreSQL-1-1-3-1            : showing benchmarker times
-PostgreSQL-1-1-3-1            : benchmarker timespan job from 1783978545 to 1783980031
-PostgreSQL-1-1-3-1            : benchmarker timespan pods from 1783978550 to 1783980021
-PostgreSQL-1-1-3-1            : benchmarker timespan (start to end single container [s]) = 1471
-PostgreSQL-1-1-3-1            : benchmarker times (start/end per pod and container) = [(1783978551, 1783980005), (1783978550, 1783980021), (1783978551, 1783980014), (1783978551, 1783980016), (1783978551, 1783980016)]
-PostgreSQL-1-1-3-1            : found and updated times {'benchmarker': [(1783978551, 1783980005), (1783978550, 1783980021), (1783978551, 1783980014), (1783978551, 1783980016), (1783978551, 1783980016)]}
-- waiting 30s -               : done
+postgresql-1-1-3-1            : wrote benchmarking_timespans to /data/benchmarks/1792720916/postgresql-1-1-3-1.config
+postgresql-1-1-3-1            : showing benchmarker times
+postgresql-1-1-3-1            : benchmarker timespan job from 1792725330 to 1792726808
+postgresql-1-1-3-1            : benchmarker timespan pods from 1792725337 to 1792726793
+postgresql-1-1-3-1            : benchmarker timespan (start to end single container [s]) = 1456
+postgresql-1-1-3-1            : benchmarker times (start/end per pod and container) = [(1792725337, 1792726783), (1792725337, 1792726770), (1792725337, 1792726793), (1792725337, 1792726769), (1792725337, 1792726785)]
+postgresql-1-1-3-1            : found and updated times {'benchmarker': [(1792725337, 1792726783), (1792725337, 1792726770), (1792725337, 1792726793), (1792725337, 1792726769), (1792725337, 1792726785)]}
+Loop pass                     : took 24.1s (12 kubectl calls 19.2s, 40 API requests 4.3s)
 Experiment                    : Reset experiment counter. This is first run of client number 4.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-PostgreSQL-1-1783974695 initialized to 10.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-PostgreSQL-1-1792720916 initialized to 10.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 4
-PostgreSQL-1-1-4-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1783974695
-- waiting 10s -               : done
-PostgreSQL-1                  : benchmarking is waiting for job bexhoma-benchmarker-postgresql-1-1783974695-1-4-1-45tlc: found
+postgresql-1-1-4-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792720916
+PostgreSQL-1                  : submitted benchmarker job in 5.9s (3 kubectl calls 3.4s, 13 API requests 2.4s)
+Loop pass                     : took 10.0s (3 kubectl calls 3.4s, 42 API requests 6.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 29 API requests 3.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 6.6s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 27 API requests 2.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 27 API requests 2.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 27 API requests 2.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.4s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.7s (0 kubectl calls 0.0s, 27 API requests 3.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.9s (0 kubectl calls 0.0s, 27 API requests 3.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 4.8s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.7s (0 kubectl calls 0.0s, 27 API requests 2.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 27 API requests 2.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 27 API requests 2.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 3.9s (0 kubectl calls 0.0s, 27 API requests 2.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 7.8s (4 kubectl calls 4.7s, 29 API requests 2.9s)
 - waiting 30s -               : done
-PostgreSQL-1-1-4-1            : wrote benchmarking_timespans to D:/data/benchmarks/1783974695/PostgreSQL-1-1-4-1.config
-PostgreSQL-1-1-4-1            : showing benchmarker times
-PostgreSQL-1-1-4-1            : benchmarker timespan job from 1783980086 to 1783981628
-PostgreSQL-1-1-4-1            : benchmarker timespan pods from 1783980094 to 1783981595
-PostgreSQL-1-1-4-1            : benchmarker timespan (start to end single container [s]) = 1501
-PostgreSQL-1-1-4-1            : benchmarker times (start/end per pod and container) = [(1783980095, 1783981567), (1783980095, 1783981595), (1783980094, 1783981576), (1783980095, 1783981548), (1783980095, 1783981586), (1783980095, 1783981588), (1783980095, 1783981590), (1783980094, 1783981548), (1783980095, 1783981578), (1783980095, 1783981572)]
-PostgreSQL-1-1-4-1            : found and updated times {'benchmarker': [(1783980095, 1783981567), (1783980095, 1783981595), (1783980094, 1783981576), (1783980095, 1783981548), (1783980095, 1783981586), (1783980095, 1783981588), (1783980095, 1783981590), (1783980094, 1783981548), (1783980095, 1783981578), (1783980095, 1783981572)]}
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 8.5s (4 kubectl calls 5.0s, 27 API requests 2.9s)
 - waiting 30s -               : done
+postgresql-1-1-4-1            : wrote benchmarking_timespans to /data/benchmarks/1792720916/postgresql-1-1-4-1.config
+postgresql-1-1-4-1            : showing benchmarker times
+postgresql-1-1-4-1            : benchmarker timespan job from 1792726819 to 1792728360
+postgresql-1-1-4-1            : benchmarker timespan pods from 1792726829 to 1792728327
+postgresql-1-1-4-1            : benchmarker timespan (start to end single container [s]) = 1498
+postgresql-1-1-4-1            : benchmarker times (start/end per pod and container) = [(1792726830, 1792728311), (1792726830, 1792728306), (1792726830, 1792728282), (1792726829, 1792728302), (1792726830, 1792728314), (1792726830, 1792728263), (1792726830, 1792728256), (1792726830, 1792728327), (1792726829, 1792728320), (1792726830, 1792728253)]
+postgresql-1-1-4-1            : found and updated times {'benchmarker': [(1792726830, 1792728311), (1792726830, 1792728306), (1792726830, 1792728282), (1792726829, 1792728302), (1792726830, 1792728314), (1792726830, 1792728263), (1792726830, 1792728256), (1792726830, 1792728327), (1792726829, 1792728320), (1792726830, 1792728253)]}
+Loop pass                     : took 25.8s (14 kubectl calls 19.3s, 52 API requests 5.8s)
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 0 restarts at worker bexhoma-sut-postgresql-1-1783974695-859fdbbb5f-p7l7q
-Experiment                    : ends at 2026-07-14 00:27:48.368119 (134802.7874779) - 6972.36s total
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1792720916-68cdccf5d5-8h4mh
+Loop pass                     : took 10.9s (4 kubectl calls 7.5s, 29 API requests 3.0s)
+Experiment                    : ends at 2026-10-23 06:06:14.648483 (53717.4909961) - 7457.39s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -508,88 +760,117 @@ Result workflow complete
 ### Workload
 Benchbase Workload chbenchmark SF=100
 * Type: benchbase
-* Duration: 6973s 
-* Code: 1783974695
+* Duration: 7458s 
+* Code: 1792720916
 * Benchbase runs the CH-Benchmark benchmark.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-  * Benchbase data is generated and loaded using several threads.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'chbenchmark'. Scaling factor is 100. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 20 minutes.
-  * Experiment uses bexhoma version 0.10.5.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.8.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
   * SUT is fixed to cl-worker36.
   * Database uses ephemeral storage of size 100Gi.
   * Loading is tested with [1] threads, split into [1] pods.
   * Benchmarking is tested with [100] threads, split into [1, 2, 5, 10] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 
 ### Connections
-* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1224877
+  * disk:975507
+  * datadisk:26568
+  * volume_size:1.8T
+  * volume_used:953G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1783974695
+    * code:1792720916
     * TENANT_VOL:False
-* PostgreSQL-1-1-2-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-2-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1242932
+  * disk:988370
+  * datadisk:44712
+  * volume_size:1.8T
+  * volume_used:966G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1783974695
+    * code:1792720916
     * TENANT_VOL:False
-* PostgreSQL-1-1-3-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-3-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1244195
+  * disk:967725
+  * datadisk:47622
+  * volume_size:1.8T
+  * volume_used:946G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1783974695
+    * code:1792720916
     * TENANT_VOL:False
-* PostgreSQL-1-1-4-1 uses docker image postgres:18.3
-  * RAM:2164173213696
+* postgresql-1-1-4-1 uses docker image postgres:18.6
+  * RAM:2164173172736
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:1245018
+  * disk:968738
+  * datadisk:48700
+  * volume_size:1.8T
+  * volume_used:947G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1783974695
+    * code:1792720916
     * TENANT_VOL:False
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783974695-859fdbbb5f-p7l7q: 0 0
+* bexhoma-sut-postgresql-1-1792720916-68cdccf5d5-8h4mh: 0
 
 ### Workflow
 
@@ -611,45 +892,48 @@ Benchbase Workload chbenchmark SF=100
 
 #### Per Run
 
-|                |   experiment_run |     SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|-------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 100.00 |      867.00 |           0.00 |            0.00 |        414.00 |          453.00 |              1 |           1 |             |                |             0 | False         |              415.22 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |  100 |     1246.00 |           7.00 |            0.00 |       1232.00 |            7.00 |              1 |           1 |             |                |             0 | False         |              288.92 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS                  | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |    time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|--------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1-1-1  | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |         100 |    16384 |        1 |               1 |       1 |           0 | 1200.00 |         2298 |                        1074.08 |                     1067.64 |         0.00 |                                                     146824.00 |                                             158529.00 |
-| PostgreSQL-1-1-2-1-1  | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          50 |     8192 |        2 |               1 |       1 |           0 | 1200.00 |         1864 |                          86.89 |                       84.63 |         0.00 |                                                     144452.00 |                                             969309.00 |
-| PostgreSQL-1-1-2-1-2  | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          50 |     8192 |        2 |               1 |       2 |           0 | 1200.00 |         1784 |                          80.71 |                       78.53 |         0.00 |                                                     147895.00 |                                            1038188.00 |
-| PostgreSQL-1-1-3-1-1  | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       1 |           0 | 1200.00 |          634 |                          25.99 |                       25.10 |         0.00 |                                                     107852.00 |                                            1355590.00 |
-| PostgreSQL-1-1-3-1-2  | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       2 |           0 | 1200.00 |          621 |                          27.35 |                       26.44 |         0.00 |                                                      75947.00 |                                            1252902.00 |
-| PostgreSQL-1-1-3-1-3  | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       3 |           0 | 1200.00 |          625 |                          28.12 |                       27.19 |         0.00 |                                                      95471.00 |                                            1268214.00 |
-| PostgreSQL-1-1-3-1-4  | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       4 |           0 | 1200.00 |          619 |                          26.13 |                       25.24 |         0.00 |                                                     110908.00 |                                            1326913.00 |
-| PostgreSQL-1-1-3-1-5  | PostgreSQL-1-1-3 | PostgreSQL-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       5 |           0 | 1200.00 |          630 |                          27.39 |                       26.43 |         0.00 |                                                      85949.00 |                                            1321078.00 |
-| PostgreSQL-1-1-4-1-1  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       1 |           0 | 1200.00 |          294 |                          12.08 |                       11.66 |         0.00 |                                                     433879.00 |                                            1512053.00 |
-| PostgreSQL-1-1-4-1-2  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       2 |           0 | 1200.00 |          280 |                          12.66 |                       12.26 |         0.00 |                                                     304519.00 |                                            1436473.00 |
-| PostgreSQL-1-1-4-1-3  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       3 |           0 | 1200.00 |          303 |                          11.90 |                       11.48 |         0.00 |                                                     319883.00 |                                            1372088.00 |
-| PostgreSQL-1-1-4-1-4  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       4 |           0 | 1200.00 |          294 |                          12.37 |                       11.96 |         0.00 |                                                     400742.00 |                                            1444689.00 |
-| PostgreSQL-1-1-4-1-5  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       5 |           0 | 1200.00 |          307 |                          11.79 |                       11.35 |         0.00 |                                                     496111.00 |                                            1392216.00 |
-| PostgreSQL-1-1-4-1-6  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       6 |           0 | 1200.00 |          264 |                          12.15 |                       11.76 |         0.00 |                                                     270543.00 |                                            1306122.00 |
-| PostgreSQL-1-1-4-1-7  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       7 |           0 | 1200.00 |          311 |                          12.22 |                       11.78 |         0.00 |                                                     506996.00 |                                            1392251.00 |
-| PostgreSQL-1-1-4-1-8  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       8 |           0 | 1200.00 |          275 |                          11.79 |                       11.40 |         0.00 |                                                     397529.00 |                                            1453359.00 |
-| PostgreSQL-1-1-4-1-9  | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       9 |           0 | 1200.00 |          312 |                          12.13 |                       11.68 |         0.00 |                                                     422416.00 |                                            1482770.00 |
-| PostgreSQL-1-1-4-1-10 | PostgreSQL-1-1-4 | PostgreSQL-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |      10 |           0 | 1200.00 |          313 |                          12.49 |                       12.04 |         0.00 |                                                     323974.00 |                                            1348181.00 |
+| postgresql-1-1-1-1-1  | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |         100 |    16384 |        1 |               1 |       1 |           0 | 1200.00 |          338 |                        1222.23 |                     1216.62 |         0.00 |                                                     262928.00 |                                             159886.00 |
+| postgresql-1-1-2-1-1  | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          50 |     8192 |        2 |               1 |       1 |           0 | 1200.00 |         1629 |                         188.29 |                      185.61 |         0.00 |                                                     181528.00 |                                             440238.00 |
+| postgresql-1-1-2-1-2  | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          50 |     8192 |        2 |               1 |       2 |           0 | 1200.00 |         1645 |                         180.90 |                      178.27 |         0.00 |                                                     185743.00 |                                             470533.00 |
+| postgresql-1-1-3-1-1  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       1 |           0 | 1200.00 |          613 |                          35.01 |                       34.01 |         0.00 |                                                      56026.00 |                                             945909.00 |
+| postgresql-1-1-3-1-2  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       2 |           0 | 1200.00 |          595 |                          35.56 |                       34.56 |         0.00 |                                                      53228.00 |                                             924991.00 |
+| postgresql-1-1-3-1-3  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       3 |           0 | 1200.00 |          609 |                          37.18 |                       36.15 |         0.00 |                                                      52895.00 |                                             979108.00 |
+| postgresql-1-1-3-1-4  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       4 |           0 | 1200.00 |          640 |                          35.24 |                       34.18 |         0.00 |                                                      59368.00 |                                             972872.00 |
+| postgresql-1-1-3-1-5  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |          20 |     3276 |        3 |               1 |       5 |           0 | 1200.00 |          639 |                          36.46 |                       35.41 |         0.00 |                                                      52550.00 |                                             900888.00 |
+| postgresql-1-1-4-1-1  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       1 |           0 | 1200.00 |          309 |                           2.83 |                        2.55 |         0.00 |                                                   30019768.00 |                                            5510331.00 |
+| postgresql-1-1-4-1-2  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       2 |           0 | 1200.00 |          334 |                           3.06 |                        2.76 |         0.00 |                                                   30018929.00 |                                            5849179.00 |
+| postgresql-1-1-4-1-3  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       3 |           0 | 1200.00 |          323 |                           3.55 |                        3.25 |         0.00 |                                                   30016842.00 |                                            4999111.00 |
+| postgresql-1-1-4-1-4  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       4 |           0 | 1200.00 |          280 |                           2.74 |                        2.48 |         0.00 |                                                   30021619.00 |                                            6195315.00 |
+| postgresql-1-1-4-1-5  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       5 |           0 | 1200.00 |          282 |                           3.08 |                        2.82 |         0.00 |                                                   30018233.00 |                                            5279693.00 |
+| postgresql-1-1-4-1-6  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       6 |           0 | 1200.00 |          315 |                           3.22 |                        2.93 |         0.00 |                                                   30016529.00 |                                            4886726.00 |
+| postgresql-1-1-4-1-7  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       7 |           0 | 1200.00 |          325 |                           3.88 |                        3.56 |         0.00 |                                                   30015267.00 |                                            4446304.00 |
+| postgresql-1-1-4-1-8  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       8 |           0 | 1200.00 |          308 |                           2.95 |                        2.66 |         0.00 |                                                   30019930.00 |                                            5578126.00 |
+| postgresql-1-1-4-1-9  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |       9 |           0 | 1200.00 |          335 |                           3.26 |                        2.97 |         0.00 |                                                   30016681.00 |                                            4850482.00 |
+| postgresql-1-1-4-1-10 | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |          10 |     1638 |        4 |               1 |      10 |           0 | 1200.00 |          268 |                           3.77 |                        3.53 |         0.00 |                                                   30011308.00 |                                            3499069.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |    time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|--------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |         100 |    16384 |               1 |           1 |           0 | 1200.00 |         2298 |                        1074.08 |                     1067.64 |         0.00 |                                                     146824.00 |                                             158529.00 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |         100 |    16384 |               1 |           2 |           0 | 1200.00 |         3648 |                         167.60 |                      163.15 |         0.00 |                                                     147895.00 |                                            1003748.50 |
-| PostgreSQL-1-1-3 | PostgreSQL-1-1-3 |                1 |         100 |    16380 |               1 |           5 |           0 | 1200.00 |         3129 |                         134.98 |                      130.39 |         0.00 |                                                     110908.00 |                                            1304939.40 |
-| PostgreSQL-1-1-4 | PostgreSQL-1-1-4 |                1 |         100 |    16380 |               1 |          10 |           0 | 1200.00 |         2953 |                         121.58 |                      117.37 |         0.00 |                                                     506996.00 |                                            1414020.20 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |         100 |    16384 |               1 |           1 |           0 | 1200.00 |          338 |                        1222.23 |                     1216.62 |         0.00 |                                                     262928.00 |                                             159886.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |         100 |    16384 |               1 |           2 |           0 | 1200.00 |         3274 |                         369.19 |                      363.88 |         0.00 |                                                     185743.00 |                                             455385.50 |
+| postgresql-1-1-3 | postgresql-1-1-3 |                1 |         100 |    16380 |               1 |           5 |           0 | 1200.00 |         3096 |                         179.45 |                      174.31 |         0.00 |                                                      59368.00 |                                             944753.60 |
+| postgresql-1-1-4 | postgresql-1-1-4 |                1 |         100 |    16380 |               1 |          10 |           0 | 1200.00 |         3079 |                          32.34 |                       29.53 |         0.00 |                                                   30021619.00 |                                            5109433.60 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned

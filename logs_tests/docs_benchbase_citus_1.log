@@ -2,17 +2,19 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792373206
-Experiment                    : starts at 2026-10-19 03:26:47.274373 (357162.5546619)
+Experiment                    : has code 1792800739
+Experiment                    : starts at 2026-10-24 02:12:19.734249 (126082.5146889)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-Experiment uses bexhoma version 0.11.6.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.8.
 Experiment is limited to DBMS ['Citus'].
 Import is handled by 1 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
 SUT is fixed to cl-worker36.
+Workers are fixed to cl-worker36, cl-worker37, cl-worker29.
 Database uses ephemeral storage of size 50Gi.
 Loading is tested with [1] threads, split into [1] pods.
 Benchmarking is tested with [16] threads, split into [1, 2] pods.
@@ -27,80 +29,65 @@ Citus-1                       : will start now
 Citus-1                       : deployments ['sut']
 Citus-1                       : stateful sets ['worker']
 Citus-1                       : pvcs ['sut']
-Citus-1                       : name of SUT pods = bexhoma-sut-citus-1-1792373206
-Citus-1                       : name of SUT service = bexhoma-sut-citus-1-1792373206
+Citus-1                       : name of SUT pods = bexhoma-sut-citus-1-1792800739
+Citus-1                       : name of SUT service = bexhoma-sut-citus-1-1792800739
 Citus-1                       : name of worker pods = bexhoma-worker-citus-benchbase-tpcc-16
 Citus-1                       : name of worker service headless = bexhoma-worker-citus-benchbase-tpcc-16
-Loop pass                     : took 4.8s (1 kubectl calls 2.4s, 11 API requests 1.3s)
+Loop pass                     : took 4.4s (1 kubectl calls 2.0s, 11 API requests 1.4s)
 - waiting 30s -               : done
 Citus-1                       : waits for health check to succeed
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 16 API requests 1.5s)
+Loop pass                     : took 9.0s (0 kubectl calls 0.0s, 16 API requests 2.2s)
 - waiting 30s -               : done
 Citus-1                       : waits for health check to succeed
-Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 16 API requests 1.4s)
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 16 API requests 1.8s)
 - waiting 30s -               : done
 Citus-1                       : waits for health check to succeed
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 16 API requests 1.3s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 16 API requests 1.6s)
 - waiting 30s -               : done
-Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0']
-Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0']
-Citus-1                       : found 0 / 3 running workers (component worker)
-Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 12.7s (0 kubectl calls 0.0s, 19 API requests 2.2s)
+Citus-1                       : waits for health check to succeed
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 16 API requests 1.7s)
 - waiting 30s -               : done
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
 Citus-1                       : found 1 / 3 running workers (component worker)
 Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 17 API requests 1.5s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 21 API requests 2.0s)
 - waiting 30s -               : done
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
 Citus-1                       : found 1 / 3 running workers (component worker)
 Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 18 API requests 1.6s)
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 18 API requests 2.0s)
 - waiting 30s -               : done
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
 Citus-1                       : found 1 / 3 running workers (component worker)
 Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 1.7s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
 Citus-1                       : found 1 / 3 running workers (component worker)
 Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 18 API requests 1.6s)
-- waiting 30s -               : done
-Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
-Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1']
-Citus-1                       : found 1 / 3 running workers (component worker)
-Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 18 API requests 1.5s)
+Loop pass                     : took 3.8s (0 kubectl calls 0.0s, 18 API requests 2.8s)
 - waiting 30s -               : done
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : found 2 / 3 running workers (component worker)
 Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 20 API requests 1.8s)
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 20 API requests 2.5s)
 - waiting 30s -               : done
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : found 2 / 3 running workers (component worker)
 Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 20 API requests 1.8s)
+Loop pass                     : took 18.3s (0 kubectl calls 0.0s, 20 API requests 2.9s)
 - waiting 30s -               : done
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : found 2 / 3 running workers (component worker)
 Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 20 API requests 1.8s)
-- waiting 30s -               : done
-Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
-Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
-Citus-1                       : found 2 / 3 running workers (component worker)
-Citus-1                       : waits for health check of workers to succeed
-Loop pass                     : took 13.0s (0 kubectl calls 0.0s, 20 API requests 2.6s)
+Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 20 API requests 2.2s)
 - waiting 30s -               : done
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
@@ -122,43 +109,43 @@ Citus-1                       : worker bexhoma-worker-citus-benchbase-tpcc-16-0.
 Citus-1                       : worker bexhoma-worker-citus-benchbase-tpcc-16-1.bexhoma-worker-citus-benchbase-tpcc-16 attached
 Citus-1                       : worker bexhoma-worker-citus-benchbase-tpcc-16-2.bexhoma-worker-citus-benchbase-tpcc-16 attached
 Citus-1                       : is not loaded yet
-Citus-1                       : will start loading but not before 2026-10-19 01:35:58 (that is in 60 secs)
-Loop pass                     : took 14.5s (3 kubectl calls 5.7s, 27 API requests 2.6s)
+Citus-1                       : will start loading but not before 2026-10-24 00:20:35 (that is in 60 secs)
+Loop pass                     : took 16.1s (3 kubectl calls 7.7s, 27 API requests 3.2s)
 - waiting 30s -               : done
 Citus-1                       : is not loaded yet
-Citus-1                       : will start loading but not before 2026-10-19 01:35:58
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 13 API requests 1.2s)
+Citus-1                       : will start loading but not before 2026-10-24 00:20:35
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 13 API requests 1.5s)
 - waiting 30s -               : done
 Citus-1                       : is not loaded yet
-Citus-1                       : connect to pod bexhoma-sut-citus-1-1792373206-678f9b768d-wdc9f to load scripts
+Citus-1                       : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+Citus-1                       : connect to pod bexhoma-sut-citus-1-1792800739-8478fd5c45-vwcfd to load scripts
 Citus-1                       : start asynch loading scripts of type schema
+Citus-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
+Citus-1                       : Schema scripts done after 8s
 Citus-1                       : is loading
-Loop pass                     : took 14.3s (5 kubectl calls 9.0s, 31 API requests 4.2s)
+Loop pass                     : took 28.7s (8 kubectl calls 14.6s, 36 API requests 5.5s)
 - waiting 30s -               : done
 Citus-1                       : is loading
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 20 API requests 1.7s)
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 20 API requests 2.1s)
 - waiting 30s -               : done
 Citus-1                       : is loading
-Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 20 API requests 1.8s)
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 20 API requests 1.8s)
 - waiting 30s -               : done
 Citus-1                       : is loading
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 20 API requests 1.7s)
-- waiting 30s -               : done
-Citus-1                       : is loading
-Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 20 API requests 1.8s)
+Loop pass                     : took 3.8s (0 kubectl calls 0.0s, 20 API requests 2.0s)
 - waiting 30s -               : done
 Citus-1                       : showing loader times (benchbase-loader)
 Citus-1                       : generator times (start/end per pod and container) []
-Citus-1                       : loader times (start/end per pod and container) [(1792373775, 1792373929)]
-Citus-1                       : total times (start/end per pod and container) [(1792373775, 1792373929)]
-Citus-1                       : loader timespan (first to last [s]) = 154
-Citus-1                       : connect to pod bexhoma-sut-citus-1-1792373206-678f9b768d-wdc9f to load scripts
+Citus-1                       : loader times (start/end per pod and container) [(1792801268, 1792801375)]
+Citus-1                       : total times (start/end per pod and container) [(1792801268, 1792801375)]
+Citus-1                       : loader timespan (first to last [s]) = 107
+Citus-1                       : connect to pod bexhoma-sut-citus-1-1792800739-8478fd5c45-vwcfd to load scripts
 Citus-1                       : start asynch loading scripts of type index
 Citus-1                       : is loading
-Loop pass                     : took 31.1s (7 kubectl calls 13.3s, 27 API requests 3.7s)
+Loop pass                     : took 31.1s (10 kubectl calls 17.9s, 27 API requests 4.0s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Citus-1-1792373206 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Citus-1-1792800739 initialized to 1.
 Citus-1                       : benchmarks done 0 of 1. This will be client 1
 citus-1-1-1-1                 : start benchmarking (benchmark_run=1)
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
@@ -166,47 +153,47 @@ Citus-1                       : worker pods found (only stateful set pods): ['be
 Citus-1                       : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-16-0
 Citus-1                       : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-16-1
 Citus-1                       : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-16-2
-Citus-1                       : benchmarking results in folder C:\data\benchmarks/1792373206
-Citus-1                       : submitted benchmarker job in 30.0s (4 kubectl calls 7.3s, 70 API requests 21.9s)
-Loop pass                     : took 34.7s (5 kubectl calls 8.9s, 90 API requests 24.4s)
+Citus-1                       : benchmarking results in folder C:\data\benchmarks/1792800739
+Citus-1                       : submitted benchmarker job in 25.6s (4 kubectl calls 7.1s, 70 API requests 17.8s)
+Loop pass                     : took 30.6s (5 kubectl calls 8.7s, 90 API requests 20.7s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 20 API requests 2.5s)
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 20 API requests 2.3s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 18 API requests 1.6s)
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 2.1s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 18 API requests 1.6s)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 18 API requests 1.6s)
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
 Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 18 API requests 1.7s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 18 API requests 1.7s)
+Loop pass                     : took 12.7s (0 kubectl calls 0.0s, 18 API requests 2.5s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 9.9s (0 kubectl calls 0.0s, 18 API requests 2.0s)
+Loop pass                     : took 3.6s (0 kubectl calls 0.0s, 18 API requests 1.9s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 18 API requests 1.6s)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 18 API requests 1.7s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 18 API requests 1.8s)
 - waiting 30s -               : done
-citus-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1792373206/citus-1-1-1-1.config
+citus-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1792800739/citus-1-1-1-1.config
 citus-1-1-1-1                 : showing benchmarker times
-citus-1-1-1-1                 : benchmarker timespan job from 1792374026 to 1792374364
-citus-1-1-1-1                 : benchmarker timespan pods from 1792374029 to 1792374333
-citus-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 304
-citus-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1792374029, 1792374333)]
-citus-1-1-1-1                 : found and updated times {'benchmarker': [(1792374029, 1792374333)]}
-Loop pass                     : took 9.4s (4 kubectl calls 6.9s, 24 API requests 2.4s)
+citus-1-1-1-1                 : benchmarker timespan job from 1792801484 to 1792801827
+citus-1-1-1-1                 : benchmarker timespan pods from 1792801488 to 1792801791
+citus-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 303
+citus-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1792801488, 1792801791)]
+citus-1-1-1-1                 : found and updated times {'benchmarker': [(1792801488, 1792801791)]}
+Loop pass                     : took 7.3s (4 kubectl calls 4.5s, 24 API requests 2.7s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-Citus-1-1792373206 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-Citus-1-1792800739 initialized to 2.
 Citus-1                       : benchmarks done 0 of 1. This will be client 2
 citus-1-1-2-1                 : start benchmarking (benchmark_run=1)
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
@@ -214,54 +201,54 @@ Citus-1                       : worker pods found (only stateful set pods): ['be
 Citus-1                       : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-16-0
 Citus-1                       : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-16-1
 Citus-1                       : distributed system - get host info for worker bexhoma-worker-citus-benchbase-tpcc-16-2
-Citus-1                       : benchmarking results in folder C:\data\benchmarks/1792373206
-Citus-1                       : submitted benchmarker job in 13.3s (3 kubectl calls 4.8s, 29 API requests 8.3s)
-Loop pass                     : took 15.9s (3 kubectl calls 4.8s, 50 API requests 10.9s)
+Citus-1                       : benchmarking results in folder C:\data\benchmarks/1792800739
+Citus-1                       : submitted benchmarker job in 11.2s (3 kubectl calls 3.6s, 29 API requests 7.5s)
+Loop pass                     : took 13.7s (3 kubectl calls 3.6s, 50 API requests 10.0s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 21 API requests 2.1s)
+Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 21 API requests 2.6s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 1.7s)
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 19 API requests 1.8s)
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 19 API requests 2.2s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 1.6s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 19 API requests 2.1s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 13.0s (0 kubectl calls 0.0s, 19 API requests 2.2s)
+Loop pass                     : took 4.9s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 19 API requests 1.8s)
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 1.8s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 19 API requests 1.8s)
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 19 API requests 2.0s)
 - waiting 30s -               : done
 Citus-1                       : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 1.7s)
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.9s)
 - waiting 30s -               : done
-citus-1-1-2-1                 : wrote benchmarking_timespans to /data/benchmarks/1792373206/citus-1-1-2-1.config
+citus-1-1-2-1                 : wrote benchmarking_timespans to /data/benchmarks/1792800739/citus-1-1-2-1.config
 citus-1-1-2-1                 : showing benchmarker times
-citus-1-1-2-1                 : benchmarker timespan job from 1792374382 to 1792374730
-citus-1-1-2-1                 : benchmarker timespan pods from 1792374386 to 1792374688
-citus-1-1-2-1                 : benchmarker timespan (start to end single container [s]) = 302
-citus-1-1-2-1                 : benchmarker times (start/end per pod and container) = [(1792374386, 1792374688), (1792374386, 1792374688)]
-citus-1-1-2-1                 : found and updated times {'benchmarker': [(1792374386, 1792374688), (1792374386, 1792374688)]}
-Loop pass                     : took 17.4s (6 kubectl calls 13.3s, 28 API requests 2.9s)
+citus-1-1-2-1                 : benchmarker timespan job from 1792801842 to 1792802176
+citus-1-1-2-1                 : benchmarker timespan pods from 1792801845 to 1792802148
+citus-1-1-2-1                 : benchmarker timespan (start to end single container [s]) = 303
+citus-1-1-2-1                 : benchmarker times (start/end per pod and container) = [(1792801845, 1792802147), (1792801846, 1792802148)]
+citus-1-1-2-1                 : found and updated times {'benchmarker': [(1792801845, 1792802147), (1792801846, 1792802148)]}
+Loop pass                     : took 10.0s (6 kubectl calls 6.5s, 28 API requests 3.0s)
 Citus-1                       : can be stopped
-Citus-1                       : had 0 restarts at worker bexhoma-sut-citus-1-1792373206-678f9b768d-wdc9f
+Citus-1                       : had 0 restarts at worker bexhoma-sut-citus-1-1792800739-8478fd5c45-vwcfd
 Citus-1                       : worker pods found: ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : worker pods found (only stateful set pods): ['bexhoma-worker-citus-benchbase-tpcc-16-0', 'bexhoma-worker-citus-benchbase-tpcc-16-1', 'bexhoma-worker-citus-benchbase-tpcc-16-2']
 Citus-1                       : had 0 restarts at worker bexhoma-worker-citus-benchbase-tpcc-16-0
 Citus-1                       : had 0 restarts at worker bexhoma-worker-citus-benchbase-tpcc-16-1
 Citus-1                       : had 0 restarts at worker bexhoma-worker-citus-benchbase-tpcc-16-2
-Loop pass                     : took 21.5s (9 kubectl calls 17.0s, 39 API requests 3.9s)
-Experiment                    : ends at 2026-10-19 03:52:38.010531 (358713.2858114) - 1550.73s total
+Loop pass                     : took 15.5s (9 kubectl calls 11.1s, 39 API requests 4.1s)
+Experiment                    : ends at 2026-10-24 02:36:34.940934 (127537.7215479) - 1455.21s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -272,18 +259,20 @@ Result workflow complete
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1551s 
-* Code: 1792373206
+* Duration: 1456s 
+* Code: 1792800739
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.11.6.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.8.
   * Experiment is limited to DBMS ['Citus'].
   * Import is handled by 1 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
   * SUT is fixed to cl-worker36.
+  * Workers are fixed to cl-worker36, cl-worker37, cl-worker29.
   * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [1] threads, split into [1] pods.
   * Benchmarking is tested with [16] threads, split into [1, 2] pods.
@@ -301,56 +290,57 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:567750
-  * datadisk:43
+  * disk:958813
+  * datadisk:42
   * volume_size:1.8T
-  * volume_used:555G
+  * volume_used:937G
   * cpu_list:0-223
-  * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:540590800896
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-146-generic
-    * node:cl-worker24
-    * disk:149876
-    * datadisk:1493
-    * volume_size:219G
-    * volume_used:147G
-    * cpu_list:0-95
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+    * RAM:2164173172736
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-137-generic
+    * node:cl-worker36
+    * disk:958813
+    * datadisk:1494
+    * volume_size:1.8T
+    * volume_used:937G
+    * cpu_list:0-223
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 1
-    * RAM:1077382627328
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1060-nvidia
-    * node:cl-worker28
-    * disk:886573
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:472565
     * datadisk:1265
     * volume_size:1.8T
-    * volume_used:866G
-    * cpu_list:0-255
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+    * volume_used:462G
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 2
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:624976
+    * disk:352084
     * datadisk:1263
     * volume_size:879G
-    * volume_used:611G
+    * volume_used:344G
     * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 16.0 CPU, 256.0 GiB RAM requested in 4 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1792373206
+    * code:1792800739
     * BEXHOMA_REPLICAS:1
     * BEXHOMA_SHARDS:48
     * BEXHOMA_WORKERS:3
@@ -360,62 +350,63 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-137-generic
   * node:cl-worker36
-  * disk:567779
-  * datadisk:79
+  * disk:959643
+  * datadisk:78
   * volume_size:1.8T
-  * volume_used:555G
+  * volume_used:938G
   * cpu_list:0-223
-  * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:540590800896
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-146-generic
-    * node:cl-worker24
-    * disk:156794
-    * datadisk:2132
-    * volume_size:219G
-    * volume_used:154G
-    * cpu_list:0-95
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 1
-    * RAM:1077382627328
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
-    * host:6.8.0-1060-nvidia
-    * node:cl-worker28
-    * disk:887368
-    * datadisk:1945
+    * RAM:2164173172736
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-137-generic
+    * node:cl-worker36
+    * disk:959643
+    * datadisk:2275
     * volume_size:1.8T
-    * volume_used:867G
-    * cpu_list:0-255
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+    * volume_used:938G
+    * cpu_list:0-223
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:473122
+    * datadisk:1822
+    * volume_size:1.8T
+    * volume_used:463G
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 2
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:633410
-    * datadisk:1922
+    * disk:352640
+    * datadisk:1819
     * volume_size:879G
-    * volume_used:619G
+    * volume_used:345G
     * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'synchronous_commit=local', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 16.0 CPU, 256.0 GiB RAM requested in 4 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1792373206
+    * code:1792800739
     * BEXHOMA_REPLICAS:1
     * BEXHOMA_SHARDS:48
     * BEXHOMA_WORKERS:3
 
 ### SUT Container Restarts
-* bexhoma-sut-citus-1-1792373206-678f9b768d-wdc9f: 0
+* bexhoma-sut-citus-1-1792800739-8478fd5c45-vwcfd: 0
 * bexhoma-worker-citus-benchbase-tpcc-16-0: 0
 * bexhoma-worker-citus-benchbase-tpcc-16-1: 0
 * bexhoma-worker-citus-benchbase-tpcc-16-2: 0
@@ -438,7 +429,7 @@ Benchbase Workload tpcc SF=16
 
 |           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| Citus-1-1 |                1 |   16 |      171.00 |           4.00 |            0.00 |        154.00 |           13.00 |              1 |           1 |             | None           |             0 | False         |              336.84 | False               |
+| Citus-1-1 |                1 |   16 |      127.00 |           7.00 |            0.00 |        107.00 |           13.00 |              1 |           1 |             | None           |             0 | False         |              453.54 | False               |
 
 ### Benchmarking
 
@@ -446,20 +437,21 @@ Benchbase Workload tpcc SF=16
 
 | DBMS            | phase       | job           |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------|:------------|:--------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| citus-1-1-1-1-1 | citus-1-1-1 | citus-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        1544.06 |                     1537.09 |         0.00 |                                                      22350.00 |                                              10357.00 |
-| citus-1-1-2-1-1 | citus-1-1-2 | citus-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            3 |                         705.91 |                      700.05 |         0.00 |                                                      24536.00 |                                              11326.00 |
-| citus-1-1-2-1-2 | citus-1-1-2 | citus-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                         719.42 |                      713.72 |         0.00 |                                                      24463.00 |                                              11114.00 |
+| citus-1-1-1-1-1 | citus-1-1-1 | citus-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        1499.29 |                     1492.53 |         0.00 |                                                      27113.00 |                                              10664.00 |
+| citus-1-1-2-1-1 | citus-1-1-2 | citus-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            1 |                         640.07 |                      634.38 |         0.00 |                                                      30470.00 |                                              12487.00 |
+| citus-1-1-2-1-2 | citus-1-1-2 | citus-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            1 |                         628.28 |                      623.02 |         0.00 |                                                      30689.00 |                                              12720.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------|:------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| citus-1-1-1 | citus-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        1544.06 |                     1537.09 |         0.00 |                                                      22350.00 |                                              10357.00 |
-| citus-1-1-2 | citus-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            3 |                        1425.33 |                     1413.77 |         0.00 |                                                      24536.00 |                                              11220.00 |
+| citus-1-1-1 | citus-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        1499.29 |                     1492.53 |         0.00 |                                                      27113.00 |                                              10664.00 |
+| citus-1-1-2 | citus-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            2 |                        1268.35 |                     1257.40 |         0.00 |                                                      30689.00 |                                              12603.50 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned

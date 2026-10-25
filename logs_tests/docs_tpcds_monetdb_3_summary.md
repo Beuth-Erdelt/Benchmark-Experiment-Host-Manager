@@ -2,283 +2,334 @@
 
 ### Workload
 TPC-DS Queries SF=30
-    Type: tpcds
-    Duration: 1771s 
-    Code: 1772481803
-    This includes the reading queries of TPC-DS.
-    This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-    TPC-DS (SF=30) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q99.
-    All instances use the same query parameters.
-    Timeout per query is 14400.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.21.
-    System metrics are monitored by a cluster-wide installation.
-    Experiment is limited to DBMS ['MonetDB'].
-    Import is handled by 8 processes (pods).
-    Database is persisted to disk of type shared and size 1000Gi.
-    Loading is tested with [8] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1, 1, 3] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: tpcds
+* Duration: 3193s 
+* Code: 1792734284
+* This includes the reading queries of TPC-DS.
+* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+  * TPC-DS (SF=30) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q99.
+  * All instances use the same query parameters.
+  * Timeout per query is 14400.
+  * Data transfer volume per query is also measured.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.8.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['MonetDB'].
+  * Import is handled by 8 processes (pods).
+  * Database is persisted to disk of type nvme and size 2000Gi.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1, 1, 3] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * SUT requests 4 CPU and 900Gi RAM. RAM limit is 1024Gi.
 
 ### Connections
-MonetDB-BHT-8-1-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:2164173176832
-    CPU:INTEL(R) XEON(R) PLATINUM 8570
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:1191989
-    volume_size:1000G
-    volume_used:74G
-    cpu_list:0-223
-    requests_cpu:4
-    requests_memory:1024Gi
-    limits_memory:1024Gi
-    eval_parameters
-        code:1772481803
-MonetDB-BHT-8-2-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:2164173176832
-    CPU:INTEL(R) XEON(R) PLATINUM 8570
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:1191974
-    volume_size:1000G
-    volume_used:74G
-    cpu_list:0-223
-    requests_cpu:4
-    requests_memory:1024Gi
-    limits_memory:1024Gi
-    eval_parameters
-        code:1772481803
-MonetDB-BHT-8-3-1 uses docker image monetdb/monetdb:Dec2025
-    RAM:2164173176832
-    CPU:INTEL(R) XEON(R) PLATINUM 8570
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:1191977
-    volume_size:1000G
-    volume_used:74G
-    cpu_list:0-223
-    requests_cpu:4
-    requests_memory:1024Gi
-    limits_memory:1024Gi
-    eval_parameters
-        code:1772481803
-MonetDB-BHT-8-3-2 uses docker image monetdb/monetdb:Dec2025
-    RAM:2164173176832
-    CPU:INTEL(R) XEON(R) PLATINUM 8570
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:1191977
-    volume_size:1000G
-    volume_used:74G
-    cpu_list:0-223
-    requests_cpu:4
-    requests_memory:1024Gi
-    limits_memory:1024Gi
-    eval_parameters
-        code:1772481803
-MonetDB-BHT-8-3-3 uses docker image monetdb/monetdb:Dec2025
-    RAM:2164173176832
-    CPU:INTEL(R) XEON(R) PLATINUM 8570
-    Cores:224
-    host:6.8.0-90-generic
-    node:cl-worker36
-    disk:1191977
-    volume_size:1000G
-    volume_used:74G
-    cpu_list:0-223
-    requests_cpu:4
-    requests_memory:1024Gi
-    limits_memory:1024Gi
-    eval_parameters
-        code:1772481803
+* monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:920070
+  * datadisk:51000
+  * volume_size:2.0T
+  * volume_used:50G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1792734284
+* monetdb-1-1-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:920015
+  * datadisk:51000
+  * volume_size:2.0T
+  * volume_used:50G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1792734284
+* monetdb-1-1-3-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:920020
+  * datadisk:51000
+  * volume_size:2.0T
+  * volume_used:50G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1792734284
+* monetdb-1-1-3-1-2 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:920020
+  * datadisk:51000
+  * volume_size:2.0T
+  * volume_used:50G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1792734284
+* monetdb-1-1-3-1-3 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:920020
+  * datadisk:51000
+  * volume_size:2.0T
+  * volume_used:50G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1792734284
 
-### Errors (failed queries)
-            MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1  MonetDB-BHT-8-3-1  MonetDB-BHT-8-3-2  MonetDB-BHT-8-3-3
-TPC-DS Q90               True               True               True               True               True
-TPC-DS Q90
-MonetDB-BHT-8-3-2: numRun 1: : java.sql.SQLException: division by zero.
-MonetDB-BHT-8-3-3: numRun 1: : java.sql.SQLException: division by zero.
-MonetDB-BHT-8-1-1: numRun 1: : java.sql.SQLException: division by zero.
-MonetDB-BHT-8-2-1: numRun 1: : java.sql.SQLException: division by zero.
-MonetDB-BHT-8-3-1: numRun 1: : java.sql.SQLException: division by zero.
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MonetDB-1
 
-### Warnings (result mismatch)
-               MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1  MonetDB-BHT-8-3-1  MonetDB-BHT-8-3-2  MonetDB-BHT-8-3-3
-TPC-DS Q39a+b               True               True               True              False               True
-
-### Latency of Timer Execution [ms]
-DBMS           MonetDB-BHT-8-1-1  MonetDB-BHT-8-2-1  MonetDB-BHT-8-3-1  MonetDB-BHT-8-3-2  MonetDB-BHT-8-3-3
-TPC-DS Q1                2803.58              69.71              73.52              53.87              57.44
-TPC-DS Q2                8636.28             217.20             483.02             227.28             380.94
-TPC-DS Q3               19256.43             359.37             102.71             567.71             532.36
-TPC-DS Q4               47404.68            4054.92            6772.10            7032.01            7949.06
-TPC-DS Q5               63149.32            2945.17            1588.82            1526.41            1487.74
-TPC-DS Q6                1134.22             567.84             871.56             768.15             246.80
-TPC-DS Q7               33931.77             127.99             159.69             212.03             159.79
-TPC-DS Q8                 302.24              12.71              16.17              13.35              13.43
-TPC-DS Q9                6324.16             686.99            1364.37            1530.11            1122.17
-TPC-DS Q10             114502.85              47.49              33.14              40.01             121.52
-TPC-DS Q11               2380.92            1644.09            2159.83            2667.66            2052.77
-TPC-DS Q12                275.96             106.42             239.59             227.31             238.17
-TPC-DS Q13                388.99             258.05             435.11             288.15             212.08
-TPC-DS Q14a+b              75.95              27.79              25.32              25.43              28.13
-TPC-DS Q15                117.27             129.62             138.21             133.06             120.35
-TPC-DS Q16              49963.68           37998.73          112920.96           37736.07           65578.99
-TPC-DS Q17              12802.24            2308.06            4348.07            2677.53            4326.35
-TPC-DS Q18               4766.91             525.50             935.86            2412.95           16190.55
-TPC-DS Q19                306.45             173.01             434.99            7789.65           25793.19
-TPC-DS Q20                 97.40             125.16             139.32           14255.65             432.73
-TPC-DS Q21               7677.42             115.28             274.69            3808.50             136.01
-TPC-DS Q22               2931.76             277.51             270.36            1040.16             452.07
-TPC-DS Q23a+b             885.41             847.03             621.95           41871.17            1384.82
-TPC-DS Q24a+b            3350.83            3174.31            3831.31            4005.44            4162.98
-TPC-DS Q25                817.57             826.34             851.26            1044.04             801.04
-TPC-DS Q26                150.48             139.26             158.75             357.60             464.47
-TPC-DS Q27               6555.77             810.79             782.19             977.48            1066.21
-TPC-DS Q28               1734.06            1044.71             686.95            1240.80            1339.89
-TPC-DS Q29                747.44             756.86            1132.73            1366.01            1192.19
-TPC-DS Q30                191.30              25.81              33.17              82.61              11.07
-TPC-DS Q31               2563.32            1246.91            5385.29            1812.21            1066.69
-TPC-DS Q32                153.86             154.81             137.56             167.41             158.73
-TPC-DS Q33                 98.75              81.36              68.85             115.08              78.96
-TPC-DS Q34               1818.60             328.39             236.52             472.46             133.31
-TPC-DS Q35                 32.59              29.95              30.48              38.18              24.89
-TPC-DS Q36                841.94             565.84             574.60             766.96             565.11
-TPC-DS Q37                482.81             342.44             592.50             492.02             534.97
-TPC-DS Q38                  6.32               6.28               5.41               4.89               6.82
-TPC-DS Q39a+b              10.05               8.25               7.14              11.79              11.59
-TPC-DS Q40               2360.66             541.37             785.37             533.41             761.12
-TPC-DS Q41                  5.80               5.89              37.51               6.48              11.55
-TPC-DS Q42                 65.77              64.91              70.27              74.08             153.14
-TPC-DS Q43                280.81             225.06             267.67             296.65             401.79
-TPC-DS Q44              32553.06            5740.13             478.14            5390.60            4231.37
-TPC-DS Q45                145.31             142.65             146.96             145.81             176.72
-TPC-DS Q46                864.18             204.38             210.67             219.54             175.63
-TPC-DS Q47                184.57             137.03             165.87             147.89             197.19
-TPC-DS Q48                183.77             161.29             174.82             207.64             276.78
-TPC-DS Q49               8313.61            1093.56             903.92            1055.62            1131.00
-TPC-DS Q50                864.38             717.24             733.83             604.91             813.81
-TPC-DS Q51                 91.12              95.57             109.52             137.41             234.60
-TPC-DS Q52                 64.85              63.04             196.57             572.37             100.53
-TPC-DS Q53                273.91              90.94             306.55              86.12              98.07
-TPC-DS Q54                 98.67              98.26             302.96             124.66             125.56
-TPC-DS Q55                 70.61              48.51             184.94              87.97              72.03
-TPC-DS Q56               2037.01            2227.03            2069.12            2244.94            2396.48
-TPC-DS Q57                226.64             144.32             145.91             164.27             374.95
-TPC-DS Q58               1799.45             439.38             440.71             614.94             747.81
-TPC-DS Q59                991.79             768.36             964.88             895.87             728.67
-TPC-DS Q60               3212.06            3104.75            4233.68            3529.38            3355.82
-TPC-DS Q61                472.16             178.71             182.90             423.99             251.76
-TPC-DS Q62                361.57             248.52            1303.95             242.52             253.02
-TPC-DS Q63                125.88             103.57            2509.54             146.43              91.01
-TPC-DS Q64              10774.75            2188.13            2379.56            3400.74            3473.68
-TPC-DS Q65                201.24             202.42             188.75             201.48             163.07
-TPC-DS Q66               1821.07            1386.27            1579.40            2479.53            4026.82
-TPC-DS Q67                 19.43              17.27              16.10            1680.60              76.35
-TPC-DS Q68                286.35             252.43             242.65             179.01             221.11
-TPC-DS Q69                 39.58              34.79              32.38              49.93              30.61
-TPC-DS Q70                540.12              12.50               6.93              14.34               8.28
-TPC-DS Q71                168.06             135.65              94.49             107.96             132.17
-TPC-DS Q72               1688.20             631.94             532.54             897.29             680.48
-TPC-DS Q73                108.79              97.90             105.01             158.49             236.45
-TPC-DS Q74                689.27             476.11             381.40             940.41             803.10
-TPC-DS Q75               6573.59            3550.55            5712.90            3882.19            4518.24
-TPC-DS Q76              20834.45            5040.30             269.67            5219.21            5008.92
-TPC-DS Q77                740.88             710.68             545.66             788.12             656.38
-TPC-DS Q78               7206.13            2682.08            5491.52            5602.49            5649.14
-TPC-DS Q79                139.08             148.61             154.51             160.40             237.46
-TPC-DS Q80               6120.70            5939.55            7249.11            8925.97            9619.09
-TPC-DS Q81                182.25              28.04              17.52              21.52              17.28
-TPC-DS Q82                453.41             429.05             730.50             361.56             378.46
-TPC-DS Q83                 27.07              20.55              49.51              23.09              18.27
-TPC-DS Q84                 53.71              33.24              27.15              77.00              26.38
-TPC-DS Q85                420.64             371.79             373.49             597.47             738.88
-TPC-DS Q86                185.09             202.03             178.51             441.08             253.73
-TPC-DS Q87                  6.67               6.64               4.94              11.68               8.14
-TPC-DS Q88                756.03             654.05             734.00             979.32            1116.13
-TPC-DS Q89                189.44             149.20             151.75             179.42             223.14
-TPC-DS Q91                171.14              31.49             478.53              86.20              79.90
-TPC-DS Q92                125.06             137.27             121.95             134.68             212.19
-TPC-DS Q93               1869.49            1905.25            4202.07            3808.53            3754.87
-TPC-DS Q94              35218.64           33696.25          129556.76           35459.53          163957.84
-TPC-DS Q95              38308.70           37077.34           61195.83           49604.13           56100.01
-TPC-DS Q96                 41.19              34.42              27.86           13180.38              58.11
-TPC-DS Q97                 69.07              47.53              51.63           21225.57              69.97
-TPC-DS Q98                134.70              99.39             120.01           28621.51              96.24
-TPC-DS Q99                277.76             295.99             266.47           15876.60             255.60
-
-### Loading [s]
-                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MonetDB-BHT-8-1-1           1.0          257.0        11.0     1070.0    1376.0
-MonetDB-BHT-8-2-1           1.0          257.0        11.0     1070.0    1376.0
-MonetDB-BHT-8-3-1           1.0          257.0        11.0     1070.0    1376.0
-MonetDB-BHT-8-3-2           1.0          257.0        11.0     1070.0    1376.0
-MonetDB-BHT-8-3-3           1.0          257.0        11.0     1070.0    1376.0
-
-### Geometric Mean of Medians of Timer Run [s]
-                   Geo Times [s]
-DBMS                            
-MonetDB-BHT-8-1-1           0.64
-MonetDB-BHT-8-2-1           0.26
-MonetDB-BHT-8-3-1           0.33
-MonetDB-BHT-8-3-2           0.53
-MonetDB-BHT-8-3-3           0.37
-
-### Power@Size ((3600*SF)/(geo times))
-                   Power@Size [~Q/h]
-DBMS                                
-MonetDB-BHT-8-1-1          168770.19
-MonetDB-BHT-8-2-1          411294.30
-MonetDB-BHT-8-3-1          332405.14
-MonetDB-BHT-8-3-2          204235.70
-MonetDB-BHT-8-3-3          290573.47
-
-### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))
-                                                time [s]  count    SF  Throughput@Size
-DBMS            SF   num_experiment num_client                                        
-MonetDB-BHT-8-1 30.0 1              1                605      1  30.0         17494.21
-MonetDB-BHT-8-2 30.0 1              2                189      1  30.0         56000.00
-MonetDB-BHT-8-3 30.0 1              3                436      3  30.0         72825.69
+### SUT Container Restarts
+* bexhoma-sut-monetdb-1-1792734284-5d4d46898d-vgb5m: 0
 
 ### Workflow
-                         orig_name    SF  pods  num_experiment  num_client  benchmark_start  benchmark_end
-MonetDB-BHT-8-1-1  MonetDB-BHT-8-1  30.0     8               1           1       1772481970     1772482575
-MonetDB-BHT-8-2-1  MonetDB-BHT-8-2  30.0     8               1           2       1772482728     1772482917
-MonetDB-BHT-8-3-1  MonetDB-BHT-8-3  30.0     8               1           3       1772483055     1772483456
-MonetDB-BHT-8-3-2  MonetDB-BHT-8-3  30.0     8               1           3       1772483055     1772483429
-MonetDB-BHT-8-3-3  MonetDB-BHT-8-3  30.0     8               1           3       1772483055     1772483491
 
 #### Actual
-DBMS MonetDB-BHT-8 - Pods [[1, 1, 3]]
+
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 2: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 3: tpcds (3 pods)
 
 #### Planned
-DBMS MonetDB-BHT-8 - Pods [[1, 1, 3]]
 
-### Execution - SUT
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1     9057.51    72.35        177.71               177.80
-MonetDB-BHT-8-2     2853.24    22.14         47.24                47.32
-MonetDB-BHT-8-3    15960.43    72.12        263.95               264.03
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 2: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 3: tpcds (3 pods)
 
-### Execution - Benchmarker
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MonetDB-BHT-8-1       11.90     0.16          0.30                  0.3
-MonetDB-BHT-8-2       11.90     0.01          0.30                  0.3
-MonetDB-BHT-8-3       31.49     0.57          0.29                  0.3
+### Loading
+
+#### Per Run
+
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MonetDB-1-1 |                1 |   30 |      688.00 |           4.00 |            1.00 |        517.00 |          147.00 |              0 |           0 |             | None           |             0 | False         |              156.98 | True                |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
+|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
+| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        647 |            0.92 |           122585.57 |          16525.50 |          -1 | monetdb-1-1-1-1-1 |
+| monetdb-1-1-2-1-1 | MonetDB-1       | monetdb-1-1-2 | monetdb-1-1-2-1 |                1 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        558 |            0.64 |           179040.49 |          19161.29 |          -1 | monetdb-1-1-2-1-1 |
+| monetdb-1-1-3-1-1 | MonetDB-1       | monetdb-1-1-3 | monetdb-1-1-3-1 |                1 |        3 |               1 |           1 | 30.00 |               99 |                  99 |       1593 |            0.85 |           131938.85 |           6711.86 |          -1 | monetdb-1-1-3-1-1 |
+| monetdb-1-1-3-1-2 | MonetDB-1       | monetdb-1-1-3 | monetdb-1-1-3-1 |                1 |        3 |               1 |           1 | 30.00 |               99 |                  99 |        858 |            1.07 |           104503.48 |          12461.54 |          -1 | monetdb-1-1-3-1-2 |
+| monetdb-1-1-3-1-3 | MonetDB-1       | monetdb-1-1-3 | monetdb-1-1-3-1 |                1 |        3 |               1 |           1 | 30.00 |               99 |                  99 |       1622 |            0.85 |           133354.40 |           6591.86 |          -1 | monetdb-1-1-3-1-3 |
+
+#### Per Phase
+
+|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        647 |            0.92 |           122585.57 |          16525.50 |          -1 |
+| monetdb-1-1-2 | monetdb-1-1-2 |                1 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        558 |            0.64 |           179040.49 |          19161.29 |          -1 |
+| monetdb-1-1-3 | monetdb-1-1-3 |                1 |        3 |               1 |           3 | 30.00 |              297 |                 297 |       1622 |            0.92 |           122509.64 |          19775.59 |          -1 |
+
+#### Query Completion per Phase
+
+| phase         |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:--------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| monetdb-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| monetdb-1-1-2 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| monetdb-1-1-3 |      3 | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3          | 3/3          | 3/3          | 3/3          | 3/3             | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3             | 3/3             | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3             | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### Latency of Timer Execution [ms]
+| Queries       |   monetdb-1-1-1-1-1 |   monetdb-1-1-2-1-1 |   monetdb-1-1-3-1-1 |   monetdb-1-1-3-1-2 |   monetdb-1-1-3-1-3 |
+|:--------------|--------------------:|--------------------:|--------------------:|--------------------:|--------------------:|
+| TPC-DS Q1     |             1597.41 |              251.28 |              404.99 |              391.14 |              822.32 |
+| TPC-DS Q2     |             3707.42 |             2260.92 |             1879.92 |             2687.72 |             2412.33 |
+| TPC-DS Q3     |             6772.81 |              141.92 |              854.65 |              214.21 |              709.42 |
+| TPC-DS Q4     |            23754.43 |            14319.85 |            19912.89 |            15703.58 |            16029.96 |
+| TPC-DS Q5     |            19987.04 |             1270.47 |             1577.24 |             1636.59 |             1726.09 |
+| TPC-DS Q6     |              568.43 |              290.26 |             1034.23 |              452.05 |             1443.57 |
+| TPC-DS Q7     |             5345.23 |              172.40 |              193.94 |              201.15 |              179.39 |
+| TPC-DS Q8     |             3160.88 |              206.85 |              381.50 |              221.28 |              262.27 |
+| TPC-DS Q9     |              519.26 |             1126.27 |              617.15 |             1074.57 |             1312.71 |
+| TPC-DS Q10    |            22224.34 |              124.98 |              131.19 |              115.88 |              130.95 |
+| TPC-DS Q11    |             6718.46 |             7903.05 |             8195.27 |             7645.84 |             6962.59 |
+| TPC-DS Q12    |              253.15 |             3352.91 |             2025.47 |              871.86 |              124.42 |
+| TPC-DS Q13    |              357.60 |             1631.91 |             2022.81 |             2103.34 |              314.28 |
+| TPC-DS Q14a+b |            31255.23 |            30565.85 |            31390.51 |            33553.53 |            33649.77 |
+| TPC-DS Q15    |              174.35 |              861.33 |              129.99 |             2058.16 |              157.28 |
+| TPC-DS Q16    |            47109.07 |            40383.85 |            94729.66 |            39797.17 |            64914.01 |
+| TPC-DS Q17    |             4887.11 |             1879.82 |             2148.09 |             4823.26 |             5042.48 |
+| TPC-DS Q18    |             1401.98 |             1635.64 |             5170.08 |             3730.30 |             8638.36 |
+| TPC-DS Q19    |              180.86 |             1446.97 |              220.99 |            14320.56 |            19996.59 |
+| TPC-DS Q20    |              150.59 |              160.16 |              896.22 |             2053.83 |              231.76 |
+| TPC-DS Q21    |             2491.03 |              103.63 |              106.47 |            25459.22 |              168.84 |
+| TPC-DS Q22    |             1265.09 |             1078.98 |             1142.07 |             5974.90 |             1308.31 |
+| TPC-DS Q23a+b |            34702.70 |            43920.03 |            45274.45 |            38201.30 |            45535.33 |
+| TPC-DS Q24a+b |            39306.70 |            39127.48 |            56509.24 |            63603.04 |            56018.98 |
+| TPC-DS Q25    |             2293.80 |             2287.50 |             2609.15 |             8266.52 |             7975.78 |
+| TPC-DS Q26    |             1495.54 |              168.27 |             1924.45 |             1524.81 |              178.94 |
+| TPC-DS Q27    |              928.45 |              961.71 |             1813.78 |             1579.50 |             1772.69 |
+| TPC-DS Q28    |              630.36 |              529.80 |             1633.00 |             1236.28 |             2726.69 |
+| TPC-DS Q29    |             2192.55 |             3660.81 |             2379.03 |             2856.47 |             2494.39 |
+| TPC-DS Q30    |               96.68 |               71.31 |               96.02 |              325.10 |               70.55 |
+| TPC-DS Q31    |             1936.59 |             1697.98 |             1866.34 |             2372.63 |             2384.68 |
+| TPC-DS Q32    |              163.42 |              179.10 |              189.76 |              309.37 |              535.14 |
+| TPC-DS Q33    |              114.71 |               91.98 |               99.80 |             1202.56 |              120.20 |
+| TPC-DS Q34    |              104.68 |              100.89 |              105.98 |              231.79 |              187.13 |
+| TPC-DS Q35    |              801.26 |              860.18 |              875.89 |              941.72 |              802.74 |
+| TPC-DS Q36    |             1517.66 |             1618.78 |             1675.22 |             1616.22 |             1668.06 |
+| TPC-DS Q37    |              416.09 |              433.76 |              348.03 |              439.08 |              385.13 |
+| TPC-DS Q38    |             2564.39 |             2138.27 |             2808.87 |             2354.71 |             2330.16 |
+| TPC-DS Q39a+b |             1257.66 |             1251.34 |             1439.76 |             1370.24 |             1349.31 |
+| TPC-DS Q40    |             1574.61 |              898.16 |             1435.25 |             2468.94 |              936.77 |
+| TPC-DS Q41    |                6.48 |                5.70 |                6.23 |                8.78 |                5.44 |
+| TPC-DS Q42    |              105.77 |               70.87 |               75.94 |              128.40 |               82.09 |
+| TPC-DS Q43    |              304.76 |              289.27 |              441.06 |              476.27 |             1957.95 |
+| TPC-DS Q44    |             7993.69 |              500.65 |              477.67 |              704.59 |              492.90 |
+| TPC-DS Q45    |             1163.79 |              140.73 |              166.50 |              272.89 |              167.55 |
+| TPC-DS Q46    |              202.88 |              195.13 |              249.67 |              197.53 |              250.23 |
+| TPC-DS Q47    |              788.13 |              781.04 |              863.12 |             1139.08 |             1279.02 |
+| TPC-DS Q48    |              212.26 |              209.12 |              228.71 |              222.95 |              279.57 |
+| TPC-DS Q49    |             4522.60 |             1026.49 |             1017.17 |             1252.06 |             2516.64 |
+| TPC-DS Q50    |              525.46 |              512.52 |              665.55 |              549.74 |              626.30 |
+| TPC-DS Q51    |             2312.30 |             2343.64 |             2649.19 |             2580.46 |             2830.79 |
+| TPC-DS Q52    |               97.21 |              100.47 |              111.15 |               96.81 |               80.62 |
+| TPC-DS Q53    |               76.47 |               84.27 |               83.36 |               82.08 |               87.38 |
+| TPC-DS Q54    |               88.19 |               93.21 |               94.24 |              107.50 |               97.27 |
+| TPC-DS Q55    |               89.64 |               84.77 |              100.37 |              105.77 |               59.96 |
+| TPC-DS Q56    |               94.12 |               88.20 |              124.33 |              113.96 |              111.50 |
+| TPC-DS Q57    |              136.61 |              132.48 |              154.04 |              203.96 |              146.98 |
+| TPC-DS Q58    |             6275.82 |             4844.48 |             6122.77 |             4656.50 |             4337.37 |
+| TPC-DS Q59    |             1096.81 |             1135.85 |              779.93 |              907.32 |              889.70 |
+| TPC-DS Q60    |              119.82 |              120.68 |              123.12 |              120.19 |              106.47 |
+| TPC-DS Q61    |              160.01 |              164.13 |              203.18 |              637.47 |              482.92 |
+| TPC-DS Q62    |              252.32 |              245.55 |             1363.24 |              362.28 |              280.69 |
+| TPC-DS Q63    |               84.50 |               92.80 |               90.98 |              101.44 |               81.69 |
+| TPC-DS Q64    |             3941.21 |             3911.14 |             4538.23 |             5817.23 |             4601.79 |
+| TPC-DS Q65    |             1578.48 |             1040.79 |             2855.89 |             1306.40 |             1497.94 |
+| TPC-DS Q66    |             1917.58 |             1746.09 |             4981.09 |             7586.23 |             5697.03 |
+| TPC-DS Q67    |             4593.13 |             4578.33 |             4911.89 |             5041.24 |             5558.25 |
+| TPC-DS Q68    |              366.44 |              377.70 |              214.40 |              246.33 |              325.01 |
+| TPC-DS Q69    |               98.36 |               72.69 |               61.09 |               83.02 |               66.80 |
+| TPC-DS Q70    |             1876.16 |             1933.56 |             1801.66 |             1925.06 |             2148.35 |
+| TPC-DS Q71    |              227.91 |              139.25 |              138.50 |              121.90 |              196.15 |
+| TPC-DS Q72    |             1174.61 |             1132.73 |             1367.48 |             1139.57 |             1124.10 |
+| TPC-DS Q73    |               73.54 |               81.58 |             2086.61 |               80.17 |               71.95 |
+| TPC-DS Q74    |             1795.04 |             1703.94 |             3794.04 |             4700.31 |             3884.41 |
+| TPC-DS Q75    |             5484.80 |             5588.02 |             6333.89 |             6355.40 |             6449.30 |
+| TPC-DS Q76    |             3013.77 |              167.59 |              160.84 |              280.11 |              150.38 |
+| TPC-DS Q77    |              738.02 |              769.26 |             1315.09 |             1186.98 |              768.25 |
+| TPC-DS Q78    |            12295.69 |            12004.23 |            14595.10 |            15458.00 |            14822.52 |
+| TPC-DS Q79    |              209.00 |              194.82 |              190.76 |              204.68 |              467.71 |
+| TPC-DS Q80    |             7559.98 |             7498.00 |             9188.28 |             9447.77 |             9630.26 |
+| TPC-DS Q81    |              146.74 |              146.76 |              127.63 |              205.42 |              143.58 |
+| TPC-DS Q82    |              400.27 |              436.25 |              402.86 |              383.05 |             1422.24 |
+| TPC-DS Q83    |              284.68 |               57.69 |               53.51 |               47.74 |              159.11 |
+| TPC-DS Q84    |              399.14 |               34.63 |               31.99 |               33.84 |               31.33 |
+| TPC-DS Q85    |              929.36 |              874.20 |              910.02 |              804.83 |              899.82 |
+| TPC-DS Q86    |              392.11 |              383.98 |              403.86 |              380.20 |              367.24 |
+| TPC-DS Q87    |             2620.05 |             2421.52 |             2719.28 |             2552.54 |             2683.82 |
+| TPC-DS Q88    |              498.57 |              503.05 |              565.12 |              540.29 |             2451.31 |
+| TPC-DS Q89    |              121.09 |              125.95 |              130.28 |              121.62 |              110.20 |
+| TPC-DS Q90    |               72.15 |               65.38 |               84.01 |              146.56 |               67.96 |
+| TPC-DS Q91    |               44.25 |               33.64 |               45.43 |               31.54 |               40.81 |
+| TPC-DS Q92    |              170.27 |              160.88 |              807.21 |              185.87 |              520.18 |
+| TPC-DS Q93    |             1941.84 |             1953.46 |             2735.78 |             2683.60 |             3137.62 |
+| TPC-DS Q94    |            36065.55 |            37270.07 |           160860.79 |            35764.44 |           192940.43 |
+| TPC-DS Q95    |           217497.11 |           206215.32 |          1017826.53 |           378028.73 |          1017694.09 |
+| TPC-DS Q96    |               36.40 |               38.36 |              567.50 |            10280.38 |               51.25 |
+| TPC-DS Q97    |             3343.61 |             4809.53 |             4884.06 |            15769.23 |             2963.11 |
+| TPC-DS Q98    |              160.54 |              146.41 |              441.07 |             6505.34 |              155.57 |
+| TPC-DS Q99    |             2186.10 |              230.62 |              379.66 |             5125.89 |              237.60 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
+|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
+| monetdb-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+| monetdb-1-1-3-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+| monetdb-1-1-3-1-2 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+| monetdb-1-1-3-1-3 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+
+### Monitoring
+
+### Benchmarking phase: SUT deployment
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| monetdb-1-1-1-1 |      9257.78 |    121.48 |         986.95 |                986.96 |
+| monetdb-1-1-2-1 |      9525.96 |    115.80 |         940.81 |                940.82 |
+| monetdb-1-1-3-1 |     27387.42 |    214.25 |        1022.34 |               1024.00 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| monetdb-1-1-1-1 |        28.61 |      0.38 |           0.40 |                  0.40 |
+| monetdb-1-1-2-1 |        31.46 |      0.40 |           0.38 |                  0.38 |
+| monetdb-1-1-3-1 |        99.95 |      1.40 |           0.41 |                  0.42 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection monetdb-1-1-2-1 (bexhoma-metrics-monetdb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection monetdb-1-1-2-1 (bexhoma-metrics-monetdb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection monetdb-1-1-3-1 (bexhoma-metrics-monetdb-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection monetdb-1-1-3-1 (bexhoma-metrics-monetdb-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST failed: SQL errors
-TEST failed: SQL warnings (result mismatch)
-TEST passed: Workflow as planned
-TEST passed: Execution SUT contains no 0 or NaN in CPU [CPUs]
-TEST passed: Execution Benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MonetDB-1)
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST failed: SQL warnings (result mismatch)
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned

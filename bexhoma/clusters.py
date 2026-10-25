@@ -3342,7 +3342,7 @@ class Kubernetes():
             while attempt < 10:
                 stdout = self.pod_description(pod_name, container)
                 if stdout:
-                    with open(filename_log, "w") as f:
+                    with open(filename_log, "w", encoding='utf-8') as f:
                         f.write(stdout)
                     return
                 else:
@@ -3372,7 +3372,7 @@ class Kubernetes():
             while attempt < 10:
                 stdout = self.job_description(jobname)
                 if stdout:
-                    with open(filename_log, "w") as f:
+                    with open(filename_log, "w", encoding='utf-8') as f:
                         f.write(stdout)
                     return
                 else:

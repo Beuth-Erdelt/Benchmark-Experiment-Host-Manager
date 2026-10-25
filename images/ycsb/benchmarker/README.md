@@ -62,7 +62,7 @@ drivers, and the workload template placeholder reference.
 
 ### YCSB workload parameters
 
-* `YCSB_WORKLOAD`: YCSB workload name — `a`, `b`, `c`, `c2` (C with uniform request distribution), `d`, `e`, or `f`.
+* `YCSB_WORKLOAD`: YCSB workload name — `a`, `a2` (A with uniform request distribution), `b`, `c`, `c2` (C with uniform request distribution), `d`, `e`, or `f`.
 * `YCSB_ROWS`: Total number of records in the dataset. Defaults to `SF × 100,000`.
 * `YCSB_OPERATIONS`: Number of operations per pod. Defaults to `SF × 100,000`.
 * `YCSB_THREADCOUNT`: YCSB workload property `threadcount`.

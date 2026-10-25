@@ -458,7 +458,7 @@ workloads:
           template, so peak-resource validation for a pinned benchmarking node
           must count them rather than the SUT limits"
     out_of_scope:
-      systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB]
+      systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB, ClickHouse, ClickHouseCluster]
       why: "the full tpch workload also supports these systems. They are trimmed
         out here to keep this contract focused on the PostgreSQL/PgDuckDB pair
         chosen for the prototype, so an experiment.yml naming any of them fails
@@ -692,9 +692,10 @@ workloads:
     params:
       workload:
         type: enum
-        values: [a, b, c, c2, d, e, f]
+        values: [a, a2, b, c, c2, d, e, f]
         required: true
-        why: "YCSB access-pattern mix: a=read/update 50/50, b=read-mostly 95/5,
+        why: "YCSB access-pattern mix: a=read/update 50/50, a2=read/update 50/50 with
+          uniform request distribution, b=read-mostly 95/5,
           c=read-only, c2=read-only with uniform request distribution (no hot
           set that the cache absorbs), d=read-latest (insert + read newest), e=short scans,
           f=read-modify-write. Sets YCSB_WORKLOAD."

@@ -186,7 +186,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly clus
 # Cluster of 3 Dragonfly instances with a changed setting (--set)
 bexhoma ycsb `
   -dbms Dragonfly               <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records in millions) #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -214,7 +214,7 @@ bexhoma ycsb `
   --set "statefulset[bexhoma-worker].container[dbms].env.DFLY_proactor_threads=8" <# 8 io threads per worker instead of 16 (template) #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly_6.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=1  nbp=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=10  nbp=1"
 
 
 ###########################################

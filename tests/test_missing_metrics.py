@@ -161,6 +161,44 @@ class CollectMissingMetricsTest(unittest.TestCase):
         })
         self.assertTrue(all(entry.expected == "" for entry in without_interval))
 
+    def test_gaps_of_short_lived_job_pods_are_expected(self) -> None:
+        """A loader inside a long loading window counts by the time its pods ran (scoped: 36 s, rate: 60 s)."""
+        def connection(name: str, sensor: list) -> dict:
+            return {"name": name, "monitoring": {}, "hostsystem": {"loading_timespans": {"sensor": sensor}}}
+        connections = [
+            connection("pg-1", [(1000, 1017), (1001, 1018)]),  # 18 s
+            connection("pg-2", [(1000, 1040)]),                # 40 s
+            connection("pg-3", []),                            # no times stored
+        ]
+        def gap(title: str, query: str, name: str) -> str:
+            return f"ERROR:root:Metrics missing for {title} ({query}) for connection {name}: {_URL}"
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            (result_dir / "connections.config").write_text(repr(connections))
+            for name in ("pg-1", "pg-2", "pg-3"):
+                lines = [gap("Memory", "sum(container_memory_working_set_bytes{})", name),
+                         gap("CPU Utilization", "sum(irate(container_cpu_usage_seconds_total{}[5m]))", name)]
+                for component in ("loader", "loading"):
+                    (result_dir / missing_metrics.fetch_log_name(name, component)).write_text(
+                        "### python metrics.py\nInterval length 153s\n" + "\n".join(lines) + "\n")
+            missing = missing_metrics.collect_missing_metrics(result_dir, scrape_interval=30, jobs_scoped=True)
+        expected = {(entry.connection, entry.component, entry.title): entry.expected for entry in missing}
+        job = missing_metrics.EXPECTED_SHORT_JOB
+        self.assertEqual(expected, {
+            ("pg-1", "loader", "Memory"): job,              # 18 s < 36 s
+            ("pg-1", "loader", "CPU Utilization"): job,     # 18 s < 60 s
+            ("pg-2", "loader", "Memory"): "",               # 40 s: one scrape landed
+            ("pg-2", "loader", "CPU Utilization"): job,     # 40 s < 60 s: irate needs two
+            ("pg-3", "loader", "Memory"): "",               # window counts: 153 s
+            ("pg-3", "loader", "CPU Utilization"): "",
+            ("pg-1", "loading", "Memory"): "",              # the SUT runs all the window
+            ("pg-1", "loading", "CPU Utilization"): "",
+            ("pg-2", "loading", "Memory"): "",
+            ("pg-2", "loading", "CPU Utilization"): "",
+            ("pg-3", "loading", "Memory"): "",
+            ("pg-3", "loading", "CPU Utilization"): "",
+        })
+
     def test_fetch_window(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             log = Path(tmp_dir) / "bexhoma-metrics-pg-1-loader.log"

@@ -32,7 +32,7 @@ Both images are built from a `Dockerfile_template`; the `{version}` placeholder 
 replaced by `create_Dockerfiles.py` with the target DBMSBenchmarker Git tag.
 
 **Supported DBMS (JDBC drivers bundled):** PostgreSQL, MySQL, MariaDB, MonetDB,
-SingleStore, YugabyteDB.
+SingleStore, YugabyteDB, ClickHouse.
 
 ---
 
@@ -67,6 +67,7 @@ shared persistent volume, then one or more loader pods import those files into t
 | [`tpcds/loader_mysql/`](tpcds/loader_mysql/) | Loader | Loads TPC-DS flat files into MySQL. |
 | [`tpcds/loader_mariadb/`](tpcds/loader_mariadb/) | Loader | Loads TPC-DS flat files into MariaDB. |
 | [`tpcds/loader_monetdb/`](tpcds/loader_monetdb/) | Loader | Loads TPC-DS flat files into MonetDB. |
+| [`tpcds/loader_clickhouse/`](tpcds/loader_clickhouse/) | Loader | Loads TPC-DS flat files into ClickHouse (also ClickHouseCluster) via `clickhouse-client INSERT ... FORMAT CSV`. |
 
 The `dsdgen` binary and `tpcds.idx` index file must be present in
 `tpcds/generator/` before building the image (not included due to TPC licensing).
@@ -80,6 +81,7 @@ The `dsdgen` binary and `tpcds.idx` index file must be present in
 | [`tpch/loader_mysql/`](tpch/loader_mysql/) | Loader | Loads TPC-H flat files into MySQL. |
 | [`tpch/loader_mariadb/`](tpch/loader_mariadb/) | Loader | Loads TPC-H flat files into MariaDB. |
 | [`tpch/loader_monetdb/`](tpch/loader_monetdb/) | Loader | Loads TPC-H flat files into MonetDB. |
+| [`tpch/loader_clickhouse/`](tpch/loader_clickhouse/) | Loader | Loads TPC-H flat files into ClickHouse (also ClickHouseCluster) via `clickhouse-client INSERT ... FORMAT CSV`. |
 
 The `dbgen` binary and `dists.dss` file must be present in `tpch/generator/`
 before building the image (not included due to TPC licensing).

@@ -24,7 +24,7 @@ import pandas as pd
 from bexhoma import missing_metrics
 from bexhoma.evaluators.base import EvaluatorBase
 from bexhoma.experiments.base import ExperimentBase
-from bexhoma.monitoring_math import min_measurable_window
+from bexhoma.monitoring_math import job_lifetime, min_measurable_window
 
 __all__ = []
 
@@ -54,13 +54,40 @@ class MinMeasurableWindowTest(unittest.TestCase):
         self.assertEqual(min_measurable_window('loader', 30), 60)
         self.assertEqual(min_measurable_window('benchmarker', 30, jobs_scoped=True), 36)
 
+    def test_rate_of_a_job_needs_two_scrapes(self) -> None:
+        self.assertEqual(min_measurable_window('loader', 30, jobs_scoped=True, rate=True), 60)
+        self.assertEqual(min_measurable_window('loading', 30, rate=True), 36)
+
+
+class JobLifetimeTest(unittest.TestCase):
+    """job_lifetime() spans a job's containers, from the connection's hostsystem."""
+
+    connections = [{'name': 'pg-1-1-1-1', 'hostsystem': {
+        'loading_timespans': {'sensor': [(100, 117), (101, 118)], 'datagenerator': []},
+        'benchmarking_timespans': {'benchmarker': [(200, 500)]}}}]
+
+    def test_per_component(self) -> None:
+        self.assertEqual(job_lifetime(self.connections, 'pg-1-1-1-1', 'loader'), 18)
+        self.assertEqual(job_lifetime(self.connections, 'pg-1-1-1-1', 'benchmarker'), 300)
+        self.assertIsNone(job_lifetime(self.connections, 'pg-1-1-1-1', 'datagenerator'))  # no pods
+        self.assertIsNone(job_lifetime(self.connections, 'pg-1-1-1-1', 'loading'))        # no job
+
+    def test_benchmarker_name_with_client(self) -> None:
+        self.assertEqual(job_lifetime(self.connections, 'pg-1-1-1-1-1', 'benchmarker'), 300)
+
+    def test_unknown_connection(self) -> None:
+        self.assertIsNone(job_lifetime(self.connections, 'mysql-1-1-1-1', 'loader'))
+        self.assertIsNone(job_lifetime([{'name': 'pg-1-1-1-1'}], 'pg-1-1-1-1', 'loader'))
+
 
 class ShortPhaseSummaryTest(unittest.TestCase):
     """show_summary_monitoring(): n/a for short phases, test over the measurable ones."""
 
-    def summary(self, component: str, windows: dict, cpu: dict, scrape_interval=30):
+    def summary(self, component: str, windows: dict, cpu: dict, scrape_interval=30, connections=None):
         tmp_dir = tempfile.TemporaryDirectory()
         self.addCleanup(tmp_dir.cleanup)
+        if connections is not None:
+            (Path(tmp_dir.name) / 'connections.config').write_text(repr(connections))
         for connection, window in windows.items():
             text = "### python metrics.py\n" + (f"Interval length {window}s\n" if window is not None else "")
             (Path(tmp_dir.name) / missing_metrics.fetch_log_name(connection, component)).write_text(text)
@@ -107,6 +134,20 @@ class ShortPhaseSummaryTest(unittest.TestCase):
         row = next(line for line in table.splitlines() if 'pg-1-1-1-1' in line)
         self.assertIn('n/a', row)
         self.assertIn('640.00', table)
+
+    def test_loader_pods_shorter_than_the_window_are_not_measurable(self) -> None:
+        """Loading window 153 s, loader pods 18 s: n/a and skipped; pods of 300 s are measured."""
+        def connection(name: str, end: int) -> dict:
+            return {'name': name, 'monitoring': {},
+                    'hostsystem': {'loading_timespans': {'sensor': [(1000, end)]}}}
+        (passed, label), table = self.summary(
+            'loader', {'pg-1-1-1-1': 153}, {'pg-1-1-1-1': 0.0}, connections=[connection('pg-1-1-1-1', 1018)])
+        self.assertIsNone(passed)
+        self.assertIn('n/a', table)
+        (passed, _), table = self.summary(
+            'loader', {'pg-1-1-1-1': 600}, {'pg-1-1-1-1': 0.0}, connections=[connection('pg-1-1-1-1', 1300)])
+        self.assertFalse(passed)
+        self.assertNotIn('n/a', table)
 
     def test_old_logs_without_window_keep_the_old_test(self) -> None:
         (passed, _), table = self.summary('benchmarking', {'pg-1-1-1-1': None}, {'pg-1-1-1-1': 0.0})

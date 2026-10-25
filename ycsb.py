@@ -46,7 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xnpp',  '--xnum-pooling-pods', help='comma-separated list of connection-pooler pod counts', default="1", dest='num_pooling_pods')
     parser.add_argument('-xnpi',  '--xnum-pooling-in', help='comma-separated list of max inbound connections per pooler pod', default="", dest='num_pooling_in')
     parser.add_argument('-xnpo',  '--xnum-pooling-out', help='comma-separated list of max outbound connections per pooler pod (to the DBMS)', default="", dest='num_pooling_out')
-    parser.add_argument('-xwl',   '--xworkload', help='YCSB workload letter (a=read-heavy, b=read-mostly, c=read-only, c2=read-only with uniform instead of zipfian request distribution, d=read-latest, e=scan, f=read-modify-write)', choices=['a', 'b', 'c', 'c2', 'd', 'e', 'f'], default='', dest='workload')
+    parser.add_argument('-xwl',   '--xworkload', help='YCSB workload letter (a=read-heavy, a2=read-heavy with uniform instead of zipfian request distribution, b=read-mostly, c=read-only, c2=read-only with uniform instead of zipfian request distribution, d=read-latest, e=scan, f=read-modify-write)', choices=['a', 'a2', 'b', 'c', 'c2', 'd', 'e', 'f'], default='', dest='workload')
     parser.add_argument('-xop',   '--xnum-operations', help='total operation count in millions (overrides SF for operations; default: use SF)', default=None, dest='scaling_factor_operations')
     parser.add_argument('-xsbs',  '--xscaling-batchsize', help='batch size for insert operations', default="", dest='scaling_batchsize')
     parser.add_argument('-xli',   '--xlogging-interval', help='status logging interval in seconds', default=10, dest='scaling_logging')
