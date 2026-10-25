@@ -1,0 +1,68 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
+  name: bexhoma-sensor
+spec:
+  backoffLimit: 1
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels: {app: bexhoma, component: loading, configuration: default, experiment: default, client: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - name: dockerhub
+      #nodeSelector: {kubernetes.io/hostname: cl-worker36}
+      tolerations:
+      initContainers:
+      - name: datagenerator
+        image: bexhoma/generator_ssb:BEXHOMA_PACKAGE_VERSION
+        imagePullPolicy: Always
+        env:
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-monetdb-1234567890'}
+        - {name: BEXHOMA_PORT, value: '9091'}
+        - {name: BEXHOMA_CONNECTION, value: 'monetdb'}
+        - {name: BEXHOMA_EXPERIMENT, value: '1234567890'}
+        - {name: SF, value: '1'}
+        - {name: SSB_WORK_DIR, value: '/work'}
+        resources:
+          # flat (-xsv flat): sort buffer (SSB_SORT_MEM, 512M) plus supplier and part held in awk
+          requests: {memory: 1Gi}
+          limits: {memory: 16Gi}
+        volumeMounts:
+        - name: datadir
+          mountPath: "/tmp/ssb/"
+        - name: workdir
+          mountPath: "/work"
+        - {mountPath: /data, name: benchmark-data-volume}
+      containers:
+      - name: sensor
+        image: bexhoma/loader_ssb_monetdb:BEXHOMA_PACKAGE_VERSION
+        imagePullPolicy: Always
+        env:
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-monetdb-1234567890'}
+        - {name: BEXHOMA_PORT, value: '9091'}
+        - {name: BEXHOMA_CONNECTION, value: 'monetdb'}
+        - {name: BEXHOMA_EXPERIMENT, value: '1234567890'}
+        - {name: SF, value: '1'}
+        resources:
+          requests: {memory: 256Mi}
+          limits: {memory: 16Gi}
+        volumeMounts:
+        - name: datadir
+          mountPath: "/tmp/ssb/"
+        - {mountPath: /data, name: benchmark-data-volume}
+      restartPolicy: Never
+      volumes:
+      # chunk index from the generator to the loader (and the data itself with STORE_RAW_DATA=0)
+      - name: datadir
+        emptyDir:
+          medium: Memory
+      # flat generation: sort temp files, dimensions and the lineorder chunk, about 2-3x the
+      # chunk; on node disk, not in memory
+      - name: workdir
+        emptyDir: {}
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}

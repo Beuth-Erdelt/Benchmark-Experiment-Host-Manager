@@ -1,8 +1,69 @@
 # Plan: Star Schema Benchmark (SSB)
 
-Status: **plan only** (2026-10-24). Nothing is implemented. Tracks issue #348
-("Try SSB"). Decisions of 2026-10-24 are in "Decisions" at the end; the
-sections below already follow them.
+Status: **implemented, not yet run on the cluster** (2026-10-25, branch
+`feature/ssb`): M0, M1, M2-M6, M8, M9 done and checked locally; M1b (bash vs
+DuckDB) and M7 (cluster checks) open, they need the images pushed. Tracks issue
+#348 ("Try SSB"). Decisions of 2026-10-24 are in "Decisions" at the end; what
+changed during the implementation is in "Implementation notes (2026-10-25)"
+right below and overrides the design sections where they differ.
+
+## Implementation notes (2026-10-25)
+
+Found while implementing; these override the design below.
+
+- **dbgen chunking has two bugs**, so only lineorder is chunked:
+  - In the chunked path (`-C/-S`), `set_state()` scales part linearly
+    (200,000 x SF / N per chunk, not 200,000 x floor(1+log2 SF)) and gives date
+    2,557 x SF / N rows.
+  - From chunk 2 on, the order-level random streams of `lo_custkey`,
+    `lo_orderpriority` (and the unused clerk) restart: `sd_line()` advances only
+    `O_ODATE`/`O_LCNT`. The data then depended on `-nlp`.
+  - Fix: `images/ssb/generator/dbgen-chunk-seeds.patch` (3 lines, applied in
+    the Dockerfile). Checked: SF1 in 4 chunks = unchunked lineorder (byte for
+    byte, sorted), SF10 chunk 3 of 8 = its slice of the unchunked file; the
+    unchunked output is unchanged by the patch.
+  - Not reported upstream (outward-facing; ask first).
+- **Dimensions** (customer, supplier, part, date) are generated unchunked by
+  child 1 only, into its own folder. Each loader loads its own folder, so the
+  loaders need no "child 1 only" rule.
+- **No `TRANSFORM_RAW_DATA`/`sed` fallback**: dbgen is built with
+  `EOL_HANDLING=ON` (checked: no trailing `|` in any table). A `sed` pass would
+  cut a real character from flat files and reused chunks.
+- **`.complete` marker** decides reuse; cleanup removes only `.tbl` files and the
+  marker (with one pod the folder is `/data/ssb/SF<n>` itself, which holds
+  `flat/` and other splits).
+- **Flat file is 3.4x lineorder** (not 2x): SF1 2.08 GB vs 593 MB. Flat step at
+  SF10, chunk of 7.5 M rows (Docker Desktop): 17 s stream + 7 s order restore;
+  awk holds 180 MB (SF10 supplier + part, all columns).
+- **G3 dropped**: no DBMS-Benchmarker change. Two distinct cities of one nation
+  come from a `dict` keyed by city with the other 9 cities of its nation as
+  values; region -> nation, year -> next year, month/week -> first/last date
+  likewise. The benchmarker image stays as it is.
+- **Flat date literals**: `date 'YYYY-MM-DD'` works in PostgreSQL, MonetDB and
+  ClickHouse; no per-DBMS query variants at all.
+- **Random domains** follow the specification where it gives them (Q1 template:
+  year [1993,1997], discount D in [2,9] for D-1..D+1, quantity < Q with Q in
+  [24,25]); weeks 2..52 (week 1 has 6 days, week 53 one or two); Q2.2 brand
+  start in {10,11,12,20,21,22,30,31,32} (unpadded brands: a range across a
+  decade catches a one-digit brand).
+- **Q2.3 brand** `MFGR#2239` and **Q1.3 quantity** 26-35: the specification's
+  text and SQL disagree; we follow ClickHouse/Doris and the SQL.
+- **G2 as a class attribute**: `ExperimentBase.summary_from_type` (False);
+  True in tpch, tpcds, ssb, ycsb, tpcc, benchbase. `bexhoma summary` resolves the
+  class with `getattr(experiments, type)` only for those, so behaviour for
+  other types (e.g. hardware) is unchanged.
+- **Query files are generated** by `experiments/ssb/make_queries.py` (in the
+  repo; a test checks the committed files are its output).
+- **`cluster.config` is gitignored**: the entry is in the local file and in the
+  tracked `k8s-cluster.config`.
+- **Local end-to-end check (instead of the first part of M7)**: PostgreSQL 18.6,
+  MonetDB Dec2025-SP3, ClickHouse 26.8 in Docker, SF1, 2 loader pods, loader
+  images, all post-load scripts. All 13 spec and 13 random queries return the
+  same results on all three DBMS, for normal and flat, and flat = normal for the
+  spec queries.
+- Open: M1b (bash vs DuckDB), M7 on the cluster (needs the images pushed),
+  ephemeral-storage request for the `/work` emptyDir (size from M7),
+  `docs/Example-SSB.md` without result summaries yet (to add from the M7/M8 runs).
 
 ## Goal
 

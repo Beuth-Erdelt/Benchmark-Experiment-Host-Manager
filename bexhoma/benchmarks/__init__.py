@@ -16,6 +16,7 @@ from .ycsb import YCSB
 from .tpcc import TPCC
 from .tpch import TPCH
 from .tpcds import TPCDS
+from .ssb import SSB
 from .benchbase import Benchbase
 from .refresh import RefreshStreamBenchmark
 from .hardware import Hardware
@@ -27,6 +28,7 @@ __all__ = [
     "TPCC",
     "TPCH",
     "TPCDS",
+    "SSB",
     "Benchbase",
     "RefreshStreamBenchmark",
     "Hardware",

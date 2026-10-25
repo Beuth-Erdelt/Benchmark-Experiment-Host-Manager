@@ -88,6 +88,11 @@ EXPECTED = {
         'ClickHouse': [_FLUSH],
         'ClickHouseCluster': ['reset-tpcds.sql', _FLUSH],
     },
+    'ssb.py': {
+        'PostgreSQL': ['reset-ssb.sql'],
+        'MonetDB': ['reset-ssb.sql'],
+        'ClickHouse': [_FLUSH],
+    },
 }
 
 #: Benchbase benchmarks other than tpcc have folders (and resets) only for these DBMS (R4).
@@ -164,6 +169,9 @@ class ResetCompletenessTest(unittest.TestCase):
 
     def test_tpcds(self):
         self.assert_complete('tpcds.py')
+
+    def test_ssb(self):
+        self.assert_complete('ssb.py')
 
     def test_benchbase(self):
         for benchmark in ('tpcc', 'twitter', 'ycsb', 'chbenchmark'):

@@ -169,6 +169,11 @@ class ExperimentBase():
     #: (``-nlp 1``, counted per tenant) instead of a multiple of ``-mtn`` (see
     #: :func:`bexhoma.cli_args.check_tenant_loading_pods`).
     tenant_loading_one_pod_per_tenant = False
+    #: Whether ``bexhoma summary`` rebuilds a finished experiment of this class from
+    #: the workload ``type`` in its ``queries.config`` (the type names the class alias
+    #: in :mod:`bexhoma.experiments`, constructed with ``cluster``, ``code`` and ``SF``);
+    #: otherwise the summary uses :class:`ExperimentBase`.
+    summary_from_type = False
 
     def __init__(self,
                  cluster,

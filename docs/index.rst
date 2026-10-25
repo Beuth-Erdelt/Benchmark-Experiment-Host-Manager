@@ -28,6 +28,8 @@
     ./Queries-TPC-H.md
     ./Example-TPC-DS.md
     ./Queries-TPC-DS.md
+    ./Example-SSB.md
+    ./Queries-SSB.md
     ./Example-Hardware.md
     ./Example-Citus.md
     ./Example-YugaByteDB.md

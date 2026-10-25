@@ -37,6 +37,8 @@ class BenchbaseExperiment(MixedExperiment):
     #: -nlp counts pods per tenant and the generator maps loader pod k to tenant k-1,
     #: so schema/database tenancy needs -nlp 1.
     tenant_loading_one_pod_per_tenant = True
+    #: ``bexhoma summary`` rebuilds it from workload type ``benchbase``.
+    summary_from_type = True
 
     def __init__(self,
                  cluster,
