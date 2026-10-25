@@ -16,13 +16,22 @@ See [images/ssb/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-
 2. Write child index to `/tmp/ssb/BEXHOMA_CHILD` (the loader reads this file).
 3. Determine `destination_raw`: `/data/ssb/SF<SF>[/<N>/<child>]` (normal) or
    `/data/ssb/SF<SF>/flat[/<N>/<child>]` (flat); `/tmp/ssb/...` if `STORE_RAW_DATA=0`.
-   Exit early if it holds `.complete` and `STORE_RAW_DATA_RECREATE=0`. Otherwise remove its
-   `.tbl` files and `.complete` (files only: with one pod the folder holds other splits too).
 4. If `BEXHOMA_SYNCH_GENERATE=1`: sync on `bexhoma-generator-podcount-job-<CONNECTION>-<EXPERIMENT>-<DATA_JOB>`.
-5. normal: `dbgen -T l [-C <N> -S <child>]`; child 1 also `dbgen -T c`, `-T s`, `-T p`, `-T d`.
+   Before the check for existing data, so a pod that exits early still checks in.
+5. Exit early if the folder holds `.complete` and `STORE_RAW_DATA_RECREATE=0`. With recreate,
+   remove its `.tbl` files and `.complete` (files only: with one pod the folder holds other splits too).
+6. Generate into the staging folder `<destination>/.staging-<pod name>`:
+   normal: `dbgen -T l [-C <N> -S <child>]`; child 1 also `dbgen -T c`, `-T s`, `-T p`, `-T d`.
    flat: lineorder chunk (reused from the normal folder if complete), full customer/supplier/part
    in `SSB_WORK_DIR`, then `sort | join | gawk -f flat.awk`, optional order restore, row count check.
-6. Write `.complete`. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+7. Unless another pod completed the folder meanwhile, move the files into the folder (`mv`,
+   atomic rename on the same file system), then write `.complete`. Remove the staging folder.
+   Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+
+Several pods may generate the same folder at once: bexhoma starts one loading job per DBMS
+configuration, each with its own generator pods, and they share `/data`. The staging folder and
+the move keep a loader from reading a half-written file, and no pod deletes files of another
+pod. dbgen is deterministic, so every copy is the same.
 
 ## Environment variables
 

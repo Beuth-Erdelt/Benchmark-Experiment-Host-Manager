@@ -33,6 +33,12 @@ Each folder gets a `.complete` marker as the last step of the generator. A folde
 marker is reused by later experiments; a folder without it (a generator that died halfway)
 is generated again. `STORE_RAW_DATA=0` writes to `/tmp/ssb` (in memory) instead of `/data`.
 
+The generator pods of all DBMS configurations of an experiment run at the same time and may
+generate the same folder. Each generates into its own `.staging-<pod>` subfolder and moves
+the finished files in (atomic rename), then writes `.complete`; a pod that finds the folder
+completed meanwhile discards its copy. The generator barrier (`BEXHOMA_SYNCH_GENERATE`) comes
+before the check for existing data, so pods that find their folder complete still check in.
+
 ## Key design decisions
 
 | Decision | Reason |

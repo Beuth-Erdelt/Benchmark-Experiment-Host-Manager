@@ -62,36 +62,10 @@ else
 fi
 echo "destination_raw:$destination_raw"
 
-######################## Exit if data is already there ########################
-# .complete is written as the last step, so a folder left by a pod that died halfway is regenerated.
-# Only files are removed: with one pod the folder is /data/ssb/SF<SF> itself, which also
-# holds flat/ and the <N>/<child> folders of other splits.
-remove_raw_files() {
-	rm -f "$destination_raw"/*.tbl* "$destination_raw"/.complete
-}
-if [ -f "$destination_raw/.complete" ]
-then
-	if test $STORE_RAW_DATA_RECREATE -gt 0
-	then
-		echo "Recreate raw folder"
-		remove_raw_files
-	else
-		echo "Raw folder exists, I do nothing"
-		DURATION_SCRIPT=$((SECONDS-SECONDS_START_SCRIPT))
-		echo "Duration $DURATION_SCRIPT seconds"
-		echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
-		bexhoma_end_epoch=$(date -u +%s)
-		echo "BEXHOMA_START:$bexhoma_start_epoch"
-		echo "BEXHOMA_END:$bexhoma_end_epoch"
-		exit 0
-	fi
-else
-	# incomplete leftovers of an earlier attempt
-	remove_raw_files
-fi
-mkdir -p $destination_raw
-
 ######################## Wait until all pods of job are ready ########################
+# Before the check for existing data: a pod that exits early must still check in, or the
+# pods of the job that do generate wait for it forever (other configurations may have
+# completed some of the folders already).
 if test $BEXHOMA_SYNCH_GENERATE -gt 0
 then
 	echo "Decrementing job counter bexhoma-generator-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB"
@@ -108,6 +82,36 @@ then
 		fi
 	done
 fi
+
+######################## Exit if data is already there ########################
+# Several pods may generate the same folder at the same time (one job per DBMS configuration,
+# each with its own pods). So every pod generates into its own staging folder next to the
+# destination (same file system) and moves the finished files in with mv (atomic rename);
+# .complete is written after the move. A loader never sees a half-written file, and no pod
+# deletes files of another pod. dbgen is deterministic, so all copies are equal.
+# Recreate removes only files: with one pod the folder is /data/ssb/SF<SF> itself, which also
+# holds flat/ and the <N>/<child> folders of other splits.
+if [ -f "$destination_raw/.complete" ]
+then
+	if test $STORE_RAW_DATA_RECREATE -gt 0
+	then
+		echo "Recreate raw folder"
+		rm -f "$destination_raw"/*.tbl* "$destination_raw"/.complete
+	else
+		echo "Raw folder exists, I do nothing"
+		DURATION_SCRIPT=$((SECONDS-SECONDS_START_SCRIPT))
+		echo "Duration $DURATION_SCRIPT seconds"
+		echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
+		bexhoma_end_epoch=$(date -u +%s)
+		echo "BEXHOMA_START:$bexhoma_start_epoch"
+		echo "BEXHOMA_END:$bexhoma_end_epoch"
+		exit 0
+	fi
+fi
+staging_raw=$destination_raw/.staging-${HOSTNAME:-$$}
+rm -rf $staging_raw
+mkdir -p $staging_raw
+echo "staging_raw:$staging_raw"
 
 ######################## Start measurement of time ########################
 bexhoma_start_epoch=$(date -u +%s)
@@ -186,7 +190,7 @@ then
 	then
 		flat_unsorted=$work/lineorder_flat.unsorted
 	else
-		flat_unsorted=$destination_raw/lineorder_flat.tbl
+		flat_unsorted=$staging_raw/lineorder_flat.tbl
 	fi
 	echo "Stream lineorder: sort by lo_custkey | join customer | awk supplier, part"
 	time sort -t'|' -k3,3 -S $SSB_SORT_MEM -T $work/sorttmp $lineorder_file \
@@ -201,7 +205,7 @@ then
 	if test $SSB_FLAT_RESTORE_ORDER -gt 0
 	then
 		echo "Restore lineorder order (lo_orderkey, lo_linenumber)"
-		time sort -t'|' -k1,1n -k2,2n -S $SSB_SORT_MEM -T $work/sorttmp $flat_unsorted > $destination_raw/lineorder_flat.tbl
+		time sort -t'|' -k1,1n -k2,2n -S $SSB_SORT_MEM -T $work/sorttmp $flat_unsorted > $staging_raw/lineorder_flat.tbl
 		if [ $? -ne 0 ]; then
 			echo "FATAL: sort by lo_orderkey failed"
 			exit 1
@@ -209,7 +213,7 @@ then
 	fi
 	# join drops unmatched lines without an error, so the row count is the real check
 	lines_lineorder=$(count_lines $lineorder_file)
-	lines_flat=$(count_lines $destination_raw/lineorder_flat.tbl)
+	lines_flat=$(count_lines $staging_raw/lineorder_flat.tbl)
 	echo "Rows lineorder chunk: $lines_lineorder"
 	echo "Rows lineorder_flat:  $lines_flat"
 	if [ "$lines_lineorder" != "$lines_flat" ]; then
@@ -219,30 +223,43 @@ then
 	rm -rf $work
 else
 	######################## Normal: lineorder chunk, dimensions in child 1 ########################
-	generate_lineorder $destination_raw
+	generate_lineorder $staging_raw
 	if test $BEXHOMA_CHILD -eq 1
 	then
-		run_dbgen $destination_raw -T c
-		run_dbgen $destination_raw -T s
-		run_dbgen $destination_raw -T p
-		run_dbgen $destination_raw -T d
+		run_dbgen $staging_raw -T c
+		run_dbgen $staging_raw -T s
+		run_dbgen $staging_raw -T p
+		run_dbgen $staging_raw -T d
 	fi
 fi
 
 ######################## Fail if generation failed ###################
 shopt -s nullglob
-generated_tbl_files=("$destination_raw"/*tbl*)
+generated_tbl_files=("$staging_raw"/*tbl*)
 shopt -u nullglob
 if [ ${#generated_tbl_files[@]} -eq 0 ]; then
-	echo "FATAL: no files in $destination_raw"
+	echo "FATAL: no files in $staging_raw"
 	exit 1
 fi
 
-######################## Show generated files ###################
+######################## Move generated files into place ###################
 # No trailing '|' to remove: the image builds dbgen with EOL_HANDLING
 echo "Generated these files:"
+ls $staging_raw/*tbl* -lh
+if [ -f "$destination_raw/.complete" ] && test $STORE_RAW_DATA_RECREATE -eq 0
+then
+	echo "Another pod completed $destination_raw meanwhile, discarding this copy"
+else
+	mv -f "${generated_tbl_files[@]}" $destination_raw/
+	if [ $? -ne 0 ]; then
+		echo "FATAL: moving the files to $destination_raw failed"
+		exit 1
+	fi
+	touch $destination_raw/.complete
+fi
+rm -rf $staging_raw
+echo "Files in $destination_raw:"
 ls $destination_raw/*tbl* -lh
-touch $destination_raw/.complete
 
 ######################## End measurement of time ########################
 bexhoma_end_epoch=$(date -u +%s)
