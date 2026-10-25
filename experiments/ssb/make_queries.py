@@ -324,19 +324,22 @@ s += entry("Select constant 1 (Q1)", "select 1")
 s += "\t]\n}\n"
 open(f"{OUT}/queries-ssb-empty.config", 'w', encoding='utf-8', newline='\n').write(s)
 
-# profiling: row count, distinct keys, min/max of the key columns per table
-PROFILE = [
-    ('customer', ['c_custkey']), ('supplier', ['s_suppkey']), ('part', ['p_partkey']),
-    ('dates', ['d_datekey']), ('lineorder', ['lo_orderkey', 'lo_orderdate', 'lo_commitdate']),
-    ('lineorder_flat', ['lo_orderkey', 'lo_orderdate', 'lo_commitdate']),
-]
-s = header("Data Profiling SSB", "Row count, count distinct, minimum and maximum of the key and date "
-           "columns of each table. A table missing in the loaded schema variant gives an error, not a result.",
-           streams=False)
-for table, cols in PROFILE:
-    for c in cols:
-        s += entry(f"stats about {table}.{c}",
-                   f"select count(*) as co, count(distinct {c}) as di, min({c}) as mi, max({c}) as ma from {table}")
-s += "\t]\n}\n"
-open(f"{OUT}/queries-ssb-profiling.config", 'w', encoding='utf-8', newline='\n').write(s)
+# profiling: row count, distinct keys, min/max of the key and date columns per table,
+# one file per schema variant (a query on a table of the other variant would fail)
+LO_COLUMNS = ['lo_orderkey', 'lo_custkey', 'lo_partkey', 'lo_suppkey', 'lo_orderdate', 'lo_commitdate']
+PROFILES = {
+    'queries-ssb-profiling.config': ("Data Profiling SSB", [
+        ('customer', ['c_custkey']), ('supplier', ['s_suppkey']), ('part', ['p_partkey']),
+        ('dates', ['d_datekey']), ('lineorder', LO_COLUMNS)]),
+    'queries-ssb-flat-profiling.config': ("Data Profiling SSB (flat)", [('lineorder_flat', LO_COLUMNS)]),
+}
+for filename, (name, profile) in PROFILES.items():
+    s = header(name, "Row count, count distinct, minimum and maximum of the key and date columns of each table.",
+               streams=False)
+    for table, cols in profile:
+        for c in cols:
+            s += entry(f"stats about {table}.{c}",
+                       f"select count(*) as co, count(distinct {c}) as di, min({c}) as mi, max({c}) as ma from {table}")
+    s += "\t]\n}\n"
+    open(f"{OUT}/{filename}", 'w', encoding='utf-8', newline='\n').write(s)
 print("written to", OUT)

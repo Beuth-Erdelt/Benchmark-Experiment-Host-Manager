@@ -139,7 +139,7 @@ bexhoma ssb -dbms PostgreSQL MonetDB ClickHouse -sf 1 -nlp 8 profiling
 ```
 
 Runs count, count distinct, minimum and maximum of the key and date columns of each table
-instead of the benchmark queries.
+instead of the benchmark queries. With `-xsv flat` it profiles `lineorder_flat`.
 
 ## Adjust Parameters
 

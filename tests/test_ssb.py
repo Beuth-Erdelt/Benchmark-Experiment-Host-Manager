@@ -81,7 +81,11 @@ class QueryFilesTest(unittest.TestCase):
                 for order in cfg['stream_ordering'].values():
                     self.assertEqual(sorted(order), list(range(1, 14)))
         self.assertEqual(len(_load_config('queries-ssb-empty.config')['queries']), 1)
-        self.assertTrue(_load_config('queries-ssb-profiling.config')['queries'])
+        normal = {q['query'].rsplit(' from ', 1)[1] for q in _load_config('queries-ssb-profiling.config')['queries']}
+        flat = {q['query'].rsplit(' from ', 1)[1] for q in _load_config('queries-ssb-flat-profiling.config')['queries']}
+        # each profiling file reads only the tables of its schema variant
+        self.assertEqual(normal, {'customer', 'supplier', 'part', 'dates', 'lineorder'})
+        self.assertEqual(flat, {'lineorder_flat'})
 
     def test_variants_share_titles(self):
         titles = {(s, q): [x['title'] for x in _load_config(resolve_queryfile(s, q))['queries']]
@@ -226,6 +230,10 @@ class EntryScriptTest(unittest.TestCase):
     def test_normal_post_load_combination(self):
         experiment = self.run_script('load', '-xic', '-xis')
         self.assertEqual(experiment.indexing, 'Constraints_and_Statistics')
+
+    def test_profiling_file_per_variant(self):
+        self.assertEqual(self.run_script('profiling').queryfile, 'queries-ssb-profiling.config')
+        self.assertEqual(self.run_script('profiling', '-xsv', 'flat').queryfile, 'queries-ssb-flat-profiling.config')
 
     def test_multi_tenancy_rejected(self):
         self.assertEqual(self.run_script('run', '-mtn', '2', '-mtb', 'schema'), 2)

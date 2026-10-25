@@ -149,7 +149,8 @@ class SSB(DBMSBenchmarkerBenchmark):
                 defaultParameters={'SF': SF},
             )
         else:
-            experiment.set_queryfile('queries-ssb-profiling.config')
+            experiment.set_queryfile('queries-ssb-profiling.config' if schema_variant == 'normal'
+                                     else 'queries-ssb-flat-profiling.config')
             experiment.set_workload(
                 name=f'SSB Data Profiling SF={SF}',
                 info='This experiment compares imported SSB data sets in different DBMS.',

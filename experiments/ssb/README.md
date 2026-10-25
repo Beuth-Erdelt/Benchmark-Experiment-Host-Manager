@@ -36,8 +36,9 @@ week 53 one or two. Week 6 of 1994 is 1994-02-04 to 1994-02-10.
 | `queries-ssb-flat.config` | 13 queries on `lineorder_flat`, constants of the specification (`-xsv flat`) |
 | `queries-ssb-flat-random.config` | 13 queries on `lineorder_flat`, random parameters |
 | `queries-ssb-empty.config` | `select 1` (mode `empty`) |
-| `queries-ssb-profiling.config` | count, count distinct, min, max of the key and date columns (mode `profiling`) |
-| `make_queries.py` | Writes the six query files above |
+| `queries-ssb-profiling.config` | count, count distinct, min, max of the key and date columns (mode `profiling`, star schema) |
+| `queries-ssb-flat-profiling.config` | the same for `lineorder_flat` (mode `profiling`, `-xsv flat`) |
+| `make_queries.py` | Writes the seven query files above |
 | `<DBMS>/initschema-ssb.sql`, `initschema-ssb-flat.sql` | Create the tables of the variant |
 | `<DBMS>/initindexes-ssb*.sql` | `-xii`: foreign key columns of lineorder and the filtered dimension columns |
 | `<DBMS>/initconstraints-ssb.sql` | `-xic`: primary keys and foreign keys (star schema only) |
