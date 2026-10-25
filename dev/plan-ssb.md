@@ -1,8 +1,8 @@
 # Plan: Star Schema Benchmark (SSB)
 
-Status: **implemented, not yet run on the cluster** (2026-10-25, branch
-`feature/ssb`): M0, M1, M2-M6, M8, M9 done and checked locally; M1b (bash vs
-DuckDB) and M7 (cluster checks) open, they need the images pushed. Tracks issue
+Status: **implemented and run on the cluster** (2026-10-25, branch
+`feature/ssb`): M0-M6, M8, M9 done; M7 done except SF10 (M7.6); M1b (bash vs
+DuckDB) open. Tracks issue
 #348 ("Try SSB"). Decisions of 2026-10-24 are in "Decisions" at the end; what
 changed during the implementation is in "Implementation notes (2026-10-25)"
 right below and overrides the design sections where they differ.
@@ -61,9 +61,19 @@ Found while implementing; these override the design below.
   images, all post-load scripts. All 13 spec and 13 random queries return the
   same results on all three DBMS, for normal and flat, and flat = normal for the
   spec queries.
-- Open: M1b (bash vs DuckDB), M7 on the cluster (needs the images pushed),
-  ephemeral-storage request for the `/work` emptyDir (size from M7),
-  `docs/Example-SSB.md` without result summaries yet (to add from the M7/M8 runs).
+- **Cluster runs 2026-10-25** (images 0.11.9): star schema 3 DBMS (1792951409),
+  random per stream (1792951495), reuse (1792952702), flat 3 DBMS (1792952656),
+  flat profiling (1792957739) and all 8 runs of `test-docs-ssb.ps1` passed (no
+  errors, no result mismatches across DBMS). Found on the way and fixed:
+  - concurrent generators of the DBMS configurations wrote/deleted the same
+    folder: staging folder per pod + atomic move (85d7bd34);
+  - generator barrier after the early exit deadlocked: barrier first (85d7bd34);
+  - one profiling file queried both schema variants: one file per variant
+    (d4c0f0d8).
+  - Same two generator patterns exist in the TPC-H generator (not changed).
+- `docs/Example-SSB.md` holds the summaries of the docs runs.
+- Open: M7.6 (SF10), M1b (bash vs DuckDB), ephemeral-storage request for the
+  `/work` emptyDir.
 
 ## Goal
 
