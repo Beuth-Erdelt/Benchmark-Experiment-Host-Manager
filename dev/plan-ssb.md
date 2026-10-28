@@ -107,6 +107,103 @@ Found while implementing; these override the design below.
   flat file is generated (documented in `images/ssb/README.md`). `/work` on the
   data volume (estimated 2-3x slower) was not measured.
 
+## Next: ClickHouseCluster (planned 2026-10-28, not implemented)
+
+Built like TPC-H's ClickHouseCluster (6bc6cac5). No new image, no new job
+template, no change to generic files.
+
+- **C1 `ssb.py`**: `ClickHouseCluster` in the `-dbms` choices; a configuration
+  block as in `tpch.py` (`docker='ClickHouseCluster'`, `worker=num_worker`, alias
+  `DBMS C1`, storage `clickhousecluster`, eval parameter `BEXHOMA_WORKERS`,
+  reset scripts `['reset-ssb.sql', 'reset-flush.sh']` with script target
+  `workers`). Loader template: the existing `jobtemplate-loading-ssb-ClickHouse.yml`;
+  the loader writes to the coordinator's Distributed tables, which send the rows
+  to the shards. Not part of the default DBMS set (empty `-dbms`).
+- **C2 `experiments/ssb/ClickHouseCluster/`**:
+  - `initschema-ssb.sql`, `initschema-ssb-flat.sql`: per table `<name>_local`
+    (MergeTree, `ON CLUSTER bexhoma`, same columns and sorting keys as
+    `experiments/ssb/ClickHouse`) and a Distributed table `<name>` on the shards
+    (`ON CLUSTER`) and on the coordinator. Sharding key: the table's key column;
+    `lineorder` and `lineorder_flat` by `lo_orderkey` (all lines of an order on
+    one shard).
+  - `checkschema-ssb.sql`, `checkschema-ssb-flat.sql`: rows/parts/size per table
+    summed over `clusterAllReplicas(bexhoma, system.parts)`, then per shard.
+  - `reset-ssb.sql` (`SYSTEM FLUSH DISTRIBUTED` per table; for flat only
+    `lineorder_flat`: the script must not fail on missing tables, or one file per
+    variant) and `reset-flush.sh` (copy of the TPC-H cluster one).
+  - No index, constraint, statistics or durability scripts (as single-node
+    ClickHouse); the script lists in `cluster.config` stay as they are, missing
+    files are skipped as for ClickHouse.
+- **C3 queries**: unchanged. Joins of Distributed tables are correct for any
+  sharding through `distributed_product_mode = global` in the template; the
+  dimensions are then broadcast per query. Check results = single-node ClickHouse
+  (spec and random, normal and flat).
+- **C4 tests**: `tests/test_ssb.py` (script lists resolve for ClickHouseCluster,
+  reset script names); run the reset-script and resource-sweep tests.
+- **C5 cluster checks** (`-ks no`): SF1 normal and flat with `-nw 2` (or 3),
+  `-nlp 2`; compare row counts and query results with ClickHouse; a run with `-ar`
+  (reset on coordinator + workers); SF10 `-nlp 8` once.
+- **C6 docs**: one ClickHouseCluster run in `scripts/test-docs-ssb.{sh,ps1}`, a
+  section in `docs/Example-SSB.md`, the README limits line (drop "no
+  ClickHouseCluster").
+
+Options kept for later:
+- Dimensions as a full copy on every node instead of Distributed, so a join runs
+  locally on each shard and no dimension is broadcast per query (matters at large
+  SF: customer has 30,000 x SF rows). No manual loading per shard needed:
+  - **R1 (chosen 2026-10-28, after C1-C6)**: `ReplicatedMergeTree` with one fixed Keeper path for all
+    nodes (no `{shard}` in it), i.e. all workers (and the coordinator) are
+    replicas of one shard; the loader inserts on the coordinator as now, Keeper
+    replicates the parts. Needs `SYSTEM SYNC REPLICA` before the benchmark
+    (checkschema/reset) and a replica name for the coordinator (it has no
+    macros). Init scripts must not contain curly braces (`str.format()` runs
+    only with DDL parameters or per-schema tenants, so `{{replica}}` would reach
+    ClickHouse unformatted otherwise). Decided: the ClickHouseCluster template
+    sets `default_replica_path` `/clickhouse/tables/{database}/{table}` (no
+    `{shard}`) and `default_replica_name` `{replica}`, and the coordinator gets a
+    `replica` macro; the scripts write `ENGINE = ReplicatedMergeTree ORDER BY ...`
+    without arguments. Generic: no other script uses ReplicatedMergeTree. Uses
+    the embedded single-node Keeper of the coordinator.
+  - R2 (not chosen): a second cluster in `remote_servers` with one shard and all
+    workers as replicas, `internal_replication=false`; a Distributed table over it
+    writes every block to every node. No Keeper for data, but no consistency check.
+  - Check first: a join of Distributed `lineorder` with a local dimension is
+    pushed to the shards unchanged with `distributed_product_mode = global`.
+    Measure against GLOBAL JOIN at SF10/SF100. Flat needs none of this.
+- `lineorder` sharded by `lo_custkey`.
+
+Other DBMS for SSB, by effort (all have TPC-H templates in bexhoma):
+
+| DBMS | Loader | Why interesting |
+|---|---|---|
+| PgDuckDB | PostgreSQL loader as is | Column engine inside PostgreSQL: same SQL, same data, PostgreSQL vs DuckDB execution |
+| Citus | PostgreSQL loader as is | Textbook star-schema case: `lineorder` distributed, dimensions as reference tables (scripts per variant); optional columnar access method |
+| MySQL, MariaDB | new loader image (`LOAD DATA`) | Row stores as a baseline; slow loads known from TPC-H |
+
+Not planned (decided 2026-10-28): CedarDB, YugabyteDB, CockroachDB.
+
+Steps per DBMS (sketch, after ClickHouseCluster; each with `ssb.py` block,
+`experiments/ssb/<DBMS>/` scripts for normal and flat, unit tests, cluster
+check SF1 normal/flat/random against PostgreSQL results, one run in
+`test-docs-ssb`, a docs section):
+
+- **PgDuckDB** (P1-P3): P1 `ssb.py` block with the PostgreSQL loader template
+  and `-xdfe` (DuckDB force execution, off by default) as in TPC-H; P2 scripts from `experiments/tpch/PgDuckDB`
+  (schema, indexes, constraints, statistics; checkschema/reset/durability as
+  PostgreSQL); P3 checks.
+- **Citus** (S1-S4): S1 `ssb.py` block with workers (`-nw`), PostgreSQL loader
+  template; S2 schema: `lineorder`/`lineorder_flat` distributed (by
+  `lo_orderkey`), the four dimensions as reference tables
+  (`create_reference_table`); optional columnar variant as TPC-H
+  `initschemacolumnar`; S3 indexes, constraints (FKs to reference tables are
+  allowed), statistics, checkschema, reset, durability from `experiments/tpch/Citus`;
+  S4 checks incl. `-nw 2`, reset with `-ar`.
+- **MySQL, MariaDB** (M1-M4): M1 new loader images `images/ssb/loader_{mysql,mariadb}`
+  (from the TPC-H ones, `LOAD DATA`, `dates` mapping, row-count check) + job
+  templates + build scripts; M2 `ssb.py` blocks; M3 scripts (PK in the schema
+  for MariaDB, FK checks off during load, as learned from TPC-H), durability
+  `.sh`/`.sql` as TPC-H; M4 checks, SF10 load time.
+
 ## Goal
 
 Add SSB as a DBMSBenchmarker workload, built like TPC-H and TPC-DS:
