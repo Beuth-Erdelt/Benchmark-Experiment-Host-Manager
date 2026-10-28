@@ -72,8 +72,36 @@ Found while implementing; these override the design below.
     (d4c0f0d8).
   - Same two generator patterns exist in the TPC-H generator (not changed).
 - `docs/Example-SSB.md` holds the summaries of the docs runs.
-- Open: M7.6 (SF10), M1b (bash vs DuckDB), ephemeral-storage request for the
-  `/work` emptyDir.
+- **M7.6 (2026-10-27)**: SF10, 8 loader pods, 3 DBMS: star schema 1793091947,
+  flat 1793092772, both passed. Loading (time_load) normal: ClickHouse 67 s,
+  PostgreSQL 177 s, MonetDB 251 s; flat: 95 s, 510 s, 557 s. Flat generation
+  45-58 s per configuration (chunks of 7.5 M rows reused from the normal run;
+  stream 30-40 s, order restore 11-20 s). MonetDB and ClickHouse generated the
+  same flat folders concurrently; ClickHouse's copies were discarded as designed.
+- **M1b (2026-10-27)**: `images/ssb/generator/compare-flat.sh` + `flat.sql`, dev
+  image `--build-arg INCLUDE_DUCKDB=1` (DuckDB CLI 1.1.3, sha256 pinned). Local
+  Docker Desktop (8 cores), 3 repetitions (SF10 unchunked 1-2), medians; all
+  outputs byte-identical to bash (unordered ones after sorting). Wall s / peak
+  temp GB in the work folder:
+
+  | chunk | bash ordered | bash unordered | awk only | DuckDB ordered | DuckDB unordered |
+  |---|---|---|---|---|---|
+  | SF1, 1 of 4 (1.5 M rows) | 5.5 / 1.0 | 4.0 / 0 | 4.0 / 0 | 3.6 / 0.7 | 1.0 / 0 |
+  | SF1, 1 of 1 (6 M) | 25.7 / 3.9 | 16.1 / 0.6 | 15.1 / 0 | 23.7 / 4.0 | 4.1 / 0 |
+  | SF10, 1 of 8 (7.5 M) | 26.2 / 4.9 | 18.1 / 0.7 | 21.6 / 0 | 26.0 / 5.2 | 3.6 / 0 |
+  | SF10, 1 of 4 (15 M) | 52.8 / 9.8 | 37.7 / 1.5 | 47.8 / 0 | 136.5 / 10.8 | 7.7 / 0 |
+  | SF10, 1 of 1 (60 M) | 244.5 / 44.8 | 138.0 / 9.0 | 185.8 / 0 | 986.5 / 43.6 | 28.6 / 0 |
+
+  Largest single process: bash 514 MB, awk only 443 MB at SF10 (grows with
+  customer: about 1.8 GB at SF100, 13 GB at SF1000, extrapolated), DuckDB 1.7-1.9 GB
+  ordered (memory_limit 1GB, spills), 0.3-0.7 GB unordered. The order restore
+  dominates: bash ordered needs temp of about 2x the flat chunk = about 6.7x the
+  lineorder chunk (not 2-3x as estimated). DuckDB unordered is 5-7x faster in wall
+  time (all cores; similar CPU time). The local runs filled C: through Docker's
+  virtual disk (the "free" space Docker reports is inside its disk file); further
+  large measurements only on the cluster.
+- Open: choose the flat method from M1b (bash unordered / awk up to SF100 / DuckDB),
+  then the ephemeral-storage request for the `/work` emptyDir.
 
 ## Goal
 

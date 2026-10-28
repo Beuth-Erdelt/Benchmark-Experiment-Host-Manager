@@ -62,9 +62,11 @@ before the check for existing data, so pods that find their folder complete stil
 5. Row count of the flat file must equal the chunk's row count (`join` drops unmatched rows silently).
 
 Work files (sort temp, dimensions, chunk) go to `SSB_WORK_DIR` (default `/work`, a disk
-`emptyDir` in the job templates), about 2-3x the chunk size. Measured locally (Docker Desktop):
-SF10 chunk of 7.5 M rows in 17 s plus 7 s for the order restore; awk holds 180 MB for SF10's
-supplier and part; the flat file is about 3.4x the lineorder chunk.
+`emptyDir` in the job templates). With the order restore (default) the peak is about 2x the flat
+chunk, about 6.7x the lineorder chunk (SF10 in 8 chunks: 4.9 GB per pod); without it about 1x the
+lineorder chunk. Measured locally (Docker Desktop): SF10 chunk of 7.5 M rows in 26 s (18 s without
+the order restore); awk holds 180 MB for SF10's supplier and part; the flat file is about 3.4x the
+lineorder chunk. `compare-flat.sh` compares this with DuckDB (see `dev/plan-ssb.md`, M1b).
 
 ## Per-DBMS loader differences
 

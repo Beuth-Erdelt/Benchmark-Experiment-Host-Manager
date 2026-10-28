@@ -541,7 +541,7 @@ the full customer, supplier and part tables, before loading. The DBMS then inges
 `lineorder_flat`, in parallel per pod; the join is not part of the measured loading time.
 
 * Columns: the 17 lineorder columns, then all customer, supplier and part columns without their keys. `lo_orderdate` and `lo_commitdate` are `DATE`.
-* The join streams: `sort` and `join` for customer, an awk lookup for supplier and part. Memory stays bounded (a 512 MB sort buffer plus supplier and part, about 1 GB at SF 1000); the sort needs temporary disk space of about 2-3x the chunk on the node.
+* The join streams: `sort` and `join` for customer, an awk lookup for supplier and part. Memory stays bounded (a 512 MB sort buffer plus supplier and part, about 1 GB at SF 1000); the sorts need temporary disk space on the node of about 6.7x the lineorder chunk (about 2x the flat chunk; SF 10 in 8 chunks: 4.9 GB per pod).
 * The file is about 3.4 times the size of the lineorder data and is stored in `/data/ssb/SF<SF>/flat/<N>/<k>`, next to the star schema files. At SF 100 that is about 200 GB on the shared volume.
 * A flat experiment gets its own volume label (`ssb-flat-<SF>`), so it never reuses a volume loaded with the star schema.
 * `-xic` has no effect: `lineorder_flat` has no keys to constrain.

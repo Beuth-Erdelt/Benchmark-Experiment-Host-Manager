@@ -74,6 +74,26 @@ COPY ./generator.sh /tmp/generator.sh
 RUN chmod +x /tmp/generator.sh
 
 ######################################################################################
+# Dev only (INCLUDE_DUCKDB=1, tag <version>-duckdb): DuckDB CLI and GNU time for
+# compare-flat.sh, which measures the flat generation of generator.sh against DuckDB
+######################################################################################
+ARG INCLUDE_DUCKDB=0
+ARG DUCKDB_VERSION=1.1.3
+ARG DUCKDB_SHA256=efd0fccdb1a28d9ec7a6ebfcde59900068b8ba43a846c9b553c0fd2bbe4acf43
+COPY ./flat.sql /tmp/flat.sql
+COPY ./compare-flat.sh /tmp/compare-flat.sh
+RUN chmod +x /tmp/compare-flat.sh \
+    && if [ "$INCLUDE_DUCKDB" = "1" ]; then \
+        apt-get update -y \
+        && apt-get install -y --no-install-recommends wget unzip time ca-certificates \
+        && wget -q https://github.com/duckdb/duckdb/releases/download/v$DUCKDB_VERSION/duckdb_cli-linux-amd64.zip -O /tmp/duckdb.zip \
+        && echo "$DUCKDB_SHA256  /tmp/duckdb.zip" | sha256sum -c - \
+        && unzip -q /tmp/duckdb.zip -d /usr/local/bin \
+        && rm /tmp/duckdb.zip \
+        && rm -rf /var/lib/apt/lists/*; \
+    fi
+
+######################################################################################
 # Environment variables — runtime configuration
 ######################################################################################
 # Scaling and parallelism
