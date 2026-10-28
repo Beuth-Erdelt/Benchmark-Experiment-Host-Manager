@@ -33,6 +33,7 @@ REFERENCE_BENCHMARK = {'PostgreSQL': 'tpch', 'MySQL': 'tpcds', 'Citus': 'tpch', 
 #: (benchmark, DBMS, script) -> why this copy differs from the reference copy.
 ALLOWED_DEVIATIONS = {
     ('tpch', 'MySQL', 'durability-relaxed.sql'): 'also autocommit 0 (the TPC-H loaders commit), as before -xld',
+    ('ssb', 'MySQL', 'durability-relaxed.sql'): 'also autocommit 0 (the SSB loader commits), as for TPC-H',
     ('tpcc', 'MySQL', 'durability-relaxed.sql'): 'flush 0 and 1G log buffer for the HammerDB build, as before -xld',
     ('ycsb', 'MySQL', 'durability-relaxed.sql'): 'flush 0 and 1G log buffer for the YCSB load, as before -xld',
 }
@@ -161,9 +162,11 @@ class RepositoryScriptsTest(unittest.TestCase):
         used = set()
         for path in self.scripts():
             folder, script = os.path.split(path)
-            dbms = os.path.basename(folder)
-            benchmark = os.path.relpath(os.path.dirname(folder), _EXPERIMENTS).replace(os.sep, '/')
-            key = (benchmark, dbms, script)
+            # <benchmark>/<DBMS>[/<variant>], e.g. benchbase/chbenchmark/PostgreSQL, ssb/Citus/distributed
+            parts = os.path.relpath(folder, _EXPERIMENTS).split(os.sep)
+            i = max(n for n, part in enumerate(parts) if part in REFERENCE_BENCHMARK)
+            benchmark, dbms = '/'.join(parts[:i]), parts[i]
+            key = (benchmark, '/'.join(parts[i:]), script)
             with self.subTest(copy='/'.join(key)):
                 reference = os.path.join(_EXPERIMENTS, REFERENCE_BENCHMARK[dbms], dbms, script)
                 same = _body(path) == _body(reference)
@@ -174,7 +177,7 @@ class RepositoryScriptsTest(unittest.TestCase):
                     self.assertTrue(same, f'differs from {REFERENCE_BENCHMARK[dbms]}/{dbms}/{script}; '
                                           'align it or declare it in ALLOWED_DEVIATIONS')
                 with open(path, encoding='utf-8') as f:
-                    self.assertTrue(f.readline().rstrip().endswith(f'| experiments/{benchmark}/{dbms}'))
+                    self.assertTrue(f.readline().rstrip().endswith(f'| experiments/{benchmark}/{key[1]}'))
         self.assertEqual(used, set(ALLOWED_DEVIATIONS))
 
     def test_no_curly_braces(self):
