@@ -147,11 +147,11 @@ template, no change to generic files.
   section in `docs/Example-SSB.md`, the README limits line (drop "no
   ClickHouseCluster").
 
-Options kept for later:
+Dimension placement (`-xdim`) and options kept for later:
 - Dimensions as a full copy on every node instead of Distributed, so a join runs
   locally on each shard and no dimension is broadcast per query (matters at large
   SF: customer has 30,000 x SF rows). No manual loading per shard needed:
-  - **R1 (chosen 2026-10-28, after C1-C6)**: `ReplicatedMergeTree` with one fixed Keeper path for all
+  - **R1 (chosen 2026-10-28, default, part of C1-C6)**: `ReplicatedMergeTree` with one fixed Keeper path for all
     nodes (no `{shard}` in it), i.e. all workers (and the coordinator) are
     replicas of one shard; the loader inserts on the coordinator as now, Keeper
     replicates the parts. Needs `SYSTEM SYNC REPLICA` before the benchmark
@@ -163,7 +163,22 @@ Options kept for later:
     `{shard}`) and `default_replica_name` `{replica}`, and the coordinator gets a
     `replica` macro; the scripts write `ENGINE = ReplicatedMergeTree ORDER BY ...`
     without arguments. Generic: no other script uses ReplicatedMergeTree. Uses
-    the embedded single-node Keeper of the coordinator.
+    the embedded single-node Keeper of the coordinator (its log and snapshots
+    are on the coordinator's storage volume, so they survive with `-rst`).
+    Parts: template (generic), `experiments/ssb/ClickHouseCluster` scripts
+    (dimensions `ON CLUSTER bexhoma` + once on the coordinator, which is not in
+    that cluster; `lineorder` stays Distributed; checkschema with
+    `SYSTEM SYNC REPLICA` and rows per node), a flag in `ssb.py` to choose
+    Distributed or replicated dimensions, its script lists in `cluster.config`.
+    Decided 2026-10-28: stays selectable (no replacement). Proposed flag:
+    `-xdim` / `--xdimensions distributed|replicated`, default `replicated`
+    (decided 2026-10-28); only for multi-node DBMS (ClickHouseCluster now: R1
+    vs Distributed; Citus later: reference tables vs distributed), ignored with
+    `-xsv flat` (no dimensions) and by single-node DBMS (so one run can mix
+    them). Since replicated is the default, R1 is part of the ClickHouseCluster
+    work: C1-C5 with both variants, the docs (C6) show the default. Queries unchanged. Risk: a dropped replicated
+    table keeps its Keeper path for about 8 minutes (Atomic database), so a
+    reload within that time fails with "replica already exists": drop with `SYNC`.
   - R2 (not chosen): a second cluster in `remote_servers` with one shard and all
     workers as replicas, `internal_replication=false`; a Distributed table over it
     writes every block to every node. No Keeper for data, but no consistency check.
