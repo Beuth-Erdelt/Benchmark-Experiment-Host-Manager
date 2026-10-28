@@ -156,6 +156,64 @@ build_and_push_tpcds() {
   _bg "bexhoma/loader_tpcds_clickhouse:$version"
 }
 
+###########
+build_and_push_ssb() {
+  local version="$1"
+
+  if [[ -z "$version" ]]; then
+    echo "Usage: build_and_push_ssb <image_tag>"
+    return 1
+  fi
+
+  (
+    set -e
+    cd images/ssb/generator
+    docker build -f Dockerfile -t "bexhoma/generator_ssb:$version" .
+    docker push "bexhoma/generator_ssb:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/generator_ssb:$version"
+
+  (
+    set -e
+    cd images/ssb/loader_postgresql
+    docker build -f Dockerfile -t "bexhoma/loader_ssb_postgresql:$version" .
+    docker push "bexhoma/loader_ssb_postgresql:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_ssb_postgresql:$version"
+
+  (
+    set -e
+    cd images/ssb/loader_monetdb
+    docker build -f Dockerfile -t "bexhoma/loader_ssb_monetdb:$version" .
+    docker push "bexhoma/loader_ssb_monetdb:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_ssb_monetdb:$version"
+
+  (
+    set -e
+    cd images/ssb/loader_clickhouse
+    docker build -f Dockerfile -t "bexhoma/loader_ssb_clickhouse:$version" .
+    docker push "bexhoma/loader_ssb_clickhouse:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_ssb_clickhouse:$version"
+
+  (
+    set -e
+    cd images/ssb/loader_mysql
+    docker build -f Dockerfile -t "bexhoma/loader_ssb_mysql:$version" .
+    docker push "bexhoma/loader_ssb_mysql:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_ssb_mysql:$version"
+
+  (
+    set -e
+    cd images/ssb/loader_mariadb
+    docker build -f Dockerfile -t "bexhoma/loader_ssb_mariadb:$version" .
+    docker push "bexhoma/loader_ssb_mariadb:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_ssb_mariadb:$version"
+}
+
 
 ###########
 build_and_push_tpch() {
@@ -395,6 +453,7 @@ build_and_push_dbmsbenchmarker "$dbmsbenchmarker" "$version"
 build_and_push_tpch "$version"
 build_and_push_tpch_refresh "$version"
 build_and_push_tpcds "$version"
+build_and_push_ssb "$version"
 build_and_push_monitoring "$version"
 build_and_push_hammerdb "$version"
 build_and_push_ycsb "$version"
@@ -411,6 +470,7 @@ build_and_push_dbmsbenchmarker "$dbmsbenchmarker" "$version"
 build_and_push_tpch "$version"
 build_and_push_tpch_refresh "$version"
 build_and_push_tpcds "$version"
+build_and_push_ssb "$version"
 build_and_push_monitoring "$version"
 build_and_push_hammerdb "$version"
 build_and_push_ycsb "$version"

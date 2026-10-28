@@ -116,6 +116,17 @@ function Build-AndPush-Tpcds {
     _BgDockerJob "bexhoma/loader_tpcds_clickhouse:$Version"  "images/tpcds/loader_clickhouse" "loader_tpcds_clickhouse"  $Version
 }
 
+function Build-AndPush-Ssb {
+    param([string]$Version)
+    if (-not $Version) { Write-Host "Usage: Build-AndPush-Ssb <image_tag>"; return }
+    _BgDockerJob "bexhoma/generator_ssb:$Version"            "images/ssb/generator"           "generator_ssb"            $Version
+    _BgDockerJob "bexhoma/loader_ssb_postgresql:$Version"    "images/ssb/loader_postgresql"   "loader_ssb_postgresql"    $Version
+    _BgDockerJob "bexhoma/loader_ssb_monetdb:$Version"       "images/ssb/loader_monetdb"      "loader_ssb_monetdb"       $Version
+    _BgDockerJob "bexhoma/loader_ssb_clickhouse:$Version"    "images/ssb/loader_clickhouse"   "loader_ssb_clickhouse"    $Version
+    _BgDockerJob "bexhoma/loader_ssb_mysql:$Version"         "images/ssb/loader_mysql"        "loader_ssb_mysql"         $Version
+    _BgDockerJob "bexhoma/loader_ssb_mariadb:$Version"       "images/ssb/loader_mariadb"      "loader_ssb_mariadb"       $Version
+}
+
 function Build-AndPush-Tpch {
     param([string]$Version)
     if (-not $Version) { Write-Host "Usage: Build-AndPush-Tpch <image_tag>"; return }
@@ -192,6 +203,7 @@ Build-AndPush-Dbmsbenchmarker $dbmsbenchmarker $version
 Build-AndPush-Tpch          $version
 Build-AndPush-TpchRefresh   $version
 Build-AndPush-Tpcds         $version
+Build-AndPush-Ssb           $version
 Build-AndPush-Monitoring    $version
 Build-AndPush-Hammerdb      $version
 Build-AndPush-Ycsb          $version
@@ -208,6 +220,7 @@ Build-AndPush-Dbmsbenchmarker $dbmsbenchmarker $version
 Build-AndPush-Tpch          $version
 Build-AndPush-TpchRefresh   $version
 Build-AndPush-Tpcds         $version
+Build-AndPush-Ssb           $version
 Build-AndPush-Monitoring    $version
 Build-AndPush-Hammerdb      $version
 Build-AndPush-Ycsb          $version

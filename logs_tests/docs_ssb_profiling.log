@@ -1,0 +1,400 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792957689
+Experiment                    : starts at 2026-10-25 20:48:09.413309 (283034.498141)
+Experiment                    : This experiment compares imported SSB data sets in different DBMS.
+Schema is the star schema (-xsv normal).
+SSB (SF=1) data is loaded and benchmark is executed.
+Query ordering is Q1.1 - Q4.3.
+Timeout per query is 1200.
+Data transfer volume per query is also measured.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.9.
+Experiment is limited to DBMS ['PostgreSQL', 'MonetDB', 'ClickHouse'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Database uses ephemeral storage of size 50Gi.
+Loading is tested with [1] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2GB')].
+SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+Cluster monitoring            : is running
+PostgreSQL-1                  : will start now
+PostgreSQL-1                  : deployments ['sut']
+PostgreSQL-1                  : stateful sets []
+PostgreSQL-1                  : pvcs ['sut']
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1792957689
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1792957689
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather = 2
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers = 4
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes = 6
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers = 20GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 48GB
+PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].work_mem = 1GB
+PostgreSQL-1                  : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
+MonetDB-1                     : will start now
+MonetDB-1                     : deployments ['sut']
+MonetDB-1                     : stateful sets []
+MonetDB-1                     : pvcs ['sut']
+MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1792957689
+MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1792957689
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+MonetDB-1                     : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : will start now
+ClickHouse-1                  : deployments ['sut']
+ClickHouse-1                  : stateful sets []
+ClickHouse-1                  : pvcs ['sut']
+ClickHouse-1                  : name of SUT pods = bexhoma-sut-clickhouse-1-1792957689
+ClickHouse-1                  : name of SUT service = bexhoma-sut-clickhouse-1-1792957689
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+ClickHouse-1                  : deployment[bexhoma-deployment-postgres] not found in file
+Loop pass                     : took 5.6s (3 kubectl calls 3.4s, 19 API requests 2.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+MonetDB-1                     : is not loaded yet
+MonetDB-1                     : will start loading but not before 2026-10-25 19:49:48 (that is in 60 secs)
+ClickHouse-1                  : is not loaded yet
+ClickHouse-1                  : will start loading but not before 2026-10-25 19:49:49 (that is in 60 secs)
+Loop pass                     : took 3.4s (0 kubectl calls 0.0s, 40 API requests 3.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+MonetDB-1                     : is not loaded yet
+MonetDB-1                     : will start loading but not before 2026-10-25 19:49:48
+ClickHouse-1                  : is not loaded yet
+ClickHouse-1                  : will start loading but not before 2026-10-25 19:49:49
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 34 API requests 3.4s)
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+MonetDB-1                     : is not loaded yet
+MonetDB-1                     : load durability relaxed, scripts []
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1792957689-5f64445dbf-tj9dm to load scripts
+MonetDB-1                     : start asynch loading scripts of type schema
+MonetDB-1                     : waits for the Schema scripts (schema=True) before starting the loading jobs
+MonetDB-1                     : Schema scripts done after 4s
+MonetDB-1                     : is loading
+ClickHouse-1                  : is not loaded yet
+ClickHouse-1                  : load durability relaxed, scripts []
+ClickHouse-1                  : connect to pod bexhoma-sut-clickhouse-1-1792957689-56c7bfbb8d-4hsw6 to load scripts
+ClickHouse-1                  : start asynch loading scripts of type schema
+ClickHouse-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
+ClickHouse-1                  : Schema scripts done after 4s
+ClickHouse-1                  : is loading
+Loop pass                     : took 29.2s (10 kubectl calls 11.0s, 76 API requests 10.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is not loaded yet
+PostgreSQL-1                  : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792957689-9cb9f866c-fvlrc to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type schema
+PostgreSQL-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
+PostgreSQL-1                  : Schema scripts done after 6s
+PostgreSQL-1                  : is loading
+MonetDB-1                     : is loading
+ClickHouse-1                  : is loading
+Loop pass                     : took 26.3s (8 kubectl calls 9.0s, 98 API requests 11.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+MonetDB-1                     : is loading
+ClickHouse-1                  : is loading
+Loop pass                     : took 64.3s (39 kubectl calls 43.0s, 107 API requests 13.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+MonetDB-1                     : showing loader times (ssb-loader)
+MonetDB-1                     : generator times (start/end per pod and container) [(1792957832, 1792957846), (1792957841, 1792957846), (1792957833, 1792957846), (1792957843, 1792957846), (1792957825, 1792957846), (1792957836, 1792957846), (1792957846, 1792957846), (1792957827, 1792957846)]
+MonetDB-1                     : loader times (start/end per pod and container) [(1792957856, 1792957868), (1792957857, 1792957869), (1792957857, 1792957868), (1792957857, 1792957870), (1792957857, 1792957873), (1792957857, 1792957869), (1792957856, 1792957868), (1792957857, 1792957870)]
+MonetDB-1                     : total times (start/end per pod and container) [(1792957832, 1792957846), (1792957841, 1792957846), (1792957833, 1792957846), (1792957843, 1792957846), (1792957825, 1792957846), (1792957836, 1792957846), (1792957846, 1792957846), (1792957827, 1792957846), (1792957856, 1792957868), (1792957857, 1792957869), (1792957857, 1792957868), (1792957857, 1792957870), (1792957857, 1792957873), (1792957857, 1792957869), (1792957856, 1792957868), (1792957857, 1792957870)]
+MonetDB-1                     : generator timespan (first to last [s]) = 21
+MonetDB-1                     : loader timespan (first to last [s]) = 17
+MonetDB-1                     : total timespan (first to last [s]) = 48
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1792957689-5f64445dbf-tj9dm to load scripts
+MonetDB-1                     : start asynch loading scripts of type index
+MonetDB-1                     : is loading
+ClickHouse-1                  : showing loader times (ssb-loader)
+ClickHouse-1                  : generator times (start/end per pod and container) [(1792957862, 1792957877), (1792957868, 1792957876), (1792957867, 1792957876), (1792957872, 1792957877), (1792957864, 1792957876), (1792957854, 1792957876), (1792957859, 1792957877), (1792957876, 1792957876)]
+ClickHouse-1                  : loader times (start/end per pod and container) [(1792957886, 1792957887), (1792957886, 1792957887), (1792957885, 1792957886), (1792957885, 1792957886), (1792957886, 1792957887), (1792957886, 1792957888), (1792957886, 1792957887), (1792957885, 1792957886)]
+ClickHouse-1                  : total times (start/end per pod and container) [(1792957862, 1792957877), (1792957868, 1792957876), (1792957867, 1792957876), (1792957872, 1792957877), (1792957864, 1792957876), (1792957854, 1792957876), (1792957859, 1792957877), (1792957876, 1792957876), (1792957886, 1792957887), (1792957886, 1792957887), (1792957885, 1792957886), (1792957885, 1792957886), (1792957886, 1792957887), (1792957886, 1792957888), (1792957886, 1792957887), (1792957885, 1792957886)]
+ClickHouse-1                  : generator timespan (first to last [s]) = 23
+ClickHouse-1                  : loader timespan (first to last [s]) = 3
+ClickHouse-1                  : total timespan (first to last [s]) = 34
+ClickHouse-1                  : connect to pod bexhoma-sut-clickhouse-1-1792957689-56c7bfbb8d-4hsw6 to load scripts
+ClickHouse-1                  : start asynch loading scripts of type index
+ClickHouse-1                  : is loading
+Loop pass                     : took 35.4s (19 kubectl calls 20.4s, 124 API requests 14.4s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1792957689 initialized to 1.
+MonetDB-1                     : benchmarks done 0 of 1. This will be client 1
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-ClickHouse-1-1792957689 initialized to 1.
+ClickHouse-1                  : benchmarks done 0 of 1. This will be client 1
+monetdb-1-1-1-1               : start benchmarking (benchmark_run=1)
+clickhouse-1-1-1-1            : start benchmarking (benchmark_run=1)
+MonetDB-1                     : benchmarking results in folder C:\data\benchmarks/1792957689
+ClickHouse-1                  : benchmarking results in folder C:\data\benchmarks/1792957689
+MonetDB-1                     : submitted benchmarker job in 11.1s (4 kubectl calls 4.6s, 24 API requests 6.3s)
+ClickHouse-1                  : submitted benchmarker job in 12.2s (3 kubectl calls 3.4s, 23 API requests 5.3s)
+Experiment                    : submitted 2 benchmark rounds in 12.3s (2 at once; 7 kubectl calls 8.1s, 49 API requests 11.8s)
+Loop pass                     : took 31.2s (18 kubectl calls 18.7s, 116 API requests 20.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : showing loader times (ssb-loader)
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1792957910, 1792957976), (1792957899, 1792957976), (1792957951, 1792957977), (1792957957, 1792957976), (1792957917, 1792957977), (1792957931, 1792957976), (1792957976, 1792957976), (1792957925, 1792957976)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1792958000, 1792958003), (1792958000, 1792958003), (1792958000, 1792958003), (1792958000, 1792958003), (1792958000, 1792958003), (1792958001, 1792958003), (1792958000, 1792958003), (1792958000, 1792958003)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1792957910, 1792957976), (1792957899, 1792957976), (1792957951, 1792957977), (1792957957, 1792957976), (1792957917, 1792957977), (1792957931, 1792957976), (1792957976, 1792957976), (1792957925, 1792957976), (1792958000, 1792958003), (1792958000, 1792958003), (1792958000, 1792958003), (1792958000, 1792958003), (1792958000, 1792958003), (1792958001, 1792958003), (1792958000, 1792958003), (1792958000, 1792958003)]
+PostgreSQL-1                  : generator timespan (first to last [s]) = 78
+PostgreSQL-1                  : loader timespan (first to last [s]) = 3
+PostgreSQL-1                  : total timespan (first to last [s]) = 104
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792957689-9cb9f866c-fvlrc to load scripts
+PostgreSQL-1                  : start asynch loading scripts of type index
+PostgreSQL-1                  : is loading
+monetdb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1792957689/monetdb-1-1-1-1.config
+monetdb-1-1-1-1               : showing benchmarker times
+monetdb-1-1-1-1               : benchmarker timespan job from 1792958096 to 1792958165
+monetdb-1-1-1-1               : benchmarker timespan pods from 1792958108 to 1792958111
+monetdb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 3
+monetdb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1792958108, 1792958111)]
+clickhouse-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1792957689/clickhouse-1-1-1-1.config
+clickhouse-1-1-1-1            : showing benchmarker times
+clickhouse-1-1-1-1            : benchmarker timespan job from 1792958097 to 1792958165
+clickhouse-1-1-1-1            : benchmarker timespan pods from 1792958110 to 1792958112
+clickhouse-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 2
+clickhouse-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1792958110, 1792958112)]
+monetdb-1-1-1-1               : found and updated times {'benchmarker': [(1792958108, 1792958111)]}
+clickhouse-1-1-1-1            : found and updated times {'benchmarker': [(1792958110, 1792958112)]}
+Experiment                    : ended 2 benchmarker jobs in 3.5s (3 at once; 4 kubectl calls 4.3s, 22 API requests 2.6s)
+Loop pass                     : took 38.2s (29 kubectl calls 30.8s, 96 API requests 10.3s)
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1792957689 initialized to 1.
+PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
+MonetDB-1                     : can be stopped
+MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1792957689-5f64445dbf-tj9dm
+ClickHouse-1                  : can be stopped
+ClickHouse-1                  : had 0 restarts at worker bexhoma-sut-clickhouse-1-1792957689-56c7bfbb8d-4hsw6
+postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
+PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792957689
+PostgreSQL-1                  : submitted benchmarker job in 8.5s (3 kubectl calls 3.4s, 23 API requests 5.0s)
+Loop pass                     : took 22.2s (10 kubectl calls 9.7s, 93 API requests 12.2s)
+- waiting 30s -               : done
+postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1792957689/postgresql-1-1-1-1.config
+postgresql-1-1-1-1            : showing benchmarker times
+postgresql-1-1-1-1            : benchmarker timespan job from 1792958189 to 1792958230
+postgresql-1-1-1-1            : benchmarker timespan pods from 1792958196 to 1792958203
+postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 7
+postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1792958196, 1792958203)]
+postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1792958196, 1792958203)]}
+Loop pass                     : took 12.3s (4 kubectl calls 5.0s, 30 API requests 3.5s)
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1792957689-9cb9f866c-fvlrc
+Loop pass                     : took 7.8s (4 kubectl calls 3.6s, 35 API requests 3.4s)
+Experiment                    : ends at 2026-10-25 20:57:22.703092 (283587.7909224) - 553.29s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+SSB Data Profiling SF=1
+* Type: ssb
+* Duration: 554s 
+* Code: 1792957689
+* Row count, count distinct, minimum and maximum of the key and date columns of each table.
+* This experiment compares imported SSB data sets in different DBMS.
+  * Schema is the star schema (-xsv normal).
+  * SSB (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1.1 - Q4.3.
+  * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.9.
+  * Experiment is limited to DBMS ['PostgreSQL', 'MonetDB', 'ClickHouse'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
+  * Loading is tested with [1] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2GB')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+
+### Connections
+* clickhouse-1-1-1-1-1 uses docker image clickhouse/clickhouse-server:26.8.34.13
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:677714
+  * datadisk:500
+  * volume_size:1.8T
+  * volume_used:662G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792957689
+* monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:677714
+  * datadisk:862
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792957689
+* postgresql-1-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:677885
+  * datadisk:1354
+  * volume_size:1.8T
+  * volume_used:662G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792957689
+
+### SUT Container Restarts
+* bexhoma-sut-clickhouse-1-1792957689-56c7bfbb8d-4hsw6: 0
+* bexhoma-sut-monetdb-1-1792957689-5f64445dbf-tj9dm: 0
+* bexhoma-sut-postgresql-1-1792957689-9cb9f866c-fvlrc: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS ClickHouse-1 - Experiment 1 Client 1: ssb (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 1: ssb (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: ssb (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: ssb (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 1: ssb (1 pods)
+* DBMS ClickHouse-1 - Experiment 1 Client 1: ssb (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouse-1-1 |                1 |    1 |       39.00 |           2.00 |           23.00 |          3.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |               92.31 | False               |
+| MonetDB-1-1    |                1 |    1 |       52.00 |           2.00 |           21.00 |         17.00 |            2.00 |              8 |           0 |             | None           |             0 | False         |               69.23 | False               |
+| PostgreSQL-1-1 |                1 |    1 |      114.00 |           4.00 |           78.00 |          3.00 |            6.00 |              8 |           0 |             | None           |             0 | False         |               31.58 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| clickhouse-1-1-1-1-1 | ClickHouse-1    | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          2 |            0.03 |           147661.02 |          18000.00 |          -1 | clickhouse-1-1-1-1-1 |
+| monetdb-1-1-1-1-1    | MonetDB-1       | monetdb-1-1-1    | monetdb-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          3 |            0.03 |           135839.85 |          12000.00 |          -1 | monetdb-1-1-1-1-1    |
+| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          7 |            0.13 |            28299.56 |           5142.86 |          -1 | postgresql-1-1-1-1-1 |
+
+#### Per Phase
+
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          2 |            0.03 |           147661.02 |          18000.00 |          -1 |
+| monetdb-1-1-1    | monetdb-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          3 |            0.03 |           135839.85 |          12000.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          7 |            0.13 |            28299.56 |           5142.86 |          -1 |
+
+#### Query Completion per Phase
+
+| phase            |   pods | stats about customer.c_custkey   | stats about supplier.s_suppkey   | stats about part.p_partkey   | stats about dates.d_datekey   | stats about lineorder.lo_orderkey   | stats about lineorder.lo_custkey   | stats about lineorder.lo_partkey   | stats about lineorder.lo_suppkey   | stats about lineorder.lo_orderdate   | stats about lineorder.lo_commitdate   | complete   |
+|:-----------------|-------:|:---------------------------------|:---------------------------------|:-----------------------------|:------------------------------|:------------------------------------|:-----------------------------------|:-----------------------------------|:-----------------------------------|:-------------------------------------|:--------------------------------------|:-----------|
+| clickhouse-1-1-1 |      1 | 1/1                              | 1/1                              | 1/1                          | 1/1                           | 1/1                                 | 1/1                                | 1/1                                | 1/1                                | 1/1                                  | 1/1                                   | yes        |
+| monetdb-1-1-1    |      1 | 1/1                              | 1/1                              | 1/1                          | 1/1                           | 1/1                                 | 1/1                                | 1/1                                | 1/1                                | 1/1                                  | 1/1                                   | yes        |
+| postgresql-1-1-1 |      1 | 1/1                              | 1/1                              | 1/1                          | 1/1                           | 1/1                                 | 1/1                                | 1/1                                | 1/1                                | 1/1                                  | 1/1                                   | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### Latency of Timer Execution [ms]
+| Queries                             |   clickhouse-1-1-1-1-1 |   monetdb-1-1-1-1-1 |   postgresql-1-1-1-1-1 |
+|:------------------------------------|-----------------------:|--------------------:|-----------------------:|
+| stats about customer.c_custkey      |                 212.32 |               19.26 |                  48.94 |
+| stats about supplier.s_suppkey      |                   5.30 |                4.09 |                   2.16 |
+| stats about part.p_partkey          |                  12.72 |                3.08 |                  23.55 |
+| stats about dates.d_datekey         |                  26.92 |                2.42 |                   1.98 |
+| stats about lineorder.lo_orderkey   |                 563.79 |              134.94 |                 801.90 |
+| stats about lineorder.lo_custkey    |                  14.17 |               63.04 |                 750.65 |
+| stats about lineorder.lo_partkey    |                  24.93 |              110.09 |                 967.38 |
+| stats about lineorder.lo_suppkey    |                  10.25 |               67.73 |                 752.66 |
+| stats about lineorder.lo_orderdate  |                   9.28 |               67.22 |                 691.79 |
+| stats about lineorder.lo_commitdate |                  10.17 |               68.40 |                 739.95 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned

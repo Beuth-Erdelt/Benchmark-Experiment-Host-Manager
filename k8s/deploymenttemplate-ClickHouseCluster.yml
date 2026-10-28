@@ -6,8 +6,13 @@
 #     CREATE TABLE t (...) ENGINE = Distributed(bexhoma, default, t_local, rand());
 # - ON CLUSTER needs a Keeper: a single-node ClickHouse Keeper runs embedded in the
 #   coordinator (port 9181); workers reach it via the SUT service
-# - macros {shard} (pod ordinal) and {replica} (pod name) are set on workers for later
-#   ReplicatedMergeTree setups
+# - macros {shard} (pod ordinal) and {replica} (pod name) are set on workers, {replica}
+#   (coordinator) on the coordinator
+# - a table copied to every node: ENGINE = ReplicatedMergeTree without arguments, created
+#   ON CLUSTER bexhoma and once more on the coordinator. The default replica path has no
+#   {shard}, so all nodes are replicas of one table; parts are fetched over the
+#   interserver port 9009 (the coordinator announces the SUT service, its pod name is
+#   not resolvable)
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -33,6 +38,7 @@ spec:
   # port-sut-* is kept without monitoring: native protocol (clickhouse-client) and Keeper (workers)
   - {port: 9000, protocol: TCP, name: port-sut-native, targetPort: 9000}
   - {port: 9181, protocol: TCP, name: port-sut-keeper, targetPort: 9181}
+  - {port: 9009, protocol: TCP, name: port-sut-interserver, targetPort: 9009}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   - {port: 9363, protocol: TCP, name: port-monitoring-application, targetPort: 9363}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
@@ -90,6 +96,13 @@ spec:
               <zookeeper>
                 <node><host>localhost</host><port>9181</port></node>
               </zookeeper>
+              <macros>
+                <cluster>bexhoma</cluster>
+                <replica>coordinator</replica>
+              </macros>
+              <default_replica_path>/clickhouse/tables/{database}/{table}</default_replica_path>
+              <default_replica_name>{replica}</default_replica_name>
+              <interserver_http_host>${BEXHOMA_SUT_NAME}</interserver_http_host>
               <!-- application metrics (-ma) -->
               <prometheus>
                 <port>9363</port>
@@ -128,6 +141,7 @@ spec:
         - {containerPort: 8123, name: http}
         - {containerPort: 9000, name: native}
         - {containerPort: 9181, name: keeper}
+        - {containerPort: 9009, name: interserver}
         - {containerPort: 9363, name: metrics}
         resources:
           limits: {cpu: 16000m, memory: 128Gi}
@@ -263,6 +277,9 @@ spec:
                 <shard>${HOSTNAME##*-}</shard>
                 <replica>${HOSTNAME}</replica>
               </macros>
+              <default_replica_path>/clickhouse/tables/{database}/{table}</default_replica_path>
+              <default_replica_name>{replica}</default_replica_name>
+              <interserver_http_host>${HOSTNAME}.${BEXHOMA_WORKER_SERVICE}</interserver_http_host>
               <prometheus>
                 <port>9363</port>
                 <endpoint>/metrics</endpoint>
@@ -299,6 +316,7 @@ spec:
         ports:
         - {containerPort: 8123, name: http}
         - {containerPort: 9000, name: native}
+        - {containerPort: 9009, name: interserver}
         - {containerPort: 9363, name: metrics}
         resources:
           limits: {cpu: 16000m, memory: 128Gi}

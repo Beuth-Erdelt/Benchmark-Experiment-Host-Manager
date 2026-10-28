@@ -201,19 +201,15 @@ def manage():
                 sf_kwargs = {}
                 if 'SF' in workload_properties.get('defaultParameters', {}):
                     sf_kwargs['SF'] = workload_properties['defaultParameters']['SF']
-                match workload_properties['type']:
-                    case 'ycsb':
-                        experiment = experiments.ycsb(cluster=cluster, code=code, **sf_kwargs)
-                    case 'tpcc':
-                        experiment = experiments.tpcc(cluster=cluster, code=code, **sf_kwargs)
-                    case 'tpch':
-                        experiment = experiments.tpch(cluster=cluster, code=code, **sf_kwargs)
-                    case 'tpcds':
-                        experiment = experiments.tpcds(cluster=cluster, code=code, **sf_kwargs)
-                    case 'benchbase':
-                        experiment = experiments.benchbase(cluster=cluster, code=code, **sf_kwargs)
-                    case _:
-                        experiment = experiments.base(cluster=cluster, code=code)
+                # the workload type names the experiment class alias in bexhoma.experiments
+                # (e.g. 'tpch' -> experiments.tpch); classes without summary_from_type fall
+                # back to the base class
+                experiment_class = getattr(experiments, str(workload_properties['type']), None)
+                if (isinstance(experiment_class, type) and issubclass(experiment_class, experiments.ExperimentBase)
+                        and experiment_class.summary_from_type):
+                    experiment = experiment_class(cluster=cluster, code=code, **sf_kwargs)
+                else:
+                    experiment = experiments.base(cluster=cluster, code=code)
                 # Reconstructing from just type/SF leaves experiment.workload at its
                 # __init__ defaults (e.g. monitoring_components={}). evaluate_results()
                 # uses self.workload['monitoring_components'] to decide which extra
