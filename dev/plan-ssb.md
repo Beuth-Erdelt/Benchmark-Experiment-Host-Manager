@@ -154,9 +154,14 @@ MySQL, MariaDB. These notes override the sketches below where they differ.
   - PostgreSQL vs Citus reference tables, `-xii -xic -xis` (1793198583).
   - PostgreSQL vs Citus `-xdim distributed`, `-xii -xic -xis` (1793199304).
   - Flat: PostgreSQL, PgDuckDB `-xdfe`, Citus, ClickHouseCluster (1793199271).
-- Open: MySQL and MariaDB checks (after the image build), the new docs runs in
-  `test-docs-ssb` (ClickHouseCluster x2, PgDuckDB, Citus, MySQL, MariaDB) and their
-  summaries in `docs/Example-SSB.md`; SF10 comparison replicated vs distributed.
+- Docs runs passed 2026-10-28, summaries in `docs/Example-SSB.md`: ClickHouseCluster
+  replicated (1793200104), distributed (1793201126), PgDuckDB `-xdfe` (1793202264),
+  Citus (1793202939). SF1, `-nw 3`: replicated Geo 0.13 s vs distributed 0.46 s.
+- MySQL and MariaDB after the image build (2026-10-28): docs runs MySQL (1793208131),
+  MariaDB (1793208774), `-xii -xic -xis`, passed; flat check PostgreSQL vs MySQL vs
+  MariaDB (1793209328, `-nlp 2`): no errors, no result mismatches (MySQL variant of the
+  year expression).
+- Open: SF10 comparison replicated vs distributed.
 
 ## Next: ClickHouseCluster (planned 2026-10-28)
 
