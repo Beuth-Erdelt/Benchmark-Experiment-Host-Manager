@@ -113,7 +113,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_postgresql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_postgresql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_postgresql.log" target="_blank" rel="noopener">docs_reset_ycsb_postgresql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_postgresql_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_postgresql.log</a>
 
 
 ### PGBouncer
@@ -145,7 +145,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_pgbouncer.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_pgbouncer_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_pgbouncer.log" target="_blank" rel="noopener">docs_reset_ycsb_pgbouncer.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_pgbouncer_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_pgbouncer.log</a>
 
 
 ### MySQL
@@ -174,7 +174,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_mysql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_mysql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_mysql.log" target="_blank" rel="noopener">docs_reset_ycsb_mysql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_mysql_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_mysql.log</a>
 
 
 ### MariaDB
@@ -203,7 +203,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_mariadb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_mariadb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_mariadb.log" target="_blank" rel="noopener">docs_reset_ycsb_mariadb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_mariadb_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_mariadb.log</a>
 
 
 ### Citus
@@ -235,7 +235,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_citus.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_citus_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_citus.log" target="_blank" rel="noopener">docs_reset_ycsb_citus.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_citus_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_citus.log</a>
 
 
 ### CockroachDB
@@ -266,7 +266,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_cockroachdb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_cockroachdb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_cockroachdb.log" target="_blank" rel="noopener">docs_reset_ycsb_cockroachdb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_cockroachdb_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_cockroachdb.log</a>
 
 
 ### TiDB
@@ -298,7 +298,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_tidb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_tidb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_tidb.log" target="_blank" rel="noopener">docs_reset_ycsb_tidb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_tidb_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_tidb.log</a>
 
 
 ### Dragonfly
@@ -327,7 +327,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_dragonfly.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_dragonfly_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_dragonfly.log" target="_blank" rel="noopener">docs_reset_ycsb_dragonfly.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_dragonfly_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_dragonfly.log</a>
 
 
 ### Dragonfly Replica
@@ -358,7 +358,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_dragonfly_replica.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_dragonfly_replica_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_dragonfly_replica.log" target="_blank" rel="noopener">docs_reset_ycsb_dragonfly_replica.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_dragonfly_replica_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_dragonfly_replica.log</a>
 
 
 ### Redis
@@ -387,7 +387,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_redis.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_redis_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_redis.log" target="_blank" rel="noopener">docs_reset_ycsb_redis.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_redis_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_redis.log</a>
 
 
 ### Redis Cluster
@@ -417,7 +417,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_redis_cluster.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_redis_cluster_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_redis_cluster.log" target="_blank" rel="noopener">docs_reset_ycsb_redis_cluster.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_redis_cluster_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_redis_cluster.log</a>
 
 
 ### YugabyteDB
@@ -448,7 +448,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_yugabytedb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_yugabytedb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_yugabytedb.log" target="_blank" rel="noopener">docs_reset_ycsb_yugabytedb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_yugabytedb_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_yugabytedb.log</a>
 
 
 ## Benchbase
@@ -476,7 +476,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_postgresql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_postgresql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_postgresql.log" target="_blank" rel="noopener">docs_reset_benchbase_postgresql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_postgresql_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_postgresql.log</a>
 
 
 ### TPC-C PGBouncer
@@ -504,7 +504,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_pgbouncer.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_pgbouncer_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_pgbouncer.log" target="_blank" rel="noopener">docs_reset_benchbase_pgbouncer.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_pgbouncer_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_pgbouncer.log</a>
 
 
 ### TPC-C MySQL
@@ -529,7 +529,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_mysql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_mysql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_mysql.log" target="_blank" rel="noopener">docs_reset_benchbase_mysql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_mysql_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_mysql.log</a>
 
 
 ### TPC-C MariaDB
@@ -554,7 +554,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_mariadb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_mariadb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_mariadb.log" target="_blank" rel="noopener">docs_reset_benchbase_mariadb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_mariadb_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_mariadb.log</a>
 
 
 ### Twitter PostgreSQL
@@ -580,7 +580,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_twitter_postgresql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_twitter_postgresql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_twitter_postgresql.log" target="_blank" rel="noopener">docs_reset_benchbase_twitter_postgresql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_twitter_postgresql_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_twitter_postgresql.log</a>
 
 
 ### TPC-C Citus
@@ -608,7 +608,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_citus.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_citus_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_citus.log" target="_blank" rel="noopener">docs_reset_benchbase_citus.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_citus_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_citus.log</a>
 
 
 ### TPC-C CockroachDB
@@ -635,7 +635,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_cockroachdb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_cockroachdb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_cockroachdb.log" target="_blank" rel="noopener">docs_reset_benchbase_cockroachdb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_cockroachdb_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_cockroachdb.log</a>
 
 
 ### TPC-C TiDB
@@ -663,7 +663,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_tidb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_tidb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_tidb.log" target="_blank" rel="noopener">docs_reset_benchbase_tidb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_tidb_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_tidb.log</a>
 
 
 ### TPC-C YugabyteDB
@@ -690,7 +690,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_reset_benchbase_yugabytedb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_yugabytedb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_yugabytedb.log" target="_blank" rel="noopener">docs_reset_benchbase_yugabytedb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_yugabytedb_summary.md" target="_blank" rel="noopener">docs_reset_benchbase_yugabytedb.log</a>
 
 
 ## HammerDB
@@ -717,7 +717,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_reset_hammerdb_postgresql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_postgresql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_postgresql.log" target="_blank" rel="noopener">docs_reset_hammerdb_postgresql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_postgresql_summary.md" target="_blank" rel="noopener">docs_reset_hammerdb_postgresql.log</a>
 
 
 ### MySQL
@@ -741,7 +741,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_reset_hammerdb_mysql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_mysql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_mysql.log" target="_blank" rel="noopener">docs_reset_hammerdb_mysql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_mysql_summary.md" target="_blank" rel="noopener">docs_reset_hammerdb_mysql.log</a>
 
 
 ### MariaDB
@@ -765,7 +765,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_reset_hammerdb_mariadb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_mariadb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_mariadb.log" target="_blank" rel="noopener">docs_reset_hammerdb_mariadb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_mariadb_summary.md" target="_blank" rel="noopener">docs_reset_hammerdb_mariadb.log</a>
 
 
 ### Citus
@@ -792,7 +792,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_reset_hammerdb_citus.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_citus_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_citus.log" target="_blank" rel="noopener">docs_reset_hammerdb_citus.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_hammerdb_citus_summary.md" target="_blank" rel="noopener">docs_reset_hammerdb_citus.log</a>
 
 
 ## TPC-H
@@ -818,7 +818,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_reset_tpch_postgresql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_postgresql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_postgresql.log" target="_blank" rel="noopener">docs_reset_tpch_postgresql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_postgresql_summary.md" target="_blank" rel="noopener">docs_reset_tpch_postgresql.log</a>
 
 
 ### PgDuckDB
@@ -841,7 +841,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_reset_tpch_pgduckdb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_pgduckdb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_pgduckdb.log" target="_blank" rel="noopener">docs_reset_tpch_pgduckdb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_pgduckdb_summary.md" target="_blank" rel="noopener">docs_reset_tpch_pgduckdb.log</a>
 
 
 ### MonetDB
@@ -864,7 +864,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_reset_tpch_monetdb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_monetdb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_monetdb.log" target="_blank" rel="noopener">docs_reset_tpch_monetdb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_monetdb_summary.md" target="_blank" rel="noopener">docs_reset_tpch_monetdb.log</a>
 
 
 ### MySQL
@@ -887,7 +887,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_reset_tpch_mysql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_mysql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_mysql.log" target="_blank" rel="noopener">docs_reset_tpch_mysql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_mysql_summary.md" target="_blank" rel="noopener">docs_reset_tpch_mysql.log</a>
 
 
 ### MariaDB
@@ -910,7 +910,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_reset_tpch_mariadb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_mariadb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_mariadb.log" target="_blank" rel="noopener">docs_reset_tpch_mariadb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_mariadb_summary.md" target="_blank" rel="noopener">docs_reset_tpch_mariadb.log</a>
 
 
 ### Citus
@@ -936,7 +936,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_reset_tpch_citus.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_citus_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_citus.log" target="_blank" rel="noopener">docs_reset_tpch_citus.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_citus_summary.md" target="_blank" rel="noopener">docs_reset_tpch_citus.log</a>
 
 
 ### PostgreSQL with Refresh Stream
@@ -960,7 +960,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_reset_tpch_refresh_postgresql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_refresh_postgresql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_refresh_postgresql.log" target="_blank" rel="noopener">docs_reset_tpch_refresh_postgresql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpch_refresh_postgresql_summary.md" target="_blank" rel="noopener">docs_reset_tpch_refresh_postgresql.log</a>
 
 
 ## TPC-DS
@@ -987,7 +987,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_reset_tpcds_postgresql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_postgresql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_postgresql.log" target="_blank" rel="noopener">docs_reset_tpcds_postgresql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_postgresql_summary.md" target="_blank" rel="noopener">docs_reset_tpcds_postgresql.log</a>
 
 
 ### MonetDB
@@ -1011,7 +1011,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_reset_tpcds_monetdb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_monetdb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_monetdb.log" target="_blank" rel="noopener">docs_reset_tpcds_monetdb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_monetdb_summary.md" target="_blank" rel="noopener">docs_reset_tpcds_monetdb.log</a>
 
 
 ### MySQL
@@ -1035,7 +1035,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_reset_tpcds_mysql.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_mysql_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_mysql.log" target="_blank" rel="noopener">docs_reset_tpcds_mysql.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_mysql_summary.md" target="_blank" rel="noopener">docs_reset_tpcds_mysql.log</a>
 
 
 ### MariaDB
@@ -1059,4 +1059,4 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_reset_tpcds_mariadb.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_mariadb_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_mariadb.log" target="_blank" rel="noopener">docs_reset_tpcds_mariadb.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_tpcds_mariadb_summary.md" target="_blank" rel="noopener">docs_reset_tpcds_mariadb.log</a>

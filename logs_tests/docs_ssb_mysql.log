@@ -1,0 +1,257 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1793208131
+Experiment                    : starts at 2026-10-28 18:22:11.915799 (61858.3015337)
+Experiment                    : This experiment compares run time and resource consumption of SSB queries in different DBMS.
+Schema is the star schema (-xsv normal).
+SSB (SF=1) data is loaded and benchmark is executed.
+Queries use the constants of the specification (-xqv spec).
+Query ordering is Q1.1 - Q4.3.
+Timeout per query is 1200.
+Data transfer volume per query is also measured.
+Import sets indexes, constraints, statistics recomputation after loading.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.9.
+Experiment is limited to DBMS ['MySQL'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Database uses ephemeral storage of size 50Gi.
+Loading is tested with [1] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+Cluster monitoring            : is running
+MySQL-1                       : will start now
+MySQL-1                       : deployments ['sut']
+MySQL-1                       : stateful sets []
+MySQL-1                       : pvcs ['sut']
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1793208131
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1793208131
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1793208131
+Loop pass                     : took 3.1s (1 kubectl calls 1.4s, 10 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-28 17:26:52 (that is in 120 secs)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-28 17:26:52
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 13 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-28 17:26:52
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 13 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-10-28 17:26:52
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 13 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1793208131-5f4779f7bd-bnxb6 to load scripts
+MySQL-1                       : start asynch loading scripts of type schema
+MySQL-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
+MySQL-1                       : Schema scripts done after 8s
+MySQL-1                       : is loading
+Loop pass                     : took 37.0s (8 kubectl calls 16.2s, 36 API requests 3.0s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 34 API requests 1.9s)
+- waiting 30s -               : done
+MySQL-1                       : showing loader times (ssb-loader)
+MySQL-1                       : generator times (start/end per pod and container) [(1793208465, 1793208481), (1793208476, 1793208482), (1793208479, 1793208481), (1793208465, 1793208482), (1793208472, 1793208481), (1793208480, 1793208481), (1793208466, 1793208481), (1793208468, 1793208481)]
+MySQL-1                       : loader times (start/end per pod and container) [(1793208494, 1793208505), (1793208494, 1793208502), (1793208494, 1793208502), (1793208495, 1793208503), (1793208494, 1793208503), (1793208495, 1793208503), (1793208494, 1793208503), (1793208494, 1793208503)]
+MySQL-1                       : total times (start/end per pod and container) [(1793208465, 1793208481), (1793208476, 1793208482), (1793208479, 1793208481), (1793208465, 1793208482), (1793208472, 1793208481), (1793208480, 1793208481), (1793208466, 1793208481), (1793208468, 1793208481), (1793208494, 1793208505), (1793208494, 1793208502), (1793208494, 1793208502), (1793208495, 1793208503), (1793208494, 1793208503), (1793208495, 1793208503), (1793208494, 1793208503), (1793208494, 1793208503)]
+MySQL-1                       : generator timespan (first to last [s]) = 17
+MySQL-1                       : loader timespan (first to last [s]) = 11
+MySQL-1                       : total timespan (first to last [s]) = 40
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1793208131-5f4779f7bd-bnxb6 to load scripts
+MySQL-1                       : start asynch loading scripts of type index
+MySQL-1                       : is loading
+Loop pass                     : took 73.5s (41 kubectl calls 64.1s, 62 API requests 3.5s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 14 API requests 0.8s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1793208131 initialized to 1.
+MySQL-1                       : benchmarks done 0 of 1. This will be client 1
+mysql-1-1-1-1                 : start benchmarking (benchmark_run=1)
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1793208131
+MySQL-1                       : submitted benchmarker job in 8.2s (4 kubectl calls 5.3s, 24 API requests 2.7s)
+Loop pass                     : took 11.9s (5 kubectl calls 6.6s, 44 API requests 4.1s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 20 API requests 1.0s)
+- waiting 30s -               : done
+mysql-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1793208131/mysql-1-1-1-1.config
+mysql-1-1-1-1                 : showing benchmarker times
+mysql-1-1-1-1                 : benchmarker timespan job from 1793208659 to 1793208732
+mysql-1-1-1-1                 : benchmarker timespan pods from 1793208670 to 1793208692
+mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 22
+mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1793208670, 1793208692)]
+mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1793208670, 1793208692)]}
+Loop pass                     : took 12.2s (4 kubectl calls 5.1s, 24 API requests 1.2s)
+MySQL-1                       : can be stopped
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1793208131-5f4779f7bd-bnxb6
+Loop pass                     : took 6.8s (4 kubectl calls 4.9s, 30 API requests 1.3s)
+Experiment                    : ends at 2026-10-28 18:32:21.836507 (62468.2189603) - 609.92s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+SSB Queries SF=1
+* Type: ssb
+* Duration: 610s 
+* Code: 1793208131
+* This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
+* This experiment compares run time and resource consumption of SSB queries in different DBMS.
+  * Schema is the star schema (-xsv normal).
+  * SSB (SF=1) data is loaded and benchmark is executed.
+  * Queries use the constants of the specification (-xqv spec).
+  * Query ordering is Q1.1 - Q4.3.
+  * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
+  * Import sets indexes, constraints, statistics recomputation after loading.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.9.
+  * Experiment is limited to DBMS ['MySQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
+  * Loading is tested with [1] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+
+### Connections
+* mysql-1-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:660571
+  * datadisk:34417
+  * volume_size:1.8T
+  * volume_used:646G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793208131
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1793208131-5f4779f7bd-bnxb6: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS MySQL-1 - Experiment 1 Client 1: ssb (1 pods)
+
+#### Planned
+
+* DBMS MySQL-1 - Experiment 1 Client 1: ssb (1 pods)
+
+### Loading
+
+#### Per Run
+
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |    1 |       94.00 |           5.00 |           17.00 |         11.00 |           49.00 |              8 |           0 |             | None           |             0 | False         |               38.30 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
+|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
+| mysql-1-1-1-1-1 | MySQL-1         | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         22 |            0.51 |             7147.10 |           2127.27 |          -1 | mysql-1-1-1-1-1 |
+
+#### Per Phase
+
+|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         22 |            0.51 |             7147.10 |           2127.27 |          -1 |
+
+#### Query Completion per Phase
+
+| phase       |   pods | Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)   | Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)   | Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)   | Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)   | Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)   | Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)   | Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)   | Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)   | Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)   | Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)   | Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1)   | Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)   | Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)   | complete   |
+|:------------|-------:|:-------------------------------------------------------------------------|:--------------------------------------------------------------------------|:-------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------|:---------------------------------------------------------------------|:------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------|:---------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------|:------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------|:-----------|
+| mysql-1-1-1 |      1 | 1/1                                                                      | 1/1                                                                       | 1/1                                                                      | 1/1                                                                                     | 1/1                                                                                | 1/1                                                                  | 1/1                                                                                 | 1/1                                                                               | 1/1                                                                              | 1/1                                                                                  | 1/1                                                                                      | 1/1                                                                           | 1/1                                                                                  | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### Latency of Timer Execution [ms]
+| Queries                                                                                |   mysql-1-1-1-1-1 |
+|:---------------------------------------------------------------------------------------|------------------:|
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |           1177.30 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |             98.05 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |             25.91 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |           2488.97 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |            510.27 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |             43.54 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |           5712.01 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |            654.17 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |            155.14 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |            112.06 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |           4134.77 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |           2640.91 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |           1145.44 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned

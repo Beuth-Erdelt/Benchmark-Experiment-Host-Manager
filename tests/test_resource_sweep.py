@@ -300,7 +300,7 @@ class EntryScriptSweepTest(unittest.TestCase):
                 self.assertFalse(sweeps_resources(config), config.configuration)
 
     def test_every_dbms_of_every_benchmark_is_swept(self):
-        for script in ('tpch.py', 'tpcds.py', 'ycsb.py', 'benchbase.py', 'hammerdb.py', 'hardware.py'):
+        for script in ('tpch.py', 'tpcds.py', 'ssb.py', 'ycsb.py', 'benchbase.py', 'hammerdb.py', 'hardware.py'):
             with self.subTest(script):
                 self.assert_swept(self.run_script(script))
 

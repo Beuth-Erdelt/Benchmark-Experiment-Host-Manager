@@ -1,8 +1,279 @@
 # Plan: Star Schema Benchmark (SSB)
 
-Status: **plan only** (2026-10-24). Nothing is implemented. Tracks issue #348
-("Try SSB"). Decisions of 2026-10-24 are in "Decisions" at the end; the
-sections below already follow them.
+Status: **implemented and run on the cluster** (2026-10-25, branch
+`feature/ssb`): M0-M9 and M1b done (SF10 and bash vs DuckDB on 2026-10-27).
+Tracks issue
+#348 ("Try SSB"). Decisions of 2026-10-24 are in "Decisions" at the end; what
+changed during the implementation is in "Implementation notes (2026-10-25)"
+right below and overrides the design sections where they differ.
+
+## Implementation notes (2026-10-25)
+
+Found while implementing; these override the design below.
+
+- **dbgen chunking has two bugs**, so only lineorder is chunked:
+  - In the chunked path (`-C/-S`), `set_state()` scales part linearly
+    (200,000 x SF / N per chunk, not 200,000 x floor(1+log2 SF)) and gives date
+    2,557 x SF / N rows.
+  - From chunk 2 on, the order-level random streams of `lo_custkey`,
+    `lo_orderpriority` (and the unused clerk) restart: `sd_line()` advances only
+    `O_ODATE`/`O_LCNT`. The data then depended on `-nlp`.
+  - Fix: `images/ssb/generator/dbgen-chunk-seeds.patch` (3 lines, applied in
+    the Dockerfile). Checked: SF1 in 4 chunks = unchunked lineorder (byte for
+    byte, sorted), SF10 chunk 3 of 8 = its slice of the unchunked file; the
+    unchunked output is unchanged by the patch.
+  - Not reported upstream (outward-facing; ask first).
+- **Dimensions** (customer, supplier, part, date) are generated unchunked by
+  child 1 only, into its own folder. Each loader loads its own folder, so the
+  loaders need no "child 1 only" rule.
+- **No `TRANSFORM_RAW_DATA`/`sed` fallback**: dbgen is built with
+  `EOL_HANDLING=ON` (checked: no trailing `|` in any table). A `sed` pass would
+  cut a real character from flat files and reused chunks.
+- **`.complete` marker** decides reuse; cleanup removes only `.tbl` files and the
+  marker (with one pod the folder is `/data/ssb/SF<n>` itself, which holds
+  `flat/` and other splits).
+- **Flat file is 3.4x lineorder** (not 2x): SF1 2.08 GB vs 593 MB. Flat step at
+  SF10, chunk of 7.5 M rows (Docker Desktop): 17 s stream + 7 s order restore;
+  awk holds 180 MB (SF10 supplier + part, all columns).
+- **G3 dropped**: no DBMS-Benchmarker change. Two distinct cities of one nation
+  come from a `dict` keyed by city with the other 9 cities of its nation as
+  values; region -> nation, year -> next year, month/week -> first/last date
+  likewise. The benchmarker image stays as it is.
+- **Flat date literals**: `date 'YYYY-MM-DD'` works in PostgreSQL, MonetDB and
+  ClickHouse; no per-DBMS query variants at all.
+- **Random domains** follow the specification where it gives them (Q1 template:
+  year [1993,1997], discount D in [2,9] for D-1..D+1, quantity < Q with Q in
+  [24,25]); weeks 2..52 (week 1 has 6 days, week 53 one or two); Q2.2 brand
+  start in {10,11,12,20,21,22,30,31,32} (unpadded brands: a range across a
+  decade catches a one-digit brand).
+- **Q2.3 brand** `MFGR#2239` and **Q1.3 quantity** 26-35: the specification's
+  text and SQL disagree; we follow ClickHouse/Doris and the SQL.
+- **G2 as a class attribute**: `ExperimentBase.summary_from_type` (False);
+  True in tpch, tpcds, ssb, ycsb, tpcc, benchbase. `bexhoma summary` resolves the
+  class with `getattr(experiments, type)` only for those, so behaviour for
+  other types (e.g. hardware) is unchanged.
+- **Query files are generated** by `experiments/ssb/make_queries.py` (in the
+  repo; a test checks the committed files are its output).
+- **`cluster.config` is gitignored**: the entry is in the local file and in the
+  tracked `k8s-cluster.config`.
+- **Local end-to-end check (instead of the first part of M7)**: PostgreSQL 18.6,
+  MonetDB Dec2025-SP3, ClickHouse 26.8 in Docker, SF1, 2 loader pods, loader
+  images, all post-load scripts. All 13 spec and 13 random queries return the
+  same results on all three DBMS, for normal and flat, and flat = normal for the
+  spec queries.
+- **Cluster runs 2026-10-25** (images 0.11.9): star schema 3 DBMS (1792951409),
+  random per stream (1792951495), reuse (1792952702), flat 3 DBMS (1792952656),
+  flat profiling (1792957739) and all 8 runs of `test-docs-ssb.ps1` passed (no
+  errors, no result mismatches across DBMS). Found on the way and fixed:
+  - concurrent generators of the DBMS configurations wrote/deleted the same
+    folder: staging folder per pod + atomic move (85d7bd34);
+  - generator barrier after the early exit deadlocked: barrier first (85d7bd34);
+  - one profiling file queried both schema variants: one file per variant
+    (d4c0f0d8).
+  - Same two generator patterns exist in the TPC-H generator (not changed).
+- `docs/Example-SSB.md` holds the summaries of the docs runs.
+- **M7.6 (2026-10-27)**: SF10, 8 loader pods, 3 DBMS: star schema 1793091947,
+  flat 1793092772, both passed. Loading (time_load) normal: ClickHouse 67 s,
+  PostgreSQL 177 s, MonetDB 251 s; flat: 95 s, 510 s, 557 s. Flat generation
+  45-58 s per configuration (chunks of 7.5 M rows reused from the normal run;
+  stream 30-40 s, order restore 11-20 s). MonetDB and ClickHouse generated the
+  same flat folders concurrently; ClickHouse's copies were discarded as designed.
+- **M1b (2026-10-27)**: `images/ssb/generator/compare-flat.sh` + `flat.sql`, dev
+  image `--build-arg INCLUDE_DUCKDB=1` (DuckDB CLI 1.1.3, sha256 pinned). Local
+  Docker Desktop (8 cores), 3 repetitions (SF10 unchunked 1-2), medians; all
+  outputs byte-identical to bash (unordered ones after sorting). Wall s / peak
+  temp GB in the work folder:
+
+  | chunk | bash ordered | bash unordered | awk only | DuckDB ordered | DuckDB unordered |
+  |---|---|---|---|---|---|
+  | SF1, 1 of 4 (1.5 M rows) | 5.5 / 1.0 | 4.0 / 0 | 4.0 / 0 | 3.6 / 0.7 | 1.0 / 0 |
+  | SF1, 1 of 1 (6 M) | 25.7 / 3.9 | 16.1 / 0.6 | 15.1 / 0 | 23.7 / 4.0 | 4.1 / 0 |
+  | SF10, 1 of 8 (7.5 M) | 26.2 / 4.9 | 18.1 / 0.7 | 21.6 / 0 | 26.0 / 5.2 | 3.6 / 0 |
+  | SF10, 1 of 4 (15 M) | 52.8 / 9.8 | 37.7 / 1.5 | 47.8 / 0 | 136.5 / 10.8 | 7.7 / 0 |
+  | SF10, 1 of 1 (60 M) | 244.5 / 44.8 | 138.0 / 9.0 | 185.8 / 0 | 986.5 / 43.6 | 28.6 / 0 |
+
+  Largest single process: bash 514 MB, awk only 443 MB at SF10 (grows with
+  customer: about 1.8 GB at SF100, 13 GB at SF1000, extrapolated), DuckDB 1.7-1.9 GB
+  ordered (memory_limit 1GB, spills), 0.3-0.7 GB unordered. The order restore
+  dominates: bash ordered needs temp of about 2x the flat chunk = about 6.7x the
+  lineorder chunk (not 2-3x as estimated). DuckDB unordered is 5-7x faster in wall
+  time (all cores; similar CPU time). The local runs filled C: through Docker's
+  virtual disk (the "free" space Docker reports is inside its disk file); further
+  large measurements only on the cluster.
+- **Decision 2026-10-28**: the flat method stays bash with the order restore
+  (default). No ephemeral-storage request for the `/work` emptyDir: a pod that
+  finds its folder complete uses no `/work`, and a request would reserve the disk
+  anyway. The node needs free local disk of about 6.7x the lineorder chunk while a
+  flat file is generated (documented in `images/ssb/README.md`). `/work` on the
+  data volume (estimated 2-3x slower) was not measured.
+
+## Next steps: implementation notes (2026-10-28)
+
+Implemented on `feature/ssb`: ClickHouseCluster (C1-C6 with R1), PgDuckDB, Citus,
+MySQL, MariaDB. These notes override the sketches below where they differ.
+
+- **`-xdim` switches the script folder**: `resolve_dimension_folder()` (in
+  `bexhoma/benchmarks/ssb.py`) gives `<DBMS>/distributed` for `distributed` on the
+  star schema, else the DBMS folder; `ssb.py` sets `config.path_experiment_docker`
+  and the volume label `ssb-distributed-<SF>`. No change to `cluster.config` or
+  generic code. Files of `distributed/` that do not depend on the placement are
+  copies (a test checks they are identical).
+- **ClickHouseCluster template** (generic): `default_replica_path`
+  `/clickhouse/tables/{database}/{table}`, `default_replica_name` `{replica}`,
+  macro `replica` = `coordinator` on the coordinator, `interserver_http_host`
+  (coordinator: the SUT service, its pod name is not resolvable; workers:
+  `<pod>.<headless service>`), port 9009 in the SUT service. Worker pod names
+  come from the volume label, so replica names stay stable with `-rst`.
+- `CREATE TABLE t ON CLUSTER c AS t_local ENGINE = Distributed(...)` fails: the
+  initiator (coordinator) resolves `t_local`, which exists only on the shards;
+  the columns are written out, as for TPC-H.
+- checkschema (replicated) runs `SYSTEM SYNC REPLICA ON CLUSTER` per dimension and
+  fails (`throwIf`) if a node is missing or holds other rows than the others.
+- Reset scripts per variant where the tables differ (`reset-ssb-flat.sql`):
+  ClickHouseCluster, Citus (VACUUM must name the tables to reach the shards), MySQL, MariaDB.
+- **PgDuckDB**: `path_experiment_docker = 'PostgreSQL'` as for TPC-H, `-xdfe`.
+- **Citus**: reference tables (default) or distributed dimensions; with
+  `distributed` `-xic` adds only primary keys (no foreign keys between
+  non-co-located distributed tables). No `-xcol` (columnar) yet.
+- **MySQL, MariaDB**: one `loader.sh` in two images (`loader_mysql`,
+  `loader_mariadb`, client and base image as for TPC-H; MySQL: `--skip-ssl`);
+  `LOAD DATA LOCAL INFILE ...; SELECT ROW_COUNT(); COMMIT;` and a row-count check.
+  Primary keys in the schema. MySQL does not know `CAST(... AS INTEGER)`: the
+  flat queries get a `'DBMS': {'MySQL': ...}` variant (MariaDB, dialect MySQL,
+  uses it too). Durability and `reset-flush.sh` copied from TPC-H.
+- Images to build: `bexhoma/loader_ssb_mysql`, `bexhoma/loader_ssb_mariadb`
+  (build scripts updated).
+- **Cluster checks 2026-10-28** (SF1, `-nlp 2`, `-nw 2`, `-ks no`), all passed, no
+  result mismatches:
+  - ClickHouse vs ClickHouseCluster replicated (1793198150): 3 replicas per
+    dimension, identical rows; a shard's query_log shows the joins against its
+    local `dates`/`part`/`supplier` (no per-query broadcast).
+  - ClickHouseCluster `-xdim distributed` (1793198173).
+  - ClickHouseCluster replicated `-rst nvme -nc 2 -ar` (1793198608): run 2 reused
+    the volumes (Keeper and replicas intact after the restart), reset OK in both rounds.
+  - PostgreSQL vs Citus reference tables, `-xii -xic -xis` (1793198583).
+  - PostgreSQL vs Citus `-xdim distributed`, `-xii -xic -xis` (1793199304).
+  - Flat: PostgreSQL, PgDuckDB `-xdfe`, Citus, ClickHouseCluster (1793199271).
+- Docs runs passed 2026-10-28, summaries in `docs/Example-SSB.md`: ClickHouseCluster
+  replicated (1793200104), distributed (1793201126), PgDuckDB `-xdfe` (1793202264),
+  Citus (1793202939). SF1, `-nw 3`: replicated Geo 0.13 s vs distributed 0.46 s.
+- MySQL and MariaDB after the image build (2026-10-28): docs runs MySQL (1793208131),
+  MariaDB (1793208774), `-xii -xic -xis`, passed; flat check PostgreSQL vs MySQL vs
+  MariaDB (1793209328, `-nlp 2`): no errors, no result mismatches (MySQL variant of the
+  year expression).
+- Open: SF10 comparison replicated vs distributed.
+
+## Next: ClickHouseCluster (planned 2026-10-28)
+
+Built like TPC-H's ClickHouseCluster (6bc6cac5). No new image, no new job
+template, no change to generic files.
+
+- **C1 `ssb.py`**: `ClickHouseCluster` in the `-dbms` choices; a configuration
+  block as in `tpch.py` (`docker='ClickHouseCluster'`, `worker=num_worker`, alias
+  `DBMS C1`, storage `clickhousecluster`, eval parameter `BEXHOMA_WORKERS`,
+  reset scripts `['reset-ssb.sql', 'reset-flush.sh']` with script target
+  `workers`). Loader template: the existing `jobtemplate-loading-ssb-ClickHouse.yml`;
+  the loader writes to the coordinator's Distributed tables, which send the rows
+  to the shards. Not part of the default DBMS set (empty `-dbms`).
+- **C2 `experiments/ssb/ClickHouseCluster/`**:
+  - `initschema-ssb.sql`, `initschema-ssb-flat.sql`: per table `<name>_local`
+    (MergeTree, `ON CLUSTER bexhoma`, same columns and sorting keys as
+    `experiments/ssb/ClickHouse`) and a Distributed table `<name>` on the shards
+    (`ON CLUSTER`) and on the coordinator. Sharding key: the table's key column;
+    `lineorder` and `lineorder_flat` by `lo_orderkey` (all lines of an order on
+    one shard).
+  - `checkschema-ssb.sql`, `checkschema-ssb-flat.sql`: rows/parts/size per table
+    summed over `clusterAllReplicas(bexhoma, system.parts)`, then per shard.
+  - `reset-ssb.sql` (`SYSTEM FLUSH DISTRIBUTED` per table; for flat only
+    `lineorder_flat`: the script must not fail on missing tables, or one file per
+    variant) and `reset-flush.sh` (copy of the TPC-H cluster one).
+  - No index, constraint, statistics or durability scripts (as single-node
+    ClickHouse); the script lists in `cluster.config` stay as they are, missing
+    files are skipped as for ClickHouse.
+- **C3 queries**: unchanged. Joins of Distributed tables are correct for any
+  sharding through `distributed_product_mode = global` in the template; the
+  dimensions are then broadcast per query. Check results = single-node ClickHouse
+  (spec and random, normal and flat).
+- **C4 tests**: `tests/test_ssb.py` (script lists resolve for ClickHouseCluster,
+  reset script names); run the reset-script and resource-sweep tests.
+- **C5 cluster checks** (`-ks no`): SF1 normal and flat with `-nw 2` (or 3),
+  `-nlp 2`; compare row counts and query results with ClickHouse; a run with `-ar`
+  (reset on coordinator + workers); SF10 `-nlp 8` once.
+- **C6 docs**: one ClickHouseCluster run in `scripts/test-docs-ssb.{sh,ps1}`, a
+  section in `docs/Example-SSB.md`, the README limits line (drop "no
+  ClickHouseCluster").
+
+Dimension placement (`-xdim`) and options kept for later:
+- Dimensions as a full copy on every node instead of Distributed, so a join runs
+  locally on each shard and no dimension is broadcast per query (matters at large
+  SF: customer has 30,000 x SF rows). No manual loading per shard needed:
+  - **R1 (chosen 2026-10-28, default, part of C1-C6)**: `ReplicatedMergeTree` with one fixed Keeper path for all
+    nodes (no `{shard}` in it), i.e. all workers (and the coordinator) are
+    replicas of one shard; the loader inserts on the coordinator as now, Keeper
+    replicates the parts. Needs `SYSTEM SYNC REPLICA` before the benchmark
+    (checkschema/reset) and a replica name for the coordinator (it has no
+    macros). Init scripts must not contain curly braces (`str.format()` runs
+    only with DDL parameters or per-schema tenants, so `{{replica}}` would reach
+    ClickHouse unformatted otherwise). Decided: the ClickHouseCluster template
+    sets `default_replica_path` `/clickhouse/tables/{database}/{table}` (no
+    `{shard}`) and `default_replica_name` `{replica}`, and the coordinator gets a
+    `replica` macro; the scripts write `ENGINE = ReplicatedMergeTree ORDER BY ...`
+    without arguments. Generic: no other script uses ReplicatedMergeTree. Uses
+    the embedded single-node Keeper of the coordinator (its log and snapshots
+    are on the coordinator's storage volume, so they survive with `-rst`).
+    Parts: template (generic), `experiments/ssb/ClickHouseCluster` scripts
+    (dimensions `ON CLUSTER bexhoma` + once on the coordinator, which is not in
+    that cluster; `lineorder` stays Distributed; checkschema with
+    `SYSTEM SYNC REPLICA` and rows per node), a flag in `ssb.py` to choose
+    Distributed or replicated dimensions, its script lists in `cluster.config`.
+    Decided 2026-10-28: stays selectable (no replacement). Proposed flag:
+    `-xdim` / `--xdimensions distributed|replicated`, default `replicated`
+    (decided 2026-10-28); only for multi-node DBMS (ClickHouseCluster now: R1
+    vs Distributed; Citus later: reference tables vs distributed), ignored with
+    `-xsv flat` (no dimensions) and by single-node DBMS (so one run can mix
+    them). Since replicated is the default, R1 is part of the ClickHouseCluster
+    work: C1-C5 with both variants, the docs (C6) show the default. Queries unchanged. Risk: a dropped replicated
+    table keeps its Keeper path for about 8 minutes (Atomic database), so a
+    reload within that time fails with "replica already exists": drop with `SYNC`.
+  - R2 (not chosen): a second cluster in `remote_servers` with one shard and all
+    workers as replicas, `internal_replication=false`; a Distributed table over it
+    writes every block to every node. No Keeper for data, but no consistency check.
+  - Check first: a join of Distributed `lineorder` with a local dimension is
+    pushed to the shards unchanged with `distributed_product_mode = global`.
+    Measure against GLOBAL JOIN at SF10/SF100. Flat needs none of this.
+- `lineorder` sharded by `lo_custkey`.
+
+Other DBMS for SSB, by effort (all have TPC-H templates in bexhoma):
+
+| DBMS | Loader | Why interesting |
+|---|---|---|
+| PgDuckDB | PostgreSQL loader as is | Column engine inside PostgreSQL: same SQL, same data, PostgreSQL vs DuckDB execution |
+| Citus | PostgreSQL loader as is | Textbook star-schema case: `lineorder` distributed, dimensions as reference tables (scripts per variant); optional columnar access method |
+| MySQL, MariaDB | new loader image (`LOAD DATA`) | Row stores as a baseline; slow loads known from TPC-H |
+
+Not planned (decided 2026-10-28): CedarDB, YugabyteDB, CockroachDB.
+
+Steps per DBMS (sketch, after ClickHouseCluster; each with `ssb.py` block,
+`experiments/ssb/<DBMS>/` scripts for normal and flat, unit tests, cluster
+check SF1 normal/flat/random against PostgreSQL results, one run in
+`test-docs-ssb`, a docs section):
+
+- **PgDuckDB** (P1-P3): P1 `ssb.py` block with the PostgreSQL loader template
+  and `-xdfe` (DuckDB force execution, off by default) as in TPC-H; P2 scripts from `experiments/tpch/PgDuckDB`
+  (schema, indexes, constraints, statistics; checkschema/reset/durability as
+  PostgreSQL); P3 checks.
+- **Citus** (S1-S4): S1 `ssb.py` block with workers (`-nw`), PostgreSQL loader
+  template; S2 schema: `lineorder`/`lineorder_flat` distributed (by
+  `lo_orderkey`), the four dimensions as reference tables
+  (`create_reference_table`); optional columnar variant as TPC-H
+  `initschemacolumnar`; S3 indexes, constraints (FKs to reference tables are
+  allowed), statistics, checkschema, reset, durability from `experiments/tpch/Citus`;
+  S4 checks incl. `-nw 2`, reset with `-ar`.
+- **MySQL, MariaDB** (M1-M4): M1 new loader images `images/ssb/loader_{mysql,mariadb}`
+  (from the TPC-H ones, `LOAD DATA`, `dates` mapping, row-count check) + job
+  templates + build scripts; M2 `ssb.py` blocks; M3 scripts (PK in the schema
+  for MariaDB, FK checks off during load, as learned from TPC-H), durability
+  `.sh`/`.sql` as TPC-H; M4 checks, SF10 load time.
 
 ## Goal
 

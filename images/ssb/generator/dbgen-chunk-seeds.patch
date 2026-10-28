@@ -1,0 +1,18 @@
+diff --git a/src/speed_seed.c b/src/speed_seed.c
+index c7c573f..7c8e817 100644
+--- a/src/speed_seed.c
++++ b/src/speed_seed.c
+@@ -115,6 +115,13 @@ sd_line(int child, long skip_count)
+ 		{
+ 		ADVANCE_STREAM(O_ODATE_SD, skip_count);
+ 		ADVANCE_STREAM(O_LCNT_SD, skip_count);
++#ifdef SSB
++		/* SSB mk_order() also draws these once per order; without them every
++		 * chunk (-S > 1) restarts lo_custkey and lo_orderpriority */
++		ADVANCE_STREAM(O_CKEY_SD, skip_count);
++		ADVANCE_STREAM(O_PRIO_SD, skip_count);
++		ADVANCE_STREAM(O_CLRK_SD, skip_count);
++#endif
+ 		}
+ 		
+ 	return(0L);

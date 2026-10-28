@@ -91,6 +91,8 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
 
     #: Every DBMS may be swept across CPU, RAM and storage class.
     supports_storage_sweep = True
+    #: ``bexhoma summary`` rebuilds it from workload type ``tpch``.
+    summary_from_type = True
 
     def __init__(self,
                  cluster,

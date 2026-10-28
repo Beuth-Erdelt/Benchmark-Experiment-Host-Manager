@@ -1,0 +1,228 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1792953734
+Experiment                    : starts at 2026-10-25 19:42:15.245043 (279080.2800159)
+Experiment                    : This experiment compares run time and resource consumption of SSB queries in different DBMS.
+Schema is the star schema (-xsv normal).
+SSB (SF=1) data is loaded and benchmark is executed.
+Queries use the constants of the specification (-xqv spec).
+Query ordering is Q1.1 - Q4.3.
+Timeout per query is 1200.
+Data transfer volume per query is also measured.
+Import sets indexes, constraints, statistics recomputation after loading.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.9.
+Experiment is limited to DBMS ['MonetDB'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Database uses ephemeral storage of size 50Gi.
+Loading is tested with [1] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+Cluster monitoring            : is running
+MonetDB-1                     : will start now
+MonetDB-1                     : deployments ['sut']
+MonetDB-1                     : stateful sets []
+MonetDB-1                     : pvcs ['sut']
+MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1792953734
+MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1792953734
+Loop pass                     : took 4.1s (1 kubectl calls 2.0s, 9 API requests 1.1s)
+- waiting 30s -               : done
+MonetDB-1                     : is not loaded yet
+MonetDB-1                     : will start loading but not before 2026-10-25 18:43:52 (that is in 60 secs)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 16 API requests 1.6s)
+- waiting 30s -               : done
+MonetDB-1                     : is not loaded yet
+MonetDB-1                     : will start loading but not before 2026-10-25 18:43:52
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 13 API requests 1.4s)
+- waiting 30s -               : done
+MonetDB-1                     : is not loaded yet
+MonetDB-1                     : load durability relaxed, scripts []
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1792953734-7f9ddf867f-m45j9 to load scripts
+MonetDB-1                     : start asynch loading scripts of type schema
+MonetDB-1                     : waits for the Schema scripts (schema=True) before starting the loading jobs
+MonetDB-1                     : Schema scripts done after 8s
+MonetDB-1                     : is loading
+Loop pass                     : took 24.5s (5 kubectl calls 10.7s, 36 API requests 5.7s)
+- waiting 30s -               : done
+MonetDB-1                     : is loading
+Loop pass                     : took 22.3s (0 kubectl calls 0.0s, 34 API requests 5.6s)
+- waiting 30s -               : done
+MonetDB-1                     : showing loader times (ssb-loader)
+MonetDB-1                     : generator times (start/end per pod and container) [(1792953873, 1792953891), (1792953882, 1792953892), (1792953877, 1792953892), (1792953889, 1792953892), (1792953871, 1792953891), (1792953885, 1792953891), (1792953891, 1792953891), (1792953884, 1792953892)]
+MonetDB-1                     : loader times (start/end per pod and container) [(1792953900, 1792953912), (1792953900, 1792953911), (1792953900, 1792953912), (1792953900, 1792953914), (1792953900, 1792953916), (1792953901, 1792953914), (1792953900, 1792953913), (1792953901, 1792953914)]
+MonetDB-1                     : total times (start/end per pod and container) [(1792953873, 1792953891), (1792953882, 1792953892), (1792953877, 1792953892), (1792953889, 1792953892), (1792953871, 1792953891), (1792953885, 1792953891), (1792953891, 1792953891), (1792953884, 1792953892), (1792953900, 1792953912), (1792953900, 1792953911), (1792953900, 1792953912), (1792953900, 1792953914), (1792953900, 1792953916), (1792953901, 1792953914), (1792953900, 1792953913), (1792953901, 1792953914)]
+MonetDB-1                     : generator timespan (first to last [s]) = 21
+MonetDB-1                     : loader timespan (first to last [s]) = 16
+MonetDB-1                     : total timespan (first to last [s]) = 45
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1792953734-7f9ddf867f-m45j9 to load scripts
+MonetDB-1                     : start asynch loading scripts of type index
+MonetDB-1                     : is loading
+Loop pass                     : took 90.6s (38 kubectl calls 80.8s, 62 API requests 7.5s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1792953734 initialized to 1.
+MonetDB-1                     : benchmarks done 0 of 1. This will be client 1
+monetdb-1-1-1-1               : start benchmarking (benchmark_run=1)
+MonetDB-1                     : benchmarking results in folder C:\data\benchmarks/1792953734
+MonetDB-1                     : submitted benchmarker job in 13.4s (4 kubectl calls 8.0s, 24 API requests 5.1s)
+Loop pass                     : took 19.0s (5 kubectl calls 10.4s, 44 API requests 7.8s)
+- waiting 30s -               : done
+monetdb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1792953734/monetdb-1-1-1-1.config
+monetdb-1-1-1-1               : showing benchmarker times
+monetdb-1-1-1-1               : benchmarker timespan job from 1792954079 to 1792954119
+monetdb-1-1-1-1               : benchmarker timespan pods from 1792954093 to 1792954095
+monetdb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 2
+monetdb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1792954093, 1792954095)]
+monetdb-1-1-1-1               : found and updated times {'benchmarker': [(1792954093, 1792954095)]}
+Loop pass                     : took 12.3s (4 kubectl calls 8.7s, 24 API requests 2.9s)
+MonetDB-1                     : can be stopped
+MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1792953734-7f9ddf867f-m45j9
+Loop pass                     : took 9.6s (3 kubectl calls 6.4s, 29 API requests 2.6s)
+Experiment                    : ends at 2026-10-25 19:48:54.370677 (279479.4133906) - 399.13s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+SSB Queries SF=1
+* Type: ssb
+* Duration: 400s 
+* Code: 1792953734
+* This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
+* This experiment compares run time and resource consumption of SSB queries in different DBMS.
+  * Schema is the star schema (-xsv normal).
+  * SSB (SF=1) data is loaded and benchmark is executed.
+  * Queries use the constants of the specification (-xqv spec).
+  * Query ordering is Q1.1 - Q4.3.
+  * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
+  * Import sets indexes, constraints, statistics recomputation after loading.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.9.
+  * Experiment is limited to DBMS ['MonetDB'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
+  * Loading is tested with [1] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+
+### Connections
+* monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173172736
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-137-generic
+  * node:cl-worker36
+  * disk:668740
+  * datadisk:2025
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1792953734
+
+### SUT Container Restarts
+* bexhoma-sut-monetdb-1-1792953734-7f9ddf867f-m45j9: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS MonetDB-1 - Experiment 1 Client 1: ssb (1 pods)
+
+#### Planned
+
+* DBMS MonetDB-1 - Experiment 1 Client 1: ssb (1 pods)
+
+### Loading
+
+#### Per Run
+
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MonetDB-1-1 |                1 |    1 |       66.00 |           5.00 |           21.00 |         16.00 |           16.00 |              8 |           0 |             | None           |             0 | False         |               54.55 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
+|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
+| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          2 |            0.03 |           130355.44 |          23400.00 |          -1 | monetdb-1-1-1-1-1 |
+
+#### Per Phase
+
+|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          2 |            0.03 |           130355.44 |          23400.00 |          -1 |
+
+#### Query Completion per Phase
+
+| phase         |   pods | Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)   | Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)   | Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)   | Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)   | Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)   | Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)   | Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)   | Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)   | Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)   | Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)   | Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1)   | Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)   | Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)   | complete   |
+|:--------------|-------:|:-------------------------------------------------------------------------|:--------------------------------------------------------------------------|:-------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------|:---------------------------------------------------------------------|:------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------|:---------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------|:------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------|:-----------|
+| monetdb-1-1-1 |      1 | 1/1                                                                      | 1/1                                                                       | 1/1                                                                      | 1/1                                                                                     | 1/1                                                                                | 1/1                                                                  | 1/1                                                                                 | 1/1                                                                               | 1/1                                                                              | 1/1                                                                                  | 1/1                                                                                      | 1/1                                                                           | 1/1                                                                                  | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### Latency of Timer Execution [ms]
+| Queries                                                                                |   monetdb-1-1-1-1-1 |
+|:---------------------------------------------------------------------------------------|--------------------:|
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |               31.93 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               12.53 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               11.72 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               28.11 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               32.46 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               27.83 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               26.87 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               28.30 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               28.70 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               38.69 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |               44.07 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               35.93 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               34.15 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned

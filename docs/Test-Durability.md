@@ -108,7 +108,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_durable.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_durable_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_durable.log" target="_blank" rel="noopener">docs_durability_tpch_postgresql_durable.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_durable_summary.md" target="_blank" rel="noopener">docs_durability_tpch_postgresql_durable.log</a>
 
 
 ### PostgreSQL relaxed
@@ -131,7 +131,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_relaxed.log" target="_blank" rel="noopener">docs_durability_tpch_postgresql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_tpch_postgresql_relaxed.log</a>
 
 
 ### PostgreSQL unsafe
@@ -154,7 +154,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_unsafe.log" target="_blank" rel="noopener">docs_durability_tpch_postgresql_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_tpch_postgresql_unsafe.log</a>
 
 
 ### PostgreSQL unsafe on persistent storage
@@ -180,7 +180,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_unsafe_storage.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_unsafe_storage_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_unsafe_storage.log" target="_blank" rel="noopener">docs_durability_tpch_postgresql_unsafe_storage.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_unsafe_storage_summary.md" target="_blank" rel="noopener">docs_durability_tpch_postgresql_unsafe_storage.log</a>
 
 
 ### PostgreSQL relaxed with schema tenancy
@@ -205,7 +205,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_tenants_schema.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_tenants_schema_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_tenants_schema.log" target="_blank" rel="noopener">docs_durability_tpch_postgresql_tenants_schema.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_postgresql_tenants_schema_summary.md" target="_blank" rel="noopener">docs_durability_tpch_postgresql_tenants_schema.log</a>
 
 
 ### PgDuckDB unsafe
@@ -228,7 +228,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_pgduckdb_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_pgduckdb_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_pgduckdb_unsafe.log" target="_blank" rel="noopener">docs_durability_tpch_pgduckdb_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_pgduckdb_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_tpch_pgduckdb_unsafe.log</a>
 
 
 ### MySQL durable
@@ -253,7 +253,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_mysql_durable.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_durable_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_durable.log" target="_blank" rel="noopener">docs_durability_tpch_mysql_durable.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_durable_summary.md" target="_blank" rel="noopener">docs_durability_tpch_mysql_durable.log</a>
 
 
 ### MySQL relaxed
@@ -276,7 +276,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_mysql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_relaxed.log" target="_blank" rel="noopener">docs_durability_tpch_mysql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_tpch_mysql_relaxed.log</a>
 
 
 ### MySQL unsafe
@@ -299,7 +299,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_mysql_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_unsafe.log" target="_blank" rel="noopener">docs_durability_tpch_mysql_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mysql_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_tpch_mysql_unsafe.log</a>
 
 
 ### MariaDB relaxed
@@ -322,7 +322,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_mariadb_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mariadb_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mariadb_relaxed.log" target="_blank" rel="noopener">docs_durability_tpch_mariadb_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_mariadb_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_tpch_mariadb_relaxed.log</a>
 
 
 ### Citus unsafe
@@ -346,7 +346,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_durability_tpch_citus_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_citus_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_citus_unsafe.log" target="_blank" rel="noopener">docs_durability_tpch_citus_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpch_citus_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_tpch_citus_unsafe.log</a>
 
 
 ## TPC-DS
@@ -373,7 +373,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_durability_tpcds_postgresql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_postgresql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_postgresql_relaxed.log" target="_blank" rel="noopener">docs_durability_tpcds_postgresql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_postgresql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_tpcds_postgresql_relaxed.log</a>
 
 
 ### MySQL relaxed
@@ -397,7 +397,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_durability_tpcds_mysql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_mysql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_mysql_relaxed.log" target="_blank" rel="noopener">docs_durability_tpcds_mysql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_mysql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_tpcds_mysql_relaxed.log</a>
 
 
 ### MySQL unsafe
@@ -421,7 +421,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_durability_tpcds_mysql_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_mysql_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_mysql_unsafe.log" target="_blank" rel="noopener">docs_durability_tpcds_mysql_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_tpcds_mysql_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_tpcds_mysql_unsafe.log</a>
 
 
 ## YCSB
@@ -453,7 +453,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_durability_ycsb_postgresql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_postgresql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_postgresql_relaxed.log" target="_blank" rel="noopener">docs_durability_ycsb_postgresql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_postgresql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_postgresql_relaxed.log</a>
 
 
 ### PGBouncer unsafe
@@ -482,7 +482,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_durability_ycsb_pgbouncer_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_pgbouncer_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_pgbouncer_unsafe.log" target="_blank" rel="noopener">docs_durability_ycsb_pgbouncer_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_pgbouncer_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_pgbouncer_unsafe.log</a>
 
 
 ### MySQL relaxed
@@ -511,7 +511,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_durability_ycsb_mysql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_mysql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_mysql_relaxed.log" target="_blank" rel="noopener">docs_durability_ycsb_mysql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_mysql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_mysql_relaxed.log</a>
 
 
 ### MySQL unsafe
@@ -540,7 +540,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_durability_ycsb_mysql_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_mysql_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_mysql_unsafe.log" target="_blank" rel="noopener">docs_durability_ycsb_mysql_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_mysql_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_mysql_unsafe.log</a>
 
 
 ### Citus relaxed
@@ -572,7 +572,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_durability_ycsb_citus_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_citus_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_citus_relaxed.log" target="_blank" rel="noopener">docs_durability_ycsb_citus_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_citus_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_citus_relaxed.log</a>
 
 
 ### TiDB relaxed
@@ -604,7 +604,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_durability_ycsb_tidb_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_tidb_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_tidb_relaxed.log" target="_blank" rel="noopener">docs_durability_ycsb_tidb_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_tidb_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_tidb_relaxed.log</a>
 
 
 ## HammerDB
@@ -631,7 +631,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_durability_hammerdb_postgresql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_postgresql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_postgresql_relaxed.log" target="_blank" rel="noopener">docs_durability_hammerdb_postgresql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_postgresql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_hammerdb_postgresql_relaxed.log</a>
 
 
 ### MySQL relaxed
@@ -655,7 +655,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_durability_hammerdb_mysql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_mysql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_mysql_relaxed.log" target="_blank" rel="noopener">docs_durability_hammerdb_mysql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_mysql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_hammerdb_mysql_relaxed.log</a>
 
 
 ### MySQL unsafe
@@ -679,7 +679,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_durability_hammerdb_mysql_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_mysql_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_mysql_unsafe.log" target="_blank" rel="noopener">docs_durability_hammerdb_mysql_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_mysql_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_hammerdb_mysql_unsafe.log</a>
 
 
 ### Citus relaxed
@@ -704,7 +704,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_durability_hammerdb_citus_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_citus_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_citus_relaxed.log" target="_blank" rel="noopener">docs_durability_hammerdb_citus_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_hammerdb_citus_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_hammerdb_citus_relaxed.log</a>
 
 
 ## Benchbase
@@ -732,7 +732,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_durability_benchbase_postgresql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_postgresql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_postgresql_relaxed.log" target="_blank" rel="noopener">docs_durability_benchbase_postgresql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_postgresql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_benchbase_postgresql_relaxed.log</a>
 
 
 ### TPC-C PGBouncer relaxed
@@ -760,7 +760,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_durability_benchbase_pgbouncer_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_pgbouncer_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_pgbouncer_relaxed.log" target="_blank" rel="noopener">docs_durability_benchbase_pgbouncer_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_pgbouncer_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_benchbase_pgbouncer_relaxed.log</a>
 
 
 ### TPC-C MySQL relaxed
@@ -785,7 +785,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_durability_benchbase_mysql_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_mysql_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_mysql_relaxed.log" target="_blank" rel="noopener">docs_durability_benchbase_mysql_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_mysql_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_benchbase_mysql_relaxed.log</a>
 
 
 ### TPC-C MySQL unsafe
@@ -810,7 +810,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_durability_benchbase_mysql_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_mysql_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_mysql_unsafe.log" target="_blank" rel="noopener">docs_durability_benchbase_mysql_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_mysql_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_benchbase_mysql_unsafe.log</a>
 
 
 ### TPC-C Citus relaxed
@@ -838,7 +838,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_durability_benchbase_citus_relaxed.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_citus_relaxed_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_citus_relaxed.log" target="_blank" rel="noopener">docs_durability_benchbase_citus_relaxed.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_citus_relaxed_summary.md" target="_blank" rel="noopener">docs_durability_benchbase_citus_relaxed.log</a>
 
 
 ### Twitter PostgreSQL unsafe
@@ -864,4 +864,4 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_durability_benchbase_twitter_postgresql_unsafe.log
 ```
 
-Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_twitter_postgresql_unsafe_summary.md" target="_blank" rel="noopener">summary</a>, <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_twitter_postgresql_unsafe.log" target="_blank" rel="noopener">docs_durability_benchbase_twitter_postgresql_unsafe.log</a>
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_twitter_postgresql_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_benchbase_twitter_postgresql_unsafe.log</a>

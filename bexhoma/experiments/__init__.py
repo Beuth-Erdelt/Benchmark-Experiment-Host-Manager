@@ -3,7 +3,7 @@ Public API of the bexhoma.experiments package.
 
 Exports :class:`ExperimentBase`, :class:`MixedExperiment`,
 :class:`DbmsBenchmarkerExperiment`, :class:`TpchExperiment`,
-:class:`TpcdsExperiment`, :class:`BenchbaseExperiment`,
+:class:`TpcdsExperiment`, :class:`SsbExperiment`, :class:`BenchbaseExperiment`,
 :class:`TpccExperiment`, :class:`YcsbExperiment`, and
 :class:`HardwareExperiment` experiment classes.
 
@@ -17,6 +17,7 @@ from .mixed import MixedExperiment
 from .dbmsbenchmarker import DbmsBenchmarkerExperiment
 from .tpch import TpchExperiment
 from .tpcds import TpcdsExperiment
+from .ssb import SsbExperiment
 from .benchbase import BenchbaseExperiment
 from .tpcc import TpccExperiment
 from .ycsb import YcsbExperiment
@@ -28,6 +29,7 @@ mixed = MixedExperiment
 dbmsbenchmarker = DbmsBenchmarkerExperiment
 tpch = TpchExperiment
 tpcds = TpcdsExperiment
+ssb = SsbExperiment
 benchbase = BenchbaseExperiment
 tpcc = TpccExperiment
 ycsb = YcsbExperiment
@@ -35,8 +37,8 @@ hardware = HardwareExperiment
 
 __all__ = [
     "ExperimentBase", "MixedExperiment", "DbmsBenchmarkerExperiment",
-    "TpchExperiment", "TpcdsExperiment", "YcsbExperiment", "TpccExperiment",
+    "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "YcsbExperiment", "TpccExperiment",
     "BenchbaseExperiment", "HardwareExperiment",
     # backward-compat aliases
-    "base", "mixed", "dbmsbenchmarker", "tpch", "tpcds", "ycsb", "tpcc", "benchbase", "hardware",
+    "base", "mixed", "dbmsbenchmarker", "tpch", "tpcds", "ssb", "ycsb", "tpcc", "benchbase", "hardware",
 ]

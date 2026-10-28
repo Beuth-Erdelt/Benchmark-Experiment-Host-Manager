@@ -133,6 +133,16 @@ Loads 1 GB of TPC-DS data (scale factor 1) and runs all 99 decision-support quer
 
 See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-DS.html
 
+### SSB
+
+```bash
+bexhoma ssb run -ms 1 -dbms PostgreSQL
+```
+
+Generates Star Schema Benchmark data (scale factor 1) and runs its 13 queries with a single client. `-xsv flat` uses one denormalized table instead of the star schema, `-xqv random` draws random query parameters.
+
+See more details at https://bexhoma.readthedocs.io/en/latest/Example-SSB.html
+
 ### Hardware (fio)
 
 ```bash

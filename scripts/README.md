@@ -58,7 +58,7 @@ The summary files are the content embedded inside ` ```markdown ``` ` blocks in 
 
 `test-docs-reset` is a check: it runs every reset script of `-ar` (one run per DBMS and benchmark, two rounds each, logs `docs_reset_*.log`), and its header lists what to check in the logs (see "Reset scripts" in `docs/DBMS.md`).
 `test-docs-durability` is a check of the same kind for `-xld durable|relaxed|unsafe`: one run per DBMS, benchmark and level with durability scripts (and a few without, e.g. TiDB), logs `docs_durability_*.log`; its header lists what to check.
-Their pages `docs/Test-Reset.md` and `docs/Test-Durability.md` show the commands and link the logs on GitHub instead of embedding the summaries.
+Their pages `docs/Test-Reset.md` and `docs/Test-Durability.md` show the commands and link the summaries on GitHub instead of embedding them.
 
 **Node variables** (set at the top of each script, or inherited from `testfunctions.sh/.ps1`);
 these are also the defaults used by `test-docs-collector.ps1` / `test-docs-collector.sh`:
