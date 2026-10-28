@@ -3,8 +3,8 @@
 ### Workload
 Hardware Benchmark (sysbench)
 * Type: hardware
-* Duration: 730s 
-* Code: 1783814697
+* Duration: 494s 
+* Code: 1793242315
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
   * Benchmark tool: sysbench.
@@ -12,71 +12,83 @@ Hardware Benchmark (sysbench)
   * Total sysbench thread count(s) swept: [2], split across pod count(s): [1].
   * CPU phase: sysbench cpu --cpu-max-prime=20000 (fixed).
   * Memory phase: sysbench memory --memory-block-size=1K --memory-total-size=10G (fixed; may finish before the duration cap if this transfers first).
-  * Experiment uses bexhoma version 0.10.4.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.10.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['Hardware'].
-  * Benchmarking is fixed to cl-worker19.
+  * Benchmarking is fixed to cl-worker38.
   * SUT is fixed to cl-worker36.
   * Benchmarking is tested with [2] threads, split into [1] pods.
   * Benchmarking is run as [1, 2, 4, 8] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 2 CPU and 16Gi RAM. CPU limit is 2.
 
 ### Connections
-* Hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.10.4
-  * RAM:2164173213696
+* hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.11.10
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1062818
+  * disk:363117
   * cpu_list:0-223
   * requests_cpu:2
   * requests_memory:16Gi
   * limits_cpu:2
+  * resources_total: 2.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 2.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783814697
-* Hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.10.4
-  * RAM:2164173213696
+    * code:1793242315
+* hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.11.10
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1062819
+  * disk:363117
   * cpu_list:0-223
   * requests_cpu:2
   * requests_memory:16Gi
   * limits_cpu:2
+  * resources_total: 2.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 2.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783814697
-* Hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.10.4
-  * RAM:2164173213696
+    * code:1793242315
+* hardware-1-1-3-1 uses docker image bexhoma/sut_hardware:0.11.10
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1062820
+  * disk:363118
   * cpu_list:0-223
   * requests_cpu:2
   * requests_memory:16Gi
   * limits_cpu:2
+  * resources_total: 2.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 2.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783814697
-* Hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.10.4
-  * RAM:2164173213696
+    * code:1793242315
+* hardware-1-1-4-1 uses docker image bexhoma/sut_hardware:0.11.10
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1062820
+  * disk:363119
   * cpu_list:0-223
   * requests_cpu:2
   * requests_memory:16Gi
   * limits_cpu:2
+  * resources_total: 2.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 2.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1783814697
+    * code:1793242315
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1783814697-69c476b458-24skd: 0
+* bexhoma-sut-hardware-1-1793242315-544bc5bbbc-zzsmz: 0
 
 ### Workflow
 
@@ -94,60 +106,73 @@ Hardware Benchmark (sysbench)
 * DBMS Hardware-1 - Experiment 1 Client 3: hardware (4 pods)
 * DBMS Hardware-1 - Experiment 1 Client 4: hardware (8 pods)
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
 |:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1-1-1 | Hardware-1-1-1 | Hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 |                  2 |                                2327.85 |                                60.00 |                               1.25 |                             4519198.20 |                                     4413.28 |                                  0.00 |        0 |
-| Hardware-1-1-2-1-1 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         65 |                  2 |                                1196.63 |                                60.00 |                               1.30 |                             3496153.84 |                                     3414.21 |                                  0.00 |        0 |
-| Hardware-1-1-2-1-2 | Hardware-1-1-2 | Hardware-1-1-2-1 |                1 |        2 |               1 |       2 |         69 |                  2 |                                1182.24 |                                60.00 |                               1.30 |                             1574692.31 |                                     1537.79 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-1 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         72 |                  2 |                                 595.38 |                                60.00 |                               7.98 |                             1450708.98 |                                     1416.71 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-2 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       2 |         75 |                  2 |                                 610.61 |                                60.07 |                               7.98 |                              912273.03 |                                      890.89 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-3 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       3 |         72 |                  2 |                                 612.80 |                                60.00 |                               7.98 |                             1153357.27 |                                     1126.33 |                                  0.00 |        0 |
-| Hardware-1-1-3-1-4 | Hardware-1-1-3 | Hardware-1-1-3-1 |                1 |        3 |               1 |       4 |         72 |                  2 |                                 604.80 |                                60.00 |                               7.98 |                             1024798.28 |                                     1000.78 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-1 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         78 |                  2 |                                 298.69 |                                60.01 |                              80.03 |                              852319.94 |                                      832.34 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-2 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       2 |         79 |                  2 |                                 272.38 |                                60.00 |                              81.48 |                              873092.49 |                                      852.63 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-3 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       3 |         79 |                  2 |                                 296.64 |                                60.00 |                              80.03 |                              760471.69 |                                      742.65 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-4 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       4 |         80 |                  2 |                                 296.62 |                                60.00 |                              80.03 |                              727100.88 |                                      710.06 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-5 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       5 |         78 |                  2 |                                 294.82 |                                60.01 |                              80.03 |                              765363.73 |                                      747.43 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-6 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       6 |         76 |                  2 |                                 299.66 |                                60.00 |                              80.03 |                              838578.28 |                                      818.92 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-7 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       7 |         78 |                  2 |                                 285.68 |                                60.00 |                              80.03 |                              747198.39 |                                      729.69 |                                  0.00 |        0 |
-| Hardware-1-1-4-1-8 | Hardware-1-1-4 | Hardware-1-1-4-1 |                1 |        4 |               1 |       8 |         76 |                  2 |                                 284.80 |                                60.01 |                              80.03 |                              754763.63 |                                      737.07 |                                  0.00 |        0 |
+| hardware-1-1-1-1-1 | hardware-1-1-1 | hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         64 |                  2 |                                2222.29 |                                60.00 |                               1.27 |                             3679035.89 |                                     3592.81 |                                  0.00 |        0 |
+| hardware-1-1-2-1-1 | hardware-1-1-2 | hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         67 |                  2 |                                1133.29 |                                60.02 |                               1.32 |                             2279492.18 |                                     2226.07 |                                  0.00 |        0 |
+| hardware-1-1-2-1-2 | hardware-1-1-2 | hardware-1-1-2-1 |                1 |        2 |               1 |       2 |         67 |                  2 |                                1113.07 |                                60.00 |                               1.32 |                             2167667.94 |                                     2116.86 |                                  0.00 |        0 |
+| hardware-1-1-3-1-1 | hardware-1-1-3 | hardware-1-1-3-1 |                1 |        3 |               1 |       1 |         72 |                  2 |                                 542.75 |                                60.00 |                              32.53 |                             1485844.64 |                                     1451.02 |                                  0.00 |        0 |
+| hardware-1-1-3-1-2 | hardware-1-1-3 | hardware-1-1-3-1 |                1 |        3 |               1 |       2 |         70 |                  2 |                                 554.26 |                                60.00 |                              32.53 |                             1627649.15 |                                     1589.50 |                                  0.00 |        0 |
+| hardware-1-1-3-1-3 | hardware-1-1-3 | hardware-1-1-3-1 |                1 |        3 |               1 |       3 |         71 |                  2 |                                 549.23 |                                60.03 |                              32.53 |                             1389097.90 |                                     1356.54 |                                  0.00 |        0 |
+| hardware-1-1-3-1-4 | hardware-1-1-3 | hardware-1-1-3-1 |                1 |        3 |               1 |       4 |         69 |                  2 |                                 546.77 |                                60.01 |                              32.53 |                             1579677.10 |                                     1542.65 |                                  0.00 |        0 |
+| hardware-1-1-4-1-1 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       1 |         85 |                  2 |                                 272.04 |                                60.00 |                              56.84 |                              609501.22 |                                      595.22 |                                  0.00 |        0 |
+| hardware-1-1-4-1-2 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       2 |         86 |                  2 |                                 270.72 |                                60.03 |                              56.84 |                              539698.01 |                                      527.05 |                                  0.00 |        0 |
+| hardware-1-1-4-1-3 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       3 |         82 |                  2 |                                 264.47 |                                60.00 |                              56.84 |                              669886.93 |                                      654.19 |                                  0.00 |        0 |
+| hardware-1-1-4-1-4 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       4 |         85 |                  2 |                                 271.11 |                                60.00 |                              56.84 |                              550114.73 |                                      537.22 |                                  0.00 |        0 |
+| hardware-1-1-4-1-5 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       5 |         83 |                  2 |                                 270.91 |                                60.00 |                              56.84 |                              551894.34 |                                      538.96 |                                  0.00 |        0 |
+| hardware-1-1-4-1-6 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       6 |         79 |                  2 |                                 269.66 |                                60.00 |                              56.84 |                              688110.45 |                                      671.98 |                                  0.00 |        0 |
+| hardware-1-1-4-1-7 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       7 |         78 |                  2 |                                 283.99 |                                60.00 |                              56.84 |                              740823.43 |                                      723.46 |                                  0.00 |        0 |
+| hardware-1-1-4-1-8 | hardware-1-1-4 | hardware-1-1-4-1 |                1 |        4 |               1 |       8 |         78 |                  2 |                                 271.15 |                                60.00 |                              56.84 |                              687796.40 |                                      671.68 |                                  0.00 |        0 |
 
 #### Per Phase
 
-| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
-|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
-| Hardware-1-1-1 | Hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 |                  2 |                                2327.85 |                                60.00 |                               1.25 |                             4519198.20 |                                     4413.28 |                                  0.00 |        0 |
-| Hardware-1-1-2 | Hardware-1-1-2 |                1 |        2 |               1 |           2 |         69 |                  4 |                                2378.87 |                                60.00 |                               1.30 |                             5070846.15 |                                     4952.00 |                                  0.00 |        0 |
-| Hardware-1-1-3 | Hardware-1-1-3 |                1 |        3 |               1 |           4 |         75 |                  8 |                                2423.59 |                                60.07 |                               7.98 |                             4541137.56 |                                     4434.71 |                                  0.00 |        0 |
-| Hardware-1-1-4 | Hardware-1-1-4 |                1 |        4 |               1 |           8 |         80 |                 16 |                                2329.29 |                                60.01 |                              81.48 |                             6318889.03 |                                     6170.79 |                                  0.00 |        0 |
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration |   hardware_threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors | hardware_type   |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|-------------------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|:----------------|
+| hardware-1-1-1 | hardware-1-1-1 |                1 |        1 |               1 |           1 |         64 |                  2 |                                2222.29 |                                60.00 |                               1.27 |                             3679035.89 |                                     3592.81 |                                  0.00 |        0 | sysbench        |
+| hardware-1-1-2 | hardware-1-1-2 |                1 |        2 |               1 |           2 |         67 |                  4 |                                2246.36 |                                60.02 |                               1.32 |                             4447160.12 |                                     4342.93 |                                  0.00 |        0 | sysbench        |
+| hardware-1-1-3 | hardware-1-1-3 |                1 |        3 |               1 |           4 |         72 |                  8 |                                2193.01 |                                60.03 |                              32.53 |                             6082268.79 |                                     5939.71 |                                  0.00 |        0 | sysbench        |
+| hardware-1-1-4 | hardware-1-1-4 |                1 |        4 |               1 |           8 |         86 |                 16 |                                2174.05 |                                60.03 |                              56.84 |                             5037825.51 |                                     4919.76 |                                  0.00 |        0 | sysbench        |
 
 ### Monitoring
 
-### Execution phase: SUT deployment
+### Benchmarking phase: SUT deployment
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |        79.99 |      2.00 |           0.21 |                  0.21 |
-| Hardware-1-1-2-1 |       111.03 |      2.00 |           0.21 |                  0.21 |
-| Hardware-1-1-3-1 |       131.88 |      2.00 |           0.22 |                  0.22 |
-| Hardware-1-1-4-1 |        99.31 |      2.00 |           0.23 |                  0.23 |
+| hardware-1-1-1-1 |       107.64 |      2.00 |           0.21 |                  0.21 |
+| hardware-1-1-2-1 |       108.08 |      2.00 |           0.21 |                  0.21 |
+| hardware-1-1-3-1 |        78.63 |      2.00 |           0.22 |                  0.22 |
+| hardware-1-1-4-1 |       136.31 |      2.00 |           0.23 |                  0.23 |
 
-### Execution phase: component benchmarker
+### Benchmarking phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| Hardware-1-1-1-1 |         0.56 |      0.02 |           0.00 |                  0.00 |
-| Hardware-1-1-2-1 |         1.17 |      0.02 |           0.00 |                  0.00 |
-| Hardware-1-1-3-1 |         2.42 |      0.06 |           0.00 |                  0.00 |
-| Hardware-1-1-4-1 |         5.17 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-1-1-1 |         0.62 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-1-2-1 |         1.30 |      0.00 |           0.00 |                  0.00 |
+| hardware-1-1-3-1 |         2.64 |      0.03 |           0.00 |                  0.00 |
+| hardware-1-1-4-1 |         6.10 |      0.19 |           0.00 |                  0.00 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-3-1 (bexhoma-metrics-hardware-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-4-1 (bexhoma-metrics-hardware-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-4-1 (bexhoma-metrics-hardware-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
 
 ### Tests
+* TEST passed: Loading measured in this experiment
 * TEST passed: No SUT container restarts
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: every round has non-zero CPU events/sec

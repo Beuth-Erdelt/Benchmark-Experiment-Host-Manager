@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 936s 
-* Code: 1792431737
+* Duration: 753s 
+* Code: 1793221755
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -16,12 +16,13 @@ YCSB SF=1
   * Factors for loading are [4].
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
-  * Experiment uses bexhoma version 0.11.7.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.10.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['YugabyteDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker39.
-  * Benchmarking is fixed to cl-worker39.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
   * SUT is fixed to cl-worker36.
   * Loading is skipped.
   * Loading is tested with [64] threads, split into [8] pods.
@@ -34,15 +35,15 @@ YCSB SF=1
 
 ### Connections
 * yugabytedb-1-1-1-1 uses docker image postgres:15.0
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:889525
+  * disk:366065
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:869G
+  * volume_used:358G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
@@ -52,55 +53,55 @@ YCSB SF=1
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:639763
+    * disk:566872
     * cpu_list:0-127
   * yb-tserver 1
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:366066
+    * cpu_list:0-223
+  * yb-tserver 2
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:332754
+    * disk:515962
     * cpu_list:0-127
-  * yb-tserver 2
-    * RAM:2164173172736
+  * yb-master 0
+    * RAM:2164173156352
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
-    * host:6.8.0-137-generic
+    * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:889526
+    * disk:366068
     * cpu_list:0-223
-  * yb-master 0
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:639763
-    * cpu_list:0-127
   * yb-master 1
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:332752
+    * disk:515962
     * cpu_list:0-127
   * yb-master 2
-    * RAM:2164173172736
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
     * host:6.8.0-137-generic
-    * node:cl-worker36
-    * disk:889409
-    * cpu_list:0-223
+    * node:cl-worker37
+    * disk:566873
+    * cpu_list:0-127
   * resources_total: 0.25 CPU, 0.5 GiB RAM requested in 1 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * eval_parameters
-    * code:1792431737
+    * code:1793221755
 
 ### SUT Container Restarts
-* bexhoma-sut-yugabytedb-1-1792431737-6b75d485c7-9qf26: 0
+* bexhoma-sut-yugabytedb-1-1793221755-5cb5b4c9b9-w8dwl: 0
 * yb-tserver-0: 0
 * yb-tserver-1: 0
 * yb-tserver-2: 0
@@ -124,13 +125,13 @@ YCSB SF=1
 
 | DBMS                 | phase            | job                | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:---------------------|:-----------------|:-------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| yugabytedb-1-1-1-1-1 | yugabytedb-1-1-1 | yugabytedb-1-1-1-1 | YugabyteDB-1    |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                        18167.38 |               550437.00 |            4996584 |                           45919.00 |              5003416 |                             50687.00 |
+| yugabytedb-1-1-1-1-1 | yugabytedb-1-1-1 | yugabytedb-1-1-1-1 | YugabyteDB-1    |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                        21636.03 |               462192.00 |            4997743 |                           39167.00 |              5002257 |                             44927.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-----------------|:-----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| yugabytedb-1-1-1 | yugabytedb-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                        18167.38 |               550437.00 |            4996584 |                           45919.00 |              5003416 |                             50687.00 |
+| yugabytedb-1-1-1 | yugabytedb-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                        21636.03 |               462192.00 |            4997743 |                           39167.00 |              5002257 |                             44927.00 |
 
 ### Monitoring
 
@@ -138,19 +139,19 @@ YCSB SF=1
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| yugabytedb-1-1-1-1 |     18678.39 |     37.40 |          11.80 |                 20.81 |
+| yugabytedb-1-1-1-1 |     17507.64 |     41.35 |          12.78 |                 23.73 |
 
 ### Benchmarking phase: component yb-master
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| yugabytedb-1-1-1-1 |        23.85 |      0.12 |           0.23 |                  0.26 |
+| yugabytedb-1-1-1-1 |        22.50 |      0.12 |           0.23 |                  0.26 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| yugabytedb-1-1-1-1 |      1307.80 |      2.64 |           0.55 |                  0.55 |
+| yugabytedb-1-1-1-1 |       631.54 |      1.72 |           0.54 |                  0.55 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
