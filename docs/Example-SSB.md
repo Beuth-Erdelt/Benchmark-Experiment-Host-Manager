@@ -3,7 +3,8 @@
 The Star Schema Benchmark (SSB) is a data warehouse benchmark derived from TPC-H: one fact
 table `lineorder` (TPC-H's `lineitem` and `orders` combined) and four dimensions `customer`,
 `supplier`, `part` and `dates`, queried by 13 queries in four flights. Bexhoma runs it with the
-DBMSBenchmarker, like TPC-H and TPC-DS, on PostgreSQL, MonetDB and ClickHouse.
+DBMSBenchmarker, like TPC-H and TPC-DS, on PostgreSQL, MonetDB and ClickHouse (the default
+set), and on ClickHouseCluster, Citus, PgDuckDB, MySQL and MariaDB.
 
 Two options choose what is measured:
 
@@ -11,6 +12,7 @@ Two options choose what is measured:
 |---|---|---|
 | `-xsv` | `normal` (default), `flat` | star schema, or one denormalized table `lineorder_flat` (lineorder joined with customer, supplier and part, as in the ClickHouse and Doris SSB setups) |
 | `-xqv` | `spec` (default), `random` | the constants of the specification, or random parameters that keep the filter factor of each query (after Rabl et al., ICPE 2013) |
+| `-xdim` | `replicated` (default), `distributed` | multi-node DBMS only (ClickHouseCluster, Citus), star schema: a full copy of every dimension on every node, or the dimensions spread over the nodes like `lineorder` (see [Multi-Node DBMS](#multi-node-dbms)) |
 
 Sources:
 
@@ -508,6 +510,46 @@ No warnings
 
 </details>
 
+PgDuckDB runs PostgreSQL with the pg_duckdb extension and uses PostgreSQL's scripts and loader.
+With `-xdfe` the queries run in DuckDB's engine, otherwise in PostgreSQL's:
+
+```bash
+bexhoma ssb -dbms PgDuckDB -xdfe -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+```
+
+MySQL and MariaDB load with `LOAD DATA LOCAL INFILE`. Their tables get the primary keys in the
+schema script (InnoDB stores a table in key order, so a key added after the load rebuilds the
+table); `-xic` adds the foreign keys. The flat queries have a MySQL variant without
+`CAST(... AS INTEGER)`, which MySQL does not know:
+
+```bash
+bexhoma ssb -dbms MySQL -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms MariaDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+```
+
+## Multi-Node DBMS
+
+ClickHouseCluster (a coordinator and `-nw` shards) and Citus (a coordinator and `-nw` workers)
+spread `lineorder` (and `lineorder_flat`) over the nodes by `lo_orderkey`. The loaders write to the
+coordinator, which sends the rows to the nodes. For the dimensions there are two placements
+(`-xdim`, star schema only):
+
+| `-xdim` | ClickHouseCluster | Citus | Joins |
+|---|---|---|---|
+| `replicated` (default) | `ReplicatedMergeTree` on every node: the coordinator and all shards are replicas of one table, Keeper (in the coordinator) copies the parts | reference tables | run on every shard against its local copy |
+| `distributed` | `Distributed` tables over `<name>_local` on the shards, as for TPC-H | distributed tables | ClickHouse sends the dimension to all shards per query (`GLOBAL`), Citus runs a repartition join |
+
+```bash
+bexhoma ssb -dbms ClickHouseCluster -nw 3 -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms ClickHouseCluster -nw 3 -xdim distributed -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms Citus -nw 3 -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+```
+
+* With `replicated`, the check script of ClickHouseCluster waits until every node has fetched the dimension parts (`SYSTEM SYNC REPLICA`) and fails if a node holds other rows than the coordinator.
+* With `distributed`, Citus gets only the primary keys from `-xic`: a foreign key between distributed tables needs them co-located, and `lineorder` is distributed by its own key.
+* The two placements get different volumes (`ssb-<SF>` and `ssb-distributed-<SF>`), so `-rst` never reuses one for the other.
+* The scripts of `distributed` are in the subfolder `distributed` of the DBMS folder.
+
 ## Data Generation and Loading
 
 Each loader pod runs the generator as an init container, then the loader of its DBMS.
@@ -525,8 +567,9 @@ Each loader pod runs the generator as an init container, then the loader of its 
 | `dates` | 2,557 |
 | `lineorder` | about 6,000,000 x SF |
 
-Loading tools: `psql \COPY` (PostgreSQL), `mclient COPY` (MonetDB), `clickhouse-client
-INSERT ... FORMAT CSV` (ClickHouse). A loader pod fails if a table does not load completely.
+Loading tools: `psql \COPY` (PostgreSQL, PgDuckDB, Citus), `mclient COPY` (MonetDB),
+`clickhouse-client INSERT ... FORMAT CSV` (ClickHouse, ClickHouseCluster), `LOAD DATA LOCAL INFILE`
+(MySQL, MariaDB). A loader pod fails if a table does not load completely.
 
 `-xlit <table>` loads only one table.
 
@@ -1211,7 +1254,10 @@ SSB Data Loading SF=1
 ## Reset Scripts
 
 With `-ar` a reset runs before each benchmarking round: `VACUUM ANALYZE`, `CHECKPOINT` and a
-statistics reset for PostgreSQL, `ANALYZE` for MonetDB, `sync` for ClickHouse.
+statistics reset for PostgreSQL and PgDuckDB (Citus: also on every worker), `ANALYZE` for MonetDB,
+`ANALYZE TABLE`, a flush of the dirty pages and `FLUSH STATUS` for MySQL and MariaDB, `sync` for
+ClickHouse. ClickHouseCluster first sends the rows still held by the Distributed tables, syncs
+the replicated dimensions, then runs `sync` on every shard.
 
 ## Profiling
 
@@ -1418,6 +1464,9 @@ No warnings
 |---|---|
 | `-xsv normal\|flat` | schema variant |
 | `-xqv spec\|random` | query variant |
+| `-xdim replicated\|distributed` | placement of the dimensions on ClickHouseCluster and Citus |
+| `-nw <n>` | number of shards (ClickHouseCluster) or workers (Citus) |
+| `-xdfe` | PgDuckDB: run the queries in DuckDB's engine |
 | `-xii`, `-xic`, `-xis` | indexes, primary and foreign keys (star schema only), statistics after loading |
 | `-xrcp` | with `-xqv random`: new parameters per stream |
 | `-xshq` | shuffle the query order per stream |

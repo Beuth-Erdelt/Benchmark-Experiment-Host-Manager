@@ -123,6 +123,8 @@ function Build-AndPush-Ssb {
     _BgDockerJob "bexhoma/loader_ssb_postgresql:$Version"    "images/ssb/loader_postgresql"   "loader_ssb_postgresql"    $Version
     _BgDockerJob "bexhoma/loader_ssb_monetdb:$Version"       "images/ssb/loader_monetdb"      "loader_ssb_monetdb"       $Version
     _BgDockerJob "bexhoma/loader_ssb_clickhouse:$Version"    "images/ssb/loader_clickhouse"   "loader_ssb_clickhouse"    $Version
+    _BgDockerJob "bexhoma/loader_ssb_mysql:$Version"         "images/ssb/loader_mysql"        "loader_ssb_mysql"         $Version
+    _BgDockerJob "bexhoma/loader_ssb_mariadb:$Version"       "images/ssb/loader_mariadb"      "loader_ssb_mariadb"       $Version
 }
 
 function Build-AndPush-Tpch {

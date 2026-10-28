@@ -14,7 +14,7 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
-from bexhoma.benchmarks.ssb import SCHEMA_VARIANTS, QUERY_VARIANTS
+from bexhoma.benchmarks.ssb import SCHEMA_VARIANTS, QUERY_VARIANTS, DIMENSION_VARIANTS, resolve_dimension_folder
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -33,8 +33,9 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'ClickHouse'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test (default: PostgreSQL, MonetDB, ClickHouse)', choices=['PostgreSQL', 'MonetDB', 'ClickHouse', 'ClickHouseCluster', 'PgDuckDB', 'Citus', 'MySQL', 'MariaDB'], default=[], nargs='*')
     parser.add_argument('-xsv',   '--xschema-variant', help='normal: star schema (4 dimensions + lineorder); flat: one denormalized table lineorder_flat, generated as flat files', choices=SCHEMA_VARIANTS, default='normal', dest='schema_variant')
+    parser.add_argument('-xdim',  '--xdimensions', help='star schema on a multi-node DBMS (ClickHouseCluster, Citus): replicated = a full copy of each dimension on every node (Citus: reference tables), joins run locally per shard; distributed = dimensions spread over the nodes like lineorder, joined across nodes per query (ignored by single-node DBMS and with -xsv flat)', choices=DIMENSION_VARIANTS, default='replicated', dest='dimensions')
     parser.add_argument('-xqv',   '--xquery-variant', help='spec: the 13 queries with the constants of the SSB specification; random: random parameters that keep the filter factor of each query', choices=QUERY_VARIANTS, default='spec', dest='query_variant')
     parser.add_argument('-xlit',  '--xlimit-import-table', help='import only this table (customer, supplier, part, dates, lineorder or lineorder_flat)', default='', dest='limit_import_table')
     parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query', action='store_true', default=False, dest='datatransfer')
@@ -46,6 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('-xrcp',  '--xrecreate-parameter', help='with -xqv random: draw new random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
     parser.add_argument('-xaq',   '--xactive-queries', help='comma-separated 1-based query numbers to run, e.g. 1,4,7 for Q1.1, Q2.1, Q3.1 (all other queries are set inactive in the query config uploaded to the cluster; unset = run all 13 queries)', default='', dest='active_queries')
+    parser.add_argument('-xdfe',  '--xduckdb-force-execution', help='run queries on PostgreSQL tables in pg_duckdb\'s DuckDB engine (PgDuckDB only); off by default, so they run in PostgreSQL\'s own executor', action='store_true', default=False, dest='duckdb_force_execution')
     parser.add_argument('-xve',   '--xverbose-explain', help='run and print configured EXPLAIN statements after each benchmark query (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='verbose_explain')
     parser.add_argument('-xse',   '--xstore-explain', help='run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='store_explain')
     # evaluate args
@@ -85,6 +87,11 @@ if __name__ == '__main__':
     ### specific to: dbmsbenchmarker SSB
     ##############
     schema_variant = args.schema_variant
+    # placement of the dimensions on multi-node DBMS
+    dimensions = args.dimensions
+    num_worker = int(args.num_worker)
+    num_worker_replicas = int(args.num_worker_replicas)
+    num_worker_shards = int(args.num_worker_shards)
     # shuffle ordering and random parameters
     recreate_parameter = args.recreate_parameter
     shuffle_queries = args.shuffle_queries
@@ -182,6 +189,27 @@ if __name__ == '__main__':
                     )
                 config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("PgDuckDB" in args.dbms):
+                # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's scripts and loading job)
+                config = configurations.default(experiment=experiment, docker='PgDuckDB', dialect='PostgreSQL', alias='DBMS A4')
+                config.path_experiment_docker = 'PostgreSQL'
+                # With -ar: reset of PostgreSQL
+                config.set_benchmark_resetscript(['reset-ssb.sql'])
+                config.set_storage(
+                    storageConfiguration = 'PgDuckDB'
+                    )
+                config.sut_parameters = {
+                    # read by deploymenttemplate-PgDuckDB.yml's postStart hook to decide
+                    # whether to ALTER ROLE ... SET duckdb.force_execution
+                    'DUCKDB_FORCE_EXECUTION': str(args.duckdb_force_execution).lower(),
+                }
+                config.jobtemplate_loading = "jobtemplate-loading-ssb-PostgreSQL.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
                 config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB', alias='DBMS A1')
@@ -206,6 +234,96 @@ if __name__ == '__main__':
                     storageConfiguration = 'clickhouse'
                     )
                 config.jobtemplate_loading = "jobtemplate-loading-ssb-ClickHouse.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("MySQL" in args.dbms):
+                # MySQL
+                config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS A5')
+                # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
+                config.set_benchmark_resetscript(['reset-ssb.sql' if schema_variant == 'normal' else 'reset-ssb-flat.sql', 'reset-flush.sh'])
+                config.set_storage(
+                    storageConfiguration = 'mysql'
+                    )
+                config.jobtemplate_loading = "jobtemplate-loading-ssb-MySQL.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("MariaDB" in args.dbms):
+                # MariaDB
+                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL', alias='DBMS A6')
+                # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
+                config.set_benchmark_resetscript(['reset-ssb.sql' if schema_variant == 'normal' else 'reset-ssb-flat.sql', 'reset-flush.sh'])
+                config.set_storage(
+                    storageConfiguration = 'mariadb'
+                    )
+                config.jobtemplate_loading = "jobtemplate-loading-ssb-MariaDB.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                # the container creates the database and grants it to the user bexhoma
+                config.set_sut_parameters(
+                    MARIADB_DATABASE = "ssb",
+                    )
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("ClickHouseCluster" in args.dbms):
+                # ClickHouse cluster: coordinator (SUT) and num_worker shards
+                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', alias='DBMS C1', worker=num_worker)
+                # -xdim distributed: scripts in ClickHouseCluster/distributed, and a volume of its own
+                config.path_experiment_docker = resolve_dimension_folder('ClickHouseCluster', schema_variant, dimensions)
+                if config.path_experiment_docker != 'ClickHouseCluster':
+                    config.storage_label = f'ssb-distributed-{SF}'
+                # With -ar: rows held by the Distributed tables are sent to the shards and the
+                # replicated dimensions are synced (coordinator), then the loaded parts are
+                # synced to disk (every worker)
+                config.set_benchmark_resetscript(['reset-ssb.sql' if schema_variant == 'normal' else 'reset-ssb-flat.sql', 'reset-flush.sh'])
+                config.set_script_target('workers')
+                config.set_storage(
+                    storageConfiguration = 'clickhousecluster'
+                    )
+                config.set_eval_parameters(
+                    BEXHOMA_WORKERS = num_worker,
+                    )
+                # the loader writes to the coordinator's tables, which send the rows to the shards
+                config.jobtemplate_loading = "jobtemplate-loading-ssb-ClickHouse.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("Citus" in args.dbms):
+                # Citus: coordinator (SUT) and num_worker workers
+                config = configurations.default(experiment=experiment, docker='Citus', dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
+                # -xdim distributed: scripts in Citus/distributed, and a volume of its own
+                config.path_experiment_docker = resolve_dimension_folder('Citus', schema_variant, dimensions)
+                if config.path_experiment_docker != 'Citus':
+                    config.storage_label = f'ssb-distributed-{SF}'
+                # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset on the
+                # coordinator and every worker before each round
+                config.set_benchmark_resetscript(['reset-ssb.sql' if schema_variant == 'normal' else 'reset-ssb-flat.sql'])
+                config.set_storage(
+                    storageConfiguration = 'citus'
+                    )
+                config.set_sut_parameters(
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    BEXHOMA_SHARDS = num_worker_shards,
+                    )
+                config.set_eval_parameters(
+                    BEXHOMA_REPLICAS = num_worker_replicas,
+                    BEXHOMA_SHARDS = num_worker_shards,
+                    BEXHOMA_WORKERS = num_worker,
+                    )
+                # the loader writes to the coordinator, which sends the rows to the shards
+                config.jobtemplate_loading = "jobtemplate-loading-ssb-PostgreSQL.yml"
                 config.set_loading_parameters(
                     PODS_TOTAL = str(loading_pods_total),
                     PODS_PARALLEL = str(split_portion),

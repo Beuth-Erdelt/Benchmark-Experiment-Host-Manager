@@ -92,6 +92,11 @@ EXPECTED = {
         'PostgreSQL': ['reset-ssb.sql'],
         'MonetDB': ['reset-ssb.sql'],
         'ClickHouse': [_FLUSH],
+        'ClickHouseCluster': ['reset-ssb.sql', _FLUSH],
+        'PgDuckDB': ['reset-ssb.sql'],
+        'Citus': ['reset-ssb.sql'],
+        'MySQL': ['reset-ssb.sql', _FLUSH],
+        'MariaDB': ['reset-ssb.sql', _FLUSH],
     },
 }
 

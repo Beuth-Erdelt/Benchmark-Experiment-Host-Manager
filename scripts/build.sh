@@ -196,6 +196,22 @@ build_and_push_ssb() {
     docker push "bexhoma/loader_ssb_clickhouse:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_ssb_clickhouse:$version"
+
+  (
+    set -e
+    cd images/ssb/loader_mysql
+    docker build -f Dockerfile -t "bexhoma/loader_ssb_mysql:$version" .
+    docker push "bexhoma/loader_ssb_mysql:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_ssb_mysql:$version"
+
+  (
+    set -e
+    cd images/ssb/loader_mariadb
+    docker build -f Dockerfile -t "bexhoma/loader_ssb_mariadb:$version" .
+    docker push "bexhoma/loader_ssb_mariadb:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_ssb_mariadb:$version"
 }
 
 

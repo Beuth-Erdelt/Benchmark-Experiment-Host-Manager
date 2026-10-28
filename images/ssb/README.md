@@ -17,7 +17,9 @@ images/ssb/
 │   └── README.md
 ├── loader_postgresql/           — psql \COPY
 ├── loader_monetdb/              — mclient COPY ... FROM STDIN
-├── loader_clickhouse/           — clickhouse-client INSERT ... FORMAT CSV
+├── loader_clickhouse/           — clickhouse-client INSERT ... FORMAT CSV (also ClickHouseCluster)
+├── loader_mysql/                — LOAD DATA LOCAL INFILE, MySQL client
+├── loader_mariadb/              — LOAD DATA LOCAL INFILE, MariaDB client (same loader.sh)
 └── README.md                    — this file
 ```
 
@@ -76,9 +78,14 @@ free local disk above while a flat file is generated, or the kubelet evicts the 
 
 | DBMS | Tool | Check |
 |---|---|---|
-| PostgreSQL | `psql \COPY <table> FROM '<file>' delimiter '\|' null ''` | answer must be `COPY <lines of the file>` |
+| PostgreSQL (also PgDuckDB, Citus) | `psql \COPY <table> FROM '<file>' delimiter '\|' null ''` | answer must be `COPY <lines of the file>` |
 | MonetDB | `mclient COPY <lines> RECORDS INTO <table> FROM STDIN USING DELIMITERS '\|'` | `<lines> affected rows`; retries on worker/producer thread errors |
-| ClickHouse | `clickhouse-client --format_csv_delimiter='\|' INSERT INTO <table> FORMAT CSV` | exit code |
+| ClickHouse (also ClickHouseCluster) | `clickhouse-client --format_csv_delimiter='\|' INSERT INTO <table> FORMAT CSV` | exit code |
+| MySQL, MariaDB | `mysql --local-infile=1 -e "LOAD DATA LOCAL INFILE '<file>' INTO TABLE ssb.<table> FIELDS TERMINATED BY '\|'; SELECT ROW_COUNT(); COMMIT;"` | the only output line must be the lines of the file; `COMMIT` because MySQL's load durability switches autocommit off |
+
+The MySQL and MariaDB images differ only in the client and base image, as their TPC-H loaders
+(MySQL: the job template sets `MYSQL_CLIENT_OPTIONS=--skip-ssl`); `loader.sh` is the same file.
+On the multi-node DBMS the loader writes to the coordinator, which sends the rows to the nodes.
 
 A failed table fails the loader pod (exit 1).
 

@@ -107,7 +107,58 @@ Found while implementing; these override the design below.
   flat file is generated (documented in `images/ssb/README.md`). `/work` on the
   data volume (estimated 2-3x slower) was not measured.
 
-## Next: ClickHouseCluster (planned 2026-10-28, not implemented)
+## Next steps: implementation notes (2026-10-28)
+
+Implemented on `feature/ssb`: ClickHouseCluster (C1-C6 with R1), PgDuckDB, Citus,
+MySQL, MariaDB. These notes override the sketches below where they differ.
+
+- **`-xdim` switches the script folder**: `resolve_dimension_folder()` (in
+  `bexhoma/benchmarks/ssb.py`) gives `<DBMS>/distributed` for `distributed` on the
+  star schema, else the DBMS folder; `ssb.py` sets `config.path_experiment_docker`
+  and the volume label `ssb-distributed-<SF>`. No change to `cluster.config` or
+  generic code. Files of `distributed/` that do not depend on the placement are
+  copies (a test checks they are identical).
+- **ClickHouseCluster template** (generic): `default_replica_path`
+  `/clickhouse/tables/{database}/{table}`, `default_replica_name` `{replica}`,
+  macro `replica` = `coordinator` on the coordinator, `interserver_http_host`
+  (coordinator: the SUT service, its pod name is not resolvable; workers:
+  `<pod>.<headless service>`), port 9009 in the SUT service. Worker pod names
+  come from the volume label, so replica names stay stable with `-rst`.
+- `CREATE TABLE t ON CLUSTER c AS t_local ENGINE = Distributed(...)` fails: the
+  initiator (coordinator) resolves `t_local`, which exists only on the shards;
+  the columns are written out, as for TPC-H.
+- checkschema (replicated) runs `SYSTEM SYNC REPLICA ON CLUSTER` per dimension and
+  fails (`throwIf`) if a node is missing or holds other rows than the others.
+- Reset scripts per variant where the tables differ (`reset-ssb-flat.sql`):
+  ClickHouseCluster, Citus (VACUUM must name the tables to reach the shards), MySQL, MariaDB.
+- **PgDuckDB**: `path_experiment_docker = 'PostgreSQL'` as for TPC-H, `-xdfe`.
+- **Citus**: reference tables (default) or distributed dimensions; with
+  `distributed` `-xic` adds only primary keys (no foreign keys between
+  non-co-located distributed tables). No `-xcol` (columnar) yet.
+- **MySQL, MariaDB**: one `loader.sh` in two images (`loader_mysql`,
+  `loader_mariadb`, client and base image as for TPC-H; MySQL: `--skip-ssl`);
+  `LOAD DATA LOCAL INFILE ...; SELECT ROW_COUNT(); COMMIT;` and a row-count check.
+  Primary keys in the schema. MySQL does not know `CAST(... AS INTEGER)`: the
+  flat queries get a `'DBMS': {'MySQL': ...}` variant (MariaDB, dialect MySQL,
+  uses it too). Durability and `reset-flush.sh` copied from TPC-H.
+- Images to build: `bexhoma/loader_ssb_mysql`, `bexhoma/loader_ssb_mariadb`
+  (build scripts updated).
+- **Cluster checks 2026-10-28** (SF1, `-nlp 2`, `-nw 2`, `-ks no`), all passed, no
+  result mismatches:
+  - ClickHouse vs ClickHouseCluster replicated (1793198150): 3 replicas per
+    dimension, identical rows; a shard's query_log shows the joins against its
+    local `dates`/`part`/`supplier` (no per-query broadcast).
+  - ClickHouseCluster `-xdim distributed` (1793198173).
+  - ClickHouseCluster replicated `-rst nvme -nc 2 -ar` (1793198608): run 2 reused
+    the volumes (Keeper and replicas intact after the restart), reset OK in both rounds.
+  - PostgreSQL vs Citus reference tables, `-xii -xic -xis` (1793198583).
+  - PostgreSQL vs Citus `-xdim distributed`, `-xii -xic -xis` (1793199304).
+  - Flat: PostgreSQL, PgDuckDB `-xdfe`, Citus, ClickHouseCluster (1793199271).
+- Open: MySQL and MariaDB checks (after the image build), the new docs runs in
+  `test-docs-ssb` (ClickHouseCluster x2, PgDuckDB, Citus, MySQL, MariaDB) and their
+  summaries in `docs/Example-SSB.md`; SF10 comparison replicated vs distributed.
+
+## Next: ClickHouseCluster (planned 2026-10-28)
 
 Built like TPC-H's ClickHouseCluster (6bc6cac5). No new image, no new job
 template, no change to generic files.

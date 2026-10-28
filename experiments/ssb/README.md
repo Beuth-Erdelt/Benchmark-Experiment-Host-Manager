@@ -1,7 +1,8 @@
 # SSB Experiments
 
 This folder contains the query files and the DDL scripts of the Star Schema Benchmark (SSB)
-for PostgreSQL, MonetDB and ClickHouse. The entry script is `ssb.py`
+for PostgreSQL, MonetDB, ClickHouse, ClickHouseCluster, Citus, MySQL and MariaDB (PgDuckDB uses
+the PostgreSQL scripts). The entry script is `ssb.py`
 (`bexhoma ssb run ...`), the images are in `images/ssb/`.
 
 ## Sources
@@ -41,14 +42,19 @@ week 53 one or two. Week 6 of 1994 is 1994-02-04 to 1994-02-10.
 | `make_queries.py` | Writes the seven query files above |
 | `<DBMS>/initschema-ssb.sql`, `initschema-ssb-flat.sql` | Create the tables of the variant |
 | `<DBMS>/initindexes-ssb*.sql` | `-xii`: foreign key columns of lineorder and the filtered dimension columns |
-| `<DBMS>/initconstraints-ssb.sql` | `-xic`: primary keys and foreign keys (star schema only) |
+| `<DBMS>/initconstraints-ssb.sql` | `-xic`: primary keys and foreign keys (star schema only; MySQL and MariaDB: foreign keys, the primary keys are in the schema) |
 | `<DBMS>/initstatistics-ssb*.sql` | `-xis`: `ANALYZE` |
 | `<DBMS>/checkschema-ssb*.sql` | Last post-load script: row counts and sizes |
-| `<DBMS>/reset-ssb.sql`, `reset-flush.sh` | `-ar`: reset before each benchmarking round |
-| `PostgreSQL/durability-*.sql`, `restoredurability-*` | `-xld`: durability during the load |
+| `<DBMS>/reset-ssb*.sql`, `reset-flush.sh` | `-ar`: reset before each benchmarking round (`-flat` where the tables differ) |
+| `<DBMS>/durability-*`, `restoredurability-*` | `-xld`: durability during the load (PostgreSQL, Citus, MySQL, MariaDB) |
+| `<DBMS>/distributed/` | `-xdim distributed` (ClickHouseCluster, Citus): the scripts of the star schema with the dimensions spread over the nodes; the files that do not depend on the placement are copies |
 
-ClickHouse has no index, constraint or statistics scripts (the sorting key is set in the
-schema). The script lists are `volumes.ssb` in the cluster config.
+ClickHouse and ClickHouseCluster have no index, constraint or statistics scripts (the sorting
+key is set in the schema). The script lists are `volumes.ssb` in the cluster config; a DBMS
+folder without a listed script skips it.
+
+The flat queries have a MySQL variant (`'DBMS': {'MySQL': ...}`, also used by MariaDB, whose
+dialect is MySQL): `extract(year from lo_orderdate)` without `CAST(... AS INTEGER)`.
 
 ## Queries and filter factors (specification)
 

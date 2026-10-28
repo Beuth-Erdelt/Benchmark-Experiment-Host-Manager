@@ -273,6 +273,152 @@ bexhoma ssb `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB profiling  sf=1"
 
 
+#### SSB ClickHouseCluster (Example-SSB.md)
+bexhoma ssb `
+  -dbms ClickHouseCluster       <# DBMS under test #> `
+  -nw 3                         <# number of worker nodes (shards) #> `
+  -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_clickhousecluster.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB ClickHouseCluster  sf=1  nw=3"
+
+
+#### SSB ClickHouseCluster distributed dimensions (Example-SSB.md)
+bexhoma ssb `
+  -dbms ClickHouseCluster       <# DBMS under test #> `
+  -nw 3                         <# number of worker nodes (shards) #> `
+  -xdim distributed             <# dimensions spread over the shards like lineorder (default: a copy on every node) #> `
+  -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_clickhousecluster_distributed.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB ClickHouseCluster distributed dimensions  sf=1  nw=3  xdim=distributed"
+
+
+#### SSB PgDuckDB (Example-SSB.md)
+bexhoma ssb `
+  -dbms PgDuckDB                <# DBMS under test #> `
+  -xdfe                         <# run the queries in pg_duckdb's DuckDB engine #> `
+  -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# add primary and foreign keys after data load #> `
+  -xis                          <# run statistics after data load #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_pgduckdb.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB PgDuckDB  sf=1"
+
+
+#### SSB Citus (Example-SSB.md)
+bexhoma ssb `
+  -dbms Citus                   <# DBMS under test #> `
+  -nw 3                         <# number of worker nodes #> `
+  -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# add primary and foreign keys after data load #> `
+  -xis                          <# run statistics after data load #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_citus.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB Citus  sf=1  nw=3"
+
+
+#### SSB MySQL (Example-SSB.md)
+bexhoma ssb `
+  -dbms MySQL                   <# DBMS under test #> `
+  -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# add primary and foreign keys after data load #> `
+  -xis                          <# run statistics after data load #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_mysql.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MySQL  sf=1"
+
+
+#### SSB MariaDB (Example-SSB.md)
+bexhoma ssb `
+  -dbms MariaDB                 <# DBMS under test #> `
+  -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# add primary and foreign keys after data load #> `
+  -xis                          <# run statistics after data load #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_mariadb.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MariaDB  sf=1"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

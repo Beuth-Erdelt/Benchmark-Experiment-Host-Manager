@@ -60,8 +60,8 @@ spec:
       - name: datadir
         emptyDir:
           medium: Memory
-      # flat generation: sort temp files, dimensions and the lineorder chunk, about 2-3x the
-      # chunk; on node disk, not in memory
+      # flat generation: sort temp files, dimensions and the lineorder chunk, about 6.7x the
+      # lineorder chunk with the order restore (images/ssb/README.md); on node disk, not in memory
       - name: workdir
         emptyDir: {}
       - name: benchmark-data-volume

@@ -36,7 +36,8 @@ from unittest import mock
 from dbmsbenchmarker import parameter
 
 from bexhoma import experiments
-from bexhoma.benchmarks.ssb import (QUERY_VARIANTS, SCHEMA_VARIANTS, resolve_indexing_key,
+from bexhoma.benchmarks.ssb import (DIMENSION_DBMS, QUERY_VARIANTS, SCHEMA_VARIANTS,
+                                    resolve_dimension_folder, resolve_indexing_key,
                                     resolve_queryfile)
 from bexhoma.experiments.base import ExperimentBase
 
@@ -44,7 +45,11 @@ from .test_resource_sweep import _AnyDockers, _SweepStubCluster
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _EXP = os.path.join(_REPO, 'experiments', 'ssb')
+#: DBMS of the default -dbms set.
 _DBMS_FOLDERS = ('PostgreSQL', 'MonetDB', 'ClickHouse')
+#: Every script folder, including the -xdim distributed scripts.
+_ALL_FOLDERS = _DBMS_FOLDERS + ('ClickHouseCluster', 'ClickHouseCluster/distributed', 'Citus', 'Citus/distributed',
+                                'MySQL', 'MariaDB')
 #: Placeholders the loading code replaces by the durability scripts the folder has.
 _PLACEHOLDERS = {'durability.sql', 'restoredurability.sql'}
 
@@ -86,6 +91,22 @@ class QueryFilesTest(unittest.TestCase):
         # each profiling file reads only the tables of its schema variant
         self.assertEqual(normal, {'customer', 'supplier', 'part', 'dates', 'lineorder'})
         self.assertEqual(flat, {'lineorder_flat'})
+
+    def test_mysql_variants(self):
+        """The flat queries have a MySQL variant without CAST(... AS INTEGER), otherwise equal."""
+        for query_variant in QUERY_VARIANTS:
+            for q in _load_config(resolve_queryfile('flat', query_variant))['queries']:
+                sql = q['query']
+                with self.subTest(query_variant=query_variant, title=q['title']):
+                    if 'as integer' not in sql:
+                        self.assertNotIn('DBMS', q)
+                        continue
+                    self.assertEqual(set(q['DBMS']), {'MySQL'})
+                    self.assertNotIn('as integer', q['DBMS']['MySQL'])
+                    self.assertEqual(q['DBMS']['MySQL'], sql.replace(
+                        'cast(extract(year from lo_orderdate) as integer)', 'extract(year from lo_orderdate)'))
+        for q in _load_config(resolve_queryfile('normal', 'spec'))['queries']:
+            self.assertNotIn('DBMS', q)
 
     def test_variants_share_titles(self):
         titles = {(s, q): [x['title'] for x in _load_config(resolve_queryfile(s, q))['queries']]
@@ -160,9 +181,19 @@ class ScriptListsTest(unittest.TestCase):
                 with self.subTest(key=key, script=script):
                     self.assertTrue(os.path.isfile(os.path.join(_EXP, 'PostgreSQL', script)))
                     self.assertTrue(os.path.isfile(os.path.join(_EXP, 'MonetDB', script)))
+                    self.assertTrue(os.path.isfile(os.path.join(_EXP, 'Citus', script)))
+                    self.assertTrue(os.path.isfile(os.path.join(_EXP, 'MySQL', script)))
+                    self.assertTrue(os.path.isfile(os.path.join(_EXP, 'MariaDB', script)))
+                    if not script.endswith('-flat.sql'):
+                        self.assertTrue(os.path.isfile(os.path.join(_EXP, 'Citus', 'distributed', script)))
                     # ClickHouse has no secondary indexes, constraints or statistics scripts
                     if script.startswith(('initschema', 'checkschema')):
                         self.assertTrue(os.path.isfile(os.path.join(_EXP, 'ClickHouse', script)))
+                        self.assertTrue(os.path.isfile(os.path.join(_EXP, 'ClickHouseCluster', script)))
+                        # -xdim distributed changes the star schema only
+                        if not script.endswith('-flat.sql'):
+                            self.assertTrue(os.path.isfile(
+                                os.path.join(_EXP, 'ClickHouseCluster', 'distributed', script)))
 
     def test_post_load_lists_end_with_check(self):
         for key, scripts in self.lists.items():
@@ -170,9 +201,26 @@ class ScriptListsTest(unittest.TestCase):
                 self.assertTrue(scripts[-1].startswith('checkschema-ssb'), key)
                 self.assertEqual(scripts[-1].endswith('-flat.sql'), key.endswith('_flat'), key)
 
+    def test_distributed_copies_are_identical(self):
+        """The files of <DBMS>/distributed that do not depend on the dimensions are copies of the default ones."""
+        own = {
+            'ClickHouseCluster': {'initschema-ssb.sql', 'checkschema-ssb.sql', 'reset-ssb.sql'},
+            'Citus': {'initschema-ssb.sql', 'initconstraints-ssb.sql'},
+        }
+        self.assertEqual(set(own), set(DIMENSION_DBMS))
+        for docker in DIMENSION_DBMS:
+            folder = os.path.join(_EXP, docker, 'distributed')
+            for name in sorted(set(os.listdir(folder)) - own[docker]):
+                with self.subTest(docker=docker, name=name), open(os.path.join(folder, name), encoding='utf-8') as copy, \
+                        open(os.path.join(_EXP, docker, name), encoding='utf-8') as original:
+                    self.assertEqual(copy.read().replace(f'experiments/ssb/{docker}/distributed', f'experiments/ssb/{docker}'),
+                                     original.read())
+
     def test_no_braces(self):
-        for folder in _DBMS_FOLDERS:
+        for folder in _ALL_FOLDERS:
             for name in os.listdir(os.path.join(_EXP, folder)):
+                if os.path.isdir(os.path.join(_EXP, folder, name)):
+                    continue
                 with self.subTest(folder=folder, name=name):
                     with open(os.path.join(_EXP, folder, name), encoding='utf-8') as f:
                         text = f.read()
@@ -237,6 +285,99 @@ class EntryScriptTest(unittest.TestCase):
 
     def test_multi_tenancy_rejected(self):
         self.assertEqual(self.run_script('run', '-mtn', '2', '-mtb', 'schema'), 2)
+
+    def _cluster_config(self, experiment):
+        configs = [c for c in experiment.configurations if c.docker == 'ClickHouseCluster']
+        self.assertEqual(len(configs), 1)
+        return configs[0]
+
+    def test_clickhouse_cluster_replicated_default(self):
+        experiment = self.run_script('run', '-dbms', 'PostgreSQL', 'ClickHouseCluster', '-nw', '2')
+        config = self._cluster_config(experiment)
+        self.assertEqual(config.path_experiment_docker, 'ClickHouseCluster')
+        self.assertEqual(config.storage_label, 'ssb-1')
+        self.assertEqual(config.num_worker, 2)
+        self.assertEqual(config.script_target, 'workers')
+        self.assertEqual(config.jobtemplate_loading, 'jobtemplate-loading-ssb-ClickHouse.yml')
+        self.assertIn('Dimensions of ClickHouseCluster are a full copy on every node (-xdim replicated)',
+                      experiment.workload['info'])
+        resets = {e.get('resetscript') and tuple(e['resetscript'])
+                  for r in config.experiment_dict['benchmarker'] for e in r}
+        self.assertEqual(resets, {('reset-ssb.sql', 'reset-flush.sh')})
+
+    def test_clickhouse_cluster_distributed(self):
+        experiment = self.run_script('run', '-dbms', 'PostgreSQL', 'ClickHouseCluster', '-xdim', 'distributed')
+        config = self._cluster_config(experiment)
+        self.assertEqual(config.path_experiment_docker, 'ClickHouseCluster/distributed')
+        self.assertEqual(config.storage_label, 'ssb-distributed-1')
+        self.assertIn('spread over the nodes like lineorder (-xdim distributed)', experiment.workload['info'])
+        # single-node DBMS ignore -xdim
+        postgresql = [c for c in experiment.configurations if c.docker == 'PostgreSQL'][0]
+        self.assertEqual((postgresql.path_experiment_docker, postgresql.storage_label), ('PostgreSQL', 'ssb-1'))
+
+    def test_clickhouse_cluster_flat_ignores_dimensions(self):
+        experiment = self.run_script('run', '-dbms', 'ClickHouseCluster', '-xsv', 'flat', '-xdim', 'distributed')
+        config = self._cluster_config(experiment)
+        self.assertEqual((config.path_experiment_docker, config.storage_label), ('ClickHouseCluster', 'ssb-flat-1'))
+        self.assertNotIn('-xdim', experiment.workload['info'])
+        resets = {e.get('resetscript') and tuple(e['resetscript'])
+                  for r in config.experiment_dict['benchmarker'] for e in r}
+        self.assertEqual(resets, {('reset-ssb-flat.sql', 'reset-flush.sh')})
+        self.assertTrue(os.path.isfile(os.path.join(_EXP, 'ClickHouseCluster', 'reset-ssb-flat.sql')))
+
+    def test_pgduckdb_reuses_postgresql(self):
+        experiment = self.run_script('run', '-dbms', 'PgDuckDB', '-xdfe')
+        config = experiment.configurations[0]
+        self.assertEqual(config.docker, 'PgDuckDB')
+        self.assertEqual(config.path_experiment_docker, 'PostgreSQL')
+        self.assertEqual(config.jobtemplate_loading, 'jobtemplate-loading-ssb-PostgreSQL.yml')
+        self.assertEqual(config.sut_parameters['DUCKDB_FORCE_EXECUTION'], 'true')
+        self.assertIn('forced through the DuckDB execution engine', experiment.workload['info'])
+        self.assertEqual(self.run_script('run', '-dbms', 'PgDuckDB').configurations[0]
+                         .sut_parameters['DUCKDB_FORCE_EXECUTION'], 'false')
+
+    def test_citus(self):
+        experiment = self.run_script('run', '-dbms', 'Citus', '-nw', '3')
+        config = experiment.configurations[0]
+        self.assertEqual((config.docker, config.num_worker, config.path_experiment_docker, config.storage_label),
+                         ('Citus', 3, 'Citus', 'ssb-1'))
+        self.assertEqual(config.jobtemplate_loading, 'jobtemplate-loading-ssb-PostgreSQL.yml')
+        self.assertIn('Dimensions of Citus are a full copy on every node', experiment.workload['info'])
+        config = self.run_script('run', '-dbms', 'Citus', '-xdim', 'distributed').configurations[0]
+        self.assertEqual((config.path_experiment_docker, config.storage_label), ('Citus/distributed', 'ssb-distributed-1'))
+        config = self.run_script('run', '-dbms', 'Citus', '-xsv', 'flat', '-xdim', 'distributed').configurations[0]
+        self.assertEqual((config.path_experiment_docker, config.storage_label), ('Citus', 'ssb-flat-1'))
+        resets = {e.get('resetscript') and tuple(e['resetscript'])
+                  for r in config.experiment_dict['benchmarker'] for e in r}
+        self.assertEqual(resets, {('reset-ssb-flat.sql',)})
+
+    def test_mysql_mariadb(self):
+        experiment = self.run_script('run', '-dbms', 'MySQL', 'MariaDB', '-xsv', 'flat')
+        configs = {c.docker: c for c in experiment.configurations}
+        self.assertEqual(set(configs), {'MySQL', 'MariaDB'})
+        for docker, config in configs.items():
+            self.assertEqual(config.jobtemplate_loading, f'jobtemplate-loading-ssb-{docker}.yml')
+            self.assertTrue(os.path.isfile(os.path.join(_REPO, 'k8s', config.jobtemplate_loading)))
+            resets = {e.get('resetscript') and tuple(e['resetscript'])
+                      for r in config.experiment_dict['benchmarker'] for e in r}
+            self.assertEqual(resets, {('reset-ssb-flat.sql', 'reset-flush.sh')})
+        self.assertEqual(configs['MariaDB'].sut_parameters['MARIADB_DATABASE'], 'ssb')
+
+    def test_mysql_loaders_share_the_script(self):
+        loaders = os.path.join(_REPO, 'images', 'ssb')
+        with open(os.path.join(loaders, 'loader_mysql', 'loader.sh'), encoding='utf-8') as mysql, \
+                open(os.path.join(loaders, 'loader_mariadb', 'loader.sh'), encoding='utf-8') as mariadb:
+            self.assertEqual(mysql.read(), mariadb.read())
+
+    def test_dimension_folder(self):
+        for docker in DIMENSION_DBMS:
+            self.assertEqual(resolve_dimension_folder(docker, 'normal', 'replicated'), docker)
+            self.assertEqual(resolve_dimension_folder(docker, 'normal', 'distributed'), docker + '/distributed')
+            self.assertEqual(resolve_dimension_folder(docker, 'flat', 'distributed'), docker)
+        self.assertEqual(resolve_dimension_folder('PostgreSQL', 'normal', 'distributed'), 'PostgreSQL')
+        for folder in ('ClickHouseCluster', 'ClickHouseCluster/distributed'):
+            for name in ('reset-ssb.sql', 'reset-flush.sh'):
+                self.assertTrue(os.path.isfile(os.path.join(_EXP, folder, name)), (folder, name))
 
 
 class SummaryDispatchTest(unittest.TestCase):

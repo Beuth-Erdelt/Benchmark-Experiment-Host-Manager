@@ -90,6 +90,9 @@ assert week_bounds(1994, 6) == (datetime.date(1994, 2, 4), datetime.date(1994, 2
 # --------------------------------------------------------------------- queries
 JOIN_D = "lo_orderdate = d_datekey"
 YEAR_FLAT = "cast(extract(year from lo_orderdate) as integer)"
+# MySQL has no CAST(... AS INTEGER); its EXTRACT already returns an integer. DBMS-Benchmarker
+# picks the variant by dialect or connection name, so MariaDB (dialect MySQL) runs it too.
+YEAR_FLAT_DBMS = {'MySQL': "extract(year from lo_orderdate)"}
 
 def flat_range(lo, hi_excl):
     return f"lo_orderdate >= {DATE.format(lo)} and lo_orderdate < {DATE.format(hi_excl)}"
@@ -282,6 +285,12 @@ def entry(title, sql, params=None):
     s = "\t\t{\n"
     s += f"\t\t\t'title': {title!r},\n"
     s += f'\t\t\t\'query\': """{sql}""",\n'
+    if YEAR_FLAT in sql:
+        # DBMS-specific variants (YEAR_FLAT_DBMS)
+        s += "\t\t\t'DBMS': {\n"
+        for dbms, year in YEAR_FLAT_DBMS.items():
+            s += f'\t\t\t\t{dbms!r}: """{sql.replace(YEAR_FLAT, year)}""",\n'
+        s += "\t\t\t},\n"
     if params:
         s += "\t\t\t'parameter': {\n"
         for k, v in params.items():
