@@ -1,8 +1,8 @@
 # Plan: Star Schema Benchmark (SSB)
 
 Status: **implemented and run on the cluster** (2026-10-25, branch
-`feature/ssb`): M0-M6, M8, M9 done; M7 done except SF10 (M7.6); M1b (bash vs
-DuckDB) open. Tracks issue
+`feature/ssb`): M0-M9 and M1b done (SF10 and bash vs DuckDB on 2026-10-27).
+Tracks issue
 #348 ("Try SSB"). Decisions of 2026-10-24 are in "Decisions" at the end; what
 changed during the implementation is in "Implementation notes (2026-10-25)"
 right below and overrides the design sections where they differ.
@@ -100,8 +100,12 @@ Found while implementing; these override the design below.
   time (all cores; similar CPU time). The local runs filled C: through Docker's
   virtual disk (the "free" space Docker reports is inside its disk file); further
   large measurements only on the cluster.
-- Open: choose the flat method from M1b (bash unordered / awk up to SF100 / DuckDB),
-  then the ephemeral-storage request for the `/work` emptyDir.
+- **Decision 2026-10-28**: the flat method stays bash with the order restore
+  (default). No ephemeral-storage request for the `/work` emptyDir: a pod that
+  finds its folder complete uses no `/work`, and a request would reserve the disk
+  anyway. The node needs free local disk of about 6.7x the lineorder chunk while a
+  flat file is generated (documented in `images/ssb/README.md`). `/work` on the
+  data volume (estimated 2-3x slower) was not measured.
 
 ## Goal
 

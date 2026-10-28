@@ -68,6 +68,10 @@ lineorder chunk. Measured locally (Docker Desktop): SF10 chunk of 7.5 M rows in 
 the order restore); awk holds 180 MB for SF10's supplier and part; the flat file is about 3.4x the
 lineorder chunk. `compare-flat.sh` compares this with DuckDB (see `dev/plan-ssb.md`, M1b).
 
+The job templates set no ephemeral-storage request for `/work`: a pod that finds its folder
+complete uses none, and a request would reserve the disk on every run. The node must have the
+free local disk above while a flat file is generated, or the kubelet evicts the pod.
+
 ## Per-DBMS loader differences
 
 | DBMS | Tool | Check |
