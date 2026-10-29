@@ -9,7 +9,8 @@
 --          There are no secondary indexes or constraints (-xii/-xic have no
 --          scripts). CHAR/VARCHAR are String: FixedString pads with \0, not
 --          with blanks. Order keys are Int64 (SF 1000 exceeds Int32).
---          No curly braces in this file: bexhoma may fill it with str.format().
+--          The sort keys of orders and lineitem are DDL parameters
+--          (ddl-parameters.config).
 
 CREATE TABLE nation (
     n_nationkey  Int32,
@@ -75,7 +76,7 @@ CREATE TABLE orders (
     o_clerk          String,
     o_shippriority   Int32,
     o_comment        String
-) ENGINE = MergeTree ORDER BY o_orderkey;
+) ENGINE = MergeTree ORDER BY {order_orders};
 
 CREATE TABLE lineitem (
     l_orderkey       Int64,
@@ -94,4 +95,4 @@ CREATE TABLE lineitem (
     l_shipinstruct   String,
     l_shipmode       String,
     l_comment        String
-) ENGINE = MergeTree ORDER BY (l_orderkey, l_linenumber);
+) ENGINE = MergeTree ORDER BY {order_lineitem};

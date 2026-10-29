@@ -22,7 +22,8 @@ A DBMS folder (``experiments/<benchmark>/<dbms>``) may declare parameters in
 parameter existed. ``values`` (optional) lists the allowed tokens, ``sql``
 (optional) maps a token to the text written into the script, for values that
 need characters a token may not have. ``type: 'int'`` (optional) normalises
-values (``032`` is ``32``). Scripts of the folder name a parameter as
+values (``032`` is ``32``). ``requires`` (optional, ``{'other_key': [values]}``)
+restricts other keys while this key is not at its default. Scripts of the folder name a parameter as
 ``{key}``; any other text in braces (JSON, ClickHouse macros) is kept.
 
 Values are tokens that are valid Kubernetes label values, because the values
@@ -46,7 +47,7 @@ import os
 import re
 
 __all__ = ["FILENAME", "LABEL_PREFIX", "load_declarations", "parse_assignments", "combinations",
-           "normalize", "validate", "resolve", "fill_values", "fill", "is_label_value",
+           "normalize", "validate", "check_requirements", "resolve", "fill_values", "fill", "is_label_value",
            "volume_labels", "compare_with_volume"]
 
 #: Name of the declaration file in a DBMS script folder.
@@ -95,7 +96,13 @@ def load_declarations(experiments_folder: str, docker_path: str) -> dict:
         if os.path.isfile(filename):
             with open(filename, 'r', encoding='utf-8') as f:
                 declarations = ast.literal_eval(f.read())
-            return {key: _checked(filename, key, declaration) for key, declaration in declarations.items()}
+            checked = {key: _checked(filename, key, declaration) for key, declaration in declarations.items()}
+            for key, declaration in checked.items():
+                for other, allowed in (declaration.get('requires') or {}).items():
+                    if other not in checked or not isinstance(allowed, list):
+                        raise ValueError(f"{filename}: '{key}' requires '{other}', which must be a declared key "
+                                         f"with a list of values")
+            return checked
         path = os.path.dirname(path)
     return {}
 
@@ -201,6 +208,29 @@ def validate(declarations: dict, given: dict, where: str) -> dict:
             normalized.append(value)
         checked[key] = normalized if isinstance(values, list) else normalized[0]
     return checked
+
+
+def check_requirements(declarations: dict, values: dict, where: str) -> None:
+    """Check that keys away from their default have what they require of other keys.
+
+    A declaration may hold ``'requires': {'other_key': ['allowed', ...]}``:
+    when the key's value is not its default, ``other_key`` must have one of
+    the allowed values (e.g. TiDB ``split_regions`` needs a clustered key,
+    YugabyteDB ``num_tablets`` needs hash sharding).
+
+    :param declarations: From :func:`load_declarations`.
+    :param values: Effective values of one configuration (or one sweep combination).
+    :param where: Name for the error message.
+    :raises ValueError: When a requirement is not met.
+    """
+    for key, declaration in declarations.items():
+        if str(values.get(key, declaration['default'])) == str(declaration['default']):
+            continue
+        for other, allowed in (declaration.get('requires') or {}).items():
+            other_value = str(values.get(other, declarations.get(other, {}).get('default')))
+            if other_value not in [str(value) for value in allowed]:
+                raise ValueError(f"{where}: {key}={values[key]} requires {other} in {list(allowed)}, "
+                                 f"not {other}={other_value}")
 
 
 def resolve(declarations: dict, given: dict) -> dict:

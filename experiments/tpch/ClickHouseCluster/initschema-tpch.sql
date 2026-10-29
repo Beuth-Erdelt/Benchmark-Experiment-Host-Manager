@@ -13,7 +13,8 @@
 --          Distributed tables are correct for any sharding
 --          (distributed_product_mode = global in the template).
 --          Columns and sorting keys as in experiments/tpch/ClickHouse.
---          No curly braces in this file: bexhoma may fill it with str.format().
+--          The sort keys of orders and lineitem are DDL parameters
+--          (ddl-parameters.config).
 
 CREATE TABLE nation_local ON CLUSTER bexhoma (
     n_nationkey  Int32,
@@ -187,7 +188,7 @@ CREATE TABLE orders_local ON CLUSTER bexhoma (
     o_clerk          String,
     o_shippriority   Int32,
     o_comment        String
-) ENGINE = MergeTree ORDER BY o_orderkey;
+) ENGINE = MergeTree ORDER BY {order_orders};
 
 CREATE TABLE orders ON CLUSTER bexhoma (
     o_orderkey       Int64,
@@ -230,7 +231,7 @@ CREATE TABLE lineitem_local ON CLUSTER bexhoma (
     l_shipinstruct   String,
     l_shipmode       String,
     l_comment        String
-) ENGINE = MergeTree ORDER BY (l_orderkey, l_linenumber);
+) ENGINE = MergeTree ORDER BY {order_lineitem};
 
 CREATE TABLE lineitem ON CLUSTER bexhoma (
     l_orderkey       Int64,

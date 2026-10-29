@@ -19,14 +19,17 @@ one experiment per value with `--set` on the same `-rst` PVC).
 | 4 | Short names: abbreviations in both cluster configs (by storage name), workers `bx-<w|component>`, `limit_name()` guard, Redis/Dragonfly special case removed, `dfr` | **done, uncommitted**; old volumes to delete at rollout | [Short names](#short-volume-and-worker-names-decided-2026-10-29) |
 | 4b | `shape_num_worker`/`shape_state` labels (refused on difference), `load_script`, `load_indexing`, `load_insert_order` labels (reported like DDL) | **done, uncommitted** | [Beyond DDL](#data-defining-parameters-beyond-ddl-proposal-2026-10-29-accepted-in-principle) |
 | 5 | Cluster check B (YCSB defaults without `-nwr`/`-nws`) | **OK** (32 shards, RF 1) | [Cluster checks](#cluster-checks) |
-| 5b | Rollout: commit, reinstall, list and delete old bexhoma volumes (storage + `bxw-…`, not `bexhoma-data`/`-results`/model-server) when no experiment runs | open, needs your OK for the deletion | – |
 | 6 | Cluster check after items 1–3: reuse of a labelled volume (same values, other values, nothing given) and of an unlabelled one | after 1–3 | [Cluster checks](#cluster-checks) |
 | 7 | Volumes of check A on cephcsi: two have `-ddl<hash>` names, orphaned once B is implemented | cleanup, ask first | [Cluster checks](#cluster-checks) |
-| 8 | M3 priority A keys, M3b experiment.yml, M4, M5 | later | [Milestones](#milestones) |
+| 5b | Rollout | **done**: reinstalled 15:46, 115 old volumes deleted | – |
+| 5c | Cluster checks of reuse cases C–G (MariaDB labels, reuse, difference, Citus worker count, sweep with `-rst`) | **OK** | [Cluster checks](#cluster-checks) |
+| 8 | M3 priority A keys: implemented except `dimensions`, cluster checks H–K running; M3b experiment.yml, M4, M5 later | in progress | [Milestones](#milestones) |
 | 9 | Verify: Citus `shard_replication_factor` > 1 in our version; MariaDB histograms by default; CockroachDB `bucket_count` default in v24.2.4 | research | [Candidates](#candidates-per-dbms) |
 | 10 | Result tables: a column per swept key (also for resource cells); rename `expand_resource_cells()` → `expand_cells()` | deferred | [Open questions](#open-questions) |
 | 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
-| 12 | Commit (message proposed, waits for go-ahead) | – | – |
+| 12 | Commit M3 + `requires` (message proposed, waits for go-ahead) | – | – |
+| 13 | Test `Init scripts without errors`: script errors during loading are only in stderr logs today (found in check J) | proposal | [Milestones](#milestones) |
+| 14 | `dimensions` for Citus and ClickHouseCluster TPC-H: a DDL key that selects a script folder variant | design open | [Milestones](#milestones) |
 
 ## Mechanism (implemented, uncommitted)
 
@@ -375,9 +378,11 @@ Priority: **A** = cheap, large or well-known effect, belongs in the first
 round; **B** = useful sweep; **C** = later or only with extra deployment.
 "Default" is the current, hard-coded behaviour.
 
-Reach: DDL keys reach TPC-C only through **BenchBase**; HammerDB creates its
-own schema (bexhoma's TPC-C init scripts are empty placeholders), and so does
-BenchBase on CockroachDB.
+Reach (corrected 2026-10-29): DDL keys reach TPC-C only where bexhoma creates
+the schema: BenchBase on **Citus and YugabyteDB**. HammerDB (all DBMS) and
+BenchBase on PostgreSQL, MySQL, MariaDB, TiDB and CockroachDB create the
+schema themselves; bexhoma's scripts there are placeholders. "TPC-C
+(BenchBase)" in the tables below applies to Citus and YugabyteDB only.
 
 #### PostgreSQL (also PgDuckDB, DatabaseService) — TPC-H, TPC-DS, SSB, YCSB, TPC-C (BenchBase)
 
@@ -558,10 +563,68 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
 - **M2c** decided (item 4), not implemented: short volume and worker
   names, Dragonfly replica storage name; then delete the old bexhoma
   volumes (list first, no experiment running).
-- **M3** priority A keys: PostgreSQL `fillfactor`; CockroachDB `pk_hash`;
-  YugabyteDB `pk_sharding`, `num_tablets`; TiDB `clustered`,
-  `pre_split_regions`; Citus/ClickHouse `dimensions`; ClickHouse `order_by`.
-  Each with a docs test run.
+- **M3** priority A keys. **Implemented 2026-10-29, uncommitted** (830
+  unit tests OK, defaults reproduce the old scripts):
+  - ycsb/PostgreSQL `fillfactor` (int, default 100);
+  - ycsb/CockroachDB `pk_hash` (hash | none);
+  - ycsb/YugabyteDB `pk_sharding` (hash | asc), `num_tablets` (auto | 4 … 128,
+    `SPLIT INTO n TABLETS`, only with hash);
+  - ycsb/TiDB `clustered` (default | clustered | nonclustered),
+    `split_regions` (none | 4 … 128, `SPLIT TABLE … BETWEEN ('user0') AND
+    ('user9') REGIONS n`);
+  - tpch/ClickHouse and tpch/ClickHouseCluster `order_orders`,
+    `order_lineitem` (key | date).
+
+  Corrections found while implementing: BenchBase creates the TPC-C schema
+  itself for PostgreSQL, MySQL, MariaDB, TiDB and CockroachDB (bexhoma's
+  scripts are placeholders); only Citus and YugabyteDB TPC-C schemas are
+  bexhoma's. So `fillfactor` is YCSB only. TiDB `PRE_SPLIT_REGIONS` needs
+  `SHARD_ROW_ID_BITS` or `AUTO_RANDOM` and does nothing for YCSB's VARCHAR
+  key; `split_regions` replaces it.
+
+  Cluster checks (2026-10-29, ephemeral, sweeps, `-ks no`):
+  - H (1793286796) PostgreSQL `fillfactor=100,80`: `WITH (fillfactor = 100)`
+    / `80` filled; all tests passed, no script errors.
+  - I (1793287309) CockroachDB `pk_hash=hash,none`: `PRIMARY KEY USING HASH`
+    / `PRIMARY KEY ,`; all tests passed, no script errors.
+  - J (1793288481) TiDB `clustered=nonclustered`, `split_regions=16`:
+    `NONCLUSTERED` filled, but `SPLIT TABLE … BETWEEN ('user0') AND
+    ('user9')` failed: `ERROR 1265 … Incorrect value: 'user0' for column
+    '_tidb_rowid'` (nonclustered rows are keyed by the integer rowid). The
+    run went on without the split and all tests passed. Fix: generic
+    `requires` in declarations (`split_regions` requires `clustered` in
+    default/clustered; YugabyteDB `num_tablets` requires `pk_sharding=hash`),
+    checked in `resolve_ddl_parameters()` for every combination before
+    anything starts.
+  - J2 (1793289753) TiDB `clustered=clustered`, `split_regions=16`:
+    `PRIMARY KEY CLUSTERED`, `TOTAL_SPLIT_REGION 15`,
+    `SCATTER_FINISH_RATIO 1`, no SQL errors: the key works. But
+    `bx-tikv-ti-ycsb-1-0` restarted after ~8 min and then crash-looped:
+    `FATAL … duplicated store address … already registered by id:13`.
+    Without `-rst`, TiKV keeps its data in the container filesystem; after a
+    container restart it comes back without its store ID and PD refuses the
+    new registration (not caused by the renaming: worker names were
+    storage-label based before too). Cause of the first restart unknown
+    (only the last termination is in the describe log); run J (same
+    settings, no effective split) had none.
+  - J3 (1793290378) = J2 with `-m`: split again 16 regions, scatter 1, **no
+    restarts**, all tests passed; TiKV peak 8.6 GB RAM in loading (limit
+    16Gi). The J2 restart did not reproduce; an ephemeral TiKV cannot
+    survive a container restart either way (`-rst` for long runs).
+  - K (1793289099) ClickHouse `order_lineitem=key,date` ×
+    `order_orders=key,date`: 4 configurations, the four sort-key
+    combinations filled; all tests passed, no script errors.
+  - YugabyteDB not checked (deployed by its own Helm script, not by bexhoma).
+
+  **Found**: an error in an init script (stderr of the loading scripts) does
+  not fail the run or any test; it is only in
+  `bexhoma-loading-<configuration>-<script>-*.stderr.log`. Proposal: a test
+  `Init scripts without errors` like `Reset scripts ran without errors`
+  (open item 13).
+
+  Open: Citus/ClickHouseCluster `dimensions` (a key that selects a script
+  folder variant, like SSB `-xdim`; ClickHouseCluster replicated dimensions
+  also need the dimension data on every shard).
 - **M3b** `systems[].ddl` in experiment.yml + catalog capability
   ([bexhoma/spec.py](../bexhoma/spec.py), tpch_catalog.py, ycsb_catalog.py
   emit `-xddl` through a shared helper).
@@ -589,10 +652,32 @@ All with `-ks no`.
   `shard_replication_factor = 1`; 32 shards of usertable in the check
   output; all tests passed. Citus waited ~2 h for experiment 1793222643
   (one Citus SUT per cluster).
-- **After M2b** (item 6): reuse of a labelled volume with the same values,
-  with other values (test failed, volume's values used) and without any
-  values (taken from the volume); reuse of an unlabelled volume (assumed,
-  test skipped); `-rst` with a DDL sweep refused.
+- **Reuse checks after M2b/M2c** (2026-10-29, after reinstall and deleting
+  the 115 old volumes; TPC-H SF1, `-rst cephcsi`), all **OK**:
+  - C (1793286512) MariaDB `-xddl engine=Aria -xii -xic -xis`: new volume
+    `bexhoma-storage-ma-cephcsi-tpch-1` with labels `ddl_engine=Aria`,
+    `load_script=Schema`, `load_indexing=Index_and_Constraints_and_Statistics`,
+    `shape_num_worker=0`, `shape_state=stable`; test passed.
+  - D (1793287556) same without `-xddl`: reused, "DDL values taken from the
+    volume: engine=Aria", section "Data Parameters of Reused Volumes", test
+    passed.
+  - E (1793288096) `-xddl engine=InnoDB`: reused, ran with Aria, message
+    "volume loaded with engine=Aria (requested InnoDB) … -rsr reloads",
+    `TEST failed: Data parameters as requested (volume differs: MariaDB-1
+    engine: requested InnoDB, volume Aria)`.
+  - F1 (1793288637) Citus `-nw 2`: volumes `bexhoma-storage-ci-cephcsi-tpch-1`,
+    `bxw-bx-w-ci-cephcsi-tpch-1-0/1`, StatefulSet and headless Service
+    `bx-w-ci-cephcsi-tpch-1`; labels `ddl_num_worker_shards=32`,
+    `shape_num_worker=2`.
+  - F2 Citus `-nw 3`: refused at start, "existing storage
+    bexhoma-storage-ci-cephcsi-tpch-1 was loaded with 2 workers, but 3 are
+    requested".
+  - G MariaDB `-xddl engine=InnoDB,Aria -rst`: refused at start
+    (persistent storage).
+  - Not yet seen on the cluster: a reused volume without labels (assumed,
+    test skipped): no old volume left; covered by unit tests.
+  - `kubectl get pvc -L ddl_engine,load_indexing,shape_num_worker` shows
+    the values as columns.
 
 ## Open questions
 

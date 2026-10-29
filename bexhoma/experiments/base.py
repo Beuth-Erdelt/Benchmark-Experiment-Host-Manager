@@ -1245,6 +1245,10 @@ class ExperimentBase():
             config.ddl_given = set(given)
             single = {key: values[0] for key, values in given.items() if len(values) == 1}
             config.ddl_parameters = ddl_parameters.resolve(declarations, {**config.ddl_parameters, **single})
+            # every combination the configuration will run with, before anything starts
+            for combo in ddl_parameters.combinations(config.ddl_swept):
+                ddl_parameters.check_requirements(
+                    declarations, {**config.ddl_parameters, **combo}, config.configuration)
             config.set_eval_parameters(**{f'ddl_{key}': value for key, value in single.items()
                                           if key in self.ddl_keys_given})
         unknown = [key for key in self.ddl_keys_given if key not in declared]

@@ -13,8 +13,11 @@
 
 ALTER DATABASE yugabyte SET temp_file_limit=-1;
 
+-- Primary key sharding and tablets are DDL parameters (ddl-parameters.config):
+-- HASH (YSQL's default for the first key column) or ASC; SPLIT INTO n TABLETS
+-- only with HASH.
 CREATE TABLE IF NOT EXISTS usertable (
-    YCSB_KEY  VARCHAR(255) PRIMARY KEY,
+    YCSB_KEY  VARCHAR(255),
     FIELD0    TEXT,
     FIELD1    TEXT,
     FIELD2    TEXT,
@@ -24,8 +27,9 @@ CREATE TABLE IF NOT EXISTS usertable (
     FIELD6    TEXT,
     FIELD7    TEXT,
     FIELD8    TEXT,
-    FIELD9    TEXT
-);
+    FIELD9    TEXT,
+    PRIMARY KEY (YCSB_KEY {pk_sharding})
+) {num_tablets};
 
 SELECT current_timestamp AS "Time after creation";
 

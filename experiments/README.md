@@ -128,12 +128,21 @@ Parameters of Reused Volumes", test `Data parameters as requested`). A sweep
 with persistent storage (`-rst`) is refused, since all values would share
 one volume.
 
+A declaration may restrict other keys while it is not at its default:
+`'requires': {'clustered': ['default', 'clustered']}` (checked for every
+configuration and sweep combination before anything starts).
+
 | Folder | Keys |
 |---|---|
 | tpch/Citus, ssb/Citus, benchbase/tpcc/Citus | `num_worker_shards` |
 | ycsb/Citus | `num_worker_shards`, `num_worker_replicas` |
-| ycsb/CockroachDB, tpch/CockroachDB, ycsb/TiDB, benchbase/tpcc/TiDB | `num_worker_replicas` |
-| tpch/MariaDB | `engine` |
+| ycsb/CockroachDB | `num_worker_replicas`, `pk_hash` (hash, none) |
+| tpch/CockroachDB, benchbase/tpcc/TiDB | `num_worker_replicas` |
+| ycsb/TiDB | `num_worker_replicas`, `clustered` (default, clustered, nonclustered), `split_regions` (none, 4 … 128; requires a clustered key) |
+| ycsb/YugabyteDB | `pk_sharding` (hash, asc), `num_tablets` (auto, 4 … 128; requires hash) |
+| ycsb/PostgreSQL | `fillfactor` (int, default 100) |
+| tpch/MariaDB | `engine` (InnoDB, Aria, MyISAM) |
+| tpch/ClickHouse, tpch/ClickHouseCluster | `order_orders`, `order_lineitem` (key, date) |
 
 ### Required file header (all .sql and .sh files)
 

@@ -8,7 +8,7 @@
 --          range and node distribution.
 
 CREATE TABLE public.usertable (
-    YCSB_KEY  VARCHAR(255) PRIMARY KEY USING HASH,
+    YCSB_KEY  VARCHAR(255) PRIMARY KEY {pk_hash},
     FIELD0    TEXT,
     FIELD1    TEXT,
     FIELD2    TEXT,

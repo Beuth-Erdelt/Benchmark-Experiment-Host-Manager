@@ -545,9 +545,44 @@ class YcsbExperimentTest(_ExperimentTestBase):
         configs = self.configs('-dbms', 'Citus', 'CockroachDB', 'TiDB', 'PostgreSQL', '-nw', '3')
         by_docker = {config.docker: config for config in configs.values()}
         self.assertEqual(by_docker['Citus'].ddl_parameters, {'num_worker_shards': '32', 'num_worker_replicas': '1'})
-        self.assertEqual(by_docker['CockroachDB'].ddl_parameters, {'num_worker_replicas': '3'})
-        self.assertEqual(by_docker['TiDB'].ddl_parameters, {'num_worker_replicas': '3'})
-        self.assertEqual(by_docker['PostgreSQL'].ddl_parameters, {})
+        self.assertEqual(by_docker['CockroachDB'].ddl_parameters, {'num_worker_replicas': '3', 'pk_hash': 'hash'})
+        self.assertEqual(by_docker['TiDB'].ddl_parameters,
+                         {'num_worker_replicas': '3', 'clustered': 'default', 'split_regions': 'none'})
+        self.assertEqual(by_docker['PostgreSQL'].ddl_parameters, {'fillfactor': '100'})
+
+    def test_defaults_reproduce_the_scripts(self):
+        """With the defaults, the filled scripts equal the scripts before the placeholders."""
+        expected = {
+            'PostgreSQL': ('initschema-ycsb.sql', ') WITH (fillfactor = 100);'),
+            'CockroachDB': ('initschema-ycsb.sql', 'YCSB_KEY  VARCHAR(255) PRIMARY KEY USING HASH,'),
+            'YugabyteDB': ('initschema-ycsb.sql', 'PRIMARY KEY (YCSB_KEY HASH)\n) ;'),
+            'TiDB': ('initschema-ycsb.sql', 'YCSB_KEY  VARCHAR(255) PRIMARY KEY ,'),
+        }
+        for dbms, (script, line) in expected.items():
+            with self.subTest(dbms):
+                folder = os.path.join(_EXPERIMENTS, 'ycsb', dbms)
+                declarations = ddl_parameters.load_declarations(os.path.join(_EXPERIMENTS, 'ycsb'), dbms)
+                with open(os.path.join(folder, script), encoding='utf-8') as f:
+                    filled = ddl_parameters.fill(f.read(), ddl_parameters.fill_values(
+                        declarations, ddl_parameters.resolve(declarations, {})))
+                self.assertIn(line, filled)
+                self.assertNotRegex(filled, r'\{(' + '|'.join(declarations) + r')\}')
+
+    def test_requirements_are_checked_before_start(self):
+        with self.assertRaisesRegex(ValueError, 'split_regions=16 requires clustered'):
+            self.configs('-dbms', 'TiDB', '-nw', '3', '-xddl', 'clustered=nonclustered', '-xddl', 'split_regions=16')
+        with self.assertRaisesRegex(ValueError, 'num_tablets=8 requires pk_sharding'):
+            self.configs('-dbms', 'YugabyteDB', '-xddl', 'pk_sharding=hash,asc', '-xddl', 'num_tablets=8')
+
+    def test_requirements_allow_valid_combinations(self):
+        configs = self.configs('-dbms', 'TiDB', '-nw', '3', '-xddl', 'clustered=default,clustered',
+                               '-xddl', 'split_regions=16')
+        self.assertEqual(len(configs), 2)
+
+    def test_cockroachdb_without_hash(self):
+        declarations = ddl_parameters.load_declarations(os.path.join(_EXPERIMENTS, 'ycsb'), 'CockroachDB')
+        values = ddl_parameters.fill_values(declarations, ddl_parameters.resolve(declarations, {'pk_hash': 'none'}))
+        self.assertEqual(values['pk_hash'], '')
 
     def test_shard_sweep_normalises(self):
         configs = self.configs('-dbms', 'Citus', '-nw', '3', '-xddl', 'num_worker_shards=016,64')
