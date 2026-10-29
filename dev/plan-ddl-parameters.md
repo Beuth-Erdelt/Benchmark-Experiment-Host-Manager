@@ -4,7 +4,8 @@ Status: **plan only** (2026-10-29, revised the same day). Inventory of what
 exists, gaps, a generic mechanism with minimal Python changes, and candidate
 parameters per DBMS. Nothing implemented. Non-DDL settings (planner knobs,
 isolation level, client options):
-[plan-session-parameters.md](plan-session-parameters.md).
+[plan-session-parameters.md](plan-session-parameters.md) (parked; today:
+one experiment per value with `--set` on the same `-rst` PVC).
 
 ## How it works today
 
