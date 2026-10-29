@@ -143,6 +143,8 @@ class MetricsCollector:
         c['storage'] = cfg.storage
         c['storage_reused'] = cfg.storage_reused
         c['loading_inherited'] = cfg.loading_inherited
+        # reused volume: its DDL and loading values against the requested ones
+        c['volume_check'] = getattr(cfg, 'volume_check', {})
         # collect worker information
         c['worker'] = {}
         components = list(cfg.deployment_infos['statefulset'].keys())

@@ -165,6 +165,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     # remove running dbms
     #experiment.clean()
     experiment.prepare_testbed(command_args)
+    # the key order of the loaded data: stored on volumes (load_insert_order), compared on reuse
+    experiment.data_parameters['insert_order'] = args.extra_insert_order
     num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_loading_target_factors = experiment.get_parameter_as_list('num_loading_target_factors')
@@ -709,8 +711,10 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                             config.sut_template = "deploymenttemplate-DragonflyReplica.yml"
                         else:
                             BEXHOMA_DBMS_TYPE = "redis-cluster" # multi-master aware client, finds correct master for each write
+                    # the replica mode keeps all data on worker-0, the cluster mode shards it:
+                    # different data on volumes of the same names otherwise
                     config.set_storage(
-                        storageConfiguration = 'dragonfly'
+                        storageConfiguration = 'dfr' if num_worker > 0 and num_worker_replicas > 0 else 'dragonfly'
                         )
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,
@@ -731,11 +735,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                         BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         )
-                    # Dragonfly/Redis: use shorter pod names via SutConfiguration branching attributes.
-                    config.worker_name_app = 'bx'
-                    config.worker_name_component = 'w'
-                    if config.num_worker > 0:
-                        config.experiment_name = config.storage_label
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
                     for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
@@ -796,11 +795,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                         BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         )
-                    # Dragonfly/Redis: use shorter pod names via SutConfiguration branching attributes.
-                    config.worker_name_app = 'bx'
-                    config.worker_name_component = 'w'
-                    if config.num_worker > 0:
-                        config.experiment_name = config.storage_label
                     config.set_loading(parallel=loading_pods, num_pods=loading_pods)
                     executor_list = []
                     for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):

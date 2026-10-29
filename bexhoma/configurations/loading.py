@@ -941,8 +941,12 @@ class LoadingCoordinator:
                 if use_storage and not use_ramdisk:
                     volume = self.get_volume_to_label()
                     if volume:
+                        # what the volume holds: DDL and loading values, shape (see
+                        # SutConfiguration.volume_parameter_labels); a reuse reads them
+                        labels = ''.join(' {}={}'.format(key, value)
+                                         for key, value in cfg.volume_parameter_labels().items())
                         cfg.experiment.cluster.kubectl(
-                            'label pvc {} --overwrite loaded=True'.format(volume))
+                            'label pvc {} --overwrite loaded=True{}'.format(volume, labels))
             if 'time_loading_start' in pod_labels[pod]:
                 cfg.time_loading_start = int(pod_labels[pod]['time_loading_start'])
             if 'time_loading_end' in pod_labels[pod]:

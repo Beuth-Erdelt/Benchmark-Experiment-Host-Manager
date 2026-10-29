@@ -1,9 +1,10 @@
 # Plan: DDL parameters (placeholders in init scripts)
 
-Status (2026-10-29): **M1, M1b, M2 implemented, uncommitted**; unit tests
-OK (805); cluster check A OK, B running. **Decided but not implemented:**
-volume names without DDL values (B), DDL values as volume labels, reuse
-semantics (M2b). Open: short volume/worker names (M2c), M3–M5. Non-DDL
+Status (2026-10-29): **M1, M1b, M2 committed (04a57300)**; cluster checks A
+and B OK. **M2b, M2c and the data-defining parameters (items 1–4b)
+implemented, uncommitted**, unit tests OK (828). Rollout open: reinstall,
+delete the old bexhoma volumes (list first, no experiment running), cluster
+check of the reuse cases. Then M3–M5. Non-DDL
 settings (planner knobs, isolation level, client options):
 [plan-session-parameters.md](plan-session-parameters.md) (parked; today:
 one experiment per value with `--set` on the same `-rst` PVC).
@@ -12,12 +13,13 @@ one experiment per value with `--set` on the same `-rst` PVC).
 
 | # | Item | Kind | Section |
 |---|---|---|---|
-| 1 | Implement decision B: remove `-ddl<hash>` volume suffix (`ddl_storage_suffix`), refuse DDL sweeps with `-rst`, fix experiments/README.md (still describes the suffix), adjust tests | code, decided | [Decisions](#decisions-2026-10-29) |
-| 2 | DDL values as volume labels, reuse semantics (volume wins, report), test `DDL parameters as requested`, summary lines, connection fields, AgentReport validity rule | code, decided | [Decisions](#decisions-2026-10-29) |
-| 3 | Token and declaration rules (label-compatible tokens, `'type': 'int'`, no bool/float, checks in `load_declarations()`) | code, decided | [Decisions](#decisions-2026-10-29) |
-| 4 | Short names: abbreviation per DBMS (by storage name), workers `bx-<component>`, guard in `get_worker_name()`, Dragonfly replica storage name; all bexhoma volumes deleted at rollout | decided, not implemented | [Short names](#short-volume-and-worker-names-decided-2026-10-29) |
-| 4b | Data-defining parameters beyond DDL: `dfr` (name), `shape_num_worker` label (refuse on difference), `load_*` labels for script variant, post-load variant, `-xio` (report like DDL); test `Data parameters as requested` | accepted in principle, not implemented | [Beyond DDL](#data-defining-parameters-beyond-ddl-proposal-2026-10-29-accepted-in-principle) |
-| 5 | Cluster check B (YCSB defaults without `-nwr`/`-nws`) | running | [Cluster checks](#cluster-checks) |
+| 1 | Decision B: no `-ddl<hash>` volume suffix, DDL sweeps with `-rst` refused, experiments/README.md fixed | **done, uncommitted** | [Decisions](#decisions-2026-10-29) |
+| 2 | DDL values as volume labels, reuse semantics (volume wins, report), summary section "Data Parameters of Reused Volumes", test `Data parameters as requested`, `volume_check` per connection, validity rule in report_writer.py | **done, uncommitted** | [Decisions](#decisions-2026-10-29) |
+| 3 | Token and declaration rules (label-compatible tokens, `'type': 'int'`, no bool/float, checks in `load_declarations()`) | **done, uncommitted** | [Decisions](#decisions-2026-10-29) |
+| 4 | Short names: abbreviations in both cluster configs (by storage name), workers `bx-<w|component>`, `limit_name()` guard, Redis/Dragonfly special case removed, `dfr` | **done, uncommitted**; old volumes to delete at rollout | [Short names](#short-volume-and-worker-names-decided-2026-10-29) |
+| 4b | `shape_num_worker`/`shape_state` labels (refused on difference), `load_script`, `load_indexing`, `load_insert_order` labels (reported like DDL) | **done, uncommitted** | [Beyond DDL](#data-defining-parameters-beyond-ddl-proposal-2026-10-29-accepted-in-principle) |
+| 5 | Cluster check B (YCSB defaults without `-nwr`/`-nws`) | **OK** (32 shards, RF 1) | [Cluster checks](#cluster-checks) |
+| 5b | Rollout: commit, reinstall, list and delete old bexhoma volumes (storage + `bxw-…`, not `bexhoma-data`/`-results`/model-server) when no experiment runs | open, needs your OK for the deletion | – |
 | 6 | Cluster check after items 1–3: reuse of a labelled volume (same values, other values, nothing given) and of an unlabelled one | after 1–3 | [Cluster checks](#cluster-checks) |
 | 7 | Volumes of check A on cephcsi: two have `-ddl<hash>` names, orphaned once B is implemented | cleanup, ask first | [Cluster checks](#cluster-checks) |
 | 8 | M3 priority A keys, M3b experiment.yml, M4, M5 | later | [Milestones](#milestones) |
@@ -583,8 +585,10 @@ All with `-ks no`.
   `citus-ddle10c17-cephcsi` (+ workers), whose names decision B drops
   (item 7).
 - **B** (2026-10-29, code 1793273894): YCSB `-dbms PostgreSQL Citus`
-  without `-nwr`/`-nws`: Citus gets 32 shards / RF 1, PostgreSQL unchanged.
-  Running.
+  without `-nwr`/`-nws`. **OK**: filled script `SET citus.shard_count = 32`,
+  `shard_replication_factor = 1`; 32 shards of usertable in the check
+  output; all tests passed. Citus waited ~2 h for experiment 1793222643
+  (one Citus SUT per cluster).
 - **After M2b** (item 6): reuse of a labelled volume with the same values,
   with other values (test failed, volume's values used) and without any
   values (taken from the volume); reuse of an unlabelled volume (assumed,

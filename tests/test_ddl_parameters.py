@@ -1,17 +1,19 @@
 """
-Tests for DDL parameters (:mod:`bexhoma.ddl_parameters`).
+Tests for DDL parameters (:mod:`bexhoma.ddl_parameters`) and the volumes that store them.
 
-Covers the pure functions (parsing, declarations, filling, volume names), the
-declaration files in ``experiments/``, the upload of filled scripts, and the
-resolution and sweep per configuration through ``tpch.run``/``ycsb.run``
-against :class:`~tests.stubs.StubCluster` (``process()`` patched out, its two
-steps called as it would).
+Covers the pure functions (parsing, declarations, filling, labels, comparison
+with a reused volume), the declaration files in ``experiments/``, the upload
+of filled scripts, the resolution and sweep per configuration through
+``tpch.run``/``ycsb.run`` against :class:`~tests.stubs.StubCluster`
+(``process()`` patched out, its two steps called as it would), short volume
+and worker names, the shape check and the summary's test of reused volumes.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import ast
 import glob
 import os
 import re
@@ -23,7 +25,10 @@ from unittest import mock
 import tpch
 import ycsb
 from bexhoma import ddl_parameters
+from bexhoma.cli_args import MAX_STATEFULSET_NAME, abbreviate_storage_name, limit_name
+from bexhoma.configurations.base import SutConfiguration
 from bexhoma.configurations.loading import LoadingCoordinator
+from bexhoma.experiments.base import ExperimentBase
 from bexhoma.experiments.tpch import TpchExperiment
 from bexhoma.experiments.ycsb import YcsbExperiment
 
@@ -31,6 +36,10 @@ from .test_resource_sweep import _AnyDockers, _AnyVolumes, _SweepStubCluster
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _EXPERIMENTS = os.path.join(_REPO, 'experiments')
+
+#: Kubernetes label name (without prefix) and value syntax.
+_LABEL_NAME = re.compile(r'^[A-Za-z0-9]([A-Za-z0-9_.-]{0,61}[A-Za-z0-9])?$')
+_LABEL_VALUE = re.compile(r'^([A-Za-z0-9]([A-Za-z0-9_.-]{0,61}[A-Za-z0-9])?)?$')
 
 
 class ParseTest(unittest.TestCase):
@@ -44,8 +53,9 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(ddl_parameters.parse_assignments([]), {})
         self.assertEqual(ddl_parameters.parse_assignments(None), {})
 
-    def test_malformed_entries_are_refused(self):
-        for entry in ('engine', '=Aria', 'engine=', 'engine=Aria,', "engine=Aria'; DROP", 'engine=a b'):
+    def test_values_must_be_label_values(self):
+        for entry in ('engine', '=Aria', 'engine=', 'engine=Aria,', "engine=Aria'; DROP", 'engine=a b',
+                      'shards=-1', 'shards=+32', 'engine=Aria.', 'engine=' + 'a' * 64):
             with self.subTest(entry):
                 with self.assertRaises(ValueError):
                     ddl_parameters.parse_assignments([entry])
@@ -65,38 +75,59 @@ class DeclarationTest(unittest.TestCase):
         self.folder = tmp_dir.name
         os.makedirs(os.path.join(self.folder, 'Citus', 'distributed'))
         os.makedirs(os.path.join(self.folder, 'PostgreSQL'))
-        with open(os.path.join(self.folder, 'Citus', ddl_parameters.FILENAME), 'w') as f:
-            f.write("# comment\n{'num_worker_shards': {'default': 32, 'description': 'shards'}}\n")
+        self.write('Citus', "# comment\n{'num_worker_shards': {'default': 32, 'type': 'int', 'description': 'shards'}}\n")
+
+    def write(self, folder, text):
+        with open(os.path.join(self.folder, folder, ddl_parameters.FILENAME), 'w') as f:
+            f.write(text)
 
     def test_folder_parent_and_none(self):
-        expected = {'num_worker_shards': {'default': 32, 'description': 'shards'}}
+        expected = {'num_worker_shards': {'default': '32', 'type': 'int', 'description': 'shards'}}
         self.assertEqual(ddl_parameters.load_declarations(self.folder, 'Citus'), expected)
         self.assertEqual(ddl_parameters.load_declarations(self.folder, 'Citus/distributed'), expected)
         self.assertEqual(ddl_parameters.load_declarations(self.folder, 'PostgreSQL'), {})
 
-    def test_entry_without_default_is_refused(self):
-        with open(os.path.join(self.folder, 'PostgreSQL', ddl_parameters.FILENAME), 'w') as f:
-            f.write("{'fillfactor': {'description': 'no default'}}")
-        with self.assertRaisesRegex(ValueError, 'default'):
-            ddl_parameters.load_declarations(self.folder, 'PostgreSQL')
+    def test_bad_declarations_are_refused(self):
+        for text, message in (
+                ("{'fillfactor': {'description': 'no default'}}", 'default'),
+                ("{'fill_': {'default': 100}}", 'label name'),
+                ("{'_fill': {'default': 100}}", 'label name'),
+                ("{'unlogged': {'default': True}}", 'string or an int'),
+                ("{'ratio': {'default': 0.5}}", 'string or an int'),
+                ("{'limit': {'default': -1}}", 'not a valid label value'),
+                ("{'mode': {'default': 'a', 'values': ['a', 'b c']}}", 'not a valid label value'),
+                ("{'mode': {'default': 'a', 'type': 'float'}}", 'type'),
+        ):
+            with self.subTest(text):
+                self.write('PostgreSQL', text)
+                with self.assertRaisesRegex(ValueError, message):
+                    ddl_parameters.load_declarations(self.folder, 'PostgreSQL')
 
 
-class FillTest(unittest.TestCase):
+class ValueTest(unittest.TestCase):
 
     declarations = {
         'engine': {'default': 'InnoDB', 'values': ['InnoDB', 'Aria']},
         'pk': {'default': 'hash', 'values': ['hash', 'asc'], 'sql': {'hash': 'HASH', 'asc': 'ASC'}},
-        'shards': {'default': 32},
+        'shards': {'default': '32', 'type': 'int'},
     }
 
-    def test_validate(self):
-        ddl_parameters.validate(self.declarations, {'engine': ['InnoDB', 'Aria'], 'shards': '7'}, 'x')
-        with self.assertRaisesRegex(ValueError, 'engine=MyISAM'):
-            ddl_parameters.validate(self.declarations, {'engine': 'MyISAM'}, 'x')
+    def test_validate_normalises(self):
+        self.assertEqual(
+            ddl_parameters.validate(self.declarations, {'engine': ['InnoDB', 'Aria'], 'shards': '032'}, 'x'),
+            {'engine': ['InnoDB', 'Aria'], 'shards': '32'})
+
+    def test_validate_refuses(self):
+        for given, message in (({'engine': 'MyISAM'}, 'engine=MyISAM'),
+                               ({'engine': 'innodb'}, 'engine=innodb'),
+                               ({'shards': 'many'}, 'not an integer')):
+            with self.subTest(given):
+                with self.assertRaisesRegex(ValueError, message):
+                    ddl_parameters.validate(self.declarations, given, 'x')
 
     def test_resolve_and_sql_mapping(self):
         values = ddl_parameters.resolve(self.declarations, {'pk': 'asc', 'other': 'ignored'})
-        self.assertEqual(values, {'engine': 'InnoDB', 'pk': 'asc', 'shards': 32})
+        self.assertEqual(values, {'engine': 'InnoDB', 'pk': 'asc', 'shards': '32'})
         self.assertEqual(ddl_parameters.fill_values(self.declarations, values),
                          {'engine': 'InnoDB', 'pk': 'ASC', 'shards': '32'})
 
@@ -104,20 +135,198 @@ class FillTest(unittest.TestCase):
         text = ("SET citus.shard_count = {shards};\n"
                 "ENGINE = ReplicatedMergeTree('/clickhouse/tables/{shard}', '{replica}');\n"
                 "WITH (replica_placement='{\"num_replicas\": 3}');\n")
-        self.assertEqual(
-            ddl_parameters.fill(text, {'shards': '64'}),
-            text.replace('{shards}', '64'))
+        self.assertEqual(ddl_parameters.fill(text, {'shards': '64'}), text.replace('{shards}', '64'))
 
-    def test_storage_suffix(self):
-        defaults = ddl_parameters.resolve(self.declarations, {})
-        self.assertEqual(ddl_parameters.storage_suffix(self.declarations, defaults), '')
-        # a value given as text equal to the default is still the default
-        self.assertEqual(ddl_parameters.storage_suffix(self.declarations, {**defaults, 'shards': '32'}), '')
-        first = ddl_parameters.storage_suffix(self.declarations, {**defaults, 'shards': '64'})
-        second = ddl_parameters.storage_suffix(self.declarations, {**defaults, 'shards': '16'})
-        self.assertRegex(first, r'^ddl[0-9a-f]{6}$')
-        self.assertNotEqual(first, second)
-        self.assertEqual(first, ddl_parameters.storage_suffix(self.declarations, {**defaults, 'shards': '64'}))
+    def test_labels_round_trip(self):
+        values = {'engine': 'Aria', 'shards': '8'}
+        labels = ddl_parameters.volume_labels(values)
+        self.assertEqual(labels, {'ddl_engine': 'Aria', 'ddl_shards': '8'})
+        effective, _ = ddl_parameters.compare_with_volume(
+            {'engine': 'InnoDB', 'shards': '32'}, set(), labels, {})
+        self.assertEqual(effective, values)
+
+    def test_values_that_are_no_label_are_left_out(self):
+        self.assertEqual(ddl_parameters.volume_labels({'a': 'ok', 'b': 'not ok', 'c': ''}, prefix='load_'),
+                         {'load_a': 'ok'})
+
+
+class CompareWithVolumeTest(unittest.TestCase):
+    """The volume's values win; given values that differ are reported, missing labels assumed."""
+
+    def compare(self, requested, given, labels):
+        defaults = {'engine': 'InnoDB', 'shards': '32'}
+        return ddl_parameters.compare_with_volume(requested, given, labels, defaults)
+
+    def test_not_given_is_taken_from_the_volume(self):
+        effective, report = self.compare({'engine': 'InnoDB', 'shards': '32'}, set(),
+                                         {'ddl_engine': 'Aria', 'ddl_shards': '8'})
+        self.assertEqual(effective, {'engine': 'Aria', 'shards': '8'})
+        self.assertEqual(report['from_volume'], {'engine': 'Aria', 'shards': '8'})
+        self.assertEqual(report['differences'], {})
+
+    def test_given_and_equal_matches(self):
+        _, report = self.compare({'engine': 'Aria', 'shards': '32'}, {'engine'},
+                                 {'ddl_engine': 'Aria', 'ddl_shards': '32'})
+        self.assertEqual(report['matching'], ['engine'])
+        self.assertEqual(report['differences'], {})
+
+    def test_given_and_other_differs_but_volume_wins(self):
+        effective, report = self.compare({'engine': 'InnoDB', 'shards': '64'}, {'shards'},
+                                         {'ddl_engine': 'InnoDB', 'ddl_shards': '8'})
+        self.assertEqual(effective['shards'], '8')
+        self.assertEqual(report['differences'], {'shards': ['64', '8']})
+
+    def test_missing_label_is_assumed_and_unknown_listed(self):
+        effective, report = self.compare({'engine': 'Aria', 'shards': '32'}, {'engine'},
+                                         {'loaded': 'True', 'ddl_dropped_key': 'x'})
+        self.assertEqual(effective, {'engine': 'InnoDB', 'shards': '32'})
+        self.assertEqual(report['assumed'], ['engine', 'shards'])
+        self.assertEqual(report['unknown'], ['dropped_key'])
+
+
+class NameTest(unittest.TestCase):
+
+    dockers = {'PostgreSQL': {'abbreviation': 'pg'}, 'PGBouncer': {}, 'ClickHouse': {'abbreviation': 'ch'},
+               'ClickHouseCluster': {'abbreviation': 'chc'}, 'Dragonfly': {'abbreviation': 'df'},
+               'DragonflyCluster': {}, 'PgDuckDB': {'abbreviation': 'pgd'}}
+
+    def test_abbreviation_by_storage_name(self):
+        for name, expected in (('postgresql', 'pg'), ('postgresql-schema-16', 'pg-schema-16'),
+                               ('PostgreSQL-1', 'pg-1'), ('PgDuckDB', 'pgd'),
+                               ('clickhousecluster', 'chc'), ('clickhouse-2', 'ch-2'),
+                               ('dragonfly', 'df'), ('dfr', 'dfr'), ('postgresqlx', 'postgresqlx'),
+                               ('cedardb', 'cedardb'), ('dbs', 'dbs')):
+            with self.subTest(name):
+                self.assertEqual(abbreviate_storage_name(name, self.dockers), expected)
+
+    def test_without_dockers_nothing_changes(self):
+        self.assertEqual(abbreviate_storage_name('postgresql', None), 'postgresql')
+
+    def test_limit_name(self):
+        short = 'bx-w-ci-cephcsi-tpch-100'
+        self.assertEqual(limit_name(short), short)
+        long_names = ['bx-w-cockroachdb-12-cephcsi-benchbase-tpcc-16000-' + suffix for suffix in 'ab']
+        limited = [limit_name(name) for name in long_names]
+        for name in limited:
+            self.assertLessEqual(len(name), MAX_STATEFULSET_NAME)
+            self.assertRegex(name, r'^[a-z0-9]([a-z0-9-]*[a-z0-9])?$')
+        self.assertNotEqual(limited[0], limited[1])
+
+    def config(self, storage_configuration, storage_class=None, num_worker=3, storage_label='tpch-100'):
+        config = types.SimpleNamespace(
+            configuration='Citus-1', appname='bexhoma', code='1793', storage_label=storage_label,
+            num_worker=num_worker,
+            storage={'storageConfiguration': storage_configuration, 'storageClassName': storage_class},
+            experiment=types.SimpleNamespace(cluster=types.SimpleNamespace(
+                dockers={'Citus': {'abbreviation': 'ci'}, 'TiDB': {'abbreviation': 'ti'}})))
+        for method in ('get_storage_configuration', 'generate_component_name', 'get_worker_name'):
+            setattr(config, method, getattr(SutConfiguration, method).__get__(config))
+        return config
+
+    def test_volume_and_worker_names(self):
+        config = self.config('citus', 'cephcsi')
+        self.assertEqual(config.get_storage_configuration(), 'ci-cephcsi')
+        self.assertEqual(config.get_worker_name(), 'bx-w-ci-cephcsi-tpch-100')
+        tidb = self.config('tidb', 'nvme', storage_label='benchbase-tpcc-1600')
+        self.assertEqual(tidb.get_worker_name(component='tikv'), 'bx-tikv-ti-nvme-benchbase-tpcc-1600')
+        self.assertEqual(tidb.get_worker_name(component='pd'), 'bx-pd-ti-nvme-benchbase-tpcc-1600')
+
+    def test_worker_name_never_exceeds_the_limit(self):
+        config = self.config('citus-' + 'x' * 40, 'cephcsi', storage_label='benchbase-tpcc-1600')
+        self.assertLessEqual(len(config.get_worker_name()), MAX_STATEFULSET_NAME)
+
+
+class ShapeTest(unittest.TestCase):
+
+    def config(self, num_worker):
+        config = types.SimpleNamespace(configuration='Citus-1', num_worker=num_worker)
+        config.check_volume_shape = SutConfiguration.check_volume_shape.__get__(config)
+        return config
+
+    def test_same_or_unknown_shape_passes(self):
+        self.config(4).check_volume_shape('v', {'shape_num_worker': '4', 'shape_state': 'stable'})
+        self.config(4).check_volume_shape('v', {'loaded': 'True'})
+
+    def test_other_shape_is_refused(self):
+        with self.assertRaisesRegex(ValueError, 'loaded with 2 workers, but 4'):
+            self.config(4).check_volume_shape('v', {'shape_num_worker': '2'})
+        with self.assertRaisesRegex(ValueError, 'shape_state=changing'):
+            self.config(4).check_volume_shape('v', {'shape_num_worker': '4', 'shape_state': 'changing'})
+
+
+class VolumeParametersTest(unittest.TestCase):
+    """Labels written at load time and taken back on reuse."""
+
+    def config(self, ddl_parameters_, given=(), script='Schema', indexing='Index', data=None):
+        config = types.SimpleNamespace(
+            configuration='MariaDB-1', num_worker=0, script=script, indexing=indexing,
+            ddl_parameters=dict(ddl_parameters_), ddl_given=set(given), eval_parameters={},
+            ddl_declarations={'engine': {'default': 'InnoDB'}},
+            experiment=types.SimpleNamespace(data_parameters=data or {}))
+        for method in ('load_parameters', 'volume_parameter_labels', 'apply_volume_parameters',
+                       'set_eval_parameters'):
+            setattr(config, method, getattr(SutConfiguration, method).__get__(config))
+        return config
+
+    def test_labels_written_at_load_time(self):
+        config = self.config({'engine': 'Aria'}, data={'insert_order': 'ordered'})
+        labels = config.volume_parameter_labels()
+        self.assertEqual(labels, {
+            'ddl_engine': 'Aria', 'load_script': 'Schema', 'load_indexing': 'Index',
+            'load_insert_order': 'ordered', 'shape_num_worker': '0', 'shape_state': 'stable'})
+        for name, value in labels.items():
+            self.assertRegex(name, _LABEL_NAME)
+            self.assertRegex(value, _LABEL_VALUE)
+
+    def test_reuse_takes_the_volume_values(self):
+        loaded = self.config({'engine': 'Aria'}).volume_parameter_labels()
+        config = self.config({'engine': 'InnoDB'}, given={'engine'}, indexing='Checks')
+        with mock.patch('builtins.print'):
+            check = config.apply_volume_parameters(loaded)
+        self.assertEqual(config.ddl_parameters, {'engine': 'Aria'})
+        self.assertEqual(config.eval_parameters, {'ddl_engine': 'Aria'})
+        self.assertEqual(check['ddl']['differences'], {'engine': ['InnoDB', 'Aria']})
+        self.assertEqual(check['ddl_requested'], {'engine': 'InnoDB'})
+        self.assertEqual(check['load']['differences'], {'indexing': ['Checks', 'Index']})
+
+
+class SummaryTest(unittest.TestCase):
+    """The test ``Data parameters as requested`` from the connections' ``volume_check``."""
+
+    def results(self, *checks):
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment._test_results = []
+        connections = [{'name': f'c{i}', 'configuration': f'C-{i}', 'volume_check': check}
+                       for i, check in enumerate(checks)]
+        with mock.patch('builtins.print'):
+            experiment._show_volume_checks(connections)
+        return experiment._test_results
+
+    @staticmethod
+    def report(**kwargs):
+        return {'from_volume': {}, 'differences': {}, 'matching': [], 'assumed': [], 'unknown': [], **kwargs}
+
+    def test_no_reuse_passes(self):
+        self.assertEqual(self.results({}), [(True, 'Data parameters as requested')])
+
+    def test_old_results_record_nothing(self):
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment._test_results = []
+        experiment._show_volume_checks([{'name': 'c'}])
+        self.assertEqual(experiment._test_results, [])
+
+    def test_difference_fails(self):
+        check = {'ddl': self.report(from_volume={'engine': 'Aria'}, differences={'engine': ['InnoDB', 'Aria']}),
+                 'load': self.report()}
+        [(passed, label)] = self.results(check)
+        self.assertFalse(passed)
+        self.assertIn('C-0 engine: requested InnoDB, volume Aria', label)
+
+    def test_assumed_is_skipped(self):
+        check = {'ddl': self.report(assumed=['engine']), 'load': self.report(assumed=['script'])}
+        [(passed, label)] = self.results(check)
+        self.assertIsNone(passed)
+        self.assertIn('C-0 engine, C-0 script', label)
 
 
 class RepositoryDeclarationsTest(unittest.TestCase):
@@ -151,15 +360,44 @@ class RepositoryDeclarationsTest(unittest.TestCase):
                     used |= names
                 self.assertEqual(set(declarations) - used, set(), 'declared but not used')
 
-    def test_defaults_are_allowed_values(self):
+    def test_every_value_round_trips_as_a_label(self):
         for folder in self.folders():
             declarations = ddl_parameters.load_declarations(folder, '.')
-            with self.subTest(os.path.relpath(folder, _REPO)):
-                ddl_parameters.validate(
-                    declarations, {key: declaration['default'] for key, declaration in declarations.items()}, folder)
+            for key, declaration in declarations.items():
+                for value in declaration.get('values', [declaration['default']]):
+                    with self.subTest(folder=os.path.relpath(folder, _REPO), key=key, value=value):
+                        labels = ddl_parameters.volume_labels({key: value})
+                        [(name, label)] = labels.items()
+                        self.assertRegex(name, _LABEL_NAME)
+                        self.assertRegex(label, _LABEL_VALUE)
+                        effective, _ = ddl_parameters.compare_with_volume({key: 'x'}, set(), labels, {})
+                        self.assertEqual(effective[key], ddl_parameters.normalize(declaration, value))
 
     def test_no_filled_files_in_the_source_tree(self):
         self.assertEqual(glob.glob(os.path.join(_EXPERIMENTS, '**', 'filled_*'), recursive=True), [])
+
+
+class ClusterConfigTest(unittest.TestCase):
+    """Abbreviations in both cluster configs: the same, unique and short."""
+
+    def dockers(self, filename):
+        path = os.path.join(_REPO, filename)
+        if not os.path.isfile(path):
+            self.skipTest(f'{filename} not present')
+        with open(path, encoding='utf-8') as f:
+            return ast.literal_eval(f.read())['dockers']
+
+    def test_abbreviations(self):
+        abbreviations = {dbms: entry.get('abbreviation')
+                         for dbms, entry in self.dockers('k8s-cluster.config').items()}
+        given = [a for a in abbreviations.values() if a]
+        self.assertEqual(len(given), len(set(given)), 'abbreviations must be unique')
+        for abbreviation in given:
+            self.assertRegex(abbreviation, r'^[a-z][a-z0-9]{1,2}$')
+        local = os.path.join(_REPO, 'cluster.config')
+        if os.path.isfile(local):
+            self.assertEqual({dbms: entry.get('abbreviation') for dbms, entry in self.dockers('cluster.config').items()
+                              if dbms in abbreviations}, abbreviations)
 
 
 class UploadTest(unittest.TestCase):
@@ -175,7 +413,7 @@ class UploadTest(unittest.TestCase):
             with open(os.path.join(self.experiments, dbms, 'init.sql'), 'w') as f:
                 f.write("SET citus.shard_count = {num_worker_shards}; -- {shard}\n")
         with open(os.path.join(self.experiments, 'Citus', ddl_parameters.FILENAME), 'w') as f:
-            f.write("{'num_worker_shards': {'default': 32}}")
+            f.write("{'num_worker_shards': {'default': 32, 'type': 'int'}}")
 
     def coordinator(self, dbms, ddl):
         cluster = types.SimpleNamespace(experiments_configfolder=self.experiments, upload_file=mock.Mock())
@@ -244,11 +482,10 @@ class TpchExperimentTest(_ExperimentTestBase):
         configs = self.configs('-dbms', 'Citus', 'MonetDB', 'MariaDB')
         citus, monetdb, mariadb = (next(c for c in configs.values() if c.docker == d)
                                    for d in ('Citus', 'MonetDB', 'MariaDB'))
-        self.assertEqual(citus.ddl_parameters, {'num_worker_shards': 32})
+        self.assertEqual(citus.ddl_parameters, {'num_worker_shards': '32'})
         self.assertEqual(mariadb.ddl_parameters, {'engine': 'InnoDB'})
         self.assertEqual(monetdb.ddl_parameters, {})
         for config in configs.values():
-            self.assertEqual(config.ddl_storage_suffix, '')
             self.assertNotIn('ddl_engine', config.eval_parameters)
 
     def test_nws_sets_the_shards_of_citus_only(self):
@@ -256,19 +493,18 @@ class TpchExperimentTest(_ExperimentTestBase):
         citus = next(c for c in configs.values() if c.docker == 'Citus')
         monetdb = next(c for c in configs.values() if c.docker == 'MonetDB')
         self.assertEqual(citus.ddl_parameters, {'num_worker_shards': '48'})
-        self.assertRegex(citus.ddl_storage_suffix, r'^ddl[0-9a-f]{6}$')
+        self.assertEqual(citus.ddl_given, {'num_worker_shards'})
         self.assertEqual(monetdb.ddl_parameters, {})
 
-    def test_single_value_names_the_volume_and_is_evaluated(self):
+    def test_single_value_keeps_the_volume_name(self):
         configs = self.configs('-dbms', 'MariaDB', '-xddl', 'engine=Aria', '-rst', 'cephcsi', '-rss', '10Gi')
         (mariadb,) = configs.values()
         self.assertEqual(mariadb.ddl_parameters, {'engine': 'Aria'})
         self.assertEqual(mariadb.eval_parameters['ddl_engine'], 'Aria')
-        self.assertRegex(mariadb.get_storage_configuration(), r'^mariadb-ddl[0-9a-f]{6}-cephcsi$')
+        self.assertEqual(mariadb.get_storage_configuration(), 'mariadb-cephcsi')
 
     def test_sweep_clones_declaring_dbms_only(self):
-        configs = self.configs('-dbms', 'MariaDB', 'MonetDB', '-xddl', 'engine=InnoDB,Aria,MyISAM',
-                               '-rst', 'cephcsi', '-rss', '10Gi')
+        configs = self.configs('-dbms', 'MariaDB', 'MonetDB', '-xddl', 'engine=InnoDB,Aria,MyISAM')
         self.assertEqual(sorted(name for name, c in configs.items() if c.docker == 'MariaDB'),
                          ['MariaDB-1', 'MariaDB-2', 'MariaDB-3'])
         monetdb = [c for c in configs.values() if c.docker == 'MonetDB']
@@ -278,22 +514,19 @@ class TpchExperimentTest(_ExperimentTestBase):
                          ['InnoDB', 'Aria', 'MyISAM'])
         self.assertEqual([configs[f'MariaDB-{n}'].eval_parameters['ddl_engine'] for n in (1, 2, 3)],
                          ['InnoDB', 'Aria', 'MyISAM'])
-        volumes = [configs[f'MariaDB-{n}'].get_storage_configuration() for n in (1, 2, 3)]
-        self.assertEqual(volumes[0], 'mariadb-cephcsi')    # the default keeps the plain volume
-        self.assertEqual(len(set(volumes)), 3)
         self.assertEqual(configs['MariaDB-2'].alias, 'MariaDB@2')
 
     def test_sweep_times_resource_cells(self):
-        configs = self.configs('-dbms', 'MariaDB', '-xddl', 'engine=InnoDB,Aria',
-                               '-rr', '32Gi,64Gi', '-rst', 'cephcsi', '-rss', '10Gi')
+        configs = self.configs('-dbms', 'MariaDB', '-xddl', 'engine=InnoDB,Aria', '-rr', '32Gi,64Gi')
         self.assertEqual(
             [(name, config.resources['requests']['memory'], config.ddl_parameters['engine'])
              for name, config in sorted(configs.items())],
             [('MariaDB-1', '32Gi', 'InnoDB'), ('MariaDB-2', '32Gi', 'Aria'),
              ('MariaDB-3', '64Gi', 'InnoDB'), ('MariaDB-4', '64Gi', 'Aria')])
-        volumes = [config.get_storage_configuration() for config in configs.values()]
-        self.assertEqual(len(set(volumes)), 4)
-        self.assertEqual(configs['MariaDB-3'].get_storage_configuration(), 'mariadb-2-cephcsi')
+
+    def test_sweep_with_persistent_storage_is_refused(self):
+        with self.assertRaisesRegex(ValueError, 'persistent storage'):
+            self.configs('-dbms', 'MariaDB', '-xddl', 'engine=InnoDB,Aria', '-rst', 'cephcsi', '-rss', '10Gi')
 
     def test_unknown_key_is_refused(self):
         with self.assertRaisesRegex(ValueError, 'fillfactor'):
@@ -311,16 +544,29 @@ class YcsbExperimentTest(_ExperimentTestBase):
     def test_dbms_with_placeholders_get_defaults(self):
         configs = self.configs('-dbms', 'Citus', 'CockroachDB', 'TiDB', 'PostgreSQL', '-nw', '3')
         by_docker = {config.docker: config for config in configs.values()}
-        self.assertEqual(by_docker['Citus'].ddl_parameters, {'num_worker_shards': 32, 'num_worker_replicas': 1})
-        self.assertEqual(by_docker['CockroachDB'].ddl_parameters, {'num_worker_replicas': 3})
-        self.assertEqual(by_docker['TiDB'].ddl_parameters, {'num_worker_replicas': 3})
+        self.assertEqual(by_docker['Citus'].ddl_parameters, {'num_worker_shards': '32', 'num_worker_replicas': '1'})
+        self.assertEqual(by_docker['CockroachDB'].ddl_parameters, {'num_worker_replicas': '3'})
+        self.assertEqual(by_docker['TiDB'].ddl_parameters, {'num_worker_replicas': '3'})
         self.assertEqual(by_docker['PostgreSQL'].ddl_parameters, {})
 
-    def test_shard_sweep(self):
-        configs = self.configs('-dbms', 'Citus', '-nw', '3', '-xddl', 'num_worker_shards=16,64')
+    def test_shard_sweep_normalises(self):
+        configs = self.configs('-dbms', 'Citus', '-nw', '3', '-xddl', 'num_worker_shards=016,64')
         self.assertEqual(sorted((name, config.ddl_parameters['num_worker_shards'])
                                 for name, config in configs.items()),
                          [('Citus-1', '16'), ('Citus-2', '64')])
+
+    def test_insert_order_is_a_load_parameter(self):
+        configs = self.configs('-dbms', 'PostgreSQL', '-xio', 'ordered')
+        (config,) = configs.values()
+        self.assertEqual(config.load_parameters()['insert_order'], 'ordered')
+
+    def test_dragonfly_replica_mode_has_its_own_volume(self):
+        modes = {}
+        for argv in (('-nw', '3'), ('-nw', '3', '-nwr', '1')):
+            configs = self.configs('-dbms', 'Dragonfly', *argv)
+            (config,) = configs.values()
+            modes[argv] = config.storage['storageConfiguration']
+        self.assertEqual(modes, {('-nw', '3'): 'dragonfly', ('-nw', '3', '-nwr', '1'): 'dfr'})
 
 
 if __name__ == '__main__':

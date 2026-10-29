@@ -12,6 +12,7 @@ See LICENSE for details.
 """
 import argparse
 import ast
+import hashlib
 import os
 import re
 
@@ -21,7 +22,8 @@ __all__ = [
     "make_base_parser", "resolve_scaling_factor",
     "parse_metric_overrides", "format_metric_overrides",
     "split_storage_types", "format_storage_types",
-    "storage_suffix", "set_cell_storage", "resource_cells",
+    "storage_suffix", "abbreviate_storage_name", "limit_name", "MAX_STATEFULSET_NAME",
+    "set_cell_storage", "resource_cells",
     "KEEP_SUT_CHOICES", "resolve_keep_sut", "split_worker_nodes",
 ]
 
@@ -218,6 +220,56 @@ def storage_suffix(storage_type) -> str:
     :rtype: str
     """
     return re.sub(r'[^a-z0-9-]+', '-', (storage_type or 'ephemeral').lower()).strip('-')
+
+
+def abbreviate_storage_name(name: str, dockers: dict) -> str:
+    """
+    Shorten a storage name by the abbreviation of the DBMS it starts with.
+
+    The longest DBMS name of ``dockers`` (case-insensitive) that the storage
+    name equals or starts with, followed by ``-``, is replaced by that DBMS's
+    ``abbreviation`` (``postgresql-schema-16`` → ``pg-schema-16``,
+    ``clickhousecluster`` → ``chc``). Chosen by the storage name, not by the
+    configuration's DBMS, so a configuration that uses another DBMS's volume
+    (PGBouncer uses PostgreSQL's) keeps finding it. Names of worker
+    StatefulSets contain the storage name and must stay short.
+
+    :param name: ``storageConfiguration`` (or the configuration name).
+    :param dockers: The ``dockers`` section of the cluster config.
+    :return: The abbreviated name, or ``name`` when no DBMS with an abbreviation matches.
+    :rtype: str
+    """
+    lowered = name.lower()
+    for dbms in sorted(dockers or {}, key=len, reverse=True):
+        abbreviation = (dockers[dbms] or {}).get('abbreviation')
+        prefix = dbms.lower()
+        if abbreviation and (lowered == prefix or lowered.startswith(prefix + '-')):
+            return abbreviation + name[len(prefix):]
+    return name
+
+
+#: Longest StatefulSet name: Kubernetes adds ``-<10 hex>`` for the pod label
+#: ``controller-revision-hash``, which may have 63 characters.
+MAX_STATEFULSET_NAME = 52
+
+
+def limit_name(name: str, limit: int = MAX_STATEFULSET_NAME) -> str:
+    """
+    Keep a Kubernetes name within ``limit`` characters.
+
+    A longer name keeps its first characters and ends with ``-`` and 6 hex
+    digits of a hash of the full name, so different long names stay different.
+    Names within the limit are returned unchanged.
+
+    :param name: The name.
+    :param limit: Maximum length.
+    :return: The name, shortened only when it is too long.
+    :rtype: str
+    """
+    if len(name) <= limit:
+        return name
+    digest = hashlib.sha1(name.encode('utf-8')).hexdigest()[:6]
+    return f"{name[:limit - 7].rstrip('-.')}-{digest}"
 
 
 def set_cell_storage(config, storage_configuration, cell) -> None:

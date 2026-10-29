@@ -233,6 +233,7 @@ class ExperimentBase():
         self.ddl_parameters = {}                                        # DDL schema parameter for init scripts (like index type or sharding strategy)
         self.ddl_assignments = {}                                       # DDL parameter values per key from -xddl/-nwr/-nws, a list of several sweeps the key
         self.ddl_keys_given = []                                        # keys given by -xddl: at least one configuration must declare each
+        self.data_parameters = {}                                       # other values that define the loaded data (e.g. YCSB insert order), stored as load_<key> labels on volumes
         self.eval_parameters = {}                                       # parameters that will be handed over to dbmsbenchmarker
         self.storage = {}                                               # parameters for persistent storage (like type and size)
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
@@ -1203,15 +1204,19 @@ class ExperimentBase():
         (:mod:`bexhoma.ddl_parameters`). Each configuration gets the defaults,
         overwritten by the single values of ``-xddl``/``-nwr``/``-nws`` for
         the keys it declares; swept keys (comma lists) are set per clone by
-        :meth:`expand_resource_cells`. Values that differ from the defaults
-        name the volume (``ddl_storage_suffix``) and are added to the
-        evaluation parameters as ``ddl_<key>``. A folder without declarations
-        gets no DDL parameters, so its scripts are uploaded unchanged.
+        :meth:`expand_resource_cells`. Keys given by ``-xddl`` are added to
+        the evaluation parameters as ``ddl_<key>``. A folder without
+        declarations gets no DDL parameters, so its scripts are uploaded
+        unchanged. The volume name does not depend on DDL values: a volume
+        stores them as labels, and a reused volume's values win
+        (:meth:`~bexhoma.configurations.base.SutConfiguration.apply_volume_parameters`).
         Called by :meth:`process` before anything is started; a second call
         does nothing.
 
-        :raises ValueError: For a value a folder does not allow, or an
-            ``-xddl`` key that no configuration declares.
+        :raises ValueError: For a value a folder does not allow, an ``-xddl``
+            key that no configuration declares, or a DDL sweep of a
+            configuration with persistent storage (all values would share
+            one volume).
         """
         if getattr(self, '_ddl_parameters_resolved', False):
             return
@@ -1221,15 +1226,25 @@ class ExperimentBase():
             declarations = ddl_parameters.load_declarations(
                 self.cluster.experiments_configfolder, config.path_experiment_docker)
             config.ddl_declarations = declarations
-            given = {key: values for key, values in self.ddl_assignments.items() if key in declarations}
+            given = ddl_parameters.validate(
+                declarations,
+                {key: values for key, values in self.ddl_assignments.items() if key in declarations},
+                config.configuration)
             declared |= set(given)
-            ddl_parameters.validate(declarations, given, config.configuration)
             if not declarations:
                 config.ddl_parameters = {}
                 continue
+            swept = sorted(key for key, values in given.items() if len(values) > 1)
+            if swept and config.use_storage() and not config.use_ramdisk():
+                raise ValueError(
+                    f"{config.configuration}: -xddl sweeps {', '.join(swept)}, but the configuration has "
+                    f"persistent storage (-rst): all values would share one volume. Sweep without -rst, "
+                    f"or run one experiment per value")
+            # swept keys are set per clone by expand_resource_cells(), with the normalised values
+            config.ddl_swept = {key: values for key, values in given.items() if len(values) > 1}
+            config.ddl_given = set(given)
             single = {key: values[0] for key, values in given.items() if len(values) == 1}
             config.ddl_parameters = ddl_parameters.resolve(declarations, {**config.ddl_parameters, **single})
-            config.ddl_storage_suffix = ddl_parameters.storage_suffix(declarations, config.ddl_parameters)
             config.set_eval_parameters(**{f'ddl_{key}': value for key, value in single.items()
                                           if key in self.ddl_keys_given})
         unknown = [key for key in self.ddl_keys_given if key not in declared]
@@ -1247,9 +1262,9 @@ class ExperimentBase():
         clones each configuration per cell, so every DBMS of every workload is
         swept the same way. ``-xddl KEY=V1,V2`` sweeps a DDL parameter: a
         configuration whose folder declares ``KEY`` is cloned per value (per
-        combination for several keys), times the resource cells; the values
-        name its volume (``ddl_storage_suffix``). Each cell gets its own
-        identity, so cells never share pods or a PVC:
+        combination for several keys), times the resource cells; only
+        without persistent storage (see :meth:`resolve_ddl_parameters`).
+        Each cell gets its own identity, so cells never share pods or a PVC:
 
         * name ``{docker}-{cell}`` (``PostgreSQL-1``, ``PostgreSQL-2``, ...)
           when the DBMS has one configuration, ``{configuration}-{cell}`` when
@@ -1277,9 +1292,9 @@ class ExperimentBase():
         per_docker = Counter(config.docker for config in originals if sweeps(config))
         self.configurations = []
         for config in originals:
-            declarations = getattr(config, 'ddl_declarations', {})
             # DDL cells: the combinations of the swept keys this folder declares
-            combos = ddl_parameters.combinations({key: values for key, values in swept.items() if key in declarations})
+            # (normalised by resolve_ddl_parameters())
+            combos = ddl_parameters.combinations(getattr(config, 'ddl_swept', {}))
             if len(cells) * len(combos) <= 1:
                 self.configurations.append(config)
                 continue
@@ -1305,9 +1320,8 @@ class ExperimentBase():
                         )
                     set_cell_storage(clone, f'{base_storage}-{resource_number}', cell)
                 if combo:
-                    # the DDL values tell the volumes apart (ddl_storage_suffix)
+                    # no persistent volume here (refused by resolve_ddl_parameters())
                     clone.ddl_parameters = {**clone.ddl_parameters, **combo}
-                    clone.ddl_storage_suffix = ddl_parameters.storage_suffix(declarations, clone.ddl_parameters)
                     clone.set_eval_parameters(**{f'ddl_{key}': value for key, value in combo.items()})
                     print("{:30s}: DDL parameters {}".format(
                         clone.configuration, ", ".join(f"{key}={value}" for key, value in combo.items())))
@@ -1802,6 +1816,56 @@ class ExperimentBase():
         if inherited:
             print("\n### Inherited Loading")
             print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
+        self._show_volume_checks(connections_sorted)
+
+    def _show_volume_checks(self, connections_sorted: list) -> None:
+        """
+        Print the DDL and loading values reused volumes brought along, and record their test.
+
+        A reused volume's values win over the requested ones (it holds the
+        data, see ``SutConfiguration.apply_volume_parameters``). The test
+        ``Data parameters as requested`` fails when a given value differs from
+        the volume's, is skipped when a volume has no label for a value (loaded
+        before the labels existed: assumed as requested), and passes otherwise.
+        Results written before ``volume_check`` was recorded record nothing.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        recorded = [c for c in connections_sorted if 'volume_check' in c]
+        if not recorded:
+            return
+        checks = {}
+        for c in recorded:
+            if c['volume_check']:
+                checks.setdefault(c.get('configuration', c['name']), c['volume_check'])
+        differences, assumed, lines = [], [], []
+        for configuration, check in sorted(checks.items()):
+            for kind, title in (('ddl', 'DDL'), ('load', 'loading')):
+                report = check.get(kind) or {}
+                if report.get('from_volume'):
+                    lines.append("* {}: {} values of the volume: {}".format(configuration, title, ", ".join(
+                        f"{key}={value}" for key, value in report['from_volume'].items())))
+                for key, (wanted, found) in (report.get('differences') or {}).items():
+                    differences.append(f"{configuration} {key}: requested {wanted}, volume {found}")
+                assumed += [f"{configuration} {key}" for key in report.get('assumed') or []]
+                if report.get('unknown'):
+                    lines.append("* {}: volume has {} labels of keys not requested: {}".format(
+                        configuration, title, ", ".join(report['unknown'])))
+        if lines or differences or assumed:
+            print("\n### Data Parameters of Reused Volumes")
+            for line in lines:
+                print(line)
+            for difference in differences:
+                print("* differs, the run used the volume's value: {}".format(difference))
+            if assumed:
+                print("* no label on the volume (loaded before the labels existed), assumed as requested: {}".format(
+                    ", ".join(assumed)))
+        if differences:
+            self._record_test(False, "Data parameters as requested (volume differs: {})".format("; ".join(differences)))
+        elif assumed:
+            self._record_skipped_test("Data parameters as requested (unknown, assumed: {})".format(", ".join(assumed)))
+        else:
+            self._record_test(True, "Data parameters as requested")
     def _test_column(self, df, column: str, title: str = '') -> bool:
         """
         Call evaluator.test_results_column and record the result.

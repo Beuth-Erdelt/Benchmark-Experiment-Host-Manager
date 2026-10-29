@@ -667,6 +667,9 @@ scrape_configs:
                     print("{:30s}: storage {} exists".format(configuration, volume))
                     check_storage_class_of_existing_pvc(volume)
                     pvc_labels = pvcs_labels[0]
+                    cfg.check_volume_shape(volume, pvc_labels)
+                    # all labels: DDL and loading values for apply_volume_parameters()
+                    cfg.volume_labels = dict(pvc_labels)
                     copy_labels = [
                         'loaded', 'schema', 'data', 'index',
                         'time_loading', 'time_loading_start', 'time_loading_end',
@@ -689,6 +692,8 @@ scrape_configs:
                 # Either way this repetition does not load: its loading times
                 # are copied, not measured.
                 cfg.loading_inherited = True
+                # the data is the volume's: its DDL values win, differences are reported
+                cfg.apply_volume_parameters(getattr(cfg, 'volume_labels', {}))
                 dep['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                 for label in labels_on_existing_pvc:
                     print("{:30s}: copied label {} = {}".format(

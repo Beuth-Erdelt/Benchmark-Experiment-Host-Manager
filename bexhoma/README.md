@@ -137,14 +137,17 @@ Call sites in `experiments/base.py` use the helper attributes:
 
 ### Branching attributes for DBMS-specific behaviour
 
-Rather than monkey-patching methods in entry scripts, `SutConfiguration` provides three
+Rather than monkey-patching methods in entry scripts, `SutConfiguration` provides
 instance attributes that change the behaviour of existing methods:
 
 | Attribute | Default | Effect when set |
 |---|---|---|
-| `worker_name_app` | `''` | `get_worker_name()` uses this instead of `self.appname` and also substitutes `experiment_name` for `storage_label` |
-| `worker_name_component` | `''` | `get_worker_name()` uses this as the component label |
 | `worker_metric_strip_container` | `False` | `set_metric_of_config()` strips the `container="dbms"` PromQL filter (YugabyteDB) |
+
+Worker StatefulSets of every DBMS are named `bx-<w|component>-<storage name>-<storage_label>`
+by `get_worker_name()` (short: Kubernetes limits StatefulSet names to 52 characters,
+Redis limits hostnames); the storage name starts with the DBMS abbreviation of the
+cluster config (`dockers.<DBMS>.abbreviation`).
 
 `statefulset_name` (declared in `__init__`, not new) causes `get_worker_pods()` to call
 `cluster.get_stateful_set_pods()` and `get_worker_endpoints()` to return bare pod names.
@@ -172,7 +175,8 @@ Key attribute groups:
 | State | `is_sut_ready`, `are_worker_ready`, `loading_started`, `loading_finished`, `experiment_done` |
 | Deployment bookkeeping | `deployment_infos`, `statefulset_name`, `sut_service_name`, `sut_pod_name`, `volumeid`, `service` |
 | Benchmark sequencing | `benchmark_list`, `benchmark_list_template`, `benchmarking_parameters_list`, `benchmarking_parameters_list_template`, `client`, `connection`, `current_benchmark_start`, `current_benchmark_connection` |
-| DBMS branching | `worker_name_app`, `worker_name_component`, `worker_metric_strip_container` |
+| DBMS branching | `worker_metric_strip_container` |
+| Volume contents | `ddl_given`, `volume_check` (DDL and loading values of a reused volume, see `apply_volume_parameters()`) |
 | SUT throttling | `max_sut_dbms` — max concurrent SUT pods with the same `dbms` label allowed in the cluster; `None` means no limit |
 
 ### Key design decisions

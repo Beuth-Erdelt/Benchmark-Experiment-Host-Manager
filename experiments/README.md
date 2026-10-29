@@ -96,11 +96,12 @@ A DBMS folder may declare parameters of its scripts in `ddl-parameters.config`
 {
     'num_worker_shards': {
         'default': 32,                        # reproduces the script without the parameter
+        'type': 'int',                        # optional: 032 and 32 are the same value
         'description': 'citus.shard_count of the distributed tables',
     },
     'engine': {
         'default': 'InnoDB',
-        'values': ['InnoDB', 'Aria', 'MyISAM'],   # optional: allowed values
+        'values': ['InnoDB', 'Aria', 'MyISAM'],   # optional: allowed values, exact spelling
         # 'sql': {'token': 'SQL text'},           # optional: text written for a value
         'description': 'storage engine of all tables',
     },
@@ -112,9 +113,20 @@ macros) stays as it is. Values come from `-xddl KEY=VALUE` (a comma list
 sweeps the key, one configuration per value) and from `-nwr`/`-nws`
 (`num_worker_replicas`/`num_worker_shards`). A folder without the file gets
 no filling; a folder variant (`ssb/Citus/distributed`) uses the file of its
-parent folder. Values other than the defaults become part of the volume name,
-so a persistent volume loaded with other values is not reused. The filled
-scripts are in the result folder (`<app>-loading-<configuration>-<script>-...`).
+parent folder. The filled scripts are in the result folder
+(`<app>-loading-<configuration>-<script>-...`).
+
+Keys and values are valid Kubernetes label names and values: keys match
+`^[A-Za-z]([A-Za-z0-9_]{0,57}[A-Za-z0-9])?$`, values are 1-63 characters of
+letters, digits and `_.-`, starting and ending with a letter or digit; only
+strings and ints (a negative number or SQL text needs a token and an `sql`
+mapping). A loaded volume stores the values as labels `ddl_<key>` (next to
+`load_script`, `load_indexing`, `shape_num_worker`, ...). The volume name does
+not depend on them: a reused volume brings its values along, they win over
+the requested ones, and differences are reported (summary section "Data
+Parameters of Reused Volumes", test `Data parameters as requested`). A sweep
+with persistent storage (`-rst`) is refused, since all values would share
+one volume.
 
 | Folder | Keys |
 |---|---|
