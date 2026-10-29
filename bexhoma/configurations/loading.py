@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING
 
 from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, start_process, wait_for_cluster
 from ..cluster_calls import stored_pods
+from .. import ddl_parameters
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
@@ -527,8 +528,56 @@ class LoadingCoordinator:
                         + ' /data/' + str(cfg.code) + '/' + cfg.configuration + '.log')
             cfg.execute_command_in_pod_sut(command=cmd_save)
 
+    def ddl_fill_values(self) -> dict:
+        """Text per placeholder of this configuration's DDL parameters.
+
+        Empty when the script folder declares no DDL parameters
+        (:mod:`bexhoma.ddl_parameters`): its scripts are uploaded unchanged.
+
+        :return: Text per key.
+        :rtype: dict[str, str]
+        """
+        cfg = self._config
+        declarations = ddl_parameters.load_declarations(
+            cfg.experiment.cluster.experiments_configfolder, cfg.path_experiment_docker)
+        if not declarations:
+            return {}
+        return ddl_parameters.fill_values(
+            declarations, ddl_parameters.resolve(declarations, cfg.ddl_parameters))
+
+    def upload_script(self, script: str, values: dict, filename_in_container: str,
+                      filename_in_resultfolder: str) -> bool:
+        """Fill a script of the configuration's folder, keep it in the result folder and upload it.
+
+        :param script: Script filename in the configuration's folder.
+        :param values: Text per placeholder; empty uploads the script unchanged.
+        :param filename_in_container: Target path in the SUT's ``dbms`` container.
+        :param filename_in_resultfolder: Copy in the result folder.
+        :return: False when the script is not in the folder (nothing uploaded).
+        :rtype: bool
+        """
+        cfg = self._config
+        filename_source = (cfg.experiment.cluster.experiments_configfolder
+                           + '/' + cfg.path_experiment_docker + '/' + script)
+        if not os.path.isfile(filename_source):
+            return False
+        if values:
+            with open(filename_source, "r") as initscript_template:
+                data = ddl_parameters.fill(initscript_template.read(), values)
+            with open(filename_in_resultfolder, "w") as initscript_filled:
+                initscript_filled.write(data)
+        else:
+            shutil.copy(filename_source, filename_in_resultfolder)
+        cfg.experiment.cluster.upload_file(
+            filename_remote=filename_in_container,
+            filename_local=filename_in_resultfolder,
+            pod=cfg.pod_sut, container="dbms")
+        cfg.execute_command_in_pod_sut(
+            "sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
+        return True
+
     def prepare_init_dbms(self, scripts: list) -> None:
-        """Copy and optionally fill DDL scripts into the SUT pod for loading.
+        """Copy DDL scripts into the SUT pod for loading, filled with the DDL parameters.
 
         :param scripts: List of script filenames from the experiment's initscript list.
         """
@@ -540,39 +589,23 @@ class LoadingCoordinator:
         scriptfolder = '/tmp/'
         c = cfg.dockertemplate['template']
         database = c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC'] else cfg.experiment.volume
-        schema = c['JDBC']['schema'] if 'JDBC' in c and 'schema' in c['JDBC'] else 'default'
-        databases = [database]
+        values = self.ddl_fill_values()
         if cfg.num_tenants > 0 and cfg.tenant_per == 'schema':
             for tenant in range(cfg.num_tenants):
                 print("{:30s}: scripts for tenant #{}".format(cfg.configuration, tenant))
                 for script in scripts:
-                    filename_template = cfg.path_experiment_docker + '/' + script
-                    filename_source = (cfg.experiment.cluster.experiments_configfolder
-                                       + '/' + filename_template)
                     filename_base, file_extension = os.path.splitext(script)
-                    if os.path.isfile(filename_source):
-                        with open(filename_source, "r") as initscript_template:
-                            data = initscript_template.read()
-                            data = data.format(BEXHOMA_SCHEMA=f"tenant_{tenant}")
-                            filename_in_resultfolder = (
-                                cfg.experiment.path
-                                + '/{app}-loading-{configuration}-{tenant}-{filename}'
-                                  '-{database}{extension}.log'.format(
-                                    app=cfg.appname, configuration=cfg.configuration,
-                                    filename=filename_base, database=database,
-                                    tenant=tenant,
-                                    extension=file_extension.lower()).lower())
-                            filename_target = f'/{tenant}-{script}'
-                            filename_in_container = scriptfolder + filename_target
-                            with open(filename_in_resultfolder, "w") as initscript_filled:
-                                initscript_filled.write(data)
-                            cfg.experiment.cluster.upload_file(
-                                filename_remote=filename_in_container,
-                                filename_local=filename_in_resultfolder,
-                                pod=cfg.pod_sut, container="dbms")
-                            cfg.execute_command_in_pod_sut(
-                                "sed -i 's/\\r$//' {to_name}".format(
-                                    to_name=filename_in_container))
+                    self.upload_script(
+                        script, {**values, 'BEXHOMA_SCHEMA': f"tenant_{tenant}"},
+                        filename_in_container=scriptfolder + f'/{tenant}-{script}',
+                        filename_in_resultfolder=(
+                            cfg.experiment.path
+                            + '/{app}-loading-{configuration}-{tenant}-{filename}'
+                              '-{database}{extension}.log'.format(
+                                app=cfg.appname, configuration=cfg.configuration,
+                                filename=filename_base, database=database,
+                                tenant=tenant,
+                                extension=file_extension.lower()).lower()))
             return
         if cfg.num_tenants > 0 and cfg.tenant_per == 'database':
             script = 'initdatabases.sql'
@@ -601,62 +634,17 @@ class LoadingCoordinator:
                 pod=cfg.pod_sut, container="dbms")
             cfg.execute_command_in_pod_sut(
                 "sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
-        if len(cfg.ddl_parameters):
-            for script in scripts:
-                filename_template = cfg.path_experiment_docker + '/' + script
-                if os.path.isfile(cfg.experiment.cluster.experiments_configfolder
-                                  + '/' + filename_template):
-                    with open(cfg.experiment.cluster.experiments_configfolder
-                              + '/' + filename_template, "r") as initscript_template:
-                        data = initscript_template.read()
-                        data = data.format(**cfg.ddl_parameters)
-                        filename_filled = cfg.path_experiment_docker + '/filled_' + script
-                        with open(cfg.experiment.cluster.experiments_configfolder
-                                  + '/' + filename_filled, "w") as initscript_filled:
-                            initscript_filled.write(data)
-                        filename_in_container = scriptfolder + script
-                        filename_in_resultfolder = (
-                            cfg.experiment.cluster.experiments_configfolder
-                            + '/' + filename_filled)
-                        cfg.experiment.cluster.upload_file(
-                            filename_remote=filename_in_container,
-                            filename_local=filename_in_resultfolder,
-                            pod=cfg.pod_sut, container="dbms")
-                        cfg.execute_command_in_pod_sut(
-                            "sed -i 's/\\r$//' {to_name}".format(
-                                to_name=filename_in_container))
-                        filename_source = (cfg.experiment.cluster.experiments_configfolder
-                                           + '/' + filename_filled)
-                        filename_base, file_extension = os.path.splitext(script)
-                        filename_in_resultfolder = (
-                            cfg.experiment.path
-                            + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'
-                            .format(app=cfg.appname, configuration=cfg.configuration,
-                                    filename=filename_base, database=database,
-                                    extension=file_extension.lower()).lower())
-                        shutil.copy(filename_source, filename_in_resultfolder)
-        else:
-            for script in scripts:
-                filename = cfg.path_experiment_docker + '/' + script
-                filename_source = (cfg.experiment.cluster.experiments_configfolder
-                                   + '/' + filename)
-                filename_in_container = scriptfolder + script
-                filename_base, file_extension = os.path.splitext(script)
-                filename_in_resultfolder = (
+        for script in scripts:
+            filename_base, file_extension = os.path.splitext(script)
+            self.upload_script(
+                script, values,
+                filename_in_container=scriptfolder + script,
+                filename_in_resultfolder=(
                     cfg.experiment.path
                     + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(
                         app=cfg.appname, configuration=cfg.configuration,
                         filename=filename_base, database=database,
-                        extension=file_extension.lower()).lower())
-                if os.path.isfile(filename_source):
-                    shutil.copy(filename_source, filename_in_resultfolder)
-                    cfg.experiment.cluster.upload_file(
-                        filename_remote=filename_in_container,
-                        filename_local=filename_in_resultfolder,
-                        pod=cfg.pod_sut, container="dbms")
-                    cfg.execute_command_in_pod_sut(
-                        "sed -i 's/\\r$//' {to_name}".format(
-                            to_name=filename_in_container))
+                        extension=file_extension.lower()).lower()))
 
     def check(self) -> None:
         """Check loading status, update timing attributes, and clean up finished jobs.

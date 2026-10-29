@@ -145,6 +145,9 @@ CREATE TABLE public.warehouse (
     CONSTRAINT warehouse_pkey PRIMARY KEY (w_id)
 );
 
+-- Shards per distributed table (-nws / -xddl num_worker_shards, see ddl-parameters.config).
+SET citus.shard_count = {num_worker_shards};
+
 SELECT create_distributed_table('customer', 'c_w_id');
 SELECT create_distributed_table('district', 'd_w_id');
 SELECT create_distributed_table('history', 'h_w_id');

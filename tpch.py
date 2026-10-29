@@ -484,10 +484,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 config.set_storage(
                     storageConfiguration = 'citus'
                     )
-                config.set_ddl_parameters(
-                    num_worker_replicas = num_worker_replicas,
-                    num_worker_shards = num_worker_shards,
-                    )
                 config.set_sut_parameters(
                     BEXHOMA_REPLICAS = num_worker_replicas,
                     BEXHOMA_SHARDS = num_worker_shards,

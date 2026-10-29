@@ -351,6 +351,7 @@ def make_base_parser():
     p.add_argument('-nw',  '--num-worker', help='number of worker nodes for distributed DBMS', default=0)
     p.add_argument('-nwr', '--num-worker-replicas', help='number of replicas per worker node', default=0)
     p.add_argument('-nws', '--num-worker-shards', help='number of shards per worker node', default=0)
+    p.add_argument('-xddl', '--ddl-parameter', help="DDL parameter KEY=VALUE filled into the schema scripts of every DBMS whose folder declares KEY in ddl-parameters.config (repeatable); a comma list KEY=V1,V2 sweeps it, one configuration per value (several swept keys: one per combination)", action='append', default=[], dest='ddl_parameters')
     p.add_argument('-nlp', '--num-loading-pods', help='comma-separated list of total loader pod counts', default="1")
     p.add_argument('-nlt', '--num-loading-threads', help='comma-separated list of total loader threads (split across pods)', default="1")
     p.add_argument('-nbp', '--num-benchmarking-pods', help='comma-separated list of benchmarker pod counts', default="1")

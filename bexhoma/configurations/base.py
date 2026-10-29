@@ -116,6 +116,7 @@ class SutConfiguration:
         self.path = self.experiment.path                                         #: Filesystem path to the experiment's working directory.
         self.resources = {}                                                      #: Dict of Kubernetes resource requests/limits for the SUT pod.
         self.ddl_parameters = {}                                                 #: DDL schema parameters for init scripts.
+        self.ddl_storage_suffix = ''                                             #: Volume name part for non-default DDL parameters (see bexhoma.ddl_parameters.storage_suffix).
         self.eval_parameters = {}                                                #: Parameters forwarded to dbmsbenchmarker for evaluation.
         self.storage = {}                                                        #: Parameters for persistent storage.
         self.nodes = {}                                                          #: Dict of node infos to guide component placement.
@@ -594,9 +595,11 @@ class SutConfiguration:
     def set_ddl_parameters(self, **kwargs) -> None:
         """Set DDL parameters that are substituted in init scripts.
 
+        Merges into the parameters set so far (e.g. the experiment's).
+
         :param kwargs: Parameter dict, e.g. ``index='btree'``.
         """
-        self.ddl_parameters = kwargs
+        self.ddl_parameters = {**self.ddl_parameters, **kwargs}
 
     def set_eval_parameters(self, **kwargs) -> None:
         """Set evaluation parameters forwarded to the benchmarker component.
@@ -1378,7 +1381,9 @@ class SutConfiguration:
         name alone, so the class has to be part of it: otherwise data loaded
         on one backend would be reused on another. Ephemeral storage, the
         cluster's default class (``''``) and ``ramdisk`` add nothing. A name
-        that already ends with the class is kept as it is.
+        that already ends with the class is kept as it is. DDL parameters
+        that differ from their defaults add :attr:`ddl_storage_suffix` before
+        the class, so data loaded with other DDL values is not found again.
 
         :return: Name used for the SUT's PVC, its ``configuration`` label and
             the worker StatefulSets.
@@ -1386,10 +1391,15 @@ class SutConfiguration:
         """
         storage_configuration = self.storage.get('storageConfiguration') or self.configuration
         storage_class = self.storage.get('storageClassName')
-        if not storage_class or storage_class == 'ramdisk':
-            return storage_configuration
-        suffix = storage_suffix(storage_class)
-        if storage_configuration.lower().endswith(f'-{suffix}'):
+        suffix = '' if not storage_class or storage_class == 'ramdisk' else storage_suffix(storage_class)
+        has_class = bool(suffix) and storage_configuration.lower().endswith(f'-{suffix}')
+        ddl_suffix = getattr(self, 'ddl_storage_suffix', '')
+        if ddl_suffix:
+            if has_class:
+                storage_configuration = storage_configuration[:-len(suffix) - 1]
+                has_class = False
+            storage_configuration = f'{storage_configuration}-{ddl_suffix}'
+        if not suffix or has_class:
             return storage_configuration
         return f'{storage_configuration}-{suffix}'
 

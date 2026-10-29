@@ -87,6 +87,42 @@ experiments/<benchmark>/          e.g. tpch/, tpcds/
 `-schema` variants use the `{BEXHOMA_SCHEMA}` placeholder instead of a
 hard-coded schema name; it is substituted at runtime by the Bexhoma framework.
 
+### DDL parameters (`ddl-parameters.config`)
+
+A DBMS folder may declare parameters of its scripts in `ddl-parameters.config`
+(a Python dict literal, see `bexhoma/ddl_parameters.py`):
+
+```python
+{
+    'num_worker_shards': {
+        'default': 32,                        # reproduces the script without the parameter
+        'description': 'citus.shard_count of the distributed tables',
+    },
+    'engine': {
+        'default': 'InnoDB',
+        'values': ['InnoDB', 'Aria', 'MyISAM'],   # optional: allowed values
+        # 'sql': {'token': 'SQL text'},           # optional: text written for a value
+        'description': 'storage engine of all tables',
+    },
+}
+```
+
+Scripts name a parameter as `{key}`; other text in braces (JSON, ClickHouse
+macros) stays as it is. Values come from `-xddl KEY=VALUE` (a comma list
+sweeps the key, one configuration per value) and from `-nwr`/`-nws`
+(`num_worker_replicas`/`num_worker_shards`). A folder without the file gets
+no filling; a folder variant (`ssb/Citus/distributed`) uses the file of its
+parent folder. Values other than the defaults become part of the volume name,
+so a persistent volume loaded with other values is not reused. The filled
+scripts are in the result folder (`<app>-loading-<configuration>-<script>-...`).
+
+| Folder | Keys |
+|---|---|
+| tpch/Citus, ssb/Citus, benchbase/tpcc/Citus | `num_worker_shards` |
+| ycsb/Citus | `num_worker_shards`, `num_worker_replicas` |
+| ycsb/CockroachDB, tpch/CockroachDB, ycsb/TiDB, benchbase/tpcc/TiDB | `num_worker_replicas` |
+| tpch/MariaDB | `engine` |
+
 ### Required file header (all .sql and .sh files)
 
 Every file must start with this exact block, adapted to its path and purpose:
@@ -199,7 +235,9 @@ must be identical across benchmarks unless the deviation is declared in
 `tests/test_load_durability.py` (e.g. `tpch/MySQL/durability-relaxed.sql` adds
 autocommit 0). `unsafe` includes the `relaxed` scripts too; a script a folder
 does not have is not run.
-No curly braces in these scripts: bexhoma may fill them with `str.format()`.
+No curly braces in these scripts (checked by `test_no_curly_braces`); since
+DDL parameters are filled by key, braces would only matter for a `{key}` a
+folder declares.
 
 **Scale factor data path**: `/data/tpch/<SF>/` where `<SF>` is `SF1`, `SF10`,
 `SF30`, or `SF100`. All `.tbl` files are pipe-delimited with a trailing `|`.

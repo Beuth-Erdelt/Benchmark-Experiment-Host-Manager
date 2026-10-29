@@ -116,6 +116,9 @@ ALTER TABLE orders   ADD CONSTRAINT orders_pkey   PRIMARY KEY (o_orderkey);
 ALTER TABLE lineitem ADD CONSTRAINT lineitem_pkey PRIMARY KEY (l_orderkey, l_linenumber);
 
 
+-- Shards per distributed table (-nws / -xddl num_worker_shards, see ddl-parameters.config).
+SET citus.shard_count = {num_worker_shards};
+
 -- Q22: correlated subqueries are not supported when FROM contains a reference table.
 SELECT create_reference_table('nation');
 SELECT create_reference_table('region');

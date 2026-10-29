@@ -713,10 +713,6 @@ if __name__ == '__main__':
                     config.set_storage(
                         storageConfiguration = 'cockroachdb'
                         )
-                    config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas,
-                        num_worker_shards = num_worker_shards,
-                        )
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BEXHOMA_SHARDS = num_worker_shards,
@@ -778,10 +774,6 @@ if __name__ == '__main__':
                         replicas_sut = num_sut_replicas,
                         replicas_pd = num_pd_nodes
                     )
-                    config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas,
-                        num_worker_shards = num_worker_shards,
-                        )
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BEXHOMA_SHARDS = num_worker_shards,
@@ -887,10 +879,6 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'citus'
-                        )
-                    config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas,
-                        num_worker_shards = num_worker_shards,
                         )
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,

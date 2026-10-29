@@ -1,163 +1,371 @@
 # Plan: DDL parameters (placeholders in init scripts)
 
-Status: **plan only** (2026-10-29, revised the same day). Inventory of what
-exists, gaps, a generic mechanism with minimal Python changes, and candidate
-parameters per DBMS. Nothing implemented. Non-DDL settings (planner knobs,
-isolation level, client options):
+Status (2026-10-29): **M1, M1b, M2 implemented, uncommitted**; unit tests
+OK (805); cluster check A OK, B running. **Decided but not implemented:**
+volume names without DDL values (B), DDL values as volume labels, reuse
+semantics (M2b). Open: short volume/worker names (M2c), M3–M5. Non-DDL
+settings (planner knobs, isolation level, client options):
 [plan-session-parameters.md](plan-session-parameters.md) (parked; today:
 one experiment per value with `--set` on the same `-rst` PVC).
 
-## How it works today
+## Open items
 
-- A driver calls `config.set_ddl_parameters(**kwargs)` (or
-  `experiment.set_ddl_parameters`, inherited by every configuration,
-  [base.py:126](../bexhoma/configurations/base.py#L126)). Both **replace**
-  the dict instead of merging.
-- When `ddl_parameters` is **non-empty**, every script of the load step
-  (init, index, check, durability, reset) is read, filled with
-  `str.format(**ddl_parameters)`, written as `filled_<script>` **into the
-  source folder** `experiments/<bench>/<dbms>/` (gitignored), uploaded to the
-  SUT and copied to the result folder
-  ([loading.py:604-637](../bexhoma/configurations/loading.py#L604-L637)).
-- When it is empty, scripts are uploaded unchanged.
-- Separate path for tenants per schema: scripts are filled with
-  `str.format(BEXHOMA_SCHEMA=...)` only, **ignoring `ddl_parameters`**
-  ([loading.py:545-576](../bexhoma/configurations/loading.py#L545-L576)).
-- The values also go to `connection_parameter['ddl_parameters']`
-  ([benchmarking.py:149](../bexhoma/configurations/benchmarking.py#L149)),
-  so they are in the result's connection info.
+| # | Item | Kind | Section |
+|---|---|---|---|
+| 1 | Implement decision B: remove `-ddl<hash>` volume suffix (`ddl_storage_suffix`), refuse DDL sweeps with `-rst`, fix experiments/README.md (still describes the suffix), adjust tests | code, decided | [Decisions](#decisions-2026-10-29) |
+| 2 | DDL values as volume labels, reuse semantics (volume wins, report), test `DDL parameters as requested`, summary lines, connection fields, AgentReport validity rule | code, decided | [Decisions](#decisions-2026-10-29) |
+| 3 | Token and declaration rules (label-compatible tokens, `'type': 'int'`, no bool/float, checks in `load_declarations()`) | code, decided | [Decisions](#decisions-2026-10-29) |
+| 4 | Short names: abbreviation per DBMS (by storage name), workers `bx-<component>`, guard in `get_worker_name()`, Dragonfly replica storage name; all bexhoma volumes deleted at rollout | decided, not implemented | [Short names](#short-volume-and-worker-names-decided-2026-10-29) |
+| 4b | Data-defining parameters beyond DDL: `dfr` (name), `shape_num_worker` label (refuse on difference), `load_*` labels for script variant, post-load variant, `-xio` (report like DDL); test `Data parameters as requested` | accepted in principle, not implemented | [Beyond DDL](#data-defining-parameters-beyond-ddl-proposal-2026-10-29-accepted-in-principle) |
+| 5 | Cluster check B (YCSB defaults without `-nwr`/`-nws`) | running | [Cluster checks](#cluster-checks) |
+| 6 | Cluster check after items 1–3: reuse of a labelled volume (same values, other values, nothing given) and of an unlabelled one | after 1–3 | [Cluster checks](#cluster-checks) |
+| 7 | Volumes of check A on cephcsi: two have `-ddl<hash>` names, orphaned once B is implemented | cleanup, ask first | [Cluster checks](#cluster-checks) |
+| 8 | M3 priority A keys, M3b experiment.yml, M4, M5 | later | [Milestones](#milestones) |
+| 9 | Verify: Citus `shard_replication_factor` > 1 in our version; MariaDB histograms by default; CockroachDB `bucket_count` default in v24.2.4 | research | [Candidates](#candidates-per-dbms) |
+| 10 | Result tables: a column per swept key (also for resource cells); rename `expand_resource_cells()` → `expand_cells()` | deferred | [Open questions](#open-questions) |
+| 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
+| 12 | Commit (message proposed, waits for go-ahead) | – | – |
 
-Consequences of `str.format`:
+## Mechanism (implemented, uncommitted)
 
-- Any literal `{` or `}` in **any** script of a configuration with DDL
-  parameters breaks the load (`test_no_curly_braces` guards only the
-  `*durability-*` scripts). JSON in YugabyteDB `replica_placement`,
-  ClickHouse macros `{shard}`/`{replica}`, PL/pgSQL with `format()` are all
-  affected. Redis and Dragonfly also get DDL parameters, so their `.sh`
-  scripts (`save-snapshot.sh`) go through `str.format` too: no braces today,
-  but a later `${VAR}` would break the load.
-- A placeholder the driver does not set raises `KeyError` mid-load.
+Generic, no per-driver code: the drivers only lost lines.
 
-## Inventory: placeholders that exist
-
-Keys set by drivers: `num_worker_replicas` and `num_worker_shards`, from
-`-nwr` / `-nws` (default **0**, [cli_args.py:352](../bexhoma/cli_args.py#L352)),
-and `BEXHOMA_SCHEMA` in the tenant-per-schema path.
-
-| Placeholder | Script | Used for | Set by | Reachable? |
-|---|---|---|---|---|
-| `{num_worker_shards}` | ycsb/Citus/initschema-ycsb.sql | `citus.shard_count` | ycsb.py | yes |
-| `{num_worker_replicas}` | ycsb/Citus/initschema-ycsb.sql | `citus.shard_replication_factor` | ycsb.py | yes |
-| `{num_worker_replicas}` | ycsb/CockroachDB/initschema-ycsb.sql | zone `num_replicas` | ycsb.py | yes |
-| `{num_worker_replicas}` | ycsb/CockroachDB/checkschema-ycsb.sql | under-replication check | ycsb.py | yes |
-| `{num_worker_replicas}` | ycsb/TiDB/initschema-ycsb.sql | PD `max-replicas` | ycsb.py | yes |
-| `{num_worker_replicas}` | benchbase/tpcc/TiDB/initschema-benchbase.sql | PD `max-replicas` | benchbase.py | yes |
-| `{BEXHOMA_SCHEMA}` | tpch/PostgreSQL/*-tpch-schema.sql, benchbase/tpcc/PostgreSQL/*-benchbase-schema.sql | tenant schema name | loading.py (tenant per schema) | yes |
-| `{num_worker_shards}`, `{num_worker_replicas}` | tpcc/Citus/initschema-tpcc-tmp.sql | shard count / RF | hammerdb.py | **no**: file not in any script list; HammerDB builds the schema |
-| `{shard_count}`, `{replication_count}` | tpch/Citus/initschema-tpch-template.sql | shard count / RF | nobody | **no**: tpch.py sets `num_worker_*` → `KeyError` with the `SF*-template` keys |
-| `{num_replicas}` | tpch/CockroachDB/initschema-tpch(-recommended).sql | zone `num_replicas` | nobody | no (CockroachDB not in tpch.py) |
-| `{engine}` | tpch/MariaDB/initschema-tpch-template.sql | storage engine | nobody | no (MariaDB gets no DDL params) |
-| `{fragment_size}`, `{shard_count}` | tpch/OmniSci/*.sql | fragment size / shards | nobody | no (legacy, not in tpch.py) |
-
-Drivers that set `num_worker_*` without any script using them: benchbase.py
-Citus and CockroachDB, hammerdb.py Citus, tpch.py Citus, ycsb.py Redis and
-Dragonfly. YugabyteDB gets no DDL parameters at all. tpcds.py and ssb.py set
-none (SSB solves `-xdim` by folder variants).
-
-## Gaps found
-
-1. **`-nws` has no effect on Citus TPC-H, SSB and both TPC-C drivers.**
-   TPC-H, SSB and BenchBase TPC-C call `create_distributed_table` with the
-   Citus default of 32 shards; HammerDB builds its own schema. Only YCSB
-   reads `-nws`. Runs that vary `-nws` for these benchmarks measured nothing.
-2. **Default 0.** With `-nwr`/`-nws` left out, YCSB Citus executes
-   `SET citus.shard_count = 0` and CockroachDB `num_replicas = 0`. Test
-   scripts always pass both flags, so it has not been hit; to verify on the
-   cluster what happens (error or silent fallback).
-3. **Orphan placeholders** (Citus TPC-H template, MariaDB `{engine}`,
-   CockroachDB TPC-H, OmniSci) under names no driver sets. The Citus and
-   MariaDB templates are also **stale**: last changed 2026-05-26, while the
-   schemas in use changed since (MariaDB PK in schema 2026-10-22; the Citus
-   template differs in 37 lines).
-4. **Filled files are written into the source tree**, shared by all
-   configurations: two configurations of one DBMS with different values
-   race on the same `filled_*` file.
-5. `str.format` on all scripts (see above); tenant path ignores DDL
-   parameters.
-
-## Proposal: mechanism
-
-Goal: generic, no per-driver code. Drivers (tpch.py, ycsb.py, ...) only
-lose lines.
-
-- **Defaults file per script folder** (decided 2026-10-29):
-  `experiments/<bench>/<dbms>/ddl-parameters.config`, Python dict literal
-  like `queries-*.config`. One entry per key: default, allowed values or
-  range, one-line description. The file is the single source for defaults,
-  `-xddl` validation, the catalog capability and the docs table. Folder
-  variants (`ssb/Citus/distributed`) use the file of `path_experiment_docker`,
-  falling back to the parent folder. No file = no filling = today's
-  behaviour.
-- **Defaults reproduce today's scripts**, so baselines stay comparable.
-  Exception: where today's value is the broken 0 (gap 2), the default is the
-  DBMS default (Citus 32 shards / RF 1, CockroachDB and TiDB 3 replicas).
-- **Precedence**: file defaults < `-nwr`/`-nws` (only if > 0) < `-xddl` <
-  per-call values (`BEXHOMA_SCHEMA` for tenant `t`).
-- **Safe filling**: replace only `{name}` where `name` is a key of the merged
-  dict; everything else, including ClickHouse macros and JSON, stays
-  literally. One fill function for both paths (tenant and normal), so tenant
-  scripts get DDL parameters too.
-- **Validation before the SUT starts**: a `-xddl` key that the
-  configuration's defaults file does not declare, or a value outside its
-  allowed values → error. The merged (effective) dict is stored in
-  `cfg.ddl_parameters`, so the connection info records effective values,
-  not only the given ones.
-- **Filled files go to the result folder only** (per configuration), never
-  to `experiments/`.
-- **Sweep inside one experiment, generic** (revised 2026-10-29): reuse the
-  resource sweep. `experiment.process()` already calls
-  `expand_resource_cells()`
-  ([experiments/base.py:1183](../bexhoma/experiments/base.py#L1183)), which
-  deep-copies every configuration once per resource cell, for all drivers.
-  DDL values become part of the cell:
-  - `-xddl KEY=V1,V2` (comma list); several keys → Cartesian product.
-    Values are tokens without commas; where SQL needs more (e.g.
-    `CODEC(Delta, ZSTD)`), the defaults file maps the token (`delta_zstd`)
-    to the SQL text.
-  - cells = resource cells × DDL combinations, one numbering: `{base}-{n}`
-    and alias `{base}@{n}` as today, so names don't nest.
-  - **Storage per cell** (`{storageConfiguration}-{n}`, as today): data
-    differs per DDL value, so a cell must never reuse another cell's PVC
-    (`-rst`).
-  - Only configurations whose defaults file declares **all** swept keys
-    are cloned; others are kept once (like a SUT bexhoma does not manage),
-    e.g. `-xddl num_worker_shards=16,32` with `-dbms PostgreSQL Citus`
-    clones only Citus.
-  - Validation moves to `process()`, before cloning: every configuration's
-    `path_experiment_docker` is known there, and nothing is started yet.
-  - The mapping cell number → values is printed, written to the workload
-    info and stored per configuration (`connection_parameter`).
-  - Cost: one SUT and one load per cell; `-ms` limits how many run at once.
-    Alternatively, separate experiments grouped in a study
-    ([plan-studies.md](plan-studies.md)).
+- **Declarations per script folder**: `experiments/<bench>/<dbms>/ddl-parameters.config`,
+  Python dict literal like `queries-*.config`; per key `default`, optional
+  `values` (allowed tokens), optional `sql` (token → SQL text),
+  `description`. A folder variant (`ssb/Citus/distributed`) without its own
+  file uses the parent's. No file = no filling = scripts uploaded unchanged.
+- **Defaults reproduce the scripts as they were**, so baselines stay
+  comparable. Exception: where the old value was the broken 0 (`-nwr`/`-nws`
+  not given), the default is the DBMS default (Citus 32 shards / RF 1,
+  CockroachDB and TiDB 3 replicas).
+- **Values**: `-xddl KEY=VALUE` (repeatable; a comma list sweeps) and
+  `-nwr`/`-nws` > 0 (`num_worker_replicas`/`num_worker_shards`); 0 means
+  "not given". Precedence: folder default < `-nwr`/`-nws` < `-xddl`; per-call
+  values (`BEXHOMA_SCHEMA` per tenant) on top. With decision B (item 2), a
+  reused volume's labels override all of these.
+- **Resolution in `process()`** before anything starts
+  (`resolve_ddl_parameters()`): per configuration, effective values = folder
+  defaults + the given values for the keys the folder declares; a value not
+  in `values` or an `-xddl` key no DBMS of the experiment declares → error.
+  Keys given by `-xddl` are added as `ddl_<key>` to the evaluation
+  parameters (shown per connection in the summary).
+- **Safe filling**: only `{key}` of the effective values is replaced; other
+  braces (JSON, ClickHouse macros) stay. One fill path for normal and
+  tenant-per-schema scripts (tenant scripts get DDL parameters too). Filled
+  scripts go to the result folder only
+  (`<app>-loading-<configuration>-<script>-...`), never to `experiments/`.
+- **Sweep** in `expand_resource_cells()`: configurations are cloned per
+  resource cell × combination of the swept keys **their folder declares**
+  (one numbering `{base}-{n}`, alias `{base}@{n}`); a DBMS without the keys
+  runs once. With decision B, a DDL sweep with `-rst` is refused (item 1).
 - Keep schema **variants that change many statements** (reference vs
   distributed dimensions, distribution key, columnar) as script or folder
   variants (as `-xdim` does); a key may select the variant.
 
-### Python changes
+### Python changes (as implemented)
 
-| File | Change | Size |
-|---|---|---|
-| [bexhoma/configurations/loading.py](../bexhoma/configurations/loading.py) | one fill function (load defaults file, merge, safe replace, write to result folder); replaces both existing branches (tenant `str.format` and `ddl_parameters` `str.format`) | net fewer lines |
-| [bexhoma/cli_args.py](../bexhoma/cli_args.py) | `-xddl KEY=V1[,V2…]`, `action='append'`; parser returns the list of DDL combinations | ~10 lines |
-| [bexhoma/experiments/base.py](../bexhoma/experiments/base.py) | where `-nwr`/`-nws` are already parsed (~line 696): build the dict from `-nwr`/`-nws` (> 0) and `-xddl`, one line in the workload info; in `expand_resource_cells()`: cells = resource cells × DDL combinations, set each clone's DDL values, clone only configurations whose defaults file declares the keys; validate before cloning | ~30 lines |
-| [bexhoma/configurations/base.py](../bexhoma/configurations/base.py) | `set_ddl_parameters` merges (`update`) instead of replacing | 1 line |
-| tpch.py, ycsb.py (5×), benchbase.py (3×), hammerdb.py | **delete** the `set_ddl_parameters(num_worker_*)` calls: experiments/base.py sets them for all, and the driver's 0 would otherwise override the file defaults | deletions only |
-| tests/test_ddl_parameters.py (new) | merge order, safe filling (braces, macros survive), no-op without file, unknown key error, tenant path, cell expansion (product, names, storage per cell, unswept DBMS kept once) | new |
-| later (M3b): [bexhoma/spec.py](../bexhoma/spec.py), tpch_catalog.py, ycsb_catalog.py | `systems[].ddl` validated against the defaults file; catalogs emit `-xddl` (shared helper, not per catalog) | small |
+| File | Change |
+|---|---|
+| [bexhoma/ddl_parameters.py](../bexhoma/ddl_parameters.py) (new) | declarations, `-xddl` parsing, combinations, validation, resolution, `sql` mapping, safe fill; `storage_suffix()` to be removed (item 1) |
+| [bexhoma/configurations/loading.py](../bexhoma/configurations/loading.py) | `ddl_fill_values()`, `upload_script()`; `prepare_init_dbms()` uses them for normal and tenant scripts (both `str.format` branches gone) |
+| [bexhoma/cli_args.py](../bexhoma/cli_args.py) | `-xddl`, `action='append'` |
+| [bexhoma/experiments/base.py](../bexhoma/experiments/base.py) | parsing next to `-nwr`/`-nws`, workload info line, `resolve_ddl_parameters()`, DDL combinations in `expand_resource_cells()` |
+| [bexhoma/configurations/base.py](../bexhoma/configurations/base.py) | `set_ddl_parameters` merges; `ddl_storage_suffix` in `get_storage_configuration()` (to be removed, item 1) |
+| tpch.py, ycsb.py (5×), benchbase.py (3×), hammerdb.py | `set_ddl_parameters(num_worker_*)` calls deleted |
+| tests/test_ddl_parameters.py (new, 25), tests/test_ssb.py | unit tests; SSB brace test allows declared keys |
 
 No change: tpcds.py, ssb.py, DBMS-Benchmarker, evaluators, k8s templates,
-TPCTC23/ (legacy). `test_no_curly_braces` can stay as is.
+TPCTC23/ (legacy).
+
+### Folders with declarations (M2)
+
+| Folder | Keys | Script change |
+|---|---|---|
+| ycsb/Citus | `num_worker_shards`, `num_worker_replicas` | existed |
+| tpch/Citus, ssb/Citus (+ `distributed/`), benchbase/tpcc/Citus | `num_worker_shards` | `SET citus.shard_count = {num_worker_shards};` before the first distribution (TPC-H row and columnar, 3 SSB schemas, BenchBase TPC-C) |
+| ycsb/CockroachDB, ycsb/TiDB, benchbase/tpcc/TiDB | `num_worker_replicas` | existed |
+| tpch/CockroachDB | `num_worker_replicas` | `{num_replicas}` renamed |
+| tpch/MariaDB | `engine` (InnoDB, Aria, MyISAM) | `ENGINE = {engine}` per table in the current schema |
+
+Stale templates deleted: tpch/Citus and tpch/MariaDB
+`initschema-tpch-template.sql` (the `SF*-template` keys stay for OmniSci).
+experiments/README.md has a section "DDL parameters" (to be fixed, item 1).
+
+## Decisions 2026-10-29
+
+### Volume names: B) no DDL values in the name (not implemented, item 1)
+
+Each DBMS keeps one persistent volume per class (and resource cell).
+
+- A DDL sweep with `-rst` is refused (all cells would get the same volume
+  name); without `-rst` (ephemeral, no PVC) it works. Persisted variants:
+  one value per experiment.
+- A reused volume brings its DDL values along (labels, below); `-rsr`
+  reloads it with the requested values, which replaces the variant it held.
+- Reason: the name can never describe the data completely (`--set` values
+  like `innodb_page_size` or MariaDB `default_storage_engine`, script
+  versions such as the MariaDB PK change of 2026-10-22, generator/loader
+  versions), so it should not pretend to.
+
+**Rejected: A) DDL values in the name** (deterministic hash of the
+non-default values, `-d<6 hex>`, 8 characters; implemented as `-ddl<6 hex>`
+and verified in check A). What A would have given:
+- several DDL variants of one DBMS loaded at the same time (InnoDB and
+  Aria, 8 and 32 shards), each found again by every later experiment with
+  the same values, from a sweep or a single value;
+- DDL sweeps with `-rst`, each cell on its own reusable volume;
+- no reload when a comparison is repeated (matters at large SF, where
+  loading takes hours);
+- defaults add nothing, so existing volumes keep their names.
+
+Costs: 8–10 characters in names near the 52-character limit of StatefulSet
+names; incomplete as a description of the data. Revisit if keeping several
+variants loaded becomes necessary.
+
+**Also rejected:** numbered DDL cells (`-1`, `-2`) in the volume name: they
+only separate cells within one experiment; a later experiment cannot know
+what `-2` holds (true for resource cells today, too).
+
+### DDL values as volume labels (not implemented, item 2)
+
+- At load time, write `ddl_<key>: <token>` per effective value (defaults
+  too) next to the existing loading labels, on the volume
+  `get_volume_to_label()` returns (the SUT volume, or the first worker volume
+  where the SUT has none, e.g. Redis/Dragonfly). Existing PVC labels
+  (checked 2026-10-29): no prefix, snake_case keys ≤ 22 characters, none
+  starting with `ddl_`.
+- Visible outside bexhoma: `kubectl get pvc -L ddl_engine`, selectors
+  `-l ddl_engine=Aria`.
+- Later, data-defining `--set` values the same way, but as one annotation
+  (JSON; key like a label key, value free, all annotations ≤ 256 KiB),
+  since their values (paths, `256MB`) do not fit label rules.
+
+### Reuse: the volume's values win, differences are reported (item 2)
+
+No stop. When a configuration finds its volume loaded (`storage_reused`,
+existing mechanism in lifecycle.py), it reads the `ddl_*` labels before
+anything is filled.
+
+- Effective values = the volume's values. They fill every script that still
+  runs on the reused data (post-load and reset scripts per round) and are
+  what the connection info and the `ddl_<key>` evaluation parameters record.
+  A rerun on an old volume needs no `-xddl`: the values are implicit in the
+  volume.
+- Per key, compared with what was requested:
+
+  | Requested | Volume label | Effective | Reported |
+  |---|---|---|---|
+  | not given (folder default) | present | volume's value | info line "taken from the volume" |
+  | given, same value | present | same | test passed |
+  | given, other value | present | **volume's value** | **test failed**, names requested and volume value, hint `-rsr` |
+  | any | missing (loaded before labels or before the key existed) | folder default, marked *assumed* | **test skipped** "unknown, default assumed" |
+  | – | label of a key the folder no longer declares | ignored | info line "unknown key on the volume" |
+
+- "Given" = from `-xddl`, `-nwr`/`-nws` > 0 or `systems[].ddl` in
+  experiment.yml (kept apart already: `ddl_assignments`, `ddl_keys_given`).
+- Printed at start, e.g. `Citus-1 : volume loaded with num_worker_shards=8
+  (requested 64): the run uses the volume's values; -rsr reloads`.
+- **Summary**: section "Reused Storage" (`_show_loading_provenance`) gets
+  one line per configuration with the values taken from the volume, the
+  differences (requested → volume) and the assumed keys. New test, one per
+  experiment like `Loading measured in this experiment`:
+  `DDL parameters as requested` — passed when all match, failed with the
+  differing configurations and keys, skipped when only assumed values remain
+  (or nothing was given and nothing reused).
+- **Connection**: `ddl_parameters` (effective), `ddl_requested`,
+  `ddl_source` (`loaded` | `volume` | `assumed` per key).
+- **Agent report**: lists every test already
+  ([docs/AgentReport.md](../docs/AgentReport.md)); add a validity rule:
+  with `DDL parameters as requested` failed, results describe the volume's
+  DDL values; compare configurations only by their effective values.
+
+### Tokens and declarations: label-compatible, exact round trip (item 3)
+
+Kubernetes rules ("Labels and Selectors") and what follows:
+
+- **Label key** (no prefix): ≤ 63 characters, `[A-Za-z0-9_.-]`, first and
+  last alphanumeric. With `ddl_` and the placeholder syntax, a declared key
+  must match `^[A-Za-z]([A-Za-z0-9_]{0,57}[A-Za-z0-9])?$` (≤ 59 characters,
+  no trailing `_`).
+- **Label value**: ≤ 63 characters, `[A-Za-z0-9_.-]`, first and last
+  alphanumeric. Tokens (`-xddl`, declared `default` and `values`) must match
+  `^[A-Za-z0-9]([A-Za-z0-9_.-]{0,61}[A-Za-z0-9])?$`; today's `-xddl` rule
+  (`[A-Za-z0-9_.+-]+`) is too loose. Negative numbers are not valid values:
+  a token with an `sql` mapping (`unlimited` → `-1`). Only the token is
+  stored, never SQL text.
+- **Round trip without type conflicts** (labels are strings): values are
+  canonical strings everywhere (fill, `sql` mapping and comparison already
+  use `str()`).
+  - `load_declarations()` turns `default` and `values` into strings; the
+    file may hold only strings and ints (no bool, no float).
+  - Optional `'type': 'int'`: tokens normalised on parsing
+    (`str(int(token))`), so `032`, `+32` give `32`.
+  - Bools as tokens with `values` (`['on', 'off']`) and an `sql` mapping;
+    floats only as tokens with `values`.
+  - Keys with `values` accept only the exact spelling (label values are
+    case-sensitive): `engine=innodb` is refused at the start.
+  - Label name ↔ key: `ddl_` + key, case-sensitive, one-to-one.
+- `load_declarations()` checks keys, defaults and `values` of every file
+  against these rules, so a bad entry fails at the start, not when the
+  volume is labelled after the load. Unit test over all files in
+  `experiments/`: value → label → value is the identity and every label is
+  valid.
+
+## Short volume and worker names (decided 2026-10-29)
+
+**Decided**: do it; deleting all bexhoma volumes is accepted (each is loaded
+once more under its new name). Abbreviations confirmed, SUT prefix kept,
+deletion scope confirmed (2026-10-29). Details:
+
+- **Rule** (corrected): the abbreviation is chosen by the **storage name**,
+  not by the configuration's DBMS: the longest `dockers` name
+  (case-insensitive) that the storage name starts with, followed by `-` or
+  the end, is replaced by that DBMS's abbreviation. Reason: PGBouncer uses
+  PostgreSQL's volume (`storageConfiguration = 'postgresql'`); longest match
+  first so `clickhousecluster` wins over `clickhouse`.
+- **Abbreviations** (confirmed; same 17 DBMS in both config files):
+  PostgreSQL `pg`, PgDuckDB `pgd`, Citus `ci`, CockroachDB `cr`, YugabyteDB
+  `yb`, TiDB `ti`, MySQL `my`, MariaDB `ma`, MonetDB `mo`, ClickHouse `ch`,
+  ClickHouseCluster `chc`, Redis `rd`, Dragonfly `df`, Hardware `hw`; none
+  for PGBouncer (uses `pg`), DatabaseService (no volume) and
+  DragonflyCluster: its configurations use the storage name `dragonfly`
+  ([ycsb.py:713](../ycsb.py#L713)), so their worker volumes become `df`
+  (`bxw-bx-w-df-…`); the SUT has no volume. CedarDB has no `dockers` entry
+  and keeps `cedardb`.
+- **Found, independent of abbreviations**: Dragonfly's cluster mode
+  (`-nw > 0`, sharded) and replica mode (`-nwr > 0`, DragonflyReplica, all
+  data on worker-0) use the same storage name and therefore the same worker
+  volume names, so a replica run can reuse a cluster run's volumes with
+  another data layout. Fix: storage name `dfr` for the replica mode, one
+  line in ycsb.py; part of M2c. More such cases: see
+  [Data-defining parameters beyond DDL](#data-defining-parameters-beyond-ddl-proposal-2026-10-29-accepted-in-principle).
+- Workers: `bx-w-…` for `worker`, `bx-<component>-…` otherwise (`bx-pd`,
+  `bx-tikv`, `bx-store`); hash guard above 52 characters.
+- SUT volumes keep the prefix `bexhoma-storage-…` (far from the 253 limit;
+  `experimentsmanager.py` and others recognise the prefixes).
+- **Deletion at rollout**: only PVCs with `app=bexhoma`, `component=storage`
+  and the `bxw-…` worker volumes; **not** `bexhoma-data`, `bexhoma-results`
+  or other PVCs of the namespace (one with `role: model-server` exists).
+  List first, delete only when no experiment runs.
+
+Background:
+
+Worker StatefulSet names `bexhoma-<component>-<volume name>-<storage_label>`
+must stay ≤ 52 characters (Kubernetes adds `-<10 hex>` for the pod label
+`controller-revision-hash`, ≤ 63); over 63 the headless Service is refused
+too. Already over 52 without DDL: CockroachDB BenchBase tpcc-1600 on cephcsi
+(54), ClickHouseCluster SSB-flat SF100 on cephcsi (53). Redis/Dragonfly use
+`bx-w-…` (set in ycsb.py since 156a2333, 2025-03-20, because Redis limits
+hostname length); the others do not. Worker volumes are named by the
+`volumeClaimTemplate` `bxw`: `bxw-<StatefulSet>-<ordinal>` (≤ 253, no issue).
+
+Proposal (generic):
+- Abbreviation per DBMS in `cluster.config` and `k8s-cluster.config`
+  (`dockers.<DBMS>.abbreviation`: `pg`, `my`, `ma`, `mo`, `ci`, `cr`, `yb`,
+  `ti`, `ch`, `chc`, `rd`, `df`, `cd`, `pgd`, ...), applied in
+  `get_storage_configuration()` to the start of the storage name
+  (`postgresql-schema-16` → `pg-schema-16`), so SUT and worker volumes change
+  together (a renamed worker volume next to a loaded coordinator volume
+  would skip loading into empty workers). Without an abbreviation: as today.
+- Workers always `bx-<w|component>-…` (TiDB keeps `pd`/`tikv` apart); the
+  Redis/Dragonfly special case in ycsb.py goes.
+- Hash-shortening in `get_worker_name()` only above 52 characters, as a
+  last line of defence (names that work keep theirs).
+- Worst case afterwards: `bx-w-` + `chc` + cell + `-cephcsi` +
+  `-benchbase-tpcc-1600` = 39 (49 with the rejected DDL part).
+- Not possible: ClickHouseCluster with ClickHouse's name, since volumes are
+  found by name alone and the coordinator volume (only Distributed tables)
+  would be found by a single-node ClickHouse run.
+- Cost: every volume name changes (2026-10-29: 120 PVCs, ~76 volume sets):
+  each is loaded once more; old PVCs stay until deleted (list to be
+  generated, not deleted automatically).
+
+## Data-defining parameters beyond DDL (proposal 2026-10-29, accepted in principle)
+
+On reuse, bexhoma checks only the storage class
+([lifecycle.py:656](../bexhoma/configurations/lifecycle.py#L656)); it copies
+the loading labels (`loaded`, `index`, times) but compares nothing else.
+Cases with two variants under one volume name:
+
+| Case | Differs | Reuse today |
+|---|---|---|
+| Dragonfly cluster (`-nw > 0`) vs replica (`-nwr > 0`) | layout over the workers | same worker volumes |
+| Number of workers `-nw` (Citus, CockroachDB, YugabyteDB, TiDB, ClickHouseCluster, Redis/Dragonfly cluster) | not in the name | `-nw 2` → `4`: SUT volume "loaded", workers 0–1 reused, 2–3 new and empty (Citus/ClickHouseCluster: data only on old workers; Redis: slots wrong; CockroachDB/TiDB: rebalance during the measurement) |
+| Citus TPC-H heap vs columnar (`-xcol`) | table format | both `citus` + `tpch-<SF>` |
+| Post-load variants `-xii/-xic/-xis` (all DBMS) | indexes, constraints, statistics | run with `-xii` on a volume loaded without: loading (and the index script) skipped, runs without indexes; label `index` exists but is not compared |
+| YCSB `-xio hashed/ordered` | physical key order | same volume |
+| `-nwr`/`-nws` | shards, replicas | covered by DDL labels (M2b) |
+
+Already handled: SSB schema/dimension variants via `storage_label`
+(`ssb-flat-<SF>`, `ssb-distributed-<SF>`); tenancy via the storage name.
+
+Three classes:
+
+| Class | Examples | Where | Reuse with a difference |
+|---|---|---|---|
+| Template / mode, fixed for the life of a deployment | Dragonfly replica vs cluster | **name**: storage name `dfr` for the replica mode (not mapped by the abbreviation rule, as it starts with no DBMS name) | separate volumes |
+| Shape, may change during a run in a future feature | `num_worker` | **label** `shape_num_worker` (+ `shape_state`) | **refused** (the run cannot take the volume's shape); `-rsr` reloads |
+| Content, the run can take the volume's values | DDL values, script variant (`Schema-Columnar`), post-load variant (`Index_and_Constraints`, …), `-xio` | **labels** `ddl_*`, `load_*` | volume's values win, reported; the test becomes `Data parameters as requested` (DDL included) |
+
+**Worker count not in the name** (first idea `ci-w4-…`, revised): a
+StatefulSet scales in place under its name, creating `bxw-<StatefulSet>-3`
+from the same `volumeClaimTemplate`, and cannot be renamed, so a count in
+the name would be wrong after the first scaling step, and a later run with
+the old count would mount workers 0–2 and miss data moved to worker 3.
+
+**Future: shape changes during an experiment** (e.g. 3 → 4 workers while
+observing the benchmark):
+- After every scaling step, update `shape_num_worker` on the volume
+  `get_volume_to_label()` returns; `shape_state: changing` while data is
+  redistributed (Citus rebalance, Redis slot migration, CockroachDB/TiDB
+  rebalancing), `stable` afterwards. A volume left `changing` (run aborted
+  mid-rebalance) is never reused.
+- Scale-in: delete the released worker volume, or set
+  `persistentVolumeClaimRetentionPolicy: whenScaled: Delete` on the
+  StatefulSets; otherwise Kubernetes keeps `bxw-…-3`, and the next
+  scale-out mounts it again with stale data.
+- Names, pod patterns of the monitoring and worker volumes follow the
+  StatefulSet, so nothing else needs to change for the new pod
+  `<StatefulSet>-3`.
+- A reuse with another shape could later adapt instead of being refused:
+  start with the volume's shape, then scale to the requested one; that is
+  the scaling feature itself.
+
+## Background: before this plan
+
+- Drivers called `config.set_ddl_parameters(**kwargs)`, which replaced the
+  dict. Only `num_worker_replicas`/`num_worker_shards` (`-nwr`/`-nws`,
+  default 0) were set, for Citus, CockroachDB, TiDB, Redis, Dragonfly.
+- With a non-empty dict, every load-step script (init, index, check,
+  durability, reset) was filled with `str.format(**ddl_parameters)`, written
+  as `filled_<script>` into `experiments/<bench>/<dbms>/` and uploaded.
+  Tenant-per-schema scripts were filled with `BEXHOMA_SCHEMA` only, ignoring
+  DDL parameters.
+
+Placeholders found (2026-10-29):
+
+| Placeholder | Script | Used for | Set by | Reachable? |
+|---|---|---|---|---|
+| `{num_worker_shards}`, `{num_worker_replicas}` | ycsb/Citus/initschema-ycsb.sql | shard count, RF | ycsb.py | yes |
+| `{num_worker_replicas}` | ycsb/CockroachDB/initschema-ycsb.sql, checkschema-ycsb.sql | zone `num_replicas`, check | ycsb.py | yes |
+| `{num_worker_replicas}` | ycsb/TiDB, benchbase/tpcc/TiDB initschema | PD `max-replicas` | ycsb.py, benchbase.py | yes |
+| `{BEXHOMA_SCHEMA}` | tpch/PostgreSQL/*-tpch-schema.sql, benchbase/tpcc/PostgreSQL/*-benchbase-schema.sql | tenant schema | loading.py | yes |
+| `{num_worker_shards}`, `{num_worker_replicas}` | tpcc/Citus/initschema-tpcc-tmp.sql | shard count, RF | hammerdb.py | no: not in any script list |
+| `{shard_count}`, `{replication_count}` | tpch/Citus/initschema-tpch-template.sql | shard count, RF | nobody | no (`KeyError`); deleted |
+| `{num_replicas}` | tpch/CockroachDB | zone | nobody | no; renamed |
+| `{engine}` | tpch/MariaDB/initschema-tpch-template.sql | engine | nobody | no; moved to current schema, template deleted |
+| `{fragment_size}`, `{shard_count}` | tpch/OmniSci | | nobody | no (legacy) |
+
+Gaps found, all fixed by M1/M2 except where noted:
+1. `-nws` had no effect on Citus TPC-H, SSB and BenchBase TPC-C (always 32
+   shards); fixed. HammerDB TPC-C still builds its own schema (no hook).
+2. `-nwr`/`-nws` default 0 would have set 0 shards/replicas; now "not given".
+3. Orphan, stale placeholders; deleted or wired.
+4. Filled files in the source tree, shared by configurations; now per
+   configuration in the result folder (36 old files deleted).
+5. `str.format` broke on any literal brace and raised `KeyError` for unset
+   keys; now safe filling.
 
 ## Candidates per DBMS
 
@@ -177,15 +385,15 @@ BenchBase on CockroachDB.
 | `index_method` | btree, hash, brin | btree | TPC-H/TPC-DS index scripts | hash: smaller, faster equality on join keys; brin on dates (`l_shipdate`, `o_orderdate`) tiny and cheap when data is loaded in date order | B |
 | `partition_by` | none, year | none | lineitem/orders (TPC-H), store_sales (TPC-DS) | partition pruning for date-range queries; changes plans and parallelism | B |
 | `cluster_on` | none, a date index | none | after load: `CLUSTER` | physical order makes BRIN and range scans effective | C |
-| `toast_compression` | pglz, lz4 | pglz | `ALTER TABLE … SET COMPRESSION` | only affects values > ~2 kB: YCSB rows (10 × 100 B) and TPC-H rows stay below, so **expected no effect** for current benchmarks; list for completeness | C |
+| `toast_compression` | pglz, lz4 | pglz | `ALTER TABLE … SET COMPRESSION` | only affects values > ~2 kB: YCSB rows (10 × 100 B) and TPC-H rows stay below, so **expected no effect** for current benchmarks | C |
 | `autovacuum_scale_factor` | e.g. 0.01–0.2 | server default | table storage parameter | earlier vacuum on hot OLTP tables keeps bloat and latency stable in long runs | B |
 
 #### Citus — TPC-H, SSB, YCSB, TPC-C (BenchBase)
 
 | Key | Values | Default | Where | Why | Prio |
 |---|---|---|---|---|---|
-| `num_worker_shards` | 1…n | 32 | `SET citus.shard_count` before `create_distributed_table` | parallelism per query vs. per-shard overhead; rule of thumb: a small multiple of worker cores. **Fixes gap 1** | A |
-| `num_worker_replicas` | 1…n | 1 | `citus.shard_replication_factor` | write amplification vs. availability. **Verify**: the YCSB script says "only citus enterprise"; statement-based replication may be deprecated in our version | B |
+| `num_worker_shards` | 1…n | 32 | `SET citus.shard_count` | parallelism per query vs. per-shard overhead; rule of thumb: a small multiple of worker cores | **done** (M2) |
+| `num_worker_replicas` | 1…n | 1 | `citus.shard_replication_factor` (YCSB) | write amplification vs. availability. **Verify** (item 9): the YCSB script says "only citus enterprise"; statement-based replication may be deprecated in our version | B |
 | `dimensions` | reference, distributed | reference | TPC-H script variant (as SSB `-xdim`) | reference tables make dimension joins local; distributed + colocated saves memory and load time at large SF | A |
 | `access_method` | heap, columnar | heap (`-xcol` → columnar) | `USING columnar` | scan volume for OLAP; no updates/indexes | exists |
 | `columnar_compression` | none, lz4, zstd | zstd | `alter_columnar_table_set` | CPU vs. bytes read | B |
@@ -203,9 +411,9 @@ only check and reset scripts.)
 
 | Key | Values | Default | Where | Why | Prio |
 |---|---|---|---|---|---|
-| `num_worker_replicas` | 1, 3, 5 | 3 (DBMS default; today `-nwr`) | zone `num_replicas` | Raft write quorum cost | exists |
+| `num_worker_replicas` | 1, 3, 5 | 3 | zone `num_replicas` | Raft write quorum cost | **done** (M2) |
 | `pk_hash` | hash, none | hash | `PRIMARY KEY USING HASH` | spreads sequential inserts (`-xio ordered`) over ranges; costs scans (YCSB e) | A |
-| `bucket_count` | 4…64 | cluster setting `sql.defaults.default_hash_sharded_index_bucket_count` | `USING HASH WITH (bucket_count=…)` | write spread vs. scan fan-out; vendor advises testing per workload | B |
+| `bucket_count` | 4…64 | cluster setting `sql.defaults.default_hash_sharded_index_bucket_count` (**verify** default in v24.2.4, item 9) | `USING HASH WITH (bucket_count=…)` | write spread vs. scan fan-out; vendor advises testing per workload | B |
 | `range_max_bytes` | e.g. 64 MiB – 512 MiB | 512 MiB | zone config | more, smaller ranges = more leaseholders to spread load at small SF | B |
 | `pre_split` | 0…n | 0 | `ALTER TABLE … SPLIT AT` | avoids the split/rebalance phase during load | B |
 | `column_families` | one, per_field | one | `FAMILY` per YCSB field | a single-field update writes one KV instead of the whole row (YCSB a/f) | B |
@@ -217,8 +425,8 @@ only check and reset scripts.)
 |---|---|---|---|---|---|
 | `pk_sharding` | hash, asc | hash | `PRIMARY KEY (ycsb_key HASH / ASC)` | hash: even load, point reads; asc: range scans (YCSB e), hot spot for ordered inserts | A |
 | `num_tablets` | 0 = auto, n | auto (`ysql_num_shards_per_tserver` + auto-split) | `SPLIT INTO n TABLETS` | parallelism and leader spread from the start; vendor starts with ~8 per tserver | A |
-| `colocated` | false, true | false | database created `WITH colocation = true` (TPC-C small tables) | one tablet per small table/index costs RPCs; colocation can help a lot. **Not scripts only**: the database must exist before BenchBase connects (SUT/connection setup) | B |
-| `replica_placement` | RF per table | cluster RF | tablespace `replica_placement` (JSON) | per-table RF without redeploy; needs safe filling (braces) | C |
+| `colocated` | false, true | false | database created `WITH colocation = true` (TPC-C small tables) | one tablet per small table/index costs RPCs. **Not scripts only**: the database must exist before BenchBase connects | B |
+| `replica_placement` | RF per table | cluster RF | tablespace `replica_placement` (JSON; safe filling keeps the braces) | per-table RF without redeploy | C |
 
 The BenchBase TPC-C schema waits 300 s for tablet splitting; with
 `num_tablets` set, that wait could shrink.
@@ -227,7 +435,7 @@ The BenchBase TPC-C schema waits 300 s for tablet splitting; with
 
 | Key | Values | Default | Where | Why | Prio |
 |---|---|---|---|---|---|
-| `num_worker_replicas` | 1, 3, 5 | 3 (DBMS default; today `-nwr`) | `SET CONFIG pd max-replicas` | Raft quorum | exists |
+| `num_worker_replicas` | 1, 3, 5 | 3 | `SET CONFIG pd max-replicas` | Raft quorum | **done** (M2) |
 | `clustered` | clustered, nonclustered | server default | `PRIMARY KEY (…) CLUSTERED/NONCLUSTERED` | clustered saves a lookup; nonclustered is needed for `SHARD_ROW_ID_BITS` | A |
 | `shard_row_id_bits` | 0…6 | 0 | table option (nonclustered only) | spreads insert hot spot; too large = more RPCs | B |
 | `pre_split_regions` | 0…n (2^n regions) | 0 | table option | regions on all TiKV from the start instead of splitting during load | A |
@@ -252,10 +460,10 @@ index-type parameter.
 
 | Key | Values | Default | Where | Why | Prio |
 |---|---|---|---|---|---|
-| `engine` | InnoDB, Aria, ColumnStore | InnoDB | `ENGINE = {engine}` in the **current** `initschema-tpch.sql` (template is stale, see gap 3) | storage engine is the largest single factor for OLAP; ColumnStore needs its plugin/image | A |
+| `engine` | InnoDB, Aria, MyISAM | InnoDB | `ENGINE = {engine}` (TPC-H) | storage engine; check A: SF1 load Aria 106 s vs InnoDB 415 s. ColumnStore needs an image with the plugin | **done** (M2, TPC-H) |
 | `page_compressed` | 0/1 + `page_compression_level` | 0 | table option | as MySQL page compression | C |
 | `row_format`, `collation` | as MySQL | | | as MySQL | B |
-| `histograms` | off, on | **probably on**: plain `ANALYZE TABLE` in MariaDB ≥ 10.4 collects engine-independent statistics with histograms by default; **verify on the image** | `ANALYZE TABLE … PERSISTENT FOR ALL` | optimizer statistics | B |
+| `histograms` | off, on | **probably on**: plain `ANALYZE TABLE` in MariaDB ≥ 10.4 collects engine-independent statistics with histograms; **verify on the image** (item 9) | `ANALYZE TABLE … PERSISTENT FOR ALL` | optimizer statistics | B |
 
 #### ClickHouse / ClickHouseCluster — TPC-H, TPC-DS, SSB
 
@@ -264,14 +472,11 @@ index-type parameter.
 | `order_by` | key, date | current sort keys | `ORDER BY` of the large tables (e.g. lineitem by `l_shipdate` vs `l_orderkey`) | primary index pruning; the most important physical-design choice in ClickHouse | A |
 | `partition_by` | none, month, year | none | `PARTITION BY toYYYYMM(…)` | partition pruning; too many parts slow inserts | B |
 | `index_granularity` | 1024…16384 | 8192 | `SETTINGS index_granularity` | finer granules filter more, bigger index | B |
-| `codec` | LZ4, ZSTD(1), ZSTD(3), Delta+ZSTD | LZ4 | per column `CODEC(…)` | bytes read vs. CPU | B |
+| `codec` | lz4, zstd1, zstd3, delta_zstd (tokens, `sql` mapping) | LZ4 | per column `CODEC(…)` | bytes read vs. CPU | B |
 | `low_cardinality` | off, on | off | `LowCardinality(String)` for flags, modes, segments | dictionary encoding speeds group-by and filters | B |
 | `skip_indexes` | none, minmax, bloom | none | `INDEX … TYPE …` (as an Index variant) | skips granules for non-key filters | C |
-| `sharding_key` (Cluster) | orderkey, rand() | orderkey: orders and lineitem are **already** co-located (`Distributed(…, o_orderkey / l_orderkey)`) | `Distributed(…, key)` | with `distributed_product_mode = global` (template) joins are broadcast anyway; co-location only pays off with `local`, a session setting ([plan-session-parameters.md](plan-session-parameters.md)). Sweep = sharding key × product mode | B |
+| `sharding_key` (Cluster) | orderkey, rand | orderkey: orders and lineitem are **already** co-located | `Distributed(…, key)` | with `distributed_product_mode = global` (template) joins are broadcast anyway; co-location only pays off with `local`, a session setting ([plan-session-parameters.md](plan-session-parameters.md)) | B |
 | `dimensions` (Cluster) | replicated, distributed | distributed (TPC-H) / `-xdim` (SSB) | script variant | as SSB `-xdim`; extend to TPC-H/TPC-DS | A |
-
-`ReplicatedMergeTree` paths use `{shard}`/`{replica}` macros; safe filling
-leaves them untouched.
 
 #### MonetDB — TPC-H, TPC-DS, SSB, YCSB
 
@@ -282,125 +487,119 @@ version before adding index types; imprints changed between releases.
 #### Others
 
 - **CedarDB**: PostgreSQL syntax, own storage; no known DDL knobs worth a
-  sweep. None proposed.
+  sweep.
 - **Redis, Dragonfly**: no DDL; everything is a server flag → `--set`.
 - **SingleStore, OmniSci, Kinetica, Exasol, DB2, SAP HANA, SQL Server,
   Oracle, MemSQL, MariaDBCS**: script folders without a driver; out of scope.
-  Their orphan placeholders can stay until a driver uses them.
 
-## Further DDL options (all DBMS)
+### Further DDL options (all DBMS)
 
 - **Data types**: TPC-H `DECIMAL(15,2)` vs `DOUBLE PRECISION`. Citus uses
   DOUBLE, PostgreSQL DECIMAL(15,2): today a hidden difference between the
-  two. Key `numeric_type`, placeholder in the column definitions.
+  two. Key `numeric_type`.
 - **Extended statistics**: `CREATE STATISTICS` on correlated TPC-H columns
   (e.g. `l_shipdate`/`l_commitdate`/`l_receiptdate`); boolean key selecting
   an extra statistics script.
 - **Statistics target per column**: `ALTER TABLE … ALTER COLUMN … SET
-  STATISTICS n` (PostgreSQL, Citus); MySQL/MariaDB see `stats_sample_pages`
-  and histograms above.
+  STATISTICS n` (PostgreSQL, Citus).
 
-### More candidates (not yet prioritized against the above)
-
-Each with the hypothesis a sweep would test.
+### More candidates (not yet prioritized)
 
 | Key | DBMS | Benchmarks | Values | Hypothesis |
 |---|---|---|---|---|
 | `covering_indexes` | PostgreSQL/Citus (`INCLUDE`), YugabyteDB (`INCLUDE`), CockroachDB (`STORING`, YCSB only) | TPC-C (BenchBase), TPC-H | off, on | index-only scans save heap lookups; in distributed DBMS also a second remote read per row |
-| `string_type` | PostgreSQL, Citus, MySQL, ClickHouse (`FixedString`) | TPC-H, SSB | spec (`CHAR(n)`), `VARCHAR(n)`, `TEXT` | CHAR padding widens rows and costs in comparisons; spec types vs. what each DBMS prefers |
-| `column_order` | PostgreSQL, Citus | TPC-C (BenchBase), TPC-H | spec, aligned | PostgreSQL pads columns to alignment; reordering (8-byte first) shrinks rows (EDB does this for TPROC-C) |
-| `primary_keys` | MySQL, MariaDB (InnoDB) | TPC-H, TPC-DS | on, off | InnoDB clusters by PK; without one, a hidden row id: changes load time and join locality of lineitem/orders |
-| `btree_dedup` | PostgreSQL, Citus | TPC-H | on, off | `deduplicate_items` (default on) shrinks non-unique FK indexes; effect on size and scan time |
-| `pk_order` | YugabyteDB, CockroachDB | YCSB d | asc, desc | workload d reads the latest inserts; desc keeps them at the start of a range. Only with `-xio ordered` (hashed keys are not adjacent), on CockroachDB only with `pk_hash = none` |
+| `string_type` | PostgreSQL, Citus, MySQL, ClickHouse (`FixedString`) | TPC-H, SSB | spec (`CHAR(n)`), `VARCHAR(n)`, `TEXT` | CHAR padding widens rows and costs in comparisons |
+| `column_order` | PostgreSQL, Citus | TPC-C (BenchBase), TPC-H | spec, aligned | PostgreSQL pads columns to alignment; reordering shrinks rows (EDB does this for TPROC-C) |
+| `primary_keys` | MySQL, MariaDB (InnoDB) | TPC-H, TPC-DS | on, off | InnoDB clusters by PK; without one, a hidden row id: load time and join locality |
+| `btree_dedup` | PostgreSQL, Citus | TPC-H | on, off | `deduplicate_items` shrinks non-unique FK indexes |
+| `pk_order` | YugabyteDB, CockroachDB | YCSB d | asc, desc | workload d reads the latest inserts; only with `-xio ordered`, on CockroachDB only with `pk_hash = none` |
 | `distribution_key` | Citus | TPC-H | orderkey, custkey | orderkey: orders⋈lineitem local; custkey: orders⋈customer local, lineitem needs repartition |
 | `tpcc_item` | Citus | TPC-C (BenchBase) | reference, distributed | item is read-only and joined with stock: reference avoids remote reads |
-| `hash_partitions` | PostgreSQL | TPC-C (BenchBase) | 0, n (by `w_id`) | smaller indexes and less contention per partition; partition-wise plans |
-| `projections` | ClickHouse | TPC-H, SSB | none, aggregate | aggregate projections are used transparently by matching queries; cost: load time and size |
-| `wide_parts` | ClickHouse | TPC-H, TPC-DS, SSB | default, compact, wide (`min_bytes_for_wide_part`) | many small inserts from parallel loaders produce compact parts; affects merge load during and after loading |
-| `tablespace_index` | PostgreSQL | TPC-H, TPC-C (BenchBase) | same, separate volume | indexes on nvme, data on cephcsi (or vice versa); needs a second volume, see [plan-storage-class-sweep.md](plan-storage-class-sweep.md) |
+| `hash_partitions` | PostgreSQL | TPC-C (BenchBase) | 0, n (by `w_id`) | smaller indexes and less contention per partition |
+| `projections` | ClickHouse | TPC-H, SSB | none, aggregate | aggregate projections used transparently; cost: load time and size |
+| `wide_parts` | ClickHouse | TPC-H, TPC-DS, SSB | default, compact, wide | parallel loaders produce compact parts; merge load during and after loading |
+| `tablespace_index` | PostgreSQL | TPC-H, TPC-C (BenchBase) | same, separate volume | indexes on nvme, data on cephcsi (or vice versa), see [plan-storage-class-sweep.md](plan-storage-class-sweep.md) |
 
-### What each key needs beyond the scripts
-
-All keys need M1. Beyond that:
-
+What each key needs beyond a placeholder:
 - **Placeholder in existing scripts only**: `btree_dedup`, `wide_parts`,
-  `projections` (post-load script), extended statistics, statistics target,
-  `pk_order`, `tpcc_item` (today `create_reference_table('item')`),
-  `covering_indexes` as index-script variant.
-- **Scripts only, but results change**: `numeric_type` (rounding) and
-  `string_type` (`CHAR` trailing blanks) make DBMS-Benchmarker's result
-  comparison report differences between configurations; expected, needs a
-  note in the evaluation.
-- **Script variant, not one placeholder**: `distribution_key` (Citus PK must
-  contain the distribution column; lineitem has no custkey; customer
-  becomes distributed instead of reference), `primary_keys` (FKs of the
-  Constraints variant need the referenced keys: forbid the combination),
-  `hash_partitions` (partition loop = PL/pgSQL with braces: needs safe
-  filling).
-- **More than scripts**:
-  - `column_order`: loaders `\COPY` positionally (no column list, e.g.
-    images/ssb/loader_postgresql/loader.sh) → loader images need column
-    lists and a rebuild.
-  - `tablespace_index`: second volume in the deployment template and
-    storage configuration.
-  - YugabyteDB `colocated`: database creation before BenchBase connects.
-  - `tiflash_replica` (TiFlash nodes), MariaDB `engine=ColumnStore` (image
-    with the plugin).
-- **Not reachable by scripts**: HammerDB TPC-C (all DBMS) and BenchBase
-  TPC-C on CockroachDB. Only post-build `ALTER`s are possible, and e.g.
-  `fillfactor` set after loading affects only new pages.
+  `projections`, extended statistics, statistics target, `pk_order`,
+  `tpcc_item`, `covering_indexes` (index-script variant).
+- **Results change**: `numeric_type` (rounding), `string_type` (`CHAR`
+  trailing blanks): DBMS-Benchmarker reports result differences between
+  configurations; expected, needs a note in the evaluation.
+- **Script variant**: `distribution_key` (Citus PK must contain the
+  distribution column; lineitem has no custkey), `primary_keys` (forbid
+  with the Constraints variant), `hash_partitions` (PL/pgSQL loop with
+  braces).
+- **More than scripts**: `column_order` (loaders `\COPY` positionally →
+  column lists in the loader images), `tablespace_index` (second volume),
+  YugabyteDB `colocated` (database before BenchBase connects),
+  `tiflash_replica` (TiFlash nodes), MariaDB ColumnStore (image).
+- **Not reachable by scripts**: HammerDB TPC-C (all DBMS), BenchBase TPC-C
+  on CockroachDB; only post-build `ALTER`s, and e.g. `fillfactor` set after
+  loading affects only new pages.
 
 Companion, not DDL: BRIN and ClickHouse `order_by` only pay off if the
-loader inserts in that order; the load order would be a loader parameter.
-
-Not a placeholder: **index and constraint timing** (before vs after the
-load, PK present during the load). The statements stay the same, only the
-script order changes, so this is a choice of script list like the existing
-`Index`/`Constraints` keys in `cluster.config`.
+loader inserts in that order (a loader parameter). Not a placeholder: index
+and constraint timing (before/after the load) is a choice of script list
+like the existing `Index`/`Constraints` keys in `cluster.config`.
 
 ## Milestones
 
-- **M0** verify gap 2 on the cluster (Citus/CockroachDB YCSB without
-  `-nwr`/`-nws`), with `-ks no`.
-- **M1** mechanism (Python changes table): fill function, defaults file,
-  merge, validation in `process()`, files in the result folder, `-xddl`,
-  driver calls removed, unit tests (no-op for all current scripts without a
-  defaults file; with a file, filled output = today's script).
-- **M1b** sweep: `-xddl` comma lists as cells in `expand_resource_cells()`;
-  cluster check with a 2-value sweep and `-rst` (two PVCs, both loaded) and
-  a mixed `-dbms` run (unswept DBMS once).
-- **M2** wire existing placeholders, scripts only: defaults files for
-  ycsb/Citus, ycsb/CockroachDB, ycsb/TiDB, benchbase/tpcc/TiDB; Citus
-  `SET citus.shard_count = {num_worker_shards}` into TPC-H, SSB (both
-  folders), BenchBase TPC-C; MariaDB `{engine}` into the current
-  `initschema-tpch.sql`; delete the stale Citus and MariaDB templates and
-  their `SF*-template` keys if unused; rename or delete the CockroachDB
-  TPC-H placeholder.
+- **M0** superseded: 0 means "not given"; covered by check B.
+- **M1** DONE (uncommitted): mechanism, see [Python changes](#python-changes-as-implemented).
+- **M1b** DONE (uncommitted): sweep in `expand_resource_cells()`.
+- **M2** DONE (uncommitted): see [Folders with declarations](#folders-with-declarations-m2).
+- **M2b** decided, open (items 1–3): volume names without DDL values,
+  `ddl_*` volume labels, reuse semantics and reporting, token rules; then
+  check 6.
+- **M2c** decided (item 4), not implemented: short volume and worker
+  names, Dragonfly replica storage name; then delete the old bexhoma
+  volumes (list first, no experiment running).
 - **M3** priority A keys: PostgreSQL `fillfactor`; CockroachDB `pk_hash`;
   YugabyteDB `pk_sharding`, `num_tablets`; TiDB `clustered`,
   `pre_split_regions`; Citus/ClickHouse `dimensions`; ClickHouse `order_by`.
   Each with a docs test run.
-- **M3b** `systems[].ddl` in experiment.yml + catalog capability.
+- **M3b** `systems[].ddl` in experiment.yml + catalog capability
+  ([bexhoma/spec.py](../bexhoma/spec.py), tpch_catalog.py, ycsb_catalog.py
+  emit `-xddl` through a shared helper).
 - **M4** priority B keys, one DBMS at a time, each with a docs test run.
 - **M5** "More candidates" that need only placeholders or script variants;
-  candidates that need images, volumes or loader changes are a separate
-  decision.
+  those needing images, volumes or loader changes are a separate decision.
+
+## Cluster checks
+
+All with `-ks no`.
+
+- **A** (2026-10-29, code 1793273857): TPC-H `-dbms Citus MariaDB -xddl
+  num_worker_shards=8,32 -xddl engine=InnoDB,Aria -rst cephcsi -rss 10Gi`
+  SF1. **OK**: filled scripts in the result folder (`SET citus.shard_count =
+  8` / `32`, `ENGINE = InnoDB` / `Aria`, no braces left); check script shows
+  8 and 32 shards for orders/lineitem; row counts right; `ddl_*` per
+  connection in the summary; no result mismatch. MariaDB Q20/Q22 hit the
+  1200 s timeout under both engines (run without `-xii -xic -xis`, no
+  indexes; not a DDL effect). Volumes left on cephcsi: `mariadb-cephcsi`,
+  `citus-cephcsi` (+ workers), and `mariadb-ddl9703dc-cephcsi`,
+  `citus-ddle10c17-cephcsi` (+ workers), whose names decision B drops
+  (item 7).
+- **B** (2026-10-29, code 1793273894): YCSB `-dbms PostgreSQL Citus`
+  without `-nwr`/`-nws`: Citus gets 32 shards / RF 1, PostgreSQL unchanged.
+  Running.
+- **After M2b** (item 6): reuse of a labelled volume with the same values,
+  with other values (test failed, volume's values used) and without any
+  values (taken from the volume); reuse of an unlabelled volume (assumed,
+  test skipped); `-rst` with a DDL sweep refused.
 
 ## Open questions
 
-- Summaries (checked 2026-10-29): the "Connections" section
-  ([experiments/base.py:3329-3344](../bexhoma/experiments/base.py#L3329-L3344))
-  prints `resources_total`, `load_durability` and `eval_parameters` per
-  connection, but **not** `ddl_parameters`. Proposal (no evaluator change):
-  the cell expansion also writes the effective DDL values into the clone's
-  `eval_parameters`, as Citus already does with `BEXHOMA_SHARDS`; then they
-  appear per connection. The result tables (loading, throughput, latency)
-  have one row per connection name (`Citus-1`, `Citus-2`) and no parameter
-  columns, for resource cells too; a column per swept key there would be an
-  evaluator change in all benchmark types. Defer; if needed, one generic
-  "cell columns" step for resource and DDL cells together.
-- Rename `expand_resource_cells()` to `expand_cells()` once it covers both?
-  Cosmetic, touches only experiments/base.py and its callers.
+- Result tables (loading, throughput, latency) have one row per connection
+  name (`Citus-1`, `Citus-2`) and no parameter columns, for resource cells
+  too. The values are in the summary's connection section (`ddl_<key>`
+  evaluation parameters) and, after M2b, in `ddl_parameters` per
+  connection. A column per swept key would be an evaluator change in all
+  benchmark types; if needed, one generic "cell columns" step for resource
+  and DDL cells together (item 10).
+- Rename `expand_resource_cells()` to `expand_cells()`? Cosmetic.
 
 ## Sources
 
@@ -420,3 +619,4 @@ script order changes, so this is a choice of script list like the existing
 - PostgreSQL: https://www.postgresql.org/about/featurematrix/detail/lz4-compression-for-toast-tables,
   https://www.postgresql.org/about/news/postgresql-18-released-3142/
 - HammerDB/fillfactor context: https://www.enterprisedb.com/blog/postgresql-tpc-c-benchmarks-postgresql-12-vs-postgresql-13-performance
+- Kubernetes label syntax: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set

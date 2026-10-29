@@ -39,6 +39,7 @@ from bexhoma import missing_metrics
 from bexhoma.monitoring_math import (counter_total, job_lifetime, min_measurable_window, read_connections,
                                      scoped_job_connections, DEFAULT_SCRAPE_INTERVAL_SECONDS)
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes, check_tenant_loading_pods
+from bexhoma import ddl_parameters
 from bexhoma.load_durability import DEFAULT_LEVEL as LOAD_DURABILITY_DEFAULT
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
@@ -230,6 +231,8 @@ class ExperimentBase():
         self.appname = self.cluster.appname                             # app name for namespacing cluster - default is bexhoma
         self.resources = {}                                             # dict of resources infos that will be attached to SUT (like requested CPUs)
         self.ddl_parameters = {}                                        # DDL schema parameter for init scripts (like index type or sharding strategy)
+        self.ddl_assignments = {}                                       # DDL parameter values per key from -xddl/-nwr/-nws, a list of several sweeps the key
+        self.ddl_keys_given = []                                        # keys given by -xddl: at least one configuration must declare each
         self.eval_parameters = {}                                       # parameters that will be handed over to dbmsbenchmarker
         self.storage = {}                                               # parameters for persistent storage (like type and size)
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
@@ -292,6 +295,7 @@ class ExperimentBase():
         Dispatches to the appropriate workflow branch (start, load, summary,
         or the default full benchmark run) and prints timing information.
         """
+        self.resolve_ddl_parameters()
         self.expand_resource_cells()
         # should results be tested for validity?
         test_result = self.args.test_result
@@ -695,6 +699,17 @@ class ExperimentBase():
         num_worker = int(args.num_worker)
         num_worker_replicas = int(args.num_worker_replicas)
         num_worker_shards = int(args.num_worker_shards)
+        # DDL parameters: -nwr/-nws when set, -xddl on top; filled per configuration
+        # by resolve_ddl_parameters() for the keys its script folder declares
+        xddl = ddl_parameters.parse_assignments(getattr(args, 'ddl_parameters', []))
+        self.ddl_keys_given = list(xddl)
+        self.ddl_assignments = {
+            **{key: [str(value)] for key, value in (('num_worker_replicas', num_worker_replicas),
+                                                    ('num_worker_shards', num_worker_shards)) if value > 0},
+            **xddl}
+        if xddl:
+            self.workload['info'] = self.workload['info']+"\nDDL parameters: {}.".format(
+                ", ".join("{}={}".format(key, ",".join(values)) for key, values in xddl.items()))
         self.resetscript_active = args.activate_reset
         # entry scripts with their own parser may not know -xld
         self.load_durability = getattr(args, 'load_durability', LOAD_DURABILITY_DEFAULT)
@@ -1180,15 +1195,61 @@ class ExperimentBase():
         """
         self.configurations.append(configuration)
 
+    def resolve_ddl_parameters(self) -> None:
+        """
+        Set every configuration's DDL parameters from its script folder's declarations.
+
+        A folder declares its parameters in ``ddl-parameters.config``
+        (:mod:`bexhoma.ddl_parameters`). Each configuration gets the defaults,
+        overwritten by the single values of ``-xddl``/``-nwr``/``-nws`` for
+        the keys it declares; swept keys (comma lists) are set per clone by
+        :meth:`expand_resource_cells`. Values that differ from the defaults
+        name the volume (``ddl_storage_suffix``) and are added to the
+        evaluation parameters as ``ddl_<key>``. A folder without declarations
+        gets no DDL parameters, so its scripts are uploaded unchanged.
+        Called by :meth:`process` before anything is started; a second call
+        does nothing.
+
+        :raises ValueError: For a value a folder does not allow, or an
+            ``-xddl`` key that no configuration declares.
+        """
+        if getattr(self, '_ddl_parameters_resolved', False):
+            return
+        self._ddl_parameters_resolved = True
+        declared = set()
+        for config in self.configurations:
+            declarations = ddl_parameters.load_declarations(
+                self.cluster.experiments_configfolder, config.path_experiment_docker)
+            config.ddl_declarations = declarations
+            given = {key: values for key, values in self.ddl_assignments.items() if key in declarations}
+            declared |= set(given)
+            ddl_parameters.validate(declarations, given, config.configuration)
+            if not declarations:
+                config.ddl_parameters = {}
+                continue
+            single = {key: values[0] for key, values in given.items() if len(values) == 1}
+            config.ddl_parameters = ddl_parameters.resolve(declarations, {**config.ddl_parameters, **single})
+            config.ddl_storage_suffix = ddl_parameters.storage_suffix(declarations, config.ddl_parameters)
+            config.set_eval_parameters(**{f'ddl_{key}': value for key, value in single.items()
+                                          if key in self.ddl_keys_given})
+        unknown = [key for key in self.ddl_keys_given if key not in declared]
+        if unknown:
+            raise ValueError(
+                f"-xddl {', '.join(unknown)}: no DBMS of this experiment declares it in "
+                f"{ddl_parameters.FILENAME} of its script folder")
+
     def expand_resource_cells(self) -> None:
         """
-        Turn every configuration into one configuration per resource cell.
+        Turn every configuration into one configuration per resource cell and DDL combination.
 
         Entry scripts build each DBMS once; when ``-rc/-lc/-rr/-lr/-rst``
         carry comma lists (see :func:`bexhoma.cli_args.resource_cells`), this
         clones each configuration per cell, so every DBMS of every workload is
-        swept the same way. Each cell gets its own identity, so cells never
-        share pods or a PVC:
+        swept the same way. ``-xddl KEY=V1,V2`` sweeps a DDL parameter: a
+        configuration whose folder declares ``KEY`` is cloned per value (per
+        combination for several keys), times the resource cells; the values
+        name its volume (``ddl_storage_suffix``). Each cell gets its own
+        identity, so cells never share pods or a PVC:
 
         * name ``{docker}-{cell}`` (``PostgreSQL-1``, ``PostgreSQL-2``, ...)
           when the DBMS has one configuration, ``{configuration}-{cell}`` when
@@ -1204,7 +1265,8 @@ class ExperimentBase():
         a second call does nothing.
         """
         cells = self.resource_cells
-        if len(cells) <= 1 or getattr(self, '_resource_cells_expanded', False):
+        swept = {key: values for key, values in getattr(self, 'ddl_assignments', {}).items() if len(values) > 1}
+        if (len(cells) <= 1 and not swept) or getattr(self, '_resource_cells_expanded', False):
             return
         self._resource_cells_expanded = True
 
@@ -1215,24 +1277,40 @@ class ExperimentBase():
         per_docker = Counter(config.docker for config in originals if sweeps(config))
         self.configurations = []
         for config in originals:
+            declarations = getattr(config, 'ddl_declarations', {})
+            # DDL cells: the combinations of the swept keys this folder declares
+            combos = ddl_parameters.combinations({key: values for key, values in swept.items() if key in declarations})
+            if len(cells) * len(combos) <= 1:
+                self.configurations.append(config)
+                continue
             if not sweeps(config):
-                print("{:30s}: SUT is not managed by bexhoma, not swept across resources".format(config.configuration))
+                print("{:30s}: SUT is not managed by bexhoma, not swept across resources or DDL parameters".format(config.configuration))
                 self.configurations.append(config)
                 continue
             base_name = config.docker if per_docker[config.docker] == 1 else config.configuration
             base_storage = config.storage.get('storageConfiguration') or config.configuration
             # clone the untouched original before the first cell changes it;
             # the experiment (and the cluster behind it) stays shared
-            clones = [config] + [copy.deepcopy(config, memo={id(self): self}) for _ in cells[1:]]
-            for cell_number, (cell, clone) in enumerate(zip(cells, clones), start=1):
+            pairs = [(resource_number, cell, combo)
+                     for resource_number, cell in enumerate(cells, start=1) for combo in combos]
+            clones = [config] + [copy.deepcopy(config, memo={id(self): self}) for _ in pairs[1:]]
+            for cell_number, ((resource_number, cell, combo), clone) in enumerate(zip(pairs, clones), start=1):
                 clone.configuration = f'{base_name}-{cell_number}'
                 clone.alias = f'{base_name}@{cell_number}'
-                clone.set_resources(
-                    requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
-                    limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
-                    nodes_worker = cell.get('worker_nodes'),
-                    )
-                set_cell_storage(clone, f'{base_storage}-{cell_number}', cell)
+                if len(cells) > 1:
+                    clone.set_resources(
+                        requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
+                        limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
+                        nodes_worker = cell.get('worker_nodes'),
+                        )
+                    set_cell_storage(clone, f'{base_storage}-{resource_number}', cell)
+                if combo:
+                    # the DDL values tell the volumes apart (ddl_storage_suffix)
+                    clone.ddl_parameters = {**clone.ddl_parameters, **combo}
+                    clone.ddl_storage_suffix = ddl_parameters.storage_suffix(declarations, clone.ddl_parameters)
+                    clone.set_eval_parameters(**{f'ddl_{key}': value for key, value in combo.items()})
+                    print("{:30s}: DDL parameters {}".format(
+                        clone.configuration, ", ".join(f"{key}={value}" for key, value in combo.items())))
                 self.configurations.append(clone)
 
     def add_benchmark(self, benchmark) -> None:

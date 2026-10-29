@@ -49,9 +49,11 @@ one SUT and one load per value.
 - **Per-round hook**: `_submit_round` runs `exec_reset_script` on the SUT
   before each entry is submitted, only with `-ar`
   ([experiments/base.py:2140-2184](../bexhoma/experiments/base.py#L2140-L2184)).
-  Reset scripts are uploaded **once at load time** (`prepare_init_dbms`),
-  so they cannot carry per-round values. Scripts named for workers are
-  already run on all workers (`split_worker_scripts`, e.g. Citus).
+  `exec_reset_script` uploads the scripts through `prepare_init_dbms`
+  before each round (corrected 2026-10-29), now filled with the DDL
+  parameters; per-round values would need their own dict there. Scripts
+  named for workers are already run on all workers (`split_worker_scripts`,
+  e.g. Citus).
 - **`init_SQL`** in the docker template is run by DBMS-Benchmarker on every
   connection it opens (e.g. MariaDB `optimizer_switch`, cluster.config):
   per-session, but only for TPC-H, TPC-DS and SSB.
