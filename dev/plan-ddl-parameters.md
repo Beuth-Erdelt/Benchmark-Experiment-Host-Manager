@@ -1,10 +1,11 @@
 # Plan: DDL parameters (placeholders in init scripts)
 
-Status (2026-10-29): **M1, M1b, M2 committed (04a57300)**; cluster checks A
-and B OK. **M2b, M2c and the data-defining parameters (items 1–4b)
-implemented, uncommitted**, unit tests OK (828). Rollout open: reinstall,
-delete the old bexhoma volumes (list first, no experiment running), cluster
-check of the reuse cases. Then M3–M5. Non-DDL
+Status (2026-10-30): **M1, M1b, M2 committed (04a57300); M2b, M2c and the
+data-defining parameters committed (8616163b); M3 and `requires` committed
+(b730977a); test `Init scripts without errors` committed (21a877b7)**, the
+init script fixes it found committed afterwards. Rollout done (reinstall,
+115 old volumes deleted), cluster checks A–R OK. Open: `dimensions` (item 14),
+M3b, M4, M5, research (item 9). Non-DDL
 settings (planner knobs, isolation level, client options):
 [plan-session-parameters.md](plan-session-parameters.md) (parked; today:
 one experiment per value with `--set` on the same `-rst` PVC).
@@ -13,25 +14,46 @@ one experiment per value with `--set` on the same `-rst` PVC).
 
 | # | Item | Kind | Section |
 |---|---|---|---|
-| 1 | Decision B: no `-ddl<hash>` volume suffix, DDL sweeps with `-rst` refused, experiments/README.md fixed | **done, uncommitted** | [Decisions](#decisions-2026-10-29) |
-| 2 | DDL values as volume labels, reuse semantics (volume wins, report), summary section "Data Parameters of Reused Volumes", test `Data parameters as requested`, `volume_check` per connection, validity rule in report_writer.py | **done, uncommitted** | [Decisions](#decisions-2026-10-29) |
-| 3 | Token and declaration rules (label-compatible tokens, `'type': 'int'`, no bool/float, checks in `load_declarations()`) | **done, uncommitted** | [Decisions](#decisions-2026-10-29) |
-| 4 | Short names: abbreviations in both cluster configs (by storage name), workers `bx-<w|component>`, `limit_name()` guard, Redis/Dragonfly special case removed, `dfr` | **done, uncommitted**; old volumes to delete at rollout | [Short names](#short-volume-and-worker-names-decided-2026-10-29) |
-| 4b | `shape_num_worker`/`shape_state` labels (refused on difference), `load_script`, `load_indexing`, `load_insert_order` labels (reported like DDL) | **done, uncommitted** | [Beyond DDL](#data-defining-parameters-beyond-ddl-proposal-2026-10-29-accepted-in-principle) |
-| 5 | Cluster check B (YCSB defaults without `-nwr`/`-nws`) | **OK** (32 shards, RF 1) | [Cluster checks](#cluster-checks) |
-| 6 | Cluster check after items 1–3: reuse of a labelled volume (same values, other values, nothing given) and of an unlabelled one | after 1–3 | [Cluster checks](#cluster-checks) |
-| 7 | Volumes of check A on cephcsi: two have `-ddl<hash>` names, orphaned once B is implemented | cleanup, ask first | [Cluster checks](#cluster-checks) |
-| 5b | Rollout | **done**: reinstalled 15:46, 115 old volumes deleted | – |
-| 5c | Cluster checks of reuse cases C–G (MariaDB labels, reuse, difference, Citus worker count, sweep with `-rst`) | **OK** | [Cluster checks](#cluster-checks) |
-| 8 | M3 priority A keys: implemented except `dimensions`, cluster checks H–K running; M3b experiment.yml, M4, M5 later | in progress | [Milestones](#milestones) |
-| 9 | Verify: Citus `shard_replication_factor` > 1 in our version; MariaDB histograms by default; CockroachDB `bucket_count` default in v24.2.4 | research | [Candidates](#candidates-per-dbms) |
-| 10 | Result tables: a column per swept key (also for resource cells); rename `expand_resource_cells()` → `expand_cells()` | rejected (user, 2026-10-29): the values stay in `connections.md` and the setup section | [Open questions](#open-questions) |
-| 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
-| 12 | Commit M3 + `requires` (message proposed, waits for go-ahead) | – | – |
-| 13 | Test `Init scripts without errors`: script errors during loading are only in stderr logs today (found in check J). Implemented 2026-10-29: summary judges the loading logs (SUT + worker pods) with `script_failed`; PVC labels `errors_<phase>` carry the count to a reuse (no label: skipped); listed scripts not in the folder are skipped for loading and reset (missing SQL scripts in `loading_skipped`, info only; missing shell scripts silent as before; no empty placeholder files); MariaDB `checkschema` for YCSB, BenchBase TPC-C, HammerDB TPC-C added. Re-evaluation of 433 old results: 312 passed, 75 failed. Fixed 2026-10-29: CockroachDB `DO $$` in `checkschema-ycsb.sql` (v24.2.4 has no DO, PL/pgSQL needs a license) → wait loop in `waitreplicas-ycsb.sh` (YCSB Checks list, before `restoredurability.sql`; check 1793311326 OK), MonetDB TPC-DS `initconstraints` one subcommand per ALTER (check 1793311944 OK); Citus TPC-H `initconstraints` was already fixed in f17ce3a0. Open: optional refusal of post-load steps a DBMS has no script for (ClickHouse SSB); separate: Python client calls (`get_pods` etc.) do not wait for a cluster outage (`MaxRetryError`), crashed check P | done; cluster checks L (1793306726), M (1793307081), N (1793301798), O (1793302352) passed, P (1793303111) failed on CockroachDB `checkschema` as expected | [Milestones](#milestones) |
 | 14 | `dimensions` for Citus and ClickHouseCluster TPC-H: a DDL key that selects a script folder variant | design open | [Milestones](#milestones) |
+| M3b | `systems[].ddl` in experiment.yml + catalog | open | [Milestones](#milestones) |
+| M4, M5 | Priority B keys, more candidates | open | [Milestones](#milestones) |
+| 9 | Verify: Citus `shard_replication_factor` > 1 in our version; MariaDB histograms by default; CockroachDB `bucket_count` default in v24.2.4 | research | [Candidates](#candidates-per-dbms) |
+| 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
+| 13b | Optional: refuse a post-load step a DBMS has no script for (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for CedarDB, DatabaseService, PgDuckDB, `checkschema-ycsb` for CedarDB, DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |
+| – | Separate: Python client calls (`get_pods` etc. in clusters.py) do not wait for a cluster outage (`MaxRetryError`), crashed check P | open, outside this plan | – |
+| – | Volumes with the old names (`bexhoma-storage-citus-nvme-tpch-*`, `bexhoma-storage-monetdb-nvme-tpch-*`, `bxw-bexhoma-worker-…`) created 2026-10-29 by runs with an older bexhoma from another machine; the new version does not find them | that machine needs the new version | [Short names](#short-volume-and-worker-names-decided-2026-10-29) |
 
-## Mechanism (implemented, uncommitted)
+Done (details in the sections): items 1–4b (decision B, volume labels and
+reuse reporting, token rules, short names, shape and load labels), rollout,
+cluster checks A–R, M3 + `requires`, item 13 (test `Init scripts without
+errors` and the script fixes it found). Rejected: item 10 (summary columns
+per swept key).
+
+## Init scripts without errors (item 13)
+
+Implemented 2026-10-29 (21a877b7): the summary judges the loading logs (SUT
+and worker pods) with `script_failed`; PVC labels `errors_<phase>` carry the
+count to a reuse (no label: skipped); listed scripts not in the folder are
+skipped for loading and reset (missing SQL scripts in `loading_skipped`,
+info section "Init Scripts Not in Folder"; missing shell scripts silent);
+MariaDB `checkschema` for YCSB, BenchBase TPC-C, HammerDB TPC-C. Re-evaluation
+of 433 old results: 312 passed, 75 failed. Cluster checks L (1793306726), M
+(1793307081), N (1793301798), O (1793302352) passed, P (1793303111) failed on
+CockroachDB `checkschema` as expected.
+
+Fixed 2026-10-30: CockroachDB `DO $$` in `checkschema-ycsb.sql` (v24.2.4 has
+no DO, PL/pgSQL needs an enterprise license) → wait loop in
+`waitreplicas-ycsb.sh` (YCSB Checks list before `restoredurability.sql`;
+check Q 1793311326 OK); MonetDB TPC-DS `initconstraints` one subcommand per
+ALTER TABLE (check R 1793311944 OK). Citus TPC-H `initconstraints` was
+already fixed in f17ce3a0.
+
+Reporting of missing scripts, open: A) report `.sql` and `.sh` alike and move
+`save-snapshot.sh` (Redis, Dragonfly) and `waitreplicas-ycsb.sh`
+(CockroachDB) out of the shared YCSB list; B) record every skip, no summary
+section; C) mark optional list entries. Recommended: B.
+
+## Mechanism (implemented)
 
 Generic, no per-driver code: the drivers only lost lines.
 
@@ -554,16 +576,15 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
 ## Milestones
 
 - **M0** superseded: 0 means "not given"; covered by check B.
-- **M1** DONE (uncommitted): mechanism, see [Python changes](#python-changes-as-implemented).
-- **M1b** DONE (uncommitted): sweep in `expand_resource_cells()`.
-- **M2** DONE (uncommitted): see [Folders with declarations](#folders-with-declarations-m2).
-- **M2b** decided, open (items 1–3): volume names without DDL values,
-  `ddl_*` volume labels, reuse semantics and reporting, token rules; then
-  check 6.
-- **M2c** decided (item 4), not implemented: short volume and worker
-  names, Dragonfly replica storage name; then delete the old bexhoma
-  volumes (list first, no experiment running).
-- **M3** priority A keys. **Implemented 2026-10-29, uncommitted** (830
+- **M1** DONE (04a57300): mechanism, see [Python changes](#python-changes-as-implemented).
+- **M1b** DONE (04a57300): sweep in `expand_resource_cells()`.
+- **M2** DONE (04a57300): see [Folders with declarations](#folders-with-declarations-m2).
+- **M2b** DONE (8616163b): volume names without DDL values,
+  `ddl_*` volume labels, reuse semantics and reporting, token rules;
+  checks C–G.
+- **M2c** DONE (8616163b): short volume and worker names, Dragonfly
+  replica storage name; old bexhoma volumes deleted at rollout.
+- **M3** priority A keys. **DONE (b730977a)** except `dimensions` (830
   unit tests OK, defaults reproduce the old scripts):
   - ycsb/PostgreSQL `fillfactor` (int, default 100);
   - ycsb/CockroachDB `pk_hash` (hash | none);
