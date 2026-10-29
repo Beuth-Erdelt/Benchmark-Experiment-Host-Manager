@@ -12,6 +12,10 @@
 
 SELECT * FROM master_get_active_worker_nodes();
 
+-- Since Citus 11.1 the columnar access method lives in the separate citus_columnar
+-- extension; without it, CREATE TABLE ... USING COLUMNAR fails.
+CREATE EXTENSION IF NOT EXISTS citus_columnar;
+
 
 CREATE TABLE nation (
     n_nationkey  INTEGER      NOT NULL,
