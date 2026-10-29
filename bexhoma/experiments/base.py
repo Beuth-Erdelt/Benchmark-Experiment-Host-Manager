@@ -1821,6 +1821,101 @@ class ExperimentBase():
             print("\n### Inherited Loading")
             print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
         self._show_volume_checks(connections_sorted)
+        self._show_init_script_checks(connections_sorted)
+
+    def _init_script_errors(self, configurations: list) -> dict:
+        """
+        Loading scripts with errors, judged from their logs in the result folder.
+
+        Covers the scripts run in the SUT pod (``<app>-loading-<configuration>-*``)
+        and on worker pods (``<app>-<phase>-<configuration>-*``, phases schema,
+        index, tenants); see :func:`bexhoma.configurations.loading.script_failed`.
+        Scripts not in the folder are not run since loading skips them
+        (``loading_skipped``); in older results their log says "No such file
+        or directory" and fails.
+
+        :param configurations: Configuration names of the experiment.
+        :return: Failed log names (without app and phase prefix) per configuration.
+        :rtype: dict[str, list[str]]
+        """
+        from bexhoma.configurations.loading import script_failed
+        folder = getattr(self, 'path', '')
+        pattern = re.compile(r'^{}-(loading|schema|index|tenants)-(.+)\.(stdout|stderr)\.log$'.format(
+            re.escape(getattr(self, 'appname', 'bexhoma').lower())))
+        # log names are lower case; longest name first: 'postgresql-1-0' before 'postgresql-1'
+        original = {c.lower(): c for c in configurations}
+        names = sorted(original, key=len, reverse=True)
+        outputs = {}
+        for filename in sorted(os.listdir(folder)) if folder and os.path.isdir(folder) else []:
+            match = pattern.match(filename)
+            if not match:
+                continue
+            configuration = next((name for name in names if match.group(2).startswith(name + '-')), None)
+            if configuration is None:
+                continue
+            with open(os.path.join(folder, filename), encoding='utf-8', errors='replace') as file:
+                outputs.setdefault((configuration, match.group(2)), {})[match.group(3)] = file.read()
+        errors = {}
+        for (configuration, script), output in outputs.items():
+            if script_failed(output.get('stdout', ''), output.get('stderr', '')):
+                errors.setdefault(original[configuration], []).append(script[len(configuration) + 1:])
+        return {configuration: sorted(scripts) for configuration, scripts in errors.items()}
+
+    def _show_init_script_checks(self, connections_sorted: list) -> None:
+        """
+        Print the loading scripts that failed, and record the test ``Init scripts without errors``.
+
+        Scripts of this experiment are judged from their logs
+        (:meth:`_init_script_errors`); a reused volume brings its count of failed
+        scripts per phase (PVC labels ``errors_<phase>``, in ``volume_check``).
+        A reused volume without that count (loaded before it existed) makes
+        the test skipped, unless something failed. Records nothing when no
+        loading script ran and no volume was reused.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        configurations = {c.get('configuration', c['name']) for c in connections_sorted}
+        errors = self._init_script_errors(list(configurations))
+        volume_errors, unknown = {}, set()
+        for c in connections_sorted:
+            if not c.get('storage_reused'):
+                continue
+            configuration = c.get('configuration', c['name'])
+            loading_errors = (c.get('volume_check') or {}).get('loading_errors')
+            if loading_errors is None:
+                unknown.add(configuration)
+            elif loading_errors:
+                volume_errors.setdefault(configuration, loading_errors)
+        folder = getattr(self, 'path', '')
+        ran = any(re.match(r'^{}-loading-.+\.log$'.format(re.escape(getattr(self, 'appname', 'bexhoma').lower())), f)
+                  for f in (os.listdir(folder) if folder and os.path.isdir(folder) else []))
+        reused = any(c.get('storage_reused') for c in connections_sorted)
+        skipped = {}
+        for c in connections_sorted:
+            if c.get('loading_skipped'):
+                skipped.setdefault(c.get('configuration', c['name']), c['loading_skipped'])
+        if skipped:
+            print("\n### Init Scripts Not in Folder")
+            for configuration, scripts in sorted(skipped.items()):
+                print("* {}: skipped {}".format(configuration, ", ".join(scripts)))
+        if not ran and not reused:
+            return
+        if errors or volume_errors:
+            print("\n### Init Scripts with Errors")
+            for configuration, scripts in sorted(errors.items()):
+                print("* {}: {}".format(configuration, ", ".join(scripts)))
+            for configuration, phases in sorted(volume_errors.items()):
+                print("* {}: reused volume was loaded with failed scripts: {}".format(
+                    configuration, ", ".join(f"{phase} {count}" for phase, count in phases.items())))
+            failed = ["{}: {}".format(configuration, ", ".join(scripts)) for configuration, scripts in sorted(errors.items())]
+            failed += ["{}: volume {}".format(configuration, ", ".join(f"{phase} {count}" for phase, count in phases.items()))
+                       for configuration, phases in sorted(volume_errors.items())]
+            self._record_test(False, "Init scripts without errors (failed: {})".format("; ".join(failed)))
+        elif unknown:
+            self._record_skipped_test("Init scripts without errors (unknown, volume loaded before error counts: {})".format(
+                ", ".join(sorted(unknown))))
+        else:
+            self._record_test(True, "Init scripts without errors")
 
     def _show_volume_checks(self, connections_sorted: list) -> None:
         """

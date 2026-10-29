@@ -355,7 +355,8 @@ class LoadingProvenanceTest(unittest.TestCase):
             {'name': 'tidb-1-1-1-1', 'configuration': 'TiDB-1', 'storage_reused': True},
             {'name': 'mysql-1-1-1-1', 'configuration': 'MySQL-1', 'storage_reused': False})
         self.assertEqual(results, [
-            (None, 'Loading measured in this experiment (storage reused, loading times inherited: TiDB-1)')])
+            (None, 'Loading measured in this experiment (storage reused, loading times inherited: TiDB-1)'),
+            (None, 'Init scripts without errors (unknown, volume loaded before error counts: TiDB-1)')])
 
     def test_measured_loading_passes(self):
         self.assertEqual(self.results({'name': 'tidb-1-1-1-1', 'storage_reused': False}),

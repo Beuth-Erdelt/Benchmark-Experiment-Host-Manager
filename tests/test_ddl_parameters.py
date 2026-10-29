@@ -328,6 +328,87 @@ class SummaryTest(unittest.TestCase):
         self.assertIsNone(passed)
         self.assertIn('C-0 engine, C-0 script', label)
 
+    def test_volume_loading_errors_are_kept(self):
+        config = VolumeParametersTest().config({'engine': 'InnoDB'})
+        with mock.patch('builtins.print'):
+            check = config.apply_volume_parameters({'ddl_engine': 'InnoDB', 'errors_schema': '0', 'errors_index': '2'})
+        self.assertEqual(check['loading_errors'], {'index': 2})
+        with mock.patch('builtins.print'):
+            check = config.apply_volume_parameters({'ddl_engine': 'InnoDB'})
+        self.assertNotIn('loading_errors', check)
+
+
+class InitScriptsTest(unittest.TestCase):
+    """The test ``Init scripts without errors`` from the loading logs and reused volumes."""
+
+    def results(self, logs, connections=None):
+        with tempfile.TemporaryDirectory() as folder:
+            for name, text in logs.items():
+                with open(os.path.join(folder, name), 'w', encoding='utf-8') as file:
+                    file.write(text)
+            experiment = ExperimentBase.__new__(ExperimentBase)
+            experiment._test_results = []
+            experiment.path = folder
+            experiment.appname = 'bexhoma'
+            connections = connections or [{'name': 'c1', 'configuration': 'PostgreSQL-1'},
+                                          {'name': 'c10', 'configuration': 'PostgreSQL-10'}]
+            with mock.patch('builtins.print'):
+                experiment._show_init_script_checks(connections)
+            return experiment._test_results
+
+    def test_clean_logs_pass(self):
+        logs = {'bexhoma-loading-postgresql-1-initschema-tpch-postgres.sql.log': 'CREATE TABLE ...',
+                'bexhoma-loading-postgresql-1-initindexes-tpch-postgres.sql.stderr.log': 'NOTICE:  table exists\n'}
+        self.assertEqual(self.results(logs), [(True, 'Init scripts without errors')])
+
+    def test_errors_fail_per_configuration(self):
+        logs = {'bexhoma-loading-postgresql-10-checkschema-tpch-postgres.sql.stderr.log': 'ERROR:  relation "x" does not exist\n',
+                'bexhoma-loading-postgresql-1-initschema-tpch-postgres.sql.stderr.log':
+                    'bash: line 1: /tmp/initschema-tpch.sql: No such file or directory\ncommand terminated with exit code 1\n',
+                'bexhoma-index-postgresql-1-initworkers-pod-0.sh.stderr.log': 'FATAL: no\n'}
+        [(passed, label)] = self.results(logs)
+        self.assertFalse(passed)
+        self.assertIn('PostgreSQL-1: initschema-tpch-postgres.sql, initworkers-pod-0.sh', label)
+        self.assertIn('PostgreSQL-10: checkschema-tpch-postgres.sql', label)
+
+    def test_redis_error_replies_on_stdout(self):
+        logs = {'bexhoma-loading-postgresql-1-initschema-ycsb-ycsb.sql.stdout.log': '(error) ERR unknown command\n'}
+        [(passed, _)] = self.results(logs)
+        self.assertFalse(passed)
+
+    def test_skipped_scripts_are_listed_not_failed(self):
+        logs = {'bexhoma-loading-postgresql-1-initschema-tpch-postgres.sql.log': 'CREATE TABLE ...'}
+        connections = [{'name': 'c1', 'configuration': 'PostgreSQL-1', 'loading_skipped': ['checkschema-tpch.sql']}]
+        with mock.patch('builtins.print') as printed:
+            with tempfile.TemporaryDirectory() as folder:
+                for name, text in logs.items():
+                    with open(os.path.join(folder, name), 'w', encoding='utf-8') as file:
+                        file.write(text)
+                experiment = ExperimentBase.__new__(ExperimentBase)
+                experiment._test_results, experiment.path, experiment.appname = [], folder, 'bexhoma'
+                experiment._show_init_script_checks(connections)
+        self.assertEqual(experiment._test_results, [(True, 'Init scripts without errors')])
+        self.assertIn(mock.call('* PostgreSQL-1: skipped checkschema-tpch.sql'), printed.call_args_list)
+
+    def test_nothing_loaded_records_nothing(self):
+        self.assertEqual(self.results({}), [])
+
+    def test_reused_volume_with_errors_fails(self):
+        connections = [{'name': 'c1', 'configuration': 'PostgreSQL-1', 'storage_reused': True,
+                        'volume_check': {'loading_errors': {'index': 2}}}]
+        [(passed, label)] = self.results({}, connections)
+        self.assertFalse(passed)
+        self.assertIn('PostgreSQL-1: volume index 2', label)
+
+    def test_reused_volume_clean_or_unknown(self):
+        clean = [{'name': 'c1', 'configuration': 'PostgreSQL-1', 'storage_reused': True,
+                  'volume_check': {'loading_errors': {}}}]
+        self.assertEqual(self.results({}, clean), [(True, 'Init scripts without errors')])
+        unknown = [{'name': 'c1', 'configuration': 'PostgreSQL-1', 'storage_reused': True, 'volume_check': {}}]
+        [(passed, label)] = self.results({}, unknown)
+        self.assertIsNone(passed)
+        self.assertIn('PostgreSQL-1', label)
+
 
 class RepositoryDeclarationsTest(unittest.TestCase):
     """The declaration files of ``experiments/`` and the scripts that use them."""

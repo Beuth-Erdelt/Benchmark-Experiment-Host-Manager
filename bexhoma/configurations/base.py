@@ -1477,6 +1477,16 @@ class SutConfiguration:
         load = self.load_parameters()
         _, load_report = ddl_parameters.compare_with_volume(load, set(load), labels, load, prefix='load_')
         self.volume_check = {'ddl': ddl_report, 'ddl_requested': requested, 'load': load_report}
+        # failed loading scripts per phase, counted when the volume was loaded (load_data_asynch);
+        # no errors_ label at all: loaded before the count existed, unknown
+        counts = {key[len('errors_'):]: value for key, value in labels.items() if key.startswith('errors_')}
+        if counts:
+            loading_errors = {phase: int(value) for phase, value in counts.items()
+                              if str(value).isdigit() and int(value) > 0}
+            self.volume_check['loading_errors'] = loading_errors
+        if counts and loading_errors:
+            print("{:30s}: volume was loaded with failed scripts: {}".format(
+                self.configuration, ", ".join(f"{k} {v}" for k, v in loading_errors.items())))
         for kind, report in (('DDL', ddl_report), ('loading', load_report)):
             if report['from_volume']:
                 print("{:30s}: {} values taken from the volume: {}".format(

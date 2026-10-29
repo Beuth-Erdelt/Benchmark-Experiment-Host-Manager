@@ -141,6 +141,7 @@ def load_data_asynch(
         # no time_ prefix: pod labels time_* are read back as script times
         labels['loading_phase_start'] = time_phase_start
         labels['num_tenants_ready'] = 0
+        labels['errors_{script_type}'.format(script_type=script_type)] = 0
     fullcommand = 'label pods ' + pod_sut + ' --overwrite '
     for key, value in labels.items():
         fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
@@ -152,7 +153,8 @@ def load_data_asynch(
         kubectl(fullcommand, context)
     # execute scripts
     times_script = dict()
-    shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
+    num_failed = 0                                                          # scripts with errors (script_failed), labelled errors_<script_type>
+    shellcommand ='if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     for db in database:
         for c in commands:
             time_scrip_start = default_timer()
@@ -201,6 +203,12 @@ def load_data_asynch(
                 if len(stderr) > 0:
                     with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stderr)
+            else:
+                stdout, stderr = '', ''
+            if script_failed(stdout, stderr):
+                num_failed += 1
+                logger.warning("{}: loading script {} failed (see {}-loading-{}-{}-*.stderr.log)".format(
+                    configuration, c, app, configuration, filename))
             time_scrip_end = default_timer()
             sep = filename.find("-")
             if sep > 0:
@@ -243,6 +251,9 @@ def load_data_asynch(
     labels['num_tenants_ready'] = id_tenant + 1
     labels['time_{script_type}'.format(script_type=script_type)] = time_phase
     labels['time_loading_end'] = time_loading_end
+    if num_failed > 0:
+        # only written when > 0, so a tenant without errors keeps another tenant's count
+        labels['errors_{script_type}'.format(script_type=script_type)] = num_failed
     if (num_tenants > 0 and id_tenant == num_tenants - 1) or num_tenants == 0:
         logger.debug(f"#### Last tenant {id_tenant} marks loading as finished")
         labels[script_type] = 'True'
@@ -1101,8 +1112,8 @@ class LoadingCoordinator:
             entry's ``resetscript`` list).
         :return: Elapsed seconds spent running the scripts (0 if none ran), so the
             caller can attach it to the connection about to be submitted. The
-            scripts that failed (see :func:`script_failed`) or were missing are in
-            :attr:`last_reset_failed`.
+            scripts that failed (see :func:`script_failed`) are in
+            :attr:`last_reset_failed`; missing ones are not failures.
         :rtype: int
         """
         cfg = self._config
@@ -1115,10 +1126,12 @@ class LoadingCoordinator:
         folder = cfg.experiment.cluster.experiments_configfolder + '/' + cfg.path_experiment_docker
         missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
         if missing:
-            print("{:30s}: reset scripts {} not found in {}, skipped".format(
-                cfg.configuration, missing, folder))
-            self.last_reset_failed = ['{} (missing)'.format(s) for s in missing]
+            # as in loading: only scripts of the folder run, missing shell scripts stay silent
             scripts = [s for s in scripts if s not in missing]
+            missing_sql = [s for s in missing if not s.lower().endswith('.sh')]
+            if missing_sql:
+                print("{:30s}: reset scripts not in folder, skipped: {}".format(
+                    cfg.configuration, ", ".join(missing_sql)))
             if not scripts:
                 return 0
         scripts, scripts_workers = self.split_worker_scripts(scripts)
@@ -1223,6 +1236,17 @@ class LoadingCoordinator:
         # short); their time is part of the loading time
         scripts, scripts_workers = self.split_worker_scripts(scripts)
         time_offset += self.run_scripts_on_workers(scripts_workers, script_type)
+        # only scripts of the folder run (as worker scripts); missing SQL scripts are
+        # recorded as loading_skipped and listed in the summary, missing shell scripts
+        # stay silent (optional by design, e.g. save-snapshot.sh only for Redis/Dragonfly)
+        folder = cfg.experiment.cluster.experiments_configfolder + '/' + cfg.path_experiment_docker
+        missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
+        if missing:
+            scripts = [s for s in scripts if s not in missing]
+            missing = [s for s in missing if not s.lower().endswith('.sh')]
+        if missing:
+            print("{:30s}: loading scripts not in folder, skipped: {}".format(cfg.configuration, ", ".join(missing)))
+            cfg.loading_skipped = sorted(set(getattr(cfg, 'loading_skipped', [])) | set(missing))
         self.prepare_init_dbms(scripts)
         service_name = cfg.get_service_sut(configuration=cfg.configuration)
         pods = cfg.experiment.cluster.get_pods(

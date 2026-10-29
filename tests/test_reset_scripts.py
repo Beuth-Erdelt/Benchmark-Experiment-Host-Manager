@@ -278,7 +278,7 @@ class ExecResetScriptTest(unittest.TestCase):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             self.assertEqual(LoadingCoordinator(self.cfg).exec_reset_script('reset_1_1_1', ['nope.sql']), 0)
-        self.assertIn("reset scripts ['nope.sql'] not found", out.getvalue())
+        self.assertIn("reset scripts not in folder, skipped: nope.sql", out.getvalue())
 
     def test_missing_one_is_dropped(self):
         class Stop(Exception):
@@ -379,8 +379,10 @@ class ResetFailedRecordedTest(unittest.TestCase):
             with mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'), \
                     contextlib.redirect_stdout(io.StringIO()) as out:
                 loader.exec_reset_script('reset_1_1_1', ['reset-ycsb.sql', 'reset-flush.sh', 'gone.sql'])
-        self.assertEqual(loader.last_reset_failed, ['gone.sql (missing)', 'reset-flush.sh'])
-        self.assertIn('FAILED: gone.sql (missing), reset-flush.sh', out.getvalue())
+        # a script not in the folder is skipped, not failed (as in loading)
+        self.assertEqual(loader.last_reset_failed, ['reset-flush.sh'])
+        self.assertIn('not in folder, skipped: gone.sql', out.getvalue())
+        self.assertIn('FAILED: reset-flush.sh', out.getvalue())
 
 
 class ResetSummaryTest(unittest.TestCase):
