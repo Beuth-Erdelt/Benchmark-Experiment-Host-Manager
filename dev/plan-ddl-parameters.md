@@ -20,7 +20,7 @@ one experiment per value with `--set` on the same `-rst` PVC).
 | M5 | Not started: `covering_indexes`, `projections`, `pk_order`; results change: `string_type`, `numeric_type`; script variant: `primary_keys`, `distribution_key` (probably the Citus join limit of item 14); BenchBase creates the PostgreSQL TPC-C schema, so not by scripts: `hash_partitions`; more than scripts: `tablespace_index` | open | [More candidates](#more-candidates-not-yet-prioritized) |
 | – | Catalog at its margin: at most 53,990 characters (LF-counted; test keeps 2,000 below the 56,000 limit), now 53,975. Next key for PostgreSQL needs a shorter catalog or a higher limit | decision | [Milestones](#milestones) |
 | – | Docs rerun: TPC-H cluster logs in docs/Example-ClickHouse.md are from the old all-distributed layout | open | – |
-| – | Not run on the cluster: `-schema` variants of the PostgreSQL scripts (tenancy), YugabyteDB keys and its new database `benchbase` (deployed by its own Helm script; scripts/test-docs-yugabytedb) | open | – |
+| – | Not run on the cluster: `-schema` variants of the PostgreSQL scripts (tenancy) | open | – |
 | 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
 | 13b | Optional: refuse a post-load step a DBMS has no script for (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for CedarDB, DatabaseService, PgDuckDB, `checkschema-ycsb` for CedarDB, DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |
 | – | Separate: Python client calls (`get_pods` etc. in clusters.py) do not wait for a cluster outage (`MaxRetryError`), crashed check P | open, outside this plan | – |
@@ -459,7 +459,7 @@ only check and reset scripts.)
 |---|---|---|---|---|---|
 | `pk_sharding` | hash, asc | hash | `PRIMARY KEY (ycsb_key HASH / ASC)` | hash: even load, point reads; asc: range scans (YCSB e), hot spot for ordered inserts | A |
 | `num_tablets` | 0 = auto, n | auto (`ysql_num_shards_per_tserver` + auto-split) | `SPLIT INTO n TABLETS` | parallelism and leader spread from the start; vendor starts with ~8 per tserver | A |
-| `colocated` | false, true | false | database created `WITH colocation = true` (TPC-C small tables) | one tablet per small table/index costs RPCs. Needs a database created with colocation: since 2026-10-30 BenchBase TPC-C on YugabyteDB uses the database `benchbase` from initschema (uncommitted, not run on the cluster) | B |
+| `colocated` | false, true | false | database created `WITH colocation = true` (TPC-C small tables) | one tablet per small table/index costs RPCs. Needs a database created with colocation: since 2026-10-30 (20cc4c40, checked 1793380435, 1793382018) BenchBase TPC-C on YugabyteDB uses the database `benchbase` from initschema | B |
 | `replica_placement` | RF per table | cluster RF | tablespace `replica_placement` (JSON; safe filling keeps the braces) | per-table RF without redeploy | C |
 
 The BenchBase TPC-C schema waits 300 s for tablet splitting; with
@@ -639,7 +639,12 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
   - K (1793289099) ClickHouse `order_lineitem=key,date` ×
     `order_orders=key,date`: 4 configurations, the four sort-key
     combinations filled; all tests passed, no script errors.
-  - YugabyteDB not checked (deployed by its own Helm script, not by bexhoma).
+  - YugabyteDB (2026-10-30, chart 2025.2.7, ephemeral, `helm install` as in
+    scripts/test-docs-yugabytedb.sh, removed afterwards), all tests passed:
+    1793380460 `pk_sharding=asc` (`PRIMARY KEY (YCSB_KEY ASC)`); 1793381668
+    `num_tablets=8` (`yb_table_properties`: 8 tablets); 1793380435 BenchBase
+    TPC-C in the database `benchbase` (16 warehouses there, no table in
+    `yugabyte`); 1793382018 the same with `-ar` (reset connects to `benchbase`).
 
   **Found**: an error in an init script (stderr of the loading scripts) does
   not fail the run or any test; it is only in
