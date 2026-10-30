@@ -4,9 +4,9 @@ Status (2026-10-30): **M1, M1b, M2 committed (04a57300); M2b, M2c and the
 data-defining parameters committed (8616163b); M3 and `requires` committed
 (b730977a); test `Init scripts without errors` committed (21a877b7)**, the
 init script fixes it found committed afterwards; M3b and research item 9
-committed (f25ac88e). Rollout done (reinstall, 115 old volumes deleted),
+committed (47aabae1). Rollout done (reinstall, 115 old volumes deleted),
 cluster checks A–R OK. Item 14 (`-xdim` for TPC-H, ClickHouseCluster only)
-committed (01843299). M4 batches 1-4 committed (4a952d99, 95d8ac61). All keys per DBMS are in docs/DBMS.md (kept by a test). Open:
+committed (91f96682). M4 batches 1-4 committed (da4121ee, 3ee48d99). All keys per DBMS are in docs/DBMS.md (kept by a test). Open:
 rest of M4, M5, 13b, ClickHouse docs rerun. Non-DDL
 settings (planner knobs, isolation level, client options):
 [plan-session-parameters.md](plan-session-parameters.md) (parked; today:
@@ -29,9 +29,9 @@ one experiment per value with `--set` on the same `-rst` PVC).
 Done (details in the sections): items 1–4b (decision B, volume labels and
 reuse reporting, token rules, short names, shape and load labels), rollout,
 cluster checks A–R, M3 + `requires`, item 13 (test `Init scripts without
-errors` and the script fixes it found), M3b (f25ac88e, cluster check
-1793319445), item 9 research (f25ac88e), item 14 (01843299, details under M3),
-M4 batches 1-4 (4a952d99, 95d8ac61). Rejected: item 10 (summary columns
+errors` and the script fixes it found), M3b (47aabae1, cluster check
+1793319445), item 9 research (47aabae1), item 14 (91f96682, details under M3),
+M4 batches 1-4 (da4121ee, 3ee48d99). Rejected: item 10 (summary columns
 per swept key), `column_order`.
 
 ## Init scripts without errors (item 13)
@@ -459,7 +459,7 @@ only check and reset scripts.)
 |---|---|---|---|---|---|
 | `pk_sharding` | hash, asc | hash | `PRIMARY KEY (ycsb_key HASH / ASC)` | hash: even load, point reads; asc: range scans (YCSB e), hot spot for ordered inserts | A |
 | `num_tablets` | 0 = auto, n | auto (`ysql_num_shards_per_tserver` + auto-split) | `SPLIT INTO n TABLETS` | parallelism and leader spread from the start; vendor starts with ~8 per tserver | A |
-| `colocated` | false, true | false | database created `WITH colocation = true` (TPC-C small tables) | one tablet per small table/index costs RPCs. Needs a database created with colocation: since 2026-10-30 (20cc4c40, checked 1793380435, 1793382018) BenchBase TPC-C on YugabyteDB uses the database `benchbase` from initschema | B |
+| `colocated` | false, true | false | database created `WITH colocation = true` (TPC-C small tables) | one tablet per small table/index costs RPCs. Needs a database created with colocation: since 2026-10-30 (9c232161, checked 1793380435, 1793382018) BenchBase TPC-C on YugabyteDB uses the database `benchbase` from initschema | B |
 | `replica_placement` | RF per table | cluster RF | tablespace `replica_placement` (JSON; safe filling keeps the braces) | per-table RF without redeploy | C |
 
 The BenchBase TPC-C schema waits 300 s for tablet splitting; with
@@ -652,12 +652,12 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
   `Init scripts without errors` like `Reset scripts ran without errors`
   (open item 13).
 
-  Item 14 `dimensions` **DONE (01843299)**, as `-xdim replicated|distributed` in
+  Item 14 `dimensions` **DONE (91f96682)**, as `-xdim replicated|distributed` in
   tpch.py, default `replicated`, variant in the volume name
   (`tpch-distributed-<SF>`): `dimension_folder()`, `dimension_info()`, `DIMENSION_*` in bexhoma/benchmarks/base.py, shared with SSB; `-xdim` in tpch.py. ClickHouseCluster distributed: `part` by `p_partkey`, `partsupp` by `ps_partkey`, `supplier` by `s_suppkey`, `customer` by `c_custkey`; `nation`/`region` replicated in both variants (25/5 rows). Check/reset scripts flush the Distributed and sync the replicated tables, the check fails if a replica differs. Cluster checks (SF1, `-nw 2`, `-xii -xic -xis -ar -tr`): 1793356616 replicated: ClickHouseCluster and Citus 22/22, all tests passed, full copies of the 6 dimensions on 3 nodes; 1793356620 distributed: ClickHouseCluster 22/22, the 4 dimensions split over 2 shards. **Citus: dropped** (decision 2026-10-30): with distributed dimensions (reference `nation`/`region`, `partsupp` co-located with `part`, 5 of 8 FKs) 12 of 22 queries failed in 1793356620: "complex joins are only supported when all distributed tables are co-located" (Q2, Q11, Q13, Q14, Q17, Q18, Q19, Q21), cartesian product (Q9), "parallel DDL access to distributed table supplier" on `nation` (Q5, Q7, Q8; probably the FK supplier→nation). tpch.py refuses Citus with `-xdim distributed`; Citus TPC-H keeps reference tables. Tests: tests/test_tpch_dimensions.py, layout test in test_cluster_sut_settings.py generalized; 853 OK.
 - **M3b** `systems[].ddl` in experiment.yml + catalog capability
   ([bexhoma/spec.py](../bexhoma/spec.py), tpch_catalog.py, ycsb_catalog.py
-  emit `-xddl` through a shared helper). **DONE (f25ac88e)**, cluster check
+  emit `-xddl` through a shared helper). **DONE (47aabae1)**, cluster check
   1793319445:
   capability `systems.<name>.ddl.<workload>` in contracts/contract_catalog.yml
   (PostgreSQL ycsb `fillfactor` 10–100; equal to the declaration files by
@@ -669,7 +669,7 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
   by the agent (limit 56,000 characters): 54,547 after M3b, little room left.
   Design doc: docs/Design-Catalog-Contract.md "DDL parameters".
 - **M4** priority B keys, one DBMS at a time, each with a docs test run.
-  **Batches 1-2 committed 2026-10-30** (4a952d99), defaults reproduce
+  **Batches 1-2 committed 2026-10-30** (da4121ee), defaults reproduce
   the scripts (an empty `sql` text where the old script had nothing):
   - YCSB: PostgreSQL `autovacuum_scale` (0.2/0.1/0.05/0.01, also in the
     catalog); Citus `fillfactor`; CockroachDB `bucket_count` (requires
@@ -706,7 +706,7 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
     Citus `fillfactor=80`, 1793362488 TiDB, 1793363037 CockroachDB. First runs
     1793361500-525 without `-xwl` ran no workload.
 
-  **Batches 3-4 committed 2026-10-30** (95d8ac61):
+  **Batches 3-4 committed 2026-10-30** (3ee48d99):
   - TPC-H PostgreSQL (and PgDuckDB, by `extends` in the catalog and its
     `path_experiment_docker`; `-schema` scripts too): `index_method`
     (btree/hash/brin, the multicolumn lineitem index stays btree),
