@@ -49,7 +49,7 @@ _EXP = os.path.join(_REPO, 'experiments', 'ssb')
 _DBMS_FOLDERS = ('PostgreSQL', 'MonetDB', 'ClickHouse')
 #: Every script folder, including the -xdim distributed scripts.
 _ALL_FOLDERS = _DBMS_FOLDERS + ('ClickHouseCluster', 'ClickHouseCluster/distributed', 'Citus', 'Citus/distributed',
-                                'MySQL', 'MariaDB')
+                                'MySQL', 'MariaDB', 'CedarDB')
 #: Placeholders the loading code replaces by the durability scripts the folder has.
 _PLACEHOLDERS = {'durability.sql', 'restoredurability.sql'}
 

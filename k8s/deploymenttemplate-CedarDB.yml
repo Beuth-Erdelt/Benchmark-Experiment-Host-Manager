@@ -43,43 +43,42 @@ spec:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
+      initContainers:
+        # the CedarDB image has no psql, loadData needs one (Community Edition: no derived image, it must not be passed on)
+        - name: psql-client
+          image: postgres:18.6
+          command:
+            - sh
+            - -c
+            - |
+                mkdir -p /pgclient/lib
+                cp /usr/lib/postgresql/18/bin/psql /pgclient/psql.bin
+                ldd /pgclient/psql.bin | awk '/=> \//{print $3}' | grep -v -E '/(libc|libm|libdl|libpthread|librt)\.so' | xargs -I{} cp -L {} /pgclient/lib/
+                printf '#!/bin/sh\nLD_LIBRARY_PATH=/pgclient/lib exec /pgclient/psql.bin "$@"\n' > /pgclient/psql
+                chmod 755 /pgclient/psql /pgclient/psql.bin
+          volumeMounts:
+          - {mountPath: /pgclient, name: pgclient}
       containers:
       - name: dbms
-        image: cedardb/cedardb
+        image: cedardb/cedardb:v2026-10-22 # sha256:d029f6d020edeedfe86d26525b9aac436d7aad3f8702aca1b39992456a1e2777
+        # the entrypoint binds to :: and adding -address is refused as given twice, pods have no IPv6;
+        # raise soft nofile limit (1024) to the hard limit
+        command: ["bash", "-c", "sed -i 's/-address=::/-address=0.0.0.0/' /usr/local/bin/docker-entrypoint.sh; ulimit -S -n \"$(ulimit -H -n)\" || true; exec docker-entrypoint.sh"]
         env:
         - name: CEDAR_USER
           value: postgres
+        # at least 20 characters and two character categories; = JDBC auth of cluster.config, no special characters
         - name: CEDAR_PASSWORD
-          value: test
-        #- name: PGDATA
-        #  value: /var/lib/postgresql/data/pgdata
-        # pg_ctl: cannot be run as root
-        #lifecycle:
-        #  postStart:
-        #    exec:
-        #      command: ["/bin/sh", "-c", "echo 'Hello from the postStart handler' > /usr/share/message && cat /usr/share/message"]
-        #  preStop:
-        #    exec:
-        #      #command: ["/bin/sh", "-c", "gosu postgres /usr/lib/postgresql/16/bin/pg_ctl stop -m smart -t 120"]
-        #readinessProbe:
-        #  exec:
-        #    command:
-        #      - /bin/sh
-        #      - "-c"
-        #      - >
-        #        if pg_isready -h localhost -p 5432 > /dev/null; then
-        #          recovery_status=$(psql -h localhost -p 5432 -U postgres -t -c "SELECT pg_is_in_recovery();" | xargs);
-        #          [ "$recovery_status" = "f" ] && exit 0 || exit 1;
-        #        else
-        #          exit 1;
-        #        fi
-        #    #command:
-        #    #- pg_isready
-        #    #- -U
-        #    #- postgres
-        #  initialDelaySeconds: 15
-        #  periodSeconds: 60
-        #  successThreshold: 3
+          value: BexhomaBenchmarkPassword2026
+        # for loadData
+        - name: PGPASSWORD
+          value: BexhomaBenchmarkPassword2026
+        readinessProbe:
+          exec:
+            command: ["pg_isready"]   # wrapper of cedardb -isready
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 10
         ports:
         - {containerPort: 5432}
         securityContext:
@@ -98,6 +97,7 @@ spec:
         volumeMounts:
         - {mountPath: /data, name: benchmark-data-volume}
         - {mountPath: /dev/shm, name: dshm}
+        - {mountPath: /pgclient, name: pgclient}
         - {mountPath: /var/lib/cedardb/data, name: benchmark-storage-volume}
       - name: cadvisor
         image: gcr.io/cadvisor/cadvisor:v0.47.0
@@ -140,6 +140,8 @@ spec:
         persistentVolumeClaim: {claimName: bexhoma-data}
       - name: benchmark-storage-volume
         persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: pgclient
+        emptyDir: {}
       - name: rootfs
         hostPath:
           path: /

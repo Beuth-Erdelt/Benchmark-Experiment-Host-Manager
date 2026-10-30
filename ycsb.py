@@ -286,6 +286,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     name_format = 'CedarDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
                     config = configurations.default(experiment=experiment, docker='CedarDB', alias='DBMS A')
+                    # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
+                    config.set_benchmark_resetscript(['reset-ycsb.sql'])
                     config.set_storage(
                         storageConfiguration = 'cedardb'
                         )

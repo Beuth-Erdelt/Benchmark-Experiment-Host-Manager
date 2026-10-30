@@ -1184,6 +1184,39 @@ bexhoma tpch \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset PgDuckDB"
 
 
+#### TPC-H Reset CedarDB
+# -dbms CedarDB                 ANALYZE, persist n/a, counters n/a
+# -sf 1                         scaling factor
+# -nc 1                         number of repeated runs per configuration
+# -ne 1,2                       two client rounds -- the reset runs before each
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after loading
+# -xic                          create constraints after loading
+# -xis                          recompute statistics after loading
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ar                           activate configured reset scripts before each round
+bexhoma tpch \
+  -dbms CedarDB \
+  -sf 1 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ar \
+  run &>$LOG_DIR/docs_reset_tpch_cedardb.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset CedarDB"
+
+
 #### TPC-H Reset MonetDB
 # -dbms MonetDB                 ANALYZE, persist n/a, counters n/a
 # -sf 1                         scaling factor

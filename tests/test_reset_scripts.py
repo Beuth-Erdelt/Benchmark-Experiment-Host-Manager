@@ -35,7 +35,7 @@ from .test_resource_sweep import _AnyDockers, _AnyVolumes, _dbms_choices, _Sweep
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #: DBMS without reset scripts (plan decision D1).
-NO_RESET = {'CedarDB', 'DatabaseService'}
+NO_RESET = {'DatabaseService'}
 
 _FLUSH = 'reset-flush.sh'
 _COUNTERS = 'reset-counters.sh'
@@ -51,6 +51,7 @@ EXPECTED = {
         'CockroachDB': ['reset-ycsb.sql'],
         'TiDB': ['reset-ycsb.sql'],
         'Citus': ['reset-ycsb.sql'],
+        'CedarDB': ['reset-ycsb.sql'],
         'Dragonfly': ['save-snapshot.sh'],
         'Redis': ['save-snapshot.sh'],
     },
@@ -63,6 +64,7 @@ EXPECTED = {
         'CockroachDB': ['reset-benchbase.sql'],
         'TiDB': ['reset-benchbase.sql'],
         'Citus': ['reset-benchbase.sql'],
+        'CedarDB': ['reset-benchbase.sql'],
     },
     'hammerdb.py': {
         'PostgreSQL': ['reset-tpcc.sql'],
@@ -77,6 +79,7 @@ EXPECTED = {
         'MySQL': ['reset-tpch.sql', _FLUSH],
         'MariaDB': ['reset-tpch.sql', _FLUSH],
         'Citus': ['reset-tpch.sql'],
+        'CedarDB': ['reset-tpch.sql'],
         'ClickHouse': [_FLUSH],
         'ClickHouseCluster': ['reset-tpch.sql', _FLUSH],
     },
@@ -95,13 +98,14 @@ EXPECTED = {
         'ClickHouseCluster': ['reset-ssb.sql', _FLUSH],
         'PgDuckDB': ['reset-ssb.sql'],
         'Citus': ['reset-ssb.sql'],
+        'CedarDB': ['reset-ssb.sql'],
         'MySQL': ['reset-ssb.sql', _FLUSH],
         'MariaDB': ['reset-ssb.sql', _FLUSH],
     },
 }
 
 #: Benchbase benchmarks other than tpcc have folders (and resets) only for these DBMS (R4).
-BENCHBASE_NON_TPCC = {'PostgreSQL', 'PGBouncer'}
+BENCHBASE_NON_TPCC = {'PostgreSQL', 'PGBouncer', 'CedarDB'}
 
 
 def _run_script(script: str, *argv: str) -> tuple:
@@ -529,7 +533,7 @@ class WarnMissingResetScriptsTest(unittest.TestCase):
             experiment = types.SimpleNamespace(
                 resetscript_active=True, cluster=types.SimpleNamespace(experiments_configfolder=tmp_dir),
                 configurations=[config('ok', 'PostgreSQL', ['reset-ycsb.sql']),
-                                config('none', 'CedarDB', []),
+                                config('none', 'DatabaseService', []),
                                 config('missing', 'PostgreSQL', ['reset-ycsb.sql', 'gone.sh']),
                                 config('legacy', 'PostgreSQL', [], legacy=['reset-ycsb.sql'])])
             out = io.StringIO()

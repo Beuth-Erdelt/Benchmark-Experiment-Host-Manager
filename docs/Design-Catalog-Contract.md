@@ -606,7 +606,7 @@ systems:
 
   CedarDB:
     deployment: bexhoma-deployment-cedardb
-    image: cedardb/cedardb
+    image: cedardb/cedardb:v2026-10-22
     arg_style: none
     dialect: PostgreSQL        # wire/dialect reuse for query translation only — NOT DDL reuse (has its own DDL folder, unlike PgDuckDB)
     physical_design: {indexes: true, constraints: true, statistics: true, storage_format: [heap]}

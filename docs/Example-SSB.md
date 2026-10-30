@@ -4,7 +4,7 @@ The Star Schema Benchmark (SSB) is a data warehouse benchmark derived from TPC-H
 table `lineorder` (TPC-H's `lineitem` and `orders` combined) and four dimensions `customer`,
 `supplier`, `part` and `dates`, queried by 13 queries in four flights. Bexhoma runs it with the
 DBMSBenchmarker, like TPC-H and TPC-DS, on PostgreSQL, MonetDB and ClickHouse (the default
-set), and on ClickHouseCluster, Citus, PgDuckDB, MySQL and MariaDB.
+set), and on ClickHouseCluster, Citus, PgDuckDB, MySQL, MariaDB and CedarDB.
 
 Two options choose what is measured:
 

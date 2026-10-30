@@ -345,6 +345,30 @@ bexhoma ssb `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB PgDuckDB  sf=1"
 
 
+#### SSB CedarDB (Example-SSB.md)
+bexhoma ssb `
+  -dbms CedarDB                <# DBMS under test #> `
+  -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# add primary and foreign keys after data load #> `
+  -xis                          <# run statistics after data load #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_cedardb.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB CedarDB  sf=1"
+
+
 #### SSB Citus (Example-SSB.md)
 bexhoma ssb `
   -dbms Citus                   <# DBMS under test #> `
