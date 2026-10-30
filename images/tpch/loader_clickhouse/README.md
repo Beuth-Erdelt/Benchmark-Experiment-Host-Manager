@@ -1,6 +1,6 @@
 # Loader for TPC-H data into ClickHouse
 
-Loads pre-generated TPC-H `.tbl` files into ClickHouse using `clickhouse-client` `INSERT INTO <table> FORMAT CSV` over the native protocol (port 9000). Used for `ClickHouse` and `ClickHouseCluster`; in the cluster the target tables are Distributed tables on the coordinator, which pass the rows on to the shards before the `INSERT` returns (`distributed_foreground_insert=1`).
+Loads pre-generated TPC-H `.tbl` files into ClickHouse using `clickhouse-client` `INSERT INTO <table> FORMAT CSV` over the native protocol (port 9000). Used for `ClickHouse` and `ClickHouseCluster`; in the cluster the target tables on the coordinator are Distributed tables, which pass the rows on to the shards before the `INSERT` returns (`distributed_foreground_insert=1`), or replicated dimensions (`-xdim replicated`), whose parts Keeper copies to the shards.
 
 The image is based on `clickhouse/clickhouse-server` (same version as the SUT templates) for its client; the server does not start.
 

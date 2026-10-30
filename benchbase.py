@@ -62,6 +62,9 @@ if __name__ == '__main__':
     parser.set_defaults(num_worker=1)
     # evaluate args
     args = parser.parse_args()
+    if args.multi_tenant_by == 'schema' and ('MySQL' in args.dbms or len(args.dbms) == 0):
+        # only the PostgreSQL folder has -schema scripts; a MySQL schema is a database
+        parser.error('-mtb schema is not supported for MySQL in Benchbase, use -mtb database')
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
     if args.debug:
@@ -540,9 +543,6 @@ if __name__ == '__main__':
                             config.set_loading(parallel=loading_pods*config.num_tenants, num_pods=loading_pods*config.num_tenants)
                         else:
                             config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                        if config.tenant_per == 'schema':
-                            config.set_experiment(script='Schema_tenant')
-                            config.set_experiment(indexing='Checks_tenant')
                         config.set_eval_parameters(
                             TENANT_BY = config.tenant_per,
                             TENANT_NUM = config.num_tenants,
@@ -632,8 +632,11 @@ if __name__ == '__main__':
                     config.set_sut_role('placeholder') # helper pod; data lives in the Helm-managed tservers
                     config.set_pvc_selector('app=yb-tserver') # storage metrics of the tserver volumes
                     create_schema = "true"
+                    yugabyte_database = 'yugabyte'
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
+                        # initschema-benchbase.sql creates the database of the tables
+                        yugabyte_database = 'benchbase'
                         # With -ar: ANALYZE, then a stats reset on every tserver before
                         # each round; YSQL has no CHECKPOINT.
                         config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-counters.sh'])
@@ -666,6 +669,7 @@ if __name__ == '__main__':
                     config.set_loading_parameters(
                         BENCHBASE_PROFILE = 'postgres',
                         BEXHOMA_PORT = 5433,
+                        BEXHOMA_DATABASE = yugabyte_database,
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_CREATE_SCHEMA = create_schema,
                         )
@@ -691,6 +695,7 @@ if __name__ == '__main__':
                                     config.add_benchmarking_parameters(
                                         BENCHBASE_PROFILE = 'postgres',
                                         BEXHOMA_PORT = 5433,
+                                        BEXHOMA_DATABASE = yugabyte_database,
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         )
@@ -712,10 +717,6 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'cockroachdb'
-                        )
-                    config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas,
-                        num_worker_shards = num_worker_shards,
                         )
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,
@@ -778,10 +779,6 @@ if __name__ == '__main__':
                         replicas_sut = num_sut_replicas,
                         replicas_pd = num_pd_nodes
                     )
-                    config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas,
-                        num_worker_shards = num_worker_shards,
-                        )
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,
                         BEXHOMA_SHARDS = num_worker_shards,
@@ -887,10 +884,6 @@ if __name__ == '__main__':
                         config.loading_deactivated = True
                     config.set_storage(
                         storageConfiguration = 'citus'
-                        )
-                    config.set_ddl_parameters(
-                        num_worker_replicas = num_worker_replicas,
-                        num_worker_shards = num_worker_shards,
                         )
                     config.set_sut_parameters(
                         BEXHOMA_REPLICAS = num_worker_replicas,

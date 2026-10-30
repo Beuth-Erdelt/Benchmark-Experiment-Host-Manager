@@ -12,6 +12,7 @@ See LICENSE for details.
 from __future__ import annotations
 
 import itertools
+import math
 import os
 import re
 from typing import Any, NamedTuple
@@ -308,11 +309,33 @@ class _Expansion(NamedTuple):
     repetitions: int
 
 
+def _ddl_cells(experiment: dict[str, Any]) -> int:
+    """Count the configurations a ``systems[].ddl`` sweep creates per system.
+
+    Every listed value of a key is one configuration, keys are crossed
+    (``-xddl`` sweeps their product); systems agree on shared keys
+    (:func:`bexhoma.spec.validate_ddl`), so each key counts once.
+
+    :param experiment: A loaded experiment.yml.
+    :return: Configurations per system, 1 without a sweep.
+    :rtype: int
+    """
+    counts: dict[str, int] = {}
+    for system in experiment.get("systems") or []:
+        ddl = system.get("ddl") if isinstance(system, dict) else None
+        for key, value in (ddl.items() if isinstance(ddl, dict) else ()):
+            if isinstance(value, list) and value:
+                counts.setdefault(key, len(value))
+    return math.prod(counts.values()) if counts else 1
+
+
 def _expansion(experiment: dict[str, Any]) -> _Expansion:
     """Measure the factors an experiment varies.
 
     Both the run count and the repetitions rule need these four numbers, and
-    they have to agree about them, so they are counted once here.
+    they have to agree about them, so they are counted once here. A DDL sweep
+    adds configurations per system like a resource sweep (the two are never
+    combined, see :func:`bexhoma.spec.validate_ddl`), so it counts as cells.
 
     :param experiment: A loaded experiment.yml.
     :return: The four factor sizes.
@@ -327,7 +350,7 @@ def _expansion(experiment: dict[str, Any]) -> _Expansion:
         resource_cells=max(
             (len(cell) for cell in cells if isinstance(cell, list) and cell),
             default=1,
-        ),
+        ) * _ddl_cells(experiment),
         rounds=len(workload.get("rounds") or _DEFAULT_ROUNDS),
         repetitions=workload.get("repetitions") or _DEFAULT_REPETITIONS,
     )
@@ -446,6 +469,8 @@ def _check_declared_factors(
     storage_classes = resources.get("storage_class")
     if isinstance(storage_classes, list) and len(set(storage_classes)) > 1:
         varied.add("storage_class")
+    if _ddl_cells(experiment) > 1:
+        varied.add("ddl")
     if mismatch := varied.symmetric_difference(declared):
         message = ("M2.6: discriminates must name exactly the varied factors; "
                    f"declared {sorted(declared)}, varied {sorted(varied)}; "
@@ -457,7 +482,8 @@ def _check_declared_factors(
             message += (". This experiment runs a single treatment, so there is "
                         "nothing to isolate: add a second system the workload "
                         "supports, a second entry in rounds to vary concurrency, "
-                        "or a list of cpu, memory or storage_class cells")
+                        "a list of cpu, memory or storage_class cells, or a list "
+                        "of values in systems[].ddl")
         return {"stage": METHODOLOGY_STAGE, "message": message}
     return None
 

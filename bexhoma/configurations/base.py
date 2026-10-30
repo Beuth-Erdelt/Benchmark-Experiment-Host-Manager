@@ -9,8 +9,8 @@ import re
 import shutil
 from typing import List, Optional, Tuple
 
-from bexhoma import ceph_storage, experiments
-from bexhoma.cli_args import storage_suffix
+from bexhoma import ceph_storage, ddl_parameters, experiments
+from bexhoma.cli_args import abbreviate_storage_name, limit_name, storage_suffix
 from bexhoma.load_durability import DEFAULT_LEVEL, expand_durability_placeholders
 
 from .benchmarking import BenchmarkRunner
@@ -116,6 +116,8 @@ class SutConfiguration:
         self.path = self.experiment.path                                         #: Filesystem path to the experiment's working directory.
         self.resources = {}                                                      #: Dict of Kubernetes resource requests/limits for the SUT pod.
         self.ddl_parameters = {}                                                 #: DDL schema parameters for init scripts.
+        self.ddl_given = set()                                                   #: DDL keys whose value was given (-xddl, -nwr/-nws), not a default.
+        self.volume_check = {}                                                   #: Reused volume: its DDL and loading values against the requested ones (see apply_volume_parameters).
         self.eval_parameters = {}                                                #: Parameters forwarded to dbmsbenchmarker for evaluation.
         self.storage = {}                                                        #: Parameters for persistent storage.
         self.nodes = {}                                                          #: Dict of node infos to guide component placement.
@@ -142,7 +144,7 @@ class SutConfiguration:
         self.additional_labels = {}                                              #: Extra Kubernetes labels added to all managed pods.
         self.set_additional_labels(**self.experiment.additional_labels)
         self.experiment.add_configuration(self)
-        self.experiment_name = self.code                                         #: Identifier of experiment; may be overwritten when stateful set PVCs forbid per-experiment names.
+        self.experiment_name = self.code                                         #: Identifier of experiment.
         self.dialect = dialect                                                   #: SQL dialect string forwarded to dbmsbenchmarker.
         self.use_distributed_datasource = False                                  #: True iff the SUT should mount 'benchmark-data-volume' as source of non-generated data.
         # scaling
@@ -219,9 +221,6 @@ class SutConfiguration:
         self.volumeid = ""                                                       #: Identifier of the persistent volume claimed by this configuration.
         self.max_sut_dbms = None                                                 #: Max SUT pods of this DBMS type (config.docker) allowed in the cluster at once; None means no limit.
         self.resource_sweep = True                                               #: False keeps this configuration once in a -rc/-lc/-rr/-lr/-rst sweep, e.g. for a database service outside of K8s.
-        # Worker naming overrides (replace monkey-patching in entry scripts)
-        self.worker_name_app = ''                                                #: App label override for get_worker_name(); empty means use self.appname.
-        self.worker_name_component = ''                                          #: Component label override for get_worker_name(); empty means use the method argument.
         self.worker_metric_strip_container = False                               #: When True, strip container filter from Prometheus metric queries (e.g. for YugabyteDB).
         # Specialised helper objects — created last so they can reference self safely.
         self.status = ComponentStatus(self)
@@ -594,9 +593,11 @@ class SutConfiguration:
     def set_ddl_parameters(self, **kwargs) -> None:
         """Set DDL parameters that are substituted in init scripts.
 
+        Merges into the parameters set so far (e.g. the experiment's).
+
         :param kwargs: Parameter dict, e.g. ``index='btree'``.
         """
-        self.ddl_parameters = kwargs
+        self.ddl_parameters = {**self.ddl_parameters, **kwargs}
 
     def set_eval_parameters(self, **kwargs) -> None:
         """Set evaluation parameters forwarded to the benchmarker component.
@@ -849,34 +850,36 @@ class SutConfiguration:
     # ------------------------------------------------------------------
 
     def get_worker_name(self, component: str = 'worker') -> str:
-        """Return a name template for worker pods.
+        """Return the name of a StatefulSet of the SUT (and of its headless Service).
 
-        When :attr:`worker_name_app` or :attr:`worker_name_component` are set,
-        the override values are used together with :attr:`experiment_name` (the
-        experiment code) instead of :attr:`storage_label`.  This covers
-        distributed DBMS workers (e.g. Dragonfly, Redis) that use shorter pod
-        names tied to the experiment code rather than the storage label.
+        ``bx-<w|component>-<storage name>-<storage_label>``, e.g.
+        ``bx-w-ci-cephcsi-tpch-100`` or ``bx-tikv-ti-nvme-ycsb-10``: short,
+        because Kubernetes limits StatefulSet names to 52 characters (the pod
+        label ``controller-revision-hash`` adds ``-<10 hex>`` and may have
+        63), and Redis limits hostname length. Named by the storage label, not
+        the experiment code, so the worker volumes (``bxw-<name>-<i>``, from
+        the ``volumeClaimTemplate`` ``bxw``) are found again by later
+        experiments. Without persistent storage there are no worker volumes to
+        find, and two configurations of one DBMS (a sweep) or two experiments
+        running at the same time would share the name, so it is
+        ``bx-<w|component>-<configuration>-<code>``, e.g. ``bx-w-chc-2-1793362663``.
+        A longer name is shortened by :func:`bexhoma.cli_args.limit_name`.
 
-        :param component: Component type to use when not overridden.
-        :return: Worker name template string.
+        :param component: Component label of the StatefulSet, e.g. ``'worker'`` or ``'pd'``.
+        :return: StatefulSet name.
         :rtype: str
         """
-        storageConfiguration = self.get_storage_configuration()
-        if self.worker_name_app or self.worker_name_component:
-            effective_app = self.worker_name_app or self.appname
-            effective_component = self.worker_name_component or component
-            return self.generate_component_name(
-                app=effective_app,
-                component=effective_component,
-                experiment=self.experiment_name,
-                configuration=storageConfiguration,
-            )
-        return self.generate_component_name(
-            app=self.appname,
-            component=component,
-            experiment=self.storage_label,
-            configuration=storageConfiguration,
-        )
+        if self.use_storage():
+            experiment, configuration = self.storage_label, self.get_storage_configuration()
+        else:
+            dockers = getattr(getattr(getattr(self, 'experiment', None), 'cluster', None), 'dockers', None)
+            experiment, configuration = str(self.code), abbreviate_storage_name(self.configuration, dockers)
+        return limit_name(self.generate_component_name(
+            app='bx',
+            component='w' if component == 'worker' else component,
+            experiment=experiment,
+            configuration=configuration,
+        ))
 
     def get_num_worker(self, component: str = 'worker') -> int:
         """Return the resolved replica count for a StatefulSet-kind component.
@@ -1373,18 +1376,25 @@ class SutConfiguration:
         """Return the name that identifies this configuration's volumes.
 
         It is ``storageConfiguration`` (the configuration name when unset),
-        followed by the storage class when the SUT gets a volume of a named
-        class, e.g. ``postgresql-cephcsi``. A volume is found again by this
-        name alone, so the class has to be part of it: otherwise data loaded
-        on one backend would be reused on another. Ephemeral storage, the
-        cluster's default class (``''``) and ``ramdisk`` add nothing. A name
-        that already ends with the class is kept as it is.
+        shortened by the abbreviation of the DBMS it starts with
+        (``dockers.<DBMS>.abbreviation`` of the cluster config, see
+        :func:`bexhoma.cli_args.abbreviate_storage_name`), followed by the
+        storage class when the SUT gets a volume of a named class, e.g.
+        ``pg-cephcsi``. A volume is found again by this name alone, so the
+        class has to be part of it: otherwise data loaded on one backend would
+        be reused on another. Ephemeral storage, the cluster's default class
+        (``''``) and ``ramdisk`` add nothing. A name that already ends with the
+        class is kept as it is. DDL and other loading values are not part of
+        the name; the volume stores them as labels
+        (:meth:`volume_parameter_labels`).
 
         :return: Name used for the SUT's PVC, its ``configuration`` label and
             the worker StatefulSets.
         :rtype: str
         """
-        storage_configuration = self.storage.get('storageConfiguration') or self.configuration
+        dockers = getattr(getattr(getattr(self, 'experiment', None), 'cluster', None), 'dockers', None)
+        storage_configuration = abbreviate_storage_name(
+            self.storage.get('storageConfiguration') or self.configuration, dockers)
         storage_class = self.storage.get('storageClassName')
         if not storage_class or storage_class == 'ramdisk':
             return storage_configuration
@@ -1392,6 +1402,110 @@ class SutConfiguration:
         if storage_configuration.lower().endswith(f'-{suffix}'):
             return storage_configuration
         return f'{storage_configuration}-{suffix}'
+
+    def load_parameters(self) -> dict:
+        """Values that define the loaded data besides the DDL parameters.
+
+        The init script list (e.g. ``Schema`` or ``Schema-Columnar``), the
+        post-load list (indexes, constraints, statistics; ``none`` without)
+        and the experiment's :attr:`~bexhoma.experiments.base.ExperimentBase.data_parameters`
+        (e.g. YCSB's insert order).
+
+        :return: Value per key, as strings.
+        :rtype: dict[str, str]
+        """
+        values = {'script': str(self.script), 'indexing': str(self.indexing or 'none')}
+        values.update({key: str(value) for key, value in getattr(self.experiment, 'data_parameters', {}).items()})
+        return values
+
+    def volume_parameter_labels(self) -> dict:
+        """Labels a loaded volume gets, so a later experiment knows what it holds.
+
+        ``ddl_<key>`` per DDL parameter, ``load_<key>`` per
+        :meth:`load_parameters` value, ``shape_num_worker`` and
+        ``shape_state=stable``. Values that are no valid label value are left
+        out (see :func:`bexhoma.ddl_parameters.volume_labels`).
+
+        :return: Label name to value.
+        :rtype: dict[str, str]
+        """
+        labels = ddl_parameters.volume_labels(self.ddl_parameters)
+        labels.update(ddl_parameters.volume_labels(self.load_parameters(), prefix='load_'))
+        labels['shape_num_worker'] = str(self.num_worker)
+        labels['shape_state'] = 'stable'
+        return labels
+
+    def check_volume_shape(self, volume: str, labels: dict) -> None:
+        """Refuse a reused volume loaded for another number of workers.
+
+        The run cannot take the volume's shape: its workers are deployed from
+        ``-nw``, and data of a volume set loaded for fewer or more workers is
+        incomplete or misplaced. A volume without the label (loaded before the
+        label existed) passes.
+
+        :param volume: Name of the volume, for the message.
+        :param labels: Labels of the volume.
+        :raises ValueError: For another worker count, or a volume whose shape
+            was changing (``shape_state`` not ``stable``).
+        """
+        state = labels.get('shape_state')
+        if state is not None and state != 'stable':
+            raise ValueError(
+                f"{self.configuration}: existing storage {volume} has shape_state={state} "
+                f"(its workers were being changed); remove it (-rsr)")
+        found = labels.get('shape_num_worker')
+        if found is not None and found != str(self.num_worker):
+            raise ValueError(
+                f"{self.configuration}: existing storage {volume} was loaded with {found} workers, "
+                f"but {self.num_worker} are requested; remove it (-rsr) or request -nw {found}")
+
+    def apply_volume_parameters(self, labels: dict) -> dict:
+        """Take the DDL values of a reused volume and compare all loading values.
+
+        The volume's values win (they describe the data): they become this
+        configuration's DDL parameters, fill every script that still runs
+        (post-load, reset) and are recorded. Differences to given values are
+        reported (:attr:`volume_check`, the summary's "Reused Storage" and the
+        test ``Data parameters as requested``), never refused.
+
+        :param labels: All labels of the reused volume.
+        :return: :attr:`volume_check`: per kind (``ddl``, ``load``) the report
+            of :func:`bexhoma.ddl_parameters.compare_with_volume`, plus the
+            requested DDL values.
+        :rtype: dict
+        """
+        declarations = getattr(self, 'ddl_declarations', {})
+        requested = dict(self.ddl_parameters)
+        effective, ddl_report = ddl_parameters.compare_with_volume(
+            requested, self.ddl_given, labels,
+            {key: declaration['default'] for key, declaration in declarations.items()})
+        if declarations:
+            self.ddl_parameters = effective
+            self.set_eval_parameters(**{f'ddl_{key}': effective[key] for key in self.ddl_given if key in effective})
+        load = self.load_parameters()
+        _, load_report = ddl_parameters.compare_with_volume(load, set(load), labels, load, prefix='load_')
+        self.volume_check = {'ddl': ddl_report, 'ddl_requested': requested, 'load': load_report}
+        # failed loading scripts per phase, counted when the volume was loaded (load_data_asynch);
+        # no errors_ label at all: loaded before the count existed, unknown
+        counts = {key[len('errors_'):]: value for key, value in labels.items() if key.startswith('errors_')}
+        if counts:
+            loading_errors = {phase: int(value) for phase, value in counts.items()
+                              if str(value).isdigit() and int(value) > 0}
+            self.volume_check['loading_errors'] = loading_errors
+        if counts and loading_errors:
+            print("{:30s}: volume was loaded with failed scripts: {}".format(
+                self.configuration, ", ".join(f"{k} {v}" for k, v in loading_errors.items())))
+        for kind, report in (('DDL', ddl_report), ('loading', load_report)):
+            if report['from_volume']:
+                print("{:30s}: {} values taken from the volume: {}".format(
+                    self.configuration, kind, ", ".join(f"{k}={v}" for k, v in report['from_volume'].items())))
+            for key, (wanted, found) in report['differences'].items():
+                print("{:30s}: volume loaded with {}={} (requested {}): the run uses the volume's value; "
+                      "-rsr reloads".format(self.configuration, key, found, wanted))
+            if report['assumed']:
+                print("{:30s}: volume has no {} label for {}: assumed as requested/default".format(
+                    self.configuration, kind, ", ".join(report['assumed'])))
+        return self.volume_check
 
     def use_ephemeral_storage(self) -> bool:
         """Return True iff ephemeral-storage resources should be requested for the SUT.

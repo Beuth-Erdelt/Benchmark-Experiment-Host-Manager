@@ -18,7 +18,7 @@
 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white)
 
-![DB Workloads](https://img.shields.io/badge/DB%20Workloads-TPC--C%20%7C%20TPC--H%20%7C%20TPC--DS%20%7C%20YCSB-informational)
+![DB Workloads](https://img.shields.io/badge/DB%20Workloads-TPC--C%20%7C%20TPC--H%20%7C%20TPC--DS%20%7C%20SSB%20%7C%20YCSB-informational)
 ![Micro-Benchmarks](https://img.shields.io/badge/Micro--Benchmarks-fio%20%7C%20sysbench%20%7C%20netperf%20%7C%20sockperf-informational)
 
 # Benchmark Experiment Host Manager (Bexhoma)
@@ -32,7 +32,7 @@ It lets you configure hardware and software setups and repeat tests across varyi
     <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png" width="800">
 </p>
 
-**Benchmarks:** YCSB · TPC-H · TPC-DS · TPC-C (HammerDB and Benchbase)
+**Benchmarks:** YCSB · TPC-H · TPC-DS · TPC-C (HammerDB and Benchbase) · SSB (star and flat)
 
 **Tested DBMSs:** Citus (Hyperscale), Clickhouse, CockroachDB, Dragonfly, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TiDB, TimescaleDB, Vertica, YugabyteDB
 

@@ -729,7 +729,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         :param workflow_actual: Reconstructed actual workflow dict.
         :param workflow_planned: Planned workflow dict from workload config.
         :param extra: Must contain ``num_errors`` and ``num_warnings``, and
-                      ``num_active_queries``/``num_queries_with_explain`` from
+                      ``num_active_queries``/``missing_queries``/``num_queries_with_explain`` from
                       :meth:`~bexhoma.benchmarks.base.DBMSBenchmarkerBenchmark._show_extra_sections`.
         """
         if experiment.benchmarking_is_active():
@@ -753,14 +753,16 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             # completed it; one connection's failure silently drops the query from every
             # other connection's totals too, without tripping the 0-or-NaN column checks
             # above unless every query ends up dropped this way.
+            # Compared as sets, not via the Per Phase num_of_queries column, which
+            # sums the pooled count over the pods of a phase.
             num_active_queries = extra.get("num_active_queries", 0)
-            if num_active_queries > 0 and "num_of_queries" in df_reduced.columns:
-                min_num_of_queries = int(df_reduced["num_of_queries"].min())
-                passed_query_pool = min_num_of_queries == num_active_queries
+            missing_queries = extra.get("missing_queries")
+            if num_active_queries > 0 and missing_queries is not None:
+                passed_query_pool = len(missing_queries) == 0
                 experiment._record_test(
                     passed_query_pool,
                     "All active queries counted in the totals" if passed_query_pool else
-                    "Some active queries missing from the totals (see Per Phase table's num_of_queries column)"
+                    "Some active queries missing from the totals: " + ", ".join(map(str, missing_queries))
                 )
             # EXPLAIN is opt-in (-se/--store-explain); skip rather than fail when
             # nothing was captured at all, since that is the common case of the

@@ -290,6 +290,8 @@ bexhoma tpch \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
+
+#### TCP-H Refresh Stream (Example-TPC-H.md)
 bexhoma tpch \
   -dbms PostgreSQL \
   -sf 1 \

@@ -510,6 +510,28 @@ class WorkspaceTest(unittest.TestCase):
         message = verdict["errors"][0]["message"]
         self.assertIn("a second entry in rounds", message)
 
+    def test_a_ddl_sweep_is_a_factor(self) -> None:
+        """A list in systems[].ddl adds configurations, so discriminates must name ddl."""
+        swept = _YCSB_SPEC.replace(
+            "profile: analytical-ssd}", "profile: analytical-ssd, ddl: {fillfactor: [100, 80]}}")
+        self.workspace.write_file(self.path, swept)
+        verdict = self.workspace.validate(self.path)
+        self.assertFalse(verdict["valid"])
+        self.assertIn("M2.6", verdict["errors"][0]["message"])
+        self.assertIn("ddl", verdict["errors"][0]["message"])
+
+        self.workspace.write_file(self.path, swept.replace(
+            "discriminates: [concurrency]", "discriminates: [concurrency, ddl]"))
+        self.assertTrue(self.workspace.validate(self.path)["valid"])
+
+    def test_a_ddl_sweep_multiplies_the_runs(self) -> None:
+        experiment = yaml.safe_load(_YCSB_SPEC)
+        runs = validation.count_runs(experiment)
+        experiment["systems"][0]["ddl"] = {"fillfactor": [100, 90, 80]}
+        self.assertEqual(validation.count_runs(experiment), 3 * runs)
+        experiment["systems"][0]["ddl"] = {"fillfactor": 80}
+        self.assertEqual(validation.count_runs(experiment), runs)
+
     def test_a_single_factor_written_as_a_bare_number_says_what_to_write(self) -> None:
         """Blaming the contract leaves the author no way forward; name the shape instead."""
         self.workspace.write_file(

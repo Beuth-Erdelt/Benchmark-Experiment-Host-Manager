@@ -29,6 +29,7 @@ __all__ = [
     "resource_sweep",
     "resolve_resource_cells",
     "append_resource_flags",
+    "append_ddl_flags",
     "build_tpch_argv",
 ]
 
@@ -243,6 +244,20 @@ def append_resource_flags(argv: list[str], resources: dict[str, Any]) -> None:
         argv.append("-rsrp")
 
 
+def append_ddl_flags(argv: list[str], experiment: dict[str, Any]) -> None:
+    """Append one ``-xddl KEY=V1,V2`` per DDL parameter the systems select.
+
+    Shared by every workload's argv builder: ``-xddl`` is generic in the entry
+    scripts (:mod:`bexhoma.ddl_parameters`), a comma list sweeps the key.
+    :func:`bexhoma.spec.validate_ddl` has checked the selection already.
+
+    :param argv: Argument vector being built, mutated in place.
+    :param experiment: Parsed, already-validated experiment spec.
+    """
+    for key, values in spec.ddl_selection(experiment).items():
+        argv.extend(["-xddl", f"{key}={','.join(str(value) for value in values)}"])
+
+
 def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]:
     """Translate a resolved experiment.yml into a ``tpch.py`` argument vector.
 
@@ -367,6 +382,7 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-rnb", placement.get("benchmarking"))
 
     append_resource_flags(argv, resources)
+    append_ddl_flags(argv, experiment)
 
     for system_spec, resolved, configuration_name in resolved_cells:
         scope = f"@{configuration_name}" if configuration_name else ""

@@ -70,7 +70,8 @@ spec:
               </prometheus>
             </clickhouse>
             EOF
-            # SQL-standard results: outer joins fill NULL (not 0 or ''), UNION means DISTINCT,
+            # SQL-standard results: outer joins fill NULL (not 0 or ''), ROLLUP/CUBE subtotal keys are
+            # NULL (not ''), UNION means DISTINCT,
             # CAST keeps NULL, mixed Decimal/Float branches (CASE, COALESCE) get a numeric
             # common type
             cat > /etc/clickhouse-server/users.d/bexhoma.xml <<EOF
@@ -78,6 +79,7 @@ spec:
               <profiles>
                 <default>
                   <join_use_nulls>1</join_use_nulls>
+                  <group_by_use_nulls>1</group_by_use_nulls>
                   <union_default_mode>DISTINCT</union_default_mode>
                   <cast_keep_nullable>1</cast_keep_nullable>
                   <allow_lossy_numeric_supertype>1</allow_lossy_numeric_supertype>

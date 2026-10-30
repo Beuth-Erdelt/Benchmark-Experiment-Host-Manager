@@ -233,9 +233,11 @@ quoting any number, not after:
 | `SUT data survived container restarts` | Every query of that configuration after the restart ran against a freshly initialized, empty database; its SQL errors (`relation ... does not exist`, connection/I/O errors) are consequences of the restart, not findings about the queries | `connections.md`'s SUT Container Restarts |
 | `SQL errors` | Per-query metrics for the specific queries that errored | `benchmarking.md`'s Errors subsection |
 | `SQL warnings (result mismatch)` | Correctness of results for the affected queries (timing may still be valid) | `benchmarking.md`'s Warnings subsection |
-| `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured - dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed | `benchmarking.md`'s Per Phase table (`num_of_queries` column) against each connection's Errors subsection |
+| `Some active queries missing from the totals` | Geo Times/Power@Size/Throughput@Size were computed over fewer queries than configured - dbmsbenchmarker pools the successful-query set across every connection sharing this experiment code, so one connection's failed query narrows every connection's totals, not just the one that failed; the test line names the dropped queries | `benchmarking.md`'s Errors subsection and Query Completion per Phase for the named queries |
 | `Workflow as planned` | Whether pod counts matched the intended sweep - cross-configuration/cross-phase comparisons may not be apples-to-apples | `workflow.md`'s Actual vs. Planned |
 | `Reset scripts ran without errors` | The rounds of the listed jobs did not start from the reset state (`-ar`: statistics, persist, counters) - background flushes or stale statistics may fall into them, and application counters may not start at 0; compare them to other rounds with care | `benchmarking.md`'s Reset table (`reset_failed` column) and the `bexhoma-reset_<run>_<client>_<entry>-*.stderr.log` files |
+| `Data parameters as requested` | A reused volume was loaded with other DDL or loading values than requested (e.g. another storage engine, shard count, script variant or post-load variant): the listed configurations ran on the volume's values, so their results describe those, not the requested ones - compare configurations only by the values they ran with | `connections.md`'s `volume_check` and the summary's Data Parameters of Reused Volumes |
+| `Init scripts without errors` | A loading script of the listed configurations failed or was missing (schema, constraints, indexes, statistics, the final checks that restore load relaxations), or a reused volume was loaded with failed scripts: tables, keys or indexes may be missing, statistics stale or relaxations still active - their results may not describe the intended setup | the `bexhoma-loading-<configuration>-<script>-*.stderr.log` files and the summary's Init Scripts with Errors |
 | `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row - for DBMSBenchmarker usually because a query failed somewhere, which removes it from every row; the note under the Per Phase table says which | `benchmarking.md`'s Per Phase table, Query Completion per Phase, and Per Phase (Complete Phases Only) for the phases that still measured every query |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
 | `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros - their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason | `monitoring.md`'s Missing Metrics |
@@ -254,6 +256,9 @@ same holds for a repetition whose `loading_inherited` is `True` (it found the
 volume of an earlier repetition loaded): its loading times are copies and
 enter no loading statistic across repetitions. Check `connections.md`'s
 `storage_reused`, `loading_inherited` and `sut_storage_*`.
+`Data parameters as requested (unknown, assumed: ...)` names reused volumes
+loaded before bexhoma stored DDL and loading values on them: what they hold is
+assumed to be what was requested, not verified.
 """
 
 _INTERPRETATION_RULES_MD = """### Interpretation Rules

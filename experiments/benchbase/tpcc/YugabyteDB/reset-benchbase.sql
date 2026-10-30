@@ -10,6 +10,7 @@
 --          statement on stdout; VERBOSE reports row counts as NOTICEs, which
 --          ysqlsh sends to stderr.
 
+\c benchbase
 \timing on
 
 -- step 1 (statistics)

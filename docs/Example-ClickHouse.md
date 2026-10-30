@@ -421,9 +421,10 @@ The coordinator and every shard get 16 CPUs, 64 GiB RAM and a volume of 50 GiB.
 * At start, every pod writes the cluster `bexhoma` into its configuration (`remote_servers`, one shard per worker).
 * The coordinator is not a shard. It is the entry point of the benchmarker and the loaders, and it runs a single-node ClickHouse Keeper, which `ON CLUSTER` statements need.
 * A worker is ready when it has a session with the Keeper. Bexhoma runs the init scripts only when all workers are ready.
-* The schema has a MergeTree table `<name>_local` on every shard and a Distributed table `<name>` on the coordinator and on every shard. The loaders write into the Distributed tables, which pass the rows on to the shards before the `INSERT` returns, so the loading time includes them.
-* Queries read the Distributed tables on the coordinator. A Distributed table inside a join or `IN` is read once and sent to all shards (`distributed_product_mode = global`), which is correct for every sharding key.
-* The check script reports rows, parts and sizes per table summed over the shards, and per shard.
+* `orders` and `lineitem` are a MergeTree table `<name>_local` on every shard and a Distributed table `<name>` on the coordinator and on every shard. The loaders write into the Distributed tables, which pass the rows on to the shards before the `INSERT` returns, so the loading time includes them.
+* The dimensions are a `ReplicatedMergeTree` on every shard and on the coordinator (`-xdim replicated`, default): Keeper copies the parts the loaders write on the coordinator to the shards, and a join with `orders`/`lineitem` runs on each shard against its local copy. With `-xdim distributed`, `part`, `partsupp`, `supplier` and `customer` are Distributed tables like `orders` (scripts in `ClickHouseCluster/distributed`, volume `tpch-distributed-<SF>`); `nation` and `region` are replicated in both. TPC-DS has no variant: every table is distributed.
+* Queries read the tables on the coordinator. A Distributed table inside a join or `IN` is read once and sent to all shards (`distributed_product_mode = global`), which is correct for every sharding key.
+* The check script waits for the replicas, fails if a node holds other rows of a replicated table than the coordinator, and reports rows, parts and sizes per table and node.
 * Monitoring sums the metrics of coordinator and shards (components SUT and worker).
 
 <details>

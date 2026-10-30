@@ -6,11 +6,12 @@
 -- Purpose: Collect table statistics after data loading.
 --          Run after initdata-tpch-SF*.sql (and optionally after initindexes).
 
-ANALYZE TABLE tpch.customer;
-ANALYZE TABLE tpch.lineitem;
-ANALYZE TABLE tpch.nation;
-ANALYZE TABLE tpch.orders;
-ANALYZE TABLE tpch.part;
-ANALYZE TABLE tpch.partsupp;
-ANALYZE TABLE tpch.region;
-ANALYZE TABLE tpch.supplier;
+-- Histograms (PERSISTENT FOR ALL) are the DDL parameter histograms (ddl-parameters.config)
+ANALYZE TABLE tpch.customer {histograms};
+ANALYZE TABLE tpch.lineitem {histograms};
+ANALYZE TABLE tpch.nation {histograms};
+ANALYZE TABLE tpch.orders {histograms};
+ANALYZE TABLE tpch.part {histograms};
+ANALYZE TABLE tpch.partsupp {histograms};
+ANALYZE TABLE tpch.region {histograms};
+ANALYZE TABLE tpch.supplier {histograms};

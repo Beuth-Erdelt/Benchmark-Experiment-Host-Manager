@@ -19,9 +19,9 @@ SELECT * FROM INFORMATION_SCHEMA.TIKV_REGION_PEERS LIMIT 20;
 
 CREATE DATABASE ycsb;
 
--- Create table with hash sharding for better distribution
+-- Clustered index, row id sharding and pre-split regions are DDL parameters (ddl-parameters.config)
 CREATE TABLE ycsb.usertable (
-    YCSB_KEY  VARCHAR(255) PRIMARY KEY,
+    YCSB_KEY  VARCHAR(255) PRIMARY KEY {clustered},
     FIELD0    TEXT,
     FIELD1    TEXT,
     FIELD2    TEXT,
@@ -32,4 +32,9 @@ CREATE TABLE ycsb.usertable (
     FIELD7    TEXT,
     FIELD8    TEXT,
     FIELD9    TEXT
-);
+) {shard_row_id_bits} {pre_split_regions};
+
+{split_regions}
+
+SHOW CREATE TABLE ycsb.usertable;
+SHOW TABLE ycsb.usertable REGIONS;

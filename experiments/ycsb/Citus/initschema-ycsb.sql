@@ -19,11 +19,12 @@ CREATE TABLE public.usertable (
     FIELD8    TEXT,
     FIELD9    TEXT,
     PRIMARY KEY (ycsb_key)
-);
+) WITH (fillfactor = {fillfactor}); -- passed on to the shards
 
 SET citus.shard_count = {num_worker_shards}; -- default 32
 
--- only citus enterprise:
+-- statement-based shard replication, open-source Citus (verified 14.2.0); needs at least
+-- as many workers as the factor
 SET citus.shard_replication_factor = {num_worker_replicas}; -- default 1
 
 SELECT create_distributed_table('usertable', 'ycsb_key');

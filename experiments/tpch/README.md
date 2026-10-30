@@ -69,7 +69,8 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `OracleDB` | `tpch` | `INSERT … SELECT * FROM ext_<table>` (external tables) | PK + FK + CHECK | Dual-table design: external tables for loading, internal tables for storage |
 | `SAPHANA` | `TPCH` | `IMPORT FROM CSV FILE …` | PK (inline) | `CREATE COLUMN TABLE`; uppercase quoted identifiers; no secondary indexes |
 | `SQLServer` | `dbo` | `BULK INSERT … WITH (FIRSTROW=1, FIELDTERMINATOR='\|', LASTROW=N, TABLOCK)` | PK (clustered, inline) | T-SQL; GO batch separators; `RECOVERY BULK_LOGGED` during load |
-| `Citus` | `public` | `COPY public.<table> FROM … DELIMITER '\|' NULL ''` | PK + FK | Extends PostgreSQL; dimension tables as reference tables; `orders`/`lineitem` distributed; columnar variant available; `{shard_count}` template variant |
+| `Citus` | `public` | `COPY public.<table> FROM … DELIMITER '\|' NULL ''` | PK + FK | Extends PostgreSQL; `orders`/`lineitem` distributed; dimension tables as reference tables (`-xdim distributed` is refused); columnar variant available; `{num_worker_shards}` DDL parameter |
+| `ClickHouseCluster` | (default) | `clickhouse-client` `INSERT INTO <table> FORMAT CSV` on the coordinator | None | `orders`/`lineitem` as MergeTree `<name>_local` per shard + Distributed table; dimensions as `ReplicatedMergeTree` on every node (`-xdim replicated`, default) or `part`, `partsupp`, `supplier`, `customer` as Distributed tables too (`-xdim distributed`, folder `ClickHouseCluster/distributed`; `nation`/`region` replicated in both) |
 | `OmniSci` | (default) | `COPY <table> FROM … WITH (delimiter='\|', header='false', quoted='false')` | None | GPU-accelerated analytics; multiple schema variants (TEXT ENCODING DICT keys, BIGINT/DECIMAL, INTEGER/DOUBLE, 1/2/4/8 fixed shards) |
 
 ---

@@ -87,6 +87,63 @@ experiments/<benchmark>/          e.g. tpch/, tpcds/
 `-schema` variants use the `{BEXHOMA_SCHEMA}` placeholder instead of a
 hard-coded schema name; it is substituted at runtime by the Bexhoma framework.
 
+### DDL parameters (`ddl-parameters.config`)
+
+A DBMS folder may declare parameters of its scripts in `ddl-parameters.config`
+(a Python dict literal, see `bexhoma/ddl_parameters.py`):
+
+```python
+{
+    'num_worker_shards': {
+        'default': 32,                        # reproduces the script without the parameter
+        'type': 'int',                        # optional: 032 and 32 are the same value
+        'description': 'citus.shard_count of the distributed tables',
+    },
+    'engine': {
+        'default': 'InnoDB',
+        'values': ['InnoDB', 'Aria', 'MyISAM'],   # optional: allowed values, exact spelling
+        # 'sql': {'token': 'SQL text'},           # optional: text written for a value
+        'description': 'storage engine of all tables',
+    },
+}
+```
+
+Scripts name a parameter as `{key}`; other text in braces (JSON, ClickHouse
+macros) stays as it is. Values come from `-xddl KEY=VALUE` (a comma list
+sweeps the key, one configuration per value) and from `-nwr`/`-nws`
+(`num_worker_replicas`/`num_worker_shards`). A folder without the file gets
+no filling; a folder variant (`ssb/Citus/distributed`) uses the file of its
+parent folder. The filled scripts are in the result folder
+(`<app>-loading-<configuration>-<script>-...`).
+
+Keys and values are valid Kubernetes label names and values: keys match
+`^[A-Za-z]([A-Za-z0-9_]{0,57}[A-Za-z0-9])?$`, values are 1-63 characters of
+letters, digits and `_.-`, starting and ending with a letter or digit; only
+strings and ints (a negative number or SQL text needs a token and an `sql`
+mapping). A loaded volume stores the values as labels `ddl_<key>` (next to
+`load_script`, `load_indexing`, `shape_num_worker`, ...). The volume name does
+not depend on them: a reused volume brings its values along, they win over
+the requested ones, and differences are reported (summary section "Data
+Parameters of Reused Volumes", test `Data parameters as requested`). A sweep
+with persistent storage (`-rst`) is refused, since all values would share
+one volume.
+
+A declaration may restrict other keys while it is not at its default:
+`'requires': {'clustered': ['default', 'clustered']}` (checked for every
+configuration and sweep combination before anything starts).
+
+| Folder | Keys |
+|---|---|
+| tpch/Citus, ssb/Citus, benchbase/tpcc/Citus | `num_worker_shards` |
+| ycsb/Citus | `num_worker_shards`, `num_worker_replicas` |
+| ycsb/CockroachDB | `num_worker_replicas`, `pk_hash` (hash, none) |
+| tpch/CockroachDB, benchbase/tpcc/TiDB | `num_worker_replicas` |
+| ycsb/TiDB | `num_worker_replicas`, `clustered` (default, clustered, nonclustered), `split_regions` (none, 4 … 128; requires a clustered key) |
+| ycsb/YugabyteDB | `pk_sharding` (hash, asc), `num_tablets` (auto, 4 … 128; requires hash) |
+| ycsb/PostgreSQL | `fillfactor` (int, default 100) |
+| tpch/MariaDB | `engine` (InnoDB, Aria, MyISAM) |
+| tpch/ClickHouse, tpch/ClickHouseCluster | `order_orders`, `order_lineitem` (key, date) |
+
 ### Required file header (all .sql and .sh files)
 
 Every file must start with this exact block, adapted to its path and purpose:
@@ -199,7 +256,9 @@ must be identical across benchmarks unless the deviation is declared in
 `tests/test_load_durability.py` (e.g. `tpch/MySQL/durability-relaxed.sql` adds
 autocommit 0). `unsafe` includes the `relaxed` scripts too; a script a folder
 does not have is not run.
-No curly braces in these scripts: bexhoma may fill them with `str.format()`.
+No curly braces in these scripts (checked by `test_no_curly_braces`); since
+DDL parameters are filled by key, braces would only matter for a `{key}` a
+folder declares.
 
 **Scale factor data path**: `/data/tpch/<SF>/` where `<SF>` is `SF1`, `SF10`,
 `SF30`, or `SF100`. All `.tbl` files are pipe-delimited with a trailing `|`.

@@ -4,10 +4,10 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Collect table statistics after data loading (-xis).
---          No curly braces in this file: bexhoma may fill it with str.format().
 
-ANALYZE TABLE ssb.customer;
-ANALYZE TABLE ssb.supplier;
-ANALYZE TABLE ssb.part;
-ANALYZE TABLE ssb.dates;
-ANALYZE TABLE ssb.lineorder;
+-- Histograms (PERSISTENT FOR ALL) are the DDL parameter histograms (ddl-parameters.config)
+ANALYZE TABLE ssb.customer {histograms};
+ANALYZE TABLE ssb.supplier {histograms};
+ANALYZE TABLE ssb.part {histograms};
+ANALYZE TABLE ssb.dates {histograms};
+ANALYZE TABLE ssb.lineorder {histograms};

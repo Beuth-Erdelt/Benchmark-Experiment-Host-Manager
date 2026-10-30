@@ -94,11 +94,18 @@ All lowercase. Examples:
 | Use case | Example result |
 |---|---|
 | SUT pod and service | `bexhoma-sut-postgresql-1717000000` |
-| SUT storage PVC | `bexhoma-storage-postgresql-1717000000` |
+| SUT storage PVC | `bexhoma-storage-pg-cephcsi-tpch-10` |
 | Benchmarker job, client round 2, parallel job 3 | `bexhoma-benchmarker-postgresql-1717000000-2-3` |
 
-Worker pods use `get_worker_name()`, which applies the same formula but draws the experiment segment from `storage_label` (or the experiment code when `worker_name_app`/`worker_name_component` overrides are set).
+Volumes are named by the storage name, not the experiment code, so later experiments find them:
+`storageConfiguration` with the DBMS abbreviation of the cluster config (`dockers.<DBMS>.abbreviation`,
+e.g. `pg`, `ci`, `chc`) and the storage class, then `storage_label` (benchmark and SF).
+Worker StatefulSets (and their headless Services) are named `bx-<w|component>-<storage name>-<storage_label>`
+by `get_worker_name()`, e.g. `bx-w-ci-cephcsi-tpch-100` or `bx-tikv-ti-nvme-ycsb-10`; a name over 52 characters
+(the Kubernetes limit for StatefulSets) is shortened with a hash.
 Worker PVCs from StatefulSet `volumeClaimTemplates` follow the fixed prefix `bxw-{worker_name}-{i}`.
+A loaded volume carries labels with the values it was loaded with (`ddl_<key>`, `load_<key>`,
+`shape_num_worker`, `shape_state`); a reused volume's values are compared with the requested ones.
 
 The `name:` fields in templates are placeholders that `start_sut()` always overwrites — their values do not matter to the code, only their `component` label does.
 

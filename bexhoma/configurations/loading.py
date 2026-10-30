@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING
 
 from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, start_process, wait_for_cluster
 from ..cluster_calls import stored_pods
+from .. import ddl_parameters
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
@@ -140,6 +141,7 @@ def load_data_asynch(
         # no time_ prefix: pod labels time_* are read back as script times
         labels['loading_phase_start'] = time_phase_start
         labels['num_tenants_ready'] = 0
+        labels['errors_{script_type}'.format(script_type=script_type)] = 0
     fullcommand = 'label pods ' + pod_sut + ' --overwrite '
     for key, value in labels.items():
         fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
@@ -151,7 +153,8 @@ def load_data_asynch(
         kubectl(fullcommand, context)
     # execute scripts
     times_script = dict()
-    shellcommand = 'if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
+    num_failed = 0                                                          # scripts with errors (script_failed), labelled errors_<script_type>
+    shellcommand ='if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
     for db in database:
         for c in commands:
             time_scrip_start = default_timer()
@@ -200,6 +203,12 @@ def load_data_asynch(
                 if len(stderr) > 0:
                     with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stderr)
+            else:
+                stdout, stderr = '', ''
+            if script_failed(stdout, stderr):
+                num_failed += 1
+                logger.warning("{}: loading script {} failed (see {}-loading-{}-{}-*.stderr.log)".format(
+                    configuration, c, app, configuration, filename))
             time_scrip_end = default_timer()
             sep = filename.find("-")
             if sep > 0:
@@ -242,6 +251,9 @@ def load_data_asynch(
     labels['num_tenants_ready'] = id_tenant + 1
     labels['time_{script_type}'.format(script_type=script_type)] = time_phase
     labels['time_loading_end'] = time_loading_end
+    if num_failed > 0:
+        # only written when > 0, so a tenant without errors keeps another tenant's count
+        labels['errors_{script_type}'.format(script_type=script_type)] = num_failed
     if (num_tenants > 0 and id_tenant == num_tenants - 1) or num_tenants == 0:
         logger.debug(f"#### Last tenant {id_tenant} marks loading as finished")
         labels[script_type] = 'True'
@@ -527,8 +539,56 @@ class LoadingCoordinator:
                         + ' /data/' + str(cfg.code) + '/' + cfg.configuration + '.log')
             cfg.execute_command_in_pod_sut(command=cmd_save)
 
+    def ddl_fill_values(self) -> dict:
+        """Text per placeholder of this configuration's DDL parameters.
+
+        Empty when the script folder declares no DDL parameters
+        (:mod:`bexhoma.ddl_parameters`): its scripts are uploaded unchanged.
+
+        :return: Text per key.
+        :rtype: dict[str, str]
+        """
+        cfg = self._config
+        declarations = ddl_parameters.load_declarations(
+            cfg.experiment.cluster.experiments_configfolder, cfg.path_experiment_docker)
+        if not declarations:
+            return {}
+        return ddl_parameters.fill_values(
+            declarations, ddl_parameters.resolve(declarations, cfg.ddl_parameters))
+
+    def upload_script(self, script: str, values: dict, filename_in_container: str,
+                      filename_in_resultfolder: str) -> bool:
+        """Fill a script of the configuration's folder, keep it in the result folder and upload it.
+
+        :param script: Script filename in the configuration's folder.
+        :param values: Text per placeholder; empty uploads the script unchanged.
+        :param filename_in_container: Target path in the SUT's ``dbms`` container.
+        :param filename_in_resultfolder: Copy in the result folder.
+        :return: False when the script is not in the folder (nothing uploaded).
+        :rtype: bool
+        """
+        cfg = self._config
+        filename_source = (cfg.experiment.cluster.experiments_configfolder
+                           + '/' + cfg.path_experiment_docker + '/' + script)
+        if not os.path.isfile(filename_source):
+            return False
+        if values:
+            with open(filename_source, "r") as initscript_template:
+                data = ddl_parameters.fill(initscript_template.read(), values)
+            with open(filename_in_resultfolder, "w") as initscript_filled:
+                initscript_filled.write(data)
+        else:
+            shutil.copy(filename_source, filename_in_resultfolder)
+        cfg.experiment.cluster.upload_file(
+            filename_remote=filename_in_container,
+            filename_local=filename_in_resultfolder,
+            pod=cfg.pod_sut, container="dbms")
+        cfg.execute_command_in_pod_sut(
+            "sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
+        return True
+
     def prepare_init_dbms(self, scripts: list) -> None:
-        """Copy and optionally fill DDL scripts into the SUT pod for loading.
+        """Copy DDL scripts into the SUT pod for loading, filled with the DDL parameters.
 
         :param scripts: List of script filenames from the experiment's initscript list.
         """
@@ -540,39 +600,23 @@ class LoadingCoordinator:
         scriptfolder = '/tmp/'
         c = cfg.dockertemplate['template']
         database = c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC'] else cfg.experiment.volume
-        schema = c['JDBC']['schema'] if 'JDBC' in c and 'schema' in c['JDBC'] else 'default'
-        databases = [database]
+        values = self.ddl_fill_values()
         if cfg.num_tenants > 0 and cfg.tenant_per == 'schema':
             for tenant in range(cfg.num_tenants):
                 print("{:30s}: scripts for tenant #{}".format(cfg.configuration, tenant))
                 for script in scripts:
-                    filename_template = cfg.path_experiment_docker + '/' + script
-                    filename_source = (cfg.experiment.cluster.experiments_configfolder
-                                       + '/' + filename_template)
                     filename_base, file_extension = os.path.splitext(script)
-                    if os.path.isfile(filename_source):
-                        with open(filename_source, "r") as initscript_template:
-                            data = initscript_template.read()
-                            data = data.format(BEXHOMA_SCHEMA=f"tenant_{tenant}")
-                            filename_in_resultfolder = (
-                                cfg.experiment.path
-                                + '/{app}-loading-{configuration}-{tenant}-{filename}'
-                                  '-{database}{extension}.log'.format(
-                                    app=cfg.appname, configuration=cfg.configuration,
-                                    filename=filename_base, database=database,
-                                    tenant=tenant,
-                                    extension=file_extension.lower()).lower())
-                            filename_target = f'/{tenant}-{script}'
-                            filename_in_container = scriptfolder + filename_target
-                            with open(filename_in_resultfolder, "w") as initscript_filled:
-                                initscript_filled.write(data)
-                            cfg.experiment.cluster.upload_file(
-                                filename_remote=filename_in_container,
-                                filename_local=filename_in_resultfolder,
-                                pod=cfg.pod_sut, container="dbms")
-                            cfg.execute_command_in_pod_sut(
-                                "sed -i 's/\\r$//' {to_name}".format(
-                                    to_name=filename_in_container))
+                    self.upload_script(
+                        script, {**values, 'BEXHOMA_SCHEMA': f"tenant_{tenant}"},
+                        filename_in_container=scriptfolder + f'/{tenant}-{script}',
+                        filename_in_resultfolder=(
+                            cfg.experiment.path
+                            + '/{app}-loading-{configuration}-{tenant}-{filename}'
+                              '-{database}{extension}.log'.format(
+                                app=cfg.appname, configuration=cfg.configuration,
+                                filename=filename_base, database=database,
+                                tenant=tenant,
+                                extension=file_extension.lower()).lower()))
             return
         if cfg.num_tenants > 0 and cfg.tenant_per == 'database':
             script = 'initdatabases.sql'
@@ -601,62 +645,17 @@ class LoadingCoordinator:
                 pod=cfg.pod_sut, container="dbms")
             cfg.execute_command_in_pod_sut(
                 "sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
-        if len(cfg.ddl_parameters):
-            for script in scripts:
-                filename_template = cfg.path_experiment_docker + '/' + script
-                if os.path.isfile(cfg.experiment.cluster.experiments_configfolder
-                                  + '/' + filename_template):
-                    with open(cfg.experiment.cluster.experiments_configfolder
-                              + '/' + filename_template, "r") as initscript_template:
-                        data = initscript_template.read()
-                        data = data.format(**cfg.ddl_parameters)
-                        filename_filled = cfg.path_experiment_docker + '/filled_' + script
-                        with open(cfg.experiment.cluster.experiments_configfolder
-                                  + '/' + filename_filled, "w") as initscript_filled:
-                            initscript_filled.write(data)
-                        filename_in_container = scriptfolder + script
-                        filename_in_resultfolder = (
-                            cfg.experiment.cluster.experiments_configfolder
-                            + '/' + filename_filled)
-                        cfg.experiment.cluster.upload_file(
-                            filename_remote=filename_in_container,
-                            filename_local=filename_in_resultfolder,
-                            pod=cfg.pod_sut, container="dbms")
-                        cfg.execute_command_in_pod_sut(
-                            "sed -i 's/\\r$//' {to_name}".format(
-                                to_name=filename_in_container))
-                        filename_source = (cfg.experiment.cluster.experiments_configfolder
-                                           + '/' + filename_filled)
-                        filename_base, file_extension = os.path.splitext(script)
-                        filename_in_resultfolder = (
-                            cfg.experiment.path
-                            + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'
-                            .format(app=cfg.appname, configuration=cfg.configuration,
-                                    filename=filename_base, database=database,
-                                    extension=file_extension.lower()).lower())
-                        shutil.copy(filename_source, filename_in_resultfolder)
-        else:
-            for script in scripts:
-                filename = cfg.path_experiment_docker + '/' + script
-                filename_source = (cfg.experiment.cluster.experiments_configfolder
-                                   + '/' + filename)
-                filename_in_container = scriptfolder + script
-                filename_base, file_extension = os.path.splitext(script)
-                filename_in_resultfolder = (
+        for script in scripts:
+            filename_base, file_extension = os.path.splitext(script)
+            self.upload_script(
+                script, values,
+                filename_in_container=scriptfolder + script,
+                filename_in_resultfolder=(
                     cfg.experiment.path
                     + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(
                         app=cfg.appname, configuration=cfg.configuration,
                         filename=filename_base, database=database,
-                        extension=file_extension.lower()).lower())
-                if os.path.isfile(filename_source):
-                    shutil.copy(filename_source, filename_in_resultfolder)
-                    cfg.experiment.cluster.upload_file(
-                        filename_remote=filename_in_container,
-                        filename_local=filename_in_resultfolder,
-                        pod=cfg.pod_sut, container="dbms")
-                    cfg.execute_command_in_pod_sut(
-                        "sed -i 's/\\r$//' {to_name}".format(
-                            to_name=filename_in_container))
+                        extension=file_extension.lower()).lower()))
 
     def check(self) -> None:
         """Check loading status, update timing attributes, and clean up finished jobs.
@@ -953,8 +952,12 @@ class LoadingCoordinator:
                 if use_storage and not use_ramdisk:
                     volume = self.get_volume_to_label()
                     if volume:
+                        # what the volume holds: DDL and loading values, shape (see
+                        # SutConfiguration.volume_parameter_labels); a reuse reads them
+                        labels = ''.join(' {}={}'.format(key, value)
+                                         for key, value in cfg.volume_parameter_labels().items())
                         cfg.experiment.cluster.kubectl(
-                            'label pvc {} --overwrite loaded=True'.format(volume))
+                            'label pvc {} --overwrite loaded=True{}'.format(volume, labels))
             if 'time_loading_start' in pod_labels[pod]:
                 cfg.time_loading_start = int(pod_labels[pod]['time_loading_start'])
             if 'time_loading_end' in pod_labels[pod]:
@@ -1082,8 +1085,9 @@ class LoadingCoordinator:
         spawning an async thread is unnecessary.
 
         Honors the same tenancy model as :meth:`load_data` / :meth:`prepare_init_dbms`:
-        for ``tenant_per == 'schema'`` each script runs once per tenant against the
-        tenant-filled file :meth:`prepare_init_dbms` already uploaded (``<tenant>-<script>``);
+        for ``tenant_per == 'schema'`` each script runs once, as reset scripts cover
+        the whole database, from the file of tenant 0 :meth:`prepare_init_dbms` already
+        uploaded (``<tenant>-<script>``);
         for ``tenant_per == 'database'`` each script runs once per tenant against
         database ``tenant_<n>``; for ``tenant_per == 'container'`` no fan-out is needed
         here because each container tenant is already a separate :class:`SutConfiguration`
@@ -1109,8 +1113,8 @@ class LoadingCoordinator:
             entry's ``resetscript`` list).
         :return: Elapsed seconds spent running the scripts (0 if none ran), so the
             caller can attach it to the connection about to be submitted. The
-            scripts that failed (see :func:`script_failed`) or were missing are in
-            :attr:`last_reset_failed`.
+            scripts that failed (see :func:`script_failed`) are in
+            :attr:`last_reset_failed`; missing ones are not failures.
         :rtype: int
         """
         cfg = self._config
@@ -1123,10 +1127,12 @@ class LoadingCoordinator:
         folder = cfg.experiment.cluster.experiments_configfolder + '/' + cfg.path_experiment_docker
         missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
         if missing:
-            print("{:30s}: reset scripts {} not found in {}, skipped".format(
-                cfg.configuration, missing, folder))
-            self.last_reset_failed = ['{} (missing)'.format(s) for s in missing]
+            # as in loading: only scripts of the folder run, missing shell scripts stay silent
             scripts = [s for s in scripts if s not in missing]
+            missing_sql = [s for s in missing if not s.lower().endswith('.sh')]
+            if missing_sql:
+                print("{:30s}: reset scripts not in folder, skipped: {}".format(
+                    cfg.configuration, ", ".join(missing_sql)))
             if not scripts:
                 return 0
         scripts, scripts_workers = self.split_worker_scripts(scripts)
@@ -1153,9 +1159,9 @@ class LoadingCoordinator:
         # (script, script-as-uploaded-in-pod, target database, tenant tag for log naming)
         targets = []
         if cfg.num_tenants > 0 and cfg.tenant_per == 'schema':
-            for tenant in range(cfg.num_tenants):
-                for script in scripts:
-                    targets.append((script, f'{tenant}-{script}', default_database, str(tenant)))
+            # whole database, so one run covers every tenant schema
+            for script in scripts:
+                targets.append((script, f'0-{script}', default_database, ''))
         elif cfg.num_tenants > 0 and cfg.tenant_per == 'database':
             for tenant in range(cfg.num_tenants):
                 for script in scripts:
@@ -1231,6 +1237,17 @@ class LoadingCoordinator:
         # short); their time is part of the loading time
         scripts, scripts_workers = self.split_worker_scripts(scripts)
         time_offset += self.run_scripts_on_workers(scripts_workers, script_type)
+        # only scripts of the folder run (as worker scripts); missing SQL scripts are
+        # recorded as loading_skipped and listed in the summary, missing shell scripts
+        # stay silent (optional by design, e.g. save-snapshot.sh only for Redis/Dragonfly)
+        folder = cfg.experiment.cluster.experiments_configfolder + '/' + cfg.path_experiment_docker
+        missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
+        if missing:
+            scripts = [s for s in scripts if s not in missing]
+            missing = [s for s in missing if not s.lower().endswith('.sh')]
+        if missing:
+            print("{:30s}: loading scripts not in folder, skipped: {}".format(cfg.configuration, ", ".join(missing)))
+            cfg.loading_skipped = sorted(set(getattr(cfg, 'loading_skipped', [])) | set(missing))
         self.prepare_init_dbms(scripts)
         service_name = cfg.get_service_sut(configuration=cfg.configuration)
         pods = cfg.experiment.cluster.get_pods(

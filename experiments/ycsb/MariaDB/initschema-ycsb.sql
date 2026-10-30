@@ -18,4 +18,7 @@ CREATE TABLE ycsb.usertable (
     `FIELD8`    TEXT,
     `FIELD9`    TEXT,
     PRIMARY KEY (`YCSB_KEY`)
-);
+) {collation} {row_format};
+-- Collation and row format are DDL parameters (ddl-parameters.config)
+
+SHOW CREATE TABLE ycsb.usertable;

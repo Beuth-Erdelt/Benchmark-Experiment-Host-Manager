@@ -182,6 +182,21 @@ class ResetCompletenessTest(unittest.TestCase):
         for benchmark in ('tpcc', 'twitter', 'ycsb', 'chbenchmark'):
             self.assert_complete('benchbase.py', '-xbt', benchmark, benchmark=benchmark)
 
+    def test_yugabytedb_tpcc_uses_its_own_database(self):
+        """initschema creates the database; later scripts and BenchBase connect to it, other benchmarks do not."""
+        _, configurations = _run_script('benchbase.py', '-xbt', 'tpcc')
+        config = next(c for c in configurations if c.docker == 'YugabyteDB')
+        self.assertEqual(config.loading_parameters['BEXHOMA_DATABASE'], 'benchbase')
+        for entry in (e for client_round in config.experiment_dict['benchmarker'] for e in client_round):
+            self.assertEqual(entry['parameters']['BEXHOMA_DATABASE'], 'benchbase')
+        folder = os.path.join(_REPO, 'experiments', 'benchbase', 'tpcc', 'YugabyteDB')
+        for name in ('initschema-benchbase.sql', 'checkschema-benchbase.sql', 'reset-benchbase.sql'):
+            with self.subTest(name), open(os.path.join(folder, name), encoding='utf-8') as f:
+                self.assertIn('\\c benchbase\n', f.read())
+        _, configurations = _run_script('benchbase.py', '-xbt', 'twitter')
+        config = next(c for c in configurations if c.docker == 'YugabyteDB')
+        self.assertEqual(config.loading_parameters['BEXHOMA_DATABASE'], 'yugabyte')
+
     def test_tpch_refresh_stream_gets_no_second_reset(self):
         """The reset runs once per round, before the query stream, not again before the refresh stream."""
         _, configurations = _run_script('tpch.py', '-xrs', '1')
@@ -278,7 +293,7 @@ class ExecResetScriptTest(unittest.TestCase):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             self.assertEqual(LoadingCoordinator(self.cfg).exec_reset_script('reset_1_1_1', ['nope.sql']), 0)
-        self.assertIn("reset scripts ['nope.sql'] not found", out.getvalue())
+        self.assertIn("reset scripts not in folder, skipped: nope.sql", out.getvalue())
 
     def test_missing_one_is_dropped(self):
         class Stop(Exception):
@@ -316,6 +331,63 @@ class ExecResetScriptTest(unittest.TestCase):
         self.assertEqual(len(sent), 1)
         self.assertNotIn('\n', sent[0])
         self.assertIn("printf 'user=monetdb\\npassword=monetdb\\n'", sent[0])
+
+    def _sent_with_tenants(self, tenant_per: str) -> list:
+        """Commands of a reset with 3 tenants."""
+        sent = []
+        cluster = self.cfg.experiment.cluster
+        cluster.namespace = 'ns'
+        cluster.get_pods = lambda **kw: ['sut-pod']
+        cluster.kubectl = lambda command: None
+        self.cfg.experiment.path = cluster.experiments_configfolder
+        self.cfg.__dict__.update(
+            appname='bexhoma', code='1', num_tenants=3, tenant_per=tenant_per, script_target='sut',
+            dockertemplate={'loadData': 'psql -d {database} < {scriptname}',
+                            'template': {'JDBC': {'database': 'postgres'}}},
+            get_service_sut=lambda configuration: 'svc',
+            execute_command_in_pod_sut=lambda cmd, retry_interrupted=True: sent.append(cmd) or ('', '', ''))
+        with (
+            mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            LoadingCoordinator(self.cfg).exec_reset_script('reset_1_1_1', ['reset-ycsb.sql'])
+        return sent
+
+    def test_schema_tenancy_runs_once(self):
+        """A reset covers the whole database, so it does not repeat per schema."""
+        self.assertEqual(self._sent_with_tenants('schema'), ['psql -d postgres < /tmp/0-reset-ycsb.sql'])
+
+    def test_database_tenancy_runs_per_tenant(self):
+        self.assertEqual(self._sent_with_tenants('database'),
+                         [f'psql -d tenant_{tenant} < /tmp/reset-ycsb.sql' for tenant in range(3)])
+
+
+class SchemaTenancyScriptsTest(unittest.TestCase):
+    """What schema tenancy needs of its scripts."""
+
+    def test_alter_database_is_serialized(self):
+        """Tenants run the statistics script in parallel and update the same catalog row."""
+        with open(os.path.join(_REPO, 'experiments', 'tpch', 'PostgreSQL', 'initstatistics-tpch-schema.sql'),
+                  encoding='utf-8') as f:
+            text = f.read()
+        positions = [text.index(statement) for statement in
+                     ('BEGIN;', 'pg_advisory_xact_lock', 'ALTER DATABASE postgres', 'COMMIT;')]
+        self.assertEqual(positions, sorted(positions))
+
+    def test_benchbase_mysql_refused(self):
+        """Only the PostgreSQL folder has -schema scripts; no -dbms includes MySQL."""
+        for dbms in (['-dbms', 'MySQL'], ['-dbms', 'PostgreSQL', 'MySQL'], []):
+            stderr = io.StringIO()
+            with (
+                self.subTest(dbms),
+                mock.patch.object(sys, 'argv', ['benchbase.py', 'run', *dbms, '-mtb', 'schema', '-mtn', '2']),
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(stderr),
+                self.assertRaises(SystemExit) as exit_,
+            ):
+                runpy.run_path(os.path.join(_REPO, 'benchbase.py'), run_name='__main__')
+            self.assertEqual(exit_.exception.code, 2)
+            self.assertIn('-mtb schema is not supported for MySQL', stderr.getvalue())
 
 
 class ScriptFailedTest(unittest.TestCase):
@@ -379,8 +451,10 @@ class ResetFailedRecordedTest(unittest.TestCase):
             with mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'), \
                     contextlib.redirect_stdout(io.StringIO()) as out:
                 loader.exec_reset_script('reset_1_1_1', ['reset-ycsb.sql', 'reset-flush.sh', 'gone.sql'])
-        self.assertEqual(loader.last_reset_failed, ['gone.sql (missing)', 'reset-flush.sh'])
-        self.assertIn('FAILED: gone.sql (missing), reset-flush.sh', out.getvalue())
+        # a script not in the folder is skipped, not failed (as in loading)
+        self.assertEqual(loader.last_reset_failed, ['reset-flush.sh'])
+        self.assertIn('not in folder, skipped: gone.sql', out.getvalue())
+        self.assertIn('FAILED: reset-flush.sh', out.getvalue())
 
 
 class ResetSummaryTest(unittest.TestCase):

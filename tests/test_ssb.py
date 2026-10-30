@@ -217,14 +217,18 @@ class ScriptListsTest(unittest.TestCase):
                                      original.read())
 
     def test_no_braces(self):
+        """No braces except the DDL parameters the folder declares (ddl-parameters.config)."""
+        from bexhoma import ddl_parameters
         for folder in _ALL_FOLDERS:
+            declared = ddl_parameters.load_declarations(_EXP, folder)
             for name in os.listdir(os.path.join(_EXP, folder)):
-                if os.path.isdir(os.path.join(_EXP, folder, name)):
+                if os.path.isdir(os.path.join(_EXP, folder, name)) or name == ddl_parameters.FILENAME:
                     continue
                 with self.subTest(folder=folder, name=name):
                     with open(os.path.join(_EXP, folder, name), encoding='utf-8') as f:
                         text = f.read()
-                    # bexhoma may fill scripts with str.format()
+                    for key in declared:
+                        text = text.replace('{' + key + '}', '')
                     self.assertNotRegex(text, r'[{}]')
 
 

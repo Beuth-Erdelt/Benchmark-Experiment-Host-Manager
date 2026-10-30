@@ -14,7 +14,49 @@ from dataclasses import dataclass, field
 import pandas as pd
 from bexhoma import evaluators, failure_timeline
 
-__all__ = ["Benchmark", "DBMSBenchmarkerBenchmark", "Section", "render_stdout"]
+__all__ = ["Benchmark", "DBMSBenchmarkerBenchmark", "Section", "render_stdout",
+           "DIMENSION_VARIANTS", "DIMENSION_DBMS", "dimension_folder", "dimension_info"]
+
+#: ``-xdim`` (TPC-H, SSB): placement of the dimensions on a multi-node DBMS: a full
+#: copy on every node (default), or spread over the nodes like the fact table.
+DIMENSION_VARIANTS = ('replicated', 'distributed')
+
+#: Multi-node DBMS that ``-xdim`` applies to; the others ignore it.
+DIMENSION_DBMS = ('ClickHouseCluster', 'Citus')
+
+
+def dimension_folder(docker: str, dimensions: str) -> str:
+    """Script folder (in ``experiments/<benchmark>``) of a DBMS for a dimension placement.
+
+    The default placement's scripts are in the DBMS folder, the other's in its
+    subfolder ``distributed``; DBMS outside :data:`DIMENSION_DBMS` ignore it.
+
+    :param docker: DBMS name, e.g. ``ClickHouseCluster``.
+    :param dimensions: One of :data:`DIMENSION_VARIANTS`.
+    :return: Folder relative to ``experiments/<benchmark>``, e.g. ``ClickHouseCluster/distributed``.
+    :rtype: str
+    """
+    if docker in DIMENSION_DBMS and dimensions == 'distributed':
+        return docker + '/distributed'
+    return docker
+
+
+def dimension_info(dbms: list, dimensions: str, fact: str, applies_to: tuple = DIMENSION_DBMS) -> str:
+    """Workload info line on the dimension placement, empty without a DBMS it applies to.
+
+    :param dbms: The ``-dbms`` list.
+    :param dimensions: One of :data:`DIMENSION_VARIANTS`.
+    :param fact: Name of the fact table(s), e.g. ``lineorder``.
+    :param applies_to: DBMS of the benchmark that ``-xdim`` applies to.
+    :return: The line with a leading newline, or ``''``.
+    :rtype: str
+    """
+    names = [d for d in applies_to if d in (dbms or [])]
+    if not names:
+        return ''
+    placement = ('a full copy on every node' if dimensions == 'replicated'
+                 else f'spread over the nodes like {fact}')
+    return f"\nDimensions of {', '.join(names)} are {placement} (-xdim {dimensions})."
 
 
 @dataclass
@@ -823,7 +865,8 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         :param df_aggregated_reduced: The per-phase execution DataFrame.
         :return: Tuple of the extra sections to append to the summary; a dict
                  with ``num_errors``, ``num_warnings``, ``num_active_queries``,
-                 and ``num_queries_with_explain`` for test recording; and a
+                 ``missing_queries`` (active queries outside the pooled set the
+                 totals cover) and ``num_queries_with_explain`` for test recording; and a
                  report-only ``EXPLAIN`` detail section (or ``None``), shown
                  in ``benchmarking.md`` but never in the stdout summary.
         :rtype: tuple[list[Section], dict, Section | None]
@@ -841,6 +884,9 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         latency_section = Section(heading="Latency of Timer Execution [ms]", level=3, blank_after_heading=False,
                                   skip_if_empty=True)
         df_latencies = self.evaluator.get_query_latencies(query_titles=True)
+        # Columns are dbmsbenchmarker's pooled query set: the queries every
+        # connection of this experiment code completed, i.e. what the totals cover.
+        pooled_queries = set(df_latencies.columns) if df_latencies is not None else set()
         if df_latencies is not None and not df_latencies.empty:
             df_latencies = df_latencies.sort_index().T.round(2)
             df_latencies.index.names = ["Queries"]
@@ -892,6 +938,7 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         df_errors_by_num = self.evaluator.get_total_errors(query_titles=False)
         explain_lines: list[str] = []
         num_active_queries = len(df_errors.columns)
+        missing_queries = [q for q in df_errors.columns if q not in pooled_queries]
         num_queries_with_explain = 0
         for query_title, query_num in zip(list(df_errors.columns), list(df_errors_by_num.columns)):
             query_num_stripped = str(query_num).lstrip('Q')
@@ -912,6 +959,7 @@ class DBMSBenchmarkerBenchmark(Benchmark):
             "num_errors": num_errors,
             "num_warnings": num_warnings,
             "num_active_queries": num_active_queries,
+            "missing_queries": missing_queries,
             "num_queries_with_explain": num_queries_with_explain,
             "failure_events": self._failure_events(),
             # DBMSBenchmarker's own timing; the connection table's benchmark_begin

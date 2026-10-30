@@ -18,4 +18,4 @@ CREATE TABLE public.usertable (
     FIELD8    TEXT,
     FIELD9    TEXT,
     PRIMARY KEY (YCSB_KEY)
-);
+) WITH (fillfactor = {fillfactor}, autovacuum_vacuum_scale_factor = {autovacuum_scale});

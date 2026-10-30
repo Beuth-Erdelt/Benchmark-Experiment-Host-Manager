@@ -54,6 +54,9 @@ spec:
             - sh
             - -c
             - |
+                # the pgduckdb image runs as uid 999 (not root like postgres), so a fresh
+                # root-owned volume (e.g. nvme) must be handed over before initdb
+                chown 999:999 /var/lib/postgresql/data
                 echo "Running chmod on tenants:"
                 ls -l /tenant_* 2>/dev/null || echo "No tenant directories found"
                 chown -v -R 999:999 /tenant_* && chmod -v 700 /tenant_* /tenant_* 2>&1 || true

@@ -145,6 +145,9 @@ CREATE TABLE public.warehouse (
     CONSTRAINT warehouse_pkey PRIMARY KEY (w_id)
 );
 
+-- Shards per distributed table (-nws / -xddl num_worker_shards, see ddl-parameters.config).
+SET citus.shard_count = {num_worker_shards};
+
 SELECT create_distributed_table('customer', 'c_w_id');
 SELECT create_distributed_table('district', 'd_w_id');
 SELECT create_distributed_table('history', 'h_w_id');
@@ -153,7 +156,8 @@ SELECT create_distributed_table('stock', 's_w_id');
 SELECT create_distributed_table('new_order', 'no_w_id');
 SELECT create_distributed_table('oorder', 'o_w_id');
 SELECT create_distributed_table('order_line', 'ol_w_id');
-SELECT create_reference_table('item');
+-- Placement of item is the DDL parameter tpcc_item (ddl-parameters.config)
+{tpcc_item}
 
 -- Verify Distribution
 SELECT * FROM citus_shards;

@@ -39,6 +39,7 @@ from bexhoma import missing_metrics
 from bexhoma.monitoring_math import (counter_total, job_lifetime, min_measurable_window, read_connections,
                                      scoped_job_connections, DEFAULT_SCRAPE_INTERVAL_SECONDS)
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes, check_tenant_loading_pods
+from bexhoma import ddl_parameters
 from bexhoma.load_durability import DEFAULT_LEVEL as LOAD_DURABILITY_DEFAULT
 from bexhoma import sut_restarts
 from bexhoma.tls import TLS_COMPONENT
@@ -230,6 +231,9 @@ class ExperimentBase():
         self.appname = self.cluster.appname                             # app name for namespacing cluster - default is bexhoma
         self.resources = {}                                             # dict of resources infos that will be attached to SUT (like requested CPUs)
         self.ddl_parameters = {}                                        # DDL schema parameter for init scripts (like index type or sharding strategy)
+        self.ddl_assignments = {}                                       # DDL parameter values per key from -xddl/-nwr/-nws, a list of several sweeps the key
+        self.ddl_keys_given = []                                        # keys given by -xddl: at least one configuration must declare each
+        self.data_parameters = {}                                       # other values that define the loaded data (e.g. YCSB insert order), stored as load_<key> labels on volumes
         self.eval_parameters = {}                                       # parameters that will be handed over to dbmsbenchmarker
         self.storage = {}                                               # parameters for persistent storage (like type and size)
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
@@ -292,6 +296,7 @@ class ExperimentBase():
         Dispatches to the appropriate workflow branch (start, load, summary,
         or the default full benchmark run) and prints timing information.
         """
+        self.resolve_ddl_parameters()
         self.expand_resource_cells()
         # should results be tested for validity?
         test_result = self.args.test_result
@@ -695,6 +700,17 @@ class ExperimentBase():
         num_worker = int(args.num_worker)
         num_worker_replicas = int(args.num_worker_replicas)
         num_worker_shards = int(args.num_worker_shards)
+        # DDL parameters: -nwr/-nws when set, -xddl on top; filled per configuration
+        # by resolve_ddl_parameters() for the keys its script folder declares
+        xddl = ddl_parameters.parse_assignments(getattr(args, 'ddl_parameters', []))
+        self.ddl_keys_given = list(xddl)
+        self.ddl_assignments = {
+            **{key: [str(value)] for key, value in (('num_worker_replicas', num_worker_replicas),
+                                                    ('num_worker_shards', num_worker_shards)) if value > 0},
+            **xddl}
+        if xddl:
+            self.workload['info'] = self.workload['info']+"\nDDL parameters: {}.".format(
+                ", ".join("{}={}".format(key, ",".join(values)) for key, values in xddl.items()))
         self.resetscript_active = args.activate_reset
         # entry scripts with their own parser may not know -xld
         self.load_durability = getattr(args, 'load_durability', LOAD_DURABILITY_DEFAULT)
@@ -1180,15 +1196,79 @@ class ExperimentBase():
         """
         self.configurations.append(configuration)
 
+    def resolve_ddl_parameters(self) -> None:
+        """
+        Set every configuration's DDL parameters from its script folder's declarations.
+
+        A folder declares its parameters in ``ddl-parameters.config``
+        (:mod:`bexhoma.ddl_parameters`). Each configuration gets the defaults,
+        overwritten by the single values of ``-xddl``/``-nwr``/``-nws`` for
+        the keys it declares; swept keys (comma lists) are set per clone by
+        :meth:`expand_resource_cells`. Keys given by ``-xddl`` are added to
+        the evaluation parameters as ``ddl_<key>``. A folder without
+        declarations gets no DDL parameters, so its scripts are uploaded
+        unchanged. The volume name does not depend on DDL values: a volume
+        stores them as labels, and a reused volume's values win
+        (:meth:`~bexhoma.configurations.base.SutConfiguration.apply_volume_parameters`).
+        Called by :meth:`process` before anything is started; a second call
+        does nothing.
+
+        :raises ValueError: For a value a folder does not allow, an ``-xddl``
+            key that no configuration declares, or a DDL sweep of a
+            configuration with persistent storage (all values would share
+            one volume).
+        """
+        if getattr(self, '_ddl_parameters_resolved', False):
+            return
+        self._ddl_parameters_resolved = True
+        declared = set()
+        for config in self.configurations:
+            declarations = ddl_parameters.load_declarations(
+                self.cluster.experiments_configfolder, config.path_experiment_docker)
+            config.ddl_declarations = declarations
+            given = ddl_parameters.validate(
+                declarations,
+                {key: values for key, values in self.ddl_assignments.items() if key in declarations},
+                config.configuration)
+            declared |= set(given)
+            if not declarations:
+                config.ddl_parameters = {}
+                continue
+            swept = sorted(key for key, values in given.items() if len(values) > 1)
+            if swept and config.use_storage() and not config.use_ramdisk():
+                raise ValueError(
+                    f"{config.configuration}: -xddl sweeps {', '.join(swept)}, but the configuration has "
+                    f"persistent storage (-rst): all values would share one volume. Sweep without -rst, "
+                    f"or run one experiment per value")
+            # swept keys are set per clone by expand_resource_cells(), with the normalised values
+            config.ddl_swept = {key: values for key, values in given.items() if len(values) > 1}
+            config.ddl_given = set(given)
+            single = {key: values[0] for key, values in given.items() if len(values) == 1}
+            config.ddl_parameters = ddl_parameters.resolve(declarations, {**config.ddl_parameters, **single})
+            # every combination the configuration will run with, before anything starts
+            for combo in ddl_parameters.combinations(config.ddl_swept):
+                ddl_parameters.check_requirements(
+                    declarations, {**config.ddl_parameters, **combo}, config.configuration)
+            config.set_eval_parameters(**{f'ddl_{key}': value for key, value in single.items()
+                                          if key in self.ddl_keys_given})
+        unknown = [key for key in self.ddl_keys_given if key not in declared]
+        if unknown:
+            raise ValueError(
+                f"-xddl {', '.join(unknown)}: no DBMS of this experiment declares it in "
+                f"{ddl_parameters.FILENAME} of its script folder")
+
     def expand_resource_cells(self) -> None:
         """
-        Turn every configuration into one configuration per resource cell.
+        Turn every configuration into one configuration per resource cell and DDL combination.
 
         Entry scripts build each DBMS once; when ``-rc/-lc/-rr/-lr/-rst``
         carry comma lists (see :func:`bexhoma.cli_args.resource_cells`), this
         clones each configuration per cell, so every DBMS of every workload is
-        swept the same way. Each cell gets its own identity, so cells never
-        share pods or a PVC:
+        swept the same way. ``-xddl KEY=V1,V2`` sweeps a DDL parameter: a
+        configuration whose folder declares ``KEY`` is cloned per value (per
+        combination for several keys), times the resource cells; only
+        without persistent storage (see :meth:`resolve_ddl_parameters`).
+        Each cell gets its own identity, so cells never share pods or a PVC:
 
         * name ``{docker}-{cell}`` (``PostgreSQL-1``, ``PostgreSQL-2``, ...)
           when the DBMS has one configuration, ``{configuration}-{cell}`` when
@@ -1204,7 +1284,8 @@ class ExperimentBase():
         a second call does nothing.
         """
         cells = self.resource_cells
-        if len(cells) <= 1 or getattr(self, '_resource_cells_expanded', False):
+        swept = {key: values for key, values in getattr(self, 'ddl_assignments', {}).items() if len(values) > 1}
+        if (len(cells) <= 1 and not swept) or getattr(self, '_resource_cells_expanded', False):
             return
         self._resource_cells_expanded = True
 
@@ -1215,24 +1296,39 @@ class ExperimentBase():
         per_docker = Counter(config.docker for config in originals if sweeps(config))
         self.configurations = []
         for config in originals:
+            # DDL cells: the combinations of the swept keys this folder declares
+            # (normalised by resolve_ddl_parameters())
+            combos = ddl_parameters.combinations(getattr(config, 'ddl_swept', {}))
+            if len(cells) * len(combos) <= 1:
+                self.configurations.append(config)
+                continue
             if not sweeps(config):
-                print("{:30s}: SUT is not managed by bexhoma, not swept across resources".format(config.configuration))
+                print("{:30s}: SUT is not managed by bexhoma, not swept across resources or DDL parameters".format(config.configuration))
                 self.configurations.append(config)
                 continue
             base_name = config.docker if per_docker[config.docker] == 1 else config.configuration
             base_storage = config.storage.get('storageConfiguration') or config.configuration
             # clone the untouched original before the first cell changes it;
             # the experiment (and the cluster behind it) stays shared
-            clones = [config] + [copy.deepcopy(config, memo={id(self): self}) for _ in cells[1:]]
-            for cell_number, (cell, clone) in enumerate(zip(cells, clones), start=1):
+            pairs = [(resource_number, cell, combo)
+                     for resource_number, cell in enumerate(cells, start=1) for combo in combos]
+            clones = [config] + [copy.deepcopy(config, memo={id(self): self}) for _ in pairs[1:]]
+            for cell_number, ((resource_number, cell, combo), clone) in enumerate(zip(pairs, clones), start=1):
                 clone.configuration = f'{base_name}-{cell_number}'
                 clone.alias = f'{base_name}@{cell_number}'
-                clone.set_resources(
-                    requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
-                    limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
-                    nodes_worker = cell.get('worker_nodes'),
-                    )
-                set_cell_storage(clone, f'{base_storage}-{cell_number}', cell)
+                if len(cells) > 1:
+                    clone.set_resources(
+                        requests = {'cpu': cell['cpu'], 'memory': cell['memory'], 'gpu': 0},
+                        limits = {'cpu': cell['cpu_limit'], 'memory': cell['memory_limit']},
+                        nodes_worker = cell.get('worker_nodes'),
+                        )
+                    set_cell_storage(clone, f'{base_storage}-{resource_number}', cell)
+                if combo:
+                    # no persistent volume here (refused by resolve_ddl_parameters())
+                    clone.ddl_parameters = {**clone.ddl_parameters, **combo}
+                    clone.set_eval_parameters(**{f'ddl_{key}': value for key, value in combo.items()})
+                    print("{:30s}: DDL parameters {}".format(
+                        clone.configuration, ", ".join(f"{key}={value}" for key, value in combo.items())))
                 self.configurations.append(clone)
 
     def add_benchmark(self, benchmark) -> None:
@@ -1724,6 +1820,151 @@ class ExperimentBase():
         if inherited:
             print("\n### Inherited Loading")
             print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
+        self._show_volume_checks(connections_sorted)
+        self._show_init_script_checks(connections_sorted)
+
+    def _init_script_errors(self, configurations: list) -> dict:
+        """
+        Loading scripts with errors, judged from their logs in the result folder.
+
+        Covers the scripts run in the SUT pod (``<app>-loading-<configuration>-*``)
+        and on worker pods (``<app>-<phase>-<configuration>-*``, phases schema,
+        index, tenants); see :func:`bexhoma.configurations.loading.script_failed`.
+        Scripts not in the folder are not run since loading skips them
+        (``loading_skipped``); in older results their log says "No such file
+        or directory" and fails.
+
+        :param configurations: Configuration names of the experiment.
+        :return: Failed log names (without app and phase prefix) per configuration.
+        :rtype: dict[str, list[str]]
+        """
+        from bexhoma.configurations.loading import script_failed
+        folder = getattr(self, 'path', '')
+        pattern = re.compile(r'^{}-(loading|schema|index|tenants)-(.+)\.(stdout|stderr)\.log$'.format(
+            re.escape(getattr(self, 'appname', 'bexhoma').lower())))
+        # log names are lower case; longest name first: 'postgresql-1-0' before 'postgresql-1'
+        original = {c.lower(): c for c in configurations}
+        names = sorted(original, key=len, reverse=True)
+        outputs = {}
+        for filename in sorted(os.listdir(folder)) if folder and os.path.isdir(folder) else []:
+            match = pattern.match(filename)
+            if not match:
+                continue
+            configuration = next((name for name in names if match.group(2).startswith(name + '-')), None)
+            if configuration is None:
+                continue
+            with open(os.path.join(folder, filename), encoding='utf-8', errors='replace') as file:
+                outputs.setdefault((configuration, match.group(2)), {})[match.group(3)] = file.read()
+        errors = {}
+        for (configuration, script), output in outputs.items():
+            if script_failed(output.get('stdout', ''), output.get('stderr', '')):
+                errors.setdefault(original[configuration], []).append(script[len(configuration) + 1:])
+        return {configuration: sorted(scripts) for configuration, scripts in errors.items()}
+
+    def _show_init_script_checks(self, connections_sorted: list) -> None:
+        """
+        Print the loading scripts that failed, and record the test ``Init scripts without errors``.
+
+        Scripts of this experiment are judged from their logs
+        (:meth:`_init_script_errors`); a reused volume brings its count of failed
+        scripts per phase (PVC labels ``errors_<phase>``, in ``volume_check``).
+        A reused volume without that count (loaded before it existed) makes
+        the test skipped, unless something failed. Records nothing when no
+        loading script ran and no volume was reused.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        configurations = {c.get('configuration', c['name']) for c in connections_sorted}
+        errors = self._init_script_errors(list(configurations))
+        volume_errors, unknown = {}, set()
+        for c in connections_sorted:
+            if not c.get('storage_reused'):
+                continue
+            configuration = c.get('configuration', c['name'])
+            loading_errors = (c.get('volume_check') or {}).get('loading_errors')
+            if loading_errors is None:
+                unknown.add(configuration)
+            elif loading_errors:
+                volume_errors.setdefault(configuration, loading_errors)
+        folder = getattr(self, 'path', '')
+        ran = any(re.match(r'^{}-loading-.+\.log$'.format(re.escape(getattr(self, 'appname', 'bexhoma').lower())), f)
+                  for f in (os.listdir(folder) if folder and os.path.isdir(folder) else []))
+        reused = any(c.get('storage_reused') for c in connections_sorted)
+        skipped = {}
+        for c in connections_sorted:
+            if c.get('loading_skipped'):
+                skipped.setdefault(c.get('configuration', c['name']), c['loading_skipped'])
+        if skipped:
+            print("\n### Init Scripts Not in Folder")
+            for configuration, scripts in sorted(skipped.items()):
+                print("* {}: skipped {}".format(configuration, ", ".join(scripts)))
+        if not ran and not reused:
+            return
+        if errors or volume_errors:
+            print("\n### Init Scripts with Errors")
+            for configuration, scripts in sorted(errors.items()):
+                print("* {}: {}".format(configuration, ", ".join(scripts)))
+            for configuration, phases in sorted(volume_errors.items()):
+                print("* {}: reused volume was loaded with failed scripts: {}".format(
+                    configuration, ", ".join(f"{phase} {count}" for phase, count in phases.items())))
+            failed = ["{}: {}".format(configuration, ", ".join(scripts)) for configuration, scripts in sorted(errors.items())]
+            failed += ["{}: volume {}".format(configuration, ", ".join(f"{phase} {count}" for phase, count in phases.items()))
+                       for configuration, phases in sorted(volume_errors.items())]
+            self._record_test(False, "Init scripts without errors (failed: {})".format("; ".join(failed)))
+        elif unknown:
+            self._record_skipped_test("Init scripts without errors (unknown, volume loaded before error counts: {})".format(
+                ", ".join(sorted(unknown))))
+        else:
+            self._record_test(True, "Init scripts without errors")
+
+    def _show_volume_checks(self, connections_sorted: list) -> None:
+        """
+        Print the DDL and loading values reused volumes brought along, and record their test.
+
+        A reused volume's values win over the requested ones (it holds the
+        data, see ``SutConfiguration.apply_volume_parameters``). The test
+        ``Data parameters as requested`` fails when a given value differs from
+        the volume's, is skipped when a volume has no label for a value (loaded
+        before the labels existed: assumed as requested), and passes otherwise.
+        Results written before ``volume_check`` was recorded record nothing.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        recorded = [c for c in connections_sorted if 'volume_check' in c]
+        if not recorded:
+            return
+        checks = {}
+        for c in recorded:
+            if c['volume_check']:
+                checks.setdefault(c.get('configuration', c['name']), c['volume_check'])
+        differences, assumed, lines = [], [], []
+        for configuration, check in sorted(checks.items()):
+            for kind, title in (('ddl', 'DDL'), ('load', 'loading')):
+                report = check.get(kind) or {}
+                if report.get('from_volume'):
+                    lines.append("* {}: {} values of the volume: {}".format(configuration, title, ", ".join(
+                        f"{key}={value}" for key, value in report['from_volume'].items())))
+                for key, (wanted, found) in (report.get('differences') or {}).items():
+                    differences.append(f"{configuration} {key}: requested {wanted}, volume {found}")
+                assumed += [f"{configuration} {key}" for key in report.get('assumed') or []]
+                if report.get('unknown'):
+                    lines.append("* {}: volume has {} labels of keys not requested: {}".format(
+                        configuration, title, ", ".join(report['unknown'])))
+        if lines or differences or assumed:
+            print("\n### Data Parameters of Reused Volumes")
+            for line in lines:
+                print(line)
+            for difference in differences:
+                print("* differs, the run used the volume's value: {}".format(difference))
+            if assumed:
+                print("* no label on the volume (loaded before the labels existed), assumed as requested: {}".format(
+                    ", ".join(assumed)))
+        if differences:
+            self._record_test(False, "Data parameters as requested (volume differs: {})".format("; ".join(differences)))
+        elif assumed:
+            self._record_skipped_test("Data parameters as requested (unknown, assumed: {})".format(", ".join(assumed)))
+        else:
+            self._record_test(True, "Data parameters as requested")
     def _test_column(self, df, column: str, title: str = '') -> bool:
         """
         Call evaluator.test_results_column and record the result.

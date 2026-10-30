@@ -27,7 +27,7 @@ from typing import Any
 from bexhoma import spec
 from bexhoma.cli_args import format_metric_overrides
 from bexhoma.experiments.tpch_catalog import (
-    _env_set_arg, append_resource_flags, resolve_resource_cells, resource_sweep)
+    _env_set_arg, append_ddl_flags, append_resource_flags, resolve_resource_cells, resource_sweep)
 from bexhoma.spec import SpecError
 
 __all__ = ["build_ycsb_argv"]
@@ -169,6 +169,7 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-rnb", placement.get("benchmarking"))
 
     append_resource_flags(argv, resources)
+    append_ddl_flags(argv, experiment)
 
     for system_spec, resolved, configuration_name in resolved_cells:
         scope = f"@{configuration_name}" if configuration_name else ""

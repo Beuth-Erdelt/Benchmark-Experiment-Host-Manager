@@ -4,6 +4,6 @@
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
 -- Purpose: Collect statistics of lineorder_flat after data loading (-xis, -xsv flat).
---          No curly braces in this file: bexhoma may fill it with str.format().
 
-ANALYZE TABLE ssb.lineorder_flat;
+-- Histograms (PERSISTENT FOR ALL) are the DDL parameter histograms (ddl-parameters.config)
+ANALYZE TABLE ssb.lineorder_flat {histograms};

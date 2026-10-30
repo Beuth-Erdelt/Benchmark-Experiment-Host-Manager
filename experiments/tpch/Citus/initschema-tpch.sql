@@ -120,6 +120,9 @@ ALTER TABLE orders   ADD CONSTRAINT orders_pkey   PRIMARY KEY (o_orderkey);
 ALTER TABLE lineitem ADD CONSTRAINT lineitem_pkey PRIMARY KEY (l_orderkey, l_linenumber);
 
 
+-- Shards per distributed table (-nws / -xddl num_worker_shards, see ddl-parameters.config).
+SET citus.shard_count = {num_worker_shards};
+
 -- Q22: correlated subqueries are not supported when FROM contains a reference table.
 -- Dimension tables are reference tables (replicated to every worker for fast joins).
 -- orders and lineitem are distributed by their order key for co-located joins.

@@ -91,6 +91,9 @@ ALTER SYSTEM SET citus.max_intermediate_result_size TO -1;
 ALTER SYSTEM SET citus.enable_repartition_joins TO 1;
 SELECT pg_reload_conf();
 
+-- Shards per distributed table (-nws / -xddl num_worker_shards, see ddl-parameters.config).
+SET citus.shard_count = {num_worker_shards};
+
 SELECT create_reference_table('public.customer');
 SELECT create_reference_table('public.supplier');
 SELECT create_reference_table('public.part');

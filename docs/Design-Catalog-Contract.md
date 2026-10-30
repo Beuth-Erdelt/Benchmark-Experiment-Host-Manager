@@ -937,6 +937,37 @@ being invoked via argv — at that point the resolved knobs could be handed
 to `config.manifest.patch_dbms_args()` in-process, and the selector-string
 scoping (and `build_argv()` itself) would no longer be needed.
 
+### DDL parameters: `systems[].ddl`
+
+Schema parameters of a workload's scripts (fillfactor, shard count, sort
+key; see `dev/plan-ddl-parameters.md`) follow the same capability/selection
+split as `post_load`:
+
+- **Capability**: `systems.<name>.ddl.<workload>.<key>` in
+  `contract_catalog.yml`, with `type`, `values` or `min`/`max`, `default`.
+  It mirrors `experiments/<workload>/<system>/ddl-parameters.config`, which
+  stays the source of truth for bexhoma; `tests/test_ddl_parameters.py`
+  (`CatalogCapabilityTest`) keeps both equal.
+- **Selection**: `systems[].ddl: {key: value}`; a list sweeps the key.
+  `build_argv()` emits one `-xddl KEY=V1,V2` per key
+  (`tpch_catalog.append_ddl_flags()`, shared by every workload builder).
+
+```yaml
+discriminates: [ddl]
+systems:
+  - name: PostgreSQL
+    ddl: {fillfactor: [100, 80]}   # -> -xddl fillfactor=100,80: PostgreSQL-1, PostgreSQL-2
+```
+
+`spec.validate_ddl()` checks, after the post_load steps: the key is declared
+for the system and workload, every value legal; systems that declare the
+same key select the same values (`-xddl` has no per-system scope, like
+`-xii`); a sweep is refused together with a resource sweep (the `--set
+@CONFIG` scopes above name configurations by cell position) and with any
+`storage_class` (all values of a system share one volume name; bexhoma
+refuses it too). The agent validator counts a sweep as configurations
+(`count_runs()`) and requires `ddl` in `discriminates`.
+
 ## `derive:` expression language
 
 Deliberately minimal: arithmetic over a fixed set of declared inputs

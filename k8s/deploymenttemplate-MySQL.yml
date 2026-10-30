@@ -51,6 +51,9 @@ spec:
         #image: mysql:8.4.0                           # LTS, default InnoDB settings have changed, import sometimes really slow
         args:
           - "--max_connections=1500"
+          # bytewise string comparison and ordering, the same as PostgreSQL, MonetDB and ClickHouse
+          - "--character-set-server=utf8mb4"
+          - "--collation-server=utf8mb4_bin"
           - "--local-infile=1"
           # --- Authentication ---
           # 9.x has no mysql_native_password; caching_sha2_password needs TLS or the RSA key on first login.

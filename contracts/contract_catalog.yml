@@ -15,7 +15,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.12.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.13.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -45,6 +45,11 @@ catalog_concepts:
     out_of_scope: "whether an option is actually applied to a run -- that's
       a separate, per-experiment SELECTION made via loading.post_load /
       systems[].post_load in experiment_schema below, not physical_design's job"
+  ddl:
+    semantics: "systems.<name>.ddl.<workload> states CAPABILITY: the schema
+      parameters (e.g. fillfactor) of that workload's scripts, with legal
+      values and default; selection is systems[].ddl. A reused volume keeps
+      the values it was loaded with"
   derive:
     why: "lets a handful of profile knobs scale with an experiment's own
       resource limits, instead of being fixed literals an expert hand-tunes once"
@@ -158,7 +163,7 @@ experiment_schema:
     discriminates:
       type: "list[str]"
       required: true
-      values: [system, concurrency, cpu, memory, storage_class]
+      values: [system, concurrency, cpu, memory, storage_class, ddl]
       semantics: "factor(s) the experiment isolates, e.g. [system] or [system, concurrency]"
     follow_up_of:
       type: str
@@ -265,6 +270,13 @@ experiment_schema:
             resolve_physical_design_overrides() resolves the per-system
             selection separately and experiment.py applies it in-process via
             SutConfiguration.set_experiment(indexing=...) -- not through argv"
+        ddl:
+          type: object
+          required: false
+          semantics: "{key: value}, see catalog_concepts.ddl; a list sweeps
+            (one configuration per value; discriminates names ddl). Systems
+            declaring the same key must select the same values"
+          out_of_scope: "a sweep with a resources sweep or any storage_class"
     observe:
       type: object
       when: "only relevant when the hypothesis needs hardware metrics (those
@@ -907,6 +919,18 @@ systems:
       constraints: true
       statistics: true
       storage_format: [heap]
+
+    ddl:
+      ycsb:
+        fillfactor: {type: int, default: 100, min: 10, max: 100, why: "page fill
+          of usertable; below 100, updates can stay on the page (HOT)"}
+        autovacuum_scale: {values: ["0.2", "0.1", "0.05", "0.01"], default: "0.2",
+          why: "autovacuum_vacuum_scale_factor of usertable"}
+      tpch:
+        index_method: {values: [btree, hash, brin], default: btree}
+        btree_dedup: {values: ["on", "off"], default: "on", why: "btree only"}
+        statistics_target: {type: int, default: 100, min: 1, max: 10000}
+        extended_statistics: {values: ["off", "on"], default: "off"}
 
     profiles:
       analytical-ssd:

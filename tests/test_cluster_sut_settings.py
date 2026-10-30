@@ -337,19 +337,33 @@ class StartSutClickHouseManifestTest(naming.SutManifestPerRunTest):
         self.assertEqual(self._env(self._dbms(worker))['BEXHOMA_WORKER_SERVICE'], worker['metadata']['name'])
 
     def test_init_scripts_match_the_cluster_name_and_tables(self):
-        """The cluster scripts address cluster 'bexhoma' of the template and the standalone tables."""
-        for benchmark in ('tpch', 'tpcds'):
-            folder = os.path.join(_REPO, 'experiments', benchmark)
-            with open(os.path.join(folder, 'ClickHouse', f'initschema-{benchmark}.sql'), encoding='utf-8') as f:
+        """The cluster scripts address cluster 'bexhoma' of the template and the standalone tables.
+
+        A table is distributed (``<name>_local`` per shard, Distributed table on the shards
+        and the coordinator, flushed by the reset) or replicated (ReplicatedMergeTree on
+        the shards and the coordinator, synced by the reset); TPC-H has both placements
+        (-xdim).
+        """
+        for benchmark, folders in (('tpch', ('ClickHouseCluster', 'ClickHouseCluster/distributed')),
+                                   ('tpcds', ('ClickHouseCluster',))):
+            path = os.path.join(_REPO, 'experiments', benchmark)
+            with open(os.path.join(path, 'ClickHouse', f'initschema-{benchmark}.sql'), encoding='utf-8') as f:
                 tables = re.findall(r'CREATE TABLE (\w+) \(', f.read())
-            with open(os.path.join(folder, 'ClickHouseCluster', f'initschema-{benchmark}.sql'), encoding='utf-8') as f:
-                cluster = f.read()
-            self.assertEqual(re.findall(r'CREATE TABLE (\w+)_local ON CLUSTER bexhoma \(', cluster), tables)
-            # Distributed tables on the shards (ON CLUSTER) and on the coordinator (not a shard)
-            self.assertEqual(re.findall(r'CREATE TABLE (\w+)( ON CLUSTER bexhoma)? \([^;]*\) ENGINE = Distributed\(bexhoma, currentDatabase\(\), \1_local,', cluster),
-                             [(t, on_cluster) for t in tables for on_cluster in (' ON CLUSTER bexhoma', '')])
-            with open(os.path.join(folder, 'ClickHouseCluster', f'reset-{benchmark}.sql'), encoding='utf-8') as f:
-                self.assertEqual(re.findall(r'SYSTEM FLUSH DISTRIBUTED (\w+);', f.read()), tables)
+            for folder in folders:
+                with self.subTest(benchmark=benchmark, folder=folder):
+                    with open(os.path.join(path, folder, f'initschema-{benchmark}.sql'), encoding='utf-8') as f:
+                        cluster = f.read()
+                    distributed = re.findall(r'CREATE TABLE (\w+)_local ON CLUSTER bexhoma \(', cluster)
+                    # Distributed tables on the shards (ON CLUSTER) and on the coordinator (not a shard)
+                    self.assertEqual(re.findall(r'CREATE TABLE (\w+)( ON CLUSTER bexhoma)? \([^;]*\) ENGINE = Distributed\(bexhoma, currentDatabase\(\), \1_local,', cluster),
+                                     [(t, on_cluster) for t in distributed for on_cluster in (' ON CLUSTER bexhoma', '')])
+                    replicated = re.findall(r'CREATE TABLE (\w+) ON CLUSTER bexhoma \([^;]*\) ENGINE = ReplicatedMergeTree ', cluster)
+                    self.assertEqual(re.findall(r'CREATE TABLE (\w+) \([^;]*\) ENGINE = ReplicatedMergeTree ', cluster), replicated)
+                    self.assertEqual(sorted(distributed + replicated), sorted(tables))
+                    with open(os.path.join(path, folder, f'reset-{benchmark}.sql'), encoding='utf-8') as f:
+                        reset = f.read()
+                    self.assertEqual(sorted(re.findall(r'SYSTEM FLUSH DISTRIBUTED (\w+);', reset)), sorted(distributed))
+                    self.assertEqual(sorted(re.findall(r'SYSTEM SYNC REPLICA ON CLUSTER bexhoma (\w+);', reset)), sorted(replicated))
         with open(os.path.join(_REPO, 'k8s', 'deploymenttemplate-ClickHouseCluster.yml'), encoding='utf-8') as f:
             self.assertIn('<bexhoma>$shards</bexhoma>', f.read())
 

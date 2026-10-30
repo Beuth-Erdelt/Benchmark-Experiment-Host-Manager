@@ -11,7 +11,7 @@
 -- Reference: https://github.com/cockroachdb/cockroach/blob/master/pkg/workload/tpch/tpch.go
 
 SHOW ZONE CONFIGURATION FROM DATABASE defaultdb;
-ALTER DATABASE defaultdb CONFIGURE ZONE USING num_replicas = {num_replicas};
+ALTER DATABASE defaultdb CONFIGURE ZONE USING num_replicas = {num_worker_replicas};
 SHOW ZONE CONFIGURATION FROM DATABASE defaultdb;
 
 CREATE TABLE public.nation (

@@ -12,6 +12,11 @@
 
 SELECT * FROM master_get_active_worker_nodes();
 
+-- Since Citus 11.1 the columnar access method lives in the separate citus_columnar
+-- extension; without it, CREATE TABLE ... USING COLUMNAR fails. The image does not
+-- create it; Citus propagates it to the workers.
+CREATE EXTENSION IF NOT EXISTS citus_columnar;
+
 
 CREATE TABLE nation (
     n_nationkey  INTEGER      NOT NULL,
@@ -116,6 +121,9 @@ ALTER TABLE orders   ADD CONSTRAINT orders_pkey   PRIMARY KEY (o_orderkey);
 ALTER TABLE lineitem ADD CONSTRAINT lineitem_pkey PRIMARY KEY (l_orderkey, l_linenumber);
 
 
+-- Shards per distributed table (-nws / -xddl num_worker_shards, see ddl-parameters.config).
+SET citus.shard_count = {num_worker_shards};
+
 -- Q22: correlated subqueries are not supported when FROM contains a reference table.
 SELECT create_reference_table('nation');
 SELECT create_reference_table('region');
@@ -125,3 +133,6 @@ SELECT create_reference_table('partsupp');
 SELECT create_reference_table('customer');
 SELECT create_distributed_table('orders',   'o_orderkey');
 SELECT create_distributed_table('lineitem', 'l_orderkey');
+
+-- Compression of the columnar tables is the DDL parameter columnar_compression (ddl-parameters.config)
+{columnar_compression}

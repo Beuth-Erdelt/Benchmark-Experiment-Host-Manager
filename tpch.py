@@ -13,6 +13,7 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
+from bexhoma.benchmarks.base import DIMENSION_VARIANTS, dimension_folder
 from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
 # ExperimentBase.expand_resource_cells(); kept here under its old name
@@ -60,6 +61,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xic',   '--xinit-constraints', help='add primary-key and foreign-key constraints after loading', action='store_true', default=False, dest='init_constraints')
     parser.add_argument('-xis',   '--xinit-statistics', help='run ANALYZE / UPDATE STATISTICS after loading', action='store_true', default=False, dest='init_statistics')
     parser.add_argument('-xcol',  '--xinit-columns', help='use columnar storage (Citus only)', action='store_true', default=False, dest='init_columns')
+    parser.add_argument('-xdim',  '--xdimensions', help='ClickHouseCluster: replicated = a full copy of part, partsupp, supplier and customer on every node, joins with orders/lineitem run locally per shard; distributed = these four spread over the shards like orders and lineitem, joined across nodes per query; nation and region are a full copy in both. Citus always uses reference tables (distributed is refused), single-node DBMS ignore it', choices=DIMENSION_VARIANTS, default='replicated', dest='dimensions')
     parser.add_argument('-xrcp',  '--xrecreate-parameter', help='regenerate random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
     parser.add_argument('-xrs',   '--xnum-refresh-streams', help='enable a TPC-H RF1/RF2 refresh stream running in parallel with the query streams; value is the number of RF1+RF2 pairs applied per benchmarking round (set equal to the number of parallel query streams for a spec-compliant throughput test; 0 = disabled)', default=0, type=int, dest='num_refresh_streams')
@@ -130,6 +132,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     num_worker = int(args.num_worker)
     num_worker_replicas = int(args.num_worker_replicas)
     num_worker_shards = int(args.num_worker_shards)
+    # placement of the dimensions on multi-node DBMS
+    dimensions = args.dimensions
     #multi_tenant_num = int(args.multi_tenant_num)
     #multi_tenant_by = args.multi_tenant_by
     ##############
@@ -484,10 +488,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 config.set_storage(
                     storageConfiguration = 'citus'
                     )
-                config.set_ddl_parameters(
-                    num_worker_replicas = num_worker_replicas,
-                    num_worker_shards = num_worker_shards,
-                    )
                 config.set_sut_parameters(
                     BEXHOMA_REPLICAS = num_worker_replicas,
                     BEXHOMA_SHARDS = num_worker_shards,
@@ -528,8 +528,13 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
             if ("ClickHouseCluster" in args.dbms):
                 # ClickHouse cluster: coordinator (SUT) and num_worker shards
                 config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', alias='DBMS C1', worker=num_worker)
-                # With -ar: rows held by the Distributed tables are sent to the shards
-                # (coordinator), then the loaded parts are synced to disk (every worker)
+                # -xdim distributed: scripts in ClickHouseCluster/distributed, and a volume of its own
+                config.path_experiment_docker = dimension_folder('ClickHouseCluster', dimensions)
+                if config.path_experiment_docker != 'ClickHouseCluster':
+                    config.storage_label = f'tpch-distributed-{SF}'
+                # With -ar: rows held by the Distributed tables are sent to the shards and the
+                # replicated tables are synced (coordinator), then the loaded parts are synced
+                # to disk (every worker)
                 config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
                 config.set_script_target('workers')
                 if skip_loading:
@@ -573,5 +578,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
 if __name__ == '__main__':
     parser = build_parser()
     args = parser.parse_args()
+    if args.dimensions == 'distributed' and 'Citus' in args.dbms:
+        # Citus plans 12 of the 22 queries only with co-located joins (cluster check 2026-10-30)
+        parser.error('-xdim distributed is not supported for Citus in TPC-H (its dimensions are reference tables)')
     run(args)
     exit()
