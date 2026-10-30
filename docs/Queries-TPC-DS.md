@@ -49,27 +49,51 @@ parameter substitution.
 
 ## DBMS Dialect Overrides
 
-Sixteen queries carry a `'DBMS'` key with dialect-specific SQL for one or more systems:
+A query is overridden for a system when the connection name starts with the override key (case-insensitive)
+or when the connection's `dialect` equals it. MariaDB and MySQL connections both have the dialect `MySQL`, but a
+`mariadb-…` connection also matches the `MariaDB` key, so the two can run different SQL.
+
+37 queries carry a `'DBMS'` key with dialect-specific SQL for one or more systems:
 
 | Query | DBMS overrides | Reason |
 |-------|---------------|--------|
-| Q5 | MariaDB | Nested CTE workaround (MariaDB <10.4 cannot have CTEs defined inside CTE bodies) |
-| Q14a+b | MariaDB | Nested CTE workaround + `INTERSECT` substitute |
+| Q1 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`store_limit`) |
+| Q5 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround (MariaDB <10.4); `GROUP BY ROLLUP` syntax differences |
+| Q6 | ClickHouse | Correlated scalar subquery rewritten as a join with the per-category average |
+| Q7 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
+| Q10 | ClickHouse | `EXISTS` rewritten as `IN` |
+| Q14a+b | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `INTERSECT` substitute (MariaDB); dialect-specific SQL for the others |
+| Q16 | ClickHouse | `EXISTS` on another warehouse rewritten as `IN` over `GROUP BY … HAVING` |
 | Q18 | MariaDB, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
 | Q22 | MariaDB, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
-| Q27 | MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
-| Q36 | MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
+| Q26 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
+| Q27 | MariaDB, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; the MariaDB version wraps the rollup so that an `ORDER BY` is possible |
+| Q30 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`state_limit`) |
+| Q31 | ClickHouse | Numerators of the quarterly ratios converted with `toFloat64` (ClickHouse truncates `Decimal` division) |
+| Q32 | ClickHouse | Correlated scalar subquery rewritten as a join (`limit_item_sk`) |
+| Q35 | ClickHouse | `EXISTS` rewritten as `IN` |
+| Q36 | MariaDB, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()` |
+| Q41 | ClickHouse | Correlated count rewritten as `IN` over `i_manufact` |
+| Q44 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
+| Q47 | ClickHouse | Alias and CTE qualification adjusted |
+| Q49 | ClickHouse | Union wrapped as a derived table |
 | Q51 | MySQL | `FULL OUTER JOIN` not supported; rewritten with `UNION ALL` |
 | Q54 | MySQL | `CAST(… AS INT)` not supported; replaced by `CAST(… AS SIGNED)` |
-| Q66 | MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()` |
+| Q57 | ClickHouse | Alias and CTE qualification adjusted |
+| Q58 | ClickHouse, MonetDB | Alias adjusted (ClickHouse); numerators converted with `+ 0.0e0` (MonetDB, which rounds `DECIMAL` division) |
+| Q66 | ClickHouse, MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()`; derived-table qualification (ClickHouse) |
 | Q67 | MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
-| Q70 | MonetDB, PostgreSQL, Exasol, MemSQL | `GROUP BY ROLLUP` syntax differences |
-| Q77 | MariaDB, MonetDB, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP` |
-| Q80 | MariaDB, MonetDB, PostgreSQL, MemSQL | Nested CTE workaround + `GROUP BY ROLLUP` |
+| Q69 | ClickHouse | `EXISTS` / `NOT EXISTS` rewritten as `IN` / `NOT IN` |
+| Q70 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MonetDB emulates the rollup with `UNION ALL` (grand-total rank 1, subtotal ranks across all states) |
+| Q77 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP` syntax differences |
+| Q80 | Exasol, MariaDB, MemSQL, MonetDB, MySQL, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP`; MariaDB/MySQL use `concat()` because `\|\|` is logical OR there |
+| Q81 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`state_limit`) |
 | Q84 | MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()` |
-| Q86 | MariaDB, MonetDB, PostgreSQL, Exasol, MemSQL | `GROUP BY ROLLUP` syntax differences |
+| Q86 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()` |
+| Q92 | ClickHouse | Correlated scalar subquery rewritten as a join (`limit_item_sk`) |
+| Q94 | ClickHouse | `EXISTS` / `NOT EXISTS` on another warehouse rewritten as `IN` over `GROUP BY … HAVING` |
 | Q97 | MySQL | `FULL OUTER JOIN` not supported; rewritten with `UNION ALL + GROUP BY` |
-
+| Q99 | MonetDB | Plain `ORDER BY substr(…)`; the default query orders a derived table instead, which MonetDB cannot resolve |
 ---
 
 ## Deviations from the TPC-DS Reference Templates
@@ -90,6 +114,9 @@ Differences fall into two categories:
 | **Q30** | `STATE` expanded to all 43 US state codes (previously only `["TN"]`) | Draws `[STATE]` from `fips_county` distribution (any US state) | **Fixed** |
 | **Q49** | `d_moy` filter removed from all three channel subqueries; `MONTH` parameter removed | No month filter; the template aggregates an entire year | **Fixed** |
 | **Q98** | Start date uses `{DAY}` parameter (integer 1–28) instead of hardcoded `01`; `DAY` parameter added | Start date drawn from a sales-weighted date distribution within Jan–Jul of `[YEAR]` | **Approximated** — uniform day distribution used; sales-weighted draw not expressible in dbmsbenchmarker |
+| **Q27, Q36** | `'TN'` is always part of the `s_state` list | `[STATE]` drawn from `fips_county` | **Deviation** — all stores of the generated data are in TN, so any other draw returns an empty result |
+| **Q12, Q20, Q98** | `(sum(x)+0.0e0)*100/…` | `sum(x)*100/…` | Numerically equivalent; forces floating-point division so ClickHouse does not truncate |
+| **Q78** | `ss_qty*1.0/(…)` | `ss_qty/(…)` | Numerically equivalent; avoids integer division in PostgreSQL and MonetDB |
 
 ### Syntactic Differences (same result set, dialect adaptation)
 
@@ -103,6 +130,45 @@ Differences fall into two categories:
 | `CAST(… AS SIGNED)` vs. `CAST(… AS INT)` | Q54 (MySQL override) | MySQL does not support `INT` as a cast target |
 | `CAST(inv_after AS FLOAT) / inv_before` vs. plain division | Q21 | Forces floating-point division; semantically equivalent on non-integer inputs |
 | Nested CTE workaround (outer CTE wraps everything) | Q5 (MariaDB), Q14a+b (MariaDB), Q77 (MariaDB), Q80 (MariaDB) | MariaDB <10.4 cannot reference a CTE from inside another CTE body |
+
+---
+
+## Result Comparison Across DBMS (SF=3)
+
+All 99 queries were run at SF=3 on PostgreSQL, MySQL, MariaDB, MonetDB, ClickHouse and
+ClickHouseCluster in one experiment (the DBMS the `tpcds` command supports; Citus and PgDuckDB have no
+TPC-DS path, CedarDB and DatabaseService are not available), timeout 900 s. Query parameters are drawn
+once per experiment, so only results of the same experiment are comparable. The stored result sets were
+compared with numbers rounded to two decimals and rows compared as a multiset.
+
+**First comparison: 74 of 99 queries identical on all six systems. After the changes below: 94 of 99.**
+The five that still differ:
+
+| Query | Systems | Cause |
+|-------|---------|-------|
+| Q72, Q94, Q95 | MariaDB | Exceeded the 900 s limit, no result |
+| Q75 | ClickHouse, ClickHouseCluster | A rounded sum differs by 1 (float against decimal summation at a `.5` boundary) |
+| Q56 | MySQL, MariaDB, MonetDB vs. PostgreSQL, ClickHouse | `total_sales` can be NULL and the systems sort NULL first or last. Fixed afterwards with the same `is not null` ordering as elsewhere, not re-run |
+
+Q67 differed on MonetDB in an earlier run (rows near the `LIMIT` boundary); it agreed in the final run and the
+cause was not isolated.
+
+### What made the systems agree
+
+| Cause | Queries | Change |
+|-------|---------|--------|
+| NULL sorts first in MySQL, MariaDB and MonetDB and last in PostgreSQL and ClickHouse, so `LIMIT` kept different rows | Q20, Q27, Q33, Q56, Q67, Q74, Q76, Q99 | `ORDER BY col is not null, col` (Q74 orders by a `CASE` over its three key columns) |
+| ClickHouse returned `''` instead of `NULL` for subtotal keys of `ROLLUP` | Q5, Q18, Q67, Q77, Q80 | `group_by_use_nulls = 1` in the ClickHouse deployment profile |
+| ClickHouse truncates `Decimal` division, MonetDB rounds `DECIMAL` division and averages to two decimals | Q7, Q12, Q18, Q20, Q26, Q31, Q36, Q44, Q58, Q66, Q98 | Numerator or average computed as `double` (`+ 0.0e0`, `toFloat64`, `cast(… as double)`), partly as MonetDB or ClickHouse overrides |
+| Integer division in PostgreSQL and MonetDB | Q78 | `ss_qty*1.0/…` |
+| Every store in the generated data is in TN, so random states gave an empty result | Q27, Q36 | `'TN'` is always part of the state list |
+| `\|\|` is logical OR in MySQL and MariaDB, so the ids were 0 or 1 | Q80 | `concat()` in the MariaDB variant and a new MySQL variant |
+| MariaDB has no `GROUPING()`: real NULL categories were taken for subtotals, and Q27 had no `ORDER BY` | Q27, Q36, Q86 | Sentinel for real NULLs before the rollup; wrapped rollup with an outer `ORDER BY` |
+| MonetDB rollup emulation: grand-total rank NULL, subtotal ranks per state | Q70 | Rank 1 for the grand total, subtotal ranks across all states |
+| PostgreSQL, MySQL and MariaDB order strings by their own locale or collation | Q65, Q99 | Bytewise collation in the deployment templates (`--locale=C`, `utf8mb4_bin`) |
+
+The collation change applies to every benchmark that uses these deployment templates and takes effect for newly
+initialised data directories.
 
 ---
 

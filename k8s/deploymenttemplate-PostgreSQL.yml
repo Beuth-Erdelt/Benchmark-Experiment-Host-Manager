@@ -67,6 +67,9 @@ spec:
         env:
         - name: POSTGRES_HOST_AUTH_METHOD
           value: trust
+        # bytewise string ordering, the same as MonetDB and ClickHouse (applies to a fresh data directory)
+        - name: POSTGRES_INITDB_ARGS
+          value: "--encoding=UTF8 --locale=C"
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
         # pg_ctl: cannot be run as root
