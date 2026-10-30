@@ -7,6 +7,11 @@ implemented in Bexhoma, including the TPC-DS reference SQL and any DBMS-specific
 > **Reference version:** All SQL templates and parameter distributions on this page are taken from
 > **TPC-DS v4.0.0** (`DSGen-software-code-4.0.0/query_templates/` and `query_variants/`).
 
+> **Not a TPC-DS result.** Bexhoma runs the 99 queries as a cross-system test, not as a conforming TPC-DS
+> benchmark. The queries are modified beyond what the TPC allows (see
+> [Deviations from the TPC-DS Reference Templates](#deviations-from-the-tpc-ds-reference-templates)), only the
+> query part is run, and the results are **not comparable to published TPC-DS results**.
+
 ## Configuration File
 
 Queries are stored in [`experiments/tpcds/queries-tpcds.config`](../experiments/tpcds/queries-tpcds.config).
@@ -85,7 +90,7 @@ or when the connection's `dialect` equals it. MariaDB and MySQL connections both
 | Q67 | MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
 | Q69 | ClickHouse | `EXISTS` / `NOT EXISTS` rewritten as `IN` / `NOT IN` |
 | Q70 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MonetDB emulates the rollup with `UNION ALL` (grand-total rank 1, subtotal ranks across all states) |
-| Q72 | MariaDB | `STRAIGHT_JOIN` in an order that starts at the sale date and reaches `inventory` by its primary key (the optimizer started from the 28M-row inventory and ran over 15 minutes) |
+| Q72 | MariaDB | `STRAIGHT_JOIN`; the days of the same week are reached as primary-key lookups (`d_date_sk` ±6 with the same `d_week_seq`) instead of a full scan of `date_dim`, then `inventory` by its primary key (default plan over 15 minutes, now seconds). Assumes the days of a week lie within 6 `d_date_sk` values of each other |
 | Q77 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP` syntax differences |
 | Q80 | Exasol, MariaDB, MemSQL, MonetDB, MySQL, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP`; MariaDB/MySQL use `concat()` because `\|\|` is logical OR there |
 | Q81 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`state_limit`) |
@@ -100,13 +105,18 @@ or when the connection's `dialect` equals it. MariaDB and MySQL connections both
 
 ## Deviations from the TPC-DS Reference Templates
 
-Not every query in bexhoma is a verbatim translation of the TPC-DS template.
-Differences fall into two categories:
+Not every query in bexhoma is a verbatim translation of the TPC-DS template, and several go beyond the
+"minor query modifications" (dialect syntax) that, to my knowledge, the TPC allows. Differences fall into four
+categories:
 
-- **Syntactic** — different SQL dialect or notation, but the query returns the same result set on the same data.
-- **Semantic** — the query logic or filter differs, so a different result set is expected compared to a conforming TPC-DS implementation.
+- **Syntactic** — different SQL dialect or notation, same result set on the same data.
+- **Rewrites** — logically equivalent SQL with a different structure, written for one DBMS so that it runs or
+  finishes at all. These are the most serious departure from the templates.
+- **Semantic or parameter** — the query logic or the parameter domain differs, so a different result set is
+  expected than from a conforming implementation.
+- **Environment** — settings of the DBMS or of the comparison that change results or their evaluation.
 
-### Semantic Differences (different result set expected)
+### Semantic and Parameter Differences (different result set expected)
 
 | Query | What bexhoma does | What the template specifies | Effect |
 |-------|-------------------|-----------------------------|--------|
@@ -116,9 +126,32 @@ Differences fall into two categories:
 | **Q30** | `STATE` expanded to all 43 US state codes (previously only `["TN"]`) | Draws `[STATE]` from `fips_county` distribution (any US state) | **Fixed** |
 | **Q49** | `d_moy` filter removed from all three channel subqueries; `MONTH` parameter removed | No month filter; the template aggregates an entire year | **Fixed** |
 | **Q98** | Start date uses `{DAY}` parameter (integer 1–28) instead of hardcoded `01`; `DAY` parameter added | Start date drawn from a sales-weighted date distribution within Jan–Jul of `[YEAR]` | **Approximated** — uniform day distribution used; sales-weighted draw not expressible in dbmsbenchmarker |
-| **Q27, Q36** | `'TN'` is always part of the `s_state` list | `[STATE]` drawn from `fips_county` | **Deviation** — all stores of the generated data are in TN, so any other draw returns an empty result |
-| **Q12, Q20, Q98** | `(sum(x)+0.0e0)*100/…` | `sum(x)*100/…` | Numerically equivalent; forces floating-point division so ClickHouse does not truncate |
-| **Q78** | `ss_qty*1.0/(…)` | `ss_qty/(…)` | Numerically equivalent; avoids integer division in PostgreSQL and MonetDB |
+| **Q27, Q36** | `'TN'` is always part of the `s_state` list; the other states are drawn at random | `[STATE]` drawn from `fips_county` | **Deviation** — all stores of the generated data are in TN, so any other draw returns an empty result |
+| **Q74** | `ORDER BY` is a `CASE` over the three key columns chosen by `{ORDERC1..3}`, each with an explicit NULL-first ordering | `order by {ORDERC1},{ORDERC2},{ORDERC3}` (column positions) | Same sort columns; NULL names are ordered identically on all systems |
+| **Q99** | The query is wrapped in a derived table and ordered by the aliased columns with an explicit NULL-first ordering (MonetDB keeps the plain `ORDER BY`) | `order by substr(w_warehouse_name,1,20), sm_type, cc_name` | Same rows and order apart from the NULL position; the wrapper is needed because MySQL rejects the expression in `ORDER BY` |
+
+### Rewrites for individual DBMS (same result set expected)
+
+These are not minor modifications in the TPC's sense. They are also listed per query in the table of DBMS dialect
+overrides above; the reasons are:
+
+| DBMS | Queries | Rewrite |
+|------|---------|---------|
+| ClickHouse | Q1, Q6, Q30, Q32, Q81, Q92 | Correlated scalar subquery replaced by a join with a pre-aggregated subquery or CTE |
+| ClickHouse | Q10, Q35, Q69, Q41 | Correlated `EXISTS` / `NOT EXISTS` / count replaced by `IN` / `NOT IN` |
+| ClickHouse, MariaDB | Q16, Q94 | `EXISTS` on another warehouse replaced by `IN` over `GROUP BY … HAVING count(distinct …) > 1` (Q16 ClickHouse only) |
+| ClickHouse | Q47, Q49, Q57, Q58, Q66 | Aliases, derived-table qualification; `toFloat64` numerators (Q31, Q58, Q66) |
+| MariaDB | Q95 | The `web_sales` self join replaced by the set of orders with more than one warehouse |
+| MariaDB | Q72 | `STRAIGHT_JOIN` (an optimizer hint) and day-by-day primary-key lookups on `date_dim`. **Assumes the days of one week lie within 6 `d_date_sk` values of each other**, which holds for the TPC-DS calendar |
+| MariaDB | Q27, Q36, Q86 | MariaDB has no `GROUPING()` and no `ORDER BY` next to `ROLLUP`: the rollup is wrapped in a derived table, and real NULL categories are mapped to the sentinel `'~'` before the rollup so that they are not taken for subtotals |
+| MariaDB, MySQL | Q80 | `concat()` instead of `\|\|`, which is logical OR there |
+| MonetDB | Q70 | `ROLLUP` emulated with three `UNION ALL` blocks (grand total rank 1, subtotal ranks across all states) |
+| MonetDB | Q7, Q18, Q26, Q44, Q58 | Averages and numerators as `double`, because MonetDB rounds `DECIMAL` averages and divisions to two decimals |
+| MySQL | Q51, Q97 | `FULL OUTER JOIN` rewritten with `UNION ALL` |
+| MariaDB | Q5, Q14, Q77, Q80 | Nested CTE workaround (MariaDB <10.4) |
+| all | Q12, Q20, Q36, Q98, Q78 | `(sum(x)+0.0e0)*100/…` and `ss_qty*1.0/…` instead of plain division: the same value, but ClickHouse no longer truncates `Decimal` division and PostgreSQL and MonetDB no longer divide integers |
+| all | Q5, Q12, Q15, Q18, Q20, Q21, Q22, Q27, Q33, Q35, Q36, Q51, Q56, Q62, Q65, Q67, Q70, Q72, Q74, Q76, Q79, Q80, Q86, Q93, Q99 | Explicit NULL ordering: `ORDER BY col IS NOT NULL, col` puts NULLs **first** on every system (MySQL, MariaDB and MonetDB do this by default; PostgreSQL and ClickHouse sort NULLs last) |
+| all | Q72 | The column `d1.d_week_seq` is aliased `d_week_seq`, because ClickHouse otherwise labels it `D1.D_WEEK_SEQ` and the result comparison treats the column names as different |
 
 ### Syntactic Differences (same result set, dialect adaptation)
 
@@ -127,11 +160,18 @@ Differences fall into two categories:
 | `GROUP BY … WITH ROLLUP` (MySQL/MariaDB default) vs. `GROUP BY ROLLUP(…)` (standard SQL) | Q5, Q18, Q22, Q27, Q36, Q67, Q70, Q77, Q80, Q86 | Per-DBMS overrides in the `'DBMS'` key handle each target system |
 | `CONCAT('a', ',', 'b')` vs. standard `'a' \|\| ',' \|\| 'b'` | Q5, Q66, Q84 | MySQL/MariaDB default; `\|\|` used in PostgreSQL/MonetDB/Exasol overrides |
 | `interval 'N' day` vs. `+ N days` date arithmetic | Q5, Q21, Q32, Q72, Q77, Q80, Q92 | Both express the same time offset; dialect normalised for portability |
-| `ORDER BY col IS NOT NULL, col` (explicit NULL-last sort) vs. plain `ORDER BY col` | Q5, Q65, Q72 | Added to make NULL ordering deterministic across DBMS that differ in default NULL position |
-| `FULL OUTER JOIN` rewritten as `UNION ALL + GROUP BY` for MySQL | Q51, Q97 | MySQL/MariaDB override; the rewrite is logically equivalent |
 | `CAST(… AS SIGNED)` vs. `CAST(… AS INT)` | Q54 (MySQL override) | MySQL does not support `INT` as a cast target |
 | `CAST(inv_after AS FLOAT) / inv_before` vs. plain division | Q21 | Forces floating-point division; semantically equivalent on non-integer inputs |
-| Nested CTE workaround (outer CTE wraps everything) | Q5 (MariaDB), Q14a+b (MariaDB), Q77 (MariaDB), Q80 (MariaDB) | MariaDB <10.4 cannot reference a CTE from inside another CTE body |
+
+### Environment Differences
+
+| Area | What differs from a plain installation | Why |
+|------|----------------------------------------|-----|
+| String collation | PostgreSQL `--locale=C`, MySQL and MariaDB `utf8mb4_bin`; MonetDB and ClickHouse sort bytewise by default | The same `ORDER BY … LIMIT` must pick the same rows on every system. Applies to every benchmark that uses these deployment templates, for newly initialised data directories |
+| ClickHouse profile | `join_use_nulls`, `group_by_use_nulls`, `union_default_mode=DISTINCT`, `cast_keep_nullable`, `allow_lossy_numeric_supertype` (and `distributed_product_mode=global` for the cluster) | SQL-standard NULL and `UNION` semantics, so that the results equal those of the other systems |
+| Indexes | The loader creates indexes, constraints and statistics (`-xii -xic -xis`) | These are not defined by the TPC-DS schema; they are bexhoma's addition |
+| Scope | Only the 99 queries are run, one stream, one parameter draw per query and experiment | Not the TPC-DS power or throughput test; data maintenance is not part of this page |
+| Result validation | Results are compared across systems, not against the TPC-DS answer sets | See the next section |
 
 ---
 
@@ -155,6 +195,23 @@ The two that still differ:
 
 Q67 differed on MonetDB in an earlier run (rows near the `LIMIT` boundary); it agreed in the final run and the
 cause was not isolated.
+
+### How the results are compared
+
+The comparison is done by dbmsbenchmarker (`tools.py` and `benchmarker.py`), not by TPC answer sets:
+
+- **Normalisation per run:** every cell is converted to a string and stripped. With `sorted: True` (set for all 99
+  queries) numbers are rounded to the `precision` of the queries config (**0 decimals for all TPC-DS queries**) and
+  the rows are sorted by all columns. Row order is therefore irrelevant; only the rows that pass the `LIMIT` count.
+- **Comparison across systems:** the merge step rounds again to 2 decimals (hard-coded), sorts, and compares each
+  connection with the **first** connection (the reference) by concatenating the two result tables and dropping
+  duplicates. A connection is flagged if either side has rows the other lacks.
+- **What this does not detect:** differences smaller than the rounding (an average of 25.4 against 25.1 is equal at
+  0 decimals), the order of the rows (so a wrong `ORDER BY` is not found), and rows that appear twice on one side and
+  not at all on the other.
+- **What it flags without a real difference:** values at a rounding boundary (25.4999 against 25.5), a different
+  column title (ClickHouse labels a qualified column `D1.D_WEEK_SEQ`), and `''` against NULL. A failed reference
+  connection flags all others.
 
 ### What made the systems agree
 
