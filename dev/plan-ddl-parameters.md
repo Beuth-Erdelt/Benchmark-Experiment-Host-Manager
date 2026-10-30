@@ -3,9 +3,10 @@
 Status (2026-10-30): **M1, M1b, M2 committed (04a57300); M2b, M2c and the
 data-defining parameters committed (8616163b); M3 and `requires` committed
 (b730977a); test `Init scripts without errors` committed (21a877b7)**, the
-init script fixes it found committed afterwards. Rollout done (reinstall,
-115 old volumes deleted), cluster checks A–R OK. Open: `dimensions` (item 14),
-M3b, M4, M5, research (item 9). Non-DDL
+init script fixes it found committed afterwards; M3b and research item 9
+committed (f25ac88e). Rollout done (reinstall, 115 old volumes deleted),
+cluster checks A–R OK. Open: `dimensions` (item 14, decided), M4, M5,
+13b. Non-DDL
 settings (planner knobs, isolation level, client options):
 [plan-session-parameters.md](plan-session-parameters.md) (parked; today:
 one experiment per value with `--set` on the same `-rst` PVC).
@@ -15,9 +16,7 @@ one experiment per value with `--set` on the same `-rst` PVC).
 | # | Item | Kind | Section |
 |---|---|---|---|
 | 14 | `dimensions` for Citus and ClickHouseCluster TPC-H | **decided 2026-10-30**: reuse SSB's `-xdim replicated\|distributed` in tpch.py (shared `resolve_dimension_folder()`); default `replicated` for both DBMS (ClickHouseCluster TPC-H changes: its current all-distributed layout moves to `ClickHouseCluster/distributed`, replicated dimensions as `ReplicatedMergeTree` via Keeper like SSB); the variant is part of the volume name (`tpch-distributed-<SF>`, as SSB), not a label. Open in the implementation: distribution keys of the dimensions in the distributed variant (`nation`/`region` probably replicated in both), Citus query rewrites for the distributed variant | decided, not implemented | [Milestones](#milestones) |
-| M3b | `systems[].ddl` in experiment.yml + catalog | **done** 2026-10-30; cluster check 1793319445 (experiment.yml, YCSB PostgreSQL `fillfactor: [100, 80]` → PostgreSQL-1/-2 with fillfactor 100/80, all tests passed) | [Milestones](#milestones) |
-| M4, M5 | Priority B keys, more candidates | open | [Milestones](#milestones) |
-| 9 | Verify: Citus `shard_replication_factor` > 1 in our version; MariaDB histograms by default; CockroachDB `bucket_count` default in v24.2.4 | **done** 2026-10-30 on test pods with the template images: Citus 14.2.0 factor 2 works; MariaDB 12.3.3 plain `ANALYZE TABLE` collects no histograms; CockroachDB v24.2.4 default 16 buckets (details in the candidate rows) | [Candidates](#candidates-per-dbms) |
+| M4, M5 | Priority B keys, more candidates; new from item 9: MariaDB `histograms`, CockroachDB `bucket_count`, Citus `num_worker_replicas` | open | [Milestones](#milestones) |
 | 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
 | 13b | Optional: refuse a post-load step a DBMS has no script for (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for CedarDB, DatabaseService, PgDuckDB, `checkschema-ycsb` for CedarDB, DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |
 | – | Separate: Python client calls (`get_pods` etc. in clusters.py) do not wait for a cluster outage (`MaxRetryError`), crashed check P | open, outside this plan | – |
@@ -26,7 +25,8 @@ one experiment per value with `--set` on the same `-rst` PVC).
 Done (details in the sections): items 1–4b (decision B, volume labels and
 reuse reporting, token rules, short names, shape and load labels), rollout,
 cluster checks A–R, M3 + `requires`, item 13 (test `Init scripts without
-errors` and the script fixes it found). Rejected: item 10 (summary columns
+errors` and the script fixes it found), M3b (f25ac88e, cluster check
+1793319445), item 9 research (f25ac88e). Rejected: item 10 (summary columns
 per swept key).
 
 ## Init scripts without errors (item 13)
@@ -648,7 +648,8 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
   also need the dimension data on every shard).
 - **M3b** `systems[].ddl` in experiment.yml + catalog capability
   ([bexhoma/spec.py](../bexhoma/spec.py), tpch_catalog.py, ycsb_catalog.py
-  emit `-xddl` through a shared helper). **Implemented 2026-10-30**:
+  emit `-xddl` through a shared helper). **DONE (f25ac88e)**, cluster check
+  1793319445:
   capability `systems.<name>.ddl.<workload>` in contracts/contract_catalog.yml
   (PostgreSQL ycsb `fillfactor` 10–100; equal to the declaration files by
   `CatalogCapabilityTest`), contract 1.13.0; selection `systems[].ddl`
@@ -715,9 +716,7 @@ All with `-ks no`.
   name (`Citus-1`, `Citus-2`) and no parameter columns, for resource cells
   too. The values are in the summary's connection section (`ddl_<key>`
   evaluation parameters) and, after M2b, in `ddl_parameters` per
-  connection. A column per swept key would be an evaluator change in all
-  benchmark types; if needed, one generic "cell columns" step for resource
-  and DDL cells together (item 10).
+  connection. Columns per swept key (item 10) were rejected 2026-10-30.
 - Rename `expand_resource_cells()` to `expand_cells()`? Cosmetic.
 
 ## Sources
