@@ -171,15 +171,15 @@ CREATE TABLE customer (
 ) ENGINE = Distributed(bexhoma, currentDatabase(), customer_local, c_custkey);
 
 CREATE TABLE orders_local ON CLUSTER bexhoma (
-    o_orderkey       Int64,
-    o_custkey        Int32,
-    o_orderstatus    {low_cardinality},
+    o_orderkey       Int64{codec},
+    o_custkey        Int32{codec},
+    o_orderstatus    {low_cardinality}{codec},
     o_totalprice     Decimal(15,2),
-    o_orderdate      Date,
-    o_orderpriority  {low_cardinality},
-    o_clerk          String,
-    o_shippriority   Int32,
-    o_comment        String
+    o_orderdate      Date{codec},
+    o_orderpriority  {low_cardinality}{codec},
+    o_clerk          String{codec},
+    o_shippriority   Int32{codec},
+    o_comment        String{codec}
 ) ENGINE = MergeTree{partition_orders} ORDER BY {order_orders}
     SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
@@ -208,22 +208,22 @@ CREATE TABLE orders (
 ) ENGINE = Distributed(bexhoma, currentDatabase(), orders_local, o_orderkey);
 
 CREATE TABLE lineitem_local ON CLUSTER bexhoma (
-    l_orderkey       Int64,
-    l_partkey        Int32,
-    l_suppkey        Int32,
-    l_linenumber     Int32,
+    l_orderkey       Int64{codec},
+    l_partkey        Int32{codec},
+    l_suppkey        Int32{codec},
+    l_linenumber     Int32{codec},
     l_quantity       Decimal(15,2),
     l_extendedprice  Decimal(15,2),
     l_discount       Decimal(15,2),
     l_tax            Decimal(15,2),
-    l_returnflag     {low_cardinality},
-    l_linestatus     {low_cardinality},
-    l_shipdate       Date,
-    l_commitdate     Date,
-    l_receiptdate    Date,
-    l_shipinstruct   {low_cardinality},
-    l_shipmode       {low_cardinality},
-    l_comment        String
+    l_returnflag     {low_cardinality}{codec},
+    l_linestatus     {low_cardinality}{codec},
+    l_shipdate       Date{codec},
+    l_commitdate     Date{codec},
+    l_receiptdate    Date{codec},
+    l_shipinstruct   {low_cardinality}{codec},
+    l_shipmode       {low_cardinality}{codec},
+    l_comment        String{codec}
 ) ENGINE = MergeTree{partition_lineitem} ORDER BY {order_lineitem}
     SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 

@@ -925,7 +925,12 @@ systems:
         fillfactor: {type: int, default: 100, min: 10, max: 100, why: "page fill
           of usertable; below 100, updates can stay on the page (HOT)"}
         autovacuum_scale: {values: ["0.2", "0.1", "0.05", "0.01"], default: "0.2",
-          why: "autovacuum_vacuum_scale_factor of usertable; lower vacuums earlier"}
+          why: "autovacuum_vacuum_scale_factor of usertable"}
+      tpch:
+        index_method: {values: [btree, hash, brin], default: btree}
+        btree_dedup: {values: ["on", "off"], default: "on", why: "btree only"}
+        statistics_target: {type: int, default: 100, min: 1, max: 10000}
+        extended_statistics: {values: ["off", "on"], default: "off"}
 
     profiles:
       analytical-ssd:

@@ -24,6 +24,8 @@ CREATE TABLE public.usertable (
 
 ALTER TABLE public.usertable CONFIGURE ZONE USING num_replicas = {num_worker_replicas}{range_max_bytes};
 
+{pre_split}
+
 SELECT 'SHOW CREATE TABLE' AS message;
 SHOW CREATE TABLE public.usertable;
 

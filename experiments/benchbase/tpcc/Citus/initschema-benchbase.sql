@@ -156,7 +156,8 @@ SELECT create_distributed_table('stock', 's_w_id');
 SELECT create_distributed_table('new_order', 'no_w_id');
 SELECT create_distributed_table('oorder', 'o_w_id');
 SELECT create_distributed_table('order_line', 'ol_w_id');
-SELECT create_reference_table('item');
+-- Placement of item is the DDL parameter tpcc_item (ddl-parameters.config)
+{tpcc_item}
 
 -- Verify Distribution
 SELECT * FROM citus_shards;

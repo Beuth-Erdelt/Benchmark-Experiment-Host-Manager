@@ -6,8 +6,8 @@ data-defining parameters committed (8616163b); M3 and `requires` committed
 init script fixes it found committed afterwards; M3b and research item 9
 committed (f25ac88e). Rollout done (reinstall, 115 old volumes deleted),
 cluster checks A–R OK. Item 14 (`-xdim` for TPC-H, ClickHouseCluster only)
-committed (01843299). M4 batches 1-2 committed. Open: rest of M4, M5, 13b,
-ClickHouse docs rerun. Non-DDL
+committed (01843299). M4 batches 1-2 committed (4a952d99), batches 3-4
+checked, uncommitted. Open: rest of M4, M5, 13b, ClickHouse docs rerun. Non-DDL
 settings (planner knobs, isolation level, client options):
 [plan-session-parameters.md](plan-session-parameters.md) (parked; today:
 one experiment per value with `--set` on the same `-rst` PVC).
@@ -694,9 +694,33 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
     4096, wide parts, `low_cardinality=off,on`, all passed (22/22); 1793363666
     Citus `-xcol columnar_compression=lz4`, all passed. `SHOW CREATE TABLE`
     in the init output confirms TiDB `SHARD_ROW_ID_BITS=4 PRE_SPLIT_REGIONS=2`,
-    CockroachDB `bucket_count=8`, 64 MiB ranges. Running: 1793362481 Citus
-    `fillfactor=80`, 1793362488 TiDB, 1793363037 CockroachDB (single loader
-    thread, slow). First runs 1793361500-525 without `-xwl` ran no workload.
+    CockroachDB `bucket_count=8`, 64 MiB ranges. Also all passed: 1793362481
+    Citus `fillfactor=80`, 1793362488 TiDB, 1793363037 CockroachDB. First runs
+    1793361500-525 without `-xwl` ran no workload.
+
+  **Batches 3-4 implemented 2026-10-30** (uncommitted):
+  - TPC-H PostgreSQL (and PgDuckDB, by `extends` in the catalog and its
+    `path_experiment_docker`; `-schema` scripts too): `index_method`
+    (btree/hash/brin, the multicolumn lineitem index stays btree),
+    `btree_dedup` (M5, requires btree), `statistics_target` (M5; also `ALTER
+    DATABASE`, so a reset's ANALYZE keeps it), `extended_statistics` (M5).
+  - TPC-H ClickHouse(Cluster) `codec` (storage tables only), MySQL
+    `stats_sample_pages`; YCSB CockroachDB `pre_split` (9/90, requires
+    `pk_hash=none`, for hashed keys); BenchBase Citus `tpcc_item` (M5).
+  - Checks, all passed: 1793373995 PostgreSQL `index_method=hash,brin`,
+    target 500, extended statistics, -ar, 22/22; 1793374024 PostgreSQL+PgDuckDB
+    `btree_dedup=off`, 22/22; 1793374487 ClickHouse(Cluster) `codec=zstd1,zstd3`;
+    1793374506 MySQL `stats_sample_pages=100`; 1793374536 Citus
+    `tpcc_item=distributed`; 1793374567 CockroachDB `pk_hash=none`,
+    `pre_split=9` (`user1`..`user9` in the init output). The `-schema` scripts
+    are unit-tested only (no tenancy run).
+  - Catalog: `tests/test_agent_harness.py` keeps 2,000 characters of margin
+    below the 56,000 limit: at most 53,990 (LF-counted, as the harness reads
+    it), now 53,975. The next key for PostgreSQL needs a shorter catalog or a
+    higher limit.
+  - Still open in M4: PostgreSQL `partition_by` (primary keys must contain the
+    partition column), YugabyteDB `colocated`, TPC-H/TPC-DS `row_format` and
+    `collation`.
 - **M5** "More candidates" that need only placeholders or script variants;
   those needing images, volumes or loader changes are a separate decision.
 

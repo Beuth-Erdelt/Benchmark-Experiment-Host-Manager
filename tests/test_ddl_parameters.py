@@ -428,7 +428,9 @@ class CatalogCapabilityTest(unittest.TestCase):
         for workload, contract in catalog['workloads'].items():
             for system in contract.get('supports', []):
                 with self.subTest(workload=workload, system=system):
-                    declared = ddl_parameters.load_declarations(_EXPERIMENTS, f'{workload}/{system}')
+                    # PgDuckDB runs PostgreSQL's scripts (path_experiment_docker) and inherits its ddl (extends)
+                    folder = 'PostgreSQL' if system == 'PgDuckDB' else system
+                    declared = ddl_parameters.load_declarations(_EXPERIMENTS, f'{workload}/{folder}')
                     capability = spec.ddl_declarations(catalog, system, workload)
                     self.assertEqual(sorted(capability), sorted(declared))
                     for key, declaration in declared.items():
@@ -657,7 +659,7 @@ class YcsbExperimentTest(_ExperimentTestBase):
                          {'num_worker_shards': '32', 'num_worker_replicas': '1', 'fillfactor': '100'})
         self.assertEqual(by_docker['CockroachDB'].ddl_parameters,
                          {'num_worker_replicas': '3', 'pk_hash': 'hash', 'bucket_count': 'default',
-                          'range_max_bytes': 'default', 'column_families': 'one'})
+                          'range_max_bytes': 'default', 'column_families': 'one', 'pre_split': 'none'})
         self.assertEqual(by_docker['TiDB'].ddl_parameters,
                          {'num_worker_replicas': '3', 'clustered': 'default', 'split_regions': 'none',
                           'shard_row_id_bits': 'none', 'pre_split_regions': 'none'})

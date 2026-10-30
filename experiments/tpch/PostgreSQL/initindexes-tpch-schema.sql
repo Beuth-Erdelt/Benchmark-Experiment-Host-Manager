@@ -10,11 +10,13 @@
 --          compound index (l_partkey, l_suppkey), and l_suppkey alone is not
 --          selective enough to benefit queries in the TPC-H workload.
 --          {BEXHOMA_SCHEMA} is substituted at runtime by the Bexhoma framework.
+--          Access method and deduplication are DDL parameters (ddl-parameters.config);
+--          the multicolumn index stays a B-tree (hash indexes have one column).
 
-CREATE INDEX ON {BEXHOMA_SCHEMA}.nation   (n_regionkey);
-CREATE INDEX ON {BEXHOMA_SCHEMA}.customer (c_nationkey);
-CREATE INDEX ON {BEXHOMA_SCHEMA}.partsupp (ps_suppkey);
-CREATE INDEX ON {BEXHOMA_SCHEMA}.partsupp (ps_partkey);
-CREATE INDEX ON {BEXHOMA_SCHEMA}.orders   (o_custkey);
-CREATE INDEX ON {BEXHOMA_SCHEMA}.lineitem (l_orderkey);
-CREATE INDEX ON {BEXHOMA_SCHEMA}.lineitem (l_partkey, l_suppkey);
+CREATE INDEX ON {BEXHOMA_SCHEMA}.nation{index_method}   (n_regionkey){btree_dedup};
+CREATE INDEX ON {BEXHOMA_SCHEMA}.customer{index_method} (c_nationkey){btree_dedup};
+CREATE INDEX ON {BEXHOMA_SCHEMA}.partsupp{index_method} (ps_suppkey){btree_dedup};
+CREATE INDEX ON {BEXHOMA_SCHEMA}.partsupp{index_method} (ps_partkey){btree_dedup};
+CREATE INDEX ON {BEXHOMA_SCHEMA}.orders{index_method}   (o_custkey){btree_dedup};
+CREATE INDEX ON {BEXHOMA_SCHEMA}.lineitem{index_method} (l_orderkey){btree_dedup};
+CREATE INDEX ON {BEXHOMA_SCHEMA}.lineitem (l_partkey, l_suppkey){btree_dedup};
