@@ -53,7 +53,7 @@ A query is overridden for a system when the connection name starts with the over
 or when the connection's `dialect` equals it. MariaDB and MySQL connections both have the dialect `MySQL`, but a
 `mariadb-…` connection also matches the `MariaDB` key, so the two can run different SQL.
 
-37 queries carry a `'DBMS'` key with dialect-specific SQL for one or more systems:
+39 queries carry a `'DBMS'` key with dialect-specific SQL for one or more systems:
 
 | Query | DBMS overrides | Reason |
 |-------|---------------|--------|
@@ -85,13 +85,15 @@ or when the connection's `dialect` equals it. MariaDB and MySQL connections both
 | Q67 | MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
 | Q69 | ClickHouse | `EXISTS` / `NOT EXISTS` rewritten as `IN` / `NOT IN` |
 | Q70 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MonetDB emulates the rollup with `UNION ALL` (grand-total rank 1, subtotal ranks across all states) |
+| Q72 | MariaDB | `STRAIGHT_JOIN` in an order that starts at the sale date and reaches `inventory` by its primary key (the optimizer started from the 28M-row inventory and ran over 15 minutes) |
 | Q77 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP` syntax differences |
 | Q80 | Exasol, MariaDB, MemSQL, MonetDB, MySQL, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP`; MariaDB/MySQL use `concat()` because `\|\|` is logical OR there |
 | Q81 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`state_limit`) |
 | Q84 | MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()` |
 | Q86 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()` |
 | Q92 | ClickHouse | Correlated scalar subquery rewritten as a join (`limit_item_sk`) |
-| Q94 | ClickHouse | `EXISTS` / `NOT EXISTS` on another warehouse rewritten as `IN` over `GROUP BY … HAVING` |
+| Q94 | ClickHouse, MariaDB | `EXISTS` / `NOT EXISTS` on another warehouse rewritten as `IN` over `GROUP BY … HAVING count(distinct ws_warehouse_sk) > 1` (ClickHouse does not decorrelate; MariaDB took over 15 minutes) |
+| Q95 | MariaDB | The `web_sales` self join is replaced by the orders with more than one warehouse (`GROUP BY … HAVING count(distinct ws_warehouse_sk) > 1`) |
 | Q97 | MySQL | `FULL OUTER JOIN` not supported; rewritten with `UNION ALL + GROUP BY` |
 | Q99 | MonetDB | Plain `ORDER BY substr(…)`; the default query orders a derived table instead, which MonetDB cannot resolve |
 ---
@@ -141,12 +143,13 @@ TPC-DS path, CedarDB and DatabaseService are not available), timeout 900 s. Quer
 once per experiment, so only results of the same experiment are comparable. The stored result sets were
 compared with numbers rounded to two decimals and rows compared as a multiset.
 
-**First comparison: 74 of 99 queries identical on all six systems. After the changes below: 94 of 99.**
-The five that still differ:
+**First comparison: 74 of 99 queries identical on all six systems. After the changes below: 94 of 99, and 97
+of 99 once the three MariaDB timeouts were fixed (Q72, Q94, Q95 were then checked in a separate experiment on
+PostgreSQL, MariaDB, MySQL, MonetDB and ClickHouse, which returned identical results).**
+The two that still differ:
 
 | Query | Systems | Cause |
 |-------|---------|-------|
-| Q72, Q94, Q95 | MariaDB | Exceeded the 900 s limit, no result |
 | Q75 | ClickHouse, ClickHouseCluster | A rounded sum differs by 1 (float against decimal summation at a `.5` boundary) |
 | Q56 | MySQL, MariaDB, MonetDB vs. PostgreSQL, ClickHouse | `total_sales` can be NULL and the systems sort NULL first or last. Fixed afterwards with the same `is not null` ordering as elsewhere, not re-run |
 
@@ -165,6 +168,7 @@ cause was not isolated.
 | `\|\|` is logical OR in MySQL and MariaDB, so the ids were 0 or 1 | Q80 | `concat()` in the MariaDB variant and a new MySQL variant |
 | MariaDB has no `GROUPING()`: real NULL categories were taken for subtotals, and Q27 had no `ORDER BY` | Q27, Q36, Q86 | Sentinel for real NULLs before the rollup; wrapped rollup with an outer `ORDER BY` |
 | MonetDB rollup emulation: grand-total rank NULL, subtotal ranks per state | Q70 | Rank 1 for the grand total, subtotal ranks across all states |
+| MariaDB did not finish within 900 s: no decorrelation of `EXISTS` (Q94), a self join of `web_sales` (Q95), a join order starting at the 28M-row `inventory` (Q72) | Q72, Q94, Q95 | MariaDB overrides: `IN` over `GROUP BY … HAVING`, forced join order |
 | PostgreSQL, MySQL and MariaDB order strings by their own locale or collation | Q65, Q99 | Bytewise collation in the deployment templates (`--locale=C`, `utf8mb4_bin`) |
 
 The collation change applies to every benchmark that uses these deployment templates and takes effect for newly
