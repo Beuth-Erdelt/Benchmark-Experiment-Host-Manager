@@ -55,6 +55,9 @@ __all__ = [
     "ARG_STYLE_ENV_VAR",
     "ARG_STYLES_VIA_SET",
     "effective_post_load",
+    "ddl_declarations",
+    "ddl_selection",
+    "validate_ddl",
     "validate_experiment",
     "validate_environment",
     "usable_storage_classes",
@@ -70,7 +73,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.12.0"
+CATALOG_CONTRACT_VERSION = "1.13.0"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -488,6 +491,112 @@ def effective_post_load(system_spec: dict[str, Any], shared_post_load: dict[str,
     return system_spec.get("post_load", shared_post_load)
 
 
+def ddl_declarations(catalog: dict[str, Any], system_name: str, workload_name: str) -> dict[str, Any]:
+    """Return the DDL parameters a system declares for a workload (capability).
+
+    Mirrors the ``ddl-parameters.config`` of the workload's script folder for
+    that system (see :mod:`bexhoma.ddl_parameters`); empty when it has none.
+
+    :param catalog: Parsed catalog.
+    :param system_name: System name.
+    :param workload_name: Workload name.
+    :return: ``{key: {type, values, default, ...}}``.
+    :rtype: dict[str, Any]
+    """
+    definition = resolve_system_definition(catalog, system_name)
+    return (definition.get("ddl") or {}).get(workload_name) or {}
+
+
+def ddl_selection(experiment: dict[str, Any]) -> dict[str, list[Any]]:
+    """Collect the DDL values the experiment selects, one list per key.
+
+    A list sweeps the key. Systems must agree on a key (see
+    :func:`validate_ddl`), so the first system that sets it gives the values.
+
+    :param experiment: Parsed experiment spec.
+    :return: ``{key: [values]}`` in the order of ``systems:``.
+    :rtype: dict[str, list[Any]]
+    """
+    selection: dict[str, list[Any]] = {}
+    for system_spec in experiment.get("systems", []):
+        for key, value in (system_spec.get("ddl") or {}).items():
+            selection.setdefault(key, list(value) if isinstance(value, list) else [value])
+    return selection
+
+
+def validate_ddl(catalog: dict[str, Any], experiment: dict[str, Any]) -> None:
+    """Check every ``systems[].ddl`` against the catalog's DDL capability.
+
+    A key must be declared for the system and workload, every value legal
+    (one of ``values``, or an integer within ``min``/``max`` for
+    ``type: int``), a list non-empty.
+    ``-xddl`` applies to every configuration that declares the key, so all
+    systems of the experiment that declare a key must select the same values.
+    A sweep (a list with several values) creates configurations next to the
+    systems, which a resource sweep (its ``--set`` scopes name configurations
+    by position) and a storage class (one volume name for all values of a
+    system) cannot follow.
+
+    :param catalog: Parsed catalog.
+    :param experiment: Parsed experiment spec.
+    :raises SpecError: On any violation.
+    """
+    workload_name = experiment["workload"]["name"]
+    system_specs = experiment.get("systems", [])
+    selected: dict[str, list[Any]] = {}
+    for system_spec in system_specs:
+        ddl = system_spec.get("ddl")
+        if ddl is None:
+            continue
+        if not isinstance(ddl, dict):
+            raise SpecError(f"systems[{system_spec['name']}].ddl must be an object {{key: value}}")
+        declared = ddl_declarations(catalog, system_spec["name"], workload_name)
+        for key, value in ddl.items():
+            if key not in declared:
+                raise SpecError(
+                    f"system '{system_spec['name']}' declares no DDL parameter '{key}' for workload "
+                    f"'{workload_name}'; declared: {sorted(declared) or 'none'}")
+            values = value if isinstance(value, list) else [value]
+            if not values:
+                raise SpecError(f"systems[{system_spec['name']}].ddl.{key} is an empty list")
+            declaration = declared[key]
+            for entry in values:
+                if declaration.get("type") == _KNOB_TYPE_INT:
+                    if isinstance(entry, bool) or not isinstance(entry, int):
+                        raise SpecError(f"ddl.{key}={entry!r} must be an integer")
+                    low, high = declaration.get("min"), declaration.get("max")
+                    if (low is not None and entry < low) or (high is not None and entry > high):
+                        raise SpecError(f"ddl.{key}={entry} is outside [{low}, {high}]")
+                elif str(entry) not in [str(legal) for legal in declaration.get("values", [])]:
+                    raise SpecError(f"ddl.{key}={entry!r} is not one of {declaration.get('values')}")
+            if key in selected and [str(v) for v in selected[key]] != [str(v) for v in values]:
+                raise SpecError(
+                    f"systems select different values for DDL parameter '{key}'; -xddl applies one "
+                    "value list to every system declaring the key -- run the other values in a "
+                    "follow-up experiment")
+            selected[key] = values
+    for system_spec in system_specs:
+        for key in ddl_declarations(catalog, system_spec["name"], workload_name):
+            if key in selected and key not in (system_spec.get("ddl") or {}):
+                raise SpecError(
+                    f"system '{system_spec['name']}' also declares DDL parameter '{key}' and would "
+                    f"get the value of another system; set systems[{system_spec['name']}].ddl.{key} "
+                    "to the same value")
+    if any(len(values) > 1 for values in selected.values()):
+        resources = experiment.get("resources") or {}
+        swept = [name for name in ("cpu", "memory", "storage_class")
+                 if isinstance(resources.get(name), list) and len(resources[name]) > 1]
+        if swept:
+            raise SpecError(
+                f"a DDL sweep cannot be combined with a resources sweep ({', '.join(swept)}) -- "
+                "sweep one of them per experiment")
+        if any(cell is not None for cell in storage_class_cells(resources)):
+            raise SpecError(
+                "a DDL sweep needs ephemeral storage: all values of a system would share one "
+                "volume name, so resources.storage_class must be unset -- sweep on a storage "
+                "class with one experiment per value")
+
+
 def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> None:
     """Validate an experiment spec against the catalog before translation.
 
@@ -504,7 +613,9 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     selection choice — or else the shared ``loading.post_load`` default),
     that every option is a legal workload parameter (legality) and that the
     system's ``physical_design`` actually supports the requested value
-    (support). See "Validation ordering" in ``docs/Design-Catalog-Contract.md``.
+    (support); finally every ``systems[].ddl`` selection against the
+    system's DDL capability (:func:`validate_ddl`). See "Validation
+    ordering" in ``docs/Design-Catalog-Contract.md``.
 
     :param catalog: Parsed catalog.
     :param experiment: Parsed experiment spec.
@@ -588,6 +699,8 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
                     )
             elif value and not supported_value:
                 raise SpecError(f"system '{system_name}' does not support post_load.{option_name}")
+
+    validate_ddl(catalog, experiment)
 
 
 def _node_allocatable_ceiling(

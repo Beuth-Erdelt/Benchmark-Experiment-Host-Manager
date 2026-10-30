@@ -12,7 +12,8 @@ which turns it into a ``ycsb.py`` argument vector. These tests check that:
   as the tpch builder;
 * a profile's resolved knobs become ``--set`` deployment patches;
 * a resources: sweep becomes comma lists with per-cell scoped knobs;
-* an unsupported system is rejected.
+* an unsupported system is rejected;
+* ``systems[].ddl`` becomes ``-xddl`` and is checked against the catalog.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -210,6 +211,50 @@ class BuildYcsbArgvTest(unittest.TestCase):
         argv = catalog_spec.build_argv(self.catalog, spec)
         args = ycsb.build_parser().parse_args(argv)  # must not raise
         self.assertEqual(args.workload, 'a')
+
+
+class DdlSelectionTest(unittest.TestCase):
+    """``systems[].ddl`` becomes ``-xddl`` (M3b of dev/plan-ddl-parameters.md)."""
+
+    def setUp(self):
+        self.catalog = catalog_spec.load_catalog(_CATALOG_FILE)
+
+    def spec(self, ddl, **resources):
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['systems'][0]['ddl'] = ddl
+        spec['resources'].update(resources)
+        return spec
+
+    def test_value_becomes_xddl(self):
+        argv = catalog_spec.build_argv(self.catalog, self.spec({'fillfactor': 80}))
+        self.assertEqual(_flag_value(argv, '-xddl'), 'fillfactor=80')
+        args = ycsb.build_parser().parse_args(argv)
+        self.assertEqual(args.ddl_parameters, ['fillfactor=80'])
+
+    def test_list_sweeps(self):
+        argv = catalog_spec.build_argv(self.catalog, self.spec({'fillfactor': [100, 80]}))
+        self.assertEqual(_flag_value(argv, '-xddl'), 'fillfactor=100,80')
+
+    def test_without_ddl_no_flag(self):
+        self.assertNotIn('-xddl', catalog_spec.build_argv(self.catalog, copy.deepcopy(_BASE_SPEC)))
+
+    def test_illegal_selections_are_rejected(self):
+        for ddl, message in (({'shard_count': 4}, "no DDL parameter 'shard_count'"),
+                             ({'fillfactor': 5}, r'outside \[10, 100\]'),
+                             ({'fillfactor': 'high'}, 'must be an integer'),
+                             ({'fillfactor': []}, 'empty list')):
+            with self.subTest(ddl=ddl), self.assertRaisesRegex(catalog_spec.SpecError, message):
+                catalog_spec.build_argv(self.catalog, self.spec(ddl))
+
+    def test_sweep_with_storage_or_resource_sweep_is_rejected(self):
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'ephemeral storage'):
+            catalog_spec.build_argv(self.catalog, self.spec({'fillfactor': [100, 80]}, storage_class='cephcsi'))
+        memory = [{'request': '8Gi', 'limit': '8Gi'}, {'request': '16Gi', 'limit': '16Gi'}]
+        with self.assertRaisesRegex(catalog_spec.SpecError, 'resources sweep'):
+            catalog_spec.build_argv(self.catalog, self.spec({'fillfactor': [100, 80]}, memory=memory))
+        # a single value on a storage class is no sweep: the volume is labelled with it
+        argv = catalog_spec.build_argv(self.catalog, self.spec({'fillfactor': 80}, storage_class='cephcsi'))
+        self.assertEqual(_flag_value(argv, '-xddl'), 'fillfactor=80')
 
 
 if __name__ == '__main__':

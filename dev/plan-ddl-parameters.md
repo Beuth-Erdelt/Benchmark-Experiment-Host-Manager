@@ -14,10 +14,10 @@ one experiment per value with `--set` on the same `-rst` PVC).
 
 | # | Item | Kind | Section |
 |---|---|---|---|
-| 14 | `dimensions` for Citus and ClickHouseCluster TPC-H: a DDL key that selects a script folder variant | design open | [Milestones](#milestones) |
-| M3b | `systems[].ddl` in experiment.yml + catalog | open | [Milestones](#milestones) |
+| 14 | `dimensions` for Citus and ClickHouseCluster TPC-H | **decided 2026-10-30**: reuse SSB's `-xdim replicated\|distributed` in tpch.py (shared `resolve_dimension_folder()`); default `replicated` for both DBMS (ClickHouseCluster TPC-H changes: its current all-distributed layout moves to `ClickHouseCluster/distributed`, replicated dimensions as `ReplicatedMergeTree` via Keeper like SSB); the variant is part of the volume name (`tpch-distributed-<SF>`, as SSB), not a label. Open in the implementation: distribution keys of the dimensions in the distributed variant (`nation`/`region` probably replicated in both), Citus query rewrites for the distributed variant | decided, not implemented | [Milestones](#milestones) |
+| M3b | `systems[].ddl` in experiment.yml + catalog | **done** 2026-10-30; cluster check 1793319445 (experiment.yml, YCSB PostgreSQL `fillfactor: [100, 80]` → PostgreSQL-1/-2 with fillfactor 100/80, all tests passed) | [Milestones](#milestones) |
 | M4, M5 | Priority B keys, more candidates | open | [Milestones](#milestones) |
-| 9 | Verify: Citus `shard_replication_factor` > 1 in our version; MariaDB histograms by default; CockroachDB `bucket_count` default in v24.2.4 | research | [Candidates](#candidates-per-dbms) |
+| 9 | Verify: Citus `shard_replication_factor` > 1 in our version; MariaDB histograms by default; CockroachDB `bucket_count` default in v24.2.4 | **done** 2026-10-30 on test pods with the template images: Citus 14.2.0 factor 2 works; MariaDB 12.3.3 plain `ANALYZE TABLE` collects no histograms; CockroachDB v24.2.4 default 16 buckets (details in the candidate rows) | [Candidates](#candidates-per-dbms) |
 | 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
 | 13b | Optional: refuse a post-load step a DBMS has no script for (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for CedarDB, DatabaseService, PgDuckDB, `checkschema-ycsb` for CedarDB, DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |
 | – | Separate: Python client calls (`get_pods` etc. in clusters.py) do not wait for a cluster outage (`MaxRetryError`), crashed check P | open, outside this plan | – |
@@ -422,7 +422,7 @@ schema themselves; bexhoma's scripts there are placeholders. "TPC-C
 | Key | Values | Default | Where | Why | Prio |
 |---|---|---|---|---|---|
 | `num_worker_shards` | 1…n | 32 | `SET citus.shard_count` | parallelism per query vs. per-shard overhead; rule of thumb: a small multiple of worker cores | **done** (M2) |
-| `num_worker_replicas` | 1…n | 1 | `citus.shard_replication_factor` (YCSB) | write amplification vs. availability. **Verify** (item 9): the YCSB script says "only citus enterprise"; statement-based replication may be deprecated in our version | B |
+| `num_worker_replicas` | 1…n | 1 | `citus.shard_replication_factor` (YCSB) | write amplification vs. availability. **Verified** (item 9, 2026-10-30, citus/citus:14.2.0, coordinator + 2 workers): factor 2 works in open-source Citus, 32 shards → 64 placements, INSERT/UPDATE OK, `repmodel` c (statement-based: the coordinator writes every placement). The "only citus enterprise" comment in the YCSB script was outdated (fixed). Needs at least as many workers as the factor | B |
 | `dimensions` | reference, distributed | reference | TPC-H script variant (as SSB `-xdim`) | reference tables make dimension joins local; distributed + colocated saves memory and load time at large SF | A |
 | `access_method` | heap, columnar | heap (`-xcol` → columnar) | `USING columnar` | scan volume for OLAP; no updates/indexes | exists |
 | `columnar_compression` | none, lz4, zstd | zstd | `alter_columnar_table_set` | CPU vs. bytes read | B |
@@ -442,7 +442,7 @@ only check and reset scripts.)
 |---|---|---|---|---|---|
 | `num_worker_replicas` | 1, 3, 5 | 3 | zone `num_replicas` | Raft write quorum cost | **done** (M2) |
 | `pk_hash` | hash, none | hash | `PRIMARY KEY USING HASH` | spreads sequential inserts (`-xio ordered`) over ranges; costs scans (YCSB e) | A |
-| `bucket_count` | 4…64 | cluster setting `sql.defaults.default_hash_sharded_index_bucket_count` (**verify** default in v24.2.4, item 9) | `USING HASH WITH (bucket_count=…)` | write spread vs. scan fan-out; vendor advises testing per workload | B |
+| `bucket_count` | 4…64 | **16** (verified item 9, v24.2.4: cluster setting `sql.defaults.default_hash_sharded_index_bucket_count` = 16, `USING HASH` without option creates `bucket_count=16`; the server warns that relying on the global default "is not recommended") | `USING HASH WITH (bucket_count=…)` | write spread vs. scan fan-out; vendor advises testing per workload; with `pk_hash=hash` today 16 buckets regardless of the number of nodes | B |
 | `range_max_bytes` | e.g. 64 MiB – 512 MiB | 512 MiB | zone config | more, smaller ranges = more leaseholders to spread load at small SF | B |
 | `pre_split` | 0…n | 0 | `ALTER TABLE … SPLIT AT` | avoids the split/rebalance phase during load | B |
 | `column_families` | one, per_field | one | `FAMILY` per YCSB field | a single-field update writes one KV instead of the whole row (YCSB a/f) | B |
@@ -492,7 +492,7 @@ index-type parameter.
 | `engine` | InnoDB, Aria, MyISAM | InnoDB | `ENGINE = {engine}` (TPC-H) | storage engine; check A: SF1 load Aria 106 s vs InnoDB 415 s. ColumnStore needs an image with the plugin | **done** (M2, TPC-H) |
 | `page_compressed` | 0/1 + `page_compression_level` | 0 | table option | as MySQL page compression | C |
 | `row_format`, `collation` | as MySQL | | | as MySQL | B |
-| `histograms` | off, on | **probably on**: plain `ANALYZE TABLE` in MariaDB ≥ 10.4 collects engine-independent statistics with histograms; **verify on the image** (item 9) | `ANALYZE TABLE … PERSISTENT FOR ALL` | optimizer statistics | B |
+| `histograms` | off, on | **off** (verified item 9, mariadb:12.3.3): `histogram_size` 254 and `histogram_type` JSON_HB are set, but `use_stat_tables` is PREFERABLY_FOR_QUERIES, so a plain `ANALYZE TABLE` writes no engine-independent statistics (`mysql.column_stats` empty); only `ANALYZE TABLE … PERSISTENT FOR ALL` collects them (JSON_HB histograms per non-key column; full scan at `analyze_sample_percentage` 100). All MariaDB `initstatistics`/`reset` scripts use the plain form, so no MariaDB run so far had histograms | `ANALYZE TABLE … {histograms}` in `initstatistics`/`reset` (`''` or `PERSISTENT FOR ALL`) | optimizer statistics for non-indexed filters (TPC-H, TPC-DS, SSB); cost: a full scan per table at large SF | B |
 
 #### ClickHouse / ClickHouseCluster — TPC-H, TPC-DS, SSB
 
@@ -648,7 +648,16 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
   also need the dimension data on every shard).
 - **M3b** `systems[].ddl` in experiment.yml + catalog capability
   ([bexhoma/spec.py](../bexhoma/spec.py), tpch_catalog.py, ycsb_catalog.py
-  emit `-xddl` through a shared helper).
+  emit `-xddl` through a shared helper). **Implemented 2026-10-30**:
+  capability `systems.<name>.ddl.<workload>` in contracts/contract_catalog.yml
+  (PostgreSQL ycsb `fillfactor` 10–100; equal to the declaration files by
+  `CatalogCapabilityTest`), contract 1.13.0; selection `systems[].ddl`
+  (list = sweep) → `append_ddl_flags()`; `spec.validate_ddl()` (declared key,
+  legal value, same values for a key shared by systems, sweep refused with a
+  resource sweep or a storage class); agent validator: factor `ddl` in
+  `discriminates`, sweep counted in `count_runs()`. The catalog is read whole
+  by the agent (limit 56,000 characters): 54,547 after M3b, little room left.
+  Design doc: docs/Design-Catalog-Contract.md "DDL parameters".
 - **M4** priority B keys, one DBMS at a time, each with a docs test run.
 - **M5** "More candidates" that need only placeholders or script variants;
   those needing images, volumes or loader changes are a separate decision.

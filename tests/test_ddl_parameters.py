@@ -410,6 +410,25 @@ class InitScriptsTest(unittest.TestCase):
         self.assertIn('PostgreSQL-1', label)
 
 
+class CatalogCapabilityTest(unittest.TestCase):
+    """``systems.<name>.ddl.<workload>`` of the contract catalog mirrors the declaration files."""
+
+    def test_catalog_equals_declarations(self):
+        from bexhoma import spec
+        catalog = spec.load_catalog(os.path.join(os.path.dirname(_EXPERIMENTS), 'contracts', 'contract_catalog.yml'))
+        for workload, contract in catalog['workloads'].items():
+            for system in contract.get('supports', []):
+                with self.subTest(workload=workload, system=system):
+                    declared = ddl_parameters.load_declarations(_EXPERIMENTS, f'{workload}/{system}')
+                    capability = spec.ddl_declarations(catalog, system, workload)
+                    self.assertEqual(sorted(capability), sorted(declared))
+                    for key, declaration in declared.items():
+                        self.assertEqual(str(capability[key]['default']), declaration['default'])
+                        self.assertEqual(capability[key].get('type', 'token'), declaration['type'])
+                        if declaration.get('values'):
+                            self.assertEqual([str(v) for v in capability[key]['values']], declaration['values'])
+
+
 class RepositoryDeclarationsTest(unittest.TestCase):
     """The declaration files of ``experiments/`` and the scripts that use them."""
 
