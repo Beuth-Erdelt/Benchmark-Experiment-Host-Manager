@@ -182,6 +182,21 @@ class ResetCompletenessTest(unittest.TestCase):
         for benchmark in ('tpcc', 'twitter', 'ycsb', 'chbenchmark'):
             self.assert_complete('benchbase.py', '-xbt', benchmark, benchmark=benchmark)
 
+    def test_yugabytedb_tpcc_uses_its_own_database(self):
+        """initschema creates the database; later scripts and BenchBase connect to it, other benchmarks do not."""
+        _, configurations = _run_script('benchbase.py', '-xbt', 'tpcc')
+        config = next(c for c in configurations if c.docker == 'YugabyteDB')
+        self.assertEqual(config.loading_parameters['BEXHOMA_DATABASE'], 'benchbase')
+        for entry in (e for client_round in config.experiment_dict['benchmarker'] for e in client_round):
+            self.assertEqual(entry['parameters']['BEXHOMA_DATABASE'], 'benchbase')
+        folder = os.path.join(_REPO, 'experiments', 'benchbase', 'tpcc', 'YugabyteDB')
+        for name in ('initschema-benchbase.sql', 'checkschema-benchbase.sql', 'reset-benchbase.sql'):
+            with self.subTest(name), open(os.path.join(folder, name), encoding='utf-8') as f:
+                self.assertIn('\\c benchbase\n', f.read())
+        _, configurations = _run_script('benchbase.py', '-xbt', 'twitter')
+        config = next(c for c in configurations if c.docker == 'YugabyteDB')
+        self.assertEqual(config.loading_parameters['BEXHOMA_DATABASE'], 'yugabyte')
+
     def test_tpch_refresh_stream_gets_no_second_reset(self):
         """The reset runs once per round, before the query stream, not again before the refresh stream."""
         _, configurations = _run_script('tpch.py', '-xrs', '1')

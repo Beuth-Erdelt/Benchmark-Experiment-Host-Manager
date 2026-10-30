@@ -457,6 +457,23 @@ class RepositoryDeclarationsTest(unittest.TestCase):
                       if name.endswith(('.sql', '.sh')) and not name.startswith('filled_')]
         return found
 
+    def test_every_key_is_in_the_dbms_docs(self):
+        """docs/DBMS.md lists every key in the section of its DBMS, with default and values."""
+        with open(os.path.join(_REPO, 'docs', 'DBMS.md'), encoding='utf-8') as f:
+            sections = re.split(r'^## ', f.read(), flags=re.M)
+        for folder in self.folders():
+            relative = os.path.relpath(folder, _EXPERIMENTS).replace(os.sep, '/')
+            if relative == 'tpch/CockroachDB':
+                continue  # tpch.py has no CockroachDB
+            dbms = os.path.basename(folder)
+            section = next(s for s in sections if s.startswith(dbms + '\n'))
+            for key, declaration in ddl_parameters.load_declarations(os.path.dirname(folder), dbms).items():
+                with self.subTest(folder=relative, key=key):
+                    row = next(line for line in section.splitlines() if line.startswith(f'| `{key}` |'))
+                    self.assertIn(f"| `{declaration['default']}` |", row)
+                    for value in declaration.get('values') or []:
+                        self.assertIn(f'`{value}`', row)
+
     def test_every_key_is_used_and_every_placeholder_declared(self):
         self.assertTrue(self.folders())
         for folder in self.folders():

@@ -7,6 +7,11 @@
 --          primary key syntax for tablet distribution. FK constraints are
 --          omitted (not enforced on distributed tables). Waits 300 s after
 --          creation to allow tablet splitting to complete.
+--          The tables live in a database of their own, which every later script
+--          and BenchBase (BEXHOMA_DATABASE in benchbase.py) connect to.
+
+CREATE DATABASE benchbase;
+\c benchbase
 
 CREATE TABLE warehouse (
     w_id        INTEGER         NOT NULL,

@@ -335,8 +335,19 @@ Commands and logs of the test runs: [Test: Load Durability](Test-Durability.md).
 | others | - | - | - |
 
 For a new DBMS: put `durability-<level>.sql`/`.sh` and `restoredurability-<level>.sql`/`.sh` next to its init scripts; the restore must return to the startup values, not to the defaults (MySQL/MariaDB save them in `bexhoma.saved_settings`).
-No curly braces (scripts may be filled with `str.format()`).
 PostgreSQL: a parameter set on the command line (`-c`, also from `--set`) cannot be changed by `ALTER SYSTEM`, so `-xld` has no effect on it.
+
+### DDL parameters (`-xddl`)
+
+`-xddl KEY=VALUE` fills a `{key}` placeholder in the init scripts of every DBMS of the run whose script folder declares the key in `ddl-parameters.config`; the other DBMS ignore it.
+A comma list sweeps (`-xddl fillfactor=100,80`, one configuration per value), and `-xddl` can be repeated.
+The default of a key reproduces the script without the parameter.
+`Requires` means: the key may only leave its default if the other key has one of the listed values; this is checked before anything starts.
+A sweep cannot be combined with persistent storage (`-rst`): a volume keeps the values it was loaded with (labels `ddl_<key>`), and a differing request fails the test `Data parameters as requested`.
+In `experiment.yml` the catalog's keys are selected by `systems[].ddl`; there a sweep is also refused together with a resource sweep.
+Keys that apply after loading need their step: `-xii` (indexes), `-xis` (statistics).
+
+Each DBMS section below lists its keys.
 
 ### Minimal SUT template skeleton
 
@@ -442,6 +453,19 @@ The `database` and `schema` fields support multi-tenant mode: bexhoma substitute
 - [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/PostgreSQL)
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/PostgreSQL)
 
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `index_method` | TPC-H | `btree`, `hash`, `brin` | `btree` | access method of the foreign key indexes (-xii) except the multicolumn index on lineitem, which stays a B-tree: hash indexes answer equality only, brin indexes are tiny but need physically ordered keys |
+| `btree_dedup` | TPC-H | `on`, `off` | `on` | deduplication of B-tree index entries (-xii; PostgreSQL default on): shrinks non-unique foreign key indexes. Requires `index_method` = `btree` |
+| `statistics_target` | TPC-H | integer | `100` | default_statistics_target of the database (-xis; PostgreSQL default 100): rows sampled and histogram size per column; plan quality vs. ANALYZE time |
+| `extended_statistics` | TPC-H | `off`, `on` | `off` | multi-column statistics (-xis) on correlated columns of lineitem and part: the planner otherwise multiplies their selectivities |
+| `fillfactor` | YCSB | integer | `100` | fillfactor of usertable (PostgreSQL default 100, allowed 10-100): free space per page lets updates stay on the page (HOT updates, see n_tup_hot_upd in pg_stat_user_tables) |
+| `autovacuum_scale` | YCSB | `0.2`, `0.1`, `0.05`, `0.01` | `0.2` | autovacuum_vacuum_scale_factor of usertable (PostgreSQL default 0.2): share of dead rows that starts an autovacuum; lower values vacuum earlier in update-heavy runs (see autovacuum_count in pg_stat_user_tables) |
+
+PgDuckDB uses the TPC-H keys (it runs these scripts), PGBouncer the YCSB keys.
+
 ---
 
 ## PGBouncer
@@ -543,6 +567,15 @@ This accounts for InnoDB's buffer pool initialisation, which can cause a brief r
 - [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/MySQL)
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
 
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `histograms` | TPC-H | `off`, `on` | `off` | column histograms (ANALYZE TABLE ... UPDATE HISTOGRAM, 100 buckets) on all columns except primary keys and comments, in initstatistics (-xis): selectivity of filters on columns without an index; off: plain ANALYZE TABLE (index statistics only) |
+| `stats_sample_pages` | TPC-H | `default`, `100`, `1000` | `default` | pages sampled per index by ANALYZE TABLE on each table (default: innodb_stats_persistent_sample_pages, 20): plan quality vs. ANALYZE time |
+| `row_format` | YCSB | `DYNAMIC`, `COMPRESSED` | `DYNAMIC` | InnoDB row format of usertable (MySQL default DYNAMIC): COMPRESSED stores pages zlib-compressed (KEY_BLOCK_SIZE 8): less I/O, more CPU, the buffer pool may hold both copies of a page |
+| `collation` | YCSB | `utf8mb4_0900_ai_ci`, `utf8mb4_bin`, `latin1` | `utf8mb4_0900_ai_ci` | character set and collation of usertable: cost of comparing the VARCHAR(255) key (binary vs. linguistic) and bytes per character |
+
 ---
 
 ## MariaDB
@@ -587,6 +620,15 @@ The `init_SQL` statement is executed after each connection is established and en
 - [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MariaDB)
 - [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/MariaDB)
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MariaDB)
+
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `histograms` | TPC-H, TPC-DS, SSB | `off`, `on` | `off` | engine-independent statistics with histograms (ANALYZE TABLE ... PERSISTENT FOR ALL, JSON_HB, a full scan per table) in initstatistics (-xis); off: plain ANALYZE TABLE, which collects none (use_stat_tables = PREFERABLY_FOR_QUERIES, MariaDB 12.3) |
+| `engine` | TPC-H | `InnoDB`, `Aria`, `MyISAM` | `InnoDB` | storage engine of all tables (ColumnStore needs an image with the plugin, not listed) |
+| `row_format` | YCSB | `default`, `DYNAMIC`, `COMPRESSED` | `default` | InnoDB row format of usertable (default: innodb_default_row_format, DYNAMIC): COMPRESSED stores pages zlib-compressed: less I/O, more CPU |
+| `collation` | YCSB | `default`, `utf8mb4_bin`, `latin1` | `default` | character set and collation of usertable (default: the database default): cost of comparing the VARCHAR(255) key (binary vs. linguistic) and bytes per character |
 
 ---
 
@@ -675,6 +717,18 @@ TPC-H refuses `-xdim distributed` for Citus: with distributed dimensions Citus c
 
 See [Example: Citus](Example-Citus.md) for a worked example.
 
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `num_worker_shards` | TPC-H, SSB, YCSB, BenchBase TPC-C | integer | `32` | citus.shard_count of the tables distributed by warehouse (Citus default 32) |
+| `tpcc_item` | BenchBase TPC-C | `reference`, `distributed` | `reference` | placement of the read-only item table: a copy on every worker, or spread by i_id, so that New-Order reads items remotely |
+| `columnar_compression` | TPC-H | `default`, `none`, `lz4`, `zstd`, `pglz` | `default` | compression of the columnar orders and lineitem (-xcol only; default: columnar.compression of the server, zstd): bytes read vs. CPU per scan |
+| `num_worker_replicas` | YCSB | integer | `1` | citus.shard_replication_factor of usertable (Citus default 1) |
+| `fillfactor` | YCSB | integer | `100` | fillfactor of usertable and its shards (PostgreSQL default 100, allowed 10-100): free space per page lets updates stay on the page (HOT updates) |
+
+`columnar_compression` applies only with `-xcol`.
+
 ---
 
 ## ClickHouse
@@ -744,6 +798,19 @@ bexhoma tpch -dbms ClickHouse -sf 1 -nlp 8 -tr run
 
 See [Example: ClickHouse](Example-ClickHouse.md) for a worked example.
 
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `order_orders` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of orders: by key, or by date first so date ranges (Q3-Q5, Q7-Q10, Q12) skip granules |
+| `order_lineitem` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of lineitem: by key, or by ship date first so date ranges (Q1, Q6, Q7, Q14, Q15, Q20) skip granules |
+| `partition_orders` | TPC-H | `none`, `year`, `month` | `none` | partitions of orders by order date: queries with a date range skip whole partitions; more partitions mean more parts per insert block |
+| `partition_lineitem` | TPC-H | `none`, `year`, `month` | `none` | partitions of lineitem by ship date: queries with a ship date range (Q1, Q6, Q14, Q15, Q20) skip whole partitions; more partitions mean more parts per insert block |
+| `index_granularity` | TPC-H | integer | `8192` | rows per granule (= entry of the sparse primary index) of orders and lineitem (ClickHouse default 8192): smaller granules skip more precisely, the index grows |
+| `wide_parts` | TPC-H | `default`, `wide`, `compact` | `default` | part format of orders and lineitem by min_bytes_for_wide_part: default (10 MiB: small parts compact, one file; larger parts wide, a file per column), wide (every part), compact (every part up to 1 TiB); parallel loaders write many small parts |
+| `low_cardinality` | TPC-H | `off`, `on` | `off` | dictionary encoding of the string columns with few distinct values (flags, modes, priorities, segments, brands, types, containers, nation and region names): faster filters and GROUP BY |
+| `codec` | TPC-H | `default`, `zstd1`, `zstd3` | `default` | compression of all columns of orders and lineitem (default: the server setting, LZ4): bytes read vs. CPU per scan |
+
 ---
 
 ## ClickHouseCluster
@@ -775,6 +842,21 @@ bexhoma tpch -dbms ClickHouseCluster -nw 3 -sf 1 -nlp 8 -tr run
 ```
 
 See [Example: ClickHouse](Example-ClickHouse.md#clickhouse-as-a-cluster) for a worked example.
+
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `order_orders` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of orders: by key, or by date first so date ranges (Q3-Q5, Q7-Q10, Q12) skip granules |
+| `order_lineitem` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of lineitem: by key, or by ship date first so date ranges (Q1, Q6, Q7, Q14, Q15, Q20) skip granules |
+| `partition_orders` | TPC-H | `none`, `year`, `month` | `none` | partitions of orders by order date: queries with a date range skip whole partitions; more partitions mean more parts per insert block |
+| `partition_lineitem` | TPC-H | `none`, `year`, `month` | `none` | partitions of lineitem by ship date: queries with a ship date range (Q1, Q6, Q14, Q15, Q20) skip whole partitions; more partitions mean more parts per insert block |
+| `index_granularity` | TPC-H | integer | `8192` | rows per granule (= entry of the sparse primary index) of orders and lineitem (ClickHouse default 8192): smaller granules skip more precisely, the index grows |
+| `wide_parts` | TPC-H | `default`, `wide`, `compact` | `default` | part format of orders and lineitem by min_bytes_for_wide_part: default (10 MiB: small parts compact, one file; larger parts wide, a file per column), wide (every part), compact (every part up to 1 TiB); parallel loaders write many small parts |
+| `low_cardinality` | TPC-H | `off`, `on` | `off` | dictionary encoding of the string columns with few distinct values (flags, modes, priorities, segments, brands, types, containers, nation and region names): faster filters and GROUP BY |
+| `codec` | TPC-H | `default`, `zstd1`, `zstd3` | `default` | compression of all columns of orders and lineitem (default: the server setting, LZ4): bytes read vs. CPU per scan |
+
+The dimension placement of TPC-H is `-xdim`, see above.
 
 ---
 
@@ -820,6 +902,13 @@ The storage metrics include the tserver volumes (`config.set_pvc_selector('app=y
 
 See [Example: YugabyteDB](Example-YugaByteDB.md) for a worked example.
 
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `pk_sharding` | YCSB | `hash`, `asc` | `hash` | sharding of the primary key: hash spreads load evenly and suits point reads, asc keeps key order for range scans (workload e) but concentrates ordered inserts |
+| `num_tablets` | YCSB | `auto`, `4`, `8`, `16`, `32`, `64`, `128` | `auto` | tablets of usertable from the start (auto: ysql_num_shards_per_tserver and automatic splitting); only with pk_sharding=hash (asc needs SPLIT AT VALUES). Requires `pk_sharding` = `hash` |
+
 ---
 
 ## CockroachDB
@@ -861,6 +950,17 @@ The monitoring section scrapes CockroachDB's built-in Prometheus endpoint (`/_st
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/CockroachDB)
 
 See [Example: CockroachDB](Example-CockroachDB.md) for a worked example.
+
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `num_worker_replicas` | YCSB | integer | `3` | zone num_replicas of usertable (CockroachDB default 3) |
+| `pk_hash` | YCSB | `hash`, `none` | `hash` | hash-sharded primary key: spreads sequential inserts (-xio ordered) over ranges, costs range scans (workload e) |
+| `bucket_count` | YCSB | `default`, `4`, `8`, `16`, `32`, `64` | `default` | buckets of the hash-sharded primary key (default: cluster setting sql.defaults.default_hash_sharded_index_bucket_count, 16 in v24.2): write spread vs. scan fan-out. Requires `pk_hash` = `hash` |
+| `range_max_bytes` | YCSB | `default`, `64MiB`, `128MiB`, `256MiB` | `default` | zone range_max_bytes of usertable (default 512 MiB, range_min_bytes 128 MiB; a smaller value sets range_min_bytes to a quarter): more, smaller ranges spread leaseholders at small data sizes |
+| `column_families` | YCSB | `one`, `per_field` | `one` | column families of usertable: one family per row, or one per field, so updating one field writes one KV pair instead of the whole row (workloads a, b, f); costs reads of whole rows |
+| `pre_split` | YCSB | `none`, `9`, `90` | `none` | ranges of usertable before the load, split at the first digits of the YCSB keys (hashed insert order): avoids splitting and rebalancing during the load; a hash-sharded key has its buckets instead. Requires `pk_hash` = `none` |
 
 ---
 
@@ -907,6 +1007,16 @@ The monitoring section scrapes all three components via Kubernetes pod discovery
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/TiDB)
 
 See [Example: TiDB](Example-TiDB.md) for a worked example.
+
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `num_worker_replicas` | YCSB, BenchBase TPC-C | integer | `3` | PD max-replicas (TiDB default 3) |
+| `clustered` | YCSB | `default`, `clustered`, `nonclustered` | `default` | clustered index of usertable (default: tidb_enable_clustered_index of the server); clustered saves a lookup, nonclustered stores rows by a hidden _tidb_rowid |
+| `split_regions` | YCSB | `none`, `4`, `8`, `16`, `32`, `64`, `128` | `none` | regions of usertable on all TiKV nodes before the load, over the YCSB key range user0..user9; needs a clustered key (nonclustered rows are stored by the integer _tidb_rowid, which SHARD_ROW_ID_BITS spreads instead). PRE_SPLIT_REGIONS needs SHARD_ROW_ID_BITS or AUTO_RANDOM, not a VARCHAR key. Requires `clustered` = `default` or `clustered` |
+| `shard_row_id_bits` | YCSB | `none`, `2`, `4`, `6` | `none` | shard bits of the hidden _tidb_rowid of a nonclustered usertable (2^n ranges): spreads the insert hot spot of increasing row ids; too many cost RPCs in scans. Requires `clustered` = `nonclustered` |
+| `pre_split_regions` | YCSB | `none`, `1`, `2`, `3`, `4` | `none` | 2^n regions of the sharded row ids when the table is created, instead of splitting during the load; needs shard_row_id_bits at least n. Requires `shard_row_id_bits` = `4` or `6` |
 
 ---
 

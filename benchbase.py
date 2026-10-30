@@ -632,8 +632,11 @@ if __name__ == '__main__':
                     config.set_sut_role('placeholder') # helper pod; data lives in the Helm-managed tservers
                     config.set_pvc_selector('app=yb-tserver') # storage metrics of the tserver volumes
                     create_schema = "true"
+                    yugabyte_database = 'yugabyte'
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"
+                        # initschema-benchbase.sql creates the database of the tables
+                        yugabyte_database = 'benchbase'
                         # With -ar: ANALYZE, then a stats reset on every tserver before
                         # each round; YSQL has no CHECKPOINT.
                         config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-counters.sh'])
@@ -666,6 +669,7 @@ if __name__ == '__main__':
                     config.set_loading_parameters(
                         BENCHBASE_PROFILE = 'postgres',
                         BEXHOMA_PORT = 5433,
+                        BEXHOMA_DATABASE = yugabyte_database,
                         BENCHBASE_TERMINALS = loading_threads_per_pod,
                         BENCHBASE_CREATE_SCHEMA = create_schema,
                         )
@@ -691,6 +695,7 @@ if __name__ == '__main__':
                                     config.add_benchmarking_parameters(
                                         BENCHBASE_PROFILE = 'postgres',
                                         BEXHOMA_PORT = 5433,
+                                        BEXHOMA_DATABASE = yugabyte_database,
                                         BENCHBASE_TARGET = benchmarking_target_per_pod,
                                         BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
                                         )

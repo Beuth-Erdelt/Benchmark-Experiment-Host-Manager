@@ -6,6 +6,8 @@
 -- Purpose: Verify tablet distribution and cluster status for the benchbase
 --          TPC-C tables on YugabyteDB after loading.
 
+\c benchbase
+
 SELECT 'yb_table_properties.warehouse' AS msg;
 SELECT * FROM yb_table_properties('warehouse'::regclass);
 
