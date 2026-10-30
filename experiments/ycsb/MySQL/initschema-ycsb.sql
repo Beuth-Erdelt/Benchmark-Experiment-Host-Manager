@@ -40,4 +40,7 @@ CREATE TABLE ycsb.usertable (
     `FIELD8`    TEXT,
     `FIELD9`    TEXT,
     PRIMARY KEY (`YCSB_KEY`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB {collation} ROW_FORMAT={row_format};
+-- Collation and row format are DDL parameters (ddl-parameters.config)
+
+SHOW CREATE TABLE ycsb.usertable;

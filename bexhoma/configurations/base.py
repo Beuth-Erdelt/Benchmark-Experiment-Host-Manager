@@ -859,18 +859,26 @@ class SutConfiguration:
         63), and Redis limits hostname length. Named by the storage label, not
         the experiment code, so the worker volumes (``bxw-<name>-<i>``, from
         the ``volumeClaimTemplate`` ``bxw``) are found again by later
-        experiments. A longer name is shortened by
-        :func:`bexhoma.cli_args.limit_name`.
+        experiments. Without persistent storage there are no worker volumes to
+        find, and two configurations of one DBMS (a sweep) or two experiments
+        running at the same time would share the name, so it is
+        ``bx-<w|component>-<configuration>-<code>``, e.g. ``bx-w-chc-2-1793362663``.
+        A longer name is shortened by :func:`bexhoma.cli_args.limit_name`.
 
         :param component: Component label of the StatefulSet, e.g. ``'worker'`` or ``'pd'``.
         :return: StatefulSet name.
         :rtype: str
         """
+        if self.use_storage():
+            experiment, configuration = self.storage_label, self.get_storage_configuration()
+        else:
+            dockers = getattr(getattr(getattr(self, 'experiment', None), 'cluster', None), 'dockers', None)
+            experiment, configuration = str(self.code), abbreviate_storage_name(self.configuration, dockers)
         return limit_name(self.generate_component_name(
             app='bx',
             component='w' if component == 'worker' else component,
-            experiment=self.storage_label,
-            configuration=self.get_storage_configuration(),
+            experiment=experiment,
+            configuration=configuration,
         ))
 
     def get_num_worker(self, component: str = 'worker') -> int:

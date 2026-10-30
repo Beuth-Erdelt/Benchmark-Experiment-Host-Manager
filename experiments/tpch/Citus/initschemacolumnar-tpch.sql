@@ -13,7 +13,8 @@
 SELECT * FROM master_get_active_worker_nodes();
 
 -- Since Citus 11.1 the columnar access method lives in the separate citus_columnar
--- extension; without it, CREATE TABLE ... USING COLUMNAR fails.
+-- extension; without it, CREATE TABLE ... USING COLUMNAR fails. The image does not
+-- create it; Citus propagates it to the workers.
 CREATE EXTENSION IF NOT EXISTS citus_columnar;
 
 
@@ -132,3 +133,6 @@ SELECT create_reference_table('partsupp');
 SELECT create_reference_table('customer');
 SELECT create_distributed_table('orders',   'o_orderkey');
 SELECT create_distributed_table('lineitem', 'l_orderkey');
+
+-- Compression of the columnar tables is the DDL parameter columnar_compression (ddl-parameters.config)
+{columnar_compression}

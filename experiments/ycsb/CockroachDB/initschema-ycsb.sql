@@ -7,8 +7,9 @@
 --          primary key, configures zone replication, and reports cluster
 --          range and node distribution.
 
+-- Primary key, buckets, column families and range size are DDL parameters (ddl-parameters.config)
 CREATE TABLE public.usertable (
-    YCSB_KEY  VARCHAR(255) PRIMARY KEY {pk_hash},
+    YCSB_KEY  VARCHAR(255) PRIMARY KEY {pk_hash}{bucket_count},
     FIELD0    TEXT,
     FIELD1    TEXT,
     FIELD2    TEXT,
@@ -18,10 +19,13 @@ CREATE TABLE public.usertable (
     FIELD6    TEXT,
     FIELD7    TEXT,
     FIELD8    TEXT,
-    FIELD9    TEXT
+    FIELD9    TEXT{column_families}
 );
 
-ALTER TABLE public.usertable CONFIGURE ZONE USING num_replicas = {num_worker_replicas};
+ALTER TABLE public.usertable CONFIGURE ZONE USING num_replicas = {num_worker_replicas}{range_max_bytes};
+
+SELECT 'SHOW CREATE TABLE' AS message;
+SHOW CREATE TABLE public.usertable;
 
 SELECT 'SHOW ZONE CONFIGURATION' AS message;
 SHOW ZONE CONFIGURATION FROM TABLE public.usertable;

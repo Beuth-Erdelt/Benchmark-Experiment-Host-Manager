@@ -19,7 +19,7 @@ CREATE TABLE public.usertable (
     FIELD8    TEXT,
     FIELD9    TEXT,
     PRIMARY KEY (ycsb_key)
-);
+) WITH (fillfactor = {fillfactor}); -- passed on to the shards
 
 SET citus.shard_count = {num_worker_shards}; -- default 32
 

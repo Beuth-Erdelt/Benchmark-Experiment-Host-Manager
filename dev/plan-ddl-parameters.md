@@ -6,7 +6,8 @@ data-defining parameters committed (8616163b); M3 and `requires` committed
 init script fixes it found committed afterwards; M3b and research item 9
 committed (f25ac88e). Rollout done (reinstall, 115 old volumes deleted),
 cluster checks A–R OK. Item 14 (`-xdim` for TPC-H, ClickHouseCluster only)
-implemented and checked, uncommitted. Open: M4, M5, 13b. Non-DDL
+committed (01843299). M4 batches 1-2 committed. Open: rest of M4, M5, 13b,
+ClickHouse docs rerun. Non-DDL
 settings (planner knobs, isolation level, client options):
 [plan-session-parameters.md](plan-session-parameters.md) (parked; today:
 one experiment per value with `--set` on the same `-rst` PVC).
@@ -15,7 +16,7 @@ one experiment per value with `--set` on the same `-rst` PVC).
 
 | # | Item | Kind | Section |
 |---|---|---|---|
-| 14 | `dimensions` for Citus and ClickHouseCluster TPC-H | **decided 2026-10-30**: reuse SSB's `-xdim replicated\|distributed` in tpch.py (shared `resolve_dimension_folder()`); default `replicated` for both DBMS (ClickHouseCluster TPC-H changes: its current all-distributed layout moves to `ClickHouseCluster/distributed`, replicated dimensions as `ReplicatedMergeTree` via Keeper like SSB); the variant is part of the volume name (`tpch-distributed-<SF>`, as SSB), not a label. **Implemented 2026-10-30** (uncommitted): `dimension_folder()`, `dimension_info()`, `DIMENSION_*` in bexhoma/benchmarks/base.py, shared with SSB; `-xdim` in tpch.py. ClickHouseCluster distributed: `part` by `p_partkey`, `partsupp` by `ps_partkey`, `supplier` by `s_suppkey`, `customer` by `c_custkey`; `nation`/`region` replicated in both variants (25/5 rows). Check/reset scripts flush the Distributed and sync the replicated tables, the check fails if a replica differs. Cluster checks (SF1, `-nw 2`, `-xii -xic -xis -ar -tr`): 1793356616 replicated: ClickHouseCluster and Citus 22/22, all tests passed, full copies of the 6 dimensions on 3 nodes; 1793356620 distributed: ClickHouseCluster 22/22, the 4 dimensions split over 2 shards. **Citus: dropped** (decision 2026-10-30): with distributed dimensions (reference `nation`/`region`, `partsupp` co-located with `part`, 5 of 8 FKs) 12 of 22 queries failed in 1793356620: "complex joins are only supported when all distributed tables are co-located" (Q2, Q11, Q13, Q14, Q17, Q18, Q19, Q21), cartesian product (Q9), "parallel DDL access to distributed table supplier" on `nation` (Q5, Q7, Q8; probably the FK supplier→nation). tpch.py refuses Citus with `-xdim distributed`; Citus TPC-H keeps reference tables. Tests: tests/test_tpch_dimensions.py, layout test in test_cluster_sut_settings.py generalized; 853 OK. The logs in docs/Example-ClickHouse.md TPC-H cluster section are from the old all-distributed layout (docs test rerun open) | implemented, checked | [Milestones](#milestones) |
+| 14 | `dimensions` for Citus and ClickHouseCluster TPC-H | **decided 2026-10-30**: reuse SSB's `-xdim replicated\|distributed` in tpch.py (shared `resolve_dimension_folder()`); default `replicated` for both DBMS (ClickHouseCluster TPC-H changes: its current all-distributed layout moves to `ClickHouseCluster/distributed`, replicated dimensions as `ReplicatedMergeTree` via Keeper like SSB); the variant is part of the volume name (`tpch-distributed-<SF>`, as SSB), not a label. **Done 2026-10-30** (01843299): `dimension_folder()`, `dimension_info()`, `DIMENSION_*` in bexhoma/benchmarks/base.py, shared with SSB; `-xdim` in tpch.py. ClickHouseCluster distributed: `part` by `p_partkey`, `partsupp` by `ps_partkey`, `supplier` by `s_suppkey`, `customer` by `c_custkey`; `nation`/`region` replicated in both variants (25/5 rows). Check/reset scripts flush the Distributed and sync the replicated tables, the check fails if a replica differs. Cluster checks (SF1, `-nw 2`, `-xii -xic -xis -ar -tr`): 1793356616 replicated: ClickHouseCluster and Citus 22/22, all tests passed, full copies of the 6 dimensions on 3 nodes; 1793356620 distributed: ClickHouseCluster 22/22, the 4 dimensions split over 2 shards. **Citus: dropped** (decision 2026-10-30): with distributed dimensions (reference `nation`/`region`, `partsupp` co-located with `part`, 5 of 8 FKs) 12 of 22 queries failed in 1793356620: "complex joins are only supported when all distributed tables are co-located" (Q2, Q11, Q13, Q14, Q17, Q18, Q19, Q21), cartesian product (Q9), "parallel DDL access to distributed table supplier" on `nation` (Q5, Q7, Q8; probably the FK supplier→nation). tpch.py refuses Citus with `-xdim distributed`; Citus TPC-H keeps reference tables. Tests: tests/test_tpch_dimensions.py, layout test in test_cluster_sut_settings.py generalized; 853 OK. The logs in docs/Example-ClickHouse.md TPC-H cluster section are from the old all-distributed layout (docs test rerun open) | implemented, checked | [Milestones](#milestones) |
 | M4, M5 | Priority B keys, more candidates; new from item 9: MariaDB `histograms`, CockroachDB `bucket_count`, Citus `num_worker_replicas` | open | [Milestones](#milestones) |
 | 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
 | 13b | Optional: refuse a post-load step a DBMS has no script for (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for CedarDB, DatabaseService, PgDuckDB, `checkschema-ycsb` for CedarDB, DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |
@@ -660,6 +661,42 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
   by the agent (limit 56,000 characters): 54,547 after M3b, little room left.
   Design doc: docs/Design-Catalog-Contract.md "DDL parameters".
 - **M4** priority B keys, one DBMS at a time, each with a docs test run.
+  **Batches 1-2 committed 2026-10-30**, defaults reproduce
+  the scripts (an empty `sql` text where the old script had nothing):
+  - YCSB: PostgreSQL `autovacuum_scale` (0.2/0.1/0.05/0.01, also in the
+    catalog); Citus `fillfactor`; CockroachDB `bucket_count` (requires
+    `pk_hash=hash`), `range_max_bytes` (64/128/256 MiB, min = max/4),
+    `column_families` (one/per_field); TiDB `shard_row_id_bits` (requires
+    `clustered=nonclustered`), `pre_split_regions` (requires
+    `shard_row_id_bits` 4/6); MySQL `row_format`, `collation`; MariaDB
+    `row_format`, `collation`.
+  - TPC-H: MariaDB `histograms` (also TPC-DS, SSB: `PERSISTENT FOR ALL` in
+    initstatistics); MySQL `histograms` (`UPDATE HISTOGRAM` on all columns but
+    primary keys and comments); ClickHouse/ClickHouseCluster
+    `partition_orders`, `partition_lineitem` (none/year/month),
+    `index_granularity`, `wide_parts` (M5), `low_cardinality`; Citus
+    `columnar_compression` (-xcol only).
+  - Not done, with reason: ClickHouseCluster `sharding_key` (no effect with
+    `distributed_product_mode = global`); CockroachDB/YugabyteDB `pk_order`
+    (CockroachDB inline PK has no DESC; YugabyteDB not deployed by bexhoma).
+  - Found and fixed: `-xcol` failed on Citus 14.2 ("access method columnar
+    does not exist"; `CREATE EXTENSION citus_columnar` added); ephemeral worker
+    StatefulSets of two configurations of one DBMS shared the name
+    (`bx-w-chc-tpch-1`), so a ClickHouseCluster sweep hung; ephemeral workers
+    are now `bx-w-<configuration>-<code>`, with `-rst` unchanged.
+  - Checks (SF1, `-tr -ks no`): 1793362475 PostgreSQL `autovacuum_scale=0.2,0.01`
+    YCSB a, all passed; 1793362494 MySQL `row_format=DYNAMIC,COMPRESSED`
+    `collation=latin1`, all passed; 1793362500 MariaDB `row_format=COMPRESSED`
+    `collation=utf8mb4_bin,latin1`, all passed; 1793362633 TPC-H MariaDB+MySQL
+    `histograms=off,on` with -xii -xic -xis, all passed (MariaDB: statistics
+    for 8 tables, Geo 0.90 -> 0.65 s; MySQL: 43 column histograms, 0.84 s
+    both); 1793364336 ClickHouse+ClickHouseCluster partitions, granularity
+    4096, wide parts, `low_cardinality=off,on`, all passed (22/22); 1793363666
+    Citus `-xcol columnar_compression=lz4`, all passed. `SHOW CREATE TABLE`
+    in the init output confirms TiDB `SHARD_ROW_ID_BITS=4 PRE_SPLIT_REGIONS=2`,
+    CockroachDB `bucket_count=8`, 64 MiB ranges. Running: 1793362481 Citus
+    `fillfactor=80`, 1793362488 TiDB, 1793363037 CockroachDB (single loader
+    thread, slow). First runs 1793361500-525 without `-xwl` ran no workload.
 - **M5** "More candidates" that need only placeholders or script variants;
   those needing images, volumes or loader changes are a separate decision.
 

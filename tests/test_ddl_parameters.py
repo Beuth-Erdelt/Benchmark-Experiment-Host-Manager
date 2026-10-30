@@ -219,7 +219,7 @@ class NameTest(unittest.TestCase):
             storage={'storageConfiguration': storage_configuration, 'storageClassName': storage_class},
             experiment=types.SimpleNamespace(cluster=types.SimpleNamespace(
                 dockers={'Citus': {'abbreviation': 'ci'}, 'TiDB': {'abbreviation': 'ti'}})))
-        for method in ('get_storage_configuration', 'generate_component_name', 'get_worker_name'):
+        for method in ('get_storage_configuration', 'generate_component_name', 'get_worker_name', 'use_storage'):
             setattr(config, method, getattr(SutConfiguration, method).__get__(config))
         return config
 
@@ -230,6 +230,15 @@ class NameTest(unittest.TestCase):
         tidb = self.config('tidb', 'nvme', storage_label='benchbase-tpcc-1600')
         self.assertEqual(tidb.get_worker_name(component='tikv'), 'bx-tikv-ti-nvme-benchbase-tpcc-1600')
         self.assertEqual(tidb.get_worker_name(component='pd'), 'bx-pd-ti-nvme-benchbase-tpcc-1600')
+
+    def test_ephemeral_worker_names_are_per_configuration_and_experiment(self):
+        """Without a volume, the name is by configuration and code: a sweep (Citus-1, Citus-2) gets two."""
+        config = self.config('citus')
+        config.storage = {}
+        self.assertEqual(config.get_worker_name(), 'bx-w-ci-1-1793')
+        config.configuration = 'Citus-2'
+        self.assertEqual(config.get_worker_name(), 'bx-w-ci-2-1793')
+        self.assertEqual(config.get_worker_name(component='pd'), 'bx-pd-ci-2-1793')
 
     def test_worker_name_never_exceeds_the_limit(self):
         config = self.config('citus-' + 'x' * 40, 'cephcsi', storage_label='benchbase-tpcc-1600')
@@ -424,7 +433,7 @@ class CatalogCapabilityTest(unittest.TestCase):
                     self.assertEqual(sorted(capability), sorted(declared))
                     for key, declaration in declared.items():
                         self.assertEqual(str(capability[key]['default']), declaration['default'])
-                        self.assertEqual(capability[key].get('type', 'token'), declaration['type'])
+                        self.assertEqual(capability[key].get('type', 'token'), declaration.get('type', 'token'))
                         if declaration.get('values'):
                             self.assertEqual([str(v) for v in capability[key]['values']], declaration['values'])
 
@@ -582,8 +591,8 @@ class TpchExperimentTest(_ExperimentTestBase):
         configs = self.configs('-dbms', 'Citus', 'MonetDB', 'MariaDB')
         citus, monetdb, mariadb = (next(c for c in configs.values() if c.docker == d)
                                    for d in ('Citus', 'MonetDB', 'MariaDB'))
-        self.assertEqual(citus.ddl_parameters, {'num_worker_shards': '32'})
-        self.assertEqual(mariadb.ddl_parameters, {'engine': 'InnoDB'})
+        self.assertEqual(citus.ddl_parameters, {'num_worker_shards': '32', 'columnar_compression': 'default'})
+        self.assertEqual(mariadb.ddl_parameters, {'engine': 'InnoDB', 'histograms': 'off'})
         self.assertEqual(monetdb.ddl_parameters, {})
         for config in configs.values():
             self.assertNotIn('ddl_engine', config.eval_parameters)
@@ -592,14 +601,14 @@ class TpchExperimentTest(_ExperimentTestBase):
         configs = self.configs('-dbms', 'Citus', 'MonetDB', '-nws', '48', '-nw', '2')
         citus = next(c for c in configs.values() if c.docker == 'Citus')
         monetdb = next(c for c in configs.values() if c.docker == 'MonetDB')
-        self.assertEqual(citus.ddl_parameters, {'num_worker_shards': '48'})
+        self.assertEqual(citus.ddl_parameters, {'num_worker_shards': '48', 'columnar_compression': 'default'})
         self.assertEqual(citus.ddl_given, {'num_worker_shards'})
         self.assertEqual(monetdb.ddl_parameters, {})
 
     def test_single_value_keeps_the_volume_name(self):
         configs = self.configs('-dbms', 'MariaDB', '-xddl', 'engine=Aria', '-rst', 'cephcsi', '-rss', '10Gi')
         (mariadb,) = configs.values()
-        self.assertEqual(mariadb.ddl_parameters, {'engine': 'Aria'})
+        self.assertEqual(mariadb.ddl_parameters, {'engine': 'Aria', 'histograms': 'off'})
         self.assertEqual(mariadb.eval_parameters['ddl_engine'], 'Aria')
         self.assertEqual(mariadb.get_storage_configuration(), 'mariadb-cephcsi')
 
@@ -644,19 +653,27 @@ class YcsbExperimentTest(_ExperimentTestBase):
     def test_dbms_with_placeholders_get_defaults(self):
         configs = self.configs('-dbms', 'Citus', 'CockroachDB', 'TiDB', 'PostgreSQL', '-nw', '3')
         by_docker = {config.docker: config for config in configs.values()}
-        self.assertEqual(by_docker['Citus'].ddl_parameters, {'num_worker_shards': '32', 'num_worker_replicas': '1'})
-        self.assertEqual(by_docker['CockroachDB'].ddl_parameters, {'num_worker_replicas': '3', 'pk_hash': 'hash'})
+        self.assertEqual(by_docker['Citus'].ddl_parameters,
+                         {'num_worker_shards': '32', 'num_worker_replicas': '1', 'fillfactor': '100'})
+        self.assertEqual(by_docker['CockroachDB'].ddl_parameters,
+                         {'num_worker_replicas': '3', 'pk_hash': 'hash', 'bucket_count': 'default',
+                          'range_max_bytes': 'default', 'column_families': 'one'})
         self.assertEqual(by_docker['TiDB'].ddl_parameters,
-                         {'num_worker_replicas': '3', 'clustered': 'default', 'split_regions': 'none'})
-        self.assertEqual(by_docker['PostgreSQL'].ddl_parameters, {'fillfactor': '100'})
+                         {'num_worker_replicas': '3', 'clustered': 'default', 'split_regions': 'none',
+                          'shard_row_id_bits': 'none', 'pre_split_regions': 'none'})
+        self.assertEqual(by_docker['PostgreSQL'].ddl_parameters, {'fillfactor': '100', 'autovacuum_scale': '0.2'})
 
     def test_defaults_reproduce_the_scripts(self):
         """With the defaults, the filled scripts equal the scripts before the placeholders."""
         expected = {
-            'PostgreSQL': ('initschema-ycsb.sql', ') WITH (fillfactor = 100);'),
+            'PostgreSQL': ('initschema-ycsb.sql', ') WITH (fillfactor = 100, autovacuum_vacuum_scale_factor = 0.2);'),
+            'Citus': ('initschema-ycsb.sql', ') WITH (fillfactor = 100);'),
             'CockroachDB': ('initschema-ycsb.sql', 'YCSB_KEY  VARCHAR(255) PRIMARY KEY USING HASH,'),
             'YugabyteDB': ('initschema-ycsb.sql', 'PRIMARY KEY (YCSB_KEY HASH)\n) ;'),
             'TiDB': ('initschema-ycsb.sql', 'YCSB_KEY  VARCHAR(255) PRIMARY KEY ,'),
+            'MySQL': ('initschema-ycsb.sql',
+                      ') ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC;'),
+            'MariaDB': ('initschema-ycsb.sql', '    PRIMARY KEY (`YCSB_KEY`)\n)  ;'),
         }
         for dbms, (script, line) in expected.items():
             with self.subTest(dbms):

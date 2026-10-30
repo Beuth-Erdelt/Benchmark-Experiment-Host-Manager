@@ -16,43 +16,44 @@
 --            Distributed table <name> on the shards and the coordinator, rows
 --            spread by the order key (an order and its lines on one shard).
 --          Columns and sorting keys as in experiments/tpch/ClickHouse.
---          The sort keys of orders and lineitem are DDL parameters
+--          Sort keys, partitions and part settings of orders and lineitem, and
+--          LowCardinality string columns are DDL parameters
 --          (ddl-parameters.config).
 
 CREATE TABLE nation ON CLUSTER bexhoma (
     n_nationkey  Int32,
-    n_name       String,
+    n_name       {low_cardinality},
     n_regionkey  Int32,
     n_comment    String
 ) ENGINE = ReplicatedMergeTree ORDER BY n_nationkey;
 
 CREATE TABLE nation (
     n_nationkey  Int32,
-    n_name       String,
+    n_name       {low_cardinality},
     n_regionkey  Int32,
     n_comment    String
 ) ENGINE = ReplicatedMergeTree ORDER BY n_nationkey;
 
 CREATE TABLE region ON CLUSTER bexhoma (
     r_regionkey  Int32,
-    r_name       String,
+    r_name       {low_cardinality},
     r_comment    String
 ) ENGINE = ReplicatedMergeTree ORDER BY r_regionkey;
 
 CREATE TABLE region (
     r_regionkey  Int32,
-    r_name       String,
+    r_name       {low_cardinality},
     r_comment    String
 ) ENGINE = ReplicatedMergeTree ORDER BY r_regionkey;
 
 CREATE TABLE part ON CLUSTER bexhoma (
     p_partkey      Int32,
     p_name         String,
-    p_mfgr         String,
-    p_brand        String,
-    p_type         String,
+    p_mfgr         {low_cardinality},
+    p_brand        {low_cardinality},
+    p_type         {low_cardinality},
     p_size         Int32,
-    p_container    String,
+    p_container    {low_cardinality},
     p_retailprice  Decimal(15,2),
     p_comment      String
 ) ENGINE = ReplicatedMergeTree ORDER BY p_partkey;
@@ -60,11 +61,11 @@ CREATE TABLE part ON CLUSTER bexhoma (
 CREATE TABLE part (
     p_partkey      Int32,
     p_name         String,
-    p_mfgr         String,
-    p_brand        String,
-    p_type         String,
+    p_mfgr         {low_cardinality},
+    p_brand        {low_cardinality},
+    p_type         {low_cardinality},
     p_size         Int32,
-    p_container    String,
+    p_container    {low_cardinality},
     p_retailprice  Decimal(15,2),
     p_comment      String
 ) ENGINE = ReplicatedMergeTree ORDER BY p_partkey;
@@ -112,7 +113,7 @@ CREATE TABLE customer ON CLUSTER bexhoma (
     c_nationkey   Int32,
     c_phone       String,
     c_acctbal     Decimal(15,2),
-    c_mktsegment  String,
+    c_mktsegment  {low_cardinality},
     c_comment     String
 ) ENGINE = ReplicatedMergeTree ORDER BY c_custkey;
 
@@ -123,29 +124,30 @@ CREATE TABLE customer (
     c_nationkey   Int32,
     c_phone       String,
     c_acctbal     Decimal(15,2),
-    c_mktsegment  String,
+    c_mktsegment  {low_cardinality},
     c_comment     String
 ) ENGINE = ReplicatedMergeTree ORDER BY c_custkey;
 
 CREATE TABLE orders_local ON CLUSTER bexhoma (
     o_orderkey       Int64,
     o_custkey        Int32,
-    o_orderstatus    String,
+    o_orderstatus    {low_cardinality},
     o_totalprice     Decimal(15,2),
     o_orderdate      Date,
-    o_orderpriority  String,
+    o_orderpriority  {low_cardinality},
     o_clerk          String,
     o_shippriority   Int32,
     o_comment        String
-) ENGINE = MergeTree ORDER BY {order_orders};
+) ENGINE = MergeTree{partition_orders} ORDER BY {order_orders}
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE orders ON CLUSTER bexhoma (
     o_orderkey       Int64,
     o_custkey        Int32,
-    o_orderstatus    String,
+    o_orderstatus    {low_cardinality},
     o_totalprice     Decimal(15,2),
     o_orderdate      Date,
-    o_orderpriority  String,
+    o_orderpriority  {low_cardinality},
     o_clerk          String,
     o_shippriority   Int32,
     o_comment        String
@@ -154,10 +156,10 @@ CREATE TABLE orders ON CLUSTER bexhoma (
 CREATE TABLE orders (
     o_orderkey       Int64,
     o_custkey        Int32,
-    o_orderstatus    String,
+    o_orderstatus    {low_cardinality},
     o_totalprice     Decimal(15,2),
     o_orderdate      Date,
-    o_orderpriority  String,
+    o_orderpriority  {low_cardinality},
     o_clerk          String,
     o_shippriority   Int32,
     o_comment        String
@@ -172,15 +174,16 @@ CREATE TABLE lineitem_local ON CLUSTER bexhoma (
     l_extendedprice  Decimal(15,2),
     l_discount       Decimal(15,2),
     l_tax            Decimal(15,2),
-    l_returnflag     String,
-    l_linestatus     String,
+    l_returnflag     {low_cardinality},
+    l_linestatus     {low_cardinality},
     l_shipdate       Date,
     l_commitdate     Date,
     l_receiptdate    Date,
-    l_shipinstruct   String,
-    l_shipmode       String,
+    l_shipinstruct   {low_cardinality},
+    l_shipmode       {low_cardinality},
     l_comment        String
-) ENGINE = MergeTree ORDER BY {order_lineitem};
+) ENGINE = MergeTree{partition_lineitem} ORDER BY {order_lineitem}
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE lineitem ON CLUSTER bexhoma (
     l_orderkey       Int64,
@@ -191,13 +194,13 @@ CREATE TABLE lineitem ON CLUSTER bexhoma (
     l_extendedprice  Decimal(15,2),
     l_discount       Decimal(15,2),
     l_tax            Decimal(15,2),
-    l_returnflag     String,
-    l_linestatus     String,
+    l_returnflag     {low_cardinality},
+    l_linestatus     {low_cardinality},
     l_shipdate       Date,
     l_commitdate     Date,
     l_receiptdate    Date,
-    l_shipinstruct   String,
-    l_shipmode       String,
+    l_shipinstruct   {low_cardinality},
+    l_shipmode       {low_cardinality},
     l_comment        String
 ) ENGINE = Distributed(bexhoma, currentDatabase(), lineitem_local, l_orderkey);
 
@@ -210,12 +213,12 @@ CREATE TABLE lineitem (
     l_extendedprice  Decimal(15,2),
     l_discount       Decimal(15,2),
     l_tax            Decimal(15,2),
-    l_returnflag     String,
-    l_linestatus     String,
+    l_returnflag     {low_cardinality},
+    l_linestatus     {low_cardinality},
     l_shipdate       Date,
     l_commitdate     Date,
     l_receiptdate    Date,
-    l_shipinstruct   String,
-    l_shipmode       String,
+    l_shipinstruct   {low_cardinality},
+    l_shipmode       {low_cardinality},
     l_comment        String
 ) ENGINE = Distributed(bexhoma, currentDatabase(), lineitem_local, l_orderkey);

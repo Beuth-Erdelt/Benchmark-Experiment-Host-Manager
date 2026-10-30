@@ -16,5 +16,8 @@ ANALYZE TABLE tpch.partsupp;
 ANALYZE TABLE tpch.region;
 ANALYZE TABLE tpch.supplier;
 
+-- Histograms are the DDL parameter histograms (ddl-parameters.config)
+{histograms}
+
 -- The settings relaxed for the load are restored by checkschema-tpch.sql
 -- (always the last post-load script) to their startup values.
