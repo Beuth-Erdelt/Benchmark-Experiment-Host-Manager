@@ -125,6 +125,33 @@ l_linestatus
 </details>
 
 <details>
+<summary>MonetDB — averages computed on <code>double</code> instead of <code>decimal</code></summary>
+
+`avg()` of a `DECIMAL(16,2)` column keeps two decimals in MonetDB, so an average of 25.4998
+becomes 25.50 and rounds to 26 where PostgreSQL gives 25. Casting to `double` first removes the
+difference.
+
+```sql
+select
+l_returnflag,
+l_linestatus,
+cast(sum(l_quantity) as bigint) as sum_qty,
+sum(l_extendedprice) as sum_base_price,
+sum(l_extendedprice*(1-l_discount)) as sum_disc_price,
+sum(cast(l_extendedprice*(1-l_discount)*(1+l_tax) as double)) as sum_charge,
+avg(cast(l_quantity as double)) as avg_qty,
+avg(cast(l_extendedprice as double)) as avg_price,
+avg(cast(l_discount as double)) as avg_disc,
+count(*) as count_order
+from lineitem
+where l_shipdate <= date '1998-12-01' - interval '{DELTA}' day
+group by l_returnflag, l_linestatus
+order by l_returnflag, l_linestatus
+```
+
+</details>
+
+<details>
 <summary>MySQL — <code>date('…')</code> syntax; <code>cast(… as unsigned int)</code>; <code>limit 10000000</code></summary>
 
 ```sql
@@ -616,7 +643,7 @@ order by o_orderpriority;
 </details>
 
 <details>
-<summary>Default SQL — PostgreSQL, MariaDB</summary>
+<summary>Default SQL — PostgreSQL, MariaDB, MonetDB, Citus</summary>
 
 ```sql
 select
@@ -714,25 +741,6 @@ and exists (
 select * from lineitem
 where l_orderkey = o_orderkey and l_commitdate < l_receiptdate
 )
-group by o_orderpriority
-order by o_orderpriority
-```
-
-</details>
-
-<details>
-<summary>Citus — <code>exists</code> rewritten as plain join (Citus correlated-subquery limitation)</summary>
-
-```sql
-select
-o_orderpriority,
-count(*) as order_count
-from orders, lineitem
-where
-o_orderdate >= date('{DATE}')
-and o_orderdate < date('{DATE}') + interval '3' month
-and l_orderkey = o_orderkey
-and l_commitdate < l_receiptdate
 group by o_orderpriority
 order by o_orderpriority
 ```
@@ -1781,6 +1789,57 @@ select sum(ps_supplycost * ps_availqty) * {FRACTION} * (1.0 / {SF})
 from partsupp, supplier, nation
 where
 ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = '{NATION}'
+)
+order by v desc
+```
+
+</details>
+
+<details>
+<summary>MySQL / MariaDB — fraction computed as <code>1.0e0 / {SF}</code></summary>
+
+`1.0 / 3` is a decimal in MySQL and MariaDB, rounded to 0.3333 (`div_precision_increment`), so the
+HAVING threshold is slightly off. The literal `1.0e0` is a double and keeps the division exact.
+
+```sql
+select ps_partkey, sum(ps_supplycost * ps_availqty) as v
+from partsupp, supplier, nation
+where ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = '{NATION}'
+group by ps_partkey having
+sum(ps_supplycost * ps_availqty) > (
+select sum(ps_supplycost * ps_availqty) * {FRACTION} * (1.0e0 / {SF})
+from partsupp, supplier, nation
+where ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = '{NATION}'
+)
+order by v desc
+```
+
+</details>
+
+<details>
+<summary>MonetDB — fraction computed as <code>cast(1.0 as double) / {SF}</code></summary>
+
+MonetDB evaluates `1.0 / 3` as the decimal `0.333`, which lowers the HAVING threshold by 0.1%
+and returns extra rows (2,817 instead of 2,799 for one SF=3 parameter set). Dividing as `double`
+gives the same rows as PostgreSQL.
+
+```sql
+select ps_partkey, sum(ps_supplycost * ps_availqty) as v
+from partsupp, supplier, nation
+where ps_suppkey = s_suppkey
+and s_nationkey = n_nationkey
+and n_name = '{NATION}'
+group by ps_partkey having
+sum(ps_supplycost * ps_availqty) > (
+select sum(ps_supplycost * ps_availqty) * {FRACTION} * (cast(1.0 as double) / {SF})
+from partsupp, supplier, nation
+where ps_suppkey = s_suppkey
 and s_nationkey = n_nationkey
 and n_name = '{NATION}'
 )
@@ -2894,7 +2953,7 @@ order by s_name
 </details>
 
 <details>
-<summary>OmniSci / Citus — triple correlated subquery rewritten as CTE</summary>
+<summary>OmniSci — triple correlated subquery rewritten as CTE</summary>
 
 ```sql
 with corrsq as (
@@ -2912,6 +2971,40 @@ from partsupp join corrsq
 on corrsq.l_partkey = ps_partkey and corrsq.l_suppkey = ps_suppkey
 where ps_partkey in (select distinct p_partkey from part where p_name like '{COLOR}%')
 and ps_availqty > corrsq.sum_subq
+)
+and s_nationkey = n_nationkey
+and n_name = '{NATION}'
+order by s_name
+```
+
+</details>
+
+<details>
+<summary>Citus — correlated subquery rewritten as CTE; <code>{COLOR}</code> filter pushed into the CTE</summary>
+
+Citus rejects the correlated form (reference table in the FROM clause). Aggregating
+`lineitem` per `(l_partkey, l_suppkey)` for the whole year is not on the distribution key,
+so every shard sends its partial groups to the coordinator. At SF=10 this did not finish
+within 600 s (the 14400 s query timeout in every benchmark run). Restricting `lineitem` to
+the parts of the requested colour before the `group by` reduces it to about 1 s. The result
+equals the reference query's (checked against MonetDB at SF=3: 554 rows, identical).
+
+```sql
+with corrsq as (
+select l_partkey, l_suppkey, 0.5 * sum(l_quantity) sum_subq
+from lineitem
+where l_shipdate >= date '{DATE}'
+and l_shipdate < date '{DATE}' + interval '1' year
+and l_partkey in (select p_partkey from part where p_name like '{COLOR}%')
+group by l_partkey, l_suppkey
+)
+select s_name, s_address
+from supplier, nation
+where s_suppkey in (
+select distinct ps_suppkey
+from partsupp join corrsq
+on corrsq.l_partkey = ps_partkey and corrsq.l_suppkey = ps_suppkey
+where ps_availqty > corrsq.sum_subq
 )
 and s_nationkey = n_nationkey
 and n_name = '{NATION}'
@@ -3226,15 +3319,17 @@ order by cntrycode
 <details>
 <summary>Citus — nested correlated subqueries rewritten as CTEs with LEFT JOIN</summary>
 
+Citus rejects the correlated `not exists` over `orders`, so it becomes an anti-join against the
+distinct customer keys of `orders`. The average balance is computed once over all seven country
+codes, as in the specification (an earlier version averaged per country code, which returned
+slightly different counts).
+
 ```sql
 with avg_acctbal as (
-select
-substring(c_phone from 1 for 2) as cntrycode,
-avg(c_acctbal) as avg_balance
+select avg(c_acctbal) as avg_balance
 from customer
 where c_acctbal > 0.00
 and substring(c_phone from 1 for 2) in ('{I1}', '{I2}', '{I3}', '{I4}', '{I5}', '{I6}', '{I7}')
-group by substring(c_phone from 1 for 2)
 ),
 no_orders as (
 select o_custkey from orders group by o_custkey
@@ -3245,7 +3340,7 @@ count(*) as numcust,
 sum(c.c_acctbal) as totacctbal
 from
 customer c
-inner join avg_acctbal a on substring(c.c_phone from 1 for 2) = a.cntrycode
+cross join avg_acctbal a
 left join no_orders o on c.c_custkey = o.o_custkey
 where
 substring(c.c_phone from 1 for 2) in ('{I1}', '{I2}', '{I3}', '{I4}', '{I5}', '{I6}', '{I7}')
@@ -3273,14 +3368,14 @@ A checkmark means that DBMS has a SQL override in the config; blank means the de
 | Q1 | ✓ | ✓ | | ✓ | ✓ | ✓ | | | | | |
 | Q2 | | ✓ | ✓ | | | | ✓ | ✓ | ✓ | | |
 | Q3 | ✓ | ✓ | ✓ | | | | | | | | |
-| Q4 | ✓ | ✓ | | ✓ | ✓ | | ✓ | | | ✓ | |
+| Q4 | ✓ | ✓ | | ✓ | ✓ | | ✓ | | | | |
 | Q5 | ✓ | ✓ | | ✓ | ✓ | | | | ✓ | | |
 | Q6 | ✓ | ✓ | | ✓ | ✓ | | | | | | |
 | Q7 | ✓ | ✓ | | | | | | | | | |
 | Q8 | ✓ | ✓ | | | | | | | | ✓ | ✓ |
 | Q9 | ✓ | ✓ | | | | | | ✓ | | | |
 | Q10 | ✓ | ✓ | ✓ | ✓ | ✓ | | | | | ✓ | ✓ |
-| Q11 | | | | | ✓ | | ✓ | | | | |
+| Q11 | ✓ | | | | ✓ | ✓ | ✓ | | | | |
 | Q12 | ✓ | ✓ | | ✓ | ✓ | | | | | | |
 | Q13 | | | | | | | | | | | |
 | Q14 | ✓ | ✓ | | ✓ | ✓ | ✓ | ✓ | ✓ | | | |
