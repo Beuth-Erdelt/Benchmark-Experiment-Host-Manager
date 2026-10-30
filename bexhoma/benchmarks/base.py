@@ -14,7 +14,49 @@ from dataclasses import dataclass, field
 import pandas as pd
 from bexhoma import evaluators, failure_timeline
 
-__all__ = ["Benchmark", "DBMSBenchmarkerBenchmark", "Section", "render_stdout"]
+__all__ = ["Benchmark", "DBMSBenchmarkerBenchmark", "Section", "render_stdout",
+           "DIMENSION_VARIANTS", "DIMENSION_DBMS", "dimension_folder", "dimension_info"]
+
+#: ``-xdim`` (TPC-H, SSB): placement of the dimensions on a multi-node DBMS: a full
+#: copy on every node (default), or spread over the nodes like the fact table.
+DIMENSION_VARIANTS = ('replicated', 'distributed')
+
+#: Multi-node DBMS that ``-xdim`` applies to; the others ignore it.
+DIMENSION_DBMS = ('ClickHouseCluster', 'Citus')
+
+
+def dimension_folder(docker: str, dimensions: str) -> str:
+    """Script folder (in ``experiments/<benchmark>``) of a DBMS for a dimension placement.
+
+    The default placement's scripts are in the DBMS folder, the other's in its
+    subfolder ``distributed``; DBMS outside :data:`DIMENSION_DBMS` ignore it.
+
+    :param docker: DBMS name, e.g. ``ClickHouseCluster``.
+    :param dimensions: One of :data:`DIMENSION_VARIANTS`.
+    :return: Folder relative to ``experiments/<benchmark>``, e.g. ``ClickHouseCluster/distributed``.
+    :rtype: str
+    """
+    if docker in DIMENSION_DBMS and dimensions == 'distributed':
+        return docker + '/distributed'
+    return docker
+
+
+def dimension_info(dbms: list, dimensions: str, fact: str, applies_to: tuple = DIMENSION_DBMS) -> str:
+    """Workload info line on the dimension placement, empty without a DBMS it applies to.
+
+    :param dbms: The ``-dbms`` list.
+    :param dimensions: One of :data:`DIMENSION_VARIANTS`.
+    :param fact: Name of the fact table(s), e.g. ``lineorder``.
+    :param applies_to: DBMS of the benchmark that ``-xdim`` applies to.
+    :return: The line with a leading newline, or ``''``.
+    :rtype: str
+    """
+    names = [d for d in applies_to if d in (dbms or [])]
+    if not names:
+        return ''
+    placement = ('a full copy on every node' if dimensions == 'replicated'
+                 else f'spread over the nodes like {fact}')
+    return f"\nDimensions of {', '.join(names)} are {placement} (-xdim {dimensions})."
 
 
 @dataclass

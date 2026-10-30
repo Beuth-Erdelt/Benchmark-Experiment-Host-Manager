@@ -298,7 +298,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
 | MonetDB | `ANALYZE` | n/a (the write-ahead log is applied in the background; no call to force it) | n/a |
 | ClickHouse | n/a (no optimizer statistics unless declared per column) | `reset-flush.sh`: `sync` (an `INSERT` writes its parts without fsync) | n/a (`system.events` cannot be reset) |
-| ClickHouseCluster | n/a | `SYSTEM FLUSH DISTRIBUTED` on every Distributed table (`reset-<benchmark>.sql`, coordinator), then `reset-flush.sh` (`sync`) in every worker | n/a |
+| ClickHouseCluster | n/a | `SYSTEM FLUSH DISTRIBUTED` on every Distributed table and `SYSTEM SYNC REPLICA ON CLUSTER` on every replicated table (`reset-<benchmark>.sql`, coordinator), then `reset-flush.sh` (`sync`) in every worker | n/a |
 | YugabyteDB | `ANALYZE VERBOSE` (cluster-wide) | n/a (no `CHECKPOINT` in YSQL, no `yb-admin` in the helper pod) | `reset-counters.sh`: `pg_stat_reset()` on every tserver (`yb-tserver-N.yb-tservers`), not once through the service, which picks one tserver per connection |
 | CockroachDB | `ANALYZE` (cluster-wide) | n/a (Pebble flushes on its own) | `crdb_internal.reset_sql_stats()` (cluster-wide) |
 | TiDB | `ANALYZE TABLE` (cluster-wide) | n/a (no flush in SQL) | `FLUSH STATUS` on the TiDB server the connection reaches |
@@ -669,6 +669,10 @@ Coordinator and workers set `PGDATA=/var/lib/postgresql/data/pgdata`; PostgreSQL
 - [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/Citus)
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Citus)
 
+TPC-H and SSB distribute the fact tables (`orders`/`lineitem`, `lineorder`) by the order key; the dimensions are reference tables, a full copy on every worker.
+SSB can distribute the dimensions by their own key instead (`-xdim distributed`, scripts in `Citus/distributed`); then a join with `lineorder` is a repartition join.
+TPC-H refuses `-xdim distributed` for Citus: with distributed dimensions Citus could not plan 12 of the 22 queries (joins that are not co-located, subqueries, a cartesian product; check 2026-10-30).
+
 See [Example: Citus](Example-Citus.md) for a worked example.
 
 ---
@@ -756,10 +760,12 @@ Image, ports, capabilities and settings as [ClickHouse](#clickhouse); in additio
 - Workers set the macros `{shard}` (pod ordinal) and `{replica}` (pod name) for later `ReplicatedMergeTree` setups.
 
 **Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/ClickHouseCluster), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/ClickHouseCluster)):
-per table a MergeTree table `<name>_local` on every shard (`ON CLUSTER bexhoma`, columns and sorting key as ClickHouse), and a Distributed table `<name>` on the coordinator and on every shard (the parts of a distributed query that name a table resolve it there).
-Rows are spread by the first column of the sorting key.
-The loader writes into the Distributed tables on the coordinator with `distributed_foreground_insert=1`, so the load time includes sending the rows to the shards.
-The check script reports rows, parts and sizes per table summed over the shards and per shard.
+a distributed table is a MergeTree table `<name>_local` on every shard (`ON CLUSTER bexhoma`, columns and sorting key as ClickHouse) and a Distributed table `<name>` on the coordinator and on every shard (the parts of a distributed query that name a table resolve it there); rows are spread by the first column of the sorting key.
+A replicated table is a `ReplicatedMergeTree` on every shard and on the coordinator, all replicas of one table; Keeper copies the parts the loader writes on the coordinator to the shards.
+TPC-DS: every table is distributed.
+TPC-H: `orders` and `lineitem` are distributed; `part`, `partsupp`, `supplier` and `customer` are replicated (`-xdim replicated`, default, so joins with `orders`/`lineitem` run on each shard against its local copy) or distributed (`-xdim distributed`, scripts in `ClickHouseCluster/distributed`, volume `tpch-distributed-<SF>`); `nation` and `region` are replicated in both.
+The loader writes into the tables on the coordinator; a Distributed table uses `distributed_foreground_insert=1`, so the load time includes sending the rows to the shards.
+The check script waits for the replicas, fails if a node holds other rows of a replicated table than the coordinator, and reports rows, parts and sizes per table and node.
 
 The configuration equals ClickHouse plus `'attachWorker': ''` (the shards are in `remote_servers`, nothing to register) and the monitor component `worker`, which scrapes coordinator and shards (the metrics are totals of the cluster).
 In `tpch.py` and `tpcds.py` the configuration sets `set_script_target('workers')`, so the reset's `reset-flush.sh` runs in every worker.

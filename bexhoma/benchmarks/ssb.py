@@ -8,7 +8,7 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from .base import DBMSBenchmarkerBenchmark
+from .base import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, DIMENSION_DBMS, dimension_folder, dimension_info
 
 __all__ = ["SSB", "SCHEMA_VARIANTS", "QUERY_VARIANTS", "DIMENSION_VARIANTS", "DIMENSION_DBMS",
            "resolve_indexing_key", "resolve_queryfile", "resolve_dimension_folder"]
@@ -19,20 +19,12 @@ SCHEMA_VARIANTS = ('normal', 'flat')
 #: ``-xqv``: constants of the SSB specification or random parameters (Rabl et al., ICPE 2013).
 QUERY_VARIANTS = ('spec', 'random')
 
-#: ``-xdim``: placement of the dimensions on a multi-node DBMS: a full copy on every
-#: node (default), or spread over the nodes like lineorder.
-DIMENSION_VARIANTS = ('replicated', 'distributed')
-
-#: Multi-node DBMS that ``-xdim`` applies to; the others ignore it.
-DIMENSION_DBMS = ('ClickHouseCluster', 'Citus')
-
 
 def resolve_dimension_folder(docker: str, schema_variant: str, dimensions: str) -> str:
     """Script folder (in ``experiments/ssb``) of a DBMS for a dimension placement.
 
-    The default placement's scripts are in the DBMS folder, the other's in its
-    subfolder ``distributed``. The flat schema has no dimensions, so it always
-    uses the DBMS folder.
+    As :func:`~bexhoma.benchmarks.base.dimension_folder`; the flat schema has no
+    dimensions, so it always uses the DBMS folder.
 
     :param docker: DBMS name, e.g. ``ClickHouseCluster``.
     :param schema_variant: One of :data:`SCHEMA_VARIANTS`.
@@ -40,9 +32,9 @@ def resolve_dimension_folder(docker: str, schema_variant: str, dimensions: str) 
     :return: Folder relative to ``experiments/ssb``, e.g. ``ClickHouseCluster/distributed``.
     :rtype: str
     """
-    if docker in DIMENSION_DBMS and schema_variant == 'normal' and dimensions == 'distributed':
-        return docker + '/distributed'
-    return docker
+    if schema_variant != 'normal':
+        return docker
+    return dimension_folder(docker, dimensions)
 
 #: Maps every (indexes, constraints, statistics) combination to the ssb volume's
 #: ``initscripts`` key in the cluster config (``volumes.ssb.initscripts``). Every
@@ -187,12 +179,8 @@ class SSB(DBMSBenchmarkerBenchmark):
         experiment.use_distributed_datasource = True
         experiment.workload['info'] += f"\nSchema is the {schema_name} (-xsv {schema_variant})."
         dimensions = getattr(args, 'dimensions', DIMENSION_VARIANTS[0])
-        if schema_variant == 'normal' and set(getattr(args, 'dbms', None) or []) & set(DIMENSION_DBMS):
-            placement = ('a full copy on every node' if dimensions == 'replicated'
-                         else 'spread over the nodes like lineorder')
-            experiment.workload['info'] += (
-                f"\nDimensions of {', '.join(d for d in DIMENSION_DBMS if d in args.dbms)}"
-                f" are {placement} (-xdim {dimensions}).")
+        if schema_variant == 'normal':
+            experiment.workload['info'] += dimension_info(getattr(args, 'dbms', None), dimensions, 'lineorder')
         if experiment.loading_is_active():
             if experiment.benchmarking_is_active():
                 experiment.workload['info'] += f"\nSSB (SF={SF}) data is loaded and benchmark is executed."

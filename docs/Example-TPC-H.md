@@ -339,7 +339,8 @@ usage: tpch.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
                [-mtb MULTI_TENANT_BY] [-mtv] [-tr] [-rp] [--set SETS]
                [-dbms [{PostgreSQL,MonetDB,MySQL,MariaDB,DatabaseService,Citus,CedarDB,PgDuckDB} ...]]
                [-xlit LIMIT_IMPORT_TABLE] [-xdt] [-xqr NUM_RUN]
-               [-xnls NUM_LOADING_SPLIT] [-xii] [-xic] [-xis] [-xcol] [-xrcp]
+               [-xnls NUM_LOADING_SPLIT] [-xii] [-xic] [-xis] [-xcol]
+               [-xdim {replicated,distributed}] [-xrcp]
                [-xshq] [-xrs NUM_REFRESH_STREAMS]
                [-xrso NUM_REFRESH_STREAM_OFFSET] [-xaq ACTIVE_QUERIES] [-xdfe]
                [-xve] [-xse]
@@ -498,6 +499,15 @@ options:
                         run ANALYZE / UPDATE STATISTICS after loading
   -xcol, --xinit-columns
                         use columnar storage (Citus only)
+  -xdim, --xdimensions {replicated,distributed}
+                        ClickHouseCluster: replicated = a full copy of part,
+                        partsupp, supplier and customer on every node, joins
+                        with orders/lineitem run locally per shard;
+                        distributed = these four spread over the shards like
+                        orders and lineitem, joined across nodes per query;
+                        nation and region are a full copy in both. Citus
+                        always uses reference tables (distributed is
+                        refused), single-node DBMS ignore it
   -xrcp, --xrecreate-parameter
                         regenerate random query parameters for each stream
   -xshq, --xshuffle-queries
