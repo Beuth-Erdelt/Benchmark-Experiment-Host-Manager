@@ -20,7 +20,7 @@ one experiment per value with `--set` on the same `-rst` PVC).
 | M5 | Not started: `covering_indexes`, `projections`, `pk_order`; results change: `string_type`, `numeric_type`; script variant: `primary_keys`, `distribution_key` (probably the Citus join limit of item 14); BenchBase creates the PostgreSQL TPC-C schema, so not by scripts: `hash_partitions`; more than scripts: `tablespace_index` | open | [More candidates](#more-candidates-not-yet-prioritized) |
 | – | Catalog at its margin: at most 53,990 characters (LF-counted; test keeps 2,000 below the 56,000 limit), now 53,975. Next key for PostgreSQL needs a shorter catalog or a higher limit | decision | [Milestones](#milestones) |
 | – | Docs rerun: TPC-H cluster logs in docs/Example-ClickHouse.md are from the old all-distributed layout | open | – |
-| – | Not run on the cluster: `-schema` variants of the PostgreSQL scripts (tenancy) | open | – |
+| – | Cluster check of the `-schema` variants of the PostgreSQL scripts (tenancy): 1793387505, 1793387532, 1793387564 | done | – |
 | 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
 | 13b | Optional: refuse a post-load step a DBMS has no script for (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for CedarDB, DatabaseService, PgDuckDB, `checkschema-ycsb` for CedarDB, DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |
 | – | Separate: Python client calls (`get_pods` etc. in clusters.py) do not wait for a cluster outage (`MaxRetryError`), crashed check P | open, outside this plan | – |
@@ -721,7 +721,13 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
     1793374506 MySQL `stats_sample_pages=100`; 1793374536 Citus
     `tpcc_item=distributed`; 1793374567 CockroachDB `pk_hash=none`,
     `pre_split=9` (`user1`..`user9` in the init output). The `-schema` scripts
-    are unit-tested only (no tenancy run).
+    were checked with 2 schema tenants and `-ar`, all passed: 1793387505 TPC-H
+    SF1 `index_method=hash`, target 500, extended statistics, 22/22; 1793387532
+    sweep `btree_dedup=on,off` (lineitem indexes 261 vs. 386 MB per tenant);
+    1793387564 BenchBase TPC-C. The parallel `ALTER DATABASE` of the tenants
+    did not collide here, which does not rule out a collision. The reset is
+    not tenant-specific: it runs once per tenant and each run covers the whole
+    database, so a round vacuums everything N times.
   - Catalog: `tests/test_agent_harness.py` keeps 2,000 characters of margin
     below the 56,000 limit: at most 53,990 (LF-counted, as the harness reads
     it), now 53,975. The next key for PostgreSQL needs a shorter catalog or a
