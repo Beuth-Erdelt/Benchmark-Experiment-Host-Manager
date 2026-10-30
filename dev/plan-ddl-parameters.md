@@ -724,10 +724,13 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
     were checked with 2 schema tenants and `-ar`, all passed: 1793387505 TPC-H
     SF1 `index_method=hash`, target 500, extended statistics, 22/22; 1793387532
     sweep `btree_dedup=on,off` (lineitem indexes 261 vs. 386 MB per tenant);
-    1793387564 BenchBase TPC-C. The parallel `ALTER DATABASE` of the tenants
-    did not collide here, which does not rule out a collision. The reset is
-    not tenant-specific: it runs once per tenant and each run covers the whole
-    database, so a round vacuums everything N times.
+    1793387564 BenchBase TPC-C. Found there and fixed: the parallel `ALTER
+    DATABASE` of the tenants is serialized by an advisory lock (it had not
+    collided); a reset covers the whole database, so with schema tenancy it now
+    runs once per round, not once per tenant (older `time_reset` values are
+    not comparable); BenchBase refuses `-mtb schema` for MySQL, which has no
+    `-schema` scripts. Check 1793389076, 3 tenants, passed: two resets in two
+    rounds, each covering all three schemas.
   - Catalog: `tests/test_agent_harness.py` keeps 2,000 characters of margin
     below the 56,000 limit: at most 53,990 (LF-counted, as the harness reads
     it), now 53,975. The next key for PostgreSQL needs a shorter catalog or a

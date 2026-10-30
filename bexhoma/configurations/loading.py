@@ -1085,8 +1085,9 @@ class LoadingCoordinator:
         spawning an async thread is unnecessary.
 
         Honors the same tenancy model as :meth:`load_data` / :meth:`prepare_init_dbms`:
-        for ``tenant_per == 'schema'`` each script runs once per tenant against the
-        tenant-filled file :meth:`prepare_init_dbms` already uploaded (``<tenant>-<script>``);
+        for ``tenant_per == 'schema'`` each script runs once, as reset scripts cover
+        the whole database, from the file of tenant 0 :meth:`prepare_init_dbms` already
+        uploaded (``<tenant>-<script>``);
         for ``tenant_per == 'database'`` each script runs once per tenant against
         database ``tenant_<n>``; for ``tenant_per == 'container'`` no fan-out is needed
         here because each container tenant is already a separate :class:`SutConfiguration`
@@ -1158,9 +1159,9 @@ class LoadingCoordinator:
         # (script, script-as-uploaded-in-pod, target database, tenant tag for log naming)
         targets = []
         if cfg.num_tenants > 0 and cfg.tenant_per == 'schema':
-            for tenant in range(cfg.num_tenants):
-                for script in scripts:
-                    targets.append((script, f'{tenant}-{script}', default_database, str(tenant)))
+            # whole database, so one run covers every tenant schema
+            for script in scripts:
+                targets.append((script, f'0-{script}', default_database, ''))
         elif cfg.num_tenants > 0 and cfg.tenant_per == 'database':
             for tenant in range(cfg.num_tenants):
                 for script in scripts:

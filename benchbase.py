@@ -62,6 +62,9 @@ if __name__ == '__main__':
     parser.set_defaults(num_worker=1)
     # evaluate args
     args = parser.parse_args()
+    if args.multi_tenant_by == 'schema' and ('MySQL' in args.dbms or len(args.dbms) == 0):
+        # only the PostgreSQL folder has -schema scripts; a MySQL schema is a database
+        parser.error('-mtb schema is not supported for MySQL in Benchbase, use -mtb database')
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
     if args.debug:
@@ -540,9 +543,6 @@ if __name__ == '__main__':
                             config.set_loading(parallel=loading_pods*config.num_tenants, num_pods=loading_pods*config.num_tenants)
                         else:
                             config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                        if config.tenant_per == 'schema':
-                            config.set_experiment(script='Schema_tenant')
-                            config.set_experiment(indexing='Checks_tenant')
                         config.set_eval_parameters(
                             TENANT_BY = config.tenant_per,
                             TENANT_NUM = config.num_tenants,

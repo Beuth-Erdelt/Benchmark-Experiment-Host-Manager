@@ -8,7 +8,12 @@
 
 -- Statistics target and extended statistics are DDL parameters (ddl-parameters.config).
 -- ALTER DATABASE: the ANALYZE of a reset script (-ar) keeps the target.
+-- Tenants run this script in parallel: one at a time, or the update of the
+-- same catalog row may fail with "tuple concurrently updated".
+BEGIN;
+SELECT pg_advisory_xact_lock(1);
 ALTER DATABASE postgres SET default_statistics_target = {statistics_target};
+COMMIT;
 SET default_statistics_target = {statistics_target};
 SET search_path TO {BEXHOMA_SCHEMA};
 {extended_statistics}

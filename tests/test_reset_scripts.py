@@ -332,6 +332,63 @@ class ExecResetScriptTest(unittest.TestCase):
         self.assertNotIn('\n', sent[0])
         self.assertIn("printf 'user=monetdb\\npassword=monetdb\\n'", sent[0])
 
+    def _sent_with_tenants(self, tenant_per: str) -> list:
+        """Commands of a reset with 3 tenants."""
+        sent = []
+        cluster = self.cfg.experiment.cluster
+        cluster.namespace = 'ns'
+        cluster.get_pods = lambda **kw: ['sut-pod']
+        cluster.kubectl = lambda command: None
+        self.cfg.experiment.path = cluster.experiments_configfolder
+        self.cfg.__dict__.update(
+            appname='bexhoma', code='1', num_tenants=3, tenant_per=tenant_per, script_target='sut',
+            dockertemplate={'loadData': 'psql -d {database} < {scriptname}',
+                            'template': {'JDBC': {'database': 'postgres'}}},
+            get_service_sut=lambda configuration: 'svc',
+            execute_command_in_pod_sut=lambda cmd, retry_interrupted=True: sent.append(cmd) or ('', '', ''))
+        with (
+            mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
+            LoadingCoordinator(self.cfg).exec_reset_script('reset_1_1_1', ['reset-ycsb.sql'])
+        return sent
+
+    def test_schema_tenancy_runs_once(self):
+        """A reset covers the whole database, so it does not repeat per schema."""
+        self.assertEqual(self._sent_with_tenants('schema'), ['psql -d postgres < /tmp/0-reset-ycsb.sql'])
+
+    def test_database_tenancy_runs_per_tenant(self):
+        self.assertEqual(self._sent_with_tenants('database'),
+                         [f'psql -d tenant_{tenant} < /tmp/reset-ycsb.sql' for tenant in range(3)])
+
+
+class SchemaTenancyScriptsTest(unittest.TestCase):
+    """What schema tenancy needs of its scripts."""
+
+    def test_alter_database_is_serialized(self):
+        """Tenants run the statistics script in parallel and update the same catalog row."""
+        with open(os.path.join(_REPO, 'experiments', 'tpch', 'PostgreSQL', 'initstatistics-tpch-schema.sql'),
+                  encoding='utf-8') as f:
+            text = f.read()
+        positions = [text.index(statement) for statement in
+                     ('BEGIN;', 'pg_advisory_xact_lock', 'ALTER DATABASE postgres', 'COMMIT;')]
+        self.assertEqual(positions, sorted(positions))
+
+    def test_benchbase_mysql_refused(self):
+        """Only the PostgreSQL folder has -schema scripts; no -dbms includes MySQL."""
+        for dbms in (['-dbms', 'MySQL'], ['-dbms', 'PostgreSQL', 'MySQL'], []):
+            stderr = io.StringIO()
+            with (
+                self.subTest(dbms),
+                mock.patch.object(sys, 'argv', ['benchbase.py', 'run', *dbms, '-mtb', 'schema', '-mtn', '2']),
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(stderr),
+                self.assertRaises(SystemExit) as exit_,
+            ):
+                runpy.run_path(os.path.join(_REPO, 'benchbase.py'), run_name='__main__')
+            self.assertEqual(exit_.exception.code, 2)
+            self.assertIn('-mtb schema is not supported for MySQL', stderr.getvalue())
+
 
 class ScriptFailedTest(unittest.TestCase):
     """Failure detection from the output the cluster runs produced."""

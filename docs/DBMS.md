@@ -310,7 +310,7 @@ Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL and PG
 With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
 
 Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis).
-SQL files run through `loadData` (once per tenant for schema and database tenancy), shell files in the SUT pod or, with script target `workers`, in every worker pod.
+SQL files run through `loadData` (once per tenant for database tenancy; once for schema tenancy, as the PostgreSQL scripts cover the whole database), shell files in the SUT pod or, with script target `workers`, in every worker pod.
 With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both streams start.
 Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
 A script counts as failed when it exits non-zero, writes an error line (`ERROR`, `FATAL`) to stderr, or (redis-cli) an `ERR` reply to stdout; no output means success.
