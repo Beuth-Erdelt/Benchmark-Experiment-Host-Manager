@@ -876,7 +876,7 @@ It differs from a PostgreSQL template in these points:
 | Password | `CEDAR_PASSWORD` has at least 20 characters, as the JDBC `auth` of `cluster.config`; letters and digits only, it goes through `sed` in the YCSB and Benchbase images | the image refuses a weak password and the server stops |
 | Authentication | no trust authentication: `client_env` of `cluster.config` gives every job `PGPASSWORD` | the `psql` of the loader images cannot connect |
 | Address | the entrypoint binds to `::`; the container command changes it to `0.0.0.0` before the start | no IPv6 in the pods, the server stops; `-address` as an argument is refused as given twice |
-| `psql` | the image has none; the initContainer `psql-client` copies it from `postgres:18.6` to `/pgclient` for `loadData` | init scripts cannot run |
+| `psql` | the image has none; the initContainer `include-client` copies it from `postgres:18.6` to `/pgclient` for `loadData` | init scripts cannot run |
 
 Memory and threads follow the limits of the container: `buffersize` and `workmemsize` default to 45% of the memory limit each.
 CedarDB warns that the `memlock` limit is too low for its `io_uring` buffers (performance may degrade); this limit cannot be changed from a pod.
@@ -902,6 +902,8 @@ CedarDB does not share code with PostgreSQL. What the scripts cannot use:
 Isolation: every transaction runs as repeatable read. `READ COMMITTED` is accepted but stays repeatable read, `SERIALIZABLE` is refused, so Benchbase runs on repeatable read here.
 With concurrent writes to the same rows, transactions fail with `conflict with concurrent transaction` instead of waiting.
 YCSB does not retry them: workload A lost about 0.4% of its updates at 16 threads (`[UPDATE-FAILED]`), so the test `Execution Phase: contains FAILED column` fails.
+
+Benchbase `twitter` loads, but its benchmark stops when it connects: the PostgreSQL profile of the image fixes `TRANSACTION_SERIALIZABLE` for it and ignores `BENCHBASE_ISOLATION`.
 
 CH-benCHmark runs, but `num_errors` is not 0 and no bexhoma test reports it; the SQL comes from Benchbase:
 - Q22 always fails: `GROUP BY substring(c_state from 1 for 1)` and `ORDER BY substring(c_state,1,1)` are not the same expression for CedarDB.

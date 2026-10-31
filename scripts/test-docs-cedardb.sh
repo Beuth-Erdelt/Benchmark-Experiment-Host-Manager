@@ -376,55 +376,6 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB tpcc  sf=16"
 
 
-#### Benchbase twitter
-# -dbms CedarDB                 DBMS under test
-# -sf 10                        scaling factor (controls database size)
-# -xbt twitter                  Benchbase benchmark type
-# -xsd 5                        benchmark duration in minutes
-# -xtb 1024                     base ops/s used to compute the throughput target
-# -xnbf 16                      throughput target as a multiple of the base ops/s
-# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
-# -nbt 100                      threads per benchmarking pod
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-# -lr 64Gi                      RAM limit for the SUT container
-# -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
-# -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
-# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# -ar                           run the reset scripts before each round
-# -ks no                        remove the SUT at the end
-bexhoma benchbase \
-  -dbms CedarDB \
-  -sf 10 \
-  -xbt twitter \
-  -xsd 5 \
-  -xtb 1024 \
-  -xnbf 16 \
-  -nbp 1 \
-  -nbt 100 \
-  -ms $BEXHOMA_MS \
-  -tr \
-  -lr 64Gi \
-  -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
-  -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
-  -ar \
-  -ks no \
-  run &>$LOG_DIR/doc_benchbase_testcase_twitter_cedardb_simple.log
-
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB twitter  sf=10"
-
-
 #### Benchbase ycsb
 # -dbms CedarDB                 DBMS under test
 # -sf 1                         scaling factor (controls database size)

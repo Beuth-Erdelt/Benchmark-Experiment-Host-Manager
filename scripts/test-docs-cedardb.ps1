@@ -223,34 +223,6 @@ bexhoma benchbase `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CedarDB tpcc  sf=16"
 
 
-#### Benchbase twitter
-bexhoma benchbase `
-  -dbms CedarDB                 <# DBMS under test #> `
-  -sf 10                        <# scaling factor (controls database size) #> `
-  -xbt twitter                  <# Benchbase benchmark type #> `
-  -xsd 5                        <# benchmark duration in minutes #> `
-  -xtb 1024                     <# base ops/s used to compute the throughput target #> `
-  -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
-  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
-  -nbt 100                      <# threads per benchmarking pod #> `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  -lr 64Gi                      <# RAM limit for the SUT container #> `
-  -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class of the persistent volume #> `
-  -rss 50Gi                     <# size of the persistent volume claim #> `
-  -rsr                          <# delete any existing PVC for the SUT before starting #> `
-  -nc 2                         <# two runs, the second restarts the SUT on the same data #> `
-  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  -ar                           <# run the reset scripts before each round #> `
-  -ks no                        <# remove the SUT at the end #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_twitter_cedardb_simple.log" -Encoding utf8
-
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CedarDB twitter  sf=10"
-
-
 #### Benchbase ycsb
 bexhoma benchbase `
   -dbms CedarDB                 <# DBMS under test #> `

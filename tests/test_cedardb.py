@@ -57,8 +57,18 @@ class CedarDBWiringTest(unittest.TestCase):
         mounts = {m['name']: m['mountPath'] for m in self.dbms['volumeMounts']}
         self.assertEqual(mounts['pgclient'], '/pgclient')
         self.assertIn('pgclient', [v['name'] for v in self.pod['volumes']])
-        self.assertIn('psql-client', [c['name'] for c in self.pod['initContainers']])
+        self.assertIn('include-client', [c['name'] for c in self.pod['initContainers']])
         self.assertTrue(self.docker['loadData'].startswith('/pgclient/psql '))
+
+    def test_load_client_stays_without_a_storage_volume(self):
+        from bexhoma.configurations.lifecycle import init_containers_without_storage
+        self.assertEqual(init_containers_without_storage(self.pod['initContainers']), self.pod['initContainers'])
+
+    def test_only_the_load_client_stays_without_a_storage_volume(self):
+        from bexhoma.configurations.lifecycle import init_containers_without_storage
+        with open(os.path.join(_REPO, 'k8s', 'deploymenttemplate-PostgreSQL.yml'), encoding='utf-8') as f:
+            pod = [d for d in yaml.safe_load_all(f) if d['kind'] == 'Deployment'][0]['spec']['template']['spec']
+        self.assertEqual(init_containers_without_storage(pod['initContainers']), [])
 
     def test_server_binds_to_ipv4(self):
         self.assertIn('-address=0.0.0.0', self.dbms['command'][-1])

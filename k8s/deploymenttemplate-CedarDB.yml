@@ -45,7 +45,7 @@ spec:
       terminationGracePeriodSeconds: 180
       initContainers:
         # the CedarDB image has no psql, loadData needs one (Community Edition: no derived image, it must not be passed on)
-        - name: psql-client
+        - name: include-client
           image: postgres:18.6
           command:
             - sh
