@@ -39,6 +39,7 @@
     ./Example-Redis.md
     ./Example-Dragonfly.md
     ./Example-PGBouncer.md
+    ./Example-Other-DBMS.md
     ./Example-CloudDatabase.md
     ./Example-custom.md
     ./Example-Multi-Tenant.md

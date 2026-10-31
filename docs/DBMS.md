@@ -915,6 +915,8 @@ CedarDB has no Prometheus endpoint in bexhoma (`-ma`).
 bexhoma tpch -dbms CedarDB -sf 1 -nlp 8 -xii -xic -xis -tr run
 ```
 
+See [Example: Other DBMS](Example-Other-DBMS.md#cedardb) for the workloads and the test script.
+
 ## YugabyteDB
 
 YugabyteDB is a distributed, PostgreSQL-compatible DBMS.
