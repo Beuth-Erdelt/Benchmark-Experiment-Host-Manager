@@ -337,6 +337,7 @@ folder declares.
 | `ycsb/CockroachDB` | Done |
 | `ycsb/DatabaseService` | Done |
 | `ycsb/Dragonfly` | Done |
+| `ycsb/Cassandra` | Done |
 | `ycsb/Kinetica` | Done |
 | `ycsb/MariaDB` | Done |
 | `ycsb/MonetDB` | Done |

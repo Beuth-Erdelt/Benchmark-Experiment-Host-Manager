@@ -694,7 +694,7 @@ workloads:
     supports: [PostgreSQL]
     out_of_scope:
       systems: [MySQL, MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService,
-        PGBouncer, Redis, Citus, CedarDB, Dragonfly]
+        PGBouncer, Redis, Citus, CedarDB, Dragonfly, Cassandra]
       why: "the full ycsb workload also supports these; trimmed to PostgreSQL for
         this contract's prototype scope (matching workloads.tpch). Connection
         pooling (PGBouncer) and per-system knobs (TiDB PD nodes, SUT replicas)

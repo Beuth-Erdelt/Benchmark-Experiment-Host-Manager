@@ -38,7 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: load data, run the benchmark, start SUT only, or summarize results', choices=['run', 'start', 'load', 'summary'], default='run')
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB', 'Dragonfly'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'PGBouncer', 'Redis', 'Citus', 'CedarDB', 'Dragonfly', 'Cassandra'], default=[], nargs='*')
     parser.add_argument('-xnlf',  '--xnum-loading-target-factors', help='comma-separated multipliers for the loading ops target (target = -xtb × factor)', default="1", dest='num_loading_target_factors')
     parser.add_argument('-xnsr',  '--xnum-sut-replicas', help='number of SUT replicas per configuration', default=1, dest='num_sut_replicas')
     parser.add_argument('-xnpd',  '--xnum-pd-nodes', help='number of PD (Placement Driver) nodes, independent of -nw (TiDB only; keep odd)', default=3, dest='num_pd_nodes')
@@ -815,6 +815,64 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                                         YCSB_TARGET = benchmarking_target_per_pod,
                                         YCSB_OPERATIONS = ycsb_operations_per_pod,
                                         BEXHOMA_DBMS_TYPE = BEXHOMA_DBMS_TYPE,
+                                        BEXHOMA_REPLICAS = num_worker_replicas,
+                                        )
+                    #print(executor_list)
+                    config.add_benchmark_list(executor_list)
+                if ("Cassandra" in args.dbms):# or len(args.dbms) == 0): # not included per default
+                    # Cassandra
+                    name_format = 'Cassandra-{threads}-{pods}-{target}'
+                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
+                    docker = 'CassandraCluster' if num_worker > 0 else 'Cassandra'
+                    config = configurations.default(experiment=experiment, docker=docker, alias='DBMS WC', worker=num_worker)
+                    config.path_experiment_docker = 'Cassandra'          # scripts live here regardless of single/cluster mode
+                    # With -ar: nodetool flush and wait for the compactions before each
+                    # round; there are no optimizer statistics and no resettable counters.
+                    config.set_benchmark_resetscript(['save-snapshot.sh'])
+                    if num_worker > 0:
+                        config.monitoring_sut = False # should not be monitored since only dummy
+                        config.set_sut_role('placeholder') # cqlsh for the scripts; data lives in the worker StatefulSet
+                        config.set_script_target('workers') # nodetool reaches the local node only
+                    config.set_storage(
+                        storageConfiguration = 'cassandra'
+                        )
+                    config.set_sut_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        )
+                    config.set_eval_parameters(
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        BEXHOMA_SHARDS = num_worker_shards,
+                        BEXHOMA_WORKERS = num_worker
+                        )
+                    if skip_loading:
+                        config.loading_deactivated = True
+                    config.set_loading_parameters(
+                        PARALLEL = str(loading_pods),
+                        YCSB_THREADCOUNT = loading_threads_per_pod,
+                        YCSB_TARGET = loading_target_per_pod,
+                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                        BEXHOMA_DBMS_TYPE = "cassandra",
+                        BEXHOMA_REPLICAS = num_worker_replicas,
+                        )
+                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
+                    executor_list = []
+                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
+                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for benchmarking_threads in num_benchmarking_threads:
+                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for num_executor in list_clients:
+                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
+                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                                    ycsb_operations_per_pod = int(ycsb_operations/benchmarking_pods_scaled)
+                                    benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
+                                    executor_list.append(benchmarking_pods_scaled)
+                                    config.add_benchmarking_parameters(
+                                        PARALLEL = str(benchmarking_pods_scaled),
+                                        YCSB_THREADCOUNT = benchmarking_threads_per_pod,
+                                        YCSB_TARGET = benchmarking_target_per_pod,
+                                        YCSB_OPERATIONS = ycsb_operations_per_pod,
+                                        BEXHOMA_DBMS_TYPE = "cassandra",
                                         BEXHOMA_REPLICAS = num_worker_replicas,
                                         )
                     #print(executor_list)

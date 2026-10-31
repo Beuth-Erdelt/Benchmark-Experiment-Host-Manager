@@ -34,7 +34,7 @@ It lets you configure hardware and software setups and repeat tests across varyi
 
 **Benchmarks:** YCSB · TPC-H · TPC-DS · TPC-C (HammerDB and Benchbase) · SSB (star and flat)
 
-**Tested DBMSs:** Citus (Hyperscale), Clickhouse, CockroachDB, Dragonfly, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TiDB, TimescaleDB, Vertica, YugabyteDB
+**Tested DBMSs:** Apache Cassandra, Citus (Hyperscale), Clickhouse, CockroachDB, Dragonfly, Exasol, IBM DB2, MariaDB, MariaDB Columnstore, MemSQL (SingleStore), MonetDB, MySQL, OmniSci (HEAVY.AI), Oracle DB, PostgreSQL, SQL Server, SAP HANA, TiDB, TimescaleDB, Vertica, YugabyteDB
 
 **Tested cloud platforms:** Amazon Web Services · Google Cloud · Microsoft Azure · IBM Cloud · Oracle Cloud · Minikube
 

@@ -38,6 +38,7 @@
     ./Example-ClickHouse.md
     ./Example-Redis.md
     ./Example-Dragonfly.md
+    ./Example-Cassandra.md
     ./Example-PGBouncer.md
     ./Example-Other-DBMS.md
     ./Example-CloudDatabase.md
