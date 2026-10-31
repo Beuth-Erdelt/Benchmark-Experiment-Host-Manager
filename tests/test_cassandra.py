@@ -77,6 +77,11 @@ class CassandraTemplateTest(unittest.TestCase):
     def test_seed_comes_from_the_first_worker(self):
         self.assertIn('CASSANDRA_SEEDS="$BEXHOMA_WORKER_FIRST"', _dbms_container(self.cluster, 'StatefulSet')['command'][-1])
 
+    def test_nodes_wait_for_the_dns_record_of_the_seed(self):
+        """Without a resolvable seed Cassandra exits ('The seed provider lists no seeds')."""
+        command = _dbms_container(self.cluster, 'StatefulSet')['command'][-1]
+        self.assertLess(command.index('getent hosts "$CASSANDRA_SEEDS"'), command.index('exec docker-entrypoint.sh'))
+
     def test_cluster_has_no_data_in_the_placeholder(self):
         self.assertNotIn('volumeMounts', _dbms_container(self.cluster, 'Deployment'))
         self.assertLessEqual(len(_dbms_container(self.cluster, 'Deployment')['resources']), 2)

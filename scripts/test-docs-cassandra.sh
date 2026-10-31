@@ -97,6 +97,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single  sf=1  nbp=1"
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
@@ -122,6 +123,7 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_2.log
@@ -153,6 +155,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3  sf=1  nbp=1"
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
@@ -179,6 +182,7 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_3.log
@@ -271,6 +275,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single PVC  sf=1  nbp=1
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
@@ -299,6 +304,7 @@ bexhoma ycsb \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
+  -rnw $BEXHOMA_NODES_WORKER \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_5.log

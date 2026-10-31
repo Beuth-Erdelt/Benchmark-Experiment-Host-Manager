@@ -74,6 +74,7 @@ bexhoma ycsb `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_cassandra_2.log" -Encoding utf8
@@ -106,6 +107,7 @@ bexhoma ycsb `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_cassandra_3.log" -Encoding utf8
@@ -173,6 +175,7 @@ bexhoma ycsb `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_cassandra_5.log" -Encoding utf8

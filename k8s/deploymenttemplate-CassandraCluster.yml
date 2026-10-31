@@ -92,6 +92,8 @@ spec:
             if [ "$HEAP_MIB" -gt 31744 ]; then HEAP_MIB=31744; fi
             export MAX_HEAP_SIZE="${MAX_HEAP_SIZE:-${HEAP_MIB}M}"
             export CASSANDRA_SEEDS="$BEXHOMA_WORKER_FIRST"
+            # the first worker is its own seed: Cassandra exits when the name has no DNS record yet
+            until getent hosts "$CASSANDRA_SEEDS" > /dev/null; do sleep 1; done
             exec docker-entrypoint.sh cassandra -f
         env:
           - name: CASSANDRA_CLUSTER_NAME
