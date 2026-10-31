@@ -4,19 +4,21 @@
     <!-- Connection details -->
     <type>MYSQL</type>
     <driver>com.mysql.cj.jdbc.Driver</driver>
-    <url>jdbc:mysql://localhost:3306/benchbase?rewriteBatchedStatements=true&amp;sslMode=DISABLED</url>
-    <username>admin</username>
-    <password>password</password>
+    <url>jdbc:mysql://BEXHOMA_HOST:BEXHOMA_PORT/BEXHOMA_DATABASE?rewriteBatchedStatements=true&amp;sslMode=DISABLED&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</url>
+    <username>BEXHOMA_USER</username>
+    <password>BEXHOMA_PASSWORD</password>
 
-    <batchsize>2048</batchsize>
-    <scalefactor>0.1</scalefactor>
+    <batchsize>BENCHBASE_BATCHSIZE</batchsize>
+    <newConnectionPerTxn>BENCHBASE_NEWCONNPERTXN</newConnectionPerTxn>
+    <scalefactor>BEXHOMA_SF</scalefactor>
 
     <!-- The workload -->
-    <terminals>1</terminals>
+    <terminals>BENCHBASE_TERMINALS</terminals>
     <works>
         <work>
-            <time>60</time>
-            <rate>unlimited</rate>
+            <time>BENCHBASE_TIME</time>
+            <warmup>BENCHBASE_WARMUP</warmup>
+            <rate>BENCHBASE_TARGET</rate>
             <weights>100</weights>
         </work>
     </works>

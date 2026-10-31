@@ -4,21 +4,23 @@
     <!-- Connection details -->
     <type>MARIADB</type>
     <driver>org.mariadb.jdbc.Driver</driver>
-    <url>jdbc:mariadb://localhost:3306/benchbase?useServerPrepStmts</url>
-    <username>admin</username>
-    <password>password</password>
-    <isolation>TRANSACTION_SERIALIZABLE</isolation>
-    <batchsize>128</batchsize>
+    <url>jdbc:mariadb://BEXHOMA_HOST:BEXHOMA_PORT/BEXHOMA_DATABASE?useServerPrepStmts</url>
+    <username>BEXHOMA_USER</username>
+    <password>BEXHOMA_PASSWORD</password>
+    <isolation>BENCHBASE_ISOLATION</isolation>
+    <batchsize>BENCHBASE_BATCHSIZE</batchsize>
+    <newConnectionPerTxn>BENCHBASE_NEWCONNPERTXN</newConnectionPerTxn>
 
     <!-- Scalefactor in ResourceStresser scales by *100 the number of employees -->
-    <scalefactor>1</scalefactor>
+    <scalefactor>BEXHOMA_SF</scalefactor>
 
     <!-- The workload -->
-    <terminals>1</terminals>
+    <terminals>BENCHBASE_TERMINALS</terminals>
     <works>
         <work>
-            <time>60</time>
-            <rate>10000</rate>
+            <time>BENCHBASE_TIME</time>
+            <warmup>BENCHBASE_WARMUP</warmup>
+            <rate>BENCHBASE_TARGET</rate>
             <weights>16.66,16.66,16.66,16.66,16.66,16.7</weights>
         </work>
     </works>

@@ -180,19 +180,19 @@ echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Benchmark Config File ###################
-if [ "$BENCHBASE_BENCH" == "tpcc" ]; then
-    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_tpcc_config.xml
-elif [ "$BENCHBASE_BENCH" == "twitter" ]; then
-    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_twitter_config.xml
-elif [ "$BENCHBASE_BENCH" == "chbenchmark" ]; then
-    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_chbenchmark_config.xml
-    BENCHBASE_BENCH="tpcc,chbenchmark"
-elif [ "$BENCHBASE_BENCH" == "ycsb" ]; then
-    FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_ycsb_config.xml
-else
-    echo "Unknown benchmark"
-    exit 0
-fi
+case "$BENCHBASE_BENCH" in
+    tpcc|twitter|ycsb|auctionmark|epinions|hyadapt|noop|otmetrics|resourcestresser|seats|sibench|smallbank|tatp|voter|wikipedia)
+        FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_${BENCHBASE_BENCH}_config.xml
+        ;;
+    chbenchmark)
+        FILENAME=/tmp/config/$BENCHBASE_PROFILE/sample_chbenchmark_config.xml
+        BENCHBASE_BENCH="tpcc,chbenchmark"
+        ;;
+    *)
+        echo "Unknown benchmark"
+        exit 0
+        ;;
+esac
 
 ######################## Show workload file ###################
 echo "FILENAME:$FILENAME"

@@ -376,6 +376,402 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload f  sf=1000  nbp=1,2"
 
 
+#### Benchbase auctionmark Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt auctionmark              Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt auctionmark \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_auctionmark_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase auctionmark simple  sf=1  nbp=1"
+
+
+#### Benchbase epinions Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt epinions                 Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt epinions \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_epinions_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase epinions simple  sf=1  nbp=1"
+
+
+#### Benchbase hyadapt Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt hyadapt                  Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt hyadapt \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_hyadapt_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase hyadapt simple  sf=1  nbp=1"
+
+
+#### Benchbase noop Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt noop                     Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt noop \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_noop_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase noop simple  sf=1  nbp=1"
+
+
+#### Benchbase otmetrics Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt otmetrics                Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt otmetrics \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_otmetrics_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase otmetrics simple  sf=1  nbp=1"
+
+
+#### Benchbase resourcestresser Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt resourcestresser         Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt resourcestresser \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_resourcestresser_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase resourcestresser simple  sf=1  nbp=1"
+
+
+#### Benchbase seats Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt seats                    Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt seats \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_seats_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase seats simple  sf=1  nbp=1"
+
+
+#### Benchbase sibench Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt sibench                  Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt sibench \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_sibench_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase sibench simple  sf=1  nbp=1"
+
+
+#### Benchbase smallbank Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt smallbank                Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt smallbank \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_smallbank_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase smallbank simple  sf=1  nbp=1"
+
+
+#### Benchbase tatp Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt tatp                     Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt tatp \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_tatp_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase tatp simple  sf=1  nbp=1"
+
+
+#### Benchbase voter Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt voter                    Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt voter \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_voter_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase voter simple  sf=1  nbp=1"
+
+
+#### Benchbase wikipedia Simple (Example-Benchbase-Others.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size)
+# -xbt wikipedia                Benchbase benchmark type
+# -xsd 2                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 4                        threads per benchmarking pod
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 10Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt wikipedia \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_wikipedia_simple.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase wikipedia simple  sf=1  nbp=1"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

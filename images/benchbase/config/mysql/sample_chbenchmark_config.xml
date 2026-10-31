@@ -4,18 +4,19 @@
     <!-- Connection details -->
     <type>MYSQL</type>
     <driver>com.mysql.cj.jdbc.Driver</driver>
-    <url>jdbc:mysql://localhost:3306/benchbase?rewriteBatchedStatements=true&amp;sslMode=DISABLED</url>
-    <username>admin</username>
-    <password>password</password>
-    <isolation>TRANSACTION_SERIALIZABLE</isolation>
-    <batchsize>128</batchsize>
+    <url>jdbc:mysql://BEXHOMA_HOST:BEXHOMA_PORT/BEXHOMA_DATABASE?rewriteBatchedStatements=true&amp;sslMode=DISABLED&amp;useSSL=false&amp;allowPublicKeyRetrieval=true</url>
+    <username>BEXHOMA_USER</username>
+    <password>BEXHOMA_PASSWORD</password>
+    <isolation>BENCHBASE_ISOLATION</isolation>
+    <batchsize>BENCHBASE_BATCHSIZE</batchsize>
+    <newConnectionPerTxn>BENCHBASE_NEWCONNPERTXN</newConnectionPerTxn>
 
     <!-- Scale factor is the number of warehouses in TPCC -->
-    <scalefactor>1</scalefactor>
+    <scalefactor>BEXHOMA_SF</scalefactor>
 
     <!-- The workload -->
     <!-- Number of terminal per workload -->
-    <terminals>1</terminals>
+    <terminals>BENCHBASE_TERMINALS</terminals>
 
     <!-- Extra Features (Commented Out) -->
     <!-- Can be workload-specific -->
@@ -29,10 +30,11 @@
 
         <!-- A Basic WorkPhase for Mixed Workloads -->
         <work>
-            <time>60</time>
+            <time>BENCHBASE_TIME</time>
+            <warmup>BENCHBASE_WARMUP</warmup>
 
             <!-- Note: The rate can be set to UNLIMITED or DISABLED -->
-            <rate>200</rate>
+            <rate>BENCHBASE_TARGET</rate>
 
             <!-- Need to Specify transaction weights for each workload .. Otherwise the number of fields won't match -->
             <weights bench="tpcc">45,43,4,4,4</weights>

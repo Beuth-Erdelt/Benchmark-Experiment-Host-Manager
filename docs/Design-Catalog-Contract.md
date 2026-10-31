@@ -82,7 +82,7 @@ invented. Citations are file:line where useful.
 | `mode` choices | profiling,run,start,load,empty,summary | same | run,start,load,summary | run,start,load (**no summary**) | run,start,load,summary | run,start,summary (**no load**) |
 | `-dbms` choices | PostgreSQL, MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB, PgDuckDB | PostgreSQL, MonetDB, MySQL, MariaDB | PostgreSQL, MySQL, MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService, PGBouncer, Redis, Citus, CedarDB, Dragonfly, Cassandra | PostgreSQL, MySQL, MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService, Citus, PGBouncer, CedarDB | PostgreSQL, MySQL, MariaDB, Citus | `Hardware` only — not an engine selector |
 | Loading scales with `-nlp`/`-nlt`? | yes | yes | yes | pods fixed to 1 in the sweep loop | **`-nlp` parsed but ignored, hardcoded to 1** | no loading phase at all |
-| Workload-variant flag | none (`-xaq` restricts query subset) | none | `-xwl` {a,b,c,d,e,f} | `-xbt` {tpcc,twitter,chbenchmark,ycsb} (+`-xwl` only when `-xbt ycsb`, note extra `c2` choice not in ycsb's own `-xwl`) | none (TPC-C only) | `-xht` {fio,sysbench,sockperf,netperf} |
+| Workload-variant flag | none (`-xaq` restricts query subset) | none | `-xwl` {a,b,c,d,e,f} | `-xbt` {tpcc,twitter,chbenchmark,ycsb,auctionmark,epinions,hyadapt,noop,otmetrics,resourcestresser,seats,sibench,smallbank,tatp,voter,wikipedia} (+`-xwl` only when `-xbt ycsb`, note extra `c2` choice not in ycsb's own `-xwl`) | none (TPC-C only) | `-xht` {fio,sysbench,sockperf,netperf} |
 | Refresh/secondary stream | `-xrs`/`-xrso` (RF1/RF2) | none | none | none | none |
 
 Confirmed: `mixed.py` (`bexhoma/experiments/mixed.py`, `MixedExperiment`) is

@@ -1,0 +1,7 @@
+-- Benchmark-Experiment-Host-Manager | experiments/benchbase/tatp/PostgreSQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Schema initialisation placeholder for the tatp benchmark on PostgreSQL.
+--          Benchbase creates the tatp tables automatically at runtime.

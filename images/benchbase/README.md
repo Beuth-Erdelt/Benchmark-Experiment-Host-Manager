@@ -10,7 +10,8 @@ This folder contains two Dockerfiles for Benchbase experiments within Bexhoma:
 Both images bundle the XML config templates from `config/` and substitute environment
 variable values into the selected template at container startup via `sed`.
 
-Supported benchmarks: `tpcc`, `twitter`, `chbenchmark`, `ycsb`.
+Supported benchmarks: `tpcc`, `twitter`, `chbenchmark`, `ycsb`, `auctionmark`, `epinions`, `hyadapt`, `noop`, `otmetrics`, `resourcestresser`, `seats`, `sibench`, `smallbank`, `tatp`, `voter`, `wikipedia`.
+`tpch` and `tpcds` are not supported (no timed workload, `tpcds` has no config).
 
 Supported profiles (config subdirectory / DBMS): `postgres`, `mysql`, `mariadb`,
 `cockroachdb`, `noisepage`, `spanner`, `sqlite`, `sqlserver`, `phoenix`.
@@ -154,7 +155,7 @@ Pods always synchronise before starting: each pod increments the Redis counter
 
 #### Benchbase workload parameters
 
-* `BENCHBASE_BENCH`: Benchmark name — `tpcc`, `twitter`, `chbenchmark`, or `ycsb`.
+* `BENCHBASE_BENCH`: Benchmark name — see "Supported benchmarks" above.
 * `BENCHBASE_PROFILE`: DBMS profile name. Selects the XML config subdirectory (e.g. `postgres`, `mysql`).
 * `BENCHBASE_TARGET`: Target throughput in requests per second. `0` is replaced by `unlimited`. Substituted into the XML config.
 * `BENCHBASE_TIME`: Benchmark duration in seconds. Substituted into the XML config.
@@ -221,7 +222,7 @@ An experiment-level sync barrier on `bexhoma-benchmarker-podcount-<EXPERIMENT>` 
 
 #### Benchbase workload parameters
 
-* `BENCHBASE_BENCH`: Benchmark name — `tpcc`, `twitter`, `chbenchmark`, or `ycsb`.
+* `BENCHBASE_BENCH`: Benchmark name — see "Supported benchmarks" above.
 * `BENCHBASE_PROFILE`: DBMS profile name. Selects the XML config subdirectory (e.g. `postgres`, `mysql`).
 * `BENCHBASE_TARGET`: Target throughput. `0` is replaced by `unlimited`. Substituted into the XML config (not meaningful for the load phase).
 * `BENCHBASE_TIME`: Benchmark duration in seconds. Substituted into the XML config (not meaningful for the load phase).

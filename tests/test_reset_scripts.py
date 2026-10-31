@@ -184,7 +184,7 @@ class ResetCompletenessTest(unittest.TestCase):
         self.assert_complete('ssb.py')
 
     def test_benchbase(self):
-        for benchmark in ('tpcc', 'twitter', 'ycsb', 'chbenchmark'):
+        for benchmark in ('tpcc', 'twitter', 'ycsb', 'chbenchmark', 'auctionmark', 'epinions', 'hyadapt', 'noop', 'otmetrics', 'resourcestresser', 'seats', 'sibench', 'smallbank', 'tatp', 'voter', 'wikipedia'):
             self.assert_complete('benchbase.py', '-xbt', benchmark, benchmark=benchmark)
 
     def test_yugabytedb_tpcc_uses_its_own_database(self):
