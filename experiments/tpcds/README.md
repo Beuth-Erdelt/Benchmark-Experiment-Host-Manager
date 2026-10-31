@@ -44,7 +44,7 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `Clickhouse` | `tpcds` | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; `Int32` / `Float64` types |
 | `DB2` | varies | `LOAD FROM … OF DEL` | PK + FK | IBM DB2 dialect |
 | `Exasol` | `public` | `IMPORT INTO … FROM LOCAL CSV FILE …` | PK (optimizer hint) + FK | Columnar zone maps replace secondary indexes |
-| `MariaDBCS` | `tpcds` | `cpimport` bulk loader | None (columnar engine) | `engine=columnstore` on every table |
+| `MariaDBCS` | `tpcds` | `LOAD DATA LOCAL` of the MariaDB loaders (`cpimport` inside), one pod | None (columnar engine) | `ENGINE = ColumnStore` on every table |
 | `MemSQL` | `tpcds` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK | FK not supported; columnstore tables |
 | `MonetDB` | varies | `COPY … INTO … FROM … USING DELIMITERS '\|'` | PK; FK optional | |
 | `OmniSci` | `tpcds` | `COPY … FROM … WITH (delimiter='\|')` | None | GPU-accelerated analytics; multiple schema variants |

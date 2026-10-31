@@ -1,7 +1,6 @@
 -- Benchmark-Experiment-Host-Manager | experiments/tpch/MariaDBCS
 -- Authors: Patrick K. Erdelt
--- Copyright (C) 2020 Patrick K. Erdelt
+-- Copyright (C) 2026 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder - MariaDB ColumnStore does not support primary key
---          or foreign key constraints. No statements are executed.
+-- Purpose: Placeholder, MariaDB ColumnStore has no primary or foreign keys. No statements are executed.

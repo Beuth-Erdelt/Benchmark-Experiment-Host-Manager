@@ -1,0 +1,249 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 3306}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  annotations: {bexhoma/arg-style: flag}   # --set writes --key=value elements
+  name: bexhoma-deployment-mariadbcs
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      # the shutdown saves the extent map (BRM)
+      terminationGracePeriodSeconds: 180
+      containers:
+      - name: dbms
+        # the official image without changes: the plugin of the same release is installed at every start,
+        # so the pods need access to archive.mariadb.org and the Ubuntu mirrors. The package script cannot
+        # start ColumnStore in a container (no systemd), so this does what it would do.
+        image: mariadb:12.3.3
+        command:
+          - "/bin/bash"
+          - "-c"
+          - |
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update -qq || exit 1
+            apt-get install -y -qq --no-install-recommends mariadb-plugin-columnstore procps rsyslog > /dev/null || exit 1
+            ln -sf mariadb /usr/bin/mysql
+            printf '[client]\nuser=root\npassword=%s\n' "$MARIADB_ROOT_PASSWORD" > /root/.my.cnf
+            # else install_mcs_mysql.sh logs in with the unknown password of this file and creates no function
+            rm -f /etc/mysql/debian.cnf
+
+            LOG=/var/log/mariadb/columnstore
+            TMP=$(mcsGetConfig SystemConfig SystemTempFileDir)
+            DBRM=/var/lib/columnstore/data1/systemFiles/dbrm
+            CATALOG_DONE=/var/lib/columnstore/.bexhoma-catalog-done
+            mkdir -p $LOG/{archive,corefiles,trace,cpimport,install} $LOG/data/bulk/{data/import,job,rollback,tmpjob} \
+              $DBRM /var/lib/columnstore/storagemanager $TMP /var/lock/subsys
+            chown -R mysql:mysql $LOG /etc/columnstore /var/lib/columnstore $TMP
+            chmod 777 /dev/shm
+
+            # the daemons log via syslog only; without the owner lines of the file, rsyslogd may not chown
+            grep '^local1' /usr/share/columnstore/columnstoreSyslog7 > /etc/rsyslog.d/49-columnstore.conf
+            sed -i '/imklog/d' /etc/rsyslog.conf
+            rsyslogd
+
+            # ColumnStore sizes by the RAM of the node unless it is told a cgroup, then its shares (DBBC
+            # NumBlocksPct, HashJoin TotalUmMemory) apply to the limit of the pod. The cgroup of the container
+            # itself will not do: cpuset.cpus is empty there, which ColumnStore takes for one core. So it gets
+            # a copy with the cores of the pod; the name is a path relative to /sys/fs/cgroup.
+            MCS_CGROUP=/tmp/mcs-cgroup
+            mkdir -p $MCS_CGROUP
+            ln -sf /sys/fs/cgroup/* $MCS_CGROUP/
+            rm -f $MCS_CGROUP/cpuset.cpus
+            echo "0-$(( $(nproc) - 1 ))" > $MCS_CGROUP/cpuset.cpus
+            chown -R mysql:mysql $MCS_CGROUP
+            mcsSetConfig SystemConfig CGroup ../../..$MCS_CGROUP
+            mcsSetConfig DBBC NumBlocksPct $MCS_NUM_BLOCKS_PCT
+            mcsSetConfig HashJoin TotalUmMemory $MCS_TOTAL_UM_MEMORY
+            echo "ColumnStore: version $(tr '\n' ' ' < /usr/share/columnstore/releasenum), memory limit $(cat /sys/fs/cgroup/memory.max), cores $(cat $MCS_CGROUP/cpuset.cpus), NumBlocksPct=$MCS_NUM_BLOCKS_PCT, TotalUmMemory=$MCS_TOTAL_UM_MEMORY"
+
+            JEMALLOC=$(ldconfig -p | grep -m1 libjemalloc | awk '{print $1}')
+            if [ -f $CATALOG_DONE ]; then
+              gosu mysql mcs-loadbrm.py no || exit 1
+            fi
+            gosu mysql env MALLOC_CONF= workernode DBRM_Worker1
+            gosu mysql env MALLOC_CONF= controllernode
+            gosu mysql env MALLOC_CONF= LD_PRELOAD=$JEMALLOC PrimProc
+            gosu mysql env MALLOC_CONF= LD_PRELOAD=$JEMALLOC WriteEngineServer
+            gosu mysql env MALLOC_CONF= DMLProc
+            gosu mysql env MALLOC_CONF= DDLProc
+            if [ ! -f $CATALOG_DONE ]; then
+              gosu mysql dbbuilder 7 > $LOG/install/dbbuilder.log 2>&1
+              cat $LOG/install/dbbuilder.status
+            fi
+
+            docker-entrypoint.sh mariadbd "$@" &
+            SERVER=$!
+
+            # only the final server listens on TCP, not the temporary one of the first start
+            (
+              until mariadb --protocol=tcp --host=127.0.0.1 -e 'SELECT 1' > /dev/null 2>&1; do sleep 1; done
+              if [ ! -f $CATALOG_DONE ]; then
+                mariadb < /usr/share/columnstore/syscatalog_mysql.sql
+                /usr/sbin/install_mcs_mysql.sh --tmpdir=$LOG/install
+                cat $LOG/install/mysql_install.log
+                mariadb < /usr/share/columnstore/columnstore_info.sql
+                # table_usage() of the check scripts creates a table there
+                mariadb -e "GRANT ALL ON columnstore_info.* TO '$MARIADB_USER'@'%'"
+                touch $CATALOG_DONE
+                chown mysql:mysql $CATALOG_DONE
+              fi
+              echo "ColumnStore: ready"
+            ) &
+
+            # a query can kill PrimProc: nothing would restart it (no systemd), the container would look
+            # healthy and all later queries would fail
+            (
+              while sleep 2; do
+                if ! pgrep -x PrimProc > /dev/null; then
+                  echo "ColumnStore: PrimProc died, restarting it"
+                  gosu mysql env MALLOC_CONF= LD_PRELOAD=$JEMALLOC PrimProc
+                fi
+              done
+            ) &
+            WATCHDOG=$!
+
+            shutdown_columnstore() {
+              kill $WATCHDOG
+              kill -TERM $SERVER
+              wait $SERVER
+              pkill DMLProc
+              pkill DDLProc
+              sleep 1
+              pkill WriteEngineServer
+              pkill PrimProc
+              sleep 1
+              gosu mysql mcs-savebrm.py
+              pkill controllernode
+              pkill workernode
+              exit 0
+            }
+            trap shutdown_columnstore TERM INT
+            wait $SERVER
+          - "--"
+        args:
+          - "--max_connections=1500"
+          # bytewise string comparison and ordering, the same as MariaDB and the other DBMS
+          - "--character-set-server=utf8mb4"
+          - "--collation-server=utf8mb4_bin"
+        env:
+          - {name: MARIADB_USER, value: 'bexhoma'}
+          - {name: MARIADB_PASSWORD, value: 'password'}
+          - {name: MARIADB_ROOT_PASSWORD, value: 'password'}
+          - {name: MARIADB_DATABASE, value: 'mariadb'}
+          # block cache and join memory, shares of the pod limit (defaults of ColumnStore 25.10), set per
+          # run with --set ...container[dbms].env.MCS_NUM_BLOCKS_PCT=30
+          - {name: MCS_NUM_BLOCKS_PCT, value: '20'}
+          - {name: MCS_TOTAL_UM_MEMORY, value: '65%'}
+        # the plugin is installed first, and a plain SELECT is answered without the daemons:
+        # this one needs them and the catalog
+        startupProbe:
+          exec:
+            command: ["/bin/sh", "-c", "mariadb --user=root --password=password -e 'SELECT COUNT(*) FROM calpontsys.systable;'"]
+          timeoutSeconds: 10
+          periodSeconds: 5
+          failureThreshold: 120
+        readinessProbe:
+          exec:
+            command: ["/bin/sh", "-c", "mariadb --user=root --password=password -e 'SELECT COUNT(*) FROM calpontsys.systable;'"]
+          timeoutSeconds: 30
+          periodSeconds: 10
+          failureThreshold: 6
+        ports:
+        - {containerPort: 3306}
+        - {containerPort: 9000}
+        resources:
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+        volumeMounts:
+        - {mountPath: /data, name: benchmark-data-volume}
+        # catalog of the server and data of ColumnStore belong together, on the same volume
+        - {mountPath: /var/lib/columnstore, name: benchmark-storage-volume, subPath: columnstore}
+        - {mountPath: /var/lib/mysql, name: benchmark-storage-volume, subPath: mysql}
+        # BRM is held in shared memory
+        - {mountPath: /dev/shm, name: shm}
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 150m
+            memory: 200Mi
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: shm
+        emptyDir: {medium: Memory, sizeLimit: 2Gi}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk

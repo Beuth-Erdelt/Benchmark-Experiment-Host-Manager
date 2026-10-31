@@ -54,7 +54,7 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `PostgreSQL` | `public` or `{BEXHOMA_SCHEMA}` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK (combined ALTER TABLE) | `synchronous_commit` disabled during load; `-schema` variants available |
 | `MySQL` | `tpch` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK + FK (combined ALTER TABLE) | `SET GLOBAL local_infile = 1`; zero-date mode disabled |
 | `MariaDB` | `tpch` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK + FK (combined ALTER TABLE) | Same as MySQL |
-| `MariaDBCS` | `tpch` | `cpimport` bulk loader | None (columnar engine) | `engine=columnstore` on every table |
+| `MariaDBCS` | `tpch` | `LOAD DATA LOCAL` of the MariaDB loaders (`cpimport` inside), one pod | None (columnar engine) | `ENGINE = ColumnStore` on every table |
 | `Clickhouse` | `tpch` | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; `Int32` / `Float64` types |
 | `CockroachDB` | varies | `COPY` / `INSERT` | PK + FK | PostgreSQL-compatible SQL |
 | `YugabyteDB` | varies | `COPY` | PK + FK | PostgreSQL-compatible SQL |

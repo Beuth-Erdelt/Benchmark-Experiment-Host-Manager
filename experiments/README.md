@@ -272,7 +272,7 @@ folder declares.
 |---|---|---|---|---|
 | PostgreSQL | `public` (default) or `{BEXHOMA_SCHEMA}` | `COPY … FROM … DELIMITER '|' NULL ''` | Full PK + FK; combined `ALTER TABLE` | load durability via `durability-*.sql`; -schema variants |
 | MySQL / MariaDB | `tpch` database | `LOAD DATA INFILE … FIELDS TERMINATED BY '|'` | Full PK + FK; combined `ALTER TABLE` | `SET GLOBAL local_infile = 1`; zero-date mode |
-| MariaDBCS | `tpch` database | `cpimport` bulk loader | None (columnar engine) | `engine=columnstore` on every table |
+| MariaDBCS | `tpch` database | `LOAD DATA LOCAL` of the MariaDB loaders (`cpimport` inside), one pod | None (columnar engine) | `ENGINE = ColumnStore` on every table |
 | Clickhouse | `tpch` database | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; uses `Int32` not `INTEGER` |
 | CockroachDB | varies | SQL `INSERT` / COPY | PK + FK | Similar to PostgreSQL syntax |
 | YugabyteDB | varies | SQL | PK + FK | PostgreSQL-compatible |

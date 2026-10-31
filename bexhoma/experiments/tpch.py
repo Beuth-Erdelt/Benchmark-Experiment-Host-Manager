@@ -57,6 +57,11 @@ DBMS_DEFAULTS: dict[str, dict[str, str]] = {
         'storage_prefix': 'mariadb',
         'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
     },
+    'MariaDBCS': {
+        'docker': 'MariaDBCS', 'dialect': 'MySQL',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-MariaDB.yml',
+        'storage_prefix': 'mariadbcs',
+    },
     'MySQL': {
         'docker': 'MySQL', 'dialect': 'MySQL',
         'jobtemplate_loading': 'jobtemplate-loading-tpch-MySQL.yml',

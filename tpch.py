@@ -52,7 +52,7 @@ def build_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'DatabaseService', 'Citus', 'CedarDB', 'PgDuckDB', 'ClickHouse', 'ClickHouseCluster'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'MariaDBCS', 'DatabaseService', 'Citus', 'CedarDB', 'PgDuckDB', 'ClickHouse', 'ClickHouseCluster'], default=[], nargs='*')
     parser.add_argument('-xlit',  '--xlimit-import-table', help='import only this table (useful for partial re-loads)', default='', dest='limit_import_table')
     parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query', action='store_true', default=False, dest='datatransfer')
     parser.add_argument('-xqr',   '--xnum-query-runs', help='number of times to repeat each query', default=1, dest='num_run')
@@ -430,6 +430,31 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     MARIADB_DATABASE = "tpch",
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("MariaDBCS" in args.dbms):
+                # MariaDB ColumnStore (reuses MariaDB's loading job; own scripts)
+                # one loader pod, whatever -nlp says: concurrent LOAD DATA into a table fails with
+                # error 1030 and the loader goes on, so rows would be missing (cpimport works in parallel)
+                if int(loading_pods_total) > 1:
+                    print('MariaDBCS: loads with 1 pod, ignoring -nlp ' + str(loading_pods_total))
+                config = configurations.default(experiment=experiment, docker='MariaDBCS', dialect='MySQL', alias='DBMS A8')
+                # With -ar: ANALYZE TABLE before each round; no dirty pages and no counters to reset
+                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
+                config.set_storage(
+                    storageConfiguration = 'mariadbcs'
+                    )
+                if skip_loading:
+                    config.loading_deactivated = True
+                config.jobtemplate_loading = "jobtemplate-loading-tpch-MariaDB.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = "1",
+                    PODS_PARALLEL = "1",
+                    MYSQL_LOADING_FROM = "LOCAL",
+                    )
+                config.set_benchmarking_parameters()
+                config.set_sut_parameters(
+                    MARIADB_DATABASE = "tpch",
+                    )
+                config.set_loading(parallel=1, num_pods=1)
             if ("MySQL" in args.dbms or len(args.dbms) == 0):
                 # MySQL
                 for threads in num_loading_threads:

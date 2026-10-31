@@ -79,6 +79,7 @@ EXPECTED = {
         'MonetDB': ['reset-tpch.sql'],
         'MySQL': ['reset-tpch.sql', _FLUSH],
         'MariaDB': ['reset-tpch.sql', _FLUSH],
+        'MariaDBCS': ['reset-tpch.sql'],
         'Citus': ['reset-tpch.sql'],
         'CedarDB': ['reset-tpch.sql'],
         'ClickHouse': [_FLUSH],
@@ -89,6 +90,7 @@ EXPECTED = {
         'MonetDB': ['reset-tpcds.sql'],
         'MySQL': ['reset-tpcds.sql', _FLUSH],
         'MariaDB': ['reset-tpcds.sql', _FLUSH],
+        'MariaDBCS': ['reset-tpcds.sql'],
         'ClickHouse': [_FLUSH],
         'ClickHouseCluster': ['reset-tpcds.sql', _FLUSH],
     },
@@ -102,6 +104,7 @@ EXPECTED = {
         'CedarDB': ['reset-ssb.sql'],
         'MySQL': ['reset-ssb.sql', _FLUSH],
         'MariaDB': ['reset-ssb.sql', _FLUSH],
+        'MariaDBCS': ['reset-ssb.sql'],
     },
 }
 

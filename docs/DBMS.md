@@ -15,6 +15,7 @@ This document covers all DBMS currently supported by bexhoma.
 - [PostgreSQL + PGBouncer](#pgbouncer)
 - [MySQL](#mysql)
 - [MariaDB](#mariadb)
+- [MariaDB ColumnStore](#mariadb-columnstore)
 - [MonetDB](#monetdb)
 - [Citus](#citus)
 - [ClickHouse](#clickhouse)
@@ -300,6 +301,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | PostgreSQL, PGBouncer, PgDuckDB | `VACUUM VERBOSE ANALYZE` (whole database) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
 | Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (passed on to the shards) | `CHECKPOINT` on the coordinator and with `run_command_on_workers` on every worker | as PostgreSQL, on the coordinator and every worker |
 | MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
+| MariaDBCS | `ANALYZE TABLE` | n/a (no dirty pages to flush) | n/a (the check scripts read no ColumnStore counter) |
 | CedarDB | `VACUUM VERBOSE ANALYZE` | n/a (no `CHECKPOINT`) | n/a (no `pg_stat_reset()`) |
 | MonetDB | `ANALYZE` | n/a (the write-ahead log is applied in the background; no call to force it) | n/a |
 | ClickHouse | n/a (no optimizer statistics unless declared per column) | `reset-flush.sh`: `sync` (an `INSERT` writes its parts without fsync) | n/a (`system.events` cannot be reset) |
@@ -632,9 +634,93 @@ The `init_SQL` statement is executed after each connection is established and en
 | Key | Benchmarks | Values | Default | Effect |
 |---|---|---|---|---|
 | `histograms` | TPC-H, TPC-DS, SSB | `off`, `on` | `off` | engine-independent statistics with histograms (ANALYZE TABLE ... PERSISTENT FOR ALL, JSON_HB, a full scan per table) in initstatistics (-xis); off: plain ANALYZE TABLE, which collects none (use_stat_tables = PREFERABLY_FOR_QUERIES, MariaDB 12.3) |
-| `engine` | TPC-H | `InnoDB`, `Aria`, `MyISAM` | `InnoDB` | storage engine of all tables (ColumnStore needs an image with the plugin, not listed) |
+| `engine` | TPC-H | `InnoDB`, `Aria`, `MyISAM` | `InnoDB` | storage engine of all tables (for ColumnStore use -dbms MariaDBCS) |
 | `row_format` | YCSB | `default`, `DYNAMIC`, `COMPRESSED` | `default` | InnoDB row format of usertable (default: innodb_default_row_format, DYNAMIC): COMPRESSED stores pages zlib-compressed: less I/O, more CPU |
 | `collation` | YCSB | `default`, `utf8mb4_bin`, `latin1` | `default` | character set and collation of usertable (default: the database default): cost of comparing the VARCHAR(255) key (binary vs. linguistic) and bytes per character |
+
+---
+
+## MariaDB ColumnStore
+
+MariaDB ColumnStore (`MariaDBCS`) is the columnar storage engine of MariaDB, GPL-2.0 (TPC-H, TPC-DS, SSB, single node).
+
+**Deployment template:** [`k8s/deploymenttemplate-MariaDBCS.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDBCS.yml)
+
+The template runs the official image `mariadb:12.3.3`, the same server as the template of MariaDB, without a derived image.
+The image `mariadb/columnstore` is stale (23.02.4).
+The container command does what the package script cannot do in a container, which has no systemd:
+
+| Point | Handling | Without it |
+|---|---|---|
+| Plugin | `apt-get install mariadb-plugin-columnstore` at every start (25.10.6, about 30 s), from the repository of the image, so the version follows the image tag | pods need access to `archive.mariadb.org` and the Ubuntu mirrors, else the SUT does not start |
+| Daemons | workernode, controllernode, PrimProc, WriteEngineServer, DMLProc and DDLProc start before the server | writes fail with `ERROR 1815 ... DBRM is read only!` |
+| Catalog | on the first start `dbbuilder 7`, `syscatalog_mysql.sql`, `install_mcs_mysql.sh` and `columnstore_info.sql`; a file on the volume marks them as done | no system catalog, no functions |
+| Memory | `SystemConfig CGroup` points to `/tmp/mcs-cgroup`, a copy of the cgroup of the container with the number of cores added, so `NumBlocksPct` (`MCS_NUM_BLOCKS_PCT`, 20) and `TotalUmMemory` (`MCS_TOTAL_UM_MEMORY`, `65%`) apply to the memory limit of the pod | ColumnStore sizes by the RAM of the node and the pod is killed. With the cgroup of the container itself, `cpuset.cpus` is empty and ColumnStore runs on one core |
+| Storage | `/var/lib/columnstore` and `/var/lib/mysql` are `subPath`s of one volume | the server's catalog is lost at a restart, while the data stays |
+| Shared memory | `/dev/shm` is an `emptyDir` in memory, 2 GiB | BRM is held there; Kubernetes gives 64 MiB by default |
+| Restart | `mcs-loadbrm.py` before the daemons, `mcs-savebrm.py` at `SIGTERM` | the extent map of the data is lost |
+| Probes | `SELECT COUNT(*) FROM calpontsys.systable` | a plain `SELECT` is answered without the daemons |
+| Logs | `rsyslogd` writes `/var/log/mariadb/columnstore/` | the daemons log via syslog only |
+| `PrimProc` | restarted when it dies, with `ColumnStore: PrimProc died, restarting it` in the log of the SUT | all later queries fail, and the container looks healthy |
+
+Set the shares per run with `--set deployment[bexhoma-deployment-mariadbcs].container[dbms].env.MCS_NUM_BLOCKS_PCT=30`.
+Server options work as for MariaDB, `--set deployment[bexhoma-deployment-mariadbcs].container[dbms].max_connections=2000`.
+
+**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MariaDBCS), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MariaDBCS), [SSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ssb/MariaDBCS)):
+the columns of MariaDB with `ENGINE = ColumnStore`.
+ColumnStore has no primary keys, foreign keys or secondary indexes, so `-xii` and `-xic` run scripts without statements.
+`checkschema` reports the sizes with `columnstore_info`.
+There are no durability scripts, so `-xld` has no effect, and there is no TPC-H refresh stream.
+
+**Loading** uses the loader images of MariaDB: `LOAD DATA LOCAL` is passed to `cpimport`.
+It always runs with one loader pod, and `-nlp` is ignored.
+Concurrent `LOAD DATA` into one table fail with `ERROR 1030 ... from storage engine ColumnStore` before `cpimport` starts, and the loader script goes on, so rows would be missing without any test failing.
+`cpimport` itself works in parallel, and loads of one table run one after the other anyway.
+The limit of this path is `mariadbd`, which parses the file on one core: `lineitem` at SF 10 takes 495 s.
+
+**Note: `cpimport` is only possible as a pull, so bexhoma does not use it.**
+`cpimport` run in the SUT on the same file takes 55 s, but then the SUT reads the raw files itself, which is a different path than the sending loader pods of all other DBMS and not comparable.
+A sending `cpimport` does not work: in a separate container with the plugin and the configuration of the SUT, `cpimport -m 1` reaches `WriteEngineServer`, the BRM controller and ExeMgr, and then fails with `MCS-2006: 'tpch.push_t' does not exist in Columnstore`, also with data on stdin, while the same call in the SUT works.
+So loading times of MariaDBCS are not the best the DBMS can do.
+
+**Queries** run with dialect `MySQL`; the variants named `MariaDBCS` and `MariaDB` apply on top, as connection names start with them.
+TPC-H (22) and SSB (13) run completely.
+Compared with the result sets of MariaDB at SF 1 (`-xdt`, same run), all queries of TPC-H and SSB (normal and flat) are identical.
+Of the 99 queries of TPC-DS, 80 run and all of them are identical; 11 of them need a `MariaDBCS` variant.
+Without these variants ColumnStore 25.10.6 gives wrong results or fails, some of them without an error:
+
+| Queries | Variant | Without it |
+|---|---|---|
+| Q47, Q57 | `lag()` and `lead()` in the CTE `v1` instead of two self joins of it, the final filter as `HAVING` of an outer `GROUP BY` | The instances of the CTE get mixed up, `nsum` equals `sum_sales`. A `WHERE` on a CTE also reaches its window functions: `with v as (select d_moy, d_dom, count(*) over (partition by d_moy) c from date_dim where d_year = 2000) select max(c) from v where d_dom <= 2` gives 2 instead of 31 |
+| Q72 | The days of a week as CTE `date_pairs` | The join with `d_date_sk + off.k` over the derived table of offsets of the MariaDB variant gives no rows and no error; the main text ends in `MCS-2001` (memory of the join) |
+| Q93 | Inner joins | `LEFT JOIN` with a filter on the outer table in `WHERE` keeps the rows without a match: 90,919 groups instead of 7,164 |
+| Q18, Q22, Q27, Q36, Q67, Q70, Q86 | Rollup emulated with `UNION ALL` | `GROUP BY ... WITH ROLLUP` directly on a table kills `PrimProc` with a segmentation fault in `funcexp::FuncExp::evaluate`, also on 1,305 rows; very small tables do not show it. On a derived table it runs, but gives wrong results |
+
+The other 19 queries are refused:
+
+| Queries | Result |
+|---|---|
+| Q28, Q61, Q77, Q88, Q90 | `MCS-1000: 'sub-query' and 'sub-query' are not joined` |
+| Q10, Q35, Q45 | `MCS-3033: Correlated subquery within OR operator` |
+| Q6, Q23, Q44 | `MCS-3022: Scalar subquery within a function` |
+| Q8, Q14, Q38, Q87 | `INTERSECT`, `EXCEPT` are not supported |
+| Q33, Q56 | `MCS-2061` |
+| Q9 | `MCS-3016: Function or Operator with sub query on the SELECT clause` |
+| Q21 | `MCS-1001: Function 'float_typecast' isn't supported` |
+
+So the tests `No SQL errors` and `SQL warnings` fail for TPC-DS on MariaDBCS.
+
+Memory depends on the number of cores of the node, since ColumnStore starts threads per core.
+TPC-DS at SF 1 fits 16 Gi on nodes with 96 or 128 cores. On a node with 224 cores the SUT was killed at the limit of 16 Gi in Q18 (`OOMKilled`, `ExeMgr has allocated too much memory`), 32 Gi are enough there, with a peak of 14 GiB.
+When `PrimProc` dies, queries fail at once with `MCS-2033` until it is back after about 3 s, so many queries of a stream are lost.
+
+`-ma` is not available, ColumnStore has no Prometheus exporter in bexhoma.
+
+```bash
+bexhoma tpch -dbms MariaDBCS -sf 1 -xis -tr run
+```
+
+See [Example: Other DBMS](Example-Other-DBMS.md#mariadb-columnstore) for the workloads and the test script.
 
 ---
 
