@@ -31,6 +31,9 @@ This document covers all DBMS currently supported by bexhoma.
 - [DragonflyCluster](#dragonflycluster)
 - [Redis (Cluster)](#redis)
 
+**Wide-Column Stores (YCSB)**
+- [Cassandra](#cassandra)
+
 **External / Cloud Database Services**
 - [DatabaseService](#databaseservice)
 
@@ -65,7 +68,7 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 
 ¹ Only required for SQL DBMS queried via DBMSBenchmarker. Entries whose SUT is
 never queried through DBMSBenchmarker — [Dragonfly](#dragonfly),
-[DragonflyCluster](#dragonflycluster), [Redis](#redis), [Hardware](#hardware) —
+[DragonflyCluster](#dragonflycluster), [Redis](#redis), [Cassandra](#cassandra), [Hardware](#hardware) —
 omit `template.JDBC` entirely; `template` itself is still required (at minimum
 `version`, `alias`, `docker_alias`), and `template.auth` (a `[username,
 password]` pair) becomes required instead — `configurations/manifest.py`
@@ -306,12 +309,13 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | TiDB | `ANALYZE TABLE` (cluster-wide) | n/a (no flush in SQL) | `FLUSH STATUS` on the TiDB server the connection reaches |
 | Dragonfly | n/a | `SAVE` on every data pod | `CONFIG RESETSTAT` |
 | Redis | n/a | `SAVE` (standalone: SUT pod; cluster: every worker) | `CONFIG RESETSTAT` |
+| Cassandra | n/a | `save-snapshot.sh`: `nodetool flush`, wait until no compactions are pending (at most 1800 s; single node: SUT pod; cluster: every worker) | n/a (the JMX metrics cannot be reset) |
 
 DatabaseService has no reset.
 Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL, PGBouncer and CedarDB only (the other DBMS have no scripts for them).
 With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
 
-Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis).
+Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis, Cassandra).
 SQL files run through `loadData` (once per tenant for database tenancy; once for schema tenancy, as the PostgreSQL scripts cover the whole database), shell files in the SUT pod or, with script target `workers`, in every worker pod.
 With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both streams start.
 Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
@@ -1177,6 +1181,61 @@ Monitoring uses a `redis_exporter` sidecar scraping each worker pod on port 9121
 Redis does not have dedicated DDL scripts; YCSB manages table/key-space creation directly via the Redis wire protocol.
 
 See [Example: Redis](Example-Redis.md) for a worked example.
+
+---
+
+## Cassandra
+
+Apache Cassandra is a wide-column store. It is licensed under Apache 2.0, which has no restriction on publishing benchmark results.
+Bexhoma uses the image `cassandra:5.0.9`.
+
+There are two configuration keys, chosen by `-nw` with `-dbms Cassandra`:
+
+- `Cassandra` (`-nw 0`): a single node in the SUT pod, template `deploymenttemplate-Cassandra.yml`.
+- `CassandraCluster` (`-nw` > 0): a StatefulSet of nodes with a headless service, template `deploymenttemplate-CassandraCluster.yml`. The first worker is the seed. The nodes start one after the other, as Cassandra refuses to bootstrap them in parallel, and bexhoma starts loading when the last one has joined. The SUT pod is a placeholder that runs `cqlsh` for the scripts.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'Cassandra': {
+    'abbreviation': 'ca',
+    'loadData': 'cqlsh {service_name} 9091 --request-timeout=600 -f {scriptname}',
+    'delay_prepare': 10,
+    'template': {
+        'version': '5.0.9',
+        'alias': 'Wide-Column-1',
+        'docker_alias': 'WC1',
+        'auth': ["cassandra", ""],
+    },
+    'logfile': '/var/log/cassandra/system.log',
+    'datadir': '/var/lib/cassandra',
+    'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery of the SUT pod on port 8080 (cassandra_exporter)
+},
+```
+
+There is no JDBC driver: YCSB runs its `cassandra-cql` binding, selected by `BEXHOMA_DBMS_TYPE = "cassandra"`. The binding uses the DataStax driver 3.0.0, which works with Cassandra 5. DBMSBenchmarker cannot connect, so only YCSB is offered.
+The driver connects to every node it discovers on the port of its contact points. So YCSB reaches a cluster through the workers on port 9042 and a single node through the SUT service on port 9091.
+
+Scripts are CQL with the suffix `.sql`, because bexhoma runs only that suffix through `loadData`: `initschema-ycsb.sql` creates the keyspace `ycsb` and the table `usertable`, `checkschema-ycsb.sql` shows keyspace, table and ring. It counts no rows, since `SELECT count(*)` scans the table and runs into the range timeout of the server. `save-snapshot.sh` flushes and waits for the compactions after the load, and logs `nodetool tablestats` with the estimated rows per node.
+
+The heap is a quarter of the memory limit of the container, at most 31 GiB, because `cassandra-env.sh` would size it from the RAM of the node. Change it per run with `--set deployment[bexhoma-deployment-cassandra].container[dbms].env.MAX_HEAP_SIZE=8G` (for the cluster workers: `statefulset[bexhoma-worker]`). Do not set `HEAP_NEWSIZE`, which must stay unset with G1.
+
+A loader thread of YCSB ends at its first failed insert, and a busy node answers with a write timeout after 2 s. So `generator.sh` retries a failed insert for Cassandra up to 10 times, 3 s apart; each retry is a line `Retrying insertion` in the log of the loader. The test `Loading Phase: all rows inserted` fails for every DBMS when rows are missing.
+
+Monitoring uses a [cassandra_exporter](https://github.com/criteo/cassandra_exporter) sidecar on port 8080 next to each node, which reads JMX on `127.0.0.1:7199`. See the metric set `cassandra` in [Monitoring](Monitoring.md). The request rates need a phase longer than the scrape interval of 30 s (at least `-xop 5` here); they show 0 for shorter ones.
+
+Reads and writes use consistency level `ONE`, the default of the binding, also with a replication factor above 1.
+`-xld` has no effect, since a keyspace does not exist yet when the durability scripts run: writes go to the commit log, which is synced every 10 s (`commitlog_sync: periodic`) unless set otherwise.
+`-xsbs` has no effect: the binding writes single statements.
+
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Workload | Values | Default | Meaning |
+|---|---|---|---|---|
+| `num_worker_replicas` | YCSB | integer | `1` | replication_factor of the keyspace ycsb, also set by `-nwr`; reads and writes use consistency level ONE |
+
+See [Example: Cassandra](Example-Cassandra.md) for a worked example.
 
 ---
 

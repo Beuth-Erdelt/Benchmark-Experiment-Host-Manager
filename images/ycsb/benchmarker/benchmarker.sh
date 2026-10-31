@@ -170,7 +170,7 @@ echo "YCSB_INSERTORDER:$YCSB_INSERTORDER"
 echo "YCSB_MAX_EXECUTION:$YCSB_MAX_EXECUTION"
 
 ######################## Generate driver file ########################
-# Redis or JDBC
+# Redis, Cassandra or JDBC
 #redis.cluster=false  # Set to true if using Redis Cluster
 #redis.pipeline=true  # Enable pipelining for performance
 #redis.pipeline.maxsize=50  # Adjust based on workload
@@ -188,6 +188,19 @@ if [[ "$BEXHOMA_DBMS_TYPE" == "redis" || "$BEXHOMA_DBMS_TYPE" == "redis-cluster"
 redis.port=$BEXHOMA_PORT
 redis.passwd=$BEXHOMA_PASSWORD
 " > db.properties
+elif [[ "$BEXHOMA_DBMS_TYPE" == "cassandra" ]]; then
+    echo "BEXHOMA_DBMS_TYPE is set to Cassandra"
+    # The driver connects to every node it discovers on the port of its contact points,
+    # so a cluster is reached through its workers on 9042, not through the SUT service.
+    if [ -n "$BEXHOMA_WORKER_LIST" ]; then
+        echo "hosts=$BEXHOMA_WORKER_LIST
+port=9042
+" > db.properties
+    else
+        echo "hosts=$BEXHOMA_HOST
+port=$BEXHOMA_PORT
+" > db.properties
+    fi
 else
     echo "db.driver=$BEXHOMA_DRIVER
 db.url=$URL
@@ -259,6 +272,14 @@ elif [[ "$BEXHOMA_DBMS_TYPE" == "redis-cluster" ]]; then
         time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true $YCSB_MAXEXECTIME_FLAG -s
     else
         time bin/ycsb run redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true $YCSB_MAXEXECTIME_FLAG
+    fi
+elif [[ "$BEXHOMA_DBMS_TYPE" == "cassandra" ]]; then
+    if test $YCSB_STATUS -ne 0
+    then
+        # report status
+        time bin/ycsb run cassandra-cql -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s
+    else
+        time bin/ycsb run cassandra-cql -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG
     fi
 else
     if test $YCSB_STATUS -ne 0

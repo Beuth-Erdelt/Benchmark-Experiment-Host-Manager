@@ -26,7 +26,7 @@ Six standard workloads (A–F) mix reads, updates, inserts, and scans at differe
 |---|---|
 | `initschema-ycsb.sql` | Create `usertable`; configure distribution for distributed DBMSs |
 | `checkschema-ycsb.sql` | Post-load verification: row count, tablet distribution, cluster status |
-| `save-snapshot.sh` | Trigger a persistence snapshot (Dragonfly only) |
+| `save-snapshot.sh` | Trigger a persistence snapshot (Dragonfly, Redis), flush and wait for compactions (Cassandra) |
 
 Files whose names contain `filled` are generated variants with Bexhoma placeholders already substituted; they are not edited directly.
 
@@ -49,6 +49,7 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `TiDB` | MySQL-compatible | Distributed | `SET CONFIG pd max-replicas`; hash sharding for distribution |
 | `YugabyteDB` | yugabyte database | Distributed | `ALTER DATABASE SET temp_file_limit=-1`; tablet distribution verified via `yb_table_properties` |
 | `Dragonfly` | Key-value store | — | Redis-compatible; `save-snapshot.sh` triggers persistence; no SQL schema |
+| `Cassandra` | `ycsb` keyspace | Distributed | CQL in `.sql` files, run by `cqlsh`; `{num_worker_replicas}` is the replication factor; `save-snapshot.sh` flushes and waits for compactions |
 
 ---
 

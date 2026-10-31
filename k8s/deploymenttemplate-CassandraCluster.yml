@@ -1,0 +1,209 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 9042}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-cassandra
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      containers:
+      - name: dbms
+        image: cassandra:5.0.9
+        resources:
+          # placeholder SUT (cqlsh for the scripts; data lives in the workers): bexhoma keeps these values (sut_role placeholder)
+          limits: {cpu: 1000m, memory: 1Gi}
+          requests: {cpu: 250m, memory: 512Mi}
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo hello; sleep 10;done"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+spec:
+  ports:
+  - {port: 9042, protocol: TCP, name: port-dbms, targetPort: 9042}
+  - {port: 7000, protocol: TCP, name: port-gossip, targetPort: 7000}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  # the seed has to be reachable by name before it is ready
+  publishNotReadyAddresses: true
+  clusterIP: None
+  selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bexhoma-worker
+  labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+spec:
+  serviceName: bexhoma-workers
+  replicas: 3
+  # one node after the other: Cassandra refuses to bootstrap nodes at the same time
+  podManagementPolicy: OrderedReady
+  selector:
+    matchLabels:
+      {app: bexhoma, component: worker, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
+      containers:
+      - name: dbms
+        image: cassandra:5.0.9
+        # cassandra-env.sh sizes the heap from the RAM of the node, not from the limit
+        # of the container; a quarter of the limit up to 31 GiB, unless MAX_HEAP_SIZE is set
+        command:
+          - "/bin/bash"
+          - "-c"
+          - |
+            HEAP_MIB=$(( MEMORY_LIMIT_MIB / 4 ))
+            if [ "$HEAP_MIB" -gt 31744 ]; then HEAP_MIB=31744; fi
+            export MAX_HEAP_SIZE="${MAX_HEAP_SIZE:-${HEAP_MIB}M}"
+            export CASSANDRA_SEEDS="$BEXHOMA_WORKER_FIRST"
+            exec docker-entrypoint.sh cassandra -f
+        env:
+          - name: CASSANDRA_CLUSTER_NAME
+            value: bexhoma
+          - name: MEMORY_LIMIT_MIB
+            valueFrom:
+              resourceFieldRef:
+                containerName: dbms
+                resource: limits.memory
+                divisor: "1Mi"
+        ports:
+          - containerPort: 9042
+            name: server
+          - containerPort: 7000
+            name: gossip
+        # the CQL port opens after the node has joined the ring
+        startupProbe:
+          tcpSocket:
+            port: 9042
+          periodSeconds: 5
+          failureThreshold: 720
+        readinessProbe:
+          tcpSocket:
+            port: 9042
+          periodSeconds: 5
+        livenessProbe:
+          tcpSocket:
+            port: 9042
+          periodSeconds: 10
+          failureThreshold: 6
+        lifecycle:
+          preStop:
+            exec:
+              command: ["nodetool", "drain"]
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+        resources:
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 1000m, memory: 1Gi}
+        volumeMounts:
+        - name: bxw
+          mountPath: /var/lib/cassandra
+      - name: monitor-application
+        image: criteord/cassandra_exporter:2.3.8
+        env:
+          - name: CASSANDRA_EXPORTER_CONFIG_host
+            value: 127.0.0.1:7199
+          # the JVM of the exporter sizes its heap from the RAM of the node and runs into the limit
+          - name: JVM_OPTS
+            value: -Xmx512m
+        ports:
+          - containerPort: 8080
+            name: metrics
+        resources:
+          requests: {cpu: 100m, memory: 256Mi}
+          limits: {memory: 1Gi}
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        resources:
+          requests: {cpu: 150m, memory: 200Mi}
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      - name: bxw
+        persistentVolumeClaim: {claimName: bxw}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory
+  volumeClaimTemplates:
+  - metadata:
+      name: bxw
+      labels: {app: bexhoma, component: worker, configuration: default, experiment: default}
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: 100Gi
+      storageClassName: shared

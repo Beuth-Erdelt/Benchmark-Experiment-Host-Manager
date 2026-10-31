@@ -1121,6 +1121,7 @@ class YcsbEvaluator(LogEvaluator):
                 )
             else:
                 experiment._test_column(df_loading, "[OVERALL].Throughput(ops/sec)", title="Loading Phase:")
+                self._test_rows_loaded(experiment, df_loading)
         if experiment.benchmarking_is_active():
             experiment._test_column(df_reduced, "[OVERALL].Throughput(ops/sec)", title="Execution Phase:")
             experiment._record_test(
@@ -1133,6 +1134,30 @@ class YcsbEvaluator(LogEvaluator):
                 "Execution Phase: contains no FAILED column" if not contains_failed
                 else "Execution Phase: contains FAILED column",
             )
+
+    def _test_rows_loaded(self, experiment, df_loading: pd.DataFrame) -> None:
+        """
+        Record whether the loading pods inserted all rows.
+
+        A YCSB thread ends at its first failed insert, while the other threads and
+        the pod go on, so a load can finish with rows missing and without any other
+        sign of it. Rows are split evenly, so a remainder of ``rows / pods`` stays
+        unloaded by design. Multi-tenant experiments have their own row counts.
+
+        :param experiment: The owning experiment object.
+        :param df_loading: Per-run loading DataFrame.
+        """
+        columns = {'sf', 'pod_count', '[INSERT].Return=OK'}
+        if getattr(experiment, 'num_tenants', 0) > 0 or not columns.issubset(df_loading.columns):
+            return
+        rows = df_loading['sf'].astype(int) * 1000000
+        expected = rows // df_loading['pod_count'].astype(int) * df_loading['pod_count'].astype(int)
+        missing = (expected - df_loading['[INSERT].Return=OK'].astype(int)).clip(lower=0)
+        experiment._record_test(
+            bool((missing == 0).all()),
+            "Loading Phase: all rows inserted" if (missing == 0).all()
+            else "Loading Phase: {} of {} rows not inserted".format(int(missing.max()), int(rows.max())),
+        )
 
 
 

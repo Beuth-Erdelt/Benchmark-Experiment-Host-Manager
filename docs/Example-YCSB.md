@@ -390,7 +390,7 @@ usage: ycsb.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
                [-rnb [REQUEST_NODE_BENCHMARKING]]
                [-rnp [REQUEST_NODE_POOLING]] [-mtn MULTI_TENANT_NUM]
                [-mtb MULTI_TENANT_BY] [-mtv] [-tr] [-rp] [--set SETS]
-               [-dbms [{PostgreSQL,MySQL,MariaDB,YugabyteDB,CockroachDB,TiDB,DatabaseService,PGBouncer,Redis,Citus,CedarDB,Dragonfly} ...]]
+               [-dbms [{PostgreSQL,MySQL,MariaDB,YugabyteDB,CockroachDB,TiDB,DatabaseService,PGBouncer,Redis,Citus,CedarDB,Dragonfly,Cassandra} ...]]
                [-xnlf NUM_LOADING_TARGET_FACTORS] [-xnsr NUM_SUT_REPLICAS]
                [-xnpd NUM_PD_NODES] [-xnbf NUM_BENCHMARKING_TARGET_FACTORS]
                [-xnpp NUM_POOLING_PODS] [-xnpi NUM_POOLING_IN]
@@ -532,7 +532,7 @@ options:
   --set SETS            override a deployment parameter, e.g.
                         deployment[bexhoma-deployment-postgres].container[dbms].
                         max_worker_processes=128
-  -dbms, --dbms [{PostgreSQL,MySQL,MariaDB,YugabyteDB,CockroachDB,TiDB,DatabaseService,PGBouncer,Redis,Citus,CedarDB,Dragonfly} ...]
+  -dbms, --dbms [{PostgreSQL,MySQL,MariaDB,YugabyteDB,CockroachDB,TiDB,DatabaseService,PGBouncer,Redis,Citus,CedarDB,Dragonfly,Cassandra} ...]
                         one or more DBMS engines to test
   -xnlf, --xnum-loading-target-factors NUM_LOADING_TARGET_FACTORS
                         comma-separated multipliers for the loading ops target
