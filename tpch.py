@@ -349,7 +349,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # PostgreSQL
                 name_format = 'CedarDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='CedarDB', dialect='PostgreSQL', alias='DBMS A2')
+                config = configurations.default(experiment=experiment, docker='CedarDB', dialect='CedarDB', alias='DBMS A2')
+                # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
+                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
                 config.set_storage(
                     storageConfiguration = 'cedardb'
                     )

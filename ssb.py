@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test (default: PostgreSQL, MonetDB, ClickHouse)', choices=['PostgreSQL', 'MonetDB', 'ClickHouse', 'ClickHouseCluster', 'PgDuckDB', 'Citus', 'MySQL', 'MariaDB'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test (default: PostgreSQL, MonetDB, ClickHouse)', choices=['PostgreSQL', 'MonetDB', 'ClickHouse', 'CedarDB', 'ClickHouseCluster', 'PgDuckDB', 'Citus', 'MySQL', 'MariaDB'], default=[], nargs='*')
     parser.add_argument('-xsv',   '--xschema-variant', help='normal: star schema (4 dimensions + lineorder); flat: one denormalized table lineorder_flat, generated as flat files', choices=SCHEMA_VARIANTS, default='normal', dest='schema_variant')
     parser.add_argument('-xdim',  '--xdimensions', help='star schema on a multi-node DBMS (ClickHouseCluster, Citus): replicated = a full copy of each dimension on every node (Citus: reference tables), joins run locally per shard; distributed = dimensions spread over the nodes like lineorder, joined across nodes per query (ignored by single-node DBMS and with -xsv flat)', choices=DIMENSION_VARIANTS, default='replicated', dest='dimensions')
     parser.add_argument('-xqv',   '--xquery-variant', help='spec: the 13 queries with the constants of the SSB specification; random: random parameters that keep the filter factor of each query', choices=QUERY_VARIANTS, default='spec', dest='query_variant')
@@ -203,6 +203,21 @@ if __name__ == '__main__':
                     # whether to ALTER ROLE ... SET duckdb.force_execution
                     'DUCKDB_FORCE_EXECUTION': str(args.duckdb_force_execution).lower(),
                 }
+                config.jobtemplate_loading = "jobtemplate-loading-ssb-PostgreSQL.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("CedarDB" in args.dbms):
+                # CedarDB (PostgreSQL protocol, reuses PostgreSQL's loading job; own scripts)
+                config = configurations.default(experiment=experiment, docker='CedarDB', dialect='PostgreSQL', alias='DBMS A7')
+                # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
+                config.set_benchmark_resetscript(['reset-ssb.sql'])
+                config.set_storage(
+                    storageConfiguration = 'cedardb'
+                    )
                 config.jobtemplate_loading = "jobtemplate-loading-ssb-PostgreSQL.yml"
                 config.set_loading_parameters(
                     PODS_TOTAL = str(loading_pods_total),

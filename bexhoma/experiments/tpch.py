@@ -64,7 +64,7 @@ DBMS_DEFAULTS: dict[str, dict[str, str]] = {
         'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MySQL.yml',
     },
     'CedarDB': {
-        'docker': 'CedarDB', 'dialect': 'PostgreSQL',
+        'docker': 'CedarDB', 'dialect': 'CedarDB',   # key of the query variants in queries-tpch.config
         'jobtemplate_loading': 'jobtemplate-loading-tpch-PostgreSQL.yml',
         'storage_prefix': 'cedardb',
     },

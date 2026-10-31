@@ -19,6 +19,7 @@ This document covers all DBMS currently supported by bexhoma.
 - [Citus](#citus)
 - [ClickHouse](#clickhouse)
 - [ClickHouseCluster](#clickhousecluster)
+- [CedarDB](#cedardb)
 
 **Distributed SQL / Cloud-Native**
 - [YugabyteDB](#yugabytedb)
@@ -296,6 +297,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | PostgreSQL, PGBouncer, PgDuckDB | `VACUUM VERBOSE ANALYZE` (whole database) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
 | Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (passed on to the shards) | `CHECKPOINT` on the coordinator and with `run_command_on_workers` on every worker | as PostgreSQL, on the coordinator and every worker |
 | MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
+| CedarDB | `VACUUM VERBOSE ANALYZE` | n/a (no `CHECKPOINT`) | n/a (no `pg_stat_reset()`) |
 | MonetDB | `ANALYZE` | n/a (the write-ahead log is applied in the background; no call to force it) | n/a |
 | ClickHouse | n/a (no optimizer statistics unless declared per column) | `reset-flush.sh`: `sync` (an `INSERT` writes its parts without fsync) | n/a (`system.events` cannot be reset) |
 | ClickHouseCluster | n/a | `SYSTEM FLUSH DISTRIBUTED` on every Distributed table and `SYSTEM SYNC REPLICA ON CLUSTER` on every replicated table (`reset-<benchmark>.sql`, coordinator), then `reset-flush.sh` (`sync`) in every worker | n/a |
@@ -305,8 +307,8 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | Dragonfly | n/a | `SAVE` on every data pod | `CONFIG RESETSTAT` |
 | Redis | n/a | `SAVE` (standalone: SUT pod; cluster: every worker) | `CONFIG RESETSTAT` |
 
-CedarDB and DatabaseService have no reset.
-Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL and PGBouncer only (the other DBMS have no scripts for them).
+DatabaseService has no reset.
+Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL, PGBouncer and CedarDB only (the other DBMS have no scripts for them).
 With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
 
 Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis).
@@ -859,6 +861,61 @@ See [Example: ClickHouse](Example-ClickHouse.md#clickhouse-as-a-cluster) for a w
 The dimension placement of TPC-H is `-xdim`, see above.
 
 ---
+
+## CedarDB
+
+CedarDB is an HTAP DBMS with a PostgreSQL wire protocol, the commercial successor of TUM's Umbra (TPC-H, SSB, YCSB, Benchbase).
+
+**Deployment template:** [`k8s/deploymenttemplate-CedarDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-CedarDB.yml)
+
+The template pins the Community Edition image `cedardb/cedardb:v2026-10-22`.
+It differs from a PostgreSQL template in these points:
+
+| Point | Handling | Without it |
+|---|---|---|
+| Password | `CEDAR_PASSWORD` has at least 20 characters, as the JDBC `auth` of `cluster.config`; letters and digits only, it goes through `sed` in the YCSB and Benchbase images | the image refuses a weak password and the server stops |
+| Authentication | no trust authentication: `client_env` of `cluster.config` gives every job `PGPASSWORD` | the `psql` of the loader images cannot connect |
+| Address | the entrypoint binds to `::`; the container command changes it to `0.0.0.0` before the start | no IPv6 in the pods, the server stops; `-address` as an argument is refused as given twice |
+| `psql` | the image has none; the initContainer `include-client` copies it from `postgres:18.6` to `/pgclient` for `loadData` | init scripts cannot run |
+
+Memory and threads follow the limits of the container: `buffersize` and `workmemsize` default to 45% of the memory limit each.
+CedarDB warns that the `memlock` limit is too low for its `io_uring` buffers (performance may degrade); this limit cannot be changed from a pod.
+
+**Community Edition:** free, at most 64 GiB of data; above that the database is read-only.
+TPC-H is about 1.3 GiB per scale factor including indexes, so SF30 fits and SF100 does not (there is no SF100 script).
+The [terms](https://cedardb.com/legal/agreements/community_tcs.pdf) allow no passing on of the software, so bexhoma does not build a derived image.
+
+**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/CedarDB), [SSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ssb/CedarDB), [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/CedarDB)):
+the statements of PostgreSQL, in schema `public`.
+The loaders are those of PostgreSQL; `\COPY` accepts the trailing `|` of the TPC-H files.
+TPC-H uses dialect `CedarDB`: Q8, Q10 and Q15 have a variant with `date '...'`, as CedarDB has no function `date(text)`; the other queries are the main text.
+
+CedarDB does not share code with PostgreSQL. What the scripts cannot use:
+
+| Not available | Consequence |
+|---|---|
+| `CHECKPOINT` | no persist step in `checkschema` and the reset |
+| settable `synchronous_commit`, `fsync` | `-xld` has no effect, there are no durability scripts |
+| `pg_stat_reset()` | no counters step in the reset |
+| `query_to_xml`, `pg_stat_wal`, `pg_stat_bgwriter` | `checkschema` lists the tables itself |
+
+Isolation: every transaction runs as repeatable read. `READ COMMITTED` is accepted but stays repeatable read, `SERIALIZABLE` is refused, so Benchbase runs on repeatable read here.
+With concurrent writes to the same rows, transactions fail with `conflict with concurrent transaction` instead of waiting.
+YCSB does not retry them: workload A lost about 0.4% of its updates at 16 threads (`[UPDATE-FAILED]`), so the test `Execution Phase: contains FAILED column` fails.
+
+Benchbase `twitter` loads, but its benchmark stops when it connects: the PostgreSQL profile of the image fixes `TRANSACTION_SERIALIZABLE` for it and ignores `BENCHBASE_ISOLATION`.
+
+CH-benCHmark runs, but `num_errors` is not 0 and no bexhoma test reports it; the SQL comes from Benchbase:
+- Q22 always fails: `GROUP BY substring(c_state from 1 for 1)` and `ORDER BY substring(c_state,1,1)` are not the same expression for CedarDB.
+- Q15 fails when terminals overlap: all create the same view (`Catalog object was concurrently created`).
+
+CedarDB has no Prometheus endpoint in bexhoma (`-ma`).
+
+```bash
+bexhoma tpch -dbms CedarDB -sf 1 -nlp 8 -xii -xic -xis -tr run
+```
+
+See [Example: Other DBMS](Example-Other-DBMS.md#cedardb) for the workloads and the test script.
 
 ## YugabyteDB
 

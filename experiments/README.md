@@ -278,7 +278,7 @@ folder declares.
 | YugabyteDB | varies | SQL | PK + FK | PostgreSQL-compatible |
 | DB2 | varies | SQL | PK + FK | Keyword `NOT NULL` same; type names may differ |
 | MonetDB | varies | SQL COPY | PK; FK optional | `initschemadummy` needed |
-| CedarDB | varies | SQL | PK + FK | `initschemadummy` needed |
+| CedarDB | `public` | SQL | PK + FK | Client `\COPY` of the PostgreSQL loaders; no `CHECKPOINT` |
 | DatabaseService | varies | SQL | PK + FK | `initschemadummy` needed |
 | OmniSci / HeavyAI | `tpch` | SQL | None (analytical) | Multiple shard variants |
 | Exasol | varies | SQL | PK + FK | |

@@ -22,7 +22,7 @@ one experiment per value with `--set` on the same `-rst` PVC).
 | – | Docs rerun: TPC-H cluster logs in docs/Example-ClickHouse.md are from the old all-distributed layout | open | – |
 | – | Cluster check of the `-schema` variants of the PostgreSQL scripts (tenancy): 1793387505, 1793387532, 1793387564 | done | – |
 | 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
-| 13b | Optional: refuse a post-load step a DBMS has no script for (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for CedarDB, DatabaseService, PgDuckDB, `checkschema-ycsb` for CedarDB, DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |
+| 13b | Optional: refuse a post-load step a DBMS has no script for (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for DatabaseService, PgDuckDB, `checkschema-ycsb` for DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |
 | – | Separate: Python client calls (`get_pods` etc. in clusters.py) do not wait for a cluster outage (`MaxRetryError`), crashed check P | open, outside this plan | – |
 | – | Volumes with the old names (`bexhoma-storage-citus-nvme-tpch-*`, `bexhoma-storage-monetdb-nvme-tpch-*`, `bxw-bexhoma-worker-…`) created 2026-10-29 by runs with an older bexhoma from another machine; the new version does not find them | that machine needs the new version | [Short names](#short-volume-and-worker-names-decided-2026-10-29) |
 
@@ -263,8 +263,8 @@ deletion scope confirmed (2026-10-29). Details:
   for PGBouncer (uses `pg`), DatabaseService (no volume) and
   DragonflyCluster: its configurations use the storage name `dragonfly`
   ([ycsb.py:713](../ycsb.py#L713)), so their worker volumes become `df`
-  (`bxw-bx-w-df-…`); the SUT has no volume. CedarDB has no `dockers` entry
-  and keeps `cedardb`.
+  (`bxw-bx-w-df-…`); the SUT has no volume. CedarDB got its `dockers` entry with `cdb`
+  (2026-10-31, #830).
 - **Found, independent of abbreviations**: Dragonfly's cluster mode
   (`-nw > 0`, sharded) and replica mode (`-nwr > 0`, DragonflyReplica, all
   data on worker-0) use the same storage name and therefore the same worker
