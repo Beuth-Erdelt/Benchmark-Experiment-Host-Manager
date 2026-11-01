@@ -175,6 +175,12 @@ def _configure_system(experiment: TpchExperiment, system: dict, duckdb_force_exe
     loading_cfg = system.get('loading', {}) or {}
     loading_pods_total = int(loading_cfg.get('pods', 1))
     loading_pods_split = int(loading_cfg.get('split', 1))
+    if dbms == 'MariaDBCS' and (loading_pods_total != 1 or loading_pods_split != 1):
+        # concurrent LOAD DATA into a ColumnStore table fails with error 1030 and the loader goes on,
+        # so rows would be missing; same as the single loader pod of tpch.py
+        print('MariaDBCS: loads with 1 pod, ignoring loading.pods=%d, loading.split=%d' % (loading_pods_total, loading_pods_split))
+        loading_pods_total = 1
+        loading_pods_split = 1
     split_portion = loading_pods_total // loading_pods_split
 
     config.jobtemplate_loading = defaults['jobtemplate_loading']
@@ -189,6 +195,9 @@ def _configure_system(experiment: TpchExperiment, system: dict, duckdb_force_exe
     sut_parameters = dict(system.get('sut_parameters') or {})
     if dbms == 'PgDuckDB' and 'DUCKDB_FORCE_EXECUTION' not in sut_parameters:
         sut_parameters['DUCKDB_FORCE_EXECUTION'] = str(duckdb_force_execution_default).lower()
+    if dbms in ('MariaDB', 'MariaDBCS'):
+        # the loader and the schema scripts address tables as tpch.<table>
+        sut_parameters.setdefault('MARIADB_DATABASE', 'tpch')
     if sut_parameters:
         config.set_sut_parameters(**sut_parameters)
 
